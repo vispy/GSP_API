@@ -58,22 +58,7 @@ def main():
 
     # Create a camera
     view_matrix = Bufferx.mat4_identity()
-    projection_matrix = Buffer(1, BufferType.mat4)
-    projection_matrix.set_data(
-        bytearray(
-            np.array(
-                [
-                    [1, 0, 0, 0],
-                    [0, 1, 0, 0],
-                    [0, 0, 1, 0],
-                    [0, 0, 0, 1],
-                ],
-                dtype=np.float32,
-            ).tobytes()
-        ),
-        0,
-        1,
-    )
+    projection_matrix = Bufferx.mat4_identity()
     camera = Camera(view_matrix, projection_matrix)
 
     # Create a renderer and render the scene

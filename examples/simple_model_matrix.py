@@ -7,7 +7,6 @@ import matplotlib.pyplot
 
 # local imports
 from gsp.core import Canvas, Viewport
-from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
