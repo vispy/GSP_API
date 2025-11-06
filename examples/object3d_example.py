@@ -76,6 +76,7 @@ def main():
     object3d_camera = Object3D("Camera Object3D")
     object3d_camera.attach_camera(camera)
     object3d_scene.add(object3d_camera)
+
     # =============================================================================
     # matplotlib animation
     # =============================================================================
