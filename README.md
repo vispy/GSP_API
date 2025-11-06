@@ -1,2 +1,2 @@
 # GSP_API
-Graphic Server Protocol Application USer Interface
+Graphic Server Protocol Application User Interface
