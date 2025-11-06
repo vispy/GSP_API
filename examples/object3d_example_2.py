@@ -49,7 +49,7 @@ def main():
         # Make a 3d cube of points - only the edges - 10 points per edge
         edge_points = []
         cube_size = 0.3
-        points_per_edge = 10
+        points_per_edge = 100
         for x in [-cube_size, cube_size]:
             for y in [-cube_size, cube_size]:
                 for z in np.linspace(-cube_size, cube_size, points_per_edge):
@@ -67,10 +67,6 @@ def main():
         assert False, "Unknown position setup"
 
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
-
-    # Sizes - Create buffer and set data with numpy array
-    sizes_numpy = np.array([40] * group_count, dtype=np.float32)
-    sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
 
     # all pixels red - Create buffer and fill it with a constant
     colors_buffer = Buffer(group_count, BufferType.rgba8)

@@ -30,7 +30,7 @@ def main():
     # Add random points
     # - various ways to create Buffers
     # =============================================================================
-    point_count = 10
+    point_count = 200
     group_count = 1
 
     # Random positions - Create buffer from numpy array
