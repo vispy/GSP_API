@@ -1,0 +1,26 @@
+[project]
+name = "gsp"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Jerome Etienne",email = "jerome.etienne@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy (>=2.3.4,<3.0.0)",
+    "matplotlib (>=3.10.7,<4.0.0)",
+    "pydantic (>=2.12.4,<3.0.0)",
+    "imageio (>=2.37.2,<3.0.0)",
+    "mypy (>=1.18.2,<2.0.0)",
+    "colorama (>=0.4.6,<0.5.0)",
+    "pytest (>=8.4.2,<9.0.0)"
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+# Configuration for the Black code formatter 
+[tool.black]
+line-length = 160   # to match the 79 character limit of PEP 8, but allow some extra space for longer lines

@@ -1,0 +1,1 @@
+Real world stubs extracted from actual implementations.

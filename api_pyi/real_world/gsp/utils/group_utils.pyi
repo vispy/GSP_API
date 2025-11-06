@@ -1,0 +1,16 @@
+from ..types.group import Groups as Groups
+
+class GroupUtils:
+    @staticmethod
+    def get_group_count(groups: Groups) -> int: ...
+    @staticmethod
+    def is_instance_of_groups(groups: Groups) -> bool: ...
+    FORMAT_INT: str
+    FORMAT_LIST_INT: str
+    FORMAT_LIST_LIST_INT: str
+    @staticmethod
+    def sanity_check(vertex_count: int, groups: Groups) -> None: ...
+    @staticmethod
+    def sanity_check_safe(vertex_count: int, groups: Groups) -> bool: ...
+    @staticmethod
+    def compute_indices_per_group(vertex_count: int, groups: Groups) -> list[list[int]]: ...
