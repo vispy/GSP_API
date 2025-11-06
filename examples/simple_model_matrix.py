@@ -11,6 +11,7 @@ from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
+from gsp.visuals import Pixels
 import gsp_extra.glm as glm
 
 
@@ -43,8 +44,8 @@ def main():
     sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
 
     # all pixels red - Create buffer and fill it with a constant
-    face_colors_buffer = Buffer(group_count, BufferType.rgba8)
-    face_colors_buffer.set_data(bytearray([255, 0, 0, 255]) * face_colors_buffer.get_count(), 0, 1)
+    colors_buffer = Buffer(group_count, BufferType.rgba8)
+    colors_buffer.set_data(bytearray([255, 0, 0, 255]) * colors_buffer.get_count(), 0, 1)
 
     # Edge colors - Create buffer and fill it with a constant
     edge_colors_buffer = Buffer(group_count, BufferType.rgba8)
@@ -55,7 +56,7 @@ def main():
     edge_widths_buffer.set_data(bytearray(np.array([0.5 * 72.0 / canvas.get_dpi()] * group_count, dtype=np.float32).tobytes()), 0, 1)
 
     # Create the Points visual and add it to the viewport
-    pixels = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer, group_count)
+    pixels = Pixels(positions_buffer, colors_buffer, group_count)
 
     # model_matrix_numpy = np.eye(4, dtype=np.float32)
     model_matrix_numpy = glm.zrotate(20.0)

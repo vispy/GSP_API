@@ -13,7 +13,6 @@ from gsp.core.viewport import Viewport
 from gsp.core.visual_base import VisualBase
 from gsp.types import Buffer
 from gsp.types.transbuf import TransBuf
-from gsp.visuals.points import Points
 from gsp.visuals.pixels import Pixels
 
 
@@ -76,10 +75,6 @@ class MatplotlibRenderer:
             from gsp_matplotlib.renderer.renderer_pixels import RendererPixels
 
             RendererPixels.render(self, axes, visual, model_matrix, camera)
-        elif isinstance(visual, Points):
-            from gsp_matplotlib.renderer.renderer_points import RendererPoints
-
-            RendererPoints.render(self, axes, visual, model_matrix, camera)
         else:
             raise NotImplementedError(f"Rendering for visual type {type(visual)} is not implemented.")
 
