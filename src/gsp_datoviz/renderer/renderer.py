@@ -39,20 +39,21 @@ class DatovizRenderer:
         self.dvz_visuals: dict[str, _DvzVisual] = {}
         """datoviz visual per gsp visual UUID"""
 
+    # =============================================================================
+    # .render() function
+    # =============================================================================
     def render(
         self,
         viewports: Sequence[Viewport],
         visuals: Sequence[VisualBase],
         model_matrices: Sequence[TransBuf],
         cameras: Sequence[Camera],
-        return_image: bool = False,  # NOTE: make False by default. dataviz offscreen rendering to image is not well supported
+        return_image: bool = False,  # NOTE: make False by default. datoviz screenshot can cause segmentation fault in some cases
         image_format: str = "png",
     ) -> bytes:
         for viewport, visual, model_matrix, camera in zip(viewports, visuals, model_matrices, cameras):
             if isinstance(visual, Pixels):
                 self._render_pixels(viewport, visual, model_matrix, camera)
-
-        #
 
         # =============================================================================
         # Return an image if needed
@@ -85,11 +86,11 @@ class DatovizRenderer:
 
         visual_exists = visual.get_uuid() in self.dvz_visuals
         if visual_exists == False:
-            dvz_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
-            dvz_color_numpy = np.array([[255, 0, 0, 255]], dtype=np.uint8).reshape((-1, 4))
+            dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
+            dummy_color_numpy = np.array([[255, 0, 0, 255]], dtype=np.uint8).reshape((-1, 4))
             dvz_pixels = self.dvz_app.pixel(
-                position=dvz_position_numpy,
-                color=dvz_color_numpy,
+                position=dummy_position_numpy,
+                color=dummy_color_numpy,
             )
             self.dvz_visuals[visual.get_uuid()] = dvz_pixels
             # Add the new visual to the panel
@@ -113,15 +114,23 @@ class DatovizRenderer:
         dvz_pixels.set_color(dvz_color_numpy)
 
     # =============================================================================
-    #
+    # Get or create datoviz panel for viewport
     # =============================================================================
 
     def _getOrCreateDvzPanel(self, viewport: Viewport) -> _DvzPanel:
         viewport_uuid = viewport.get_uuid()
+        # if it already exists, return it
         if viewport_uuid in self.dvz_panels:
             return self.dvz_panels[viewport_uuid]
 
-        dvz_panel = self.dvz_figure.panel()
+        # create the datoviz panel
+        dvz_panel = self.dvz_figure.panel(
+            offset=(viewport.get_origin_x(), viewport.get_origin_y()),
+            size=(viewport.get_width(), viewport.get_height()),
+        )
+
+        # store it
         self.dvz_panels[viewport_uuid] = dvz_panel
 
+        # return newly created panel
         return dvz_panel

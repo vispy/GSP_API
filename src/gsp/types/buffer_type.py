@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 
 class BufferType(Enum):
-    """Type of elements in a Buffer. Heavily inspired by GLSL types."""
+    """Type of elements in a Buffer. Heavily inspired by GLSL types and numpy."""
 
     float32 = 0
     uint32 = 1
@@ -15,11 +15,17 @@ class BufferType(Enum):
     int32 = 3
     int8 = 4
     vec2 = 5
+    """vector of 2 float32."""
     vec3 = 6
+    """vector of 3 float32."""
     vec4 = 7
+    """vector of 4 float32."""
     uvec4 = 8
+    """vector of 4 uint32."""
     mat4 = 9  # 4x4 matrix
+    """Matrix 4x4 of float32. Column-major order."""
     rgba8 = 10  # RGBA
+    """4 unsigned bytes representing red, green, blue, alpha channels. each channel in [0, 255]."""
 
     @staticmethod
     def get_item_size(buffer_type: "BufferType") -> int:
