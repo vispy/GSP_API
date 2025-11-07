@@ -3,10 +3,10 @@ import numpy as np
 from mpl3d.camera import Camera
 from gsp_nico import Canvas, Viewport, Buffer, Pixels, Renderer
 
-canvas = Canvas(100, 100, 96.0)
-viewport = Viewport(canvas, 0, 0, 100, 100)
+canvas = Canvas(200, 200, 96.0)
+viewport = Viewport(canvas, 0, 0, 200, 200)
 
-point_count = 1024
+point_count = 20_000
 coords = Buffer.from_numpy(np.random.uniform(-1, +1, (point_count, 3)), "vec3")
 colors = Buffer.from_bytes(bytearray([255, 0, 0, 255] * point_count), "rgba8")
 pixels = Pixels(coords, colors)
@@ -23,3 +23,9 @@ image_path = os.path.join(dirname, f"output/{os.path.basename(__file__).replace(
 with open(image_path, "wb") as f:
     f.write(output)
 print(f"Image saved to: {image_path}")
+
+import typing
+from gsp_datoviz.renderer import DatovizRenderer
+
+gsp_datoviz_renderer = typing.cast(DatovizRenderer, renderer.gsp_renderer)
+gsp_datoviz_renderer.dvz_app.run()

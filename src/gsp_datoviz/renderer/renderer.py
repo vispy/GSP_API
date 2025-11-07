@@ -45,7 +45,7 @@ class DatovizRenderer:
         visuals: Sequence[VisualBase],
         model_matrices: Sequence[TransBuf],
         cameras: Sequence[Camera],
-        return_image: bool = True,
+        return_image: bool = False,  # NOTE: make False by default. dataviz offscreen rendering to image is not well supported
         image_format: str = "png",
     ) -> bytes:
         for viewport, visual, model_matrix, camera in zip(viewports, visuals, model_matrices, cameras):
@@ -58,11 +58,14 @@ class DatovizRenderer:
         # Return an image if needed
         # =============================================================================
 
-        # FIXME - i dunno how to generate image from datoviz
+        # FIXME - i got some segmentation fault here when trying to do offscreen rendering with datoviz
         rendered_image = b""
         if return_image:
             assert image_format in ["png"], f"Unsupported image format: {image_format}"
-            self.dvz_app.run(1)
+            image_path = "offscreen_python.png"
+            self.dvz_app.screenshot(self.dvz_figure, image_path)
+            with open(image_path, "rb") as file_reader:
+                rendered_image = file_reader.read()
 
         return rendered_image
 

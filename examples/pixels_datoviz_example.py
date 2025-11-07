@@ -58,13 +58,6 @@ def main():
     datovizRenderer = DatovizRenderer(canvas)
     rendered_image = datovizRenderer.render([viewport], [pixels], [model_matrix], [camera])
 
-    # save rendered_image image
-    dirname = os.path.dirname(__file__)
-    image_path = os.path.join(dirname, f"output/{os.path.basename(__file__).replace('.py', '')}.png")
-    with open(image_path, "wb") as file_writer:
-        file_writer.write(rendered_image)
-    print(f"Image saved to: {image_path}")
-
     # handle non-interactive mode for tests
     inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
     if inTest:
