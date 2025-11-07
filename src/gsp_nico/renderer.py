@@ -1,8 +1,14 @@
-import numpy as np
+# Stdlib imports
 from typing import Literal
+import typing
+
+# Pip imports
+import numpy as np
+import matplotlib.pyplot
 
 # Local imports
 from .canvas import Canvas
+from .viewport import Viewport
 from gsp_matplotlib.renderer import MatplotlibRenderer as GspMatplotlibRenderer
 from gsp.core.camera import Camera as GspCamera
 from gsp.core.viewport import Viewport as GspViewport
@@ -29,7 +35,8 @@ class Renderer:
         gsp_visuals: list[GspVisualBase] = []
         gsp_model_matrices: list[GspBuffer] = []
         gsp_cameras: list[GspCamera] = []
-        for viewport in canvas.viewports:
+        for untyped_viewport in canvas.untyped_viewports:
+            viewport = typing.cast(Viewport, untyped_viewport)
             for visual_index, visual in enumerate(viewport.visuals):
 
                 gsp_viewports.append(viewport.gsp_viewport)
@@ -50,5 +57,7 @@ class Renderer:
             cameras=gsp_cameras,
             image_format=output_format,
         )
+
+        matplotlib.pyplot.show()
 
         return rendered_image
