@@ -11,7 +11,6 @@ from gsp.visuals import Pixels
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
 
 
@@ -26,8 +25,8 @@ def main():
     # Add random points
     # - various ways to create Buffers
     # =============================================================================
-    point_count = 10_000
-    group_count = 10_000  # as many groups as points - as groups are not yet in datoviz python API
+    point_count = 1024
+    group_count = 1
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
@@ -35,7 +34,7 @@ def main():
 
     # all pixels red - Create buffer and fill it with a constant
     colors_buffer = Buffer(group_count, BufferType.rgba8)
-    colors_buffer.set_data(bytearray([255, 0, 0, 255]) * colors_buffer.get_count(), 0, colors_buffer.get_count())
+    colors_buffer.set_data(bytearray([255, 0, 0, 255]) * colors_buffer.get_count(), 0, 1)
 
     # Create the Pixels visual and add it to the viewport
     pixels = Pixels(positions_buffer, colors_buffer, group_count)
@@ -52,8 +51,8 @@ def main():
     camera = Camera(view_matrix, projection_matrix)
 
     # Create a renderer and render the scene
-    datovizRenderer = DatovizRenderer(canvas)
-    rendered_image = datovizRenderer.render([viewport], [pixels], [model_matrix], [camera])
+    matplotlibRenderer = MatplotlibRenderer(canvas)
+    rendered_image = matplotlibRenderer.render([viewport], [pixels], [model_matrix], [camera])
 
     # save rendered_image image
     dirname = os.path.dirname(__file__)
@@ -61,6 +60,13 @@ def main():
     with open(image_path, "wb") as file_writer:
         file_writer.write(rendered_image)
     print(f"Image saved to: {image_path}")
+
+    # handle non-interactive mode for tests
+    inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
+    if inTest:
+        return
+
+    matplotlib.pyplot.show()
 
 
 if __name__ == "__main__":
