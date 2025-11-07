@@ -10,6 +10,7 @@ import matplotlib.pyplot
 from .canvas import Canvas
 from .viewport import Viewport
 from gsp_matplotlib.renderer import MatplotlibRenderer as GspMatplotlibRenderer
+from gsp_datoviz.renderer.renderer import DatovizRenderer as GspDatovizRenderer
 from gsp.core.camera import Camera as GspCamera
 from gsp.core.viewport import Viewport as GspViewport
 from gsp.core.visual_base import VisualBase as GspVisualBase
@@ -19,7 +20,7 @@ from gsp_matplotlib.extra.bufferx import Bufferx
 
 
 class Renderer:
-    def __init__(self, backend: Literal["matplotlib"] = "matplotlib"):
+    def __init__(self, backend: Literal["matplotlib", "datoviz"]):
         self.backend = backend
         self.gsp_renderer = None
 
@@ -27,6 +28,8 @@ class Renderer:
         if self.gsp_renderer is None:
             if self.backend == "matplotlib":
                 self.gsp_renderer = GspMatplotlibRenderer(canvas.gsp_canvas)
+            elif self.backend == "datoviz":
+                self.gsp_renderer = GspDatovizRenderer(canvas.gsp_canvas)
             else:
                 raise ValueError(f"Unsupported backend: {self.backend}")
 
