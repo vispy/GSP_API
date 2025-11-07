@@ -30,13 +30,14 @@ class Renderer:
         gsp_model_matrices: list[GspBuffer] = []
         gsp_cameras: list[GspCamera] = []
         for viewport in canvas.viewports:
-            for visual, view_matrix, proj_matrix in viewport.visual_view_projs:
-                gsp_viewports.append(viewport.gsp_viewport)
-                gsp_visuals.append(visual.gsp_visual)
-                gsp_model_matrices.append(visual.gsp_model_matrix)
+            for visual_index, visual in enumerate(viewport.visuals):
 
-                gsp_view_matrix = Bufferx.from_numpy(np.array(view_matrix, dtype=np.float32), GspBufferType.mat4)
-                gsp_proj_matrix = Bufferx.from_numpy(np.array(proj_matrix, dtype=np.float32), GspBufferType.mat4)
+                gsp_viewports.append(viewport.gsp_viewport)
+                gsp_visuals.append(visual.gsp_pixels)
+
+                gsp_model_matrices.append(visual.gsp_model_matrix)
+                gsp_view_matrix = viewport.gsp_view_matrices[visual_index]
+                gsp_proj_matrix = viewport.gsp_proj_matrices[visual_index]
                 gsp_camera = GspCamera(gsp_view_matrix, gsp_proj_matrix)
 
                 gsp_cameras.append(gsp_camera)
