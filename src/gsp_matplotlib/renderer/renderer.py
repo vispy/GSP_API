@@ -1,5 +1,6 @@
 # stdlib imports
 from typing import Sequence
+import io
 
 # pip imports
 import matplotlib.pyplot
@@ -31,7 +32,15 @@ class MatplotlibRenderer:
         # Create a figure of 512x512 pixels
         self._figure = matplotlib.pyplot.figure(figsize=(canvas.get_width() / canvas.get_dpi(), canvas.get_height() / canvas.get_dpi()), dpi=canvas.get_dpi())
 
-    def render(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], model_matrices: Sequence[TransBuf], cameras: Sequence[Camera]):
+    def render(
+        self,
+        viewports: Sequence[Viewport],
+        visuals: Sequence[VisualBase],
+        model_matrices: Sequence[TransBuf],
+        cameras: Sequence[Camera],
+        return_image: bool = True,
+        image_format: str = "png",
+    ) -> bytes:
 
         # =============================================================================
         # Sanity checks
@@ -67,6 +76,22 @@ class MatplotlibRenderer:
 
         for viewport, visual, model_matrix, camera in zip(viewports, visuals, model_matrices, cameras):
             self._render_visual(viewport, visual, model_matrix, camera)
+
+        # =============================================================================
+        # Render the output image
+        # =============================================================================
+        image_png_data = b""
+
+        # honor return_image option
+        if return_image:
+            # Render the image to a PNG buffer
+            image_png_buffer = io.BytesIO()
+            matplotlib.pyplot.savefig(image_png_buffer, format=image_format)
+            image_png_buffer.seek(0)
+            image_png_data = image_png_buffer.getvalue()
+            image_png_buffer.close()
+
+        return image_png_data
 
     def _render_visual(self, viewport: Viewport, visual: VisualBase, model_matrix: TransBuf, camera: Camera):
         """Render a single visual in a given viewport using the specified camera."""

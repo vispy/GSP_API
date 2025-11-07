@@ -4,7 +4,7 @@ from gsp.core.camera import Camera as Camera
 from gsp.core.canvas import Canvas as Canvas
 from gsp.core.viewport import Viewport as Viewport
 from gsp.core.visual_base import VisualBase as VisualBase
-from gsp.types import Buffer as Buffer
+from gsp.types import Buffer as GspBuffer
 from gsp.types.transbuf import TransBuf as TransBuf
 from typing import Sequence
 

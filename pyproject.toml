@@ -14,7 +14,8 @@ dependencies = [
     "imageio (>=2.37.2,<3.0.0)",
     "mypy (>=1.18.2,<2.0.0)",
     "colorama (>=0.4.6,<0.5.0)",
-    "pytest (>=8.4.2,<9.0.0)"
+    "pytest (>=8.4.2,<9.0.0)",
+    "mpl3d @ git+https://github.com/rougier/matplotlib-3d"
 ]
 
 [build-system]

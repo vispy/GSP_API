@@ -17,8 +17,9 @@ class BufferType(Enum):
     vec2 = 5
     vec3 = 6
     vec4 = 7
-    mat4 = 8  # 4x4 matrix
-    rgba8 = 9  # RGBA
+    uvec4 = 8
+    mat4 = 9  # 4x4 matrix
+    rgba8 = 10  # RGBA
 
     @staticmethod
     def get_item_size(buffer_type: "BufferType") -> int:
@@ -39,6 +40,8 @@ class BufferType(Enum):
             return 12  # 3 * 4 bytes (float32)
         elif buffer_type == BufferType.vec4:
             return 16  # 4 * 4 bytes (float32)
+        elif buffer_type == BufferType.uvec4:
+            return 16  # 4 * 4 bytes (uint32)
         elif buffer_type == BufferType.rgba8:
             return 4
         elif buffer_type == BufferType.mat4:
