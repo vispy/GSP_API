@@ -15,8 +15,11 @@ from gsp_extra.bufferx import Bufferx
 
 
 def main():
+    # Set random seed for reproducibility
+    np.random.seed(seed=10)
+
     # Create a canvas
-    canvas = Canvas(100, 100, 96.0)
+    canvas = Canvas(200, 200, 96.0)
 
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
@@ -56,7 +59,7 @@ def main():
 
     # save rendered_image image
     dirname = os.path.dirname(__file__)
-    image_path = os.path.join(dirname, f"{os.path.basename(__file__).replace('.py', '')}.png")
+    image_path = os.path.join(dirname, f"output/{os.path.basename(__file__).replace('.py', '')}.png")
     with open(image_path, "wb") as file_writer:
         file_writer.write(rendered_image)
     print(f"Image saved to: {image_path}")

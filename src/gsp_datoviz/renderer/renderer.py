@@ -52,14 +52,19 @@ class DatovizRenderer:
             if isinstance(visual, Pixels):
                 self._render_pixels(viewport, visual, model_matrix, camera)
 
-        self.dvz_app.run()
+        #
+
+        # =============================================================================
+        # Return an image if needed
+        # =============================================================================
 
         # FIXME - i dunno how to generate image from datoviz
-        generated_image = b""
+        rendered_image = b""
         if return_image:
             assert image_format in ["png"], f"Unsupported image format: {image_format}"
+            self.dvz_app.run(1)
 
-        return generated_image
+        return rendered_image
 
     def close(self):
         self.dvz_app.destroy()

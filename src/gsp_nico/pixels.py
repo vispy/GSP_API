@@ -7,5 +7,5 @@ from .buffer import Buffer
 
 class Pixels:
     def __init__(self, coords: GspBuffer, colors: GspBuffer):
-        self.gsp_pixels = GspPixels(coords, colors, groups=coords.get_count())
+        self.gsp_pixels = GspPixels(coords, colors, groups=colors.get_count())
         self.gsp_model_matrix = Bufferx.mat4_identity()

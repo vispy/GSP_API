@@ -61,6 +61,4 @@ class Renderer:
             image_format=output_format,
         )
 
-        matplotlib.pyplot.show()
-
         return rendered_image
