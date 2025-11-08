@@ -53,7 +53,7 @@ class DatovizRendererPixels:
         # Create the datoviz visual if needed
         # =============================================================================
 
-        visual_exists = visual.get_uuid() in renderer.dvz_visuals
+        visual_exists = visual.get_uuid() in renderer._dvz_visuals
         if visual_exists == False:
             dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
             dummy_color_numpy = np.array([[255, 0, 0, 255]], dtype=np.uint8).reshape((-1, 4))
@@ -61,7 +61,7 @@ class DatovizRendererPixels:
                 position=dummy_position_numpy,
                 color=dummy_color_numpy,
             )
-            renderer.dvz_visuals[visual.get_uuid()] = dvz_pixels
+            renderer._dvz_visuals[visual.get_uuid()] = dvz_pixels
             # Add the new visual to the panel
             dvz_panel.add(dvz_pixels)
 
@@ -70,7 +70,7 @@ class DatovizRendererPixels:
         # =============================================================================
 
         # get the datoviz visual
-        dvz_pixels = typing.cast(_DvzPixel, renderer.dvz_visuals[visual.get_uuid()])
+        dvz_pixels = typing.cast(_DvzPixel, renderer._dvz_visuals[visual.get_uuid()])
 
         # set attributes
         dvz_pixels.set_position(vertices_numpy)

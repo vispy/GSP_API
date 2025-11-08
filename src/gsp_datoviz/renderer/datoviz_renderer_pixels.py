@@ -54,7 +54,7 @@ class DatovizRendererPixels:
         # =============================================================================
 
         sample_group_uuid = f"{visual.get_uuid()}_group_0"
-        if sample_group_uuid not in renderer.dvz_visuals:
+        if sample_group_uuid not in renderer._dvz_visuals:
             for group_index in range(group_count):
                 dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
                 dummy_color_numpy = np.array([[255, 0, 0, 255]], dtype=np.uint8).reshape((-1, 4))
@@ -63,7 +63,7 @@ class DatovizRendererPixels:
                     color=dummy_color_numpy,
                 )
                 group_uuid = f"{visual.get_uuid()}_group_{group_index}"
-                renderer.dvz_visuals[group_uuid] = dvz_pixels
+                renderer._dvz_visuals[group_uuid] = dvz_pixels
                 # Add the new visual to the panel
                 dvz_panel.add(dvz_pixels)
 
@@ -75,9 +75,12 @@ class DatovizRendererPixels:
             group_uuid = f"{visual.get_uuid()}_group_{group_index}"
 
             # get the datoviz visual
-            dvz_pixels = typing.cast(_DvzPixel, renderer.dvz_visuals[group_uuid])
+            dvz_pixels = typing.cast(_DvzPixel, renderer._dvz_visuals[group_uuid])
 
             # set attributes
             group_vertices = vertices_numpy[indices_per_group[group_index]]
             dvz_pixels.set_position(group_vertices)
-            dvz_pixels.set_color(colors_numpy[group_index] * group_vertices.__len__())
+
+            # set group_colors
+            group_colors = np.tile(colors_numpy[group_index], group_vertices.__len__()).reshape((-1, 4))
+            dvz_pixels.set_color(group_colors)

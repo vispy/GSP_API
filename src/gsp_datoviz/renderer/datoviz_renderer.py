@@ -35,9 +35,9 @@ class DatovizRenderer:
             width=canvas.get_width(),
             height=canvas.get_height(),
         )
-        self.dvz_panels: dict[str, _DvzPanel] = {}
+        self._dvz_panels: dict[str, _DvzPanel] = {}
         """datoviz panel per gsp viewport UUID"""
-        self.dvz_visuals: dict[str, _DvzVisual] = {}
+        self._dvz_visuals: dict[str, _DvzVisual] = {}
         """datoviz visual per gsp visual UUID"""
 
     # =============================================================================
@@ -100,8 +100,8 @@ class DatovizRenderer:
     def _getOrCreateDvzPanel(self, viewport: Viewport) -> _DvzPanel:
         viewport_uuid = viewport.get_uuid()
         # if it already exists, return it
-        if viewport_uuid in self.dvz_panels:
-            return self.dvz_panels[viewport_uuid]
+        if viewport_uuid in self._dvz_panels:
+            return self._dvz_panels[viewport_uuid]
 
         # create the datoviz panel
         dvz_panel = self.dvz_figure.panel(
@@ -110,7 +110,7 @@ class DatovizRenderer:
         )
 
         # store it
-        self.dvz_panels[viewport_uuid] = dvz_panel
+        self._dvz_panels[viewport_uuid] = dvz_panel
 
         # return newly created panel
         return dvz_panel
