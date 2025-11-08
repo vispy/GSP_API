@@ -21,6 +21,10 @@
   - no convenience functions
 - being explicit
 - being flexible
+  - ability to extend the API easily
+  - e.g. can they implement their own renderer easily?
+  - e.g. can they implement their own transform link easily?
+  - e.g. can they implement their own transform system easily?
 
 ## Non-goals
 - no syntaxic sugar
