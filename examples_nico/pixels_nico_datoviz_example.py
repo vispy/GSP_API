@@ -6,9 +6,9 @@ from gsp_nico import Canvas, Viewport, Buffer, Pixels, Renderer
 canvas = Canvas(200, 200, 96.0)
 viewport = Viewport(canvas, 0, 0, 200, 200)
 
-point_count = 20_000
+point_count = 5_000
 coords = Buffer.from_numpy(np.random.uniform(-1, +1, (point_count, 3)), "vec3")
-colors = Buffer.from_bytes(bytearray([255, 0, 0, 255] * point_count), "rgba8")
+colors = Buffer.from_bytes(bytearray([255, 0, 0, 255]), "rgba8")
 pixels = Pixels(coords, colors)
 
 camera = Camera("perspective")
