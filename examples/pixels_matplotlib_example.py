@@ -20,7 +20,7 @@ def main():
     np.random.seed(seed=10)
 
     # Create a canvas
-    canvas = Canvas(200, 200, 96.0)
+    canvas = Canvas(300, 300, 96.0)
 
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
@@ -29,8 +29,8 @@ def main():
     # Add random points
     # - various ways to create Buffers
     # =============================================================================
-    point_count = 1_000
-    groups = 1_000
+    point_count = 10_000
+    groups = 10_000
     group_count = GroupUtils.get_group_count(point_count, groups)
 
     # Random positions - Create buffer from numpy array

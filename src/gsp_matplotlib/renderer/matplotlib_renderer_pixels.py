@@ -13,6 +13,7 @@ from gsp.utils.transbuf_utils import TransBufUtils
 from gsp.utils.math_utils import MathUtils
 from gsp.types.transbuf import TransBuf
 from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp.utils.unit_utils import UnitUtils
 from ..extra.bufferx import Bufferx
 
 
@@ -113,20 +114,19 @@ class RendererPixels:
         # Return the list of artists created/updated
         return changed_artists
 
+    # =============================================================================
+    #
+    # =============================================================================
+
     @staticmethod
     def create_artists(renderer: MatplotlibRenderer, axes: matplotlib.axes.Axes, visual: VisualBase, group_count: int) -> None:
-        # Get DPI to compute pixel size
+        # compute 1 pixel size in points squared for matplotlib sizing
         assert axes.figure.get_dpi() is not None, "Canvas DPI must be set for proper pixel sizing"
-        # TODO move that into a unit_helper module - to help with unit conversions
-        one_point_in_inches = 1.0 / 72.0
-        # Marker sizes in matplotlib are specified in "points squared" (pt²)
-        # - Squaring the ratio converts a linear scale (points) to an area scale (points squared).
-        size_point_squared = (one_point_in_inches * axes.figure.get_dpi()) ** 2
-        # hardcoded scale factor to get approximately 1 pixel size
-        size = 0.25 * size_point_squared
+        size_pt = UnitUtils.pixel_to_point(1.0, axes.figure.get_dpi())
+        size_squared_pt = size_pt * size_pt
 
         for group_index in range(group_count):
-            mpl_path_collection = axes.scatter([], [], s=size, marker="o")
+            mpl_path_collection = axes.scatter([], [], s=size_squared_pt, marker="o")
             mpl_path_collection.set_antialiased(True)
             mpl_path_collection.set_linewidth(0)
             mpl_path_collection.set_visible(False)
