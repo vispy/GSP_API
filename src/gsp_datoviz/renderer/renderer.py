@@ -8,6 +8,7 @@ import datoviz as dvz
 from datoviz._panel import Panel as _DvzPanel  # TODO to fix in datoviz ?
 from datoviz.visuals import Visual as _DvzVisual
 from datoviz.visuals import Pixel as _DvzPixel
+from datoviz.visuals import Point as _DvzPoints
 
 # dataviz glossary
 # - App: main application
@@ -54,7 +55,10 @@ class DatovizRenderer:
         for viewport, visual, model_matrix, camera in zip(viewports, visuals, model_matrices, cameras):
             if isinstance(visual, Pixels):
                 self._render_pixels(viewport, visual, model_matrix, camera)
-
+            elif isinstance(visual, Points):
+                self._render_points(viewport, visual, model_matrix, camera)
+            else:
+                raise NotImplementedError(f"DatovizRenderer.render() does not support visual of type {type(visual)}")
         # =============================================================================
         # Return an image if needed
         # =============================================================================
@@ -74,7 +78,7 @@ class DatovizRenderer:
         self.dvz_app.destroy()
 
     # =============================================================================
-    #
+    # ._render_pixels()
     # =============================================================================
 
     def _render_pixels(self, viewport: Viewport, visual: Pixels, model_matrix: TransBuf, camera: Camera) -> None:
@@ -112,6 +116,49 @@ class DatovizRenderer:
         # set attributes
         dvz_pixels.set_position(dvz_position_numpy)
         dvz_pixels.set_color(dvz_color_numpy)
+
+    # =============================================================================
+    # ._render_points()
+    # =============================================================================
+
+    def _render_points(self, viewport: Viewport, visual: Points, model_matrix: TransBuf, camera: Camera) -> None:
+        dvz_panel = self._getOrCreateDvzPanel(viewport)
+
+        # =============================================================================
+        # Create the datoviz visual if needed
+        # =============================================================================
+
+        visual_exists = visual.get_uuid() in self.dvz_visuals
+        if visual_exists == False:
+            dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
+            dummy_color_numpy = np.array([[255, 0, 0, 255]], dtype=np.uint8).reshape((-1, 4))
+            dvz_points = self.dvz_app.point(
+                position=dummy_position_numpy,
+                color=dummy_color_numpy,
+            )
+            self.dvz_visuals[visual.get_uuid()] = dvz_points
+            # Add the new visual to the panel
+            dvz_panel.add(dvz_points)
+
+        # =============================================================================
+        # Update all attributes
+        # =============================================================================
+
+        # get the datoviz visual
+        dvz_points = typing.cast(_DvzPoints, self.dvz_visuals[visual.get_uuid()])
+
+        # get attributes from TransBuf to numpy
+        positions_buffer = TransBufUtils.to_buffer(visual.get_positions())
+        fact_colors_buffer = TransBufUtils.to_buffer(visual.get_face_colors())
+        sizes_buffer = TransBufUtils.to_buffer(visual.get_sizes())
+        dvz_position_numpy = Bufferx.to_numpy(positions_buffer)
+        dvz_face_colors_numpy = Bufferx.to_numpy(fact_colors_buffer)
+        dvz_sizes_numpy = Bufferx.to_numpy(sizes_buffer)
+
+        # set attributes
+        dvz_points.set_position(dvz_position_numpy)
+        dvz_points.set_color(dvz_face_colors_numpy)
+        dvz_points.set_size(dvz_sizes_numpy.squeeze())
 
     # =============================================================================
     # Get or create datoviz panel for viewport

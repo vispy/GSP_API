@@ -13,7 +13,9 @@ from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
+from gsp.utils.group_utils import GroupUtils
 
 
 def main():
@@ -28,7 +30,8 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
     point_count = 100
-    group_count = 1
+    group_size = 1
+    group_count = GroupUtils.get_group_count(point_count, group_size)
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
@@ -51,7 +54,7 @@ def main():
     edge_widths_buffer.set_data(bytearray(np.array([0.5 * 72.0 / canvas.get_dpi()] * group_count, dtype=np.float32).tobytes()), 0, 1)
 
     # Create the Points visual and add it to the viewport
-    points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer, group_count)
+    points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer, group_size)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================
@@ -64,16 +67,35 @@ def main():
     projection_matrix.set_data(bytearray(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]], dtype=np.float32).tobytes()), 0, 1)
     camera = Camera(view_matrix, projection_matrix)
 
-    # Create a renderer and render the scene
-    matplotlibRenderer = MatplotlibRenderer(canvas)
-    matplotlibRenderer.render([viewport], [points], [model_matrix], [camera])
+    # =============================================================================
+    # Render
+    # =============================================================================
+    gsp_renderer = os.environ.get("GSP_RENDERER", "datoviz")
+    if gsp_renderer == "matplotlib":
+        # Create a renderer and render the scene
+        matplotlibRenderer = MatplotlibRenderer(canvas)
+        matplotlibRenderer.render([viewport], [points], [model_matrix], [camera])
 
-    # handle non-interactive mode for tests
-    inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-    if inTest:
-        return
+        # handle non-interactive mode for tests
+        inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
+        if inTest:
+            return
 
-    matplotlib.pyplot.show()
+        matplotlib.pyplot.show()
+    elif gsp_renderer == "datoviz":
+        # Create a renderer and render the scene
+        datovizRenderer = DatovizRenderer(canvas)
+        rendered_image = datovizRenderer.render([viewport], [points], [model_matrix], [camera])
+
+        # handle non-interactive mode for tests
+        inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
+        if inTest:
+            return
+
+        # run the datoviz app to show the window
+        datovizRenderer.dvz_app.run()
+    else:
+        raise ValueError(f"Unknown renderer: {gsp_renderer}")
 
 
 if __name__ == "__main__":
