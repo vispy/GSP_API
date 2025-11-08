@@ -15,7 +15,6 @@ from gsp.types.transbuf import TransBuf
 from gsp.visuals.pixels import Pixels
 from gsp.utils.transbuf_utils import TransBufUtils
 from .datoviz_renderer import DatovizRenderer
-from gsp.utils.group_utils import GroupUtils
 
 
 class DatovizRendererPixels:
@@ -27,27 +26,7 @@ class DatovizRendererPixels:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
-        pixels: Pixels = visual
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
-
-        # =============================================================================
-        # Get attributes
-        # =============================================================================
-
-        # get attributes from TransBuf to buffer
-        positions_buffer = TransBufUtils.to_buffer(visual.get_positions())
-        colors_buffer = TransBufUtils.to_buffer(visual.get_colors())
-
-        # convert buffers to numpy arrays
-        vertices_numpy = Bufferx.to_numpy(positions_buffer)
-        colors_numpy = Bufferx.to_numpy(colors_buffer)
-
-        # =============================================================================
-        #   Compute indices_per_group for groups depending on the type of groups
-        # =============================================================================
-
-        indices_per_group = GroupUtils.compute_indices_per_group(vertices_numpy.__len__(), pixels.get_groups())
-        group_count = GroupUtils.get_group_count(vertices_numpy.__len__(), pixels.get_groups())
 
         # =============================================================================
         # Create the datoviz visual if needed
@@ -72,6 +51,12 @@ class DatovizRendererPixels:
         # get the datoviz visual
         dvz_pixels = typing.cast(_DvzPixel, renderer.dvz_visuals[visual.get_uuid()])
 
+        # get attributes from TransBuf to numpy
+        positions_buffer = TransBufUtils.to_buffer(visual.get_positions())
+        colors_buffer = TransBufUtils.to_buffer(visual.get_colors())
+        dvz_position_numpy = Bufferx.to_numpy(positions_buffer)
+        dvz_color_numpy = Bufferx.to_numpy(colors_buffer)
+
         # set attributes
-        dvz_pixels.set_position(vertices_numpy)
-        dvz_pixels.set_color(colors_numpy)
+        dvz_pixels.set_position(dvz_position_numpy)
+        dvz_pixels.set_color(dvz_color_numpy)
