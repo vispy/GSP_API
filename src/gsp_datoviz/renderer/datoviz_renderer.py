@@ -38,7 +38,10 @@ class DatovizRenderer:
         self._dvz_panels: dict[str, _DvzPanel] = {}
         """datoviz panel per gsp viewport UUID"""
         self._dvz_visuals: dict[str, _DvzVisual] = {}
-        """datoviz visual per gsp visual UUID"""
+        """datoviz visual per gsp visual group UUID"""
+
+        self._group_count: dict[str, int] = {}
+        """group count per visual UUID"""
 
     # =============================================================================
     # .render() function

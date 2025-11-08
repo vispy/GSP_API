@@ -1,0 +1,5 @@
+- test dynamic group in datoviz pixels
+- for each example, `_matplotlib` `_datoviz` and `_both`
+  - have a test_runner ?
+- implement points in datoviz
+- implement path in matplotlib + datoviz
