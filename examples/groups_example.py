@@ -13,6 +13,7 @@ from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.constants import Constants
+from gsp.utils.group_utils import GroupUtils
 
 
 def main():
@@ -27,8 +28,9 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
     pixel_count = 3000
-    group_count = 2
-    assert pixel_count % group_count == 0, "Pixels count must be divisible by group count"
+    group_size = 1500
+    group_count = GroupUtils.get_group_count(pixel_count, group_size)
+    assert pixel_count % group_size == 0, "Pixels count must be divisible by group size"
 
     # Random positions - Create buffer from numpy array
     positions_numpy_1 = np.random.rand(pixel_count // 2, 3).astype(np.float32) * +1.0
@@ -41,7 +43,7 @@ def main():
     colors_buffer.set_data(Constants.red + Constants.green, 0, 2)
 
     # Create the Pixels visual and add it to the viewport
-    pixels = Pixels(positions_buffer, colors_buffer, group_count)
+    pixels = Pixels(positions_buffer, colors_buffer, group_size)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================

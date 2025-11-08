@@ -40,7 +40,7 @@ def main():
         [i for i in range(len(positions_numpy)) if positions_numpy[i][1] > 0],
         [i for i in range(len(positions_numpy)) if positions_numpy[i][1] <= 0],
     ]
-    group_count = GroupUtils.get_group_count(groups)
+    group_count = GroupUtils.get_group_count(point_count, groups)
 
     # all pixels red - Create buffer and fill it with a constant
     colors_buffer = Buffer(group_count, BufferType.rgba8)

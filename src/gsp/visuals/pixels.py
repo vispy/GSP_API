@@ -89,7 +89,7 @@ class Pixels(VisualBase):
 
         # get position_count and group_count
         position_count = positions.get_count() if isinstance(positions, Buffer) else positions.get_buffer_count()
-        group_count = GroupUtils.get_group_count(groups)
+        group_count = GroupUtils.get_group_count(position_count, groups)
 
         # Check groups matches position count
         GroupUtils.sanity_check(position_count, groups)

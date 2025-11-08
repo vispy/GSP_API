@@ -16,7 +16,8 @@ dependencies = [
     "colorama (>=0.4.6,<0.5.0)",
     "pytest (>=8.4.2,<9.0.0)",
     "mpl3d @ git+https://github.com/rougier/matplotlib-3d",
-    "datoviz (>=0.3.2,<0.4.0)"
+    "datoviz (>=0.3.2,<0.4.0)",
+    "line-profiler (>=5.0.0,<6.0.0)"
 ]
 
 [build-system]

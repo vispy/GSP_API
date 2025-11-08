@@ -12,6 +12,7 @@ from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
+from gsp.utils.group_utils import GroupUtils
 
 
 def main():
@@ -28,8 +29,9 @@ def main():
     # Add random points
     # - various ways to create Buffers
     # =============================================================================
-    point_count = 1024
-    group_count = 1
+    point_count = 1_000
+    group_size = 1_000
+    group_count = GroupUtils.get_group_count(point_count, group_size)
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1

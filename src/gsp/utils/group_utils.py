@@ -9,13 +9,13 @@ from ..types.group import Groups
 class GroupUtils:
 
     @staticmethod
-    def get_group_count(groups: Groups) -> int:
+    def get_group_count(vertex_count: int, groups: Groups) -> int:
         """Return the number of groups from the groups object."""
 
         groups_format = GroupUtils._groups_format(groups)
         if groups_format == GroupUtils.FORMAT_INT:
             groups_typed = typing.cast(int, groups)
-            group_count = groups_typed
+            group_count = vertex_count // groups_typed
         elif groups_format == GroupUtils.FORMAT_LIST_INT:
             groups_typed = typing.cast(list[int], groups)
             group_count = len(groups_typed)
@@ -101,6 +101,8 @@ class GroupUtils:
                 raise ValueError(f"Groups as int must be positive, got {groups_int}")
             if groups_int > vertex_count:
                 raise ValueError(f"Groups as int must be less than or equal to vertex_count, got groups={groups_int}, vertex_count={vertex_count}")
+            if vertex_count % groups_int != 0:
+                raise ValueError(f"Groups as int must divide vertex_count, got vertex_count={vertex_count}, groups={groups_int}")
         elif groups_mode == GroupUtils.FORMAT_LIST_INT:
             groups_list_int = typing.cast(list[int], groups)
             if any(group_size <= 0 for group_size in groups_list_int):
@@ -173,16 +175,14 @@ class GroupUtils:
     @staticmethod
     def _compute_indices_per_group_int(vertex_count: int, groups: int) -> list[list[int]]:
         """Compute indices_per_group for groups as int.
-        The int represents the number of groups.
+        The int represents the size of each group.
 
-        group_count = groups
+        group_count = vertex_count // groups
         indices_per_group = list[list[int]]
 
         Examples:
-        - vertex_count = 6, groups = 3 - divisible - all groups are vertex_count // groups long
+        - vertex_count = 6, groups = 2 - divisible - all groups are vertex_count // groups long
           - indices_per_group = [[0, 1], [2, 3], [4, 5]]
-        - vertex_count = 7, groups = 4 - non divisible - all groups are vertex_count // (groups-1) long, except the last group takes the remainder
-          - indices_per_group = [[0, 1], [2, 3], [4, 5], [6]]
 
         Returns:
             group_count (int): number of groups
@@ -190,16 +190,15 @@ class GroupUtils:
         """
 
         # Initialize output variables
-        group_count: int = groups
+        group_count: int = vertex_count // groups
         indices_per_group: list[list[int]] = []
 
         # Create the indices per group for this case
-        element_count_per_group = (vertex_count // group_count) if (vertex_count % group_count == 0) else (vertex_count // (group_count - 1))
+        element_count_per_group = groups
 
         for group_index in range(group_count):
-            is_last_group = group_index == group_count - 1
             start_index = element_count_per_group * group_index
-            end_index = (start_index + element_count_per_group) if is_last_group is False else vertex_count
+            end_index = element_count_per_group * (group_index + 1)
 
             # Fill the indices for this group
             indices_per_group.append(list(range(start_index, end_index)))

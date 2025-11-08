@@ -6,6 +6,7 @@ class Canvas:
         self.gsp_canvas = GspCanvas(width, height, dpi)
 
         self.untyped_viewports: list = []
+        """untyped to avoid circular import issues"""
 
     def add(self, viewport):
         self.untyped_viewports.append(viewport)
