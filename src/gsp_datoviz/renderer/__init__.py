@@ -1,1 +1,1 @@
-from .renderer import DatovizRenderer
+from .datoviz_renderer import DatovizRenderer

@@ -14,7 +14,7 @@ from gsp.visuals.points import Points
 from gsp.utils.transbuf_utils import TransBufUtils
 from gsp.types.transbuf import TransBuf
 from gsp.types.buffer_type import BufferType
-from .renderer import MatplotlibRenderer
+from .matplotlib_renderer import MatplotlibRenderer
 from ..extra.bufferx import Bufferx
 
 

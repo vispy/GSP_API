@@ -98,11 +98,11 @@ class MatplotlibRenderer:
 
         axes = self._axes[viewport.get_uuid()]
         if isinstance(visual, Pixels):
-            from gsp_matplotlib.renderer.renderer_pixels import RendererPixels
+            from gsp_matplotlib.renderer.matplotlib_renderer_pixels import RendererPixels
 
             RendererPixels.render(self, axes, visual, model_matrix, camera)
         elif isinstance(visual, Points):
-            from gsp_matplotlib.renderer.renderer_points import RendererPoints
+            from gsp_matplotlib.renderer.matplotlib_renderer_points import RendererPoints
 
             RendererPoints.render(self, axes, visual, model_matrix, camera)
         else:

@@ -10,7 +10,7 @@ import matplotlib.pyplot
 from .canvas import Canvas
 from .viewport import Viewport
 from gsp_matplotlib.renderer import MatplotlibRenderer as GspMatplotlibRenderer
-from gsp_datoviz.renderer.renderer import DatovizRenderer as GspDatovizRenderer
+from gsp_datoviz.renderer.datoviz_renderer import DatovizRenderer as GspDatovizRenderer
 from gsp.core.camera import Camera as GspCamera
 from gsp.core.viewport import Viewport as GspViewport
 from gsp.core.visual_base import VisualBase as GspVisualBase

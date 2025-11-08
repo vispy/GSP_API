@@ -1,1 +1,1 @@
-from .renderer import MatplotlibRenderer
+from .matplotlib_renderer import MatplotlibRenderer
