@@ -47,6 +47,18 @@ class DatovizRenderer:
     def get_canvas(self) -> Canvas:
         return self._canvas
 
+    def show(self) -> None:
+
+        # listen to keyboard events - if 'q' is pressed, stop the app
+        @self.dvz_app.connect(self.dvz_figure)
+        def on_keyboard(event):
+            # print(f"{event.key_event()} key {event.key()} ({event.key_name()})")
+            if event.key_event() == "press" and event.key_name() == "q":
+                self.dvz_app.stop()
+
+        # run the datoviz app to show the window
+        self.dvz_app.run()
+
     # =============================================================================
     # .render() function
     # =============================================================================

@@ -34,6 +34,9 @@ class MatplotlibRenderer:
         assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
         self._figure.canvas.manager.set_window_title("Matplotlib")
 
+    def show(self) -> None:
+        matplotlib.pyplot.show()
+
     def render(
         self,
         viewports: Sequence[Viewport],
