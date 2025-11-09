@@ -31,6 +31,8 @@ class MatplotlibRenderer:
 
         # Create a figure of 512x512 pixels
         self._figure = matplotlib.pyplot.figure(figsize=(canvas.get_width() / canvas.get_dpi(), canvas.get_height() / canvas.get_dpi()), dpi=canvas.get_dpi())
+        assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
+        self._figure.canvas.manager.set_window_title("Matplotlib")
 
     def render(
         self,

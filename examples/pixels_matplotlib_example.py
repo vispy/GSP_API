@@ -30,8 +30,8 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
     point_count = 10_000
-    groups = 10_000
-    group_count = GroupUtils.get_group_count(point_count, groups)
+    group_size = 10_000
+    group_count = GroupUtils.get_group_count(point_count, groups=group_size)
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
@@ -42,7 +42,7 @@ def main():
     colors_buffer.set_data(bytearray([255, 0, 0, 255]) * group_count, 0, group_count)
 
     # Create the Pixels visual and add it to the viewport
-    pixels = Pixels(positions_buffer, colors_buffer, groups)
+    pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================

@@ -30,6 +30,7 @@ from gsp.utils.transbuf_utils import TransBufUtils
 
 class DatovizRenderer:
     def __init__(self, canvas: Canvas):
+        self._canvas = canvas
         self.dvz_app = dvz.App(background="white")
         self.dvz_figure = self.dvz_app.figure(
             width=canvas.get_width(),
@@ -42,6 +43,9 @@ class DatovizRenderer:
 
         self._group_count: dict[str, int] = {}
         """group count per visual UUID"""
+
+    def get_canvas(self) -> Canvas:
+        return self._canvas
 
     # =============================================================================
     # .render() function
