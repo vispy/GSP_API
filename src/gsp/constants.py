@@ -10,3 +10,7 @@ class Constants:
     red = bytearray([255, 0, 0, 255])
     green = bytearray([0, 255, 0, 255])
     blue = bytearray([0, 0, 255, 255])
+
+    yellow = bytearray([255, 255, 0, 255])
+    magenta = bytearray([255, 0, 255, 255])
+    cyan = bytearray([0, 255, 255, 255])
