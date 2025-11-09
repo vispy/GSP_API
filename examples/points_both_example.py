@@ -19,6 +19,9 @@ from gsp.utils.unit_utils import UnitUtils
 
 
 def main():
+    # fix random seed for reproducibility
+    np.random.seed(0)
+
     # Create a canvas
     canvas = Canvas(100, 100, 96.0)
 
@@ -29,7 +32,7 @@ def main():
     # Add random points
     # - various ways to create Buffers
     # =============================================================================
-    point_count = 1
+    point_count = 100
     group_size = point_count
     group_count = GroupUtils.get_group_count(point_count, groups=group_size)
 
@@ -38,7 +41,7 @@ def main():
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
     # Sizes - Create buffer and set data with numpy array
-    sizes_numpy = np.array([10] * group_count, dtype=np.float32)
+    sizes_numpy = np.array([40] * group_count, dtype=np.float32)
     sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
 
     # all pixels red - Create buffer and fill it with a constant
@@ -70,32 +73,17 @@ def main():
     # =============================================================================
     # Render
     # =============================================================================
-    gsp_renderer = os.environ.get("GSP_RENDERER", "datoviz")
-    if gsp_renderer == "matplotlib":
-        # Create a renderer and render the scene
-        matplotlibRenderer = MatplotlibRenderer(canvas)
-        matplotlibRenderer.render([viewport], [points], [model_matrix], [camera])
 
-        # handle non-interactive mode for tests
-        inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-        if inTest:
-            return
+    # Create a renderer and render the scene
+    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
+    renderer.render([viewport], [points], [model_matrix], [camera])
 
-        matplotlib.pyplot.show()
-    elif gsp_renderer == "datoviz":
-        # Create a renderer and render the scene
-        datovizRenderer = DatovizRenderer(canvas)
-        rendered_image = datovizRenderer.render([viewport], [points], [model_matrix], [camera])
+    # handle non-interactive mode for tests
+    inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
+    if inTest:
+        return
 
-        # handle non-interactive mode for tests
-        inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-        if inTest:
-            return
-
-        # run the datoviz app to show the window
-        datovizRenderer.dvz_app.run()
-    else:
-        raise ValueError(f"Unknown renderer: {gsp_renderer}")
+    renderer.show()
 
 
 if __name__ == "__main__":
