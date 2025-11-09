@@ -30,6 +30,7 @@ def main():
     # Add random points
     # - various ways to create Buffers
     # =============================================================================
+
     point_count = 10_000
     group_size = point_count
     group_count = GroupUtils.get_group_count(point_count, groups=group_size)
@@ -63,12 +64,6 @@ def main():
     # Create a renderer and render the scene
     renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
     renderer.render([viewport], [pixels], [model_matrix], [camera])
-
-    # handle non-interactive mode for tests
-    inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-    if inTest:
-        return
-
     renderer.show()
 
 

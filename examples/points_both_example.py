@@ -77,12 +77,6 @@ def main():
     # Create a renderer and render the scene
     renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
     renderer.render([viewport], [points], [model_matrix], [camera])
-
-    # handle non-interactive mode for tests
-    inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-    if inTest:
-        return
-
     renderer.show()
 
 

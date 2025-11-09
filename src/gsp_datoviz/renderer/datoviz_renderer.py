@@ -1,4 +1,5 @@
 # stdlib imports
+import os
 from typing import Sequence
 import typing
 
@@ -48,6 +49,11 @@ class DatovizRenderer:
         return self._canvas
 
     def show(self) -> None:
+
+        # handle non-interactive mode for tests
+        inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
+        if inTest:
+            return
 
         # listen to keyboard events - if 'q' is pressed, stop the app
         @self.dvz_app.connect(self.dvz_figure)

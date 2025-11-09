@@ -1,4 +1,5 @@
 # stdlib imports
+import os
 from typing import Sequence
 import io
 
@@ -35,6 +36,11 @@ class MatplotlibRenderer:
         self._figure.canvas.manager.set_window_title("Matplotlib")
 
     def show(self) -> None:
+        # handle non-interactive mode for tests
+        inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
+        if inTest:
+            return
+
         matplotlib.pyplot.show()
 
     def render(
