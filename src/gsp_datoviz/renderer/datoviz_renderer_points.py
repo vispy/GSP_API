@@ -42,11 +42,13 @@ class DatovizRendererPoints:
 
         # convert buffers to numpy arrays
         vertices_numpy = Bufferx.to_numpy(positions_buffer)
+        face_colors_numpy = Bufferx.to_numpy(face_colors_buffer)
+
+        # Convert sizes from point^2 to pixel diameter
         sizes_pt2_numpy = Bufferx.to_numpy(sizes_buffer)
         radius_pt_numpy = np.sqrt(sizes_pt2_numpy / np.pi)
         radius_px_numpy = UnitUtils.point_to_pixel_numpy(radius_pt_numpy, renderer.get_canvas().get_dpi())
-        diameter_px_numpy = radius_px_numpy * 2.0
-        face_colors_numpy = Bufferx.to_numpy(face_colors_buffer)
+        diameter_px_numpy = radius_px_numpy * 2.0 * UnitUtils.device_pixel_ratio()
 
         # =============================================================================
         # Compute indices_per_group for groups depending on the type of groups
@@ -107,7 +109,7 @@ class DatovizRendererPoints:
 
             # set group_sizes
             group_sizes = np.tile(diameter_px_numpy[group_index], group_vertices.__len__()).reshape((-1, 1))
-            group_sizes = group_sizes.reshape(-1)
+            group_sizes = group_sizes.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
             dvz_points.set_size(group_sizes)
 
             # set group_colors

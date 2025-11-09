@@ -1,3 +1,6 @@
+# stdlib imports
+import sys
+
 # pip imports
 import numpy as np
 
@@ -15,8 +18,11 @@ class UnitUtils:
         Returns:
             float: Device pixel ratio (typically 1.0 for standard displays, >1.0 for high-DPI).
         """
-        # This is a placeholder implementation.
-        # In a real application, you would retrieve this from the display settings.
+        # detect if running on a macOS retina display or other high-DPI display
+        # This is a placeholder implementation; actual detection may vary based on the GUI framework used.
+        is_macosx = "darwin" in sys.platform
+        if is_macosx:
+            return 2.0  # Common value for retina displays
         return 1.0
 
     @staticmethod
