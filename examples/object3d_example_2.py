@@ -18,6 +18,7 @@ from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp_extra.object3d import Object3D
 import gsp_extra.glm as glm
+from gsp.utils.group_utils import GroupUtils
 
 
 def main():
@@ -34,13 +35,9 @@ def main():
     # Add random points
     # - various ways to create Buffers
     # =============================================================================
-    point_count = 10
-    group_count = 1
-
-    # Random positions - Create buffer from numpy array
-    positions_numpy = np.zeros((point_count, 3), dtype=np.float32)
 
     if False:
+        positions_numpy = np.zeros((10, 3), dtype=np.float32)
         # Make a line from -0.9 to 0.9 in x
         positions_numpy[:, 0] = np.linspace(-0.5, 0.5, point_count)
         positions_numpy[:, 1] = 0.0
@@ -49,7 +46,7 @@ def main():
         # Make a 3d cube of points - only the edges - 10 points per edge
         edge_points = []
         cube_size = 0.3
-        points_per_edge = 100
+        points_per_edge = 20
         for x in [-cube_size, cube_size]:
             for y in [-cube_size, cube_size]:
                 for z in np.linspace(-cube_size, cube_size, points_per_edge):
@@ -66,14 +63,18 @@ def main():
     else:
         assert False, "Unknown position setup"
 
+    point_count = positions_numpy.__len__()
+    group_size = point_count
+    group_count = GroupUtils.get_group_count(point_count, group_size)
+
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
     # all pixels red - Create buffer and fill it with a constant
     colors_buffer = Buffer(group_count, BufferType.rgba8)
-    colors_buffer.set_data(bytearray([255, 0, 0, 255]) * colors_buffer.get_count(), 0, 1)
+    colors_buffer.set_data(bytearray([255, 0, 0, 255]) * group_count, 0, group_count)
 
     # Create the Pixels visual and add it to the viewport
-    pixels = Pixels(positions_buffer, colors_buffer, group_count)
+    pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
 
     # =============================================================================
     # Render the canvas

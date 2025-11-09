@@ -17,6 +17,7 @@ from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp_extra.object3d import Object3D
+from gsp.utils.group_utils import GroupUtils
 
 
 def main():
@@ -31,7 +32,8 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
     point_count = 200
-    group_count = 1
+    group_size = 200
+    group_count = GroupUtils.get_group_count(point_count, group_size)
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.zeros((point_count, 3), dtype=np.float32)
@@ -48,7 +50,7 @@ def main():
     colors_buffer.set_data(bytearray([255, 0, 0, 255]) * colors_buffer.get_count(), 0, 1)
 
     # Create the Pixels visual and add it to the viewport
-    pixels = Pixels(positions_buffer, colors_buffer, group_count)
+    pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
 
     # =============================================================================
     # Render the canvas
