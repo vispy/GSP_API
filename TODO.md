@@ -2,7 +2,8 @@
 - for each example, `_matplotlib` `_datoviz` and `_both`
   - have a test_runner ?
 - when datoviz core dump, DVZ_LOG_LEVEL=0
-- implement points in datoviz
+  - when creating a datoviz app with 350 pixel, there is a segfault
+- DONE implement points in datoviz
 - implement path in matplotlib + datoviz
 - handle the animation loop
   - API from datoviz
