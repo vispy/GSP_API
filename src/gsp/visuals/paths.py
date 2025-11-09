@@ -102,7 +102,7 @@ class Paths(VisualBase):
         assert isinstance(colors, Buffer), "Colors must be a Buffer"
         assert isinstance(line_widths, Buffer), "Line widths must be a Buffer"
 
-        Points.sanity_check_attributes(positions, path_sizes, colors, line_widths, groups)
+        Paths.sanity_check_attributes(positions, path_sizes, colors, line_widths, groups)
 
     @staticmethod
     def sanity_check_attributes(
