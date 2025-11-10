@@ -62,6 +62,7 @@ class RendererPaths:
         colors_numpy = Bufferx.to_numpy(colors_buffer) / 255.0  # normalize to [0, 1] range
         line_widths_numpy = Bufferx.to_numpy(line_widths_buffer)
         line_widths_numpy = line_widths_numpy.reshape(-1)
+
         # =============================================================================
         #
         # =============================================================================
@@ -103,6 +104,7 @@ class RendererPaths:
         mpl_line_collection.set_color(typing.cast(list, colors_numpy))
         mpl_line_collection.set_linewidth(typing.cast(list, line_widths_numpy))
         mpl_line_collection.set_capstyle("round")
+        mpl_line_collection.set_joinstyle("round")
 
         # Return the list of artists created/updated
         changed_artists: list[matplotlib.artist.Artist] = []
