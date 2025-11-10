@@ -4,7 +4,7 @@ from ..types.buffer import Buffer
 from ..types.group import Groups
 
 
-class Path(VisualBase):
+class Paths(VisualBase):
     __slots__ = (
         "_positions",
         "_path_sizes",
@@ -90,7 +90,7 @@ class Path(VisualBase):
         assert isinstance(colors, Buffer), "Colors must be a Buffer"
         assert isinstance(line_widths, Buffer), "Line widths must be a Buffer"
 
-        Path.sanity_check_attributes(positions, path_sizes, colors, line_widths)
+        Paths.sanity_check_attributes(positions, path_sizes, colors, line_widths)
 
     @staticmethod
     def sanity_check_attributes(

@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 
+
 # Generate multiple polylines (for example, 3 sine waves with offsets)
 num_lines = 2
 num_points = 3

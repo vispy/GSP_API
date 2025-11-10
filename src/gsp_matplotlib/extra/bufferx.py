@@ -66,6 +66,14 @@ class Bufferx:
             buffer = Buffer(count, bufferType)
             buffer.set_data(bytearray(array_numpy.tobytes()), 0, count)
             return buffer
+        elif bufferType == BufferType.uint32:
+            # sanity check
+            assert array_numpy.dtype == np.uint32, "Numpy array must be of dtype uint32"
+
+            count = array_numpy.shape[0]
+            buffer = Buffer(count, bufferType)
+            buffer.set_data(bytearray(array_numpy.tobytes()), 0, count)
+            return buffer
         elif bufferType == BufferType.vec3:
             # sanity check
             assert array_numpy.shape.__len__() == 2 and array_numpy.shape[1] == 3, "Numpy array must be of shape (3,)"

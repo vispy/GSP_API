@@ -7,9 +7,7 @@ import numpy as np
 
 # local imports
 from gsp.core.camera import Camera
-from gsp.utils.group_utils import GroupUtils
 from gsp.utils.math_utils import MathUtils
-from gsp.visuals import pixels
 from gsp.visuals.paths import Paths
 from gsp.utils.transbuf_utils import TransBufUtils
 from gsp.types.transbuf import TransBuf
@@ -63,53 +61,50 @@ class RendererPaths:
         path_sizes_numpy = Bufferx.to_numpy(path_sizes_buffer)
         colors_numpy = Bufferx.to_numpy(colors_buffer) / 255.0  # normalize to [0, 1] range
         line_widths_numpy = Bufferx.to_numpy(line_widths_buffer)
-
+        line_widths_numpy = line_widths_numpy.reshape(-1)
         # =============================================================================
-        #   Compute indices_per_group for groups depending on the type of groups
+        #
         # =============================================================================
+        # segments_2d is of shape (M, 2, 2) where M is total number of line segments across all paths
+        segments_2d = np.zeros((0, 2, 2), dtype=np.float32)
 
-        indices_per_group = GroupUtils.compute_indices_per_group(vertices_numpy.__len__(), paths.get_groups())
-        group_count = GroupUtils.get_group_count(vertices_numpy.__len__(), paths.get_groups())
+        for path_index, path_size in enumerate(path_sizes_numpy):
+            path_start = int(np.sum(path_sizes_numpy[:path_index]))
+            path_size_int = int(path_size)
+            path_vertices_2d = vertices_2d[path_start : path_start + path_size_int]
 
-        assert group_count == 1, f"MatplotlibRenderer for Paths currently only supports a single group, but got {group_count} groups."
+            # Create segments for this path
+            path_segments_2d = np.concatenate([path_vertices_2d[:-1].reshape(-1, 1, 2), path_vertices_2d[1:].reshape(-1, 1, 2)], axis=1)
+            segments_2d = np.vstack([segments_2d, path_segments_2d])
 
         # =============================================================================
         # Create the artists if needed
         # =============================================================================
 
-        artist_uuid_sample = f"{visual.get_uuid()}_group_0"
-        if artist_uuid_sample not in renderer._artists:
-            for group_index in range(group_count):
-                mpl_line_collection = matplotlib.collections.LineCollection([])
-                mpl_line_collection.set_visible(False)
-                # hide until properly positioned and sized
-                group_uuid = f"{visual.get_uuid()}_group_{group_index}"
-                renderer._artists[group_uuid] = mpl_line_collection
-                axes.add_artist(mpl_line_collection)
+        if paths.get_uuid() not in renderer._artists:
+            mpl_line_collection = matplotlib.collections.LineCollection([])
+            mpl_line_collection.set_visible(False)
+            # hide until properly positioned and sized
+            renderer._artists[paths.get_uuid()] = mpl_line_collection
+            axes.add_artist(mpl_line_collection)
 
         # =============================================================================
-        # Update matplotlib for each group
+        # Get existing artists
         # =============================================================================
 
-        changed_artists: list[matplotlib.artist.Artist] = []
-        for group_index in range(group_count):
-            group_uuid = f"{visual.get_uuid()}_group_{group_index}"
+        mpl_line_collection = typing.cast(matplotlib.collections.LineCollection, renderer._artists[paths.get_uuid()])
+        mpl_line_collection.set_visible(True)
 
-            # =============================================================================
-            # Get existing artists
-            # =============================================================================
+        # =============================================================================
+        # Update artists
+        # =============================================================================
 
-            mpl_line_collection = typing.cast(matplotlib.collections.LineCollection, renderer._artists[group_uuid])
-            mpl_line_collection.set_visible(True)
-            changed_artists.append(mpl_line_collection)
-
-            # =============================================================================
-            # Update artists
-            # =============================================================================
-
-            mpl_line_collection.set_paths(segments=vertices_2d[indices_per_group[group_index]])
-            mpl_line_collection.set_color(typing.cast(list, colors_numpy[group_index]))
-            mpl_line_collection.set_linewidth(typing.cast(list, line_widths_numpy[group_index]))
+        mpl_line_collection.set_paths(typing.cast(list, segments_2d))
+        mpl_line_collection.set_color(typing.cast(list, colors_numpy))
+        mpl_line_collection.set_linewidth(typing.cast(list, line_widths_numpy))
+        mpl_line_collection.set_capstyle("round")
 
         # Return the list of artists created/updated
+        changed_artists: list[matplotlib.artist.Artist] = []
+        changed_artists.append(mpl_line_collection)
         return changed_artists
