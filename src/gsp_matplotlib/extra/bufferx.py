@@ -90,5 +90,13 @@ class Bufferx:
             buffer = Buffer(count, bufferType)
             buffer.set_data(bytearray(array_numpy.astype(np.float32).tobytes()), 0, 1)
             return buffer
+        elif bufferType == BufferType.rgba8:
+            # sanity check
+            assert array_numpy.shape.__len__() == 2 and array_numpy.shape[1] == 4, "Numpy array must be of shape (4,)"
+
+            count = array_numpy.shape[0]
+            buffer = Buffer(count, bufferType)
+            buffer.set_data(bytearray(array_numpy.astype(np.uint8).tobytes()), 0, count)
+            return buffer
         else:
             raise NotImplementedError(f"unable to create a {bufferType} buffer from numpy array of shape {array_numpy.shape} and dtype {array_numpy.dtype}")

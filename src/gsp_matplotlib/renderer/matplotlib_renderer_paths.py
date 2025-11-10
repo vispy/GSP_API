@@ -66,8 +66,12 @@ class RendererPaths:
         # =============================================================================
         #
         # =============================================================================
-        # segments_2d is of shape (M, 2, 2) where M is total number of line segments across all paths
-        segments_2d = np.zeros((0, 2, 2), dtype=np.float32)
+        # mpl_paths is of shape (M, 2, 2) where M is total number of line segments across all paths
+        mpl_paths = np.zeros((0, 2, 2), dtype=np.float32)
+        # mpl_colors is of shape (M, 4)
+        mpl_colors = np.zeros((0, 4), dtype=np.float32)
+        # mpl_line_widths is of shape (M,)
+        mpl_line_widths = np.zeros((0,), dtype=np.float32)
 
         for path_index, path_size in enumerate(path_sizes_numpy):
             path_start = int(np.sum(path_sizes_numpy[:path_index]))
@@ -75,8 +79,11 @@ class RendererPaths:
             path_vertices_2d = vertices_2d[path_start : path_start + path_size_int]
 
             # Create segments for this path
-            path_segments_2d = np.concatenate([path_vertices_2d[:-1].reshape(-1, 1, 2), path_vertices_2d[1:].reshape(-1, 1, 2)], axis=1)
-            segments_2d = np.vstack([segments_2d, path_segments_2d])
+            path_mpl_paths = np.concatenate([path_vertices_2d[:-1].reshape(-1, 1, 2), path_vertices_2d[1:].reshape(-1, 1, 2)], axis=1)
+            mpl_paths = np.vstack([mpl_paths, path_mpl_paths])
+
+            mpl_colors = np.vstack([mpl_colors, colors_numpy[path_start : path_start + path_size_int - 1]])
+            mpl_line_widths = np.hstack([mpl_line_widths, line_widths_numpy[path_start : path_start + path_size_int - 1]])
 
         # =============================================================================
         # Create the artists if needed
@@ -100,9 +107,9 @@ class RendererPaths:
         # Update artists
         # =============================================================================
 
-        mpl_line_collection.set_paths(typing.cast(list, segments_2d))
-        mpl_line_collection.set_color(typing.cast(list, colors_numpy))
-        mpl_line_collection.set_linewidth(typing.cast(list, line_widths_numpy))
+        mpl_line_collection.set_paths(typing.cast(list, mpl_paths))
+        mpl_line_collection.set_color(typing.cast(list, mpl_colors))
+        mpl_line_collection.set_linewidth(typing.cast(list, mpl_line_widths))
         mpl_line_collection.set_capstyle("round")
         mpl_line_collection.set_joinstyle("round")
 
