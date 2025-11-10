@@ -26,6 +26,7 @@ from gsp_matplotlib.extra.bufferx import Bufferx
 from gsp.types.transbuf import TransBuf
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
+from gsp.visuals.paths import Paths
 from gsp.utils.transbuf_utils import TransBufUtils
 
 
@@ -115,6 +116,10 @@ class DatovizRenderer:
             from .datoviz_renderer_points import DatovizRendererPoints
 
             DatovizRendererPoints.render(self, viewport, visual, model_matrix, camera)
+        elif isinstance(visual, Paths):
+            from .datoviz_renderer_paths import DatovizRendererPaths
+
+            DatovizRendererPaths.render(self, viewport, visual, model_matrix, camera)
         else:
             raise NotImplementedError(f"DatovizRenderer.render() does not support visual of type {type(visual)}")
 
