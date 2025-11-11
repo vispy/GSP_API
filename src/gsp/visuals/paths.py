@@ -105,7 +105,9 @@ class Paths(VisualBase):
         self.sanity_check_attributes(self._positions, self._path_sizes, self._colors, self._line_widths, self._cap_style, self._join_style)
 
     @staticmethod
-    def sanity_check_attributes_buffer(positions: Buffer, path_sizes: Buffer, colors: Buffer, line_widths: Buffer) -> None:
+    def sanity_check_attributes_buffer(
+        positions: Buffer, path_sizes: Buffer, colors: Buffer, line_widths: Buffer, cap_style: CapStyle, join_style: JoinStyle
+    ) -> None:
         """same as .sanity_check_attributes() but accept only Buffers.
 
         - It is meant to be used after converting TransBuf to Buffer.
@@ -116,7 +118,7 @@ class Paths(VisualBase):
         assert isinstance(colors, Buffer), "Colors must be a Buffer"
         assert isinstance(line_widths, Buffer), "Line widths must be a Buffer"
 
-        Paths.sanity_check_attributes(positions, path_sizes, colors, line_widths, self._cap_style, self._join_style)
+        Paths.sanity_check_attributes(positions, path_sizes, colors, line_widths, cap_style, join_style)
 
     @staticmethod
     def sanity_check_attributes(

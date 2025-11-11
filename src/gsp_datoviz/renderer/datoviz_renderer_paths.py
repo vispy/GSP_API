@@ -14,9 +14,11 @@ from gsp_matplotlib.extra.bufferx import Bufferx
 from gsp.types.transbuf import TransBuf
 from gsp.visuals.paths import Paths
 from gsp.utils.transbuf_utils import TransBufUtils
-from .datoviz_renderer import DatovizRenderer
 from gsp.utils.group_utils import GroupUtils
 from gsp.utils.unit_utils import UnitUtils
+
+from .datoviz_renderer import DatovizRenderer
+from ..utils.converter_utils import ConverterUtils
 
 
 class DatovizRendererPaths:
@@ -77,3 +79,5 @@ class DatovizRendererPaths:
         dvz_paths.set_position(vertices_numpy, groups=path_sizes_numpy)
         dvz_paths.set_color(colors_numpy)
         dvz_paths.set_linewidth(line_widths_px_numpy)
+        dvz_paths.set_cap(ConverterUtils.cap_style_gsp_to_dvz(paths.get_cap_style()))
+        dvz_paths.set_join(ConverterUtils.join_style_gsp_to_dvz(paths.get_join_style()))

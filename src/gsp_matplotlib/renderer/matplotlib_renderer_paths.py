@@ -14,6 +14,7 @@ from gsp.types.transbuf import TransBuf
 from gsp.types.buffer_type import BufferType
 from .matplotlib_renderer import MatplotlibRenderer
 from ..extra.bufferx import Bufferx
+from ..utils.converter_utils import ConverterUtils
 
 
 class RendererPaths:
@@ -110,8 +111,10 @@ class RendererPaths:
         mpl_line_collection.set_paths(typing.cast(list, mpl_paths))
         mpl_line_collection.set_color(typing.cast(list, mpl_colors))
         mpl_line_collection.set_linewidth(typing.cast(list, mpl_line_widths))
-        mpl_line_collection.set_capstyle("round")
-        mpl_line_collection.set_joinstyle("round")
+        mpl_line_collection.set_capstyle(paths.get_cap_style().value)
+        mpl_line_collection.set_joinstyle(paths.get_join_style().value)
+        mpl_line_collection.set_capstyle(ConverterUtils.cap_style_gsp_to_mpl(paths.get_cap_style()))
+        mpl_line_collection.set_joinstyle(ConverterUtils.join_style_gsp_to_mpl(paths.get_join_style()))
 
         # Return the list of artists created/updated
         changed_artists: list[matplotlib.artist.Artist] = []
