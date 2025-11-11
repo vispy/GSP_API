@@ -4,6 +4,7 @@ import os
 # pip imports
 import numpy as np
 import matplotlib.pyplot
+import matplotlib.cm
 
 # local imports
 from gsp.core import Canvas, Viewport
@@ -44,11 +45,11 @@ def main():
             y = np.sin(x * 10 + line_index * 0.3) / line_count + line_index * 1.4 / line_count  # vertical offset for each line
             y -= 0.7
             z = np.zeros_like(x)
-
             # Make color vary along the line (map y to color)
             y_normalized = (y - y.min()) / (y.max() - y.min())
-            color_values = matplotlib.pyplot.cm.plasma(y_normalized)
+            color_values = matplotlib.cm.cool(y_normalized)  # type: ignore
 
+            # Vary linewidth by slope magnitude
             # Vary linewidth by slope magnitude
             gradients = np.abs(np.gradient(y))
             gradients_normalized = (gradients - gradients.min()) / (gradients.max() - gradients.min())

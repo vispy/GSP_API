@@ -47,7 +47,7 @@ def main():
 
     # Edge colors - Create buffer and fill it with a constant
     edge_colors_buffer = Buffer(group_count, BufferType.rgba8)
-    edge_colors_buffer.set_data(Constants.blue * edge_colors_buffer.get_count(), 0, 1)
+    edge_colors_buffer.set_data(Constants.Colors.blue * edge_colors_buffer.get_count(), 0, 1)
 
     # Edge widths - Create buffer and fill it with a constant
     edge_widths_buffer = Buffer(group_count, BufferType.float32)

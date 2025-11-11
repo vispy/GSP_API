@@ -5,12 +5,21 @@ from .types.buffer_type import BufferType
 class Constants:
     """Common constants like colors."""
 
-    white = bytearray([255, 255, 255, 255])
-    black = bytearray([0, 0, 0, 255])
-    red = bytearray([255, 0, 0, 255])
-    green = bytearray([0, 255, 0, 255])
-    blue = bytearray([0, 0, 255, 255])
+    class Colors:
+        """Common colors as RGBA bytearrays."""
 
-    yellow = bytearray([255, 255, 0, 255])
-    magenta = bytearray([255, 0, 255, 255])
-    cyan = bytearray([0, 255, 255, 255])
+        white = bytearray([255, 255, 255, 255])
+        black = bytearray([0, 0, 0, 255])
+        red = bytearray([255, 0, 0, 255])
+        green = bytearray([0, 255, 0, 255])
+        blue = bytearray([0, 0, 255, 255])
+
+        yellow = bytearray([255, 255, 0, 255])
+        magenta = bytearray([255, 0, 255, 255])
+        cyan = bytearray([0, 255, 255, 255])
+
+    # Add enum for captStyle "butt" "projecting" "round"
+    class CapStyle:
+        butt = "butt"
+        projecting = "projecting"
+        round = "round"
