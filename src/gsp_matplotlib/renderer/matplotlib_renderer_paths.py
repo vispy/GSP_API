@@ -111,8 +111,6 @@ class RendererPaths:
         mpl_line_collection.set_paths(typing.cast(list, mpl_paths))
         mpl_line_collection.set_color(typing.cast(list, mpl_colors))
         mpl_line_collection.set_linewidth(typing.cast(list, mpl_line_widths))
-        mpl_line_collection.set_capstyle(paths.get_cap_style().value)
-        mpl_line_collection.set_joinstyle(paths.get_join_style().value)
         mpl_line_collection.set_capstyle(ConverterUtils.cap_style_gsp_to_mpl(paths.get_cap_style()))
         mpl_line_collection.set_joinstyle(ConverterUtils.join_style_gsp_to_mpl(paths.get_join_style()))
 
