@@ -47,7 +47,7 @@ def main():
             z = np.zeros_like(x)
             # Make color vary along the line (map y to color)
             y_normalized = (y - y.min()) / (y.max() - y.min())
-            color_values = matplotlib.cm.cool(y_normalized)  # type: ignore
+            color_values = matplotlib.cm.plasma(y_normalized)  # type: ignore
 
             # Vary linewidth by slope magnitude
             # Vary linewidth by slope magnitude
