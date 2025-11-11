@@ -3,8 +3,6 @@ import os
 
 # pip imports
 import numpy as np
-import matplotlib.pyplot
-import matplotlib.cm
 
 # local imports
 from gsp.core import Canvas, Viewport
@@ -14,8 +12,7 @@ from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
-from gsp.utils.group_utils import GroupUtils
-from gsp.constants import Constants
+from gsp.utils.cmap_utils import CmapUtils
 
 
 def main():
@@ -46,8 +43,7 @@ def main():
             y -= 0.7
             z = np.zeros_like(x)
             # Make color vary along the line (map y to color)
-            y_normalized = (y - y.min()) / (y.max() - y.min())
-            color_values = matplotlib.cm.plasma(y_normalized)  # type: ignore
+            colors_values = CmapUtils.get_color_map("plasma", y, y.min(), y.max())
 
             # Vary linewidth by slope magnitude
             # Vary linewidth by slope magnitude
@@ -59,7 +55,7 @@ def main():
             line_positions = (np.array([x, y, z]).T).tolist()
 
             lines_positions.append(line_positions)
-            lines_colors.append(color_values)
+            lines_colors.append(colors_values.tolist())
             lines_widths.append(line_width)
 
         return lines_positions, lines_colors, lines_widths

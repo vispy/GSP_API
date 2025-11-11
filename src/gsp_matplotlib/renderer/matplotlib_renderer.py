@@ -4,6 +4,10 @@ from typing import Sequence
 import io
 
 # pip imports
+import matplotlib
+
+# trick to disable the toolbar in matplotlib
+matplotlib.rcParams["toolbar"] = "none"
 import matplotlib.pyplot
 import matplotlib.axes
 import matplotlib.artist
