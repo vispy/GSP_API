@@ -9,7 +9,7 @@ import matplotlib.cm
 # local imports
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Paths
-from gsp.types import Buffer, BufferType
+from gsp.types import Buffer, BufferType, CapStyle, JoinStyle
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
@@ -88,7 +88,14 @@ def main():
     line_widths_buffer = Bufferx.from_numpy(line_widths_numpy, BufferType.float32)
 
     # Create the Pixels visual and add it to the viewport
-    paths = Paths(positions_buffer, path_sizes_buffer, colors_buffer, line_widths_buffer)
+    paths = Paths(
+        positions_buffer,
+        path_sizes_buffer,
+        colors_buffer,
+        line_widths_buffer,
+        CapStyle.ROUND,
+        JoinStyle.ROUND,
+    )
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================
