@@ -50,13 +50,19 @@ class DatovizRendererPaths:
         # Convert sizes from point^2 to pixel diameter
         line_widths_px_numpy = UnitUtils.point_to_pixel_numpy(line_widths_pt_numpy, renderer.get_canvas().get_dpi())
 
+        path_sizes_numpy = path_sizes_numpy.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
+        line_widths_px_numpy = line_widths_px_numpy.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
+
         # =============================================================================
         # Create the datoviz visual if needed
         # =============================================================================
 
         # Create datoviz_visual if they do not exist
         if visual.get_uuid() not in renderer._dvz_visuals:
+            dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
+            dummy_path_sizes_numpy = np.array([1], dtype=np.uint32)
             dvz_paths = renderer.dvz_app.path()
+            dvz_paths.set_position(dummy_position_numpy, groups=dummy_path_sizes_numpy)
             renderer._dvz_visuals[visual.get_uuid()] = dvz_paths
             # Add the new visual to the panel
             dvz_panel.add(dvz_paths)
