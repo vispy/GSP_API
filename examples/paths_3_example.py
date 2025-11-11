@@ -22,7 +22,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(512, 512, 96.0)
+    canvas = Canvas(100, 100, 96.0)
 
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
@@ -32,58 +32,20 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
 
-    # Generate multiple polylines (for example, 3 sine waves with offsets)
-
-    def generate_lines(line_count: int, points_per_line: int):
-        lines_positions = []
-        lines_colors = []
-        lines_widths = []
-
-        for line_index in range(line_count):
-            x = np.linspace(-0.9, +0.9, points_per_line)
-            y = np.sin(x * 10 + line_index * 0.3) / line_count + line_index * 1.4 / line_count  # vertical offset for each line
-            y -= 0.7
-            z = np.zeros_like(x)
-
-            # Make color vary along the line (map y to color)
-            y_normalized = (y - y.min()) / (y.max() - y.min())
-            color_values = matplotlib.pyplot.cm.plasma(y_normalized)
-
-            # Vary linewidth by slope magnitude
-            gradients = np.abs(np.gradient(y))
-            gradients_normalized = (gradients - gradients.min()) / (gradients.max() - gradients.min())
-            line_width = 1 + 10.0 * gradients_normalized
-
-            # Build vertex positions for this line
-            line_positions = (np.array([x, y, z]).T).tolist()
-
-            lines_positions.append(line_positions)
-            lines_colors.append(color_values)
-            lines_widths.append(line_width)
-
-        return lines_positions, lines_colors, lines_widths
-
-    num_lines = 10
-    points_per_line = 300
-    vertex_positions, vertex_colors, line_widths = generate_lines(num_lines, points_per_line)
-
-    # =============================================================================
-    #
-    # =============================================================================
+    point_count = 4
 
     # Random positions - Create buffer from numpy array
-    positions_numpy = np.array(vertex_positions, dtype=np.float32).reshape(-1, 3)
+    positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
-    path_sizes_numpy = np.array([points_per_line for line in range(num_lines)], dtype=np.uint32)
+    path_sizes_numpy = np.array([2, 2], dtype=np.uint32)
     path_sizes_buffer = Bufferx.from_numpy(path_sizes_numpy, BufferType.uint32)
 
     # all pixels red - Create buffer and fill it with a constant
-    colors_numpy = np.array(vertex_colors, dtype=np.float32).reshape(-1, 4)
-    colors_numpy_255 = (colors_numpy * 255).astype(np.uint8)
-    colors_buffer = Bufferx.from_numpy(colors_numpy_255, BufferType.rgba8)
+    colors_buffer = Buffer(point_count, BufferType.rgba8)
+    colors_buffer.set_data(Constants.red * point_count, 0, point_count)
 
-    line_widths_numpy = np.array(line_widths, dtype=np.float32).reshape(-1, 1)
+    line_widths_numpy = np.array([10.0 for _ in range(point_count)], dtype=np.float32)
     line_widths_buffer = Bufferx.from_numpy(line_widths_numpy, BufferType.float32)
 
     # Create the Pixels visual and add it to the viewport
