@@ -41,13 +41,16 @@ class DatovizRendererSegments:
         line_widths_buffer = TransBufUtils.to_buffer(segments.get_line_widths())
 
         # convert buffers to numpy arrays
+
+        # vertices_numpy shape (N * 2, 3)
         vertices_numpy = Bufferx.to_numpy(positions_buffer)
+        # colors_numpy shape (N, 4)
         colors_numpy = Bufferx.to_numpy(colors_buffer)
+        # line_widths_pt_numpy shape (N, 1)
         line_widths_pt_numpy = Bufferx.to_numpy(line_widths_buffer)
 
         # Convert sizes from point^2 to pixel diameter
         line_widths_px_numpy = UnitUtils.point_to_pixel_numpy(line_widths_pt_numpy, renderer.get_canvas().get_dpi())
-
         line_widths_px_numpy = line_widths_px_numpy.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
 
         # =============================================================================
@@ -55,10 +58,10 @@ class DatovizRendererSegments:
         # =============================================================================
 
         # Create datoviz_visual if they do not exist
-        if visual.get_uuid() not in renderer._dvz_visuals:
+        if segments.get_uuid() not in renderer._dvz_visuals:
             dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
             dvz_segments = renderer.dvz_app.segment(dummy_position_numpy, dummy_position_numpy)
-            renderer._dvz_visuals[visual.get_uuid()] = dvz_segments
+            renderer._dvz_visuals[segments.get_uuid()] = dvz_segments
             # Add the new visual to the panel
             dvz_panel.add(dvz_segments)
 
@@ -67,9 +70,16 @@ class DatovizRendererSegments:
         # =============================================================================
 
         # get the datoviz visual
-        dvz_segments = typing.cast(_DvzSegments, renderer._dvz_visuals[visual.get_uuid()])
+        dvz_segments = typing.cast(_DvzSegments, renderer._dvz_visuals[segments.get_uuid()])
 
-        dvz_segments.set_position(vertices_numpy)
+        # dvz_vertices_initial - the even indices are initial points
+        dvz_initial_vertices = np.ascontiguousarray(vertices_numpy[0::2])
+        # dvz_vertices_terminal - the odd indices are terminal points
+        dvz_terminal_vertices = np.ascontiguousarray(vertices_numpy[1::2])
+        dvz_initial_cap = ConverterUtils.cap_style_gsp_to_dvz(segments.get_cap_style())
+        dvz_terminal_cap = dvz_initial_cap  # same cap for initial and terminal
+
+        dvz_segments.set_position(dvz_initial_vertices, dvz_terminal_vertices)
         dvz_segments.set_color(colors_numpy)
         dvz_segments.set_linewidth(line_widths_px_numpy)
-        dvz_segments.set_cap(ConverterUtils.cap_style_gsp_to_dvz(segments.get_cap_style()))
+        dvz_segments.set_cap(dvz_initial_cap, dvz_terminal_cap)
