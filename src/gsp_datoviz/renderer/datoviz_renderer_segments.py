@@ -25,12 +25,11 @@ class DatovizRendererSegments:
     def render(
         renderer: DatovizRenderer,
         viewport: Viewport,
-        visual: Segments,
+        segments: Segments,
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
-        segments: Segments = visual
 
         # =============================================================================
         # Get attributes

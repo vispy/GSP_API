@@ -23,12 +23,10 @@ class RendererPoints:
     def render(
         renderer: MatplotlibRenderer,
         axes: matplotlib.axes.Axes,
-        visual: Points,
+        points: Points,
         model_matrix: TransBuf,
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
-        points: Points = visual
-
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================
@@ -77,13 +75,13 @@ class RendererPoints:
         # Create the artists if needed
         # =============================================================================
 
-        artist_uuid_sample = f"{visual.get_uuid()}_group_0"
+        artist_uuid_sample = f"{points.get_uuid()}_group_0"
         if artist_uuid_sample not in renderer._artists:
             for group_index in range(group_count):
                 mpl_path_collection = axes.scatter([], [])
                 mpl_path_collection.set_visible(False)
                 # hide until properly positioned and sized
-                group_uuid = f"{visual.get_uuid()}_group_{group_index}"
+                group_uuid = f"{points.get_uuid()}_group_{group_index}"
                 renderer._artists[group_uuid] = mpl_path_collection
                 axes.add_artist(mpl_path_collection)
 
@@ -93,7 +91,7 @@ class RendererPoints:
 
         changed_artists: list[matplotlib.artist.Artist] = []
         for group_index in range(group_count):
-            group_uuid = f"{visual.get_uuid()}_group_{group_index}"
+            group_uuid = f"{points.get_uuid()}_group_{group_index}"
 
             # =============================================================================
             # Get existing artists

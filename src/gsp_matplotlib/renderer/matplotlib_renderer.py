@@ -17,7 +17,6 @@ from gsp.core.camera import Camera
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.core.visual_base import VisualBase
-from gsp.types import Buffer
 from gsp.types.transbuf import TransBuf
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points

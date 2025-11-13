@@ -22,12 +22,10 @@ class RendererSegments:
     def render(
         renderer: MatplotlibRenderer,
         axes: matplotlib.axes.Axes,
-        visual: Segments,
+        segments: Segments,
         model_matrix: TransBuf,
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
-        segments: Segments = visual
-
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================

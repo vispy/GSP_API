@@ -24,12 +24,11 @@ class DatovizRendererPoints:
     def render(
         renderer: DatovizRenderer,
         viewport: Viewport,
-        visual: Points,
+        points: Points,
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
-        points: Points = visual
 
         # =============================================================================
         # Get attributes

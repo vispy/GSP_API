@@ -26,12 +26,11 @@ class DatovizRendererPaths:
     def render(
         renderer: DatovizRenderer,
         viewport: Viewport,
-        visual: Paths,
+        paths: Paths,
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
-        paths: Paths = visual
 
         # =============================================================================
         # Get attributes
@@ -60,12 +59,12 @@ class DatovizRendererPaths:
         # =============================================================================
 
         # Create datoviz_visual if they do not exist
-        if visual.get_uuid() not in renderer._dvz_visuals:
+        if paths.get_uuid() not in renderer._dvz_visuals:
             dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
             dummy_path_sizes_numpy = np.array([1], dtype=np.uint32)
             dvz_paths = renderer.dvz_app.path()
             dvz_paths.set_position(dummy_position_numpy, groups=dummy_path_sizes_numpy)
-            renderer._dvz_visuals[visual.get_uuid()] = dvz_paths
+            renderer._dvz_visuals[paths.get_uuid()] = dvz_paths
             # Add the new visual to the panel
             dvz_panel.add(dvz_paths)
 
@@ -74,7 +73,7 @@ class DatovizRendererPaths:
         # =============================================================================
 
         # get the datoviz visual
-        dvz_paths = typing.cast(_DvzPaths, renderer._dvz_visuals[visual.get_uuid()])
+        dvz_paths = typing.cast(_DvzPaths, renderer._dvz_visuals[paths.get_uuid()])
 
         dvz_paths.set_position(vertices_numpy, groups=path_sizes_numpy)
         dvz_paths.set_color(colors_numpy)

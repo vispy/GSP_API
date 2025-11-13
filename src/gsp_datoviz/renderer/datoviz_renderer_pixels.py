@@ -23,11 +23,10 @@ class DatovizRendererPixels:
     def render(
         renderer: DatovizRenderer,
         viewport: Viewport,
-        visual: Pixels,
+        pixels: Pixels,
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
-        pixels: Pixels = visual
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
 
         # =============================================================================
@@ -35,8 +34,8 @@ class DatovizRendererPixels:
         # =============================================================================
 
         # get attributes from TransBuf to buffer
-        positions_buffer = TransBufUtils.to_buffer(visual.get_positions())
-        colors_buffer = TransBufUtils.to_buffer(visual.get_colors())
+        positions_buffer = TransBufUtils.to_buffer(pixels.get_positions())
+        colors_buffer = TransBufUtils.to_buffer(pixels.get_colors())
 
         # convert buffers to numpy arrays
         vertices_numpy = Bufferx.to_numpy(positions_buffer)
@@ -50,26 +49,26 @@ class DatovizRendererPixels:
         group_count = GroupUtils.get_group_count(vertices_numpy.__len__(), pixels.get_groups())
 
         # =============================================================================
-        # Create the datoviz visual if needed
+        # Create the datoviz pixels if needed
         # =============================================================================
 
         # update stored group count
         old_group_count = None
-        if visual.get_uuid() in renderer._group_count:
-            old_group_count = renderer._group_count[visual.get_uuid()]
-        renderer._group_count[visual.get_uuid()] = group_count
+        if pixels.get_uuid() in renderer._group_count:
+            old_group_count = renderer._group_count[pixels.get_uuid()]
+        renderer._group_count[pixels.get_uuid()] = group_count
 
         # If the group count has changed, destroy old datoviz_visuals
         if old_group_count is not None and old_group_count != group_count:
             for group_index in range(old_group_count):
-                group_uuid = f"{visual.get_uuid()}_group_{group_index}"
+                group_uuid = f"{pixels.get_uuid()}_group_{group_index}"
                 if group_uuid in renderer._dvz_visuals:
                     dvz_pixels = typing.cast(_DvzPixel, renderer._dvz_visuals[group_uuid])
                     dvz_panel.remove(dvz_pixels)
                     del renderer._dvz_visuals[group_uuid]
 
         # Create datoviz_visual if they do not exist
-        sample_group_uuid = f"{visual.get_uuid()}_group_0"
+        sample_group_uuid = f"{pixels.get_uuid()}_group_0"
         if sample_group_uuid not in renderer._dvz_visuals:
             for group_index in range(group_count):
                 dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
@@ -78,9 +77,9 @@ class DatovizRendererPixels:
                     position=dummy_position_numpy,
                     color=dummy_color_numpy,
                 )
-                group_uuid = f"{visual.get_uuid()}_group_{group_index}"
+                group_uuid = f"{pixels.get_uuid()}_group_{group_index}"
                 renderer._dvz_visuals[group_uuid] = dvz_pixels
-                # Add the new visual to the panel
+                # Add the new pixels to the panel
                 dvz_panel.add(dvz_pixels)
 
         # =============================================================================
@@ -88,9 +87,9 @@ class DatovizRendererPixels:
         # =============================================================================
 
         for group_index in range(group_count):
-            group_uuid = f"{visual.get_uuid()}_group_{group_index}"
+            group_uuid = f"{pixels.get_uuid()}_group_{group_index}"
 
-            # get the datoviz visual
+            # get the datoviz pixels
             dvz_pixels = typing.cast(_DvzPixel, renderer._dvz_visuals[group_uuid])
 
             # set attributes

@@ -22,12 +22,10 @@ class RendererPixels:
     def render(
         renderer: MatplotlibRenderer,
         axes: matplotlib.axes.Axes,
-        visual: Pixels,
+        pixels: Pixels,
         model_matrix: TransBuf,
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
-        pixels: Pixels = visual
-
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================
@@ -75,18 +73,18 @@ class RendererPixels:
 
         # update stored group count
         old_group_count = None
-        if visual.get_uuid() in renderer._group_count:
-            old_group_count = renderer._group_count[visual.get_uuid()]
-        renderer._group_count[visual.get_uuid()] = group_count
+        if pixels.get_uuid() in renderer._group_count:
+            old_group_count = renderer._group_count[pixels.get_uuid()]
+        renderer._group_count[pixels.get_uuid()] = group_count
 
         # If the group count has changed, destroy old artists
         if old_group_count is not None and old_group_count != group_count:
-            RendererPixels.destroy_artists(renderer, axes, visual, old_group_count)
+            RendererPixels.destroy_artists(renderer, axes, pixels, old_group_count)
 
         # Create artists if they do not exist
-        artist_uuid_sample = f"{visual.get_uuid()}_group_0"
+        artist_uuid_sample = f"{pixels.get_uuid()}_group_0"
         if artist_uuid_sample not in renderer._artists:
-            RendererPixels.create_artists(renderer, axes, visual, group_count)
+            RendererPixels.create_artists(renderer, axes, pixels, group_count)
 
         # =============================================================================
         # Update matplotlib for each group
@@ -94,7 +92,7 @@ class RendererPixels:
 
         changed_artists: list[matplotlib.artist.Artist] = []
         for group_index in range(group_count):
-            group_uuid = f"{visual.get_uuid()}_group_{group_index}"
+            group_uuid = f"{pixels.get_uuid()}_group_{group_index}"
 
             # =============================================================================
             # Get existing artists

@@ -22,12 +22,10 @@ class RendererPaths:
     def render(
         renderer: MatplotlibRenderer,
         axes: matplotlib.axes.Axes,
-        visual: Paths,
+        paths: Paths,
         model_matrix: TransBuf,
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
-        paths: Paths = visual
-
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================

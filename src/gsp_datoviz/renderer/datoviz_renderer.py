@@ -6,10 +6,8 @@ import typing
 # pip imports
 import numpy as np
 import datoviz as dvz
-from datoviz._panel import Panel as _DvzPanel  # TODO to fix in datoviz ?
+from datoviz._panel import Panel as _DvzPanel  # TODO _panel to fix in datoviz ?
 from datoviz.visuals import Visual as _DvzVisual
-from datoviz.visuals import Pixel as _DvzPixel
-from datoviz.visuals import Point as _DvzPoints
 
 # dataviz glossary
 # - App: main application
@@ -22,12 +20,11 @@ from gsp.core.camera import Camera
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.core.visual_base import VisualBase
-from gsp_matplotlib.extra.bufferx import Bufferx
 from gsp.types.transbuf import TransBuf
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
 from gsp.visuals.paths import Paths
-from gsp.utils.transbuf_utils import TransBufUtils
+from gsp.visuals.segments import Segments
 
 
 class DatovizRenderer:
@@ -120,6 +117,10 @@ class DatovizRenderer:
             from .datoviz_renderer_paths import DatovizRendererPaths
 
             DatovizRendererPaths.render(self, viewport, visual, model_matrix, camera)
+        elif isinstance(visual, Segments):
+            from .datoviz_renderer_segments import DatovizRendererSegments
+
+            DatovizRendererSegments.render(self, viewport, visual, model_matrix, camera)
         else:
             raise NotImplementedError(f"DatovizRenderer.render() does not support visual of type {type(visual)}")
 
