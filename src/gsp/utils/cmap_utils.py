@@ -14,7 +14,7 @@ class CmapUtils:
             return False
 
     @staticmethod
-    def get_color_map(colormap_name: str, values: np.ndarray, vmin: float = 0.0, vmax: float) -> np.ndarray:
+    def get_color_map(colormap_name: str, values: np.ndarray, vmin: float, vmax: float) -> np.ndarray:
         """Get colors from a colormap for the given values.
         Args:
             colormap_name (str): Name of the colormap (e.g., 'plasma', 'viridis', etc.).
