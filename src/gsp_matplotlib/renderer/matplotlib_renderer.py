@@ -22,6 +22,7 @@ from gsp.types.transbuf import TransBuf
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
 from gsp.visuals.paths import Paths
+from gsp.visuals.segments import Segments
 
 
 class MatplotlibRenderer:
@@ -125,6 +126,10 @@ class MatplotlibRenderer:
             from gsp_matplotlib.renderer.matplotlib_renderer_paths import RendererPaths
 
             RendererPaths.render(self, axes, visual, model_matrix, camera)
+        elif isinstance(visual, Segments):
+            from gsp_matplotlib.renderer.matplotlib_renderer_segments import RendererSegments
+
+            RendererSegments.render(self, axes, visual, model_matrix, camera)
         else:
             raise NotImplementedError(f"Rendering for visual type {type(visual)} is not implemented.")
 
