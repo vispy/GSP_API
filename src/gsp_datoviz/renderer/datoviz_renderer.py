@@ -21,6 +21,7 @@ from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.core.visual_base import VisualBase
 from gsp.types.transbuf import TransBuf
+from gsp.visuals.markers import Markers
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
 from gsp.visuals.paths import Paths
@@ -117,6 +118,10 @@ class DatovizRenderer:
             from .datoviz_renderer_paths import DatovizRendererPaths
 
             DatovizRendererPaths.render(self, viewport, visual, model_matrix, camera)
+        elif isinstance(visual, Markers):
+            from .datoviz_renderer_markers import DatovizRendererMarkers
+
+            DatovizRendererMarkers.render(self, viewport, visual, model_matrix, camera)
         elif isinstance(visual, Segments):
             from .datoviz_renderer_segments import DatovizRendererSegments
 
