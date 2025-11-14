@@ -49,7 +49,7 @@ def main():
         line_widths_buffer = Bufferx.from_numpy(line_widths_numpy.reshape(-1, 1), BufferType.float32)
 
         colors_cursor = np.linspace(0, 1, line_count).astype(np.float32)
-        colors_numpy = CmapUtils.get_color_map(color_map_name, colors_cursor, colors_cursor.min(), colors_cursor.max())
+        colors_numpy = CmapUtils.get_color_map_numpy(color_map_name, colors_cursor)
         colors_buffer = Bufferx.from_numpy(colors_numpy, BufferType.rgba8)
 
         return positions_buffer, colors_buffer, line_widths_buffer

@@ -43,9 +43,8 @@ def main():
             y -= 0.7
             z = np.zeros_like(x)
             # Make color vary along the line (map y to color)
-            colors_values = CmapUtils.get_color_map("plasma", y, y.min(), y.max())
+            colors_values = CmapUtils.get_color_map_numpy("plasma", y)
 
-            # Vary linewidth by slope magnitude
             # Vary linewidth by slope magnitude
             gradients = np.abs(np.gradient(y))
             gradients_normalized = (gradients - gradients.min()) / (gradients.max() - gradients.min())
