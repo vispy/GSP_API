@@ -45,7 +45,7 @@ def main():
     face_colors_buffer = Bufferx.from_numpy(face_colors_numpy, BufferType.rgba8)
 
     edge_colors_cursor = np.linspace(0, 1, marker_count).astype(np.float32)
-    edge_colors_numpy = CmapUtils.get_color_map("viridis", edge_colors_cursor, edge_colors_cursor.min(), edge_colors_cursor.max())
+    edge_colors_numpy = CmapUtils.get_color_map("plasma", edge_colors_cursor, edge_colors_cursor.min(), edge_colors_cursor.max())
     edge_colors_buffer = Bufferx.from_numpy(edge_colors_numpy, BufferType.rgba8)
 
     edge_widths_numpy = np.full(marker_count, 10.0).astype(np.float32)
