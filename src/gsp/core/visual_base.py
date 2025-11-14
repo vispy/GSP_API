@@ -6,6 +6,8 @@ from ..utils.uuid_utils import UuidUtils
 
 
 class VisualBase:
+    __slots__ = ["_uuid", "userData"]
+
     def __init__(self):
         self._uuid: str = UuidUtils.generate_uuid()
         self.userData: dict[str, Any] = {}

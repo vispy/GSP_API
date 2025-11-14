@@ -7,14 +7,7 @@ from ..types.join_style import JoinStyle
 
 
 class Paths(VisualBase):
-    __slots__ = (
-        "_positions",
-        "_path_sizes",
-        "_colors",
-        "_line_widths",
-        "_cap_style",
-        "_join_style",
-    )
+    __slots__ = ["_positions", "_path_sizes", "_colors", "_line_widths", "_cap_style", "_join_style"]
 
     def __init__(self, positions: TransBuf, path_sizes: TransBuf, colors: TransBuf, line_widths: TransBuf, cap_style: CapStyle, join_style: JoinStyle) -> None:
         super().__init__()
@@ -25,6 +18,7 @@ class Paths(VisualBase):
         self._line_widths: TransBuf = line_widths
         self._cap_style: CapStyle = cap_style
         self._join_style: JoinStyle = join_style
+        self.check_attributes()
 
     # =============================================================================
     # get/set attributes

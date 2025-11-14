@@ -5,6 +5,8 @@ from ..types.group import Groups
 
 
 class Points(VisualBase):
+    __slots__ = ["_positions", "_sizes", "_face_colors", "_edge_colors", "_edge_widths", "_groups"]
+
     def __init__(self, positions: TransBuf, sizes: TransBuf, face_colors: TransBuf, edge_colors: TransBuf, edge_widths: TransBuf, groups: Groups):
         super().__init__()
 
@@ -14,6 +16,8 @@ class Points(VisualBase):
         self._edge_colors: TransBuf = edge_colors
         self._edge_widths: TransBuf = edge_widths
         self._groups: Groups = groups
+
+        self.check_attributes()
 
     # =============================================================================
     # get/set attributes

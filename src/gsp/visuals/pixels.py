@@ -7,6 +7,8 @@ from ..utils.group_utils import GroupUtils
 
 
 class Pixels(VisualBase):
+    __slots__ = ["__positions", "__colors", "__groups"]
+
     def __init__(self, positions: TransBuf, colors: TransBuf, groups: Groups):
         super().__init__()
 

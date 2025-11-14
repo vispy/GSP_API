@@ -7,12 +7,7 @@ from ..types.join_style import JoinStyle
 
 
 class Segments(VisualBase):
-    __slots__ = (
-        "_positions",
-        "_colors",
-        "_line_widths",
-        "_cap_style",
-    )
+    __slots__ = ["_positions", "_colors", "_line_widths", "_cap_style"]
 
     def __init__(self, positions: TransBuf, line_widths: TransBuf, cap_style: CapStyle, colors: TransBuf) -> None:
         super().__init__()
