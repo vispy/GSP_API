@@ -30,10 +30,10 @@ def main():
     #
     # =============================================================================
 
-    marker_count = 10
+    marker_count = 100
 
     # Create Buffers
-    positions_numpy = np.random.rand(marker_count, 3).astype(np.float32)
+    positions_numpy = np.random.uniform(-1, 1, (marker_count, 3)).astype(np.float32)
     positions_numpy[:, 2] = 0.0
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
@@ -43,14 +43,14 @@ def main():
     face_colors_cursor = np.linspace(0, 1, marker_count).astype(np.float32)
     face_colors_buffer = CmapUtils.get_color_map("viridis", face_colors_cursor)
 
-    edge_colors_cursor = np.linspace(0, 1, marker_count).astype(np.float32)
-    edge_colors_buffer = CmapUtils.get_color_map("plasma", edge_colors_cursor)
+    edge_colors_buffer = Buffer(marker_count, BufferType.rgba8)
+    edge_colors_buffer.set_data(Constants.Colors.black * marker_count, 0, marker_count)
 
-    edge_widths_numpy = np.full(marker_count, 10.0).astype(np.float32)
+    edge_widths_numpy = np.full(marker_count, 1.0).astype(np.float32)
     edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
     # Create the Pixels visual and add it to the viewport
-    markers = Markers(Constants.Marker_Shape.disc, positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
+    markers = Markers(Constants.Marker_Shape.club, positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================

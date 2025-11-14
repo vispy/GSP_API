@@ -23,3 +23,4 @@ class Constants:
 
         disc = "disc"
         square = "square"
+        club = r"$\clubsuit$"
