@@ -17,3 +17,5 @@ class Constants:
         yellow = bytearray([255, 255, 0, 255])
         magenta = bytearray([255, 0, 255, 255])
         cyan = bytearray([0, 255, 255, 255])
+
+        transparent = bytearray([0, 0, 0, 0])

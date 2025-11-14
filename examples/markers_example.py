@@ -37,11 +37,13 @@ def main():
     positions_numpy[:, 2] = 0.0
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
-    sizes_numpy = np.linspace(20, 200, marker_count).astype(np.float32)
+    sizes_numpy = np.linspace(20, 1000, marker_count).astype(np.float32)
     sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
 
     face_colors_cursor = np.linspace(0, 1, marker_count).astype(np.float32)
-    face_colors_buffer = CmapUtils.get_color_map("viridis", face_colors_cursor)
+    face_colors_buffer = CmapUtils.get_color_map("plasma", face_colors_cursor)
+    # face_colors_buffer = Buffer(marker_count, BufferType.rgba8)
+    # face_colors_buffer.set_data(Constants.Colors.transparent * marker_count, 0, marker_count)
 
     edge_colors_buffer = Buffer(marker_count, BufferType.rgba8)
     edge_colors_buffer.set_data(Constants.Colors.black * marker_count, 0, marker_count)

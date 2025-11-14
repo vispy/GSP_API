@@ -7,6 +7,8 @@ from gsp.types import CapStyle, JoinStyle, MarkerShape
 
 
 class ConverterUtils:
+    """Utility class for converting GSP types to Matplotlib types."""
+
     @staticmethod
     def cap_style_gsp_to_mpl(gsp_cap_style: CapStyle) -> Literal["butt", "round", "projecting"]:
         """Convert CapStyle enum to Matplotlib string."""

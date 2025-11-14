@@ -41,15 +41,11 @@ class DatovizRendererSegments:
         line_widths_buffer = TransBufUtils.to_buffer(segments.get_line_widths())
 
         # convert buffers to numpy arrays
-
-        # vertices_numpy shape (N * 2, 3)
         vertices_numpy = Bufferx.to_numpy(positions_buffer)
-        # colors_numpy shape (N, 4)
         colors_numpy = Bufferx.to_numpy(colors_buffer)
-        # line_widths_pt_numpy shape (N, 1)
         line_widths_pt_numpy = Bufferx.to_numpy(line_widths_buffer)
 
-        # Convert sizes from point^2 to pixel diameter
+        # Convert sizes from point to pixel diameter
         line_widths_px_numpy = UnitUtils.point_to_pixel_numpy(line_widths_pt_numpy, renderer.get_canvas().get_dpi())
         line_widths_px_numpy = line_widths_px_numpy.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
 

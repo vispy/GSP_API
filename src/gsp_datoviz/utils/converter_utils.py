@@ -1,10 +1,13 @@
 from gsp.types import CapStyle, JoinStyle
+from gsp.types import MarkerShape
 
 
 class ConverterUtils:
+    """Utility class for converting GSP types to Datoviz types."""
+
     @staticmethod
     def cap_style_gsp_to_dvz(cap_style: CapStyle) -> str:
-        """Convert CapStyle enum to Matplotlib string."""
+        """Convert CapStyle enum to Datoviz string."""
 
         if cap_style == CapStyle.BUTT:
             return "butt"
@@ -17,7 +20,7 @@ class ConverterUtils:
 
     @staticmethod
     def join_style_gsp_to_dvz(join_style: JoinStyle) -> str:
-        """Convert JoinStyle enum to Matplotlib string."""
+        """Convert JoinStyle enum to Datoviz string."""
         if join_style == JoinStyle.MITER:
             raise ValueError(f"Unsupported JoinStyle in datoviz: {join_style}")
         elif join_style == JoinStyle.ROUND:
@@ -26,3 +29,18 @@ class ConverterUtils:
             return "square"
         else:
             raise ValueError(f"Unsupported JoinStyle: {join_style}")
+
+    @staticmethod
+    def marker_shape_gsp_to_dvz(gsp_marker_shape: MarkerShape) -> str:
+        """Convert GSP marker shape to Datoviz marker shape."""
+
+        if gsp_marker_shape == MarkerShape.disc:
+            mpl_marker_shape = "disc"
+        elif gsp_marker_shape == MarkerShape.square:
+            mpl_marker_shape = "square"
+        elif gsp_marker_shape == MarkerShape.club:
+            mpl_marker_shape = "club"
+        else:
+            raise ValueError(f"Unsupported marker shape: {gsp_marker_shape}")
+
+        return mpl_marker_shape
