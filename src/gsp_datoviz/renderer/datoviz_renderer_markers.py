@@ -24,7 +24,7 @@ class DatovizRendererMarkers:
     def render(
         renderer: DatovizRenderer,
         viewport: Viewport,
-        points: Markers,
+        markers: Markers,
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
@@ -34,83 +34,56 @@ class DatovizRendererMarkers:
         # Get attributes
         # =============================================================================
 
-        # get attributes from TransBuf to buffer
-        positions_buffer = TransBufUtils.to_buffer(points.get_positions())
-        sizes_buffer = TransBufUtils.to_buffer(points.get_sizes())
-        face_colors_buffer = TransBufUtils.to_buffer(points.get_face_colors())
+        # =============================================================================
+        # Convert all attributes to numpy arrays
+        # =============================================================================
 
-        # convert buffers to numpy arrays
-        vertices_numpy = Bufferx.to_numpy(positions_buffer)
+        positions_buffer = TransBufUtils.to_buffer(markers.get_positions())
+        sizes_buffer = TransBufUtils.to_buffer(markers.get_sizes())
+        face_colors_buffer = TransBufUtils.to_buffer(markers.get_face_colors())
+        edge_colors_buffer = TransBufUtils.to_buffer(markers.get_edge_colors())
+        edge_widths_buffer = TransBufUtils.to_buffer(markers.get_edge_widths())
+
+        # Convert buffers to numpy arrays)
+        positions_numpy = Bufferx.to_numpy(positions_buffer)
         face_colors_numpy = Bufferx.to_numpy(face_colors_buffer)
+        edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer)
 
-        # Convert sizes from point^2 to pixel diameter
-        sizes_pt2_numpy = Bufferx.to_numpy(sizes_buffer)
-        radius_pt_numpy = np.sqrt(sizes_pt2_numpy / np.pi)
-        radius_px_numpy = UnitUtils.point_to_pixel_numpy(radius_pt_numpy, renderer.get_canvas().get_dpi())
-        diameter_px_numpy = radius_px_numpy * 2.0 * UnitUtils.device_pixel_ratio()
+        sizes_pt_numpy = Bufferx.to_numpy(sizes_buffer).reshape(-1)
+        sizes_px_numpy = UnitUtils.point_to_pixel_numpy(sizes_pt_numpy, renderer.get_canvas().get_dpi())
+        sizes_px_numpy = sizes_px_numpy.reshape(-1)
 
-        # =============================================================================
-        # Compute indices_per_group for groups depending on the type of groups
-        # =============================================================================
-
-        indices_per_group = GroupUtils.compute_indices_per_group(vertices_numpy.__len__(), points.get_groups())
-        group_count = GroupUtils.get_group_count(vertices_numpy.__len__(), points.get_groups())
+        edge_widths_pt_numpy = Bufferx.to_numpy(edge_widths_buffer)
+        edge_widths_px_numpy = UnitUtils.point_to_pixel_numpy(edge_widths_pt_numpy, renderer.get_canvas().get_dpi())
+        edge_widths_px_numpy = edge_widths_px_numpy.reshape(-1)
 
         # =============================================================================
         # Create the datoviz visual if needed
         # =============================================================================
 
-        # update stored group count
-        old_group_count = None
-        if points.get_uuid() in renderer._group_count:
-            old_group_count = renderer._group_count[points.get_uuid()]
-        renderer._group_count[points.get_uuid()] = group_count
-
-        # If the group count has changed, destroy old datoviz_visuals
-        if old_group_count is not None and old_group_count != group_count:
-            for group_index in range(old_group_count):
-                group_uuid = f"{points.get_uuid()}_group_{group_index}"
-                if group_uuid in renderer._dvz_visuals:
-                    dvz_points = typing.cast(_DvzMarkers, renderer._dvz_visuals[group_uuid])
-                    dvz_panel.remove(dvz_points)
-                    del renderer._dvz_visuals[group_uuid]
-
         # Create datoviz_visual if they do not exist
-        sample_group_uuid = f"{points.get_uuid()}_group_0"
-        if sample_group_uuid not in renderer._dvz_visuals:
-            for group_index in range(group_count):
-                dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
-                dummy_color_numpy = np.array([[255, 0, 0, 255]], dtype=np.uint8).reshape((-1, 4))
-                dummy_size_numpy = np.array([1], dtype=np.float32).reshape((-1, 1)).reshape(-1)
-                dvz_points = renderer.dvz_app.point(
-                    position=dummy_position_numpy,
-                    color=dummy_color_numpy,
-                    size=dummy_size_numpy,
-                )
-                group_uuid = f"{points.get_uuid()}_group_{group_index}"
-                renderer._dvz_visuals[group_uuid] = dvz_points
-                # Add the new visual to the panel
-                dvz_panel.add(dvz_points)
+        if markers.get_uuid() not in renderer._dvz_visuals:
+            dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
+            dvz_markers = renderer.dvz_app.marker(position=dummy_position_numpy)
+            renderer._dvz_visuals[markers.get_uuid()] = dvz_markers
+            # Add the new visual to the panel
+            dvz_panel.add(dvz_markers)
 
         # =============================================================================
         # Update all attributes
         # =============================================================================
 
-        for group_index in range(group_count):
-            group_uuid = f"{points.get_uuid()}_group_{group_index}"
+        # get the datoviz visual
+        dvz_markers = typing.cast(_DvzMarkers, renderer._dvz_visuals[markers.get_uuid()])
 
-            # get the datoviz visual
-            dvz_points = typing.cast(_DvzMarkers, renderer._dvz_visuals[group_uuid])
+        # set attributes
+        dvz_markers.set_position(positions_numpy)
 
-            # set attributes
-            group_vertices = vertices_numpy[indices_per_group[group_index]]
-            dvz_points.set_position(group_vertices)
+        dvz_markers.set_size(sizes_px_numpy)
+        dvz_markers.set_color(face_colors_numpy)
+        dvz_markers.set_linewidth(edge_widths_px_numpy[0])
+        # dvz_markers.set_edgecolor(edge_colors_numpy[0].tolist())  # datoviz only supports a single edge color
 
-            # set group_sizes
-            group_sizes = np.tile(diameter_px_numpy[group_index], group_vertices.__len__()).reshape((-1, 1))
-            group_sizes = group_sizes.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
-            dvz_points.set_size(group_sizes)
-
-            # set group_colors
-            group_colors = np.tile(face_colors_numpy[group_index], group_vertices.__len__()).reshape((-1, 4))
-            dvz_points.set_color(group_colors)
+        dvz_markers.set_mode("code")
+        dvz_markers.set_aspect("filled")
+        dvz_markers.set_shape("club")

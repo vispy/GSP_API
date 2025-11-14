@@ -94,4 +94,4 @@ class RendererMarkers:
         mpl_path_collection.set_linewidth(typing.cast(list, edge_widths_numpy))
 
         # Return the list of artists created/updated
-        return []
+        return [mpl_path_collection]

@@ -67,7 +67,7 @@ def main():
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
+    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "datoviz") == "matplotlib" else DatovizRenderer(canvas)
     renderer.render([viewport], [markers], [model_matrix], [camera])
     renderer.show()
 
