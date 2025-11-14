@@ -49,7 +49,7 @@ class CmapUtils:
 
         # Create a Buffer
         color_buffer = Buffer(color_mapped_255.__len__(), buffer_type=BufferType.rgba8)
-        color_buffer.set_data(bytearray(color_mapped_255.tobytes()), 0, color_mapped_255.__len__() * 4)
+        color_buffer.set_data(bytearray(color_mapped_255.tobytes()), 0, color_mapped_255.__len__())
 
         return color_buffer
 
