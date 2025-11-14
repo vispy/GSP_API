@@ -77,8 +77,7 @@ def main():
 
     # all pixels red - Create buffer and fill it with a constant
     colors_numpy = np.array(vertex_colors, dtype=np.float32).reshape(-1, 4)
-    colors_numpy_255 = (colors_numpy * 255).astype(np.uint8)
-    colors_buffer = Bufferx.from_numpy(colors_numpy_255, BufferType.rgba8)
+    colors_buffer = Bufferx.from_numpy(colors_numpy, BufferType.rgba8)
 
     line_widths_numpy = np.array(line_widths, dtype=np.float32).reshape(-1, 1)
     line_widths_buffer = Bufferx.from_numpy(line_widths_numpy, BufferType.float32)

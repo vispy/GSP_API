@@ -5,11 +5,12 @@ from ..types.group import Groups
 
 
 class Markers(VisualBase):
-    __slots__ = ["_positions", "_sizes", "_face_colors", "_edge_colors", "_edge_widths"]
+    __slots__ = ["_marker_shape", "_positions", "_sizes", "_face_colors", "_edge_colors", "_edge_widths"]
 
-    def __init__(self, positions: TransBuf, sizes: TransBuf, face_colors: TransBuf, edge_colors: TransBuf, edge_widths: TransBuf):
+    def __init__(self, marker_shape: str, positions: TransBuf, sizes: TransBuf, face_colors: TransBuf, edge_colors: TransBuf, edge_widths: TransBuf):
         super().__init__()
 
+        self._marker_shape: str = marker_shape
         self._positions: TransBuf = positions
         self._sizes: TransBuf = sizes
         self._face_colors: TransBuf = face_colors
@@ -21,6 +22,13 @@ class Markers(VisualBase):
     # =============================================================================
     # get/set attributes
     # =============================================================================
+
+    def get_marker_shape(self) -> str:
+        return self._marker_shape
+
+    def set_marker_shape(self, marker_shape: str) -> None:
+        self._marker_shape = marker_shape
+        self.check_attributes()
 
     def get_positions(self) -> TransBuf:
         return self._positions
@@ -59,6 +67,7 @@ class Markers(VisualBase):
 
     def set_attributes(
         self,
+        marker_shape: str | None = None,
         positions: TransBuf | None = None,
         sizes: TransBuf | None = None,
         face_colors: TransBuf | None = None,
@@ -66,6 +75,8 @@ class Markers(VisualBase):
         edge_widths: TransBuf | None = None,
     ) -> None:
         """Set multiple attributes at once and then check their validity."""
+        if marker_shape is not None:
+            self._marker_shape = marker_shape
         if positions is not None:
             self._positions = positions
         if sizes is not None:
@@ -84,10 +95,10 @@ class Markers(VisualBase):
 
     def check_attributes(self) -> None:
         """Check that the attributes are valid and consistent."""
-        self.sanity_check_attributes(self._positions, self._sizes, self._face_colors, self._edge_colors, self._edge_widths)
+        self.sanity_check_attributes(self._marker_shape, self._positions, self._sizes, self._face_colors, self._edge_colors, self._edge_widths)
 
     @staticmethod
-    def sanity_check_attributes_buffer(positions: Buffer, sizes: Buffer, face_colors: Buffer, edge_colors: Buffer, edge_widths: Buffer):
+    def sanity_check_attributes_buffer(marker_shape: str, positions: Buffer, sizes: Buffer, face_colors: Buffer, edge_colors: Buffer, edge_widths: Buffer):
         """same as .sanity_check_attributes() but accept only Buffers.
 
         - It is meant to be used after converting TransBuf to Buffer.
@@ -99,10 +110,11 @@ class Markers(VisualBase):
         assert isinstance(edge_colors, Buffer), "Edge colors must be a Buffer"
         assert isinstance(edge_widths, Buffer), "Edge widths must be a Buffer"
 
-        Markers.sanity_check_attributes(positions, sizes, face_colors, edge_colors, edge_widths)
+        Markers.sanity_check_attributes(marker_shape, positions, sizes, face_colors, edge_colors, edge_widths)
 
     @staticmethod
     def sanity_check_attributes(
+        marker_shape: str,
         positions: TransBuf,
         sizes: TransBuf,
         face_colors: TransBuf,

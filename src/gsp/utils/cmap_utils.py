@@ -33,9 +33,10 @@ class CmapUtils:
 
         normalized_values = (values - vmin) / (vmax - vmin)
         normalized_values = np.clip(normalized_values, 0.0, 1.0)
-        color_mapped = color_map(normalized_values)  # normalize values to [0, 1]
+        color_mapped_normalized = color_map(normalized_values)  # normalize values to [0, 1]
+        color_mapped_255 = (color_mapped_normalized * 255).astype(np.uint8)
 
-        return color_mapped
+        return color_mapped_255
 
 
 if __name__ == "__main__":

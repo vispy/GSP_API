@@ -50,8 +50,7 @@ def main():
 
         colors_cursor = np.linspace(0, 1, line_count).astype(np.float32)
         colors_numpy = CmapUtils.get_color_map(color_map_name, colors_cursor, colors_cursor.min(), colors_cursor.max())
-        colors_numpy_255 = (colors_numpy * 255).astype(np.uint8)
-        colors_buffer = Bufferx.from_numpy(colors_numpy_255, BufferType.rgba8)
+        colors_buffer = Bufferx.from_numpy(colors_numpy, BufferType.rgba8)
 
         return positions_buffer, colors_buffer, line_widths_buffer
 
@@ -79,7 +78,7 @@ def main():
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "datoviz") == "matplotlib" else DatovizRenderer(canvas)
+    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
     renderer.render([viewport], [segments], [model_matrix], [camera])
     renderer.show()
 
