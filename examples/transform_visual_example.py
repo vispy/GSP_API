@@ -49,7 +49,7 @@ def main():
     colors_transform.add(TransformLinkImmediate(colors_buffer))
 
     # Create the Pixels visual and add it to the viewport
-    pixels = Pixels(positions_buffer, colors_buffer, groups)
+    pixels = Pixels(positions_buffer, colors_transform, groups)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================
