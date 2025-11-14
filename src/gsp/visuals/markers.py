@@ -2,15 +2,16 @@ from ..core.visual_base import VisualBase
 from ..types.transbuf import TransBuf
 from ..types.buffer import Buffer
 from ..types.group import Groups
+from ..types.marker_shape import MarkerShape
 
 
 class Markers(VisualBase):
     __slots__ = ["_marker_shape", "_positions", "_sizes", "_face_colors", "_edge_colors", "_edge_widths"]
 
-    def __init__(self, marker_shape: str, positions: TransBuf, sizes: TransBuf, face_colors: TransBuf, edge_colors: TransBuf, edge_widths: TransBuf):
+    def __init__(self, marker_shape: MarkerShape, positions: TransBuf, sizes: TransBuf, face_colors: TransBuf, edge_colors: TransBuf, edge_widths: TransBuf):
         super().__init__()
 
-        self._marker_shape: str = marker_shape
+        self._marker_shape: MarkerShape = marker_shape
         self._positions: TransBuf = positions
         self._sizes: TransBuf = sizes
         self._face_colors: TransBuf = face_colors
@@ -23,10 +24,10 @@ class Markers(VisualBase):
     # get/set attributes
     # =============================================================================
 
-    def get_marker_shape(self) -> str:
+    def get_marker_shape(self) -> MarkerShape:
         return self._marker_shape
 
-    def set_marker_shape(self, marker_shape: str) -> None:
+    def set_marker_shape(self, marker_shape: MarkerShape) -> None:
         self._marker_shape = marker_shape
         self.check_attributes()
 
@@ -67,7 +68,7 @@ class Markers(VisualBase):
 
     def set_attributes(
         self,
-        marker_shape: str | None = None,
+        marker_shape: MarkerShape | None = None,
         positions: TransBuf | None = None,
         sizes: TransBuf | None = None,
         face_colors: TransBuf | None = None,
@@ -98,7 +99,9 @@ class Markers(VisualBase):
         self.sanity_check_attributes(self._marker_shape, self._positions, self._sizes, self._face_colors, self._edge_colors, self._edge_widths)
 
     @staticmethod
-    def sanity_check_attributes_buffer(marker_shape: str, positions: Buffer, sizes: Buffer, face_colors: Buffer, edge_colors: Buffer, edge_widths: Buffer):
+    def sanity_check_attributes_buffer(
+        marker_shape: MarkerShape, positions: Buffer, sizes: Buffer, face_colors: Buffer, edge_colors: Buffer, edge_widths: Buffer
+    ):
         """same as .sanity_check_attributes() but accept only Buffers.
 
         - It is meant to be used after converting TransBuf to Buffer.
@@ -114,7 +117,7 @@ class Markers(VisualBase):
 
     @staticmethod
     def sanity_check_attributes(
-        marker_shape: str,
+        marker_shape: MarkerShape,
         positions: TransBuf,
         sizes: TransBuf,
         face_colors: TransBuf,

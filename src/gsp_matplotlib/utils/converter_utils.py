@@ -3,8 +3,7 @@ import typing
 from typing import Literal
 
 # local imports
-from gsp.types import CapStyle, JoinStyle
-from gsp.constants import Constants
+from gsp.types import CapStyle, JoinStyle, MarkerShape
 
 
 class ConverterUtils:
@@ -34,14 +33,14 @@ class ConverterUtils:
             raise ValueError(f"Unsupported JoinStyle: {gsp_join_style}")
 
     @staticmethod
-    def marker_shape_gsp_to_mpl(gsp_marker_shape: str) -> str:
+    def marker_shape_gsp_to_mpl(gsp_marker_shape: MarkerShape) -> str:
         """Convert GSP marker shape to Matplotlib marker shape."""
 
-        if gsp_marker_shape == Constants.Marker_Shape.disc:
+        if gsp_marker_shape == MarkerShape.disc:
             mpl_marker_shape = "o"
-        elif gsp_marker_shape == Constants.Marker_Shape.square:
+        elif gsp_marker_shape == MarkerShape.square:
             mpl_marker_shape = "s"
-        elif gsp_marker_shape == Constants.Marker_Shape.club:
+        elif gsp_marker_shape == MarkerShape.club:
             mpl_marker_shape = r"$\clubsuit$"
         else:
             raise ValueError(f"Unsupported marker shape: {gsp_marker_shape}")

@@ -7,7 +7,7 @@ import numpy as np
 # local imports
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Markers
-from gsp.types import Buffer, BufferType, CapStyle, JoinStyle
+from gsp.types import Buffer, BufferType, CapStyle, JoinStyle, MarkerShape
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
@@ -50,7 +50,7 @@ def main():
     edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
     # Create the Pixels visual and add it to the viewport
-    markers = Markers(Constants.Marker_Shape.club, positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
+    markers = Markers(MarkerShape.club, positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================
