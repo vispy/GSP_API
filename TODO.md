@@ -5,6 +5,7 @@
   - data in ndc by default
   - operation with scalar with unit pt/px/cm/inch
   - dpi canvas - === ppi on screen, dpi on print
+  - dpi === PPI
   - in the transform chain, have a user data which store the current viewport size in px, and dpi
   - MathOpsLink (opts, scalar, units) in usespace
     - op_code
@@ -18,7 +19,7 @@
 - test dynamic group in datoviz pixels
 - datoviz: add better python API (seems hard/complicated to do)
 - when datoviz core dump, DVZ_LOG_LEVEL=0
-  - when creating a datoviz app with 350 pixel, there is a segfault
+  - when creating a datoviz app with 350 pixelds visual, there is a segfault
 - handle the animation loop
   - with decorator like datoviz? yes
   - API from datoviz
