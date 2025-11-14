@@ -1,11 +1,18 @@
 - transformChain
   - with depth color
   - aka with renderer events
-- transformChain with unit conversions
+- transformChain with unit conversions - can this be done in user-space
   - data in ndc by default
   - operation with scalar with unit pt/px/cm/inch
   - dpi canvas - === ppi on screen, dpi on print
   - in the transform chain, have a user data which store the current viewport size in px, and dpi
+  - MathOpsLink (opts, scalar, units) in usespace
+    - op_code
+    - scalar_value (in input buffer_type)
+    - scalar_unit
+  - how to pass the canvas to the transform chain?
+    - can this be done in userspace
+    - possibility: set by class or by instance
 - PR datoviz with the whole ./datoviz as pyright 0 errors
   - add a pyright target in justfile
 - test dynamic group in datoviz pixels
