@@ -29,15 +29,16 @@ class CmapUtils:
             vmax (float|None): Maximum value for values normalization. if None, use max of values.
         """
 
-        # sanity check
-        assert CmapUtils.has_color_map(colormap_name), f"Colormap '{colormap_name}' is not recognized."
-
-        color_map = matplotlib.cm.get_cmap(colormap_name)
-
+        # Handle default parameters
         if vmin is None:
             vmin = values.min()
         if vmax is None:
             vmax = values.max()
+
+        # sanity check
+        assert CmapUtils.has_color_map(colormap_name), f"Colormap '{colormap_name}' is not recognized."
+
+        color_map = matplotlib.cm.get_cmap(colormap_name)
 
         assert vmin is not None, "vmin should not be None"
         assert vmax is not None, "vmax should not be None"
