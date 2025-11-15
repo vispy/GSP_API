@@ -20,6 +20,13 @@
 - do serialisation with json
 - do network with http
 - do test with expected_screenshots
+- do a 'big tester' example
+  - something with arguments which can be changed from command line
+  - thus it can be intrumented to cover all the cases in combinations
+  - multi-viewports
+  - all visuals
+  - all renderers
+  - using transform or buffer as input
 - PR datoviz with the whole ./datoviz as pyright 0 errors
   - add a pyright target in justfile
 - test dynamic group in datoviz pixels
