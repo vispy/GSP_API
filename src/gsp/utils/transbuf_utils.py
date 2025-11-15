@@ -2,7 +2,6 @@
 import numpy as np
 import typing
 
-
 # local imports
 from ..types.transbuf import TransBuf
 from ..transforms.transform_chain import TransformChain
@@ -13,6 +12,7 @@ class TransBufUtils:
     @staticmethod
     def to_buffer(trans_buf: TransBuf) -> Buffer:
         """Convert a TransBuf to a Buffer."""
+
         if isinstance(trans_buf, Buffer):
             buffer = typing.cast(Buffer, trans_buf)
             return buffer

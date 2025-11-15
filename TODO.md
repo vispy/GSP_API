@@ -1,19 +1,6 @@
-- transformChain
-  - with depth color
-  - aka with renderer events
-- transformChain with unit conversions - can this be done in user-space
-  - data in ndc by default
-  - operation with scalar with unit pt/px/cm/inch
-  - dpi canvas - === ppi on screen, dpi on print
-  - dpi === PPI
-  - in the transform chain, have a user data which store the current viewport size in px, and dpi
-  - MathOpsLink (opts, scalar, units) in usespace
-    - op_code
-    - scalar_value (in input buffer_type)
-    - scalar_unit
-  - how to pass the canvas to the transform chain?
-    - can this be done in userspace
-    - possibility: set by class or by instance
+- API design principles
+  - https://chatgpt.com/c/69162470-7220-8332-9df8-a928b77f0528
+  - https://gemini.google.com/app/8fe8f99d920a68b5
 - to get the screen type on macosx
   - `system_profiler SPDisplaysDataType`
 - do something multi viewport
@@ -38,6 +25,22 @@
   - API from datoviz
   - API from matplotlib
   - GSP API common
+- transformChain
+  - with depth color
+  - aka with renderer events
+- transformChain with unit conversions - can this be done in user-space
+  - data in ndc by default
+  - operation with scalar with unit pt/px/cm/inch
+  - dpi canvas - === ppi on screen, dpi on print
+  - dpi === PPI
+  - in the transform chain, have a user data which store the current viewport size in px, and dpi
+  - MathOpsLink (opts, scalar, units) in usespace
+    - op_code
+    - scalar_value (in input buffer_type)
+    - scalar_unit
+  - how to pass the canvas to the transform chain?
+    - can this be done in userspace
+    - possibility: set by class or by instance
 
 
 
