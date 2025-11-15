@@ -6,6 +6,8 @@ from ..utils.uuid_utils import UuidUtils
 
 
 class Canvas:
+    __slots__ = ["_uuid", "_width", "_height", "_dpi", "userData"]
+
     def __init__(self, width: int, height: int, dpi: float):
         self._uuid: str = UuidUtils.generate_uuid()
         self._width: int = width

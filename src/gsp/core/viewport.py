@@ -6,6 +6,8 @@ from ..utils.uuid_utils import UuidUtils
 
 
 class Viewport:
+    __slots__ = ["_uuid", "_origin_x", "_origin_y", "_width", "_height", "userData"]
+
     def __init__(self, origin_x: int, origin_y: int, width: int, height: int):
         self._uuid: str = UuidUtils.generate_uuid()
         self._origin_x: int = origin_x

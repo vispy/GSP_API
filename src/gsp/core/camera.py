@@ -7,6 +7,8 @@ from ..utils.uuid_utils import UuidUtils
 
 
 class Camera:
+    __slots__ = ["_uuid", "_view_matrix", "_projection_matrix", "userData"]
+
     def __init__(self, view_matrix: TransBuf, projection_matrix: TransBuf):
         self._uuid: str = UuidUtils.generate_uuid()
         self._view_matrix: TransBuf = view_matrix

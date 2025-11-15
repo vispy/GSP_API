@@ -15,6 +15,8 @@ from ..transform_link import TransformLink
 class TransformDataSource(TransformLink):
     """Load data from a URI into a Buffer. previous buffer is ignored."""
 
+    __slots__ = ["_uri", "_buffer_type"]
+
     def __init__(self, uri: str, buffer_type: BufferType) -> None:
         self._uri = uri
         self._buffer_type = buffer_type

@@ -9,6 +9,8 @@ from .transform_link import TransformLink
 class TransformChain:
     """Chain of transformations to apply to data."""
 
+    __slots__ = ["__links", "__buffer_count", "__buffer_type"]
+
     def __init__(self, buffer_count: int, buffer_type: BufferType | None) -> None:
         self.__links: list[TransformLink] = []
         """Ordered list of links defining the transform."""
