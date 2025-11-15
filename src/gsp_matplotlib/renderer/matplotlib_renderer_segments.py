@@ -66,11 +66,12 @@ class RendererSegments:
         # Create the artists if needed
         # =============================================================================
 
-        if segments.get_uuid() not in renderer._artists:
+        artist_uuid = f"{viewport.get_uuid()}_{segments.get_uuid()}"
+        if artist_uuid not in renderer._artists:
             mpl_line_collection = matplotlib.collections.LineCollection([])
             mpl_line_collection.set_visible(False)
             # hide until properly positioned and sized
-            renderer._artists[segments.get_uuid()] = mpl_line_collection
+            renderer._artists[artist_uuid] = mpl_line_collection
             axes = renderer.get_axes_for_viewport(viewport)
             axes.add_artist(mpl_line_collection)
 
@@ -78,7 +79,7 @@ class RendererSegments:
         # Get existing artists
         # =============================================================================
 
-        mpl_line_collection = typing.cast(matplotlib.collections.LineCollection, renderer._artists[segments.get_uuid()])
+        mpl_line_collection = typing.cast(matplotlib.collections.LineCollection, renderer._artists[artist_uuid])
         mpl_line_collection.set_visible(True)
 
         # =============================================================================

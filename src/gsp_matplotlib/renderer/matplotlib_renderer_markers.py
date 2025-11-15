@@ -69,20 +69,22 @@ class RendererMarkers:
         # Create the artists if needed
         # =============================================================================
 
-        if markers.get_uuid() not in renderer._artists:
+        artist_uuid = f"{viewport.get_uuid()}_{markers.get_uuid()}"
+
+        if artist_uuid not in renderer._artists:
             axes = renderer.get_axes_for_viewport(viewport)
             mpl_marker_shape = ConverterUtils.marker_shape_gsp_to_mpl(markers.get_marker_shape())
             mpl_path_collection = axes.scatter([], [], marker=mpl_marker_shape)
             mpl_path_collection.set_visible(False)
             # hide until properly positioned and sized
-            renderer._artists[markers.get_uuid()] = mpl_path_collection
+            renderer._artists[artist_uuid] = mpl_path_collection
             axes.add_artist(mpl_path_collection)
 
         # =============================================================================
         # Get existing artists
         # =============================================================================
 
-        mpl_path_collection = typing.cast(matplotlib.collections.PathCollection, renderer._artists[markers.get_uuid()])
+        mpl_path_collection = typing.cast(matplotlib.collections.PathCollection, renderer._artists[artist_uuid])
         mpl_path_collection.set_visible(True)
 
         # =============================================================================
