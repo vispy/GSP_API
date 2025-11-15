@@ -53,11 +53,13 @@ class DatovizRendererSegments:
         # Create the datoviz visual if needed
         # =============================================================================
 
+        artist_uuid = f"{viewport.get_uuid()}_{segments.get_uuid()}"
+
         # Create datoviz_visual if they do not exist
-        if segments.get_uuid() not in renderer._dvz_visuals:
+        if artist_uuid not in renderer._dvz_visuals:
             dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
             dvz_segments = renderer.dvz_app.segment(dummy_position_numpy, dummy_position_numpy)
-            renderer._dvz_visuals[segments.get_uuid()] = dvz_segments
+            renderer._dvz_visuals[artist_uuid] = dvz_segments
             # Add the new visual to the panel
             dvz_panel.add(dvz_segments)
 
@@ -66,7 +68,7 @@ class DatovizRendererSegments:
         # =============================================================================
 
         # get the datoviz visual
-        dvz_segments = typing.cast(_DvzSegments, renderer._dvz_visuals[segments.get_uuid()])
+        dvz_segments = typing.cast(_DvzSegments, renderer._dvz_visuals[artist_uuid])
 
         # dvz_vertices_initial - the even indices are initial points
         dvz_initial_vertices = np.ascontiguousarray(vertices_numpy[0::2])

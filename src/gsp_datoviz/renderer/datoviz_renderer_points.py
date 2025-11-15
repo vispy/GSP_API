@@ -60,23 +60,25 @@ class DatovizRendererPoints:
         # Create the datoviz visual if needed
         # =============================================================================
 
+        artist_uuid_prefix = f"{viewport.get_uuid()}_{points.get_uuid()}"
+
         # update stored group count
         old_group_count = None
-        if points.get_uuid() in renderer._group_count:
-            old_group_count = renderer._group_count[points.get_uuid()]
-        renderer._group_count[points.get_uuid()] = group_count
+        if artist_uuid_prefix in renderer._group_count:
+            old_group_count = renderer._group_count[artist_uuid_prefix]
+        renderer._group_count[artist_uuid_prefix] = group_count
 
         # If the group count has changed, destroy old datoviz_visuals
         if old_group_count is not None and old_group_count != group_count:
             for group_index in range(old_group_count):
-                group_uuid = f"{points.get_uuid()}_group_{group_index}"
+                group_uuid = f"{artist_uuid_prefix}_group_{group_index}"
                 if group_uuid in renderer._dvz_visuals:
                     dvz_points = typing.cast(_DvzPoints, renderer._dvz_visuals[group_uuid])
                     dvz_panel.remove(dvz_points)
                     del renderer._dvz_visuals[group_uuid]
 
         # Create datoviz_visual if they do not exist
-        sample_group_uuid = f"{points.get_uuid()}_group_0"
+        sample_group_uuid = f"{artist_uuid_prefix}_group_0"
         if sample_group_uuid not in renderer._dvz_visuals:
             for group_index in range(group_count):
                 dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
@@ -87,7 +89,7 @@ class DatovizRendererPoints:
                     color=dummy_color_numpy,
                     size=dummy_size_numpy,
                 )
-                group_uuid = f"{points.get_uuid()}_group_{group_index}"
+                group_uuid = f"{artist_uuid_prefix}_group_{group_index}"
                 renderer._dvz_visuals[group_uuid] = dvz_points
                 # Add the new visual to the panel
                 dvz_panel.add(dvz_points)
@@ -97,7 +99,7 @@ class DatovizRendererPoints:
         # =============================================================================
 
         for group_index in range(group_count):
-            group_uuid = f"{points.get_uuid()}_group_{group_index}"
+            group_uuid = f"{artist_uuid_prefix}_group_{group_index}"
 
             # get the datoviz visual
             dvz_points = typing.cast(_DvzPoints, renderer._dvz_visuals[group_uuid])

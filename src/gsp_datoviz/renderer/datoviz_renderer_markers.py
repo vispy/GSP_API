@@ -62,11 +62,13 @@ class DatovizRendererMarkers:
         # Create the datoviz visual if needed
         # =============================================================================
 
+        artist_uuid = f"{viewport.get_uuid()}_{markers.get_uuid()}"
+
         # Create datoviz_visual if they do not exist
-        if markers.get_uuid() not in renderer._dvz_visuals:
+        if artist_uuid not in renderer._dvz_visuals:
             dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
             dvz_markers = renderer.dvz_app.marker(position=dummy_position_numpy)
-            renderer._dvz_visuals[markers.get_uuid()] = dvz_markers
+            renderer._dvz_visuals[artist_uuid] = dvz_markers
             # Add the new visual to the panel
             dvz_panel.add(dvz_markers)
 
@@ -75,7 +77,7 @@ class DatovizRendererMarkers:
         # =============================================================================
 
         # get the datoviz visual
-        dvz_markers = typing.cast(_DvzMarkers, renderer._dvz_visuals[markers.get_uuid()])
+        dvz_markers = typing.cast(_DvzMarkers, renderer._dvz_visuals[artist_uuid])
 
         # set attributes
         dvz_markers.set_position(positions_numpy)
@@ -85,6 +87,13 @@ class DatovizRendererMarkers:
         dvz_markers.set_color(face_colors_numpy)
         dvz_markers.set_linewidth(edge_widths_px_numpy[0])
         dvz_markers.set_edgecolor(edge_colors_numpy[0].tolist())  # datoviz only supports a single edge color
+
+        # sanity check - if edge_widths_px_numpy are not all the same, warn the user
+        if not np.all(edge_widths_px_numpy == edge_widths_px_numpy[0]):
+            warnings.warn("DatovizRendererMarkers: edge widths per marker are not fully supported by datoviz. " "Using the first edge width for all markers.")
+        # sanity check - if edge_colors_numpy are not all the same, warn the user
+        if not np.all(edge_colors_numpy == edge_colors_numpy[0]):
+            warnings.warn("DatovizRendererMarkers: edge colors per marker are not fully supported by datoviz. " "Using the first edge color for all markers.")
 
         # Set mode, shape and aspect
         dvz_markers.set_mode("code")
