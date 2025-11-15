@@ -33,7 +33,7 @@ def main():
     # =============================================================================
     point_count = 200
     group_size = 200
-    group_count = GroupUtils.get_group_count(point_count, group_size)
+    group_count = GroupUtils.get_group_count(vertex_count=point_count, groups=group_size)
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.zeros((point_count, 3), dtype=np.float32)

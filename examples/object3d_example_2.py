@@ -65,7 +65,7 @@ def main():
 
     point_count = positions_numpy.__len__()
     group_size = point_count
-    group_count = GroupUtils.get_group_count(point_count, group_size)
+    group_count = GroupUtils.get_group_count(vertex_count=point_count, groups=group_size)
 
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 

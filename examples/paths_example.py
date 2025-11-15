@@ -82,14 +82,7 @@ def main():
     line_widths_buffer = Bufferx.from_numpy(line_widths_numpy, BufferType.float32)
 
     # Create the Pixels visual and add it to the viewport
-    paths = Paths(
-        positions_buffer,
-        path_sizes_buffer,
-        colors_buffer,
-        line_widths_buffer,
-        CapStyle.ROUND,
-        JoinStyle.ROUND,
-    )
+    paths = Paths(positions_buffer, path_sizes_buffer, colors_buffer, line_widths_buffer, CapStyle.ROUND, JoinStyle.ROUND)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================
@@ -97,9 +90,7 @@ def main():
     # =============================================================================
 
     # Create a camera
-    view_matrix = Bufferx.mat4_identity()
-    projection_matrix = Bufferx.mat4_identity()
-    camera = Camera(view_matrix, projection_matrix)
+    camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
 
     # =============================================================================
     # Render
