@@ -9,6 +9,13 @@ class Canvas:
     __slots__ = ["_uuid", "_width", "_height", "_dpi", "userData"]
 
     def __init__(self, width: int, height: int, dpi: float):
+        """Create a new Canvas object with the given width, height, and dpi.
+
+        Args:
+            width (int): Width of the canvas in pixels.
+            height (int): Height of the canvas in pixels.
+            dpi (float): Dots per inch (DPI) of the canvas.
+        """
         self._uuid: str = UuidUtils.generate_uuid()
         self._width: int = width
         self._height: int = height

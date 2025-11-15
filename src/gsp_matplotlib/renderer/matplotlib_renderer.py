@@ -36,8 +36,10 @@ class MatplotlibRenderer:
         # Store group count per visual UUID
         self._group_count: dict[str, int] = {}
 
-        # Create a figure of 512x512 pixels
-        self._figure = matplotlib.pyplot.figure(figsize=(canvas.get_width() / canvas.get_dpi(), canvas.get_height() / canvas.get_dpi()), dpi=canvas.get_dpi())
+        # Create a figure
+        figure_width = canvas.get_width() / canvas.get_dpi()
+        figure_height = canvas.get_height() / canvas.get_dpi()
+        self._figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=canvas.get_dpi())
         assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
         self._figure.canvas.manager.set_window_title("Matplotlib")
 
