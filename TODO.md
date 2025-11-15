@@ -15,7 +15,7 @@
     - can this be done in userspace
     - possibility: set by class or by instance
 - to get the screen type on macosx
-  - `system_profiler SPDisplaysDataType`   
+  - `system_profiler SPDisplaysDataType`
 - do something multi viewport
 - do serialisation with json
 - do network with http
