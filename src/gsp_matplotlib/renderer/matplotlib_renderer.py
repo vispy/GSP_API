@@ -84,6 +84,8 @@ class MatplotlibRenderer:
             # - https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_model_view_projection
             axes.set_xlim(-1, 1)
             axes.set_ylim(-1, 1)
+            # hide the borders
+            axes.axis("off")
             # store axes for this viewport
             self._axes[viewport.get_uuid()] = axes
 
@@ -113,27 +115,26 @@ class MatplotlibRenderer:
     def _render_visual(self, viewport: Viewport, visual: VisualBase, model_matrix: TransBuf, camera: Camera):
         """Render a single visual in a given viewport using the specified camera."""
 
-        axes = self._axes[viewport.get_uuid()]
         if isinstance(visual, Pixels):
             from gsp_matplotlib.renderer.matplotlib_renderer_pixels import RendererPixels
 
-            RendererPixels.render(self, axes, visual, model_matrix, camera)
+            RendererPixels.render(self, viewport, visual, model_matrix, camera)
         elif isinstance(visual, Points):
             from gsp_matplotlib.renderer.matplotlib_renderer_points import RendererPoints
 
-            RendererPoints.render(self, axes, visual, model_matrix, camera)
+            RendererPoints.render(self, viewport, visual, model_matrix, camera)
         elif isinstance(visual, Paths):
             from gsp_matplotlib.renderer.matplotlib_renderer_paths import RendererPaths
 
-            RendererPaths.render(self, axes, visual, model_matrix, camera)
+            RendererPaths.render(self, viewport, visual, model_matrix, camera)
         elif isinstance(visual, Markers):
             from gsp_matplotlib.renderer.matplotlib_renderer_markers import RendererMarkers
 
-            RendererMarkers.render(self, axes, visual, model_matrix, camera)
+            RendererMarkers.render(self, viewport, visual, model_matrix, camera)
         elif isinstance(visual, Segments):
             from gsp_matplotlib.renderer.matplotlib_renderer_segments import RendererSegments
 
-            RendererSegments.render(self, axes, visual, model_matrix, camera)
+            RendererSegments.render(self, viewport, visual, model_matrix, camera)
         else:
             raise NotImplementedError(f"Rendering for visual type {type(visual)} is not implemented.")
 
