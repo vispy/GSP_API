@@ -7,6 +7,7 @@ import numpy as np
 
 # local imports
 from gsp.core.camera import Camera
+from gsp.core.viewport import Viewport
 from gsp.utils.group_utils import GroupUtils
 from gsp.utils.math_utils import MathUtils
 from gsp.visuals import Markers
@@ -22,7 +23,7 @@ class RendererMarkers:
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
-        axes: matplotlib.axes.Axes,
+        viewport: Viewport,
         markers: Markers,
         model_matrix: TransBuf,
         camera: Camera,
@@ -69,6 +70,7 @@ class RendererMarkers:
         # =============================================================================
 
         if markers.get_uuid() not in renderer._artists:
+            axes = renderer.get_axes_for_viewport(viewport)
             mpl_marker_shape = ConverterUtils.marker_shape_gsp_to_mpl(markers.get_marker_shape())
             mpl_path_collection = axes.scatter([], [], marker=mpl_marker_shape)
             mpl_path_collection.set_visible(False)

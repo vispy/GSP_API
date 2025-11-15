@@ -7,6 +7,7 @@ import numpy as np
 
 # local imports
 from gsp.core.camera import Camera
+from gsp.core.viewport import Viewport
 from gsp.utils.group_utils import GroupUtils
 from gsp.utils.math_utils import MathUtils
 from gsp.visuals import pixels
@@ -22,7 +23,7 @@ class RendererPoints:
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
-        axes: matplotlib.axes.Axes,
+        viewport: Viewport,
         points: Points,
         model_matrix: TransBuf,
         camera: Camera,
@@ -74,6 +75,7 @@ class RendererPoints:
         # =============================================================================
         # Create the artists if needed
         # =============================================================================
+        axes = renderer.get_axes_for_viewport(viewport)
 
         artist_uuid_sample = f"{points.get_uuid()}_group_0"
         if artist_uuid_sample not in renderer._artists:

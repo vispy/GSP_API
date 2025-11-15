@@ -14,6 +14,12 @@
   - how to pass the canvas to the transform chain?
     - can this be done in userspace
     - possibility: set by class or by instance
+- to get the screen type on macosx
+  - `system_profiler SPDisplaysDataType`   
+- do something multi viewport
+- do serialisation with json
+- do network with http
+- do test with expected_screenshots
 - PR datoviz with the whole ./datoviz as pyright 0 errors
   - add a pyright target in justfile
 - test dynamic group in datoviz pixels

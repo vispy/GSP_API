@@ -6,6 +6,7 @@ import matplotlib.artist
 
 # local imports
 from gsp.core.camera import Camera
+from gsp.core.viewport import Viewport
 from gsp.core.visual_base import VisualBase
 from gsp.utils.group_utils import GroupUtils
 from gsp.visuals.pixels import Pixels
@@ -21,7 +22,7 @@ class RendererPixels:
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
-        axes: matplotlib.axes.Axes,
+        viewport: Viewport,
         pixels: Pixels,
         model_matrix: TransBuf,
         camera: Camera,
@@ -71,20 +72,22 @@ class RendererPixels:
         # Create the artists if needed
         # =============================================================================
 
+        artist_uuid_prefix = f"{viewport.get_uuid()}_{pixels.get_uuid()}"
+
         # update stored group count
         old_group_count = None
-        if pixels.get_uuid() in renderer._group_count:
-            old_group_count = renderer._group_count[pixels.get_uuid()]
-        renderer._group_count[pixels.get_uuid()] = group_count
+        if artist_uuid_prefix in renderer._group_count:
+            old_group_count = renderer._group_count[artist_uuid_prefix]
+        renderer._group_count[artist_uuid_prefix] = group_count
 
         # If the group count has changed, destroy old artists
         if old_group_count is not None and old_group_count != group_count:
-            RendererPixels.destroy_artists(renderer, axes, pixels, old_group_count)
+            RendererPixels.destroy_artists(renderer, viewport, pixels, old_group_count)
 
         # Create artists if they do not exist
-        artist_uuid_sample = f"{pixels.get_uuid()}_group_0"
+        artist_uuid_sample = f"{artist_uuid_prefix}_group_0"
         if artist_uuid_sample not in renderer._artists:
-            RendererPixels.create_artists(renderer, axes, pixels, group_count)
+            RendererPixels.create_artists(renderer, viewport, pixels, group_count)
 
         # =============================================================================
         # Update matplotlib for each group
@@ -92,7 +95,7 @@ class RendererPixels:
 
         changed_artists: list[matplotlib.artist.Artist] = []
         for group_index in range(group_count):
-            group_uuid = f"{pixels.get_uuid()}_group_{group_index}"
+            group_uuid = f"{artist_uuid_prefix}_group_{group_index}"
 
             # =============================================================================
             # Get existing artists
@@ -117,7 +120,11 @@ class RendererPixels:
     # =============================================================================
 
     @staticmethod
-    def create_artists(renderer: MatplotlibRenderer, axes: matplotlib.axes.Axes, visual: VisualBase, group_count: int) -> None:
+    def create_artists(renderer: MatplotlibRenderer, viewport: Viewport, visual: VisualBase, group_count: int) -> None:
+        """Create the artists associated with the given visual and group count."""
+
+        axes = renderer.get_axes_for_viewport(viewport)
+        artist_uuid_prefix = f"{viewport.get_uuid()}_{visual.get_uuid()}"
         # compute 1 pixel size in points squared for matplotlib sizing
         assert axes.figure.get_dpi() is not None, "Canvas DPI must be set for proper pixel sizing"
         size_pt = UnitUtils.pixel_to_point(1.0, axes.figure.get_dpi())
@@ -129,18 +136,20 @@ class RendererPixels:
             mpl_path_collection.set_linewidth(0)
             mpl_path_collection.set_visible(False)
             # hide until properly positioned and sized
-            group_uuid = f"{visual.get_uuid()}_group_{group_index}"
+            group_uuid = f"{artist_uuid_prefix}_group_{group_index}"
             renderer._artists[group_uuid] = mpl_path_collection
             axes.add_artist(mpl_path_collection)
 
     @staticmethod
-    def destroy_artists(renderer: MatplotlibRenderer, axes: matplotlib.axes.Axes, visual: VisualBase, group_count: int) -> None:
+    def destroy_artists(renderer: MatplotlibRenderer, viewport: Viewport, visual: VisualBase, group_count: int) -> None:
         """Destroy the artists associated with the given visual and group count.
 
         Trigger a bug in matplotlib where artists are not properly removed from the axes.
         """
+        axes = renderer.get_axes_for_viewport(viewport)
+        artist_uuid_prefix = f"{viewport.get_uuid()}_{visual.get_uuid()}"
         for group_index in range(group_count):
-            group_uuid = f"{visual.get_uuid()}_group_{group_index}"
+            group_uuid = f"{artist_uuid_prefix}_group_{group_index}"
             mpl_path_collection = typing.cast(matplotlib.collections.PathCollection, renderer._artists[group_uuid])
             del renderer._artists[group_uuid]
             mpl_path_collection.remove()

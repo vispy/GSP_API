@@ -50,7 +50,7 @@ def main():
 
     # Edge colors - Create buffer and fill it with a constant
     edge_colors_buffer = Buffer(group_count, BufferType.rgba8)
-    edge_colors_buffer.set_data(Constants.Colors.blue * group_count, 0, group_count)
+    edge_colors_buffer.set_data(Constants.Color.blue * group_count, 0, group_count)
 
     # Edge widths - Create buffer and fill it with a constant
     edge_widths_numpy = np.array([UnitUtils.pixel_to_point(0.5, canvas.get_dpi())] * group_count, dtype=np.float32)

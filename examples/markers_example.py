@@ -46,7 +46,7 @@ def main():
     # face_colors_buffer.set_data(Constants.Colors.transparent * marker_count, 0, marker_count)
 
     edge_colors_buffer = Buffer(marker_count, BufferType.rgba8)
-    edge_colors_buffer.set_data(Constants.Colors.black * marker_count, 0, marker_count)
+    edge_colors_buffer.set_data(Constants.Color.black * marker_count, 0, marker_count)
 
     edge_widths_numpy = np.full(marker_count, 1.0).astype(np.float32)
     edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)

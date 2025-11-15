@@ -45,7 +45,7 @@ def main():
 
     # all pixels red - Create buffer and fill it with a constant
     colors_buffer = Buffer(group_count, BufferType.rgba8)
-    colors_buffer.set_data(Constants.Colors.red + Constants.Colors.green + Constants.Colors.blue + Constants.Colors.cyan, 0, 4)
+    colors_buffer.set_data(Constants.Color.red + Constants.Color.green + Constants.Color.blue + Constants.Color.cyan, 0, 4)
 
     # Create the Pixels visual and add it to the viewport
     pixels = Pixels(positions_buffer, colors_buffer, groups)

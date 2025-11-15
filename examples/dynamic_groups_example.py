@@ -43,7 +43,7 @@ def main():
 
     # all pixels red - Create buffer and fill it with a constant
     colors_buffer = Buffer(group_count, BufferType.rgba8)
-    colors_buffer.set_data(Constants.Colors.red + Constants.Colors.green, 0, 1)
+    colors_buffer.set_data(Constants.Color.red + Constants.Color.green, 0, 1)
 
     # Create the Pixels visual and add it to the viewport
     pixels = Pixels(positions_buffer, colors_buffer, group_size)
@@ -75,7 +75,7 @@ def main():
 
     if True:
         colors_buffer = Buffer(1, BufferType.rgba8)
-        colors_buffer.set_data(Constants.Colors.red, 0, 1)
+        colors_buffer.set_data(Constants.Color.red, 0, 1)
         vertex_count = TransBufUtils.to_buffer(pixels.get_positions()).get_count()
         groups = [vertex_count]
         pixels.set_attributes(colors=colors_buffer, groups=groups)
@@ -87,7 +87,7 @@ def main():
 
     if True:
         colors_buffer = Buffer(2, BufferType.rgba8)
-        colors_buffer.set_data(Constants.Colors.red + Constants.Colors.green, 0, 2)
+        colors_buffer.set_data(Constants.Color.red + Constants.Color.green, 0, 2)
         groups = [
             [i for i in range(len(positions_numpy)) if positions_numpy[i][1] > 0],
             [i for i in range(len(positions_numpy)) if positions_numpy[i][1] <= 0],
@@ -106,13 +106,13 @@ def main():
         print(f"group_config: {group_config}")
         if group_config == 0:
             colors_buffer = Buffer(1, BufferType.rgba8)
-            colors_buffer.set_data(Constants.Colors.red, 0, 1)
+            colors_buffer.set_data(Constants.Color.red, 0, 1)
             vertex_count = TransBufUtils.to_buffer(pixels.get_positions()).get_count()
             groups = [vertex_count]
             pixels.set_attributes(colors=colors_buffer, groups=groups)
         elif group_config == 1:
             colors_buffer = Buffer(2, BufferType.rgba8)
-            colors_buffer.set_data(Constants.Colors.red + Constants.Colors.green, 0, 2)
+            colors_buffer.set_data(Constants.Color.red + Constants.Color.green, 0, 2)
             groups = [
                 [i for i in range(len(positions_numpy)) if positions_numpy[i][1] > 0],
                 [i for i in range(len(positions_numpy)) if positions_numpy[i][1] <= 0],

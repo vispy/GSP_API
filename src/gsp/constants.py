@@ -5,7 +5,7 @@ from .types.buffer_type import BufferType
 class Constants:
     """Common constants like colors."""
 
-    class Colors:
+    class Color:
         """Common colors as RGBA bytearrays."""
 
         white = bytearray([255, 255, 255, 255])

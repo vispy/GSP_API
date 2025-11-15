@@ -7,6 +7,7 @@ import numpy as np
 
 # local imports
 from gsp.core.camera import Camera
+from gsp.core.viewport import Viewport
 from gsp.utils.math_utils import MathUtils
 from gsp.visuals.paths import Paths
 from gsp.utils.transbuf_utils import TransBufUtils
@@ -21,7 +22,7 @@ class RendererPaths:
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
-        axes: matplotlib.axes.Axes,
+        viewport: Viewport,
         paths: Paths,
         model_matrix: TransBuf,
         camera: Camera,
@@ -93,6 +94,7 @@ class RendererPaths:
             mpl_line_collection.set_visible(False)
             # hide until properly positioned and sized
             renderer._artists[paths.get_uuid()] = mpl_line_collection
+            axes = renderer.get_axes_for_viewport(viewport)
             axes.add_artist(mpl_line_collection)
 
         # =============================================================================

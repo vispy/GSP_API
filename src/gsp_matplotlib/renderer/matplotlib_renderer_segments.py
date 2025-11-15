@@ -8,6 +8,7 @@ import numpy as np
 # local imports
 from gsp.core.camera import Camera
 from gsp.utils.math_utils import MathUtils
+from gsp.core.viewport import Viewport
 from gsp.utils.transbuf_utils import TransBufUtils
 from gsp.types.transbuf import TransBuf
 from gsp.types.buffer_type import BufferType
@@ -21,7 +22,7 @@ class RendererSegments:
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
-        axes: matplotlib.axes.Axes,
+        viewport: Viewport,
         segments: Segments,
         model_matrix: TransBuf,
         camera: Camera,
@@ -70,6 +71,7 @@ class RendererSegments:
             mpl_line_collection.set_visible(False)
             # hide until properly positioned and sized
             renderer._artists[segments.get_uuid()] = mpl_line_collection
+            axes = renderer.get_axes_for_viewport(viewport)
             axes.add_artist(mpl_line_collection)
 
         # =============================================================================
