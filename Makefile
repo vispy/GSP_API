@@ -28,3 +28,14 @@ stubs_clean: ## Remove all generated type stubs
 stubs_gsp: stubs_clean ## Generate type stubs for src/gsp
 	stubgen -p gsp -o ./stubs/
 	stubgen -p gsp_matplotlib -o ./stubs/
+
+###############################################################################
+
+network_server_dev: network_server_kill ## Run the network server in development mode
+	watchmedo auto-restart -d ./src -d ./tools -p="*.py" -R  -- python ./src/gsp_network/tools/network_server.py
+
+network_server_kill: ## Kill any process using port 5000 (commonly used for network servers)
+	python3 ./tools/network_server_kill.py
+	
+network_server: ## Run the network renderer server
+	python3 ./src/gsp_network/tools/network_server.py

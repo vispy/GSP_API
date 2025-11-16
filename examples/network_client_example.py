@@ -1,0 +1,74 @@
+# stdlib imports
+import os
+import pathlib
+import json
+
+# pip imports
+import numpy as np
+
+# local imports
+from gsp.core import Canvas, Viewport
+from gsp.visuals import Pixels
+from gsp.types import Buffer, BufferType
+from gsp.core import Camera
+from gsp_extra.bufferx import Bufferx
+from gsp.utils.group_utils import GroupUtils
+from gsp_network.renderer.network_renderer import NetworkRenderer
+
+
+def main():
+    # fix random seed for reproducibility
+    np.random.seed(0)
+
+    # Create a canvas
+    canvas = Canvas(100, 100, 96.0)
+
+    # Create a viewport and add it to the canvas
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+
+    # =============================================================================
+    # Add random points
+    # - various ways to create Buffers
+    # =============================================================================
+
+    point_count = 1_000
+    group_size = point_count
+    group_count = GroupUtils.get_group_count(point_count, groups=group_size)
+
+    # Random positions - Create buffer from numpy array
+    positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
+    positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+    # all pixels red - Create buffer and fill it with a constant
+    colors_buffer = Buffer(group_count, BufferType.rgba8)
+    colors_buffer.set_data(bytearray([255, 0, 0, 255]) * group_count, 0, group_count)
+
+    # Create the Pixels visual and add it to the viewport
+    pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
+
+    # =============================================================================
+    # Render the canvas
+    # =============================================================================
+
+    model_matrix = Bufferx.mat4_identity()
+    # Create a camera
+    camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+    # =============================================================================
+    # Render the parsed scene
+    # =============================================================================
+
+    # Create a renderer and render the scene
+    renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000")
+    rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
+
+    # Save the rendered image to a PNG file
+    output_basename = f"{pathlib.Path(__file__).stem}.png"
+    output_path = pathlib.Path(__file__).parent / "output" / output_basename
+    with open(output_path, "wb") as file_writer:
+        file_writer.write(rendered_image)
+    print(f"Saved rendered image to: {output_path.relative_to(pathlib.Path.cwd())}")
+
+
+if __name__ == "__main__":
+    main()
