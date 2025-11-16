@@ -1,10 +1,9 @@
 # stdlib imports
-from typing import Sequence, Any
+from typing import Sequence
 import typing
 
 # pip imports
 import base64
-import pydantic_core
 
 # local imports
 from gsp.types.serializer_base import SerializerBase
