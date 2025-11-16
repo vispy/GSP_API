@@ -1,7 +1,7 @@
 # stdlib imports
 import os
 from typing import Sequence
-import typing
+import pathlib
 
 # pip imports
 import numpy as np
@@ -92,10 +92,11 @@ class DatovizRenderer(RendererBase):
         rendered_image = b""
         if return_image:
             assert image_format in ["png"], f"Unsupported image format: {image_format}"
-            image_path = "offscreen_python.png"
-            self.dvz_app.screenshot(self.dvz_figure, image_path)
+            image_path = pathlib.Path(__file__).parent / "_datoviz_offscreen_python.png"
+            self.dvz_app.screenshot(self.dvz_figure, str(image_path))
             with open(image_path, "rb") as file_reader:
                 rendered_image = file_reader.read()
+            image_path.unlink()
 
         return rendered_image
 

@@ -5,15 +5,17 @@
 - to get the screen type on macosx
   - `system_profiler SPDisplaysDataType`
   - `system_profiler SPHardwareDataType`
-- do something multi viewport
-- do serialisation with json
-- do network with http
+- DONE do something multi viewport
+- DONE do serialisation with json
+- DONE do network with http
 - do test with expected_screenshots
 - do a 'big tester' example
   - something with arguments which can be changed from command line
   - thus it can be intrumented to cover all the cases in combinations
   - multi-viewports
-  - all visuals
+  - with and without serialisation
+  - with and without http server
+  - all visuals - various scenes
   - all renderers
   - using transform or buffer as input
 - PR datoviz with the whole ./datoviz as pyright 0 errors

@@ -1,5 +1,6 @@
 # stdlib imports
 import os
+import pathlib
 
 # pip imports
 import numpy as np
@@ -61,10 +62,19 @@ def main():
     # Render
     # =============================================================================
 
+    GSP_RENDERER = os.environ.get("GSP_RENDERER", "datoviz")
+
     # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
-    renderer.render([viewport], [pixels], [model_matrix], [camera])
-    renderer.show()
+    renderer = MatplotlibRenderer(canvas) if GSP_RENDERER == "matplotlib" else DatovizRenderer(canvas)
+    rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
+    # renderer.show()
+
+    # Save to file
+    image_basename = f"{pathlib.Path(__file__).stem}_{GSP_RENDERER}.png"
+    image_path = pathlib.Path(__file__).parent / "output" / image_basename
+    with open(image_path, "wb") as file_writer:
+        file_writer.write(rendered_image)
+    print(f"Rendered image saved to: {image_path}")
 
 
 if __name__ == "__main__":
