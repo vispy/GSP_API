@@ -6,12 +6,12 @@ from ..utils.uuid_utils import UuidUtils
 
 
 class Viewport:
-    __slots__ = ["_uuid", "_origin_x", "_origin_y", "_width", "_height", "userData"]
+    __slots__ = ["_uuid", "_x", "_y", "_width", "_height", "userData"]
 
-    def __init__(self, origin_x: int, origin_y: int, width: int, height: int):
+    def __init__(self, x: int, y: int, width: int, height: int):
         self._uuid: str = UuidUtils.generate_uuid()
-        self._origin_x: int = origin_x
-        self._origin_y: int = origin_y
+        self._x: int = x
+        self._y: int = y
         self._width: int = width
         self._height: int = height
         self.userData: dict[str, Any] = {}
@@ -19,11 +19,11 @@ class Viewport:
     def get_uuid(self) -> str:
         return self._uuid
 
-    def get_origin_x(self) -> int:
-        return self._origin_x
+    def get_x(self) -> int:
+        return self._x
 
-    def get_origin_y(self) -> int:
-        return self._origin_y
+    def get_y(self) -> int:
+        return self._y
 
     def get_width(self) -> int:
         return self._width

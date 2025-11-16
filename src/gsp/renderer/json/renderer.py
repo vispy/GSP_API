@@ -4,7 +4,7 @@ from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.core.visual_base import VisualBase
 from gsp.visuals.pixels import Pixels
-import gsp.renderers.json.gsp_messages_pydantic as gsp_messages
+import gsp.renderer.json.gsp_messages_pydantic as gsp_messages
 
 
 class JsonRenderer:
@@ -35,8 +35,8 @@ class JsonRenderer:
                 message_id=self.get_message_id(),
                 viewport_uuid=viewport._uuid,
                 canvas_uuid=self.canvas._uuid,
-                x=viewport.get_origin_x(),
-                y=viewport.get_origin_y(),
+                x=viewport.get_x(),
+                y=viewport.get_y(),
                 width=viewport._width,
                 height=viewport._height,
             )

@@ -1,5 +1,5 @@
 from . import core
-from . import renderers
+from . import renderer
 from . import transforms
 from . import types
 from . import visuals

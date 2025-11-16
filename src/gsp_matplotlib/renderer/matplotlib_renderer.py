@@ -23,9 +23,10 @@ from gsp.visuals.points import Points
 from gsp.visuals.markers import Markers
 from gsp.visuals.paths import Paths
 from gsp.visuals.segments import Segments
+from gsp.renderer.renderer_base import RendererBase
 
 
-class MatplotlibRenderer:
+class MatplotlibRenderer(RendererBase):
 
     def __init__(self, canvas: Canvas):
         self.canvas = canvas
@@ -76,8 +77,8 @@ class MatplotlibRenderer:
             if viewport.get_uuid() in self._axes:
                 continue
             axes_rect = (
-                viewport.get_origin_x() / self.canvas.get_width(),
-                viewport.get_origin_y() / self.canvas.get_height(),
+                viewport.get_x() / self.canvas.get_width(),
+                viewport.get_y() / self.canvas.get_height(),
                 viewport.get_width() / self.canvas.get_width(),
                 viewport.get_height() / self.canvas.get_height(),
             )

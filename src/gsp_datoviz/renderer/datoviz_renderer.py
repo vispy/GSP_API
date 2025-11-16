@@ -26,9 +26,10 @@ from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
 from gsp.visuals.paths import Paths
 from gsp.visuals.segments import Segments
+from gsp.renderer.renderer_base import RendererBase
 
 
-class DatovizRenderer:
+class DatovizRenderer(RendererBase):
     def __init__(self, canvas: Canvas):
         self._canvas = canvas
         self.dvz_app = dvz.App(background="white")
@@ -141,7 +142,7 @@ class DatovizRenderer:
 
         # create the datoviz panel
         dvz_panel = self.dvz_figure.panel(
-            offset=(viewport.get_origin_x(), viewport.get_origin_y()),
+            offset=(viewport.get_x(), viewport.get_y()),
             size=(viewport.get_width(), viewport.get_height()),
         )
 
