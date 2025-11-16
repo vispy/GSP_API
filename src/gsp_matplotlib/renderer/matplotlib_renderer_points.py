@@ -60,60 +60,42 @@ class RendererPoints:
         edge_widths_buffer = TransBufUtils.to_buffer(points.get_edge_widths())
 
         # Convert buffers to numpy arrays
-        sizes_numpy = Bufferx.to_numpy(sizes_buffer)
+        sizes_numpy = Bufferx.to_numpy(sizes_buffer).flatten()
         face_colors_numpy = Bufferx.to_numpy(face_colors_buffer) / 255.0  # normalize to [0, 1] range
         edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer) / 255.0  # normalize to [0, 1] range
         edge_widths_numpy = Bufferx.to_numpy(edge_widths_buffer).flatten()
-
-        # =============================================================================
-        #   Compute indices_per_group for groups depending on the type of groups
-        # =============================================================================
-
-        indices_per_group = GroupUtils.compute_indices_per_group(vertices_numpy.__len__(), points.get_groups())
-        group_count = GroupUtils.get_group_count(vertices_numpy.__len__(), points.get_groups())
 
         # =============================================================================
         # Create the artists if needed
         # =============================================================================
 
         artist_uuid = f"{viewport.get_uuid()}_{points.get_uuid()}"
-
-        artist_uuid_sample = f"{artist_uuid}_group_0"
-        if artist_uuid_sample not in renderer._artists:
-            for group_index in range(group_count):
-                axes = renderer.get_axes_for_viewport(viewport)
-                mpl_path_collection = axes.scatter([], [])
-                mpl_path_collection.set_visible(False)
-                # hide until properly positioned and sized
-                group_uuid = f"{artist_uuid}_group_{group_index}"
-                renderer._artists[group_uuid] = mpl_path_collection
-                axes.add_artist(mpl_path_collection)
+        if artist_uuid not in renderer._artists:
+            axes = renderer.get_axes_for_viewport(viewport)
+            mpl_path_collection = axes.scatter([], [])
+            mpl_path_collection.set_visible(False)
+            # hide until properly positioned and sized
+            renderer._artists[artist_uuid] = mpl_path_collection
+            axes.add_artist(mpl_path_collection)
 
         # =============================================================================
-        # Update matplotlib for each group
+        # Get existing artists
         # =============================================================================
 
-        changed_artists: list[matplotlib.artist.Artist] = []
-        for group_index in range(group_count):
-            group_uuid = f"{artist_uuid}_group_{group_index}"
+        mpl_path_collection = typing.cast(matplotlib.collections.PathCollection, renderer._artists[artist_uuid])
+        mpl_path_collection.set_visible(True)
 
-            # =============================================================================
-            # Get existing artists
-            # =============================================================================
+        # =============================================================================
+        # Update artists
+        # =============================================================================
 
-            mpl_path_collection = typing.cast(matplotlib.collections.PathCollection, renderer._artists[group_uuid])
-            mpl_path_collection.set_visible(True)
-            changed_artists.append(mpl_path_collection)
-
-            # =============================================================================
-            # Update artists
-            # =============================================================================
-
-            mpl_path_collection.set_offsets(offsets=vertices_2d[indices_per_group[group_index]])
-            mpl_path_collection.set_sizes(typing.cast(list, sizes_numpy[group_index]))
-            mpl_path_collection.set_facecolor(typing.cast(list, face_colors_numpy[group_index]))
-            mpl_path_collection.set_edgecolor(typing.cast(list, edge_colors_numpy[group_index]))
-            mpl_path_collection.set_linewidth(typing.cast(list, edge_widths_numpy[group_index]))
+        mpl_path_collection.set_offsets(offsets=vertices_2d)
+        mpl_path_collection.set_sizes(typing.cast(list, sizes_numpy))
+        mpl_path_collection.set_facecolor(typing.cast(list, face_colors_numpy))
+        mpl_path_collection.set_edgecolor(typing.cast(list, edge_colors_numpy))
+        mpl_path_collection.set_linewidth(typing.cast(list, edge_widths_numpy))
 
         # Return the list of artists created/updated
+        changed_artists: list[matplotlib.artist.Artist] = []
+        changed_artists.append(mpl_path_collection)
         return changed_artists

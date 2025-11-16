@@ -32,49 +32,44 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
     point_count = 100
-    group_size = point_count
-    group_count = GroupUtils.get_group_count(point_count, groups=group_size)
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
     # Sizes - Create buffer and set data with numpy array
-    sizes_numpy = np.array([40] * group_count, dtype=np.float32)
+    sizes_numpy = np.array([40] * point_count, dtype=np.float32)
     sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
 
     # all pixels red - Create buffer and fill it with a constant
-    face_colors_buffer = Buffer(group_count, BufferType.rgba8)
-    face_colors_buffer.set_data(bytearray([255, 0, 0, 255]) * group_count, 0, group_count)
+    face_colors_buffer = Buffer(point_count, BufferType.rgba8)
+    face_colors_buffer.set_data(bytearray([255, 0, 0, 255]) * point_count, 0, point_count)
 
     # Edge colors - Create buffer and fill it with a constant
-    edge_colors_buffer = Buffer(group_count, BufferType.rgba8)
-    edge_colors_buffer.set_data(Constants.Color.blue * group_count, 0, group_count)
+    edge_colors_buffer = Buffer(point_count, BufferType.rgba8)
+    edge_colors_buffer.set_data(Constants.Color.blue * point_count, 0, point_count)
 
     # Edge widths - Create buffer and fill it with a constant
-    edge_widths_numpy = np.array([UnitUtils.pixel_to_point(1, canvas.get_dpi())] * group_count, dtype=np.float32)
+    edge_widths_numpy = np.array([UnitUtils.pixel_to_point(1, canvas.get_dpi())] * point_count, dtype=np.float32)
     edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
     # Create the Points visual and add it to the viewport
-    points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer, groups=group_size)
-    model_matrix = Bufferx.mat4_identity()
+    points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
 
     # =============================================================================
     # Render the canvas
     # =============================================================================
 
+    model_matrix = Bufferx.mat4_identity()
     # Create a camera
-    view_matrix = Bufferx.mat4_identity()
-    projection_matrix = Buffer(1, BufferType.mat4)
-    projection_matrix.set_data(bytearray(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]], dtype=np.float32).tobytes()), 0, 1)
-    camera = Camera(view_matrix, projection_matrix)
+    camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
 
     # =============================================================================
     # Render
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
+    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "datoviz") == "matplotlib" else DatovizRenderer(canvas)
     renderer.render([viewport], [points], [model_matrix], [camera])
     renderer.show()
 

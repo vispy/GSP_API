@@ -50,69 +50,41 @@ class DatovizRendererPoints:
         diameter_px_numpy = radius_px_numpy * 2.0 * UnitUtils.device_pixel_ratio()
 
         # =============================================================================
-        # Compute indices_per_group for groups depending on the type of groups
-        # =============================================================================
-
-        indices_per_group = GroupUtils.compute_indices_per_group(vertices_numpy.__len__(), points.get_groups())
-        group_count = GroupUtils.get_group_count(vertices_numpy.__len__(), points.get_groups())
-
-        # =============================================================================
         # Create the datoviz visual if needed
         # =============================================================================
 
-        artist_uuid_prefix = f"{viewport.get_uuid()}_{points.get_uuid()}"
-
-        # update stored group count
-        old_group_count = None
-        if artist_uuid_prefix in renderer._group_count:
-            old_group_count = renderer._group_count[artist_uuid_prefix]
-        renderer._group_count[artist_uuid_prefix] = group_count
-
-        # If the group count has changed, destroy old datoviz_visuals
-        if old_group_count is not None and old_group_count != group_count:
-            for group_index in range(old_group_count):
-                group_uuid = f"{artist_uuid_prefix}_group_{group_index}"
-                if group_uuid in renderer._dvz_visuals:
-                    dvz_points = typing.cast(_DvzPoints, renderer._dvz_visuals[group_uuid])
-                    dvz_panel.remove(dvz_points)
-                    del renderer._dvz_visuals[group_uuid]
+        artist_uuid = f"{viewport.get_uuid()}_{points.get_uuid()}"
 
         # Create datoviz_visual if they do not exist
-        sample_group_uuid = f"{artist_uuid_prefix}_group_0"
-        if sample_group_uuid not in renderer._dvz_visuals:
-            for group_index in range(group_count):
-                dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
-                dummy_color_numpy = np.array([[255, 0, 0, 255]], dtype=np.uint8).reshape((-1, 4))
-                dummy_size_numpy = np.array([1], dtype=np.float32).reshape((-1, 1)).reshape(-1)
-                dvz_points = renderer.dvz_app.point(
-                    position=dummy_position_numpy,
-                    color=dummy_color_numpy,
-                    size=dummy_size_numpy,
-                )
-                group_uuid = f"{artist_uuid_prefix}_group_{group_index}"
-                renderer._dvz_visuals[group_uuid] = dvz_points
-                # Add the new visual to the panel
-                dvz_panel.add(dvz_points)
+        if artist_uuid not in renderer._dvz_visuals:
+            dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
+            dummy_color_numpy = np.array([[255, 0, 0, 255]], dtype=np.uint8).reshape((-1, 4))
+            dummy_size_numpy = np.array([1], dtype=np.float32).reshape((-1, 1)).reshape(-1)
+            dvz_points = renderer.dvz_app.point(
+                position=dummy_position_numpy,
+                color=dummy_color_numpy,
+                size=dummy_size_numpy,
+            )
+            renderer._dvz_visuals[artist_uuid] = dvz_points
+            # Add the new visual to the panel
+            dvz_panel.add(dvz_points)
 
         # =============================================================================
         # Update all attributes
         # =============================================================================
 
-        for group_index in range(group_count):
-            group_uuid = f"{artist_uuid_prefix}_group_{group_index}"
+        # get the datoviz visual
+        dvz_points = typing.cast(_DvzPoints, renderer._dvz_visuals[artist_uuid])
 
-            # get the datoviz visual
-            dvz_points = typing.cast(_DvzPoints, renderer._dvz_visuals[group_uuid])
+        # set attributes
+        group_vertices = vertices_numpy
+        dvz_points.set_position(group_vertices)
 
-            # set attributes
-            group_vertices = vertices_numpy[indices_per_group[group_index]]
-            dvz_points.set_position(group_vertices)
+        # set group_sizes
+        group_sizes = np.tile(diameter_px_numpy, group_vertices.__len__()).reshape((-1, 1))
+        group_sizes = group_sizes.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
+        dvz_points.set_size(group_sizes)
 
-            # set group_sizes
-            group_sizes = np.tile(diameter_px_numpy[group_index], group_vertices.__len__()).reshape((-1, 1))
-            group_sizes = group_sizes.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
-            dvz_points.set_size(group_sizes)
-
-            # set group_colors
-            group_colors = np.tile(face_colors_numpy[group_index], group_vertices.__len__()).reshape((-1, 4))
-            dvz_points.set_color(group_colors)
+        # set group_colors
+        group_colors = np.tile(face_colors_numpy, group_vertices.__len__()).reshape((-1, 4))
+        dvz_points.set_color(group_colors)
