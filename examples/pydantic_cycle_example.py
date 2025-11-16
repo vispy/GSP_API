@@ -93,10 +93,10 @@ def main():
     # Render the parsed scene
     # =============================================================================
 
-    # # Create a renderer and render the scene
-    # renderer = MatplotlibRenderer(parsed_canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(parsed_canvas)
-    # renderer.render(parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras)
-    # renderer.show()
+    # Create a renderer and render the scene
+    renderer = MatplotlibRenderer(parsed_canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(parsed_canvas)
+    renderer.render(parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras)
+    renderer.show()
 
 
 if __name__ == "__main__":

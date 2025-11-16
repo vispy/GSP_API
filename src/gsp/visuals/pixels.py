@@ -18,6 +18,9 @@ class Pixels(VisualBase):
 
         self.check_attributes()
 
+    def __repr__(self) -> str:
+        return f"Pixels(positions={self.__positions}, colors={self.__colors}, groups={self.__groups})"
+
     # =============================================================================
     # get/set attributes
     # =============================================================================

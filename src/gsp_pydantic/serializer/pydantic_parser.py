@@ -11,6 +11,7 @@ import pydantic_core
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.types.visual_base import VisualBase
+from gsp.visuals.pixels import Pixels
 from gsp.types.transbuf import TransBuf
 from gsp.types.buffer import Buffer
 from gsp.types.buffer_type import BufferType
@@ -60,7 +61,10 @@ class PydanticParser:
         # =============================================================================
         # Parse Pydantic Visuals
         # =============================================================================
-        visuals = []  # Placeholder implementation
+        visuals: list[VisualBase] = []  # Placeholder implementation
+        for pydantic_visual in pydantic_scene.visuals:
+            visual = PydanticParser._pydantic_to_visual(pydantic_visual)
+            visuals.append(visual)
 
         # =============================================================================
         # Parse Pydantic Model Matrices
@@ -85,6 +89,19 @@ class PydanticParser:
         # Return the renderer arguments
         # =============================================================================
         return canvas, viewports, visuals, model_matrices, cameras
+
+    @staticmethod
+    def _pydantic_to_visual(pydantic_visual: PydanticVisual) -> VisualBase:
+        if pydantic_visual.type == "pixels":
+            pydantic_pixels = typing.cast(PydanticPixels, pydantic_visual.visual)
+            positions = PydanticParser._pydantic_to_transbuf(pydantic_pixels.positions)
+            colors = PydanticParser._pydantic_to_transbuf(pydantic_pixels.colors)
+            groups = pydantic_pixels.groups
+            pixels = Pixels(positions, colors, groups)
+            pixels._uuid = pydantic_pixels.uuid
+            return pixels
+        else:
+            raise ValueError(f"Unknown PydanticVisual type: {pydantic_visual.type}")
 
     @staticmethod
     def _pydantic_to_transbuf(pydantic_transbuf: PydanticTransBuf) -> TransBuf:
