@@ -1,10 +1,7 @@
-- API design principles
-  - "what are the good design principle to apply when designing an library API"
-  - https://chatgpt.com/c/69162470-7220-8332-9df8-a928b77f0528
-  - https://gemini.google.com/app/8fe8f99d920a68b5
-- to get the screen type on macosx
-  - `system_profiler SPDisplaysDataType`
-  - `system_profiler SPHardwareDataType`
+- gsp_network to specify the scene renderer on a remote server
+  - easier to test
+- datoviz network doesnt work as it is unable to take screenshots
+- pdf/svg output for matplotlib
 - DONE do something multi viewport
 - DONE do serialisation with json
 - DONE do network with http
@@ -18,6 +15,13 @@
   - all visuals - various scenes
   - all renderers
   - using transform or buffer as input
+- API design principles
+  - "what are the good design principle to apply when designing an library API"
+  - https://chatgpt.com/c/69162470-7220-8332-9df8-a928b77f0528
+  - https://gemini.google.com/app/8fe8f99d920a68b5
+- to get the screen type on macosx
+  - `system_profiler SPDisplaysDataType`
+  - `system_profiler SPHardwareDataType`
 - PR datoviz with the whole ./datoviz as pyright 0 errors
   - add a pyright target in justfile
 - test dynamic group in datoviz pixels

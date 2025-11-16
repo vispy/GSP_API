@@ -33,8 +33,12 @@ class BigTesterBoilerplate:
 
 class BigTesterCanvas:
     @staticmethod
-    def create_canvas() -> Canvas:
-        canvas = Canvas(512, 512, 96.0)
+    def create_canvas(size: int = 100, dpi: float = 96.0) -> Canvas:
+        scale = 3
+        scaled_width = int(size * scale)
+        scaled_height = int(size * scale)
+        scaled_dpi = dpi * scale
+        canvas = Canvas(scaled_width, scaled_height, scaled_dpi)
         return canvas
 
 
@@ -54,7 +58,7 @@ class BigTesterViewport:
 class BigTesterVisuals:
     @staticmethod
     def create_random_pixels(dpi: float = 96.0) -> VisualBase:
-        point_count = 1_000
+        point_count = 10_000
         group_size = point_count  # one group per point
         group_count = GroupUtils.get_group_count(point_count, groups=group_size)
 
@@ -64,7 +68,7 @@ class BigTesterVisuals:
 
         # all pixels red - Create buffer and fill it with a constant
         colors_buffer = Buffer(group_count, BufferType.rgba8)
-        colors_buffer.set_data(bytearray([255, 0, 0, 255]) * group_count, 0, group_count)
+        colors_buffer.set_data(Constants.Color.cyan * group_count, 0, group_count)
 
         # Create the Pixels visual and add it to the viewport
         pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
@@ -72,33 +76,58 @@ class BigTesterVisuals:
 
     @staticmethod
     def create_random_points(dpi: float = 96.0) -> VisualBase:
-        point_count = 1_000
-        group_size = point_count
-        group_count = GroupUtils.get_group_count(point_count, groups=group_size)
+        point_count = 20
 
         # Random positions - Create buffer from numpy array
         positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
         positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
         # Sizes - Create buffer and set data with numpy array
-        sizes_numpy = np.array([40] * group_count, dtype=np.float32)
+        sizes_numpy = np.array([5] * point_count, dtype=np.float32)
         sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
 
         # all pixels red - Create buffer and fill it with a constant
-        face_colors_buffer = Buffer(group_count, BufferType.rgba8)
-        face_colors_buffer.set_data(bytearray([255, 0, 0, 255]) * group_count, 0, group_count)
+        face_colors_buffer = Buffer(point_count, BufferType.rgba8)
+        face_colors_buffer.set_data(Constants.Color.green * point_count, 0, point_count)
 
         # Edge colors - Create buffer and fill it with a constant
-        edge_colors_buffer = Buffer(group_count, BufferType.rgba8)
-        edge_colors_buffer.set_data(Constants.Color.blue * group_count, 0, group_count)
+        edge_colors_buffer = Buffer(point_count, BufferType.rgba8)
+        edge_colors_buffer.set_data(Constants.Color.blue * point_count, 0, point_count)
 
         # Edge widths - Create buffer and fill it with a constant
-        edge_widths_numpy = np.array([UnitUtils.pixel_to_point(1, dpi)] * group_count, dtype=np.float32)
+        edge_widths_numpy = np.array([UnitUtils.pixel_to_point(1, dpi)] * point_count, dtype=np.float32)
         edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
         # Create the Points visual and add it to the viewport
-        points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer, groups=group_size)
+        points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
         return points
+
+    @staticmethod
+    def create_spiral_pixels() -> VisualBase:
+        def generate_pixels(gsp_color: bytearray) -> Pixels:
+            point_count = 1_000
+            group_size = point_count
+            group_count = GroupUtils.get_group_count(point_count, groups=group_size)
+
+            # Random positions - Create buffer from numpy array
+            positions_angle = np.linspace(0, 4 * np.pi, point_count)
+            positions_radius = np.linspace(0.0, 1.0, point_count)
+            positions_x = positions_radius * np.sin(positions_angle)
+            positions_y = positions_radius * np.cos(positions_angle)
+            positions_z = np.zeros(point_count)
+            positions_numpy = np.vstack((positions_x, positions_y, positions_z)).T.astype(np.float32)
+            positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+            # all pixels red - Create buffer and fill it with a constant
+            colors_buffer = Buffer(group_count, BufferType.rgba8)
+            colors_buffer.set_data(gsp_color * group_count, 0, group_count)
+
+            # Create the Pixels visual and add it to the viewport
+            pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
+            return pixels
+
+        pixels = generate_pixels(gsp_color=Constants.Color.red)
+        return pixels
 
     @staticmethod
     def create_random_segments() -> VisualBase:
@@ -127,7 +156,7 @@ class BigTesterVisuals:
 
             return positions_buffer, colors_buffer, line_widths_buffer
 
-        positions_buffer, colors_buffer, line_widths_buffer = generate_data(line_count=10, line_width_max=30.0, color_map_name="plasma")
+        positions_buffer, colors_buffer, line_widths_buffer = generate_data(line_count=10, line_width_max=8.0, color_map_name="plasma")
 
         # =============================================================================
         #
@@ -150,8 +179,7 @@ class BigTesterCamera:
 
 class BigTesterRenderer:
     @staticmethod
-    def create_renderer(canvas: Canvas, renderer_name: Literal["matplotlib", "datoviz"] | None = None) -> MatplotlibRenderer | DatovizRenderer:
-        renderer_name = renderer_name if renderer_name is not None else "matplotlib"
+    def create_renderer(canvas: Canvas, renderer_name: Literal["matplotlib", "datoviz"]) -> MatplotlibRenderer | DatovizRenderer:
         if renderer_name == "matplotlib":
             renderer = MatplotlibRenderer(canvas)
             return renderer
@@ -163,20 +191,12 @@ class BigTesterRenderer:
 
     @staticmethod
     def render_scene(
-        canvas: Canvas | None = None,
-        renderer: MatplotlibRenderer | DatovizRenderer | None = None,
-        viewports: list[Viewport] | None = None,
-        visuals: list[VisualBase] | None = None,
-        model_matrices: list[Buffer] | None = None,
-        cameras: list[Camera] | None = None,
+        renderer: MatplotlibRenderer | DatovizRenderer,
+        viewports: list[Viewport],
+        visuals: list[VisualBase],
+        model_matrices: list[Buffer],
+        cameras: list[Camera],
     ) -> None:
-        canvas = canvas if canvas is not None else BigTesterCanvas.create_canvas()
-        renderer = renderer if renderer is not None else BigTesterRenderer.create_renderer(canvas, renderer_name="matplotlib")
-        viewports = viewports if viewports is not None else BigTesterViewport.create_viewports(canvas, 1, 1)
-        visuals = visuals if visuals is not None else []
-        model_matrices = model_matrices if model_matrices is not None else [BigTesterCamera.create_model_matrix()] * len(visuals)
-        cameras = cameras if cameras is not None else [BigTesterCamera.create_camera()] * len(visuals)
-
         renderer.render(viewports, visuals, model_matrices, cameras)
         renderer.show()
 
@@ -194,7 +214,7 @@ def main():
     canvas = BigTesterCanvas.create_canvas()
 
     # Create a viewport and add it to the canvas
-    viewports = BigTesterViewport.create_viewports(canvas, 1, 1)
+    viewports = BigTesterViewport.create_viewports(canvas, 2, 2)
 
     # =============================================================================
     # Add random points
@@ -202,11 +222,10 @@ def main():
     # =============================================================================
 
     visuals: list[VisualBase] = []
-
-    point_count = 10_000
-    # visuals.append(BigTesterVisuals.create_random_pixels(dpi=canvas.get_dpi()))
-    # visuals.append(BigTesterVisuals.create_random_points(dpi=canvas.get_dpi()))
+    visuals.append(BigTesterVisuals.create_random_pixels(dpi=canvas.get_dpi()))
+    visuals.append(BigTesterVisuals.create_random_points(dpi=canvas.get_dpi()))
     visuals.append(BigTesterVisuals.create_random_segments())
+    visuals.append(BigTesterVisuals.create_spiral_pixels())
 
     # =============================================================================
     # Render the canvas
@@ -219,9 +238,16 @@ def main():
     # Render
     # =============================================================================
 
+    # visuals = visuals * len()
+
+    full_visuals: list[VisualBase] = visuals * len(viewports)
+    full_viewports: list[Viewport] = viewports * len(visuals)
+    model_matrices = [model_matrix] * len(full_visuals)
+    cameras = [camera] * len(full_visuals)
+
     # Create a renderer and render the scene
     renderer = BigTesterRenderer.create_renderer(canvas, renderer_name="matplotlib")
-    BigTesterRenderer.render_scene(canvas, renderer, viewports, visuals, [model_matrix], [camera])
+    BigTesterRenderer.render_scene(renderer, full_viewports, full_visuals, model_matrices, cameras)
 
 
 if __name__ == "__main__":
