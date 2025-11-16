@@ -19,14 +19,14 @@ from datoviz.visuals import Visual as _DvzVisual
 from gsp.core.camera import Camera
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
-from gsp.core.visual_base import VisualBase
+from gsp.types.visual_base import VisualBase
 from gsp.types.transbuf import TransBuf
 from gsp.visuals.markers import Markers
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
 from gsp.visuals.paths import Paths
 from gsp.visuals.segments import Segments
-from gsp.renderer.renderer_base import RendererBase
+from gsp.types.renderer_base import RendererBase
 
 
 class DatovizRenderer(RendererBase):

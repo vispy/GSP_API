@@ -1,0 +1,68 @@
+# stdlib imports
+import os
+
+# pip imports
+import numpy as np
+import matplotlib.pyplot
+
+# local imports
+from gsp.core import Canvas, Viewport
+from gsp.visuals import Pixels
+from gsp.types import Buffer, BufferType
+from gsp.core import Camera
+from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp_datoviz.renderer import DatovizRenderer
+from gsp_extra.bufferx import Bufferx
+from gsp.utils.group_utils import GroupUtils
+
+
+def main():
+    # fix random seed for reproducibility
+    np.random.seed(0)
+
+    # Create a canvas
+    canvas = Canvas(100, 100, 96.0)
+
+    # Create a viewport and add it to the canvas
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+
+    # =============================================================================
+    # Add random points
+    # - various ways to create Buffers
+    # =============================================================================
+
+    point_count = 10_000
+    group_size = point_count
+    group_count = GroupUtils.get_group_count(point_count, groups=group_size)
+
+    # Random positions - Create buffer from numpy array
+    positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
+    positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+    # all pixels red - Create buffer and fill it with a constant
+    colors_buffer = Buffer(group_count, BufferType.rgba8)
+    colors_buffer.set_data(bytearray([255, 0, 0, 255]) * group_count, 0, group_count)
+
+    # Create the Pixels visual and add it to the viewport
+    pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
+
+    # =============================================================================
+    # Render the canvas
+    # =============================================================================
+
+    model_matrix = Bufferx.mat4_identity()
+    # Create a camera
+    camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+    # =============================================================================
+    # Render
+    # =============================================================================
+
+    # Create a renderer and render the scene
+    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
+    renderer.render([viewport], [pixels], [model_matrix], [camera])
+    renderer.show()
+
+
+if __name__ == "__main__":
+    main()

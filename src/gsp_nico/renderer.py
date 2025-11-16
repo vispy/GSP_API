@@ -13,7 +13,7 @@ from gsp_matplotlib.renderer import MatplotlibRenderer as GspMatplotlibRenderer
 from gsp_datoviz.renderer.datoviz_renderer import DatovizRenderer as GspDatovizRenderer
 from gsp.core.camera import Camera as GspCamera
 from gsp.core.viewport import Viewport as GspViewport
-from gsp.core.visual_base import VisualBase as GspVisualBase
+from gsp.types.visual_base import VisualBase as GspVisualBase
 from gsp.types.buffer import Buffer as GspBuffer
 from gsp.types.buffer_type import BufferType as GspBufferType
 from gsp_matplotlib.extra.bufferx import Bufferx

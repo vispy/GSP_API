@@ -6,7 +6,7 @@ import numpy as np
 
 # local imports
 from .bufferx import Bufferx
-from gsp.core.visual_base import VisualBase
+from gsp.types.visual_base import VisualBase
 from gsp.core.camera import Camera
 from . import glm
 from gsp.core import Canvas, Viewport, VisualBase

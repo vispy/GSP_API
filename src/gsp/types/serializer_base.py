@@ -1,26 +1,26 @@
 # stdlib imports
 from abc import ABC, abstractmethod
-from typing import Sequence
+from typing import Sequence, Any
 
 # local imports
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
-from gsp.core.visual_base import VisualBase
+from gsp.types.visual_base import VisualBase
 from gsp.core.camera import Camera
 from gsp.types.transbuf import TransBuf
 
 
-class RendererBase(ABC):
+class SerializerBase(ABC):
     @abstractmethod
     def __init__(self, canvas: Canvas):
         pass
 
     @abstractmethod
-    def render(
+    def serialize(
         self,
         viewports: Sequence[Viewport],
         visuals: Sequence[VisualBase],
         model_matrices: Sequence[TransBuf],
         cameras: Sequence[Camera],
-    ) -> bytes | str:
+    ) -> dict[str, Any]:
         pass

@@ -7,7 +7,7 @@ import matplotlib.artist
 # local imports
 from gsp.core.camera import Camera
 from gsp.core.viewport import Viewport
-from gsp.core.visual_base import VisualBase
+from gsp.types.visual_base import VisualBase
 from gsp.utils.group_utils import GroupUtils
 from gsp.visuals.pixels import Pixels
 from gsp.utils.transbuf_utils import TransBufUtils

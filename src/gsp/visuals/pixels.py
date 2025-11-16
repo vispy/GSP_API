@@ -1,4 +1,4 @@
-from ..core.visual_base import VisualBase
+from ..types.visual_base import VisualBase
 from ..types.transbuf import TransBuf
 from ..types.buffer import Buffer
 from ..transforms.transform_chain import TransformChain
