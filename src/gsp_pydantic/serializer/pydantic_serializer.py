@@ -1,15 +1,25 @@
 # stdlib imports
 from typing import Sequence, Any
+import typing
+
+# pip imports
+import base64
+import pydantic_core
 
 # local imports
 from gsp.types.serializer_base import SerializerBase
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.types.visual_base import VisualBase
+from gsp.visuals.pixels import Pixels
 from gsp.core.camera import Camera
 from gsp.types.transbuf import TransBuf
-from .pydantic_types import PydanticCanvas, PydanticViewport, PydanticVisualBase, PydanticModelMatrix, PydanticCamera, PydanticScene
-from .pydantic_types import PydanticTransBuf, PydanticBuffer, PydanticTransformChain
+from gsp.types.buffer import Buffer
+from gsp.transforms.transform_chain import TransformChain
+from ..types.pydantic_types import PydanticCanvas, PydanticViewport, PydanticModelMatrix, PydanticCamera, PydanticScene
+from ..types.pydantic_types import PydanticVisual, PydanticPixels
+from ..types.pydantic_types import PydanticTransBuf, PydanticBuffer, PydanticTransformChain
+from ..types.pydantic_dict import PydanticDict
 
 
 # =============================================================================
@@ -26,7 +36,7 @@ class PydanticSerializer(SerializerBase):
         visuals: Sequence[VisualBase],
         model_matrices: Sequence[TransBuf],
         cameras: Sequence[Camera],
-    ) -> dict[str, Any]:
+    ) -> PydanticDict:
 
         # =============================================================================
         #
@@ -38,6 +48,7 @@ class PydanticSerializer(SerializerBase):
             height=self._canvas.get_height(),
             dpi=self._canvas.get_dpi(),
         )
+
         pydanticViewports = [
             PydanticViewport(
                 uuid=viewport.get_uuid(),
@@ -48,8 +59,11 @@ class PydanticSerializer(SerializerBase):
             )
             for viewport in viewports
         ]
+
         pydantic_visuals = PydanticSerializer._visuals_to_pydantic(visuals)
+
         pydantic_model_matrices = [PydanticModelMatrix(model_matrix=PydanticSerializer._transbuf_to_pydantic(model_matrix)) for model_matrix in model_matrices]
+
         pydantic_cameras = [
             PydanticCamera(
                 uuid=camera.get_uuid(),
@@ -71,22 +85,50 @@ class PydanticSerializer(SerializerBase):
             cameras=pydantic_cameras,
         )
 
-        json_dict = pydantic_scene.model_dump()
+        pydantic_scene_dict: PydanticDict = pydantic_scene.model_dump()
 
-        # Implement JSON rendering logic here
-        return json_dict  # Placeholder for JSON byte output
+        return pydantic_scene_dict  # Placeholder for JSON byte output
 
     # =============================================================================
     # Static methods
     # =============================================================================
 
     @staticmethod
-    def _transbuf_to_pydantic(transbuf: TransBuf) -> PydanticTransBuf:
-        return PydanticTransBuf()  # Placeholder implementation
+    def _visuals_to_pydantic(visuals: Sequence[VisualBase]) -> list[PydanticVisual]:
+        pydantic_visuals: list[PydanticVisual] = []
+        for visual in visuals:
+            if isinstance(visual, Pixels):
+                pixels = typing.cast(Pixels, visual)
+                pydantic_visual = PydanticVisual(
+                    type="pixels",
+                    visual=PydanticPixels(
+                        uuid=pixels.get_uuid(),
+                        positions=PydanticSerializer._transbuf_to_pydantic(pixels.get_positions()),
+                        colors=PydanticSerializer._transbuf_to_pydantic(pixels.get_colors()),
+                        groups=pixels.get_groups(),
+                    ),
+                )
+                pydantic_visuals.append(pydantic_visual)
+            else:
+                raise NotImplementedError(f"Serialization for this Visual type {type(visual)} is not implemented yet")
+
+        # return the list of pydantic visuals
+        return pydantic_visuals
 
     @staticmethod
-    def _visuals_to_pydantic(visuals: Sequence[VisualBase]) -> list[PydanticVisualBase]:
-        pydantic_visuals: list[PydanticVisualBase] = []
-        for vis in visuals:
-            pydantic_visuals.append(PydanticVisualBase(uuid=vis.get_uuid()))
-        return pydantic_visuals
+    def _transbuf_to_pydantic(transbuf: TransBuf) -> PydanticTransBuf:
+        if isinstance(transbuf, Buffer):
+            buffer = typing.cast(Buffer, transbuf)
+            pydantic_transbuf = PydanticTransBuf(
+                type="buffer",
+                transBuf=PydanticBuffer(
+                    count=buffer.get_count(),
+                    buffer_type=buffer.get_type().name,
+                    data_base64=base64.b64encode(buffer.to_bytearray()).decode("utf-8"),
+                ),
+            )
+            return pydantic_transbuf
+        elif isinstance(transbuf, TransformChain):
+            raise NotImplementedError("TransformChain serialization not implemented yet")
+        else:
+            raise ValueError("Unknown TransBuf type")

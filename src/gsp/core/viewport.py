@@ -16,6 +16,9 @@ class Viewport:
         self._height: int = height
         self.userData: dict[str, Any] = {}
 
+    def __repr__(self) -> str:
+        return f"Viewport(x={self._x}, y={self._y}, width={self._width}, height={self._height})"
+
     def get_uuid(self) -> str:
         return self._uuid
 

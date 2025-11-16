@@ -1,9 +1,10 @@
 # stdlib imports
 import os
+import pathlib
+import json
 
 # pip imports
 import numpy as np
-import matplotlib.pyplot
 
 # local imports
 from gsp.core import Canvas, Viewport
@@ -14,6 +15,9 @@ from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
+from gsp_pydantic.serializer.pydantic_parser import PydanticParser
+from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
+from gsp_pydantic.types.pydantic_dict import PydanticDict
 
 
 def main():
@@ -31,7 +35,7 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
 
-    point_count = 10_000
+    point_count = 10
     group_size = point_count
     group_count = GroupUtils.get_group_count(point_count, groups=group_size)
 
@@ -55,13 +59,44 @@ def main():
     camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
 
     # =============================================================================
-    # Render
+    # Serialize with Pydantic
     # =============================================================================
 
-    # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
-    renderer.render([viewport], [pixels], [model_matrix], [camera])
-    renderer.show()
+    # Serialize the scene
+    pydantic_serializer = PydanticSerializer(canvas)
+    serialized_data: PydanticDict = pydantic_serializer.serialize(
+        viewports=[viewport],
+        visuals=[pixels],
+        model_matrices=[model_matrix],
+        cameras=[camera],
+    )
+
+    # convert to JSON string
+    serialized_json_str: str = json.dumps(serialized_data, indent=4)
+
+    # Print serialized data
+    print(serialized_data)
+
+    # Save to file
+    output_basename = f"{pathlib.Path(__file__).stem}.gsp_pydantic.json"
+    output_path = pathlib.Path(__file__).parent / "output" / output_basename
+    with open(output_path, "w") as file_writer:
+        file_writer.write(serialized_json_str)
+
+    # =============================================================================
+    # Deserialize with pydantic
+    # =============================================================================
+
+    parsed_canvas, parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras = PydanticParser().parse(serialized_data)
+
+    # =============================================================================
+    # Render the parsed scene
+    # =============================================================================
+
+    # # Create a renderer and render the scene
+    # renderer = MatplotlibRenderer(parsed_canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(parsed_canvas)
+    # renderer.render(parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras)
+    # renderer.show()
 
 
 if __name__ == "__main__":

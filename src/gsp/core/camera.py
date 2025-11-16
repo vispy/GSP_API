@@ -15,6 +15,9 @@ class Camera:
         self._projection_matrix: TransBuf = projection_matrix
         self.userData: dict[str, Any] = {}
 
+    def __repr__(self) -> str:
+        return f"Camera(uuid={self._uuid})"
+
     def get_uuid(self) -> str:
         return self._uuid
 
