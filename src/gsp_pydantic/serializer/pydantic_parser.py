@@ -12,12 +12,15 @@ from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.types.visual_base import VisualBase
 from gsp.visuals.pixels import Pixels
+from gsp.visuals.points import Points
+from gsp.visuals.segments import Segments
+from gsp.types.cap_style import CapStyle
 from gsp.types.transbuf import TransBuf
 from gsp.types.buffer import Buffer
 from gsp.types.buffer_type import BufferType
 from gsp.core.camera import Camera
 from ..types.pydantic_types import PydanticCanvas, PydanticViewport, PydanticModelMatrix, PydanticCamera, PydanticScene
-from ..types.pydantic_types import PydanticVisual, PydanticPixels
+from ..types.pydantic_types import PydanticVisual, PydanticPixels, PydanticPoints, PydanticSegments
 from ..types.pydantic_types import PydanticTransBuf, PydanticBuffer, PydanticTransformChain
 from ..types.pydantic_dict import PydanticDict
 
@@ -28,10 +31,10 @@ class PydanticParser:
 
     def parse(self, json_dict: PydanticDict) -> tuple[
         Canvas,
-        Sequence[Viewport],
-        Sequence[VisualBase],
-        Sequence[TransBuf],
-        Sequence[Camera],
+        list[Viewport],
+        list[VisualBase],
+        list[TransBuf],
+        list[Camera],
     ]:
 
         json_str = json.dumps(json_dict, indent=4)
@@ -100,6 +103,29 @@ class PydanticParser:
             pixels = Pixels(positions, colors, groups)
             pixels._uuid = pydantic_pixels.uuid
             return pixels
+        elif pydantic_visual.type == "points":
+            from gsp.visuals.points import Points
+
+            pydantic_points = typing.cast(PydanticPoints, pydantic_visual.visual)
+            positions = PydanticParser._pydantic_to_transbuf(pydantic_points.positions)
+            sizes = PydanticParser._pydantic_to_transbuf(pydantic_points.sizes)
+            face_colors = PydanticParser._pydantic_to_transbuf(pydantic_points.face_colors)
+            edge_colors = PydanticParser._pydantic_to_transbuf(pydantic_points.edge_colors)
+            edge_widths = PydanticParser._pydantic_to_transbuf(pydantic_points.edge_widths)
+            points = Points(positions, sizes, face_colors, edge_colors, edge_widths)
+            points._uuid = pydantic_points.uuid
+            return points
+        elif pydantic_visual.type == "segments":
+            from gsp.visuals.segments import Segments
+
+            pydantic_segments = typing.cast(PydanticSegments, pydantic_visual.visual)
+            positions = PydanticParser._pydantic_to_transbuf(pydantic_segments.positions)
+            line_widths = PydanticParser._pydantic_to_transbuf(pydantic_segments.line_widths)
+            cap_style = CapStyle[pydantic_segments.cap_style]
+            colors = PydanticParser._pydantic_to_transbuf(pydantic_segments.colors)
+            segments = Segments(positions, line_widths, cap_style, colors)
+            segments._uuid = pydantic_segments.uuid
+            return segments
         else:
             raise ValueError(f"Unknown PydanticVisual type: {pydantic_visual.type}")
 

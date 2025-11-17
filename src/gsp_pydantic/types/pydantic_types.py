@@ -45,9 +45,26 @@ class PydanticPixels(BaseModel):
     groups: PydanticGroups
 
 
+class PydanticPoints(BaseModel):
+    uuid: str
+    positions: PydanticTransBuf
+    sizes: PydanticTransBuf
+    face_colors: PydanticTransBuf
+    edge_colors: PydanticTransBuf
+    edge_widths: PydanticTransBuf
+
+
+class PydanticSegments(BaseModel):
+    uuid: str
+    positions: PydanticTransBuf
+    line_widths: PydanticTransBuf
+    cap_style: str
+    colors: PydanticTransBuf
+
+
 class PydanticVisual(BaseModel):
-    type: Literal["pixels"]
-    visual: PydanticPixels
+    type: Literal["pixels", "points", "segments"]
+    visual: PydanticPixels | PydanticPoints | PydanticSegments
 
 
 # =============================================================================
