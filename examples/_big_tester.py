@@ -1,14 +1,16 @@
 # stdlib imports
 import os
-from typing import Literal
+from typing import Literal, Sequence
+import typing
 
 # pip imports
 import numpy as np
 import matplotlib.pyplot
 
 # local imports
+from gsp.types.transbuf import TransBuf
 from gsp.core import Canvas, Viewport, VisualBase
-from gsp.visuals import Segments, Points, Pixels
+from gsp.visuals import Segments, Points, Pixels, pixels
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
@@ -19,6 +21,9 @@ from gsp.utils.unit_utils import UnitUtils
 from gsp.constants import Constants
 from gsp.types import CapStyle
 from gsp.utils.cmap_utils import CmapUtils
+from gsp_pydantic.serializer.pydantic_parser import PydanticParser
+from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
+from gsp_pydantic.types.pydantic_dict import PydanticDict
 
 # =============================================================================
 #
@@ -68,7 +73,7 @@ class BigTesterVisuals:
 
         # all pixels red - Create buffer and fill it with a constant
         colors_buffer = Buffer(group_count, BufferType.rgba8)
-        colors_buffer.set_data(Constants.Color.cyan * group_count, 0, group_count)
+        colors_buffer.set_data(Constants.Color.black * group_count, 0, group_count)
 
         # Create the Pixels visual and add it to the viewport
         pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
@@ -194,11 +199,67 @@ class BigTesterRenderer:
         renderer: MatplotlibRenderer | DatovizRenderer,
         viewports: list[Viewport],
         visuals: list[VisualBase],
-        model_matrices: list[Buffer],
+        model_matrices: list[TransBuf],
         cameras: list[Camera],
     ) -> None:
         renderer.render(viewports, visuals, model_matrices, cameras)
         renderer.show()
+
+
+class BigTesterSerializer:
+    @staticmethod
+    def serialize_visual(
+        canvas: Canvas,
+        viewports: list[Viewport],
+        visuals: list[VisualBase],
+        model_matrices: list[TransBuf],
+        cameras: list[Camera],
+    ) -> PydanticDict:
+        # Serialize the scene
+        pydantic_serializer = PydanticSerializer(canvas)
+        pydantic_serial: PydanticDict = pydantic_serializer.serialize(viewports=viewports, visuals=visuals, model_matrices=model_matrices, cameras=cameras)
+        return pydantic_serial
+
+    @staticmethod
+    def deserialize_visual(
+        pydantic_serial: PydanticDict,
+    ) -> tuple[
+        Canvas,
+        list[Viewport],
+        list[VisualBase],
+        list[TransBuf],
+        list[Camera],
+    ]:
+        parsed_canvas, parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras = PydanticParser().parse(pydantic_serial)
+        return parsed_canvas, parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras
+
+    @staticmethod
+    def serialize_cycle(
+        canvas: Canvas,
+        viewports: list[Viewport],
+        visuals: list[VisualBase],
+        model_matrices: list[TransBuf],
+        cameras: list[Camera],
+    ) -> tuple[
+        Canvas,
+        list[Viewport],
+        list[VisualBase],
+        list[TransBuf],
+        list[Camera],
+    ]:
+        pydantic_serial: PydanticDict = BigTesterSerializer.serialize_visual(
+            canvas,
+            viewports,
+            visuals,
+            model_matrices,
+            cameras,
+        )
+
+        parsed_canvas, parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras = BigTesterSerializer.deserialize_visual(
+            pydantic_serial,
+        )
+
+        return parsed_canvas, parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras
 
 
 # =============================================================================
@@ -222,10 +283,10 @@ def main():
     # =============================================================================
 
     visuals: list[VisualBase] = []
-    visuals.append(BigTesterVisuals.create_random_pixels(dpi=canvas.get_dpi()))
+    # visuals.append(BigTesterVisuals.create_random_pixels(dpi=canvas.get_dpi()))
     visuals.append(BigTesterVisuals.create_random_points(dpi=canvas.get_dpi()))
     visuals.append(BigTesterVisuals.create_random_segments())
-    visuals.append(BigTesterVisuals.create_spiral_pixels())
+    # visuals.append(BigTesterVisuals.create_spiral_pixels())
 
     # =============================================================================
     # Render the canvas
@@ -238,15 +299,30 @@ def main():
     # Render
     # =============================================================================
 
-    # visuals = visuals * len()
-
     full_visuals: list[VisualBase] = visuals * len(viewports)
     full_viewports: list[Viewport] = viewports * len(visuals)
-    model_matrices = [model_matrix] * len(full_visuals)
-    cameras = [camera] * len(full_visuals)
+    model_matrices: list[TransBuf] = [model_matrix] * len(full_visuals)
+    cameras: list[Camera] = [camera] * len(full_visuals)
+
+    # =============================================================================
+    # Serialisation cycle
+    # =============================================================================
+
+    canvas, viewports, visuals, model_matrices, cameras = BigTesterSerializer.serialize_cycle(
+        canvas,
+        full_viewports,
+        full_visuals,
+        model_matrices,
+        cameras,
+    )
+
+    # =============================================================================
+    # Render and display on screen
+    # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = BigTesterRenderer.create_renderer(canvas, renderer_name="matplotlib")
+    renderer_name = typing.cast(Literal["matplotlib", "datoviz"], os.getenv("GSP_TEST_RENDERER", "matplotlib"))
+    renderer = BigTesterRenderer.create_renderer(canvas, renderer_name=renderer_name)
     BigTesterRenderer.render_scene(renderer, full_viewports, full_visuals, model_matrices, cameras)
 
 

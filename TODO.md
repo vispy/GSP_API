@@ -1,7 +1,8 @@
 - gsp_network to specify the scene renderer on a remote server
   - easier to test
 - datoviz network doesnt work as it is unable to take screenshots
-- pdf/svg output for matplotlib
+- Complete serialisation/deserialization for all visuals
+- DONE pdf/svg output for matplotlib
 - DONE do something multi viewport
 - DONE do serialisation with json
 - DONE do network with http
