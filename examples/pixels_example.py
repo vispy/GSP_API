@@ -46,17 +46,16 @@ def main():
 
     # Create the Pixels visual and add it to the viewport
     pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
-    model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================
     # Render the canvas
     # =============================================================================
 
+    # Model matrix
+    model_matrix = Bufferx.mat4_identity()
+
     # Create a camera
-    view_matrix = Bufferx.mat4_identity()
-    projection_matrix = Buffer(1, BufferType.mat4)
-    projection_matrix.set_data(bytearray(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]], dtype=np.float32).tobytes()), 0, 1)
-    camera = Camera(view_matrix, projection_matrix)
+    camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
 
     # =============================================================================
     # Render
