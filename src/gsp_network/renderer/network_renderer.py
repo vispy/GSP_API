@@ -1,5 +1,6 @@
 # typing imports
-from typing import Sequence, TypedDict
+from typing import Sequence, TypedDict, Literal
+import typing
 import json
 
 # pip imports
@@ -21,13 +22,15 @@ from gsp_pydantic.types.pydantic_dict import PydanticDict
 #   Type for the network payload
 #
 class NetworkPayload(TypedDict):
+    renderer_name: Literal["matplotlib", "datoviz"]
     data: PydanticDict
 
 
 class NetworkRenderer(RendererBase):
-    def __init__(self, canvas: Canvas, server_base_url: str):
+    def __init__(self, canvas: Canvas, server_base_url: str, renderer_name: Literal["matplotlib", "datoviz"] = "matplotlib") -> None:
         self._canvas = canvas
         self._server_base_url = server_base_url
+        self._renderer_name: Literal["matplotlib", "datoviz"] = renderer_name
 
     def render(
         self,
@@ -49,6 +52,7 @@ class NetworkRenderer(RendererBase):
         )
 
         payload: NetworkPayload = {
+            "renderer_name": self._renderer_name,
             "data": pydantic_scene_dict,
         }
 

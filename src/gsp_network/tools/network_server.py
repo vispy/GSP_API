@@ -9,6 +9,8 @@ Server example using Flask to render a scene from JSON input.
 # stdlib imports
 import io
 import os
+from typing import Literal
+import typing
 
 # pip imports
 from flask import Flask, request, send_file, Response
@@ -54,8 +56,12 @@ def render_scene_json() -> Response:
     ###############################################################################
     # Render the loaded scene with matplotlib or datoviz based on environment variable
     #
-    renderer = MatplotlibRenderer(parsed_canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(parsed_canvas)
-    image_png_data = renderer.render(parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras)
+    renderer_name = payload["renderer_name"]
+    if renderer_name == "matplotlib":
+        renderer = MatplotlibRenderer(parsed_canvas)
+    else:
+        renderer = DatovizRenderer(parsed_canvas, offscreen=True)
+    image_png_data = renderer.render(parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras, return_image=True)
 
     print(f"Rendered image size: {text_cyan(str(len(image_png_data)))} bytes")
 

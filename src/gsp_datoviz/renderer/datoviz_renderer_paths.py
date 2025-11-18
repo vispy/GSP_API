@@ -64,7 +64,7 @@ class DatovizRendererPaths:
         if artist_uuid not in renderer._dvz_visuals:
             dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
             dummy_path_sizes_numpy = np.array([1], dtype=np.uint32)
-            dvz_paths = renderer.dvz_app.path()
+            dvz_paths = renderer._dvz_app.path()
             dvz_paths.set_position(dummy_position_numpy, groups=dummy_path_sizes_numpy)
             renderer._dvz_visuals[artist_uuid] = dvz_paths
             # Add the new visual to the panel

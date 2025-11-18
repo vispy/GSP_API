@@ -60,7 +60,7 @@ class DatovizRendererPoints:
             dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
             dummy_color_numpy = np.array([[255, 0, 0, 255]], dtype=np.uint8).reshape((-1, 4))
             dummy_size_numpy = np.array([1], dtype=np.float32).reshape((-1, 1)).reshape(-1)
-            dvz_points = renderer.dvz_app.point(
+            dvz_points = renderer._dvz_app.point(
                 position=dummy_position_numpy,
                 color=dummy_color_numpy,
                 size=dummy_size_numpy,

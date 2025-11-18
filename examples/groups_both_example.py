@@ -87,7 +87,7 @@ def main():
             return
 
         # run the datoviz app to show the window
-        datovizRenderer.dvz_app.run()
+        datovizRenderer._dvz_app.run()
     else:
         raise ValueError(f"Unknown renderer: {gsp_renderer}")
 

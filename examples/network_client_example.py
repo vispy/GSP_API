@@ -2,6 +2,8 @@
 import os
 import pathlib
 import json
+import typing
+from typing import Literal
 
 # pip imports
 import numpy as np
@@ -59,7 +61,8 @@ def main():
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000")
+    renderer_name = typing.cast(Literal["matplotlib", "datoviz"], os.environ.get("GSP_RENDERER", "matplotlib"))
+    renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", renderer_name=renderer_name)
     rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
 
     # Save the rendered image to a PNG file

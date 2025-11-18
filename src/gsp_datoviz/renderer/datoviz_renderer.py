@@ -30,10 +30,10 @@ from gsp.types.renderer_base import RendererBase
 
 
 class DatovizRenderer(RendererBase):
-    def __init__(self, canvas: Canvas):
+    def __init__(self, canvas: Canvas, offscreen: bool = False) -> None:
         self._canvas = canvas
-        self.dvz_app = dvz.App(background="white")
-        self.dvz_figure = self.dvz_app.figure(
+        self._dvz_app = dvz.App(background="white", offscreen=offscreen)
+        self._dvz_figure = self._dvz_app.figure(
             width=canvas.get_width(),
             height=canvas.get_height(),
         )
@@ -56,14 +56,14 @@ class DatovizRenderer(RendererBase):
             return
 
         # listen to keyboard events - if 'q' is pressed, stop the app
-        @self.dvz_app.connect(self.dvz_figure)
+        @self._dvz_app.connect(self._dvz_figure)
         def on_keyboard(event):
             # print(f"{event.key_event()} key {event.key()} ({event.key_name()})")
             if event.key_event() == "press" and event.key_name() == "q":
-                self.dvz_app.stop()
+                self._dvz_app.stop()
 
         # run the datoviz app to show the window
-        self.dvz_app.run()
+        self._dvz_app.run()
 
     # =============================================================================
     # .render() function
@@ -88,12 +88,16 @@ class DatovizRenderer(RendererBase):
         # Return an image if needed
         # =============================================================================
 
-        # FIXME - i got some segmentation fault here when trying to do offscreen rendering with datoviz
+        # sanity check
+        has_offscreen = bool(self._dvz_app.c_flags | dvz.APP_FLAGS_OFFSCREEN)
+        if return_image and not has_offscreen:
+            raise Exception("DatovizRenderer.render(): cannot return image when datoviz App is not in offscreen mode")
+
         rendered_image = b""
         if return_image:
             assert image_format in ["png"], f"Unsupported image format: {image_format}"
             image_path = pathlib.Path(__file__).parent / "_datoviz_offscreen_python.png"
-            self.dvz_app.screenshot(self.dvz_figure, str(image_path))
+            self._dvz_app.screenshot(self._dvz_figure, str(image_path))
             with open(image_path, "rb") as file_reader:
                 rendered_image = file_reader.read()
             image_path.unlink()
@@ -101,7 +105,7 @@ class DatovizRenderer(RendererBase):
         return rendered_image
 
     def close(self):
-        self.dvz_app.destroy()
+        self._dvz_app.destroy()
 
     # =============================================================================
     # ._render_pixels()
@@ -142,7 +146,7 @@ class DatovizRenderer(RendererBase):
             return self._dvz_panels[viewport_uuid]
 
         # create the datoviz panel
-        dvz_panel = self.dvz_figure.panel(
+        dvz_panel = self._dvz_figure.panel(
             offset=(viewport.get_x(), viewport.get_y()),
             size=(viewport.get_width(), viewport.get_height()),
         )

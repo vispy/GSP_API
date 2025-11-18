@@ -1,20 +1,23 @@
 # stdlib imports
 import os
+import re
 from typing import Literal, Sequence
 import typing
 
 # pip imports
 import numpy as np
-import matplotlib.pyplot
+import argparse
 
 # local imports
+from gsp.types.renderer_base import RendererBase
 from gsp.types.transbuf import TransBuf
 from gsp.core import Canvas, Viewport, VisualBase
-from gsp.visuals import Segments, Points, Pixels, pixels
+from gsp.visuals import Segments, Points, Pixels
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
+from gsp_network.renderer import NetworkRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
 from gsp.utils.unit_utils import UnitUtils
@@ -38,10 +41,11 @@ class BigTesterBoilerplate:
 
 class BigTesterCanvas:
     @staticmethod
-    def create_canvas(size: int = 100, dpi: float = 96.0) -> Canvas:
+    def create_canvas(viewport_count: int = 2, width: int = 100, dpi: float = 96.0) -> Canvas:
         scale = 3
+        size = width * viewport_count
         scaled_width = int(size * scale)
-        scaled_height = int(size * scale)
+        scaled_height = int(width * scale)
         scaled_dpi = dpi * scale
         canvas = Canvas(scaled_width, scaled_height, scaled_dpi)
         return canvas
@@ -49,14 +53,12 @@ class BigTesterCanvas:
 
 class BigTesterViewport:
     @staticmethod
-    def create_viewports(canvas: Canvas, horizontal_count: int, vertical_count: int) -> list[Viewport]:
+    def create_viewports(canvas: Canvas, count: int) -> list[Viewport]:
         viewports: list[Viewport] = []
-        viewport_width = canvas.get_width() // horizontal_count
-        viewport_height = canvas.get_height() // vertical_count
-        for viewport_hori_index in range(horizontal_count):
-            for viewport_vert_index in range(vertical_count):
-                viewport = Viewport(viewport_hori_index * viewport_width, viewport_vert_index * viewport_height, viewport_width, viewport_height)
-                viewports.append(viewport)
+        viewport_width = canvas.get_width() // count
+        for viewport_hori_index in range(count):
+            viewport = Viewport(viewport_hori_index * viewport_width, 0, viewport_width, viewport_width)
+            viewports.append(viewport)
         return viewports
 
 
@@ -184,26 +186,31 @@ class BigTesterCamera:
 
 class BigTesterRenderer:
     @staticmethod
-    def create_renderer(canvas: Canvas, renderer_name: Literal["matplotlib", "datoviz"]) -> MatplotlibRenderer | DatovizRenderer:
+    def create_renderer(canvas: Canvas, renderer_name: Literal["matplotlib", "datoviz", "network"]) -> RendererBase:
         if renderer_name == "matplotlib":
             renderer = MatplotlibRenderer(canvas)
             return renderer
         elif renderer_name == "datoviz":
             renderer = DatovizRenderer(canvas)
             return renderer
+        elif renderer_name == "network":
+
+            server_base_url = "http://localhost:5000"
+            renderer = NetworkRenderer(canvas, server_base_url, renderer_name="datoviz")
+            return renderer
         else:
             raise ValueError(f"Unknown renderer name: {renderer_name}")
 
     @staticmethod
     def render_scene(
-        renderer: MatplotlibRenderer | DatovizRenderer,
+        renderer: RendererBase,
         viewports: list[Viewport],
         visuals: list[VisualBase],
         model_matrices: list[TransBuf],
         cameras: list[Camera],
-    ) -> None:
-        renderer.render(viewports, visuals, model_matrices, cameras)
-        renderer.show()
+    ) -> bytes:
+        rendered_image = renderer.render(viewports, visuals, model_matrices, cameras)
+        return rendered_image
 
 
 class BigTesterSerializer:
@@ -268,14 +275,54 @@ class BigTesterSerializer:
 
 
 def main():
+    # Parse command line arguments
+    argParser = argparse.ArgumentParser(
+        description="Run the big tester example.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    argParser.add_argument("--viewport-count", type=int, default=1, help="Number of viewports to create")
+    argParser.add_argument("--renderer-name", type=str, choices=["matplotlib", "datoviz", "network"], default="matplotlib", help="Renderer to use")
+    argParser.add_argument(
+        "--matplotlib-image-format", type=str, choices=["png", "svg", "pdf"], default="png", help="Matplotlib image format. Only used if renderer is matplotlib"
+    )
+    argParser.add_argument("--image-path", type=str, default=None, help="Path to save image")
+    argParser.add_argument(
+        "--pydantic-serialize-cycle",
+        action="store_true",
+        help="Perform a serialization cycle using Pydantic",
+    )
+    argParser.add_argument(
+        "--scene",
+        dest="scenes",
+        type=str,
+        default=[],
+        nargs="+",
+        choices=[
+            "random_points",
+            "random_pixels",
+            "random_segments",
+            "spiral_pixels",
+        ],
+        help="A required list of one or more scene.",
+    )
+    args = argParser.parse_args()
+
+    # type casting for all command line args
+    args.viewport_count = typing.cast(int, args.viewport_count)
+    args.renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], args.renderer_name)
+    args.matplotlib_image_format = typing.cast(Literal["png", "svg", "pdf"], args.matplotlib_image_format)
+    args.image_path = typing.cast(str | None, args.image_path)
+    args.pydantic_serialize_cycle = typing.cast(bool, args.pydantic_serialize_cycle)
+    args.scenes = typing.cast(Sequence[str], args.scenes)
+
     # fix random seed for reproducibility
     BigTesterBoilerplate.init_random_seed(0)
 
     # Create a canvas
-    canvas = BigTesterCanvas.create_canvas()
+    canvas = BigTesterCanvas.create_canvas(args.viewport_count)
 
     # Create a viewport and add it to the canvas
-    viewports = BigTesterViewport.create_viewports(canvas, 2, 2)
+    viewports = BigTesterViewport.create_viewports(canvas, args.viewport_count)
 
     # =============================================================================
     # Add random points
@@ -283,10 +330,14 @@ def main():
     # =============================================================================
 
     visuals: list[VisualBase] = []
-    # visuals.append(BigTesterVisuals.create_random_pixels(dpi=canvas.get_dpi()))
-    visuals.append(BigTesterVisuals.create_random_points(dpi=canvas.get_dpi()))
-    visuals.append(BigTesterVisuals.create_random_segments())
-    # visuals.append(BigTesterVisuals.create_spiral_pixels())
+    if "random_points" in args.scenes:
+        visuals.append(BigTesterVisuals.create_random_pixels(dpi=canvas.get_dpi()))
+    if "random_pixels" in args.scenes:
+        visuals.append(BigTesterVisuals.create_random_points(dpi=canvas.get_dpi()))
+    if "random_segments" in args.scenes:
+        visuals.append(BigTesterVisuals.create_random_segments())
+    if "spiral_pixels" in args.scenes:
+        visuals.append(BigTesterVisuals.create_spiral_pixels())
 
     # =============================================================================
     # Render the canvas
@@ -308,22 +359,33 @@ def main():
     # Serialisation cycle
     # =============================================================================
 
-    canvas, viewports, visuals, model_matrices, cameras = BigTesterSerializer.serialize_cycle(
-        canvas,
-        full_viewports,
-        full_visuals,
-        model_matrices,
-        cameras,
-    )
+    if args.pydantic_serialize_cycle:
+        canvas, viewports, visuals, model_matrices, cameras = BigTesterSerializer.serialize_cycle(
+            canvas,
+            full_viewports,
+            full_visuals,
+            model_matrices,
+            cameras,
+        )
 
     # =============================================================================
     # Render and display on screen
     # =============================================================================
 
+    # --renderer_name matplotlib|datoviz|network
+
     # Create a renderer and render the scene
-    renderer_name = typing.cast(Literal["matplotlib", "datoviz"], os.getenv("GSP_TEST_RENDERER", "matplotlib"))
-    renderer = BigTesterRenderer.create_renderer(canvas, renderer_name=renderer_name)
-    BigTesterRenderer.render_scene(renderer, full_viewports, full_visuals, model_matrices, cameras)
+    renderer = BigTesterRenderer.create_renderer(canvas, renderer_name=args.renderer_name)
+    rendered_image = BigTesterRenderer.render_scene(renderer, full_viewports, full_visuals, model_matrices, cameras)
+
+    if args.image_path is not None:
+        with open(args.image_path, "wb") as image_file:
+            image_file.write(rendered_image)
+        print(f"Rendered image saved to: {args.image_path}")
+
+    if args.renderer_name == "matplotlib" or args.renderer_name == "datoviz":
+        typed_renderer = typing.cast(MatplotlibRenderer | DatovizRenderer, renderer)
+        typed_renderer.show()
 
 
 if __name__ == "__main__":

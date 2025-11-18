@@ -28,4 +28,4 @@ import typing
 from gsp_datoviz.renderer import DatovizRenderer
 
 gsp_datoviz_renderer = typing.cast(DatovizRenderer, renderer.gsp_renderer)
-gsp_datoviz_renderer.dvz_app.run()
+gsp_datoviz_renderer._dvz_app.run()

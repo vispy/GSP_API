@@ -58,7 +58,7 @@ class DatovizRendererSegments:
         # Create datoviz_visual if they do not exist
         if artist_uuid not in renderer._dvz_visuals:
             dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
-            dvz_segments = renderer.dvz_app.segment(dummy_position_numpy, dummy_position_numpy)
+            dvz_segments = renderer._dvz_app.segment(dummy_position_numpy, dummy_position_numpy)
             renderer._dvz_visuals[artist_uuid] = dvz_segments
             # Add the new visual to the panel
             dvz_panel.add(dvz_segments)

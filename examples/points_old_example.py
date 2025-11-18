@@ -30,31 +30,29 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
     point_count = 100
-    group_size = 1
-    group_count = GroupUtils.get_group_count(vertex_count=point_count, groups=group_size)
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
     # Sizes - Create buffer and set data with numpy array
-    sizes_numpy = np.array([40] * group_count, dtype=np.float32)
+    sizes_numpy = np.array([40] * point_count, dtype=np.float32)
     sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
 
     # all pixels red - Create buffer and fill it with a constant
-    face_colors_buffer = Buffer(group_count, BufferType.rgba8)
+    face_colors_buffer = Buffer(point_count, BufferType.rgba8)
     face_colors_buffer.set_data(bytearray([255, 0, 0, 255]) * face_colors_buffer.get_count(), 0, 1)
 
     # Edge colors - Create buffer and fill it with a constant
-    edge_colors_buffer = Buffer(group_count, BufferType.rgba8)
+    edge_colors_buffer = Buffer(point_count, BufferType.rgba8)
     edge_colors_buffer.set_data(Constants.Color.blue * edge_colors_buffer.get_count(), 0, 1)
 
     # Edge widths - Create buffer and fill it with a constant
-    edge_widths_buffer = Buffer(group_count, BufferType.float32)
-    edge_widths_buffer.set_data(bytearray(np.array([0.5 * 72.0 / canvas.get_dpi()] * group_count, dtype=np.float32).tobytes()), 0, 1)
+    edge_widths_buffer = Buffer(point_count, BufferType.float32)
+    edge_widths_buffer.set_data(bytearray(np.array([0.5 * 72.0 / canvas.get_dpi()] * point_count, dtype=np.float32).tobytes()), 0, 1)
 
     # Create the Points visual and add it to the viewport
-    points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer, group_size)
+    points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================
@@ -93,7 +91,7 @@ def main():
             return
 
         # run the datoviz app to show the window
-        datovizRenderer.dvz_app.run()
+        datovizRenderer._dvz_app.run()
     else:
         raise ValueError(f"Unknown renderer: {gsp_renderer}")
 

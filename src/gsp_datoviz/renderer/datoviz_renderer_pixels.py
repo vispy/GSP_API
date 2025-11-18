@@ -75,7 +75,7 @@ class DatovizRendererPixels:
             for group_index in range(group_count):
                 dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
                 dummy_color_numpy = np.array([[255, 0, 0, 255]], dtype=np.uint8).reshape((-1, 4))
-                dvz_pixels = renderer.dvz_app.pixel(
+                dvz_pixels = renderer._dvz_app.pixel(
                     position=dummy_position_numpy,
                     color=dummy_color_numpy,
                 )
