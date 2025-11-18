@@ -87,7 +87,10 @@ def main() -> None:
     local_args, example_args = split_argv()
 
     # parse command line arguments
-    parser = argparse.ArgumentParser(description="Run all example scripts in this directory.")
+    parser = argparse.ArgumentParser(
+        description="Run all example scripts in this directory.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     parser.add_argument("--debug", action="store_true", help="Enable debug mode with more verbose output.")
     args = parser.parse_args(local_args)
 

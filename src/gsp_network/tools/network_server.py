@@ -90,7 +90,10 @@ class ServerSample:
 #######################################################################################
 
 if __name__ == "__main__":
-    argParser = argparse.ArgumentParser(description="Run the network server for rendering. see ./examples/network_client.py for usage.")
+    argParser = argparse.ArgumentParser(
+        description="Run the network server for rendering. see ./examples/network_client.py for usage.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     args = argParser.parse_args()
 
     server = ServerSample()
