@@ -14,14 +14,19 @@ from gsp.types.visual_base import VisualBase
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
 from gsp.visuals.segments import Segments
+from gsp.visuals.paths import Paths
+from gsp.visuals.markers import Markers
+from gsp.visuals.segments import Segments
 from gsp.types.cap_style import CapStyle
+from gsp.types.join_style import JoinStyle
+from gsp.visuals.markers import MarkerShape
 from gsp.types.transbuf import TransBuf
 from gsp.types.buffer import Buffer
 from gsp.types.buffer_type import BufferType
 from gsp.core.camera import Camera
 from ..types.pydantic_types import PydanticCanvas, PydanticViewport, PydanticModelMatrix, PydanticCamera, PydanticScene
-from ..types.pydantic_types import PydanticVisual, PydanticPixels, PydanticPoints, PydanticSegments
 from ..types.pydantic_types import PydanticTransBuf, PydanticBuffer, PydanticTransformChain
+from ..types.pydantic_types import PydanticVisual, PydanticPixels, PydanticPoints, PydanticSegments, PydanticPaths, PydanticMarkers
 from ..types.pydantic_dict import PydanticDict
 
 
@@ -104,8 +109,6 @@ class PydanticParser:
             pixels._uuid = pydantic_pixels.uuid
             return pixels
         elif pydantic_visual.type == "points":
-            from gsp.visuals.points import Points
-
             pydantic_points = typing.cast(PydanticPoints, pydantic_visual.visual)
             positions = PydanticParser._pydantic_to_transbuf(pydantic_points.positions)
             sizes = PydanticParser._pydantic_to_transbuf(pydantic_points.sizes)
@@ -116,8 +119,6 @@ class PydanticParser:
             points._uuid = pydantic_points.uuid
             return points
         elif pydantic_visual.type == "segments":
-            from gsp.visuals.segments import Segments
-
             pydantic_segments = typing.cast(PydanticSegments, pydantic_visual.visual)
             positions = PydanticParser._pydantic_to_transbuf(pydantic_segments.positions)
             line_widths = PydanticParser._pydantic_to_transbuf(pydantic_segments.line_widths)
@@ -126,6 +127,28 @@ class PydanticParser:
             segments = Segments(positions, line_widths, cap_style, colors)
             segments._uuid = pydantic_segments.uuid
             return segments
+        elif pydantic_visual.type == "paths":
+            pydantic_paths = typing.cast(PydanticPaths, pydantic_visual.visual)
+            positions = PydanticParser._pydantic_to_transbuf(pydantic_paths.positions)
+            path_sizes = PydanticParser._pydantic_to_transbuf(pydantic_paths.path_sizes)
+            colors = PydanticParser._pydantic_to_transbuf(pydantic_paths.colors)
+            line_widths = PydanticParser._pydantic_to_transbuf(pydantic_paths.line_widths)
+            cap_style = CapStyle[pydantic_paths.cap_style]
+            join_style = JoinStyle[pydantic_paths.join_style]
+            paths = Paths(positions, path_sizes, colors, line_widths, cap_style, join_style)
+            paths._uuid = pydantic_paths.uuid
+            return paths
+        elif pydantic_visual.type == "markers":
+            pydantic_markers = typing.cast(PydanticMarkers, pydantic_visual.visual)
+            marker_shape = MarkerShape[pydantic_markers.marker_shape]
+            positions = PydanticParser._pydantic_to_transbuf(pydantic_markers.positions)
+            sizes = PydanticParser._pydantic_to_transbuf(pydantic_markers.sizes)
+            face_colors = PydanticParser._pydantic_to_transbuf(pydantic_markers.face_colors)
+            edge_colors = PydanticParser._pydantic_to_transbuf(pydantic_markers.edge_colors)
+            edge_widths = PydanticParser._pydantic_to_transbuf(pydantic_markers.edge_widths)
+            markers = Markers(marker_shape, positions, sizes, face_colors, edge_colors, edge_widths)
+            markers._uuid = pydantic_markers.uuid
+            return markers
         else:
             raise ValueError(f"Unknown PydanticVisual type: {pydantic_visual.type}")
 

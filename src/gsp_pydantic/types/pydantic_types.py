@@ -62,9 +62,29 @@ class PydanticSegments(BaseModel):
     colors: PydanticTransBuf
 
 
+class PydanticPaths(BaseModel):
+    uuid: str
+    positions: PydanticTransBuf
+    path_sizes: PydanticTransBuf
+    colors: PydanticTransBuf
+    line_widths: PydanticTransBuf
+    cap_style: str
+    join_style: str
+
+
+class PydanticMarkers(BaseModel):
+    uuid: str
+    marker_shape: str
+    positions: PydanticTransBuf
+    sizes: PydanticTransBuf
+    face_colors: PydanticTransBuf
+    edge_colors: PydanticTransBuf
+    edge_widths: PydanticTransBuf
+
+
 class PydanticVisual(BaseModel):
-    type: Literal["pixels", "points", "segments"]
-    visual: PydanticPixels | PydanticPoints | PydanticSegments
+    type: Literal["pixels", "points", "segments", "paths", "markers"]
+    visual: PydanticPixels | PydanticPoints | PydanticSegments | PydanticPaths | PydanticMarkers
 
 
 # =============================================================================
