@@ -1,12 +1,9 @@
 # stdlib imports
-import os
-import re
-from typing import Literal, Sequence
+from typing import Literal
 import typing
 
 # pip imports
 import numpy as np
-import argparse
 
 # local imports
 from gsp.types.renderer_base import RendererBase
@@ -64,7 +61,7 @@ class BigTesterViewport:
 
 class BigTesterVisuals:
     @staticmethod
-    def create_random_pixels(dpi: float = 96.0) -> VisualBase:
+    def create_random_pixels(dpi: float = 96.0) -> tuple[VisualBase, TransBuf, Camera]:
         point_count = 10_000
         group_size = point_count  # one group per point
         group_count = GroupUtils.get_group_count(point_count, groups=group_size)
@@ -79,10 +76,16 @@ class BigTesterVisuals:
 
         # Create the Pixels visual and add it to the viewport
         pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
-        return pixels
+
+        # model matrix and camera
+        model_matrix = Bufferx.mat4_identity()
+        camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+        # return everything
+        return pixels, model_matrix, camera
 
     @staticmethod
-    def create_random_points(dpi: float = 96.0) -> VisualBase:
+    def create_random_points(dpi: float = 96.0) -> tuple[VisualBase, TransBuf, Camera]:
         point_count = 20
 
         # Random positions - Create buffer from numpy array
@@ -107,10 +110,16 @@ class BigTesterVisuals:
 
         # Create the Points visual and add it to the viewport
         points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
-        return points
+
+        # model matrix and camera
+        model_matrix = Bufferx.mat4_identity()
+        camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+        # return everything
+        return points, model_matrix, camera
 
     @staticmethod
-    def create_spiral_pixels() -> VisualBase:
+    def create_spiral_pixels() -> tuple[VisualBase, TransBuf, Camera]:
         def generate_pixels(gsp_color: bytearray) -> Pixels:
             point_count = 1_000
             group_size = point_count
@@ -134,10 +143,16 @@ class BigTesterVisuals:
             return pixels
 
         pixels = generate_pixels(gsp_color=Constants.Color.red)
-        return pixels
+
+        # model matrix and camera
+        model_matrix = Bufferx.mat4_identity()
+        camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+        # return everything
+        return pixels, model_matrix, camera
 
     @staticmethod
-    def create_random_segments() -> VisualBase:
+    def create_random_segments() -> tuple[VisualBase, TransBuf, Camera]:
         def generate_data(line_count: int, line_width_max: float, color_map_name: str):
             margin_x = 0.1
             x = np.linspace(-1 + margin_x, 1 - margin_x, line_count).astype(np.float32) * 0.9
@@ -171,7 +186,13 @@ class BigTesterVisuals:
 
         # Create the Pixels visual and add it to the viewport
         segments = Segments(positions_buffer, line_widths_buffer, CapStyle.ROUND, colors_buffer)
-        return segments
+
+        # model matrix and camera
+        model_matrix = Bufferx.mat4_identity()
+        camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+        # return everything
+        return segments, model_matrix, camera
 
 
 class BigTesterCamera:
@@ -194,7 +215,6 @@ class BigTesterRenderer:
             renderer = DatovizRenderer(canvas)
             return renderer
         elif renderer_name == "network":
-
             server_base_url = "http://localhost:5000"
             renderer = NetworkRenderer(canvas, server_base_url, renderer_name="datoviz")
             return renderer
@@ -270,123 +290,102 @@ class BigTesterSerializer:
 
 
 # =============================================================================
-#
+# class BigTesterRunner
 # =============================================================================
+class BigTesterRunner:
 
+    @staticmethod
+    def run(
+        viewport_count: int,
+        renderer_name: Literal["matplotlib", "datoviz", "network"],
+        matplotlib_image_format: Literal["png", "svg", "pdf"],
+        image_path: str | None,
+        pydantic_serialize_cycle: bool,
+        scenes: Literal["random_points", "random_pixels", "random_segments", "spiral_pixels"],
+    ) -> None:
+        # fix random seed for reproducibility
+        BigTesterBoilerplate.init_random_seed(0)
 
-def main():
-    # Parse command line arguments
-    argParser = argparse.ArgumentParser(
-        description="Run the big tester example.",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    argParser.add_argument("--viewport-count", type=int, default=1, help="Number of viewports to create")
-    argParser.add_argument("--renderer-name", type=str, choices=["matplotlib", "datoviz", "network"], default="matplotlib", help="Renderer to use")
-    argParser.add_argument(
-        "--matplotlib-image-format", type=str, choices=["png", "svg", "pdf"], default="png", help="Matplotlib image format. Only used if renderer is matplotlib"
-    )
-    argParser.add_argument("--image-path", type=str, default=None, help="Path to save image")
-    argParser.add_argument(
-        "--pydantic-serialize-cycle",
-        action="store_true",
-        help="Perform a serialization cycle using Pydantic",
-    )
-    argParser.add_argument(
-        "--scene",
-        dest="scenes",
-        type=str,
-        default=[],
-        nargs="+",
-        choices=[
-            "random_points",
-            "random_pixels",
-            "random_segments",
-            "spiral_pixels",
-        ],
-        help="A required list of one or more scene.",
-    )
-    args = argParser.parse_args()
+        # Create a canvas
+        canvas = BigTesterCanvas.create_canvas(viewport_count)
 
-    # type casting for all command line args
-    args.viewport_count = typing.cast(int, args.viewport_count)
-    args.renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], args.renderer_name)
-    args.matplotlib_image_format = typing.cast(Literal["png", "svg", "pdf"], args.matplotlib_image_format)
-    args.image_path = typing.cast(str | None, args.image_path)
-    args.pydantic_serialize_cycle = typing.cast(bool, args.pydantic_serialize_cycle)
-    args.scenes = typing.cast(Sequence[str], args.scenes)
+        # Create a viewport and add it to the canvas
+        viewports = BigTesterViewport.create_viewports(canvas, viewport_count)
 
-    # fix random seed for reproducibility
-    BigTesterBoilerplate.init_random_seed(0)
+        # =============================================================================
+        # Add random points
+        # - various ways to create Buffers
+        # =============================================================================
 
-    # Create a canvas
-    canvas = BigTesterCanvas.create_canvas(args.viewport_count)
+        visuals: list[VisualBase] = []
+        model_matrices: list[TransBuf] = []
+        cameras: list[Camera] = []
 
-    # Create a viewport and add it to the canvas
-    viewports = BigTesterViewport.create_viewports(canvas, args.viewport_count)
+        if "random_pixels" in scenes:
+            pixels, model_matrix, camera = BigTesterVisuals.create_random_pixels(dpi=canvas.get_dpi())
+            visuals.append(pixels)
+            model_matrices.append(model_matrix)
+            cameras.append(camera)
+        if "random_points" in scenes:
+            points, model_matrix, camera = BigTesterVisuals.create_random_points(dpi=canvas.get_dpi())
+            visuals.append(points)
+            model_matrices.append(model_matrix)
+            cameras.append(camera)
+        if "random_segments" in scenes:
+            segments, model_matrix, camera = BigTesterVisuals.create_random_segments()
+            visuals.append(segments)
+            model_matrices.append(model_matrix)
+            cameras.append(camera)
+        if "spiral_pixels" in scenes:
+            spiral_pixels, model_matrix, camera = BigTesterVisuals.create_spiral_pixels()
+            visuals.append(spiral_pixels)
+            model_matrices.append(model_matrix)
+            cameras.append(camera)
 
-    # =============================================================================
-    # Add random points
-    # - various ways to create Buffers
-    # =============================================================================
+        # =============================================================================
+        # Render the canvas
+        # =============================================================================
 
-    visuals: list[VisualBase] = []
-    if "random_points" in args.scenes:
-        visuals.append(BigTesterVisuals.create_random_pixels(dpi=canvas.get_dpi()))
-    if "random_pixels" in args.scenes:
-        visuals.append(BigTesterVisuals.create_random_points(dpi=canvas.get_dpi()))
-    if "random_segments" in args.scenes:
-        visuals.append(BigTesterVisuals.create_random_segments())
-    if "spiral_pixels" in args.scenes:
-        visuals.append(BigTesterVisuals.create_spiral_pixels())
+        model_matrix = BigTesterCamera.create_model_matrix()
+        camera = BigTesterCamera.create_camera()
 
-    # =============================================================================
-    # Render the canvas
-    # =============================================================================
+        # =============================================================================
+        # Render
+        # =============================================================================
 
-    model_matrix = BigTesterCamera.create_model_matrix()
-    camera = BigTesterCamera.create_camera()
+        full_visuals: list[VisualBase] = visuals * len(viewports)
+        full_model_matrices: list[TransBuf] = model_matrices * len(viewports)
+        full_cameras: list[Camera] = cameras * len(viewports)
+        full_viewports: list[Viewport] = viewports * len(visuals)
 
-    # =============================================================================
-    # Render
-    # =============================================================================
+        # =============================================================================
+        # Serialisation cycle
+        # =============================================================================
 
-    full_visuals: list[VisualBase] = visuals * len(viewports)
-    full_viewports: list[Viewport] = viewports * len(visuals)
-    model_matrices: list[TransBuf] = [model_matrix] * len(full_visuals)
-    cameras: list[Camera] = [camera] * len(full_visuals)
+        if pydantic_serialize_cycle:
+            canvas, viewports, visuals, model_matrices, cameras = BigTesterSerializer.serialize_cycle(
+                canvas,
+                full_viewports,
+                full_visuals,
+                full_model_matrices,
+                full_cameras,
+            )
 
-    # =============================================================================
-    # Serialisation cycle
-    # =============================================================================
+        # =============================================================================
+        # Render and display on screen
+        # =============================================================================
 
-    if args.pydantic_serialize_cycle:
-        canvas, viewports, visuals, model_matrices, cameras = BigTesterSerializer.serialize_cycle(
-            canvas,
-            full_viewports,
-            full_visuals,
-            model_matrices,
-            cameras,
-        )
+        # Create a renderer and render the scene
+        renderer = BigTesterRenderer.create_renderer(canvas, renderer_name=renderer_name)
+        rendered_image = BigTesterRenderer.render_scene(renderer, full_viewports, full_visuals, full_model_matrices, full_cameras)
 
-    # =============================================================================
-    # Render and display on screen
-    # =============================================================================
+        # Save the rendered image to a file
+        if image_path is not None:
+            with open(image_path, "wb") as image_file:
+                image_file.write(rendered_image)
+            print(f"Rendered image saved to: {image_path}")
 
-    # --renderer_name matplotlib|datoviz|network
-
-    # Create a renderer and render the scene
-    renderer = BigTesterRenderer.create_renderer(canvas, renderer_name=args.renderer_name)
-    rendered_image = BigTesterRenderer.render_scene(renderer, full_viewports, full_visuals, model_matrices, cameras)
-
-    if args.image_path is not None:
-        with open(args.image_path, "wb") as image_file:
-            image_file.write(rendered_image)
-        print(f"Rendered image saved to: {args.image_path}")
-
-    if args.renderer_name == "matplotlib" or args.renderer_name == "datoviz":
-        typed_renderer = typing.cast(MatplotlibRenderer | DatovizRenderer, renderer)
-        typed_renderer.show()
-
-
-if __name__ == "__main__":
-    main()
+        # Show the rendered image on screen
+        if renderer_name == "matplotlib" or renderer_name == "datoviz":
+            typed_renderer = typing.cast(MatplotlibRenderer | DatovizRenderer, renderer)
+            typed_renderer.show()

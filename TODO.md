@@ -1,21 +1,4 @@
-- gsp_network to specify the scene renderer on a remote server
-  - easier to test
-- datoviz network doesnt work as it is unable to take screenshots
-- Complete serialisation/deserialization for all visuals
-- DONE pdf/svg output for matplotlib
-- DONE do something multi viewport
-- DONE do serialisation with json
-- DONE do network with http
 - do test with expected_screenshots
-- do a 'big tester' example
-  - something with arguments which can be changed from command line
-  - thus it can be intrumented to cover all the cases in combinations
-  - multi-viewports
-  - with and without serialisation
-  - with and without http server
-  - all visuals - various scenes
-  - all renderers
-  - using transform or buffer as input
 - API design principles
   - "what are the good design principle to apply when designing an library API"
   - https://chatgpt.com/c/69162470-7220-8332-9df8-a928b77f0528
@@ -54,6 +37,23 @@
 
 
 ---
+- DONE datoviz network doesnt work as it is unable to take screenshots
+- DONE Complete serialisation/deserialization for all visuals
+- DONE do a 'big tester' example
+  - something with arguments which can be changed from command line
+  - thus it can be intrumented to cover all the cases in combinations
+  - multi-viewports
+  - with and without serialisation
+  - with and without http server
+  - all visuals - various scenes
+  - all renderers
+  - using transform or buffer as input
+- DONE gsp_network to specify the scene renderer on a remote server
+  - easier to test
+- DONE pdf/svg output for matplotlib
+- DONE do something multi viewport
+- DONE do serialisation with json
+- DONE do network with http
 - DONE implement points in datoviz
 - WONTDO for each example, `_matplotlib` `_datoviz` and `_both`
   - have a test_runner ?
