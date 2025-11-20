@@ -44,6 +44,9 @@ class MatplotlibRenderer(RendererBase):
         assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
         self._figure.canvas.manager.set_window_title("Matplotlib")
 
+    def get_canvas(self) -> Canvas:
+        return self.canvas
+
     def show(self) -> None:
         # handle non-interactive mode for tests
         inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"

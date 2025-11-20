@@ -12,8 +12,10 @@ from gsp.types.transbuf import TransBuf
 
 class RendererBase(ABC):
     @abstractmethod
-    def __init__(self, canvas: Canvas):
-        pass
+    def __init__(self, canvas: Canvas): ...
+
+    @abstractmethod
+    def get_canvas(self) -> Canvas: ...
 
     @abstractmethod
     def render(
@@ -22,5 +24,4 @@ class RendererBase(ABC):
         visuals: Sequence[VisualBase],
         model_matrices: Sequence[TransBuf],
         cameras: Sequence[Camera],
-    ) -> bytes:
-        pass
+    ) -> bytes: ...

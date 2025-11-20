@@ -6,8 +6,6 @@
 - to get the screen type on macosx
   - `system_profiler SPDisplaysDataType`
   - `system_profiler SPHardwareDataType`
-- PR datoviz with the whole ./datoviz as pyright 0 errors
-  - add a pyright target in justfile
 - test dynamic group in datoviz pixels
 - datoviz: add better python API (seems hard/complicated to do)
 - when datoviz core dump, DVZ_LOG_LEVEL=0
@@ -37,6 +35,8 @@
 
 
 ---
+- DONE PR datoviz with the whole ./datoviz as pyright 0 errors
+  - add a pyright target in justfile
 - DONE datoviz network doesnt work as it is unable to take screenshots
 - DONE Complete serialisation/deserialization for all visuals
 - DONE do a 'big tester' example
