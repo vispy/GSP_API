@@ -8,9 +8,11 @@ import matplotlib
 
 # trick to disable the toolbar in matplotlib
 matplotlib.rcParams["toolbar"] = "none"
+
 import matplotlib.pyplot
 import matplotlib.axes
 import matplotlib.artist
+import matplotlib.figure
 
 # local imports
 from gsp.core.camera import Camera
@@ -146,3 +148,6 @@ class MatplotlibRenderer(RendererBase):
 
     def get_axes_for_viewport(self, viewport: Viewport) -> matplotlib.axes.Axes:
         return self._axes[viewport.get_uuid()]
+
+    def get_mpl_figure(self) -> matplotlib.figure.Figure:
+        return self._figure

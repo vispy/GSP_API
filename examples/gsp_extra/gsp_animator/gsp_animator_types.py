@@ -2,11 +2,11 @@
 from typing import Callable, Sequence, Protocol
 
 # local imports
-import gsp
+from gsp.types.visual_base import VisualBase
 
 
 # do a callback type for the animation loop
-GSPAnimatorFunc = Callable[[float], Sequence[gsp.core.VisualBase]]
+GSPAnimatorFunc = Callable[[float], Sequence[VisualBase]]
 """A simple animation loop manager for matplotlib rendering.
 
 Arguments:
@@ -14,5 +14,6 @@ Arguments:
 """
 
 
+# TODO use the gsp.core.Event system instead?
 class VideoSavedCalledback(Protocol):
     def __call__(self) -> None: ...  # type: ignore

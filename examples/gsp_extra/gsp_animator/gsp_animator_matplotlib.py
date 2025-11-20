@@ -11,8 +11,12 @@ import time
 
 # local imports
 import gsp
+from gsp.types.transbuf import TransBuf
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp.types.visual_base import VisualBase
+from gsp.core.canvas import Canvas
+from gsp.core.viewport import Viewport
+from gsp.core.camera import Camera
 from .gsp_animator_types import GSPAnimatorFunc, VideoSavedCalledback
 
 __dirname__ = os.path.dirname(os.path.abspath(__file__))
@@ -38,10 +42,13 @@ class GspAnimatorMatplotlib:
         self._video_path = video_path
         self._video_writer: str | None = None
         self._time_last_update: float | None = None
-        self._canvas: gsp.core.Canvas | None = None
-        self._viewports: list[gsp.core.Viewport] | None = None
-        self._cameras: list[gsp.core.Camera] | None = None
         self._funcAnimation: matplotlib.animation.FuncAnimation | None = None
+
+        self._canvas: Canvas | None = None
+        self._viewports: Sequence[Viewport] | None = None
+        self._visuals: Sequence[VisualBase] | None = None
+        self._model_matrices: Sequence[TransBuf] | None = None
+        self._cameras: Sequence[Camera] | None = None
 
         self.on_video_saved = gsp.core.Event[VideoSavedCalledback]()
         """Event triggered when the video is saved."""
@@ -98,13 +105,17 @@ class GspAnimatorMatplotlib:
     # =============================================================================
     # .start()
     # =============================================================================
-    def start(self, canvas: Canvas, viewports: list[Viewport], cameras: list[Camera], block: bool = True) -> None:
+    def start(
+        self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], model_matrices: Sequence[TransBuf], cameras: Sequence[Camera], block: bool = True
+    ) -> None:
         """
         Animate the given canvas and camera using the provided callbacks to update visuals.
         """
 
-        self._canvas = canvas
+        self._canvas = self._matplotlib_renderer.get_canvas()
         self._viewports = viewports
+        self._visuals = visuals
+        self._model_matrices = model_matrices
         self._cameras = cameras
         self._time_last_update = time.time()
 
@@ -112,24 +123,23 @@ class GspAnimatorMatplotlib:
         # Render the image once
         # =============================================================================
 
-        self._matplotlib_renderer.render(canvas, viewports, cameras)
+        self._matplotlib_renderer.render(viewports, visuals, model_matrices, cameras)
 
         # =============================================================================
-        # matploglib animation callback
+        # matplotlib animation callback
         # =============================================================================
 
-        figures = list(self._matplotlib_renderer._figures.values())
-        figure = figures[0]
+        figure = self._matplotlib_renderer.get_mpl_figure()
 
         # =============================================================================
-        # Handle GSP_SC_INTERACTIVE=False
+        # Handle GSP_INTERACTIVE_MODE=False
         # =============================================================================
 
         # detect if we are in not interactive mode - used during testing
-        gsp_sc_interactive = "GSP_SC_INTERACTIVE" not in os.environ or os.environ["GSP_SC_INTERACTIVE"] != "False"
+        gsp_interactive_mode = "GSP_INTERACTIVE_MODE" not in os.environ or os.environ["GSP_INTERACTIVE_MODE"] != "False"
 
         # if we are not in interactive mode, save a preview image and return
-        if gsp_sc_interactive == False:
+        if gsp_interactive_mode == False:
             # notify all animator callbacks
             changed_visuals: list[VisualBase] = []
             for animator_callback in self._callbacks:
@@ -137,7 +147,7 @@ class GspAnimatorMatplotlib:
                 changed_visuals.extend(_changed_visuals)
 
             # render the scene to get the new image
-            image_png_data = self._matplotlib_renderer.render(canvas, canvas.viewports, cameras)
+            image_png_data = self._matplotlib_renderer.render(viewports, visuals, model_matrices, cameras, return_image=True, image_format="png")
             # get the main script name
             main_script_name = os.path.basename(__main__.__file__) if hasattr(__main__, "__file__") else "interactive"
             main_script_basename = os.path.splitext(main_script_name)[0]
@@ -156,14 +166,14 @@ class GspAnimatorMatplotlib:
         # =============================================================================
         # Connect cameras
         # =============================================================================
+        # FIXME how to handle camera?
+        # # connect the camera events to the render function
+        # def camera_update(transform) -> None:
+        #     self._matplotlib_renderer.render(canvas, viewports, cameras)
 
-        # connect the camera events to the render function
-        def camera_update(transform) -> None:
-            self._matplotlib_renderer.render(canvas, viewports, cameras)
-
-        for camera, viewport in zip(cameras, canvas.viewports):
-            mpl_axes = self._matplotlib_renderer._axes[viewport.uuid]
-            camera.mpl3d_camera.connect(mpl_axes, camera_update)
+        # for camera, viewport in zip(cameras, canvas.viewports):
+        #     mpl_axes = self._matplotlib_renderer._axes[viewport.uuid]
+        #     camera.mpl3d_camera.connect(mpl_axes, camera_update)
 
         # =============================================================================
         # Initialize the animation
@@ -191,10 +201,11 @@ class GspAnimatorMatplotlib:
     # =============================================================================
     def stop(self):
         # disconnect the cameras connected in .start()
-        if self._cameras is not None:
-            for camera in self._cameras:
-                camera.mpl3d_camera.disconnect()
-            self._cameras = None
+        # FIXME how to handle camera?
+        # if self._cameras is not None:
+        #     for camera in self._cameras:
+        #         camera.mpl3d_camera.disconnect()
+        #     self._cameras = None
 
         self._canvas = None
         self._viewports = None
@@ -216,7 +227,7 @@ class GspAnimatorMatplotlib:
         self._time_last_update = present
 
         # notify all animator callbacks
-        changed_visuals: list[gsp.core.VisualBase] = []
+        changed_visuals: list[VisualBase] = []
 
         for callback in self._callbacks:
             _changed_visuals = callback(delta_time)
@@ -237,38 +248,40 @@ class GspAnimatorMatplotlib:
     # =============================================================================
 
     # TODO move that in the matplotlib renderer?
-    def _get_mpl_artists(self, canvas: gsp.core.Canvas, visual_base: gsp.core.VisualBase) -> matplotlib.artist.Artist:
+    def _get_mpl_artists(self, canvas: gsp.core.Canvas, visual_base: VisualBase) -> matplotlib.artist.Artist:
         """
         Get the matplotlib artists corresponding to a given visual in the canvas.
         This is needed for the matplotlib FuncAnimation to update only the relevant artists.
         """
-        for viewport in canvas.viewports:
-            for visual in viewport.visuals:
-                # if it is not the visual we are looking for, skip it
-                if visual != visual_base:
-                    continue
+        # FIXME implement this properly
+        raise NotImplementedError("GspAnimatorMatplotlib._get_mpl_artists() is not implemented yet")
+        # for viewport in canvas.viewports:
+        #     for visual in viewport.visuals:
+        #         # if it is not the visual we are looking for, skip it
+        #         if visual != visual_base:
+        #             continue
 
-                # get the mpl artist corresponding to the visual
-                if isinstance(visual, gsp.visuals.Image):
-                    image: gsp.visuals.Image = visual
-                    full_uuid = image.uuid + viewport.uuid
-                    assert full_uuid in self._matplotlib_renderer._axesImages, "Image not found in renderer"
-                    mpl_artist = self._matplotlib_renderer._axesImages[full_uuid]
-                    return mpl_artist
-                elif isinstance(visual, gsp.visuals.Pixels):
-                    pixels: gsp.visuals.Pixels = visual
-                    full_uuid = pixels.uuid + viewport.uuid
-                    assert full_uuid in self._matplotlib_renderer._pathCollections, "Pixels not found in renderer"
-                    patchCollections = self._matplotlib_renderer._pathCollections[full_uuid]
-                    mpl_artist = patchCollections
-                    return mpl_artist
-                elif isinstance(visual, gsp.visuals.Mesh):
-                    mesh: gsp.visuals.Mesh = visual
-                    full_uuid = mesh.uuid + viewport.uuid
-                    assert full_uuid in self._matplotlib_renderer._polyCollections, "Mesh not found in renderer"
-                    polyCollections = self._matplotlib_renderer._polyCollections[full_uuid]
-                    mpl_artist = polyCollections
-                    return mpl_artist
-                else:
-                    assert False, "Visual type not supported yet"
-        assert False, "Visual not found in canvas"
+        #         # get the mpl artist corresponding to the visual
+        #         if isinstance(visual, gsp.visuals.Image):
+        #             image: gsp.visuals.Image = visual
+        #             full_uuid = image.uuid + viewport.uuid
+        #             assert full_uuid in self._matplotlib_renderer._axesImages, "Image not found in renderer"
+        #             mpl_artist = self._matplotlib_renderer._axesImages[full_uuid]
+        #             return mpl_artist
+        #         elif isinstance(visual, gsp.visuals.Pixels):
+        #             pixels: gsp.visuals.Pixels = visual
+        #             full_uuid = pixels.uuid + viewport.uuid
+        #             assert full_uuid in self._matplotlib_renderer._pathCollections, "Pixels not found in renderer"
+        #             patchCollections = self._matplotlib_renderer._pathCollections[full_uuid]
+        #             mpl_artist = patchCollections
+        #             return mpl_artist
+        #         elif isinstance(visual, gsp.visuals.Mesh):
+        #             mesh: gsp.visuals.Mesh = visual
+        #             full_uuid = mesh.uuid + viewport.uuid
+        #             assert full_uuid in self._matplotlib_renderer._polyCollections, "Mesh not found in renderer"
+        #             polyCollections = self._matplotlib_renderer._polyCollections[full_uuid]
+        #             mpl_artist = polyCollections
+        #             return mpl_artist
+        #         else:
+        #             assert False, "Visual type not supported yet"
+        # assert False, "Visual not found in canvas"

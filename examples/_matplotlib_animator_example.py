@@ -75,15 +75,14 @@ def main():
     # =============================================================================
     @animator_matplotlib.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:
-        new_sizes = np.random.uniform(10, 100, (point_count,)).astype(np.float32)
-        # copy inplace to avoid reallocations
-        sizes_numpy[:] = new_sizes
+        positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
+        positions_buffer.set_data(bytearray(positions_numpy.tobytes()), 0, positions_buffer.get_count())
 
         changed_visuals: list[VisualBase] = [points]
         return changed_visuals
 
     # start the animation loop
-    animator_matplotlib.start(canvas, [viewport], [camera])
+    animator_matplotlib.start([viewport], [points], [model_matrix], [camera])
 
 
 if __name__ == "__main__":
