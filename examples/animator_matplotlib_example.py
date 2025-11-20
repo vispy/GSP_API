@@ -27,12 +27,6 @@ def main():
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
 
-    # init the matplotlib renderer
-    renderer = MatplotlibRenderer(canvas)
-
-    # init the animator with the renderer
-    animator_matplotlib = GspAnimatorMatplotlib(renderer)
-
     # =============================================================================
     # Add random points
     # - various ways to create Buffers
@@ -73,10 +67,16 @@ def main():
     # =============================================================================
     # Render
     # =============================================================================
+    # init the matplotlib renderer
+    renderer = MatplotlibRenderer(canvas)
+
+    # init the animator with the renderer
+    animator_matplotlib = GspAnimatorMatplotlib(renderer)
+
     @animator_matplotlib.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:
-        positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
-        positions_buffer.set_data(bytearray(positions_numpy.tobytes()), 0, positions_buffer.get_count())
+        sizes_numpy = np.random.rand(point_count).astype(np.float32) * 40.0 + 10.0
+        sizes_buffer.set_data(bytearray(sizes_numpy.tobytes()), 0, sizes_buffer.get_count())
 
         changed_visuals: list[VisualBase] = [points]
         return changed_visuals

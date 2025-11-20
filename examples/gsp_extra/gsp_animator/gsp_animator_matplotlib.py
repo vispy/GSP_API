@@ -12,11 +12,13 @@ import time
 # local imports
 import gsp
 from gsp.types.transbuf import TransBuf
+from gsp.visuals import points
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp.types.visual_base import VisualBase
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.core.camera import Camera
+from gsp.visuals.points import Points
 from .gsp_animator_types import GSPAnimatorFunc, VideoSavedCalledback
 
 __dirname__ = os.path.dirname(os.path.abspath(__file__))
@@ -221,6 +223,13 @@ class GspAnimatorMatplotlib:
     # =============================================================================
 
     def _mpl_animate(self, frame_index: int) -> list[matplotlib.artist.Artist]:
+        # sanity checks
+        assert self._canvas is not None, "Canvas MUST be set during the animation"
+        assert self._viewports is not None, "Viewports MUST be set during the animation"
+        assert self._visuals is not None, "Visuals MUST be set during the animation"
+        assert self._model_matrices is not None, "Model matrices MUST be set during the animation"
+        assert self._cameras is not None, "Cameras MUST be set during the animation"
+
         # compute delta time
         present = time.time()
         delta_time = (present - self._time_last_update) if self._time_last_update is not None else (1 / self._fps)
@@ -233,12 +242,14 @@ class GspAnimatorMatplotlib:
             _changed_visuals = callback(delta_time)
             changed_visuals.extend(_changed_visuals)
 
+        # Render the scene to update the visuals
+        self._matplotlib_renderer.render(self._viewports, self._visuals, self._model_matrices, self._cameras)
+
         # convert all changed visuals to mpl artists
         changed_mpl_artists: list[matplotlib.artist.Artist] = []
         for visual in changed_visuals:
-            assert self._canvas is not None, "Canvas MUST be set during the animation"
-            mpl_artist = self._get_mpl_artists(self._canvas, visual)
-            changed_mpl_artists.append(mpl_artist)
+            mpl_artists = self._get_mpl_artists(self._viewports, self._visuals, visual)
+            changed_mpl_artists.extend(mpl_artists)
 
         # return the changed mpl artists
         return changed_mpl_artists
@@ -247,41 +258,25 @@ class GspAnimatorMatplotlib:
     # ._get_mpl_artists()
     # =============================================================================
 
-    # TODO move that in the matplotlib renderer?
-    def _get_mpl_artists(self, canvas: gsp.core.Canvas, visual_base: VisualBase) -> matplotlib.artist.Artist:
+    def _get_mpl_artists(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], visual_base: VisualBase) -> list[matplotlib.artist.Artist]:
         """
         Get the matplotlib artists corresponding to a given visual in the canvas.
         This is needed for the matplotlib FuncAnimation to update only the relevant artists.
         """
-        # FIXME implement this properly
-        raise NotImplementedError("GspAnimatorMatplotlib._get_mpl_artists() is not implemented yet")
-        # for viewport in canvas.viewports:
-        #     for visual in viewport.visuals:
-        #         # if it is not the visual we are looking for, skip it
-        #         if visual != visual_base:
-        #             continue
 
-        #         # get the mpl artist corresponding to the visual
-        #         if isinstance(visual, gsp.visuals.Image):
-        #             image: gsp.visuals.Image = visual
-        #             full_uuid = image.uuid + viewport.uuid
-        #             assert full_uuid in self._matplotlib_renderer._axesImages, "Image not found in renderer"
-        #             mpl_artist = self._matplotlib_renderer._axesImages[full_uuid]
-        #             return mpl_artist
-        #         elif isinstance(visual, gsp.visuals.Pixels):
-        #             pixels: gsp.visuals.Pixels = visual
-        #             full_uuid = pixels.uuid + viewport.uuid
-        #             assert full_uuid in self._matplotlib_renderer._pathCollections, "Pixels not found in renderer"
-        #             patchCollections = self._matplotlib_renderer._pathCollections[full_uuid]
-        #             mpl_artist = patchCollections
-        #             return mpl_artist
-        #         elif isinstance(visual, gsp.visuals.Mesh):
-        #             mesh: gsp.visuals.Mesh = visual
-        #             full_uuid = mesh.uuid + viewport.uuid
-        #             assert full_uuid in self._matplotlib_renderer._polyCollections, "Mesh not found in renderer"
-        #             polyCollections = self._matplotlib_renderer._polyCollections[full_uuid]
-        #             mpl_artist = polyCollections
-        #             return mpl_artist
-        #         else:
-        #             assert False, "Visual type not supported yet"
-        # assert False, "Visual not found in canvas"
+        mpl_artists: list[matplotlib.artist.Artist] = []
+
+        # Find the index of the visual in the visuals list
+        visual_index = visuals.index(visual_base)
+        visual = visuals[visual_index]
+        viewport = viewports[visual_index]
+
+        if isinstance(visual, Points):
+            points: Points = visual
+            artist_uuid = f"{viewport.get_uuid()}_{points.get_uuid()}"
+            mpl_artist = self._matplotlib_renderer._artists[artist_uuid]
+            mpl_artists.append(mpl_artist)
+        else:
+            raise NotImplementedError(f"Getting mpl artists for visual type {type(visual)} is not implemented.")
+
+        return mpl_artists

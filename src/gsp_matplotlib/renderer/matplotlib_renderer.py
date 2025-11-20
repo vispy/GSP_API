@@ -146,6 +146,10 @@ class MatplotlibRenderer(RendererBase):
         else:
             raise NotImplementedError(f"Rendering for visual type {type(visual)} is not implemented.")
 
+    # =============================================================================
+    #
+    # =============================================================================
+
     def get_axes_for_viewport(self, viewport: Viewport) -> matplotlib.axes.Axes:
         return self._axes[viewport.get_uuid()]
 
