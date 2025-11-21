@@ -2,6 +2,7 @@
 import os
 from typing import Sequence
 import pathlib
+import warnings
 
 # pip imports
 import numpy as np
@@ -44,6 +45,9 @@ class DatovizRenderer(RendererBase):
 
         self._group_count: dict[str, int] = {}
         """group count per visual UUID"""
+
+    def close(self) -> None:
+        self._dvz_app.destroy()
 
     def get_canvas(self) -> Canvas:
         return self._canvas
@@ -103,9 +107,6 @@ class DatovizRenderer(RendererBase):
             image_path.unlink()
 
         return rendered_image
-
-    def close(self):
-        self._dvz_app.destroy()
 
     # =============================================================================
     # ._render_pixels()

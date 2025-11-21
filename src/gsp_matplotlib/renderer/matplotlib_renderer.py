@@ -2,6 +2,7 @@
 import os
 import io
 from typing import Sequence
+import warnings
 
 # pip imports
 import matplotlib
@@ -48,6 +49,9 @@ class MatplotlibRenderer(RendererBase):
 
     def get_canvas(self) -> Canvas:
         return self.canvas
+
+    def close(self) -> None:
+        warnings.warn(f"Closing NetworkRenderer does not release any resources.", UserWarning)
 
     def show(self) -> None:
         # handle non-interactive mode for tests

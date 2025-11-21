@@ -15,6 +15,9 @@ class RendererBase(ABC):
     def __init__(self, canvas: Canvas): ...
 
     @abstractmethod
+    def close(self) -> None: ...
+
+    @abstractmethod
     def get_canvas(self) -> Canvas: ...
 
     @abstractmethod

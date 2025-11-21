@@ -1,8 +1,10 @@
 # stdlib imports
 import os
+import pathlib
 
 # pip imports
 import numpy as np
+
 
 # local imports
 from gsp.constants import Constants
@@ -15,6 +17,8 @@ from gsp.utils.unit_utils import UnitUtils
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
+
+__dirname__ = pathlib.Path(__file__).parent.resolve()
 
 
 def main():
@@ -72,6 +76,24 @@ def main():
 
     # init the animator with the renderer
     animator_matplotlib = GspAnimatorMatplotlib(renderer)
+
+    # Save the animation to a video file
+    video_path = os.path.join(__dirname__, f"output/{os.path.basename(__file__).replace('.py', '')}.mp4")
+    print(f"Saving video to {video_path}")
+
+    # Init a animator
+    animator = GspAnimatorMatplotlib(renderer, fps=60, video_duration=10.0, video_path=video_path)
+
+    @animator.on_video_saved.event_listener
+    def on_save():
+        # log the video path
+        print(f"Video saved to: {video_path}")
+
+        # stop the animator
+        animator.stop()
+
+        # close the renderer
+        renderer.close()
 
     @animator_matplotlib.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:

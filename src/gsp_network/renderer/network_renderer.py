@@ -1,7 +1,7 @@
 # typing imports
 from typing import Sequence, TypedDict, Literal
-import typing
 import json
+import warnings
 
 # pip imports
 import requests
@@ -34,6 +34,9 @@ class NetworkRenderer(RendererBase):
 
     def get_canvas(self) -> Canvas:
         return self._canvas
+
+    def close(self) -> None:
+        warnings.warn(f"Closing NetworkRenderer does not release any resources.", UserWarning)
 
     def get_renderer_name(self) -> Literal["matplotlib", "datoviz"]:
         return self._renderer_name
