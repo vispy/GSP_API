@@ -1,6 +1,7 @@
 # stdlib imports
 import os
 import pathlib
+import argparse
 
 # pip imports
 import numpy as np
@@ -21,7 +22,7 @@ from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
 __dirname__ = pathlib.Path(__file__).parent.resolve()
 
 
-def main():
+def main(save_video: bool = False):
     # fix random seed for reproducibility
     np.random.seed(0)
 
@@ -74,26 +75,27 @@ def main():
     # init the matplotlib renderer
     renderer = MatplotlibRenderer(canvas)
 
-    # init the animator with the renderer
-    animator_matplotlib = GspAnimatorMatplotlib(renderer)
+    if save_video is False:
+        # init the animator with the renderer
+        animator_matplotlib = GspAnimatorMatplotlib(renderer)
+    else:
+        # Save the animation to a video file
+        video_path = os.path.join(__dirname__, f"output/{os.path.basename(__file__).replace('.py', '')}.mp4")
+        print(f"Saving video to {video_path}")
 
-    # Save the animation to a video file
-    video_path = os.path.join(__dirname__, f"output/{os.path.basename(__file__).replace('.py', '')}.mp4")
-    print(f"Saving video to {video_path}")
+        # Init a animator
+        animator = GspAnimatorMatplotlib(renderer, fps=60, video_duration=10.0, video_path=video_path)
 
-    # Init a animator
-    animator = GspAnimatorMatplotlib(renderer, fps=60, video_duration=10.0, video_path=video_path)
+        @animator.on_video_saved.event_listener
+        def on_save():
+            # log the video path
+            print(f"Video saved to: {video_path}")
 
-    @animator.on_video_saved.event_listener
-    def on_save():
-        # log the video path
-        print(f"Video saved to: {video_path}")
+            # stop the animator
+            animator.stop()
 
-        # stop the animator
-        animator.stop()
-
-        # close the renderer
-        renderer.close()
+            # close the renderer
+            renderer.close()
 
     @animator_matplotlib.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:
@@ -108,4 +110,18 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # Parse command line arguments
+    argParser = argparse.ArgumentParser(
+        description="Run the animator matplotlib example.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    # --save-video -sv
+    argParser.add_argument(
+        "--save-video",
+        "--sv",
+        action="store_true",
+        help="Save the animation to a video file.",
+    )
+    args = argParser.parse_args()
+
+    main(save_video=args.save_video)
