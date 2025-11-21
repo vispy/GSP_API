@@ -1,10 +1,13 @@
 # stdlib imports
 import os
+import typing
+from typing import Literal
 
 # pip imports
 import numpy as np
 
 # local imports
+from examples.gsp_extra.gsp_animator.gsp_animator_network import GspAnimatorNetwork
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.types.visual_base import VisualBase
@@ -15,6 +18,7 @@ from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.unit_utils import UnitUtils
 from gsp_extra.gsp_animator.gsp_animator_matplotlib import GspAnimatorMatplotlib
+from gsp_network.renderer.network_renderer import NetworkRenderer
 
 
 def main():
@@ -67,13 +71,14 @@ def main():
     # =============================================================================
     # Render
     # =============================================================================
-    # init the matplotlib renderer
-    renderer = MatplotlibRenderer(canvas)
+    # Create a renderer and render the scene
+    renderer_name = typing.cast(Literal["matplotlib", "datoviz"], os.environ.get("GSP_RENDERER", "matplotlib"))
+    renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", renderer_name=renderer_name)
 
     # init the animator with the renderer
-    animator_matplotlib = GspAnimatorMatplotlib(renderer)
+    animator_network = GspAnimatorNetwork(renderer)
 
-    @animator_matplotlib.event_listener
+    @animator_network.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:
         sizes_numpy = np.random.rand(point_count).astype(np.float32) * 40.0 + 10.0
         sizes_buffer.set_data(bytearray(sizes_numpy.tobytes()), 0, sizes_buffer.get_count())
@@ -82,7 +87,7 @@ def main():
         return changed_visuals
 
     # start the animation loop
-    animator_matplotlib.start([viewport], [points], [model_matrix], [camera])
+    animator_network.start([viewport], [points], [model_matrix], [camera])
 
 
 if __name__ == "__main__":
