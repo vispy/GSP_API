@@ -15,8 +15,10 @@ import matplotlib.figure
 
 # local imports
 import gsp
-import gsp_network
-from gsp.core import canvas
+from gsp_network.renderer import NetworkRenderer
+from gsp.types.visual_base import VisualBase
+from gsp.types.transbuf import TransBuf
+from gsp.core import Viewport, Camera, Canvas
 from .gsp_animator_types import GSPAnimatorFunc, VideoSavedCalledback
 
 __dirname__ = os.path.dirname(os.path.abspath(__file__))
@@ -32,7 +34,7 @@ class GspAnimatorNetwork:
 
     def __init__(
         self,
-        network_renderer: gsp_network.NetworkRenderer,
+        network_renderer: NetworkRenderer,
         fps: int = 30,
         video_duration: float = 10.0,
         video_path: str | None = None,
@@ -45,12 +47,16 @@ class GspAnimatorNetwork:
         self._video_path = video_path
         self._video_writer: str | None = None
         self._time_last_update = None
-        self._canvas: gsp.core.Canvas | None = None
-        self._viewports: list[gsp.core.Viewport] | None = None
-        self._cameras: list[gsp.core.Camera] | None = None
+
         self._funcAnimation: matplotlib.animation.FuncAnimation | None = None
         self._figure: matplotlib.figure.Figure | None = None
         self._axes_image: matplotlib.image.AxesImage | None = None
+
+        self._canvas: Canvas | None = None
+        self._viewports: Sequence[Viewport] | None = None
+        self._visuals: Sequence[VisualBase] | None = None
+        self._model_matrices: Sequence[TransBuf] | None = None
+        self._cameras: Sequence[Camera] | None = None
 
         self.on_video_saved = gsp.core.Event[VideoSavedCalledback]()
         """Event triggered when the video is saved."""
@@ -85,7 +91,7 @@ class GspAnimatorNetwork:
 
         Usage:
             ```python
-                @animation_loop.decorator
+                @animation_loop.event_listener
                 def my_callback(delta_time: float) -> Sequence[Object3D]:
                     ...
 
@@ -96,7 +102,7 @@ class GspAnimatorNetwork:
 
         self.add_callback(func)
 
-        def wrapper(delta_time: float) -> Sequence[gsp.core.VisualBase]:
+        def wrapper(delta_time: float) -> Sequence[VisualBase]:
             # print("Before the function runs")
             result = func(delta_time)
             # print("After the function runs")
@@ -107,42 +113,44 @@ class GspAnimatorNetwork:
     # =============================================================================
     # .animate
     # =============================================================================
-    def start(self, canvas: gsp.core.Canvas, viewports: list[gsp.core.Viewport], cameras: list[gsp.core.Camera]):
+    def start(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], model_matrices: Sequence[TransBuf], cameras: Sequence[Camera]):
         """
         Animate the given canvas and camera using the provided callbacks to update visuals.
         """
 
-        self._canvas = canvas
+        self._canvas = self._network_renderer.get_canvas()
         self._viewports = viewports
+        self._visuals = visuals
+        self._model_matrices = model_matrices
         self._cameras = cameras
         self._time_last_update = time.time()
 
         # create a matplotlib figure of the right size
-        self._figure = matplotlib.pyplot.figure(frameon=False, dpi=canvas.dpi)
-        self._figure.set_size_inches(canvas.width / canvas.dpi, canvas.height / canvas.dpi)
+        self._figure = matplotlib.pyplot.figure(frameon=False, dpi=self._canvas.get_dpi())
+        self._figure.set_size_inches(self._canvas.get_width() / self._canvas.get_dpi(), self._canvas.get_height() / self._canvas.get_dpi())
 
         # get the only axes in the figure
         mpl_axes = self._figure.add_axes((0, 0, 1, 1))
 
         # create an np.array to hold the image
-        image_data_np = np.zeros((canvas.height, canvas.width, 3), dtype=np.uint8)
+        image_data_np = np.zeros((self._canvas.get_height(), self._canvas.get_width(), 3), dtype=np.uint8)
         self._axes_image = mpl_axes.imshow(image_data_np)
 
         # =============================================================================
-        # Handle GSP_SC_INTERACTIVE is False
+        # Handle GSP_INTERACTIVE_MODE is False
         # =============================================================================
 
         # detect if we are in not interactive mode - used during testing
-        gsp_sc_interactive = "GSP_SC_INTERACTIVE" not in os.environ or os.environ["GSP_SC_INTERACTIVE"] != "False"
-        if gsp_sc_interactive is False:
+        gsp_interactive_mode = "GSP_INTERACTIVE_MODE" not in os.environ or os.environ["GSP_INTERACTIVE_MODE"] != "False"
+        if gsp_interactive_mode is False:
             # notify all animator callbacks
-            changed_visuals: list[gsp.core.VisualBase] = []
+            changed_visuals: list[VisualBase] = []
             for animator_callback in self._callbacks:
                 _changed_visuals = animator_callback(1.0 / self._fps)
                 changed_visuals.extend(_changed_visuals)
 
             # render the scene to get the new image
-            image_png_data = self._network_renderer.render(canvas, canvas.viewports, cameras)
+            image_png_data = self._network_renderer.render(self._viewports, self._visuals, self._model_matrices, self._cameras)
             # get the main script name
             main_script_name = os.path.basename(__main__.__file__) if hasattr(__main__, "__file__") else "interactive"
             main_script_basename = os.path.splitext(main_script_name)[0]
@@ -204,18 +212,19 @@ class GspAnimatorNetwork:
         self._time_last_update = present
 
         # notify all animator callbacks
-        changed_visuals: list[gsp.core.VisualBase] = []
+        changed_visuals: list[VisualBase] = []
         for animator_callback in self._callbacks:
             _changed_visuals = animator_callback(delta_time)
             changed_visuals.extend(_changed_visuals)
 
         # sanity checks
-        assert self._canvas is not None, f"PANIC self._canvas is None"
         assert self._viewports is not None, f"PANIC self._viewports is None"
+        assert self._visuals is not None, f"PANIC self._visuals is None"
+        assert self._model_matrices is not None, f"PANIC self._model_matrices is None"
         assert self._cameras is not None, f"PANIC self._cameras is None"
 
         # render the scene to get the new image
-        image_png_data = self._network_renderer.render(self._canvas, self._viewports, self._cameras)
+        image_png_data = self._network_renderer.render(self._viewports, self._visuals, self._model_matrices, self._cameras)
         image_data_io = io.BytesIO(image_png_data)
         image_data_np = matplotlib.image.imread(image_data_io, format="png")
 

@@ -85,7 +85,7 @@ class GspAnimatorMatplotlib:
 
         Usage:
             ```python
-                @animation_loop.decorator
+                @animation_loop.event_listener
                 def my_callback(delta_time: float) -> Sequence[Object3D]:
                     ...
 
