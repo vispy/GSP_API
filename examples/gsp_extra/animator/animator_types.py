@@ -6,7 +6,7 @@ from gsp.types.visual_base import VisualBase
 
 
 # do a callback type for the animation loop
-GSPAnimatorFunc = Callable[[float], Sequence[VisualBase]]
+AnimatorFunc = Callable[[float], Sequence[VisualBase]]
 """A simple animation loop manager for matplotlib rendering.
 
 Arguments:

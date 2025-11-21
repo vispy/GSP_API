@@ -14,12 +14,12 @@ import matplotlib.artist
 import matplotlib.figure
 
 # local imports
-import gsp
 from gsp_network.renderer import NetworkRenderer
 from gsp.types.visual_base import VisualBase
 from gsp.types.transbuf import TransBuf
+from gsp.core.event import Event
 from gsp.core import Viewport, Camera, Canvas
-from .gsp_animator_types import GSPAnimatorFunc, VideoSavedCalledback
+from .animator_types import AnimatorFunc, VideoSavedCalledback
 
 __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -40,7 +40,7 @@ class GspAnimatorNetwork:
         video_path: str | None = None,
         video_writer: str | None = None,
     ):
-        self._callbacks: list[GSPAnimatorFunc] = []
+        self._callbacks: list[AnimatorFunc] = []
         self._network_renderer = network_renderer
         self._fps = fps
         self._video_duration = video_duration
@@ -58,7 +58,7 @@ class GspAnimatorNetwork:
         self._model_matrices: Sequence[TransBuf] | None = None
         self._cameras: Sequence[Camera] | None = None
 
-        self.on_video_saved = gsp.core.Event[VideoSavedCalledback]()
+        self.on_video_saved = Event[VideoSavedCalledback]()
         """Event triggered when the video is saved."""
 
         # guess the video writer from the file extension if not provided
@@ -78,15 +78,15 @@ class GspAnimatorNetwork:
     # .add_callback/.remove_callback/.decorator
     # =============================================================================
 
-    def add_callback(self, func: GSPAnimatorFunc):
+    def add_callback(self, func: AnimatorFunc):
         """Add a callback to the animation loop."""
         self._callbacks.append(func)
 
-    def remove_callback(self, func: GSPAnimatorFunc):
+    def remove_callback(self, func: AnimatorFunc):
         """Remove a callback from the animation loop."""
         self._callbacks.remove(func)
 
-    def event_listener(self, func: GSPAnimatorFunc) -> GSPAnimatorFunc:
+    def event_listener(self, func: AnimatorFunc) -> AnimatorFunc:
         """A decorator to add a callback to the animation loop.
 
         Usage:

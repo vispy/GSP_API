@@ -7,7 +7,6 @@ from typing import Literal
 import numpy as np
 
 # local imports
-from examples.gsp_extra.gsp_animator.gsp_animator_network import GspAnimatorNetwork
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.types.visual_base import VisualBase
@@ -17,7 +16,7 @@ from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.unit_utils import UnitUtils
-from gsp_extra.gsp_animator.gsp_animator_matplotlib import GspAnimatorMatplotlib
+from gsp_extra.animator.animator_network import GspAnimatorNetwork
 from gsp_network.renderer.network_renderer import NetworkRenderer
 
 
