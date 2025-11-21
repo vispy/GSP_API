@@ -13,7 +13,6 @@ from gsp.types.visual_base import VisualBase
 from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.unit_utils import UnitUtils
 from gsp_extra.animator.animator_network import GspAnimatorNetwork

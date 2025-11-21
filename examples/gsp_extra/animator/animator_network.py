@@ -125,12 +125,17 @@ class GspAnimatorNetwork:
         self._cameras = cameras
         self._time_last_update = time.time()
 
-        # create a matplotlib figure of the right size
-        self._figure = matplotlib.pyplot.figure(frameon=False, dpi=self._canvas.get_dpi())
-        self._figure.set_size_inches(self._canvas.get_width() / self._canvas.get_dpi(), self._canvas.get_height() / self._canvas.get_dpi())
+        # Create a figure
+        figure_width = self._canvas.get_width() / self._canvas.get_dpi()
+        figure_height = self._canvas.get_height() / self._canvas.get_dpi()
+        self._figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=self._canvas.get_dpi())
+        assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
+        self._figure.canvas.manager.set_window_title(f"Network ({self._network_renderer.get_renderer_name()}) Animator")
 
         # get the only axes in the figure
         mpl_axes = self._figure.add_axes((0, 0, 1, 1))
+        # hide the borders
+        mpl_axes.axis("off")
 
         # create an np.array to hold the image
         image_data_np = np.zeros((self._canvas.get_height(), self._canvas.get_width(), 3), dtype=np.uint8)
