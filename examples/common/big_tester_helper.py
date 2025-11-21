@@ -8,7 +8,8 @@ import numpy as np
 # local imports
 from gsp.types.renderer_base import RendererBase
 from gsp.types.transbuf import TransBuf
-from gsp.core import Canvas, Viewport, VisualBase
+from gsp.core import Canvas, Viewport
+from gsp.types.visual_base import VisualBase
 from gsp.visuals import Segments, Points, Pixels
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera

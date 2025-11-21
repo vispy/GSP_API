@@ -9,7 +9,7 @@ from .bufferx import Bufferx
 from gsp.types.visual_base import VisualBase
 from gsp.core.camera import Camera
 from . import glm
-from gsp.core import Canvas, Viewport, VisualBase
+from gsp.core import Canvas, Viewport
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp.types import Buffer, BufferType
 from gsp.utils.uuid_utils import UuidUtils

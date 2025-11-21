@@ -7,7 +7,7 @@ import matplotlib.pyplot
 
 
 # local imports
-from gsp.core import Canvas, Viewport, VisualBase, Camera
+from gsp.core import Canvas, Viewport, Camera
 from gsp.visuals import Pixels
 from gsp.constants import Constants
 from gsp.types import Buffer, BufferType

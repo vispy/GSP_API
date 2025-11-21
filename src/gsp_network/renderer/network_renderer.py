@@ -32,6 +32,9 @@ class NetworkRenderer(RendererBase):
         self._server_base_url = server_base_url
         self._renderer_name: Literal["matplotlib", "datoviz"] = renderer_name
 
+    def get_canvas(self) -> Canvas:
+        return self._canvas
+
     def render(
         self,
         viewports: Sequence[Viewport],

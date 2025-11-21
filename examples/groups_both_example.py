@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot
 
 # local imports
-from gsp.core import Canvas, Viewport, VisualBase
+from gsp.core import Canvas, Viewport
 from gsp.visuals import Pixels
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
