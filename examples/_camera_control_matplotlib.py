@@ -5,6 +5,9 @@ import os
 import numpy as np
 
 # local imports
+from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
+from gsp_extra.camera_controls.window_event_matplotlib import WindowEventMatplotlib
+from gsp_extra.camera_controls.window_event_types import KeyboardEvent, MouseEvent
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Points
@@ -69,9 +72,21 @@ def main():
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "datoviz") == "matplotlib" else DatovizRenderer(canvas)
-    renderer.render([viewport], [points], [model_matrix], [camera])
-    renderer.show()
+    renderer = MatplotlibRenderer(canvas)
+
+    window_event = WindowEventMatplotlib(mpl_figure=renderer.get_mpl_figure())
+
+    # =============================================================================
+    #
+    # =============================================================================
+    from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
+    from examples.gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
+
+    object_controls = ObjectControlsTrackball(model_matrix, window_event)
+
+    # start the animation loop
+    animator_matplotlib = GspAnimatorMatplotlib(renderer)
+    animator_matplotlib.start([viewport], [points], [model_matrix], [camera])
 
 
 if __name__ == "__main__":
