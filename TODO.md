@@ -7,10 +7,13 @@
   - windowEventNetwork/Matplotlib/Datoviz, with a common base class
   - handle pan/zoom/rotate
   - matplotlib event doc https://matplotlib.org/stable/users/explain/figure/event_handling.html
-  - datoviz event doc https://datoviz.org/guide/input
+  - datoviz event doc 
+    - https://datoviz.org/guide/input
+    - https://datoviz.org/guide/interactivity/#camera-interactivity-3d
 - camera controller awsdqe on top of the windowEventBase
 - camera controller trackball on top of the windowEventBase
   - https://github.com/rougier/matplotlib-3d/blob/master/mpl3d/trackball.py
+  - 
 - do test with expected_screenshots
 - API design principles
   - "what are the good design principle to apply when designing an library API"
