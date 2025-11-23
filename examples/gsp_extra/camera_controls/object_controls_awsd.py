@@ -25,22 +25,24 @@ class ObjectControlAwsd:
         self._speed_z = 0.1
 
         # Subscribe to keyboard and mouse events
-        self._window_event.keyboardEvent.subscribe(self._on_key_event)
+        self._window_event.key_press_event.subscribe(self._on_key_event)
+        self._window_event.key_release_event.subscribe(self._on_key_event)
 
     def close(self):
-        self._window_event.keyboardEvent.unsubscribe(self._on_key_event)
+        self._window_event.key_press_event.unsubscribe(self._on_key_event)
+        self._window_event.key_release_event.unsubscribe(self._on_key_event)
 
-    def _on_key_event(self, event: KeyboardEvent):
-        if event.event_type == EventType.KEY_PRESS:
+    def _on_key_event(self, keyboard_event: KeyboardEvent):
+        if keyboard_event.event_type == EventType.KEY_PRESS:
             translate_vector = np.array([0, 0, 0], dtype=np.float32)
 
-            if event.key_name == "w":
+            if keyboard_event.key_name == "w":
                 translate_vector[2] -= self._speed_z
-            elif event.key_name == "s":
+            elif keyboard_event.key_name == "s":
                 translate_vector[2] += self._speed_z
-            elif event.key_name == "a":
+            elif keyboard_event.key_name == "a":
                 translate_vector[0] -= self._speed_x
-            elif event.key_name == "d":
+            elif keyboard_event.key_name == "d":
                 translate_vector[0] += self._speed_x
 
             # generate translate matrix

@@ -8,15 +8,16 @@ import numpy as np
 from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
 from gsp_extra.camera_controls.window_event_matplotlib import WindowEventMatplotlib
 from gsp_extra.camera_controls.window_event_types import KeyboardEvent, MouseEvent
+from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
+from gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
+
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
-from gsp.utils.group_utils import GroupUtils
 from gsp.utils.unit_utils import UnitUtils
 
 
@@ -79,9 +80,8 @@ def main():
     # =============================================================================
     #
     # =============================================================================
-    from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
-    from examples.gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
 
+    # object_controls = ObjectControlAwsd(model_matrix, window_event)
     object_controls = ObjectControlsTrackball(model_matrix, window_event)
 
     # start the animation loop

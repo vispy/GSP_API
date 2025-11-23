@@ -71,16 +71,18 @@ class WindowEventMatplotlib(WindowEventBase):
     # Conversion matplotlib event to gsp events
     # =============================================================================
     def _mpl_mouse_event_to_gsp(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent, event_type: EventType) -> MouseEvent:
-        print(mpl_mouse_event)
+        mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._figure.canvas
+        canvas_width, canvas_height = mpl_canvas.get_width_height()
         mouse_event = MouseEvent(
             event_type=event_type,
-            x=mpl_mouse_event.x,
-            y=mpl_mouse_event.y,
+            x=mpl_mouse_event.x / canvas_width,
+            y=mpl_mouse_event.y / canvas_height,
             left_button=mpl_mouse_event.button == 1,
             middle_button=mpl_mouse_event.button == 2,
             right_button=mpl_mouse_event.button == 3,
             scroll_steps=mpl_mouse_event.step if hasattr(mpl_mouse_event, "step") else 0.0,
         )
+        print(mouse_event)
         return mouse_event
 
     def _mpl_key_event_to_gsp(self, mpl_key_event: matplotlib.backend_bases.KeyEvent, event_type: EventType) -> KeyboardEvent:
@@ -89,4 +91,5 @@ class WindowEventMatplotlib(WindowEventBase):
             event_type=event_type,
             key_name=mpl_key_event.key,
         )
+        print(keyboard_event)
         return keyboard_event
