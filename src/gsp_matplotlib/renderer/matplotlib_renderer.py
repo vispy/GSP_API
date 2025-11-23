@@ -43,7 +43,7 @@ class MatplotlibRenderer(RendererBase):
         # Create a figure
         figure_width = canvas.get_width() / canvas.get_dpi()
         figure_height = canvas.get_height() / canvas.get_dpi()
-        self._figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=canvas.get_dpi())
+        self._figure: matplotlib.figure.Figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=canvas.get_dpi())
         assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
         self._figure.canvas.manager.set_window_title("Matplotlib")
 
@@ -51,7 +51,12 @@ class MatplotlibRenderer(RendererBase):
         return self.canvas
 
     def close(self) -> None:
-        warnings.warn(f"Closing NetworkRenderer does not release any resources.", UserWarning)
+        # warnings.warn(f"Closing NetworkRenderer does not release any resources.", UserWarning)
+        # stop the event loop if any - thus .show(block=True) will return
+        self._figure.canvas.stop_event_loop()
+        # close the figure
+        matplotlib.pyplot.close(self._figure)
+        self._figure = None  # type: ignore
 
     def show(self) -> None:
         # handle non-interactive mode for tests
