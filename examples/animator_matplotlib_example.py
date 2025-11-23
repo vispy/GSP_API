@@ -2,6 +2,8 @@
 import os
 import pathlib
 import argparse
+from typing import Literal
+import typing
 
 # pip imports
 import numpy as np
@@ -22,7 +24,7 @@ from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
 __dirname__ = pathlib.Path(__file__).parent.resolve()
 
 
-def main(save_video: bool = False):
+def main(renderer_name: Literal["matplotlib", "datoviz", "network"], save_video: bool):
     # fix random seed for reproducibility
     np.random.seed(0)
 
@@ -77,7 +79,7 @@ def main(save_video: bool = False):
 
     if save_video is False:
         # init the animator with the renderer
-        animator_matplotlib = GspAnimatorMatplotlib(renderer)
+        animator = GspAnimatorMatplotlib(renderer)
     else:
         # Save the animation to a video file
         video_path = os.path.join(__dirname__, f"output/{os.path.basename(__file__).replace('.py', '')}.mp4")
@@ -97,7 +99,7 @@ def main(save_video: bool = False):
             # close the renderer
             renderer.close()
 
-    @animator_matplotlib.event_listener
+    @animator.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:
         sizes_numpy = np.random.rand(point_count).astype(np.float32) * 40.0 + 10.0
         sizes_buffer.set_data(bytearray(sizes_numpy.tobytes()), 0, sizes_buffer.get_count())
@@ -106,7 +108,7 @@ def main(save_video: bool = False):
         return changed_visuals
 
     # start the animation loop
-    animator_matplotlib.start([viewport], [points], [model_matrix], [camera])
+    animator.start([viewport], [points], [model_matrix], [camera])
 
 
 if __name__ == "__main__":
@@ -115,7 +117,14 @@ if __name__ == "__main__":
         description="Run the animator matplotlib example.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    # --save-video -sv
+    # --renderer matplotlib/datoviz/network
+    argParser.add_argument(
+        "--renderer",
+        "--r",
+        type=str,
+        choices=["matplotlib", "datoviz", "network"],
+        help="Renderer to use. if not set, use the GSP_RENDERER environment variable. Default to 'matplotlib' if not set.",
+    )
     argParser.add_argument(
         "--save-video",
         "--sv",
@@ -123,5 +132,12 @@ if __name__ == "__main__":
         help="Save the animation to a video file.",
     )
     args = argParser.parse_args()
+    # args = argParser.parse_args(["--save-video"])  # for testing purpose, replace with args = argParser.parse_args()
 
-    main(save_video=args.save_video)
+    renderer_name: Literal["matplotlib", "datoviz", "network"] = "matplotlib"
+    if os.environ.get("GSP_RENDERER") is not None:
+        renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], os.environ.get("GSP_RENDERER"))
+    if args.renderer is not None:
+        renderer_name = args.renderer
+
+    main(save_video=args.save_video, renderer_name=renderer_name)
