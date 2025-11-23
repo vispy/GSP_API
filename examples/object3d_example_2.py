@@ -17,7 +17,7 @@ from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp_extra.object3d import Object3D
-import gsp_extra.glm as glm
+import gsp_extra.mpl3d.glm as glm
 from gsp.utils.group_utils import GroupUtils
 
 

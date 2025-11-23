@@ -12,7 +12,7 @@ from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.visuals import Pixels
-import gsp_extra.glm as glm
+import gsp_extra.mpl3d.glm as glm
 
 
 def main():

@@ -32,6 +32,9 @@ class GspAnimatorNetwork:
     IMPORTANT: it DOES NOT depends on GSP matplotlib renderer, it only uses pip matplotlib to display
     """
 
+    on_video_saved = Event[VideoSavedCalledback]()
+    """Event triggered when the video is saved."""
+
     def __init__(
         self,
         network_renderer: NetworkRenderer,
@@ -63,9 +66,6 @@ class GspAnimatorNetwork:
         self._figure: matplotlib.figure.Figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=self._canvas.get_dpi())
         assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
         self._figure.canvas.manager.set_window_title(f"Network ({self._network_renderer.get_remote_renderer_name()}) Animator")
-
-        self.on_video_saved = Event[VideoSavedCalledback]()
-        """Event triggered when the video is saved."""
 
         # guess the video writer from the file extension if not provided
         if self._video_path is not None:

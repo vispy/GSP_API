@@ -16,7 +16,7 @@ from gsp.core import Canvas, Viewport
 from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.unit_utils import UnitUtils
 
@@ -73,20 +73,25 @@ def main():
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas)
+    renderer = DatovizRenderer(canvas)
+    renderer.render([viewport], [points], [model_matrix], [camera])
+    renderer.show()
 
-    window_event = WindowEventMatplotlib(mpl_figure=renderer.get_mpl_figure())
+    # # Create a renderer and render the scene
+    # renderer = MatplotlibRenderer(canvas)
 
-    # =============================================================================
-    #
-    # =============================================================================
+    # window_event = WindowEventMatplotlib(mpl_figure=renderer.get_mpl_figure())
 
-    # object_controls = ObjectControlAwsd(model_matrix, window_event)
-    object_controls = ObjectControlsTrackball(model_matrix, window_event)
+    # # =============================================================================
+    # #
+    # # =============================================================================
 
-    # start the animation loop
-    animator_matplotlib = GspAnimatorMatplotlib(renderer)
-    animator_matplotlib.start([viewport], [points], [model_matrix], [camera])
+    # # object_controls = ObjectControlAwsd(model_matrix, window_event)
+    # object_controls = ObjectControlsTrackball(model_matrix, window_event)
+
+    # # start the animation loop
+    # animator_matplotlib = GspAnimatorMatplotlib(renderer)
+    # animator_matplotlib.start([viewport], [points], [model_matrix], [camera])
 
 
 if __name__ == "__main__":

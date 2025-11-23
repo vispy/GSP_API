@@ -5,9 +5,9 @@ from gsp_extra.camera_controls.window_event_types import KeyboardEvent, MouseEve
 from gsp.types.visual_base import VisualBase
 from gsp.types.buffer import Buffer
 from gsp.types.buffer_type import BufferType
-from .. import glm
+from ..mpl3d import glm
 from ..bufferx import Bufferx
-from .trackball import Trackball
+from ..mpl3d.trackball import Trackball
 
 
 class ObjectControlsTrackball:
