@@ -1,6 +1,5 @@
-- animator
-  - handle saving video on network/matplotlib
-  - handle datoviz animator
+- animator: handle saving video on network/matplotlib
+- animator: handle datoviz animator
 - how to handle camera control in GSP, aka same events for various renderers matplotlib/datoviz/network
   - with mouse events
   - with API
@@ -13,7 +12,6 @@
 - camera controller awsdqe on top of the windowEventBase
 - camera controller trackball on top of the windowEventBase
   - https://github.com/rougier/matplotlib-3d/blob/master/mpl3d/trackball.py
-  - 
 - do test with expected_screenshots
 - API design principles
   - "what are the good design principle to apply when designing an library API"
@@ -51,6 +49,7 @@
 
 
 ---
+- DONE in trackball, notify -1 +1, not [0,+1]
 - DONE PR datoviz with the whole ./datoviz as pyright 0 errors
   - add a pyright target in justfile
 - DONE datoviz network doesnt work as it is unable to take screenshots
