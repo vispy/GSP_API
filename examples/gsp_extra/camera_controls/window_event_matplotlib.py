@@ -75,8 +75,8 @@ class WindowEventMatplotlib(WindowEventBase):
         canvas_width, canvas_height = mpl_canvas.get_width_height()
         mouse_event = MouseEvent(
             event_type=event_type,
-            x=mpl_mouse_event.x / canvas_width,
-            y=mpl_mouse_event.y / canvas_height,
+            x=(mpl_mouse_event.x / canvas_width - 0.5) * 2.0,
+            y=(mpl_mouse_event.y / canvas_height - 0.5) * 2.0,
             left_button=mpl_mouse_event.button == 1,
             middle_button=mpl_mouse_event.button == 2,
             right_button=mpl_mouse_event.button == 3,
