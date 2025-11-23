@@ -1,62 +1,93 @@
-import matplotlib.colors as mcolors
+# stdlib imports
+import os
+
+# pip imports
 import numpy as np
 
-import datoviz as dvz
+# local imports
+from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
+from gsp_extra.camera_controls.window_event_matplotlib import WindowEventMatplotlib
+from gsp_extra.camera_controls.window_event_types import KeyboardEvent, MouseEvent
+from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
+from gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
+
+from gsp.constants import Constants
+from gsp.core import Canvas, Viewport
+from gsp.visuals import Points
+from gsp.types import Buffer, BufferType
+from gsp.core import Camera
+from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp_extra.bufferx import Bufferx
+from gsp.utils.unit_utils import UnitUtils
 
 
-def generate_data():
-    """Return N, positions (N,3) float32, colors (N,4) uint8"""
-    # Parameters
-    n_arms = 5
-    n_particles_per_arm = 200_000
-    n_total = n_arms * n_particles_per_arm
+def main():
+    # fix random seed for reproducibility
+    np.random.seed(0)
 
-    rng = np.random.default_rng(seed=42)
+    # Create a canvas
+    canvas = Canvas(100, 100, 72.0)
 
-    # Radius from center, with more points toward center
-    r = rng.power(2.0, size=n_total)  # values in [0, 1), biased toward 0
+    # Create a viewport and add it to the canvas
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
 
-    # Angle with swirl per arm and some noise
-    base_theta = np.repeat(np.linspace(0, 2 * np.pi, n_arms, endpoint=False), n_particles_per_arm)
-    swirl = r * 3  # spiral effect
-    noise = rng.normal(scale=0.2, size=n_total)
-    theta = base_theta + swirl + noise
+    # =============================================================================
+    # Add random points
+    # - various ways to create Buffers
+    # =============================================================================
+    point_count = 100
 
-    # Convert polar to Cartesian
-    x = r * np.cos(theta) * 6.0 / 8.0  # HACK: window aspect ratio
-    y = r * np.sin(theta)
-    z = np.zeros_like(x)
+    # Random positions - Create buffer from numpy array
+    positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
+    positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
-    positions = np.stack([x, y, z], axis=1).astype(np.float32)
+    # Sizes - Create buffer and set data with numpy array
+    sizes_numpy = np.array([40] * point_count, dtype=np.float32)
+    sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
 
-    # Colors based on radius and angle — create a vibrant, cosmic feel
-    hue = (theta % (2 * np.pi)) / (2 * np.pi)  # hue from angle
-    saturation = np.clip(r * 1.5, 0.2, 1.0)  # more saturated at edges
-    value = np.ones_like(hue)
+    # all pixels red - Create buffer and fill it with a constant
+    face_colors_buffer = Buffer(point_count, BufferType.rgba8)
+    face_colors_buffer.set_data(bytearray([255, 0, 0, 255]) * point_count, 0, point_count)
 
-    # Convert HSV to RGB
+    # Edge colors - Create buffer and fill it with a constant
+    edge_colors_buffer = Buffer(point_count, BufferType.rgba8)
+    edge_colors_buffer.set_data(Constants.Color.blue * point_count, 0, point_count)
 
-    rgb = mcolors.hsv_to_rgb(np.stack([hue, saturation, value], axis=1))
-    rgb_u8 = (rgb * 255).astype(np.uint8)
+    # Edge widths - Create buffer and fill it with a constant
+    edge_widths_numpy = np.array([UnitUtils.pixel_to_point(1, canvas.get_dpi())] * point_count, dtype=np.float32)
+    edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
-    # Alpha: slight fade with radius
-    alpha = np.clip(128 * (1.0 - r), 1, 255).astype(np.uint8)
-    alpha = (200 * np.exp(-5 * r * r)).astype(np.uint8)
+    # Create the Points visual and add it to the viewport
+    points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
 
-    colors = np.concatenate([rgb_u8, alpha[:, None]], axis=1)
+    # =============================================================================
+    # Render the canvas
+    # =============================================================================
 
-    return n_total, positions, colors
+    model_matrix = Bufferx.mat4_identity()
+    # Create a camera
+    camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+    # =============================================================================
+    # Render
+    # =============================================================================
+
+    # Create a renderer and render the scene
+    renderer = MatplotlibRenderer(canvas)
+
+    window_event = WindowEventMatplotlib(mpl_figure=renderer.get_mpl_figure())
+
+    # =============================================================================
+    #
+    # =============================================================================
+
+    # object_controls = ObjectControlAwsd(model_matrix, window_event)
+    object_controls = ObjectControlsTrackball(model_matrix, window_event)
+
+    # start the animation loop
+    animator_matplotlib = GspAnimatorMatplotlib(renderer)
+    animator_matplotlib.start([viewport], [points], [model_matrix], [camera])
 
 
-N, position, color = generate_data()
-
-app = dvz.App()
-figure = app.figure()
-panel = figure.panel()
-# panzoom = panel.panzoom()
-
-visual = app.pixel(position=position, color=color)
-panel.add(visual)
-
-app.run()
-app.destroy()
+if __name__ == "__main__":
+    main()

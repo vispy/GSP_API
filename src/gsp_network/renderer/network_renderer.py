@@ -27,10 +27,10 @@ class NetworkPayload(TypedDict):
 
 
 class NetworkRenderer(RendererBase):
-    def __init__(self, canvas: Canvas, server_base_url: str, renderer_name: Literal["matplotlib", "datoviz"] = "matplotlib") -> None:
+    def __init__(self, canvas: Canvas, server_base_url: str, remote_renderer_name: Literal["matplotlib", "datoviz"] = "matplotlib") -> None:
         self._canvas = canvas
         self._server_base_url = server_base_url
-        self._renderer_name: Literal["matplotlib", "datoviz"] = renderer_name
+        self._remote_renderer_name: Literal["matplotlib", "datoviz"] = remote_renderer_name
 
     def get_canvas(self) -> Canvas:
         return self._canvas
@@ -38,8 +38,8 @@ class NetworkRenderer(RendererBase):
     def close(self) -> None:
         warnings.warn(f"Closing NetworkRenderer does not release any resources.", UserWarning)
 
-    def get_renderer_name(self) -> Literal["matplotlib", "datoviz"]:
-        return self._renderer_name
+    def get_remote_renderer_name(self) -> Literal["matplotlib", "datoviz"]:
+        return self._remote_renderer_name
 
     def render(
         self,
@@ -61,7 +61,7 @@ class NetworkRenderer(RendererBase):
         )
 
         payload: NetworkPayload = {
-            "renderer_name": self._renderer_name,
+            "renderer_name": self._remote_renderer_name,
             "data": pydantic_scene_dict,
         }
 

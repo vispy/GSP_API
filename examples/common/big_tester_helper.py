@@ -217,7 +217,7 @@ class BigTesterRenderer:
             return renderer
         elif renderer_name == "network":
             server_base_url = "http://localhost:5000"
-            renderer = NetworkRenderer(canvas, server_base_url, renderer_name="datoviz")
+            renderer = NetworkRenderer(canvas, server_base_url, remote_renderer_name="datoviz")
             return renderer
         else:
             raise ValueError(f"Unknown renderer name: {renderer_name}")

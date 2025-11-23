@@ -1,22 +1,26 @@
 # stdlib imports
 import os
-import typing
-from typing import Literal
 
 # pip imports
 import numpy as np
 
 # local imports
+from gsp_extra.animator.animator_network import GspAnimatorNetwork
+from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
+from gsp_extra.camera_controls.window_event_matplotlib import WindowEventMatplotlib
+from gsp_extra.camera_controls.window_event_types import KeyboardEvent, MouseEvent
+from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
+from gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
+
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
-from gsp.types.visual_base import VisualBase
 from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
+from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp_network.renderer import NetworkRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.unit_utils import UnitUtils
-from gsp_extra.animator.animator_network import GspAnimatorNetwork
-from gsp_network.renderer.network_renderer import NetworkRenderer
 
 
 def main():
@@ -69,23 +73,22 @@ def main():
     # =============================================================================
     # Render
     # =============================================================================
+
+    # =============================================================================
+    #
+    # =============================================================================
+
     # Create a renderer and render the scene
-    renderer_name = typing.cast(Literal["matplotlib", "datoviz"], os.environ.get("GSP_RENDERER", "matplotlib"))
-    renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", remote_renderer_name=renderer_name)
-
-    # init the animator with the renderer
-    animator_network = GspAnimatorNetwork(renderer)
-
-    @animator_network.event_listener
-    def animator_callback(delta_time: float) -> list[VisualBase]:
-        sizes_numpy = np.random.rand(point_count).astype(np.float32) * 40.0 + 10.0
-        sizes_buffer.set_data(bytearray(sizes_numpy.tobytes()), 0, sizes_buffer.get_count())
-
-        changed_visuals: list[VisualBase] = [points]
-        return changed_visuals
+    renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", remote_renderer_name="matplotlib")
 
     # start the animation loop
-    animator_network.start([viewport], [points], [model_matrix], [camera])
+    animator = GspAnimatorNetwork(renderer)
+
+    window_event = WindowEventMatplotlib(mpl_figure=animator.get_mpl_figure())
+    # object_controls = ObjectControlAwsd(model_matrix, window_event)
+    object_controls = ObjectControlsTrackball(model_matrix, window_event)
+
+    animator.start([viewport], [points], [model_matrix], [camera])
 
 
 if __name__ == "__main__":

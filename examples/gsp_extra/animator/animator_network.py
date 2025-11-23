@@ -49,14 +49,20 @@ class GspAnimatorNetwork:
         self._time_last_update = None
 
         self._funcAnimation: matplotlib.animation.FuncAnimation | None = None
-        self._figure: matplotlib.figure.Figure | None = None
         self._axes_image: matplotlib.image.AxesImage | None = None
 
-        self._canvas: Canvas | None = None
         self._viewports: Sequence[Viewport] | None = None
         self._visuals: Sequence[VisualBase] | None = None
         self._model_matrices: Sequence[TransBuf] | None = None
         self._cameras: Sequence[Camera] | None = None
+
+        self._canvas: Canvas = self._network_renderer.get_canvas()
+        # Create a figure
+        figure_width = self._canvas.get_width() / self._canvas.get_dpi()
+        figure_height = self._canvas.get_height() / self._canvas.get_dpi()
+        self._figure: matplotlib.figure.Figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=self._canvas.get_dpi())
+        assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
+        self._figure.canvas.manager.set_window_title(f"Network ({self._network_renderer.get_remote_renderer_name()}) Animator")
 
         self.on_video_saved = Event[VideoSavedCalledback]()
         """Event triggered when the video is saved."""
@@ -118,19 +124,11 @@ class GspAnimatorNetwork:
         Animate the given canvas and camera using the provided callbacks to update visuals.
         """
 
-        self._canvas = self._network_renderer.get_canvas()
         self._viewports = viewports
         self._visuals = visuals
         self._model_matrices = model_matrices
         self._cameras = cameras
         self._time_last_update = time.time()
-
-        # Create a figure
-        figure_width = self._canvas.get_width() / self._canvas.get_dpi()
-        figure_height = self._canvas.get_height() / self._canvas.get_dpi()
-        self._figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=self._canvas.get_dpi())
-        assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
-        self._figure.canvas.manager.set_window_title(f"Network ({self._network_renderer.get_renderer_name()}) Animator")
 
         # get the only axes in the figure
         mpl_axes = self._figure.add_axes((0, 0, 1, 1))
@@ -190,7 +188,7 @@ class GspAnimatorNetwork:
     # .stop()
     # =============================================================================
     def stop(self):
-        self._canvas = None
+        # self._canvas = None
         self._viewports = None
         self._cameras = None
         self._time_last_update = None
@@ -203,7 +201,7 @@ class GspAnimatorNetwork:
 
         if self._figure is not None:
             matplotlib.pyplot.close(self._figure)
-            self._figure = None
+            # self._figure = None
 
     # =============================================================================
     # Animation function
@@ -240,3 +238,7 @@ class GspAnimatorNetwork:
         # return the changed mpl artists
         changed_mpl_artists = [self._axes_image]
         return changed_mpl_artists
+
+    def get_mpl_figure(self) -> matplotlib.figure.Figure:
+        """Get the matplotlib figure used for the animation."""
+        return self._figure
