@@ -36,7 +36,8 @@ class NetworkRenderer(RendererBase):
         return self._canvas
 
     def close(self) -> None:
-        warnings.warn(f"Closing NetworkRenderer does not release any resources.", UserWarning)
+        # Nothing to close
+        pass
 
     def get_remote_renderer_name(self) -> Literal["matplotlib", "datoviz"]:
         return self._remote_renderer_name

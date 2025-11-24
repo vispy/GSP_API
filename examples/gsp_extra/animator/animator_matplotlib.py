@@ -237,7 +237,6 @@ class GspAnimatorMatplotlib:
 
         # notify all animator callbacks
         changed_visuals: list[VisualBase] = []
-
         for callback in self._callbacks:
             _changed_visuals = callback(delta_time)
             changed_visuals.extend(_changed_visuals)
