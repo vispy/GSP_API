@@ -15,6 +15,8 @@ from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
 from gsp.utils.unit_utils import UnitUtils
+from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
+from gsp_extra.viewport_events.viewport_events_types import KeyEvent, MouseEvent
 
 
 def main():
@@ -77,19 +79,19 @@ def main():
     renderer = MatplotlibRenderer(canvas)
     renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
 
-    from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
-    from gsp_extra.viewport_events.viewport_events_types import KeyboardEvent, MouseEvent
-
-    viewport_events = ViewportEventsMatplotlib(mpl_figure=renderer.get_mpl_figure())
-
-    def on_key_press(keyboard_event: KeyboardEvent):
+    def on_key_press(keyboard_event: KeyEvent):
         print(f"Key press: {keyboard_event}")
 
     def on_mouse_move(mouse_event: MouseEvent):
         print(f"Mouse move: {mouse_event}")
 
-    viewport_events.key_press_event.subscribe(on_key_press)
-    viewport_events.mouse_move_event.subscribe(on_mouse_move)
+    viewport_events_1 = ViewportEventsMatplotlib(renderer, viewport_1)
+    viewport_events_1.key_press_event.subscribe(on_key_press)
+    viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
+
+    # viewport_events_2 = ViewportEventsMatplotlib(renderer, viewport_2)
+    # viewport_events_2.key_press_event.subscribe(on_key_press)
+    # viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
 
     renderer.show()
 

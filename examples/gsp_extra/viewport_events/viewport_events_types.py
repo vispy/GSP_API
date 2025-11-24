@@ -12,13 +12,15 @@ class EventType(StrEnum):
 
 
 @dataclass
-class KeyboardEvent:
+class KeyEvent:
+    viewport_uuid: str
     event_type: EventType
     key_name: str
 
 
 @dataclass
 class MouseEvent:
+    viewport_uuid: str
     event_type: EventType
     x: float
     y: float
@@ -30,7 +32,7 @@ class MouseEvent:
 
 # We can define the expected function signature using a Protocol for clarity.
 class KeyboardEventCallback(Protocol):
-    def __call__(self, keyboard_event: KeyboardEvent) -> None: ...
+    def __call__(self, keyboard_event: KeyEvent) -> None: ...
 
 
 class MouseEventCallback(Protocol):

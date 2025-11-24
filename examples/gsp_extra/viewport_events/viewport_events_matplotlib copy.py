@@ -36,7 +36,7 @@ class ViewportEventsMatplotlib(ViewportEventBase):
 
         self._mpl_axes = renderer._axes[self._viewport.get_uuid()]
         self._mpl_figure = self._mpl_axes.figure
-        self._has_key_focus = False
+        self._focused_axes = self._mpl_axes
 
         # Intanciate events
         self.key_press_event = Event[KeyboardEventCallback]()
@@ -76,7 +76,7 @@ class ViewportEventsMatplotlib(ViewportEventBase):
     # =============================================================================
     def _on_key_press(self, mpl_key_event: matplotlib.backend_bases.KeyEvent) -> None:
         # discard events outside the viewport
-        if self._has_key_focus is False:
+        if self._focused_axes is not self._mpl_axes:
             return
         # convert and dispatch event
         keyboard_event = self._mpl_key_event_to_gsp(mpl_key_event, EventType.KEY_PRESS)
@@ -84,26 +84,28 @@ class ViewportEventsMatplotlib(ViewportEventBase):
 
     def _on_key_release(self, mpl_key_event: matplotlib.backend_bases.KeyEvent) -> None:
         # discard events outside the viewport
-        if self._has_key_focus is False:
+        if self._focused_axes is not self._mpl_axes:
             return
         # convert and dispatch event
         keyboard_event = self._mpl_key_event_to_gsp(mpl_key_event, EventType.KEY_RELEASE)
         self.key_release_event.dispatch(keyboard_event)
 
     def _on_button_press(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> None:
-        # discard events outside the viewport
-        if self._viewport_contains_mpl_mouse_event(mpl_mouse_event) is False:
-            self._has_key_focus = False
-            return
-        self._has_key_focus = True
+        # Handle focus change
+        if mpl_mouse_event.inaxes is not None:
+            self._focused_axes = mpl_mouse_event.inaxes
+            # print("Focus set to:", self._focused_axes)
 
+        # discard events outside the viewport
+        if self._is_mouse_event_not_in_viewport(mpl_mouse_event):
+            return
         # convert and dispatch event
         mouse_event = self._mpl_mouse_event_to_gsp(mpl_mouse_event, EventType.BUTTON_PRESS)
         self.button_press_event.dispatch(mouse_event)
 
     def _on_button_release(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> None:
         # discard events outside the viewport
-        if self._viewport_contains_mpl_mouse_event(mpl_mouse_event) is False:
+        if self._is_mouse_event_not_in_viewport(mpl_mouse_event):
             return
         # convert and dispatch event
         mouse_event = self._mpl_mouse_event_to_gsp(mpl_mouse_event, EventType.BUTTON_RELEASE)
@@ -111,7 +113,7 @@ class ViewportEventsMatplotlib(ViewportEventBase):
 
     def _on_mouse_move(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> None:
         # discard events outside the viewport
-        if self._viewport_contains_mpl_mouse_event(mpl_mouse_event) is False:
+        if self._is_mouse_event_not_in_viewport(mpl_mouse_event):
             return
         # convert and dispatch event
         mouse_event = self._mpl_mouse_event_to_gsp(mpl_mouse_event, EventType.MOUSE_MOVE)
@@ -121,37 +123,30 @@ class ViewportEventsMatplotlib(ViewportEventBase):
     #
     # =============================================================================
 
-    def _viewport_contains_mpl_mouse_event(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> bool:
+    def _is_mouse_event_not_in_viewport(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> bool:
         """Check if the matplotlib mouse event is inside the axes of this viewport"""
-        if mpl_mouse_event.x < self._viewport.get_x():
-            return False
-        if mpl_mouse_event.x >= self._viewport.get_x() + self._viewport.get_width():
-            return False
-        if mpl_mouse_event.y < self._viewport.get_y():
-            return False
-        if mpl_mouse_event.y >= self._viewport.get_y() + self._viewport.get_height():
-            return False
-        return True
+        if mpl_mouse_event.inaxes is None:
+            return True
+        not_in_viewport = mpl_mouse_event.inaxes is not self._mpl_axes
+        return not_in_viewport
 
     # =============================================================================
     # Conversion matplotlib event to gsp events
     # =============================================================================
     def _mpl_mouse_event_to_gsp(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent, event_type: EventType) -> MouseEvent:
-        # Sanity check
-        assert self._viewport_contains_mpl_mouse_event(mpl_mouse_event)
-
-        x_viewport = mpl_mouse_event.x - self._viewport.get_x()
-        y_viewport = mpl_mouse_event.y - self._viewport.get_y()
+        axes_width = typing.cast(float, self._mpl_axes.bbox.width)
+        axes_height = typing.cast(float, self._mpl_axes.bbox.height)
         mouse_event = MouseEvent(
             viewport_uuid=self._viewport.get_uuid(),
             event_type=event_type,
-            x=(x_viewport / self._viewport.get_width() - 0.5) * 2.0,
-            y=(y_viewport / self._viewport.get_height() - 0.5) * 2.0,
+            x=(mpl_mouse_event.x / axes_width - 0.5) * 2.0,
+            y=(mpl_mouse_event.y / axes_height - 0.5) * 2.0,
             left_button=mpl_mouse_event.button == 1,
             middle_button=mpl_mouse_event.button == 2,
             right_button=mpl_mouse_event.button == 3,
             scroll_steps=mpl_mouse_event.step if hasattr(mpl_mouse_event, "step") else 0.0,
         )
+        # print(mouse_event)
         return mouse_event
 
     def _mpl_key_event_to_gsp(self, mpl_key_event: matplotlib.backend_bases.KeyEvent, event_type: EventType) -> KeyEvent:
@@ -161,4 +156,6 @@ class ViewportEventsMatplotlib(ViewportEventBase):
             event_type=event_type,
             key_name=mpl_key_event.key,
         )
+        # function_name = typing.cast(FrameType, inspect.currentframe()).f_code.co_name
+        # print(f"{self.__class__.__name__}.{function_name}: {keyboard_event}")
         return keyboard_event
