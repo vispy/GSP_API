@@ -74,8 +74,23 @@ def main():
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
+    renderer = MatplotlibRenderer(canvas)
     renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+
+    from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
+    from gsp_extra.viewport_events.viewport_events_types import KeyboardEvent, MouseEvent
+
+    viewport_events = ViewportEventsMatplotlib(mpl_figure=renderer.get_mpl_figure())
+
+    def on_key_press(keyboard_event: KeyboardEvent):
+        print(f"Key press: {keyboard_event}")
+
+    def on_mouse_move(mouse_event: MouseEvent):
+        print(f"Mouse move: {mouse_event}")
+
+    viewport_events.key_press_event.subscribe(on_key_press)
+    viewport_events.mouse_move_event.subscribe(on_mouse_move)
+
     renderer.show()
 
 

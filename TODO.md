@@ -2,6 +2,8 @@
 - animator: handle datoviz animator
 - make an example of window_events
 - window events with multiple viewports
+- handle 3d rotation in datoviz
+  - how to handle that ? maybe i set it up to orthographic camera
 - how to handle camera control in GSP, aka same events for various renderers matplotlib/datoviz/network
   - with mouse events
   - with API

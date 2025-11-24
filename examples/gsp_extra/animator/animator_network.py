@@ -65,7 +65,7 @@ class GspAnimatorNetwork:
         figure_height = self._canvas.get_height() / self._canvas.get_dpi()
         self._figure: matplotlib.figure.Figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=self._canvas.get_dpi())
         assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
-        self._figure.canvas.manager.set_window_title(f"Network ({self._network_renderer.get_remote_renderer_name()}) Animator")
+        self._figure.canvas.manager.set_window_title(f"Network ({self._network_renderer.get_remote_renderer_name()})")
 
         # guess the video writer from the file extension if not provided
         if self._video_path is not None:

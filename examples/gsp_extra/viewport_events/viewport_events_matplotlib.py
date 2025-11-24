@@ -1,6 +1,10 @@
-# pip imports
+# stdlib imports
+from types import FrameType
 from typing import Any
 import typing
+import inspect
+
+# pip imports
 import matplotlib.figure
 import matplotlib.backend_bases
 
@@ -10,7 +14,7 @@ from .viewport_events_types import KeyboardEvent, MouseEvent, EventType
 from .viewport_event_base import ViewportEventBase
 
 
-class ViewportEventMatplotlib(ViewportEventBase):
+class ViewportEventsMatplotlib(ViewportEventBase):
     """Matplotlib window event handler for camera controls"""
 
     __slots__ = ("_figure", "_mpl_key_press_cid", "_mpl_key_release_cid", "_mpl_button_press_cid", "_mpl_button_release_cid")
@@ -82,7 +86,7 @@ class ViewportEventMatplotlib(ViewportEventBase):
             right_button=mpl_mouse_event.button == 3,
             scroll_steps=mpl_mouse_event.step if hasattr(mpl_mouse_event, "step") else 0.0,
         )
-        print(mouse_event)
+        # print(mouse_event)
         return mouse_event
 
     def _mpl_key_event_to_gsp(self, mpl_key_event: matplotlib.backend_bases.KeyEvent, event_type: EventType) -> KeyboardEvent:
@@ -91,5 +95,6 @@ class ViewportEventMatplotlib(ViewportEventBase):
             event_type=event_type,
             key_name=mpl_key_event.key,
         )
-        print(keyboard_event)
+        # function_name = typing.cast(FrameType, inspect.currentframe()).f_code.co_name
+        # print(f"{self.__class__.__name__}.{function_name}: {keyboard_event}")
         return keyboard_event

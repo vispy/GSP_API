@@ -20,7 +20,7 @@ class ObjectControlsTrackball:
 
         # copy arguments
         self._model_matrix_buffer = model_matrix_buffer
-        self._model_matrix_numpy = Bufferx.to_numpy(self._model_matrix_buffer)[0]
+        self._model_matrix_numpy: np.ndarray = Bufferx.to_numpy(self._model_matrix_buffer)[0]
         self._window_event = window_event
         self._button_pressed: bool = False
         self._trackball = Trackball()

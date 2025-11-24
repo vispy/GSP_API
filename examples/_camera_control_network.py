@@ -17,7 +17,6 @@ from gsp.core import Canvas, Viewport
 from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_network.renderer import NetworkRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.unit_utils import UnitUtils
@@ -28,7 +27,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(100, 100, 72.0)
+    canvas = Canvas(512, 512, 72.0)
 
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
@@ -79,14 +78,14 @@ def main():
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", remote_renderer_name="matplotlib")
+    renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", remote_renderer_name="datoviz")
 
     # start the animation loop
     animator = GspAnimatorNetwork(renderer)
 
     window_event = WindowEventMatplotlib(mpl_figure=animator.get_mpl_figure())
-    # object_controls = ObjectControlAwsd(model_matrix, window_event)
-    object_controls = ObjectControlsTrackball(model_matrix, window_event)
+    object_controls = ObjectControlAwsd(model_matrix, window_event)
+    # object_controls = ObjectControlsTrackball(model_matrix, window_event)
 
     animator.start([viewport], [points], [model_matrix], [camera])
 

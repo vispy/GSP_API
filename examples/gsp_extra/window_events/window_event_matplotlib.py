@@ -82,7 +82,7 @@ class WindowEventMatplotlib(WindowEventBase):
             right_button=mpl_mouse_event.button == 3,
             scroll_steps=mpl_mouse_event.step if hasattr(mpl_mouse_event, "step") else 0.0,
         )
-        print(mouse_event)
+        # print(f'mouse_event: {mouse_event}')
         return mouse_event
 
     def _mpl_key_event_to_gsp(self, mpl_key_event: matplotlib.backend_bases.KeyEvent, event_type: EventType) -> KeyboardEvent:
@@ -91,5 +91,5 @@ class WindowEventMatplotlib(WindowEventBase):
             event_type=event_type,
             key_name=mpl_key_event.key,
         )
-        print(keyboard_event)
+        # print(keyboard_event)
         return keyboard_event
