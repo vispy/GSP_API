@@ -29,8 +29,12 @@ def main():
     # Create a canvas
     canvas = Canvas(512, 512, 72.0)
 
+    canvas_half_width = int(canvas.get_width() / 2.0)
+    canvas_half_height = int(canvas.get_height() / 2.0)
+
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport_1 = Viewport(0, 0, canvas.get_width(), canvas_half_height)
+    viewport_2 = Viewport(0, canvas_half_height, canvas.get_width(), canvas_half_height)
 
     # =============================================================================
     # Add random points
@@ -65,7 +69,8 @@ def main():
     # Render the canvas
     # =============================================================================
 
-    model_matrix = Bufferx.mat4_identity()
+    model_matrix_1 = Bufferx.mat4_identity()
+    model_matrix_2 = Bufferx.mat4_identity()
     # Create a camera
     camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
 
@@ -83,13 +88,17 @@ def main():
     # start the animation loop
     animator_matplotlib = GspAnimatorMatplotlib(renderer)
     # FIXME this is forced render() thus it initialize all internals structures
-    renderer.render([viewport], [points], [model_matrix], [camera])
+    renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
 
-    viewport_events = ViewportEventsMatplotlib(renderer, viewport)
-    object_controls = ObjectControlAwsd(model_matrix, viewport_events)
-    # object_controls = ObjectControlsTrackball(model_matrix, viewport_events)
+    viewport_events_1 = ViewportEventsMatplotlib(renderer, viewport_1)
+    object_controls_1 = ObjectControlAwsd(model_matrix_1, viewport_events_1)
+    # object_controls_1 = ObjectControlsTrackball(model_matrix_1, viewport_events_1)
 
-    animator_matplotlib.start([viewport], [points], [model_matrix], [camera])
+    viewport_events_2 = ViewportEventsMatplotlib(renderer, viewport_2)
+    # object_controls_2 = ObjectControlAwsd(model_matrix_2, viewport_events_2)
+    object_controls_2 = ObjectControlsTrackball(model_matrix_2, viewport_events_2)
+
+    animator_matplotlib.start([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
 
 
 if __name__ == "__main__":

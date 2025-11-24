@@ -77,6 +77,7 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
     # =============================================================================
     # Matplotlib event handler
     # =============================================================================
+
     def _on_key_press(self, mpl_key_event: matplotlib.backend_bases.KeyEvent) -> None:
         # discard events outside the viewport
         if self._has_key_focus is False:
