@@ -52,6 +52,9 @@ class DatovizRenderer(RendererBase):
     def get_canvas(self) -> Canvas:
         return self._canvas
 
+    def get_dvz_app(self) -> dvz.App:
+        return self._dvz_app
+
     def show(self) -> None:
 
         # handle non-interactive mode for tests
