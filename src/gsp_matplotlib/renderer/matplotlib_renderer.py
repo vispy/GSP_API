@@ -159,7 +159,7 @@ class MatplotlibRenderer(RendererBase):
     #
     # =============================================================================
 
-    def get_axes_for_viewport(self, viewport: Viewport) -> matplotlib.axes.Axes:
+    def get_mpl_axes_for_viewport(self, viewport: Viewport) -> matplotlib.axes.Axes:
         return self._axes[viewport.get_uuid()]
 
     def get_mpl_figure(self) -> matplotlib.figure.Figure:

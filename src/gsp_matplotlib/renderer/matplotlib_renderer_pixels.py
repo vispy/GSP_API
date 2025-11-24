@@ -123,7 +123,7 @@ class RendererPixels:
     def create_artists(renderer: MatplotlibRenderer, viewport: Viewport, visual: VisualBase, group_count: int) -> None:
         """Create the artists associated with the given visual and group count."""
 
-        axes = renderer.get_axes_for_viewport(viewport)
+        axes = renderer.get_mpl_axes_for_viewport(viewport)
         artist_uuid_prefix = f"{viewport.get_uuid()}_{visual.get_uuid()}"
         # compute 1 pixel size in points squared for matplotlib sizing
         assert axes.figure.get_dpi() is not None, "Canvas DPI must be set for proper pixel sizing"
@@ -146,7 +146,7 @@ class RendererPixels:
 
         Trigger a bug in matplotlib where artists are not properly removed from the axes.
         """
-        axes = renderer.get_axes_for_viewport(viewport)
+        axes = renderer.get_mpl_axes_for_viewport(viewport)
         artist_uuid_prefix = f"{viewport.get_uuid()}_{visual.get_uuid()}"
         for group_index in range(group_count):
             group_uuid = f"{artist_uuid_prefix}_group_{group_index}"

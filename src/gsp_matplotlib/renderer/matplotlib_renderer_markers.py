@@ -72,7 +72,7 @@ class RendererMarkers:
         artist_uuid = f"{viewport.get_uuid()}_{markers.get_uuid()}"
 
         if artist_uuid not in renderer._artists:
-            axes = renderer.get_axes_for_viewport(viewport)
+            axes = renderer.get_mpl_axes_for_viewport(viewport)
             mpl_marker_shape = ConverterUtils.marker_shape_gsp_to_mpl(markers.get_marker_shape())
             mpl_path_collection = axes.scatter([], [], marker=mpl_marker_shape)
             mpl_path_collection.set_visible(False)

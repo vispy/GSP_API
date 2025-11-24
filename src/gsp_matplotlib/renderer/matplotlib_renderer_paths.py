@@ -96,7 +96,7 @@ class RendererPaths:
             mpl_line_collection.set_visible(False)
             # hide until properly positioned and sized
             renderer._artists[artist_uuid] = mpl_line_collection
-            axes = renderer.get_axes_for_viewport(viewport)
+            axes = renderer.get_mpl_axes_for_viewport(viewport)
             axes.add_artist(mpl_line_collection)
 
         # =============================================================================
