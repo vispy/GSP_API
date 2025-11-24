@@ -15,11 +15,11 @@ from gsp.core import Event
 from gsp.core import Canvas, Viewport
 from gsp_network.renderer import NetworkRenderer
 from .viewport_events_types import KeyEvent, MouseEvent, EventType
-from .viewport_event_base import ViewportEventBase
+from .viewport_events_base import ViewportEventsBase
 from .viewport_events_types import KeyEvent, MouseEvent, KeyboardEventCallback, MouseEventCallback
 
 
-class ViewportEventsNetwork(ViewportEventBase):
+class ViewportEventsNetwork(ViewportEventsBase):
     """NetworkRenderer event handler for viewport"""
 
     __slots__ = ("_renderer", "_viewport")

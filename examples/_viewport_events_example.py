@@ -24,7 +24,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(100, 100, 72.0)
+    canvas = Canvas(512, 512, 72.0)
 
     canvas_half_width = int(canvas.get_width() / 2.0)
     canvas_half_height = int(canvas.get_height() / 2.0)
@@ -79,8 +79,8 @@ def main():
     renderer = MatplotlibRenderer(canvas)
     renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
 
-    def on_key_press(keyboard_event: KeyEvent):
-        print(f"Key press: {keyboard_event}")
+    def on_key_press(key_event: KeyEvent):
+        print(f"Key press: {key_event}")
 
     def on_mouse_move(mouse_event: MouseEvent):
         print(f"Mouse move: {mouse_event}")
@@ -89,9 +89,9 @@ def main():
     viewport_events_1.key_press_event.subscribe(on_key_press)
     viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
 
-    # viewport_events_2 = ViewportEventsMatplotlib(renderer, viewport_2)
-    # viewport_events_2.key_press_event.subscribe(on_key_press)
-    # viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
+    viewport_events_2 = ViewportEventsMatplotlib(renderer, viewport_2)
+    viewport_events_2.key_press_event.subscribe(on_key_press)
+    viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
 
     renderer.show()
 

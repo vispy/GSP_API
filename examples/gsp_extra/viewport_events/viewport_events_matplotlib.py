@@ -9,34 +9,37 @@ import matplotlib.backend_bases
 # local imports
 from gsp.core import Event
 from gsp.core import Canvas, Viewport
+from gsp.utils.unit_utils import UnitUtils
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from .viewport_events_types import KeyEvent, MouseEvent, EventType
-from .viewport_event_base import ViewportEventBase
+from .viewport_events_base import ViewportEventsBase
 from .viewport_events_types import KeyEvent, MouseEvent, KeyboardEventCallback, MouseEventCallback
 
 
-class ViewportEventsMatplotlib(ViewportEventBase):
+class ViewportEventsMatplotlib(ViewportEventsBase):
     """MatplotlibRenderer event handler for viewport"""
 
-    __slots__ = (
+    __slots__ = [
         "_renderer",
         "_viewport",
-        "_mpl_axes",
+        "_has_key_focus",
         "_mpl_figure",
         "_mpl_key_press_cid",
         "_mpl_key_release_cid",
         "_mpl_button_press_cid",
         "_mpl_button_release_cid",
-    )
+        "_mpl_mouse_move_cid",
+    ]
 
     def __init__(self, renderer: MatplotlibRenderer, viewport: Viewport) -> None:
 
         self._renderer = renderer
         self._viewport = viewport
-
-        self._mpl_axes = renderer._axes[self._viewport.get_uuid()]
-        self._mpl_figure = self._mpl_axes.figure
         self._has_key_focus = False
+
+        mpl_axes = renderer._axes[self._viewport.get_uuid()]
+        assert mpl_axes is not None, "ViewportEventsMatplotlib: could not find axes for viewport"
+        self._mpl_figure = mpl_axes.figure
 
         # Intanciate events
         self.key_press_event = Event[KeyboardEventCallback]()
@@ -122,14 +125,16 @@ class ViewportEventsMatplotlib(ViewportEventBase):
     # =============================================================================
 
     def _viewport_contains_mpl_mouse_event(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> bool:
-        """Check if the matplotlib mouse event is inside the axes of this viewport"""
-        if mpl_mouse_event.x < self._viewport.get_x():
+        """Check if the matplotlib mouse event is inside this viewport"""
+        mouse_x = mpl_mouse_event.x / UnitUtils.device_pixel_ratio()
+        mouse_y = mpl_mouse_event.y / UnitUtils.device_pixel_ratio()
+        if mouse_x < self._viewport.get_x():
             return False
-        if mpl_mouse_event.x >= self._viewport.get_x() + self._viewport.get_width():
+        if mouse_x >= self._viewport.get_x() + self._viewport.get_width():
             return False
-        if mpl_mouse_event.y < self._viewport.get_y():
+        if mouse_y < self._viewport.get_y():
             return False
-        if mpl_mouse_event.y >= self._viewport.get_y() + self._viewport.get_height():
+        if mouse_y >= self._viewport.get_y() + self._viewport.get_height():
             return False
         return True
 
@@ -138,10 +143,12 @@ class ViewportEventsMatplotlib(ViewportEventBase):
     # =============================================================================
     def _mpl_mouse_event_to_gsp(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent, event_type: EventType) -> MouseEvent:
         # Sanity check
-        assert self._viewport_contains_mpl_mouse_event(mpl_mouse_event)
+        assert self._viewport_contains_mpl_mouse_event(mpl_mouse_event), "Mouse event is outside the viewport"
 
-        x_viewport = mpl_mouse_event.x - self._viewport.get_x()
-        y_viewport = mpl_mouse_event.y - self._viewport.get_y()
+        mouse_x = mpl_mouse_event.x / UnitUtils.device_pixel_ratio()
+        mouse_y = mpl_mouse_event.y / UnitUtils.device_pixel_ratio()
+        x_viewport = mouse_x - self._viewport.get_x()
+        y_viewport = mouse_y - self._viewport.get_y()
         mouse_event = MouseEvent(
             viewport_uuid=self._viewport.get_uuid(),
             event_type=event_type,

@@ -15,11 +15,11 @@ from gsp.core import Event
 from gsp.core import Canvas, Viewport
 from gsp_datoviz.renderer import DatovizRenderer
 from .viewport_events_types import KeyEvent, MouseEvent, EventType
-from .viewport_event_base import ViewportEventBase
+from .viewport_events_base import ViewportEventsBase
 from .viewport_events_types import KeyEvent, MouseEvent, KeyboardEventCallback, MouseEventCallback
 
 
-class ViewportEventsDatoviz(ViewportEventBase):
+class ViewportEventsDatoviz(ViewportEventsBase):
     """DatovizRenderer event handler for viewport"""
 
     __slots__ = ("_renderer", "_viewport")

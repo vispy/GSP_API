@@ -32,7 +32,7 @@ class MouseEvent:
 
 # We can define the expected function signature using a Protocol for clarity.
 class KeyboardEventCallback(Protocol):
-    def __call__(self, keyboard_event: KeyEvent) -> None: ...
+    def __call__(self, key_event: KeyEvent) -> None: ...
 
 
 class MouseEventCallback(Protocol):

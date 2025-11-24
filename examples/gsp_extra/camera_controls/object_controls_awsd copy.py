@@ -1,7 +1,7 @@
 import numpy as np
 
-from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
-from gsp_extra.viewport_events.viewport_events_types import KeyEvent, EventType
+from gsp_extra.window_events.window_event_base import WindowEventBase
+from gsp_extra.window_events.window_event_types import KeyboardEvent, MouseEvent, EventType
 from gsp.types.visual_base import VisualBase
 from gsp.types.buffer import Buffer
 from gsp.types.buffer_type import BufferType
@@ -12,7 +12,7 @@ from ..bufferx import Bufferx
 class ObjectControlAwsd:
     """Implements camera controls using AWSD keys for movement and mouse for orientation."""
 
-    def __init__(self, model_matrix_buffer: Buffer, viewport_events: ViewportEventsBase):
+    def __init__(self, model_matrix_buffer: Buffer, window_event: WindowEventBase):
         # sanity checks
         assert model_matrix_buffer.get_type() == BufferType.mat4, "model_matrix must be of type mat4"
         assert model_matrix_buffer.get_count() == 1, "model_matrix must have a count of 1"
@@ -20,30 +20,29 @@ class ObjectControlAwsd:
         # copy arguments
         self._model_matrix_buffer = model_matrix_buffer
         self._model_matrix_numpy = Bufferx.to_numpy(self._model_matrix_buffer)[0]
-        self._viewport_events = viewport_events
+        self._window_event = window_event
         self._speed_x = 0.1
         self._speed_z = 0.1
 
         # Subscribe to keyboard and mouse events
-        self._viewport_events.key_press_event.subscribe(self._on_key_event)
-        self._viewport_events.key_release_event.subscribe(self._on_key_event)
+        self._window_event.key_press_event.subscribe(self._on_key_event)
+        self._window_event.key_release_event.subscribe(self._on_key_event)
 
     def close(self):
-        self._viewport_events.key_press_event.unsubscribe(self._on_key_event)
-        self._viewport_events.key_release_event.unsubscribe(self._on_key_event)
+        self._window_event.key_press_event.unsubscribe(self._on_key_event)
+        self._window_event.key_release_event.unsubscribe(self._on_key_event)
 
-    def _on_key_event(self, key_event: KeyEvent):
-        print(f"ObjectControlAwsd: key_event: {key_event}")
-        if key_event.event_type == EventType.KEY_PRESS:
+    def _on_key_event(self, keyboard_event: KeyboardEvent):
+        if keyboard_event.event_type == EventType.KEY_PRESS:
             translate_vector = np.array([0, 0, 0], dtype=np.float32)
 
-            if key_event.key_name == "w":
+            if keyboard_event.key_name == "w":
                 translate_vector[2] -= self._speed_z
-            elif key_event.key_name == "s":
+            elif keyboard_event.key_name == "s":
                 translate_vector[2] += self._speed_z
-            elif key_event.key_name == "a":
+            elif keyboard_event.key_name == "a":
                 translate_vector[0] -= self._speed_x
-            elif key_event.key_name == "d":
+            elif keyboard_event.key_name == "d":
                 translate_vector[0] += self._speed_x
 
             # generate translate matrix

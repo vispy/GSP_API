@@ -6,8 +6,8 @@ import numpy as np
 
 # local imports
 from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
-from gsp_extra.camera_controls.window_event_matplotlib import WindowEventMatplotlib
-from gsp_extra.camera_controls.window_event_types import KeyboardEvent, MouseEvent
+from gsp_extra.window_events.window_event_matplotlib import WindowEventMatplotlib
+from gsp_extra.window_events.window_event_types import KeyboardEvent, MouseEvent
 from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
 from gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
 

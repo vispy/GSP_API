@@ -5,6 +5,7 @@ import os
 import numpy as np
 
 # local imports
+from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
 from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
 from gsp_extra.window_events.window_event_matplotlib import WindowEventMatplotlib
 from gsp_extra.window_events.window_event_types import KeyboardEvent, MouseEvent
@@ -75,17 +76,19 @@ def main():
     # Create a renderer and render the scene
     renderer = MatplotlibRenderer(canvas)
 
-    window_event = WindowEventMatplotlib(mpl_figure=renderer.get_mpl_figure())
-
     # =============================================================================
     #
     # =============================================================================
 
-    # object_controls = ObjectControlAwsd(model_matrix, window_event)
-    object_controls = ObjectControlsTrackball(model_matrix, window_event)
-
     # start the animation loop
     animator_matplotlib = GspAnimatorMatplotlib(renderer)
+    # FIXME this is forced render() thus it initialize all internals structures
+    renderer.render([viewport], [points], [model_matrix], [camera])
+
+    viewport_events = ViewportEventsMatplotlib(renderer, viewport)
+    object_controls = ObjectControlAwsd(model_matrix, viewport_events)
+    # object_controls = ObjectControlsTrackball(model_matrix, viewport_events)
+
     animator_matplotlib.start([viewport], [points], [model_matrix], [camera])
 
 

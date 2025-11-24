@@ -7,8 +7,8 @@ class Point:
     # or dataclasses/NamedTuple for better typing support.
     # For simple cases, Pyright can often infer the types
     # from the __init__ method, but explicitly declaring them is safer:
-    # x: int
-    # y: int
+    x: int
+    y: int
 
     def __init__(self, x: int, y: int):
         self.x = x
