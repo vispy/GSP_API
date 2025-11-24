@@ -23,7 +23,6 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         "_renderer",
         "_viewport",
         "_has_key_focus",
-        "_mpl_figure",
         "_mpl_key_press_cid",
         "_mpl_key_release_cid",
         "_mpl_button_press_cid",
@@ -34,12 +33,11 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
     def __init__(self, renderer: MatplotlibRenderer, viewport: Viewport) -> None:
 
         self._renderer = renderer
+        """MatplotlibRenderer associated with this event handler"""
         self._viewport = viewport
+        """viewport associated with this event handler"""
         self._has_key_focus = False
-
-        mpl_axes = renderer._axes[self._viewport.get_uuid()]
-        assert mpl_axes is not None, "ViewportEventsMatplotlib: could not find axes for viewport"
-        self._mpl_figure = mpl_axes.figure
+        """True if this viewport has the keyboard focus"""
 
         # Intanciate events
         self.key_press_event = Event[KeyboardEventCallback]()
@@ -49,7 +47,7 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         self.mouse_move_event = Event[MouseEventCallback]()
 
         # event connections
-        mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._mpl_figure.canvas
+        mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
         self._mpl_key_press_cid = mpl_canvas.mpl_connect("key_press_event", typing.cast(Any, self._on_key_press))
         self._mpl_key_release_cid = mpl_canvas.mpl_connect("key_release_event", typing.cast(Any, self._on_key_release))
         self._mpl_button_press_cid = mpl_canvas.mpl_connect("button_press_event", typing.cast(Any, self._on_button_press))
@@ -57,7 +55,7 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         self._mpl_mouse_move_cid = mpl_canvas.mpl_connect("motion_notify_event", typing.cast(Any, self._on_mouse_move))
 
     def close(self):
-        mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._mpl_figure.canvas
+        mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
         if self._mpl_key_press_cid is not None:
             mpl_canvas.mpl_disconnect(self._mpl_key_press_cid)
             self._mpl_key_press_cid = None
