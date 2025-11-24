@@ -28,8 +28,8 @@ class GspAnimatorNetwork:
     """
     Animator for GSP scenes using a network renderer and matplotlib for display.
 
-    Note: this requires a running GSP server. See the README for instructions.
-    IMPORTANT: it DOES NOT depends on GSP matplotlib renderer, it only uses pip matplotlib to display
+    Note: this requires a running gsp_network server. See the README for instructions.
+    IMPORTANT: it DOES NOT depends on GSP matplotlib renderer, it only uses pip matplotlib to display the remotely rendered images.
     """
 
     on_video_saved = Event[VideoSavedCalledback]()
@@ -84,11 +84,11 @@ class GspAnimatorNetwork:
     # .add_callback/.remove_callback/.decorator
     # =============================================================================
 
-    def add_callback(self, func: AnimatorFunc):
+    def add_callback(self, func: AnimatorFunc) -> None:
         """Add a callback to the animation loop."""
         self._callbacks.append(func)
 
-    def remove_callback(self, func: AnimatorFunc):
+    def remove_callback(self, func: AnimatorFunc) -> None:
         """Remove a callback from the animation loop."""
         self._callbacks.remove(func)
 
@@ -119,7 +119,7 @@ class GspAnimatorNetwork:
     # =============================================================================
     # .animate
     # =============================================================================
-    def start(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], model_matrices: Sequence[TransBuf], cameras: Sequence[Camera]):
+    def start(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], model_matrices: Sequence[TransBuf], cameras: Sequence[Camera]) -> None:
         """
         Animate the given canvas and camera using the provided callbacks to update visuals.
         """

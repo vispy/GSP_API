@@ -1,7 +1,7 @@
 import numpy as np
 
-from gsp_extra.camera_controls.window_event_base import WindowEventBase
-from gsp_extra.camera_controls.window_event_types import KeyboardEvent, MouseEvent, EventType
+from gsp_extra.window_events.window_event_base import WindowEventBase
+from gsp_extra.window_events.window_event_types import KeyboardEvent, MouseEvent, EventType
 from gsp.types.visual_base import VisualBase
 from gsp.types.buffer import Buffer
 from gsp.types.buffer_type import BufferType

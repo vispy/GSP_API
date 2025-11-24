@@ -1,5 +1,7 @@
-- animator: handle saving video on network/matplotlib
+- DONE animator: handle saving video on network/matplotlib
 - animator: handle datoviz animator
+- make an example of window_events
+- window events with multiple viewports
 - how to handle camera control in GSP, aka same events for various renderers matplotlib/datoviz/network
   - with mouse events
   - with API

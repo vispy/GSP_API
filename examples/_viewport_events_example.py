@@ -5,19 +5,15 @@ import os
 import numpy as np
 
 # local imports
-from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
-from gsp_extra.window_events.window_event_matplotlib import WindowEventMatplotlib
-from gsp_extra.window_events.window_event_types import KeyboardEvent, MouseEvent
-from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
-from gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
-
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
+from gsp.utils.group_utils import GroupUtils
 from gsp.utils.unit_utils import UnitUtils
 
 
@@ -28,8 +24,12 @@ def main():
     # Create a canvas
     canvas = Canvas(100, 100, 72.0)
 
+    canvas_half_width = int(canvas.get_width() / 2.0)
+    canvas_half_height = int(canvas.get_height() / 2.0)
+
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport_1 = Viewport(0, 0, canvas.get_width(), canvas_half_height)
+    viewport_2 = Viewport(0, canvas_half_height, canvas.get_width(), canvas_half_height)
 
     # =============================================================================
     # Add random points
@@ -64,7 +64,8 @@ def main():
     # Render the canvas
     # =============================================================================
 
-    model_matrix = Bufferx.mat4_identity()
+    model_matrix_1 = Bufferx.mat4_identity()
+    model_matrix_2 = Bufferx.mat4_identity()
     # Create a camera
     camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
 
@@ -73,20 +74,9 @@ def main():
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas)
-
-    window_event = WindowEventMatplotlib(mpl_figure=renderer.get_mpl_figure())
-
-    # =============================================================================
-    #
-    # =============================================================================
-
-    # object_controls = ObjectControlAwsd(model_matrix, window_event)
-    object_controls = ObjectControlsTrackball(model_matrix, window_event)
-
-    # start the animation loop
-    animator_matplotlib = GspAnimatorMatplotlib(renderer)
-    animator_matplotlib.start([viewport], [points], [model_matrix], [camera])
+    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
+    renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+    renderer.show()
 
 
 if __name__ == "__main__":
