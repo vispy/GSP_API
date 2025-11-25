@@ -12,13 +12,19 @@ from gsp.types.transbuf import TransBuf
 
 class RendererBase(ABC):
     @abstractmethod
-    def __init__(self, canvas: Canvas): ...
+    def __init__(self, canvas: Canvas):
+        """Initialize the renderer with the given canvas."""
+        pass
 
     @abstractmethod
-    def close(self) -> None: ...
+    def close(self) -> None:
+        """Close the renderer and release any resources."""
+        pass
 
     @abstractmethod
-    def get_canvas(self) -> Canvas: ...
+    def get_canvas(self) -> Canvas:
+        """Return the associated canvas."""
+        pass
 
     @abstractmethod
     def render(
@@ -27,4 +33,11 @@ class RendererBase(ABC):
         visuals: Sequence[VisualBase],
         model_matrices: Sequence[TransBuf],
         cameras: Sequence[Camera],
-    ) -> bytes: ...
+    ) -> bytes:
+        """Render the given scene."""
+        pass
+
+    @abstractmethod
+    def show(self) -> None:
+        """Show the rendered canvas (blocking call)."""
+        pass
