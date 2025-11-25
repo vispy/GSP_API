@@ -71,7 +71,7 @@ def main():
     # =============================================================================
 
     # Create a renderer
-    renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], os.environ.get("GSP_RENDERER", "network"))
+    renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], os.environ.get("GSP_RENDERER", "matplotlib"))
     if renderer_name == "matplotlib":
         renderer = MatplotlibRenderer(canvas)
     elif renderer_name == "datoviz":

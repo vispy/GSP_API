@@ -1,6 +1,11 @@
 - DONE animator: handle saving video on network/matplotlib
 - animator: handle datoviz animator
 - make an example of window_events
+- example launcher
+  - with env variable GSP_RENDERER to select the renderer
+  - matplotlib
+  - datoviz
+  - network
 - window events with multiple viewports
   - recode all the viewport events using the same structure
 - handle 3d rotation in datoviz
