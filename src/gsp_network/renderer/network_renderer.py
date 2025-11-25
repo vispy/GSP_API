@@ -36,7 +36,7 @@ class NetworkRenderer(RendererBase):
         return self._canvas
 
     def close(self) -> None:
-        # Nothing to close
+        #
         pass
 
     def get_remote_renderer_name(self) -> Literal["matplotlib", "datoviz"]:

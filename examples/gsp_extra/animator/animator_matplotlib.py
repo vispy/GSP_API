@@ -164,18 +164,6 @@ class GspAnimatorMatplotlib:
         # NOTE: here we are in interactive mode!!
 
         # =============================================================================
-        # Connect cameras
-        # =============================================================================
-        # FIXME how to handle camera?
-        # # connect the camera events to the render function
-        # def camera_update(transform) -> None:
-        #     self._matplotlib_renderer.render(canvas, viewports, cameras)
-
-        # for camera, viewport in zip(cameras, canvas.viewports):
-        #     mpl_axes = self._matplotlib_renderer._axes[viewport.uuid]
-        #     camera.mpl3d_camera.connect(mpl_axes, camera_update)
-
-        # =============================================================================
         # Initialize the animation
         # =============================================================================
 
@@ -199,13 +187,6 @@ class GspAnimatorMatplotlib:
     # .stop()
     # =============================================================================
     def stop(self):
-        # disconnect the cameras connected in .start()
-        # FIXME how to handle camera?
-        # if self._cameras is not None:
-        #     for camera in self._cameras:
-        #         camera.mpl3d_camera.disconnect()
-        #     self._cameras = None
-
         self._canvas = None
         self._viewports = None
         self._time_last_update = None
