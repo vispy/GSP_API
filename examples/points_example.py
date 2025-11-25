@@ -1,5 +1,7 @@
 # stdlib imports
 import os
+from typing import Literal
+import typing
 
 # pip imports
 import numpy as np
@@ -12,8 +14,8 @@ from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
+from gsp_network.renderer.network_renderer import NetworkRenderer
 from gsp_extra.bufferx import Bufferx
-from gsp.utils.group_utils import GroupUtils
 from gsp.utils.unit_utils import UnitUtils
 
 
@@ -68,9 +70,21 @@ def main():
     # Render
     # =============================================================================
 
-    # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
+    # Create a renderer
+    renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], os.environ.get("GSP_RENDERER", "network"))
+    if renderer_name == "matplotlib":
+        renderer = MatplotlibRenderer(canvas)
+    elif renderer_name == "datoviz":
+        renderer = DatovizRenderer(canvas)
+    elif renderer_name == "network":
+        renderer = NetworkRenderer(canvas, "http://localhost:5000", "matplotlib")
+    else:
+        raise ValueError(f"Unknown renderer name: {renderer_name}")
+
+    # Render the scene
     renderer.render([viewport], [points], [model_matrix], [camera])
+
+    # Show the result
     renderer.show()
 
 
