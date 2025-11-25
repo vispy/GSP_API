@@ -128,3 +128,6 @@ class NetworkRenderer(RendererBase):
 
         matplotlib.pyplot.show()
         # self._figure.show()
+
+    def get_mpl_figure(self) -> matplotlib.figure.Figure:
+        return self._figure
