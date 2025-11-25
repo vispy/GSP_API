@@ -65,6 +65,7 @@ class MatplotlibRenderer(RendererBase):
             return
 
         matplotlib.pyplot.show()
+        # self._figure.show()
 
     def render(
         self,
