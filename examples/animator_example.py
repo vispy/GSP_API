@@ -174,6 +174,7 @@ if __name__ == "__main__":
     args = argParser.parse_args()
     # args = argParser.parse_args(["--renderer", "network", "--save-video"])  # for testing purpose, replace with args = argParser.parse_args()
     # args = argParser.parse_args(["--renderer", "datoviz"])  # for testing purpose, replace with args = argParser.parse_args()
+    # args = argParser.parse_args(["--renderer", "network"])  # for testing purpose, replace with args = argParser.parse_args()
 
     renderer_name: Literal["matplotlib", "datoviz", "network"] = "matplotlib"
     if os.environ.get("GSP_RENDERER") is not None:

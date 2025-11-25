@@ -10,7 +10,6 @@ import matplotlib.artist
 import time
 
 # local imports
-import gsp
 from gsp.types.transbuf import TransBuf
 from gsp_network.renderer import NetworkRenderer
 from gsp.types.visual_base import VisualBase
@@ -24,7 +23,7 @@ from .animator_types import AnimatorFunc, VideoSavedCalledback
 __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
 
-class GspAnimatorMatplotlib:
+class GspAnimatorNetwork:
     """
     Animator for GSP scenes using a matplotlib renderer.
     """

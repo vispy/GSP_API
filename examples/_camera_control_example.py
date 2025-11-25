@@ -1,14 +1,22 @@
 # stdlib imports
 import os
+from typing import Literal
+import typing
 
 # pip imports
 import numpy as np
 
 # local imports
-from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
+from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp_network.renderer import NetworkRenderer
 from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
+from gsp_extra.animator.animator_network import GspAnimatorNetwork
+
+from gsp_extra.viewport_events.viewport_events_network import ViewportEventsNetwork
 from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
 from gsp_extra.viewport_events.viewport_events_types import KeyEvent, MouseEvent
+
+
 from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
 from gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
 
@@ -17,7 +25,6 @@ from gsp.core import Canvas, Viewport
 from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.unit_utils import UnitUtils
 
@@ -78,27 +85,47 @@ def main():
     # Render
     # =============================================================================
 
-    # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas)
+    renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], os.environ.get("GSP_RENDERER", "matplotlib"))
 
-    # =============================================================================
-    #
-    # =============================================================================
+    if renderer_name == "matplotlib":
 
-    # start the animation loop
-    animator_matplotlib = GspAnimatorMatplotlib(renderer)
-    # FIXME this is forced render() thus it initialize all internals structures
-    renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+        # Create a renderer and render the scene
+        renderer = MatplotlibRenderer(canvas)
 
-    viewport_events_1 = ViewportEventsMatplotlib(renderer, viewport_1)
-    # object_controls_1 = ObjectControlAwsd(model_matrix_1, viewport_events_1)
-    object_controls_1 = ObjectControlsTrackball(model_matrix_1, viewport_events_1)
+        # start the animation loop
+        animator = GspAnimatorMatplotlib(renderer)
+        # FIXME this is forced render() thus it initialize all internals structures
+        renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
 
-    viewport_events_2 = ViewportEventsMatplotlib(renderer, viewport_2)
-    # object_controls_2 = ObjectControlAwsd(model_matrix_2, viewport_events_2)
-    object_controls_2 = ObjectControlsTrackball(model_matrix_2, viewport_events_2)
+        viewport_events_1 = ViewportEventsMatplotlib(renderer, viewport_1)
+        # object_controls_1 = ObjectControlAwsd(model_matrix_1, viewport_events_1)
+        object_controls_1 = ObjectControlsTrackball(model_matrix_1, viewport_events_1)
 
-    animator_matplotlib.start([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+        viewport_events_2 = ViewportEventsMatplotlib(renderer, viewport_2)
+        # object_controls_2 = ObjectControlAwsd(model_matrix_2, viewport_events_2)
+        object_controls_2 = ObjectControlsTrackball(model_matrix_2, viewport_events_2)
+
+        animator.start([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+    elif renderer_name == "network":
+        # Create a renderer and render the scene
+        renderer = NetworkRenderer(canvas, "http://localhost:5000", "matplotlib")
+
+        # start the animation loop
+        animator = GspAnimatorNetwork(renderer)
+        # FIXME this is forced render() thus it initialize all internals structures
+        renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+
+        viewport_events_1 = ViewportEventsNetwork(renderer, viewport_1)
+        # object_controls_1 = ObjectControlAwsd(model_matrix_1, viewport_events_1)
+        object_controls_1 = ObjectControlsTrackball(model_matrix_1, viewport_events_1)
+
+        viewport_events_2 = ViewportEventsNetwork(renderer, viewport_2)
+        # object_controls_2 = ObjectControlAwsd(model_matrix_2, viewport_events_2)
+        object_controls_2 = ObjectControlsTrackball(model_matrix_2, viewport_events_2)
+
+        animator.start([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+    else:
+        raise ValueError(f"Unsupported renderer for this example: {renderer_name}")
 
 
 if __name__ == "__main__":
