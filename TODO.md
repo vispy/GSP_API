@@ -6,6 +6,13 @@
   - matplotlib
   - datoviz
   - network
+  ```ExampleHelper.render_show(renderer_name, canvas, viewports, visuals, model_matrices, cameras)``` 
+  ```
+    # Create a renderer and render the scene
+    renderer = MatplotlibRenderer(parsed_canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(parsed_canvas)
+    renderer.render(parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras)
+    renderer.show()
+  ```
 - window events with multiple viewports
   - recode all the viewport events using the same structure
 - handle 3d rotation in datoviz
