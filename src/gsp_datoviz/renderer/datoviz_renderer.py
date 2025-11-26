@@ -8,6 +8,7 @@ import warnings
 import numpy as np
 import datoviz as dvz
 from datoviz._panel import Panel as _DvzPanel  # TODO _panel to fix in datoviz ?
+from datoviz._figure import Figure as _DvzFigure
 from datoviz.visuals import Visual as _DvzVisual
 
 # dataviz glossary
@@ -33,8 +34,8 @@ from gsp.types.renderer_base import RendererBase
 class DatovizRenderer(RendererBase):
     def __init__(self, canvas: Canvas, offscreen: bool = False) -> None:
         self._canvas = canvas
-        self._dvz_app = dvz.App(background="white", offscreen=offscreen)
-        self._dvz_figure = self._dvz_app.figure(
+        self._dvz_app: dvz.App = dvz.App(background="white", offscreen=offscreen)
+        self._dvz_figure: _DvzFigure = self._dvz_app.figure(
             width=canvas.get_width(),
             height=canvas.get_height(),
         )
@@ -54,6 +55,9 @@ class DatovizRenderer(RendererBase):
 
     def get_dvz_app(self) -> dvz.App:
         return self._dvz_app
+
+    def get_dvz_figure(self) -> _DvzFigure:
+        return self._dvz_figure
 
     def show(self) -> None:
 

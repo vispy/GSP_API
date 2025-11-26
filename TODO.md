@@ -1,4 +1,4 @@
-- DONE animator: handle saving video on network/matplotlib
+
 - animator: handle datoviz animator
 - make an example of window_events
 - example launcher
@@ -66,6 +66,7 @@
 
 
 ---
+- DONE animator: handle saving video on network/matplotlib
 - DONE in trackball, notify -1 +1, not [0,+1]
 - DONE PR datoviz with the whole ./datoviz as pyright 0 errors
   - add a pyright target in justfile

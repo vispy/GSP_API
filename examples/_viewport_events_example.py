@@ -1,22 +1,27 @@
 # stdlib imports
 import os
+import typing
 
 # pip imports
 import numpy as np
 
 # local imports
+from common.example_helper import ExampleHelper
+from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp_datoviz.renderer import DatovizRenderer
+from gsp_network.renderer.network_renderer import NetworkRenderer
+from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
+from gsp_extra.viewport_events.viewport_events_network import ViewportEventsNetwork
+from gsp_extra.viewport_events.viewport_events_datoviz import ViewportEventsDatoviz
+from gsp_extra.viewport_events.viewport_events_types import KeyEvent, MouseEvent
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
 from gsp.utils.unit_utils import UnitUtils
-from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
-from gsp_extra.viewport_events.viewport_events_types import KeyEvent, MouseEvent
 
 
 def main():
@@ -72,27 +77,59 @@ def main():
     camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
 
     # =============================================================================
-    # Render
+    # Create the renderer
     # =============================================================================
 
+    renderer_name = ExampleHelper.get_renderer_name()
     # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas)
-    renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+    renderer = ExampleHelper.create_renderer(renderer_name, canvas)
 
+    # =============================================================================
+    # Setup the Viewport Events
+    # =============================================================================
     def on_key_press(key_event: KeyEvent):
         print(f"Key press: {key_event}")
 
     def on_mouse_move(mouse_event: MouseEvent):
         print(f"Mouse move: {mouse_event}")
 
-    viewport_events_1 = ViewportEventsMatplotlib(renderer, viewport_1)
-    viewport_events_1.key_press_event.subscribe(on_key_press)
-    viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
+    if renderer_name == "matplotlib":
+        assert isinstance(renderer, MatplotlibRenderer), "renderer must be MatplotlibRenderer"
+        matplotlib_renderer = typing.cast(MatplotlibRenderer, renderer)
+        viewport_events_1 = ViewportEventsMatplotlib(matplotlib_renderer, viewport_1)
+        viewport_events_1.key_press_event.subscribe(on_key_press)
+        viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
 
-    viewport_events_2 = ViewportEventsMatplotlib(renderer, viewport_2)
-    viewport_events_2.key_press_event.subscribe(on_key_press)
-    viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
+        viewport_events_2 = ViewportEventsMatplotlib(matplotlib_renderer, viewport_2)
+        viewport_events_2.key_press_event.subscribe(on_key_press)
+        viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
+    elif renderer_name == "datoviz":
+        assert isinstance(renderer, DatovizRenderer), "renderer must be DatovizRenderer"
+        datoviz_renderer = typing.cast(DatovizRenderer, renderer)
+        viewport_events_1 = ViewportEventsDatoviz(datoviz_renderer, viewport_1)
+        viewport_events_1.key_press_event.subscribe(on_key_press)
+        viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
 
+        viewport_events_2 = ViewportEventsDatoviz(datoviz_renderer, viewport_2)
+        viewport_events_2.key_press_event.subscribe(on_key_press)
+        viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
+    elif renderer_name == "network":
+        assert isinstance(renderer, NetworkRenderer), "renderer must be NetworkRenderer"
+        network_renderer = typing.cast(NetworkRenderer, renderer)
+        viewport_events_1 = ViewportEventsNetwork(network_renderer, viewport_1)
+        viewport_events_1.key_press_event.subscribe(on_key_press)
+        viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
+
+        viewport_events_2 = ViewportEventsNetwork(network_renderer, viewport_2)
+        viewport_events_2.key_press_event.subscribe(on_key_press)
+        viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
+    else:
+        raise NotImplementedError(f"Viewport events not implemented for renderer: {renderer_name}")
+
+    # =============================================================================
+    # Render and show the scene
+    # =============================================================================
+    renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
     renderer.show()
 
 
