@@ -6,22 +6,15 @@ import typing
 import numpy as np
 
 # local imports
-from gsp.types.renderer_base import RendererBase
-from gsp.types.transbuf import TransBuf
-from gsp.core import Canvas, Viewport
-from gsp.types.visual_base import VisualBase
+from gsp.core import Canvas, Viewport, Camera
 from gsp.visuals import Segments, Points, Pixels
-from gsp.types import Buffer, BufferType
-from gsp.core import Camera
+from gsp.types import Buffer, BufferType, VisualBase, RendererBase, TransBuf, CapStyle
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
 from gsp_network.renderer import NetworkRenderer
 from gsp_extra.bufferx import Bufferx
-from gsp.utils.group_utils import GroupUtils
-from gsp.utils.unit_utils import UnitUtils
+from gsp.utils import GroupUtils, UnitUtils, CmapUtils
 from gsp.constants import Constants
-from gsp.types import CapStyle
-from gsp.utils.cmap_utils import CmapUtils
 from gsp_pydantic.serializer.pydantic_parser import PydanticParser
 from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
 from gsp_pydantic.types.pydantic_dict import PydanticDict

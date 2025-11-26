@@ -125,12 +125,13 @@ def main():
     def on_mouse_move(mouse_event: MouseEvent):
         print(f"Mouse move: {mouse_event}")
 
-    # Subscribe to events
+    # Subscribe to events 1
     viewport_events_1.key_press_event.subscribe(on_key_press)
     viewport_events_1.key_release_event.subscribe(on_key_release)
     viewport_events_1.button_press_event.subscribe(on_button_press)
     viewport_events_1.button_release_event.subscribe(on_button_release)
     viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
+    # Subscribe to events 2
     viewport_events_2.key_press_event.subscribe(on_key_press)
     viewport_events_2.key_release_event.subscribe(on_key_release)
     viewport_events_2.button_press_event.subscribe(on_button_press)
@@ -140,6 +141,7 @@ def main():
     # =============================================================================
     # Render and show the scene
     # =============================================================================
+
     renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
     renderer.show()
 

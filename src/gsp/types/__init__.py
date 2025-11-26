@@ -5,3 +5,5 @@ from .group import Groups
 from .cap_style import CapStyle
 from .join_style import JoinStyle
 from .marker_shape import MarkerShape
+from .renderer_base import RendererBase
+from .visual_base import VisualBase
