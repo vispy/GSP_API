@@ -10,6 +10,7 @@ import numpy as np
 
 
 # local imports
+from examples.common.example_helper import ExampleHelper
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.types.visual_base import VisualBase
@@ -79,15 +80,7 @@ def main(renderer_name: Literal["matplotlib", "datoviz", "network"], save_video:
     # Create the renderer
     # =============================================================================
 
-    # init the matplotlib renderer
-    if renderer_name == "matplotlib":
-        renderer = MatplotlibRenderer(canvas)
-    elif renderer_name == "datoviz":
-        renderer = DatovizRenderer(canvas)
-    elif renderer_name == "network":
-        renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", remote_renderer_name="matplotlib")
-    else:
-        raise ValueError(f"Unknown renderer name: {renderer_name}")
+    renderer = ExampleHelper.create_renderer(renderer_name, canvas)
 
     # =============================================================================
     # Create the animator with/without save_video

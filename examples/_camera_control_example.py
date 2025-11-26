@@ -7,6 +7,10 @@ import typing
 import numpy as np
 
 # local imports
+from common.example_helper import ExampleHelper
+from gsp_extra.animator.animator_datoviz import GspAnimatorDatoviz
+from gsp_extra.viewport_events.viewport_events_datoviz import ViewportEventsDatoviz
+from gsp_datoviz.renderer.datoviz_renderer import DatovizRenderer
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_network.renderer import NetworkRenderer
 from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
@@ -14,8 +18,6 @@ from gsp_extra.animator.animator_network import GspAnimatorNetwork
 
 from gsp_extra.viewport_events.viewport_events_network import ViewportEventsNetwork
 from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
-from gsp_extra.viewport_events.viewport_events_types import KeyEvent, MouseEvent
-
 
 from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
 from gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
@@ -85,47 +87,55 @@ def main():
     # Render
     # =============================================================================
 
-    renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], os.environ.get("GSP_RENDERER", "matplotlib"))
+    # Create a renderer
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer = ExampleHelper.create_renderer(renderer_name, canvas)
+
+    # =============================================================================
+    # Create Viewport events
+    # =============================================================================
 
     if renderer_name == "matplotlib":
-
-        # Create a renderer and render the scene
-        renderer = MatplotlibRenderer(canvas)
-
-        # start the animation loop
-        animator = GspAnimatorMatplotlib(renderer)
-        # FIXME this is forced render() thus it initialize all internals structures
-        renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
-
-        viewport_events_1 = ViewportEventsMatplotlib(renderer, viewport_1)
-        # object_controls_1 = ObjectControlAwsd(model_matrix_1, viewport_events_1)
-        object_controls_1 = ObjectControlsTrackball(model_matrix_1, viewport_events_1)
-
-        viewport_events_2 = ViewportEventsMatplotlib(renderer, viewport_2)
-        # object_controls_2 = ObjectControlAwsd(model_matrix_2, viewport_events_2)
-        object_controls_2 = ObjectControlsTrackball(model_matrix_2, viewport_events_2)
-
-        animator.start([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+        matplotlib_renderer = typing.cast(MatplotlibRenderer, renderer)
+        viewport_events_1 = ViewportEventsMatplotlib(matplotlib_renderer, viewport_1)
+        viewport_events_2 = ViewportEventsMatplotlib(matplotlib_renderer, viewport_2)
+    elif renderer_name == "datoviz":
+        datoviz_renderer = typing.cast(DatovizRenderer, renderer)
+        viewport_events_1 = ViewportEventsDatoviz(datoviz_renderer, viewport_1)
+        viewport_events_2 = ViewportEventsDatoviz(datoviz_renderer, viewport_2)
     elif renderer_name == "network":
-        # Create a renderer and render the scene
-        renderer = NetworkRenderer(canvas, "http://localhost:5000", "matplotlib")
-
-        # start the animation loop
-        animator = GspAnimatorNetwork(renderer)
-        # FIXME this is forced render() thus it initialize all internals structures
-        renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
-
-        viewport_events_1 = ViewportEventsNetwork(renderer, viewport_1)
-        # object_controls_1 = ObjectControlAwsd(model_matrix_1, viewport_events_1)
-        object_controls_1 = ObjectControlsTrackball(model_matrix_1, viewport_events_1)
-
-        viewport_events_2 = ViewportEventsNetwork(renderer, viewport_2)
-        # object_controls_2 = ObjectControlAwsd(model_matrix_2, viewport_events_2)
-        object_controls_2 = ObjectControlsTrackball(model_matrix_2, viewport_events_2)
-
-        animator.start([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+        network_renderer = typing.cast(NetworkRenderer, renderer)
+        viewport_events_1 = ViewportEventsNetwork(network_renderer, viewport_1)
+        viewport_events_2 = ViewportEventsNetwork(network_renderer, viewport_2)
     else:
         raise ValueError(f"Unsupported renderer for this example: {renderer_name}")
+
+    # =============================================================================
+    #
+    # =============================================================================
+
+    # object_controls_1 = ObjectControlAwsd(model_matrix_1, viewport_events_1)
+    object_controls_1 = ObjectControlsTrackball(model_matrix_1, viewport_events_1)
+    # object_controls_2 = ObjectControlAwsd(model_matrix_2, viewport_events_2)
+    object_controls_2 = ObjectControlsTrackball(model_matrix_2, viewport_events_2)
+
+    # =============================================================================
+    # Create animator
+    # =============================================================================
+
+    if renderer_name == "matplotlib":
+        matplotlib_renderer = typing.cast(MatplotlibRenderer, renderer)
+        animator = GspAnimatorMatplotlib(matplotlib_renderer)
+    elif renderer_name == "datoviz":
+        datoviz_renderer = typing.cast(DatovizRenderer, renderer)
+        animator = GspAnimatorDatoviz(datoviz_renderer)
+    elif renderer_name == "network":
+        network_renderer = typing.cast(NetworkRenderer, renderer)
+        animator = GspAnimatorNetwork(network_renderer)
+    else:
+        raise ValueError(f"Unsupported renderer for this example: {renderer_name}")
+
+    animator.start([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
 
 
 if __name__ == "__main__":
