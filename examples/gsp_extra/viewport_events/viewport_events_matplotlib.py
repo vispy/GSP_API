@@ -28,6 +28,7 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         "_mpl_button_press_cid",
         "_mpl_button_release_cid",
         "_mpl_mouse_move_cid",
+        "_mpl_scroll_event_cid",
     ]
 
     def __init__(self, renderer: MatplotlibRenderer, viewport: Viewport) -> None:
@@ -53,6 +54,7 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         self._mpl_button_press_cid = mpl_canvas.mpl_connect("button_press_event", typing.cast(Any, self._on_button_press))
         self._mpl_button_release_cid = mpl_canvas.mpl_connect("button_release_event", typing.cast(Any, self._on_button_release))
         self._mpl_mouse_move_cid = mpl_canvas.mpl_connect("motion_notify_event", typing.cast(Any, self._on_mouse_move))
+        self._mpl_scroll_event_cid = mpl_canvas.mpl_connect("scroll_event", typing.cast(Any, self._on_scroll))
 
     def close(self):
         mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
@@ -71,6 +73,9 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         if self._mpl_mouse_move_cid is not None:
             mpl_canvas.mpl_disconnect(self._mpl_mouse_move_cid)
             self._mpl_mouse_move_cid = None
+        if self._mpl_scroll_event_cid is not None:
+            mpl_canvas.mpl_disconnect(self._mpl_scroll_event_cid)
+            self._mpl_scroll_event_cid = None
 
     # =============================================================================
     # Matplotlib event handler
@@ -93,6 +98,7 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         self.key_release_event.dispatch(keyboard_event)
 
     def _on_button_press(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> None:
+        # print("matplotlib button press event:", mpl_mouse_event)
         # Set key focus if the event is inside the viewport, otherwise remove key focus
         if self._viewport_contains_mpl_mouse_event(mpl_mouse_event):
             self._has_key_focus = True
@@ -108,6 +114,8 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         self.button_press_event.dispatch(mouse_event)
 
     def _on_button_release(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> None:
+        # print("matplotlib button release event:", mpl_mouse_event)
+
         # discard events outside the viewport
         if self._viewport_contains_mpl_mouse_event(mpl_mouse_event) is False:
             return
@@ -116,6 +124,14 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         self.button_release_event.dispatch(mouse_event)
 
     def _on_mouse_move(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> None:
+        # discard events outside the viewport
+        if self._viewport_contains_mpl_mouse_event(mpl_mouse_event) is False:
+            return
+        # convert and dispatch event
+        mouse_event = self._mpl_mouse_event_to_gsp(mpl_mouse_event, EventType.MOUSE_MOVE)
+        self.mouse_move_event.dispatch(mouse_event)
+
+    def _on_scroll(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> None:
         # discard events outside the viewport
         if self._viewport_contains_mpl_mouse_event(mpl_mouse_event) is False:
             return

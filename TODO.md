@@ -1,6 +1,8 @@
 
 - animator: handle datoviz animator
 - make an example of window_events
+- motion/scroll events in viewport_events_matplotlib/network
+  - Make a special event for scroll
 - example launcher
   - with env variable GSP_RENDERER to select the renderer
   - matplotlib
