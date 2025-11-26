@@ -17,7 +17,10 @@ from .viewport_events_types import KeyEvent, MouseEvent, KeyboardEventCallback, 
 
 
 class ViewportEventsNetwork(ViewportEventsBase):
-    """NetworkRenderer event handler for viewport"""
+    """NetworkRenderer event handler for viewport
+
+    Code heavily inspired from ViewportEventsMatplotlib
+    """
 
     __slots__ = [
         "_renderer",
