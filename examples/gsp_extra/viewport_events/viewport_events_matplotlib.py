@@ -93,11 +93,15 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         self.key_release_event.dispatch(keyboard_event)
 
     def _on_button_press(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> None:
+        # Set key focus if the event is inside the viewport, otherwise remove key focus
+        if self._viewport_contains_mpl_mouse_event(mpl_mouse_event):
+            self._has_key_focus = True
+        else:
+            self._has_key_focus = False
+
         # discard events outside the viewport
         if self._viewport_contains_mpl_mouse_event(mpl_mouse_event) is False:
-            self._has_key_focus = False
             return
-        self._has_key_focus = True
 
         # convert and dispatch event
         mouse_event = self._mpl_mouse_event_to_gsp(mpl_mouse_event, EventType.BUTTON_PRESS)

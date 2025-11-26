@@ -85,46 +85,57 @@ def main():
     renderer = ExampleHelper.create_renderer(renderer_name, canvas)
 
     # =============================================================================
-    # Setup the Viewport Events
+    # Create ViewportEvents for each viewport according to the renderer type
     # =============================================================================
-    def on_key_press(key_event: KeyEvent):
-        print(f"Key press: {key_event}")
-
-    def on_mouse_move(mouse_event: MouseEvent):
-        print(f"Mouse move: {mouse_event}")
 
     if renderer_name == "matplotlib":
         assert isinstance(renderer, MatplotlibRenderer), "renderer must be MatplotlibRenderer"
         matplotlib_renderer = typing.cast(MatplotlibRenderer, renderer)
         viewport_events_1 = ViewportEventsMatplotlib(matplotlib_renderer, viewport_1)
-        viewport_events_1.key_press_event.subscribe(on_key_press)
-        viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
-
         viewport_events_2 = ViewportEventsMatplotlib(matplotlib_renderer, viewport_2)
-        viewport_events_2.key_press_event.subscribe(on_key_press)
-        viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
     elif renderer_name == "datoviz":
         assert isinstance(renderer, DatovizRenderer), "renderer must be DatovizRenderer"
         datoviz_renderer = typing.cast(DatovizRenderer, renderer)
         viewport_events_1 = ViewportEventsDatoviz(datoviz_renderer, viewport_1)
-        viewport_events_1.key_press_event.subscribe(on_key_press)
-        viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
-
         viewport_events_2 = ViewportEventsDatoviz(datoviz_renderer, viewport_2)
-        viewport_events_2.key_press_event.subscribe(on_key_press)
-        viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
     elif renderer_name == "network":
         assert isinstance(renderer, NetworkRenderer), "renderer must be NetworkRenderer"
         network_renderer = typing.cast(NetworkRenderer, renderer)
         viewport_events_1 = ViewportEventsNetwork(network_renderer, viewport_1)
-        viewport_events_1.key_press_event.subscribe(on_key_press)
-        viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
-
         viewport_events_2 = ViewportEventsNetwork(network_renderer, viewport_2)
-        viewport_events_2.key_press_event.subscribe(on_key_press)
-        viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
     else:
         raise NotImplementedError(f"Viewport events not implemented for renderer: {renderer_name}")
+
+    # =============================================================================
+    # Subscribe to events
+    # =============================================================================
+    # callback functions
+    def on_key_press(key_event: KeyEvent):
+        print(f"Key press: {key_event}")
+
+    def on_key_release(key_event: KeyEvent):
+        print(f"Key release: {key_event}")
+
+    def on_button_press(mouse_event: MouseEvent):
+        print(f"Button press: {mouse_event}")
+
+    def on_button_release(mouse_event: MouseEvent):
+        print(f"Button release: {mouse_event}")
+
+    def on_mouse_move(mouse_event: MouseEvent):
+        print(f"Mouse move: {mouse_event}")
+
+    # Subscribe to events
+    viewport_events_1.key_press_event.subscribe(on_key_press)
+    viewport_events_1.key_release_event.subscribe(on_key_release)
+    viewport_events_1.button_press_event.subscribe(on_button_press)
+    viewport_events_1.button_release_event.subscribe(on_button_release)
+    viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
+    viewport_events_2.key_press_event.subscribe(on_key_press)
+    viewport_events_2.key_release_event.subscribe(on_key_release)
+    viewport_events_2.button_press_event.subscribe(on_button_press)
+    viewport_events_2.button_release_event.subscribe(on_button_release)
+    viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
 
     # =============================================================================
     # Render and show the scene

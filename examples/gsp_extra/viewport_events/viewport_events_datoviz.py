@@ -6,6 +6,7 @@ from datoviz._figure import Figure as _DvzFigure
 # local imports
 from gsp.core import Event
 from gsp.core import Canvas, Viewport
+from gsp.utils.unit_utils import UnitUtils
 from gsp_datoviz.renderer import DatovizRenderer
 from .viewport_events_types import KeyEvent, MouseEvent, EventType
 from .viewport_events_base import ViewportEventsBase
@@ -85,11 +86,24 @@ class ViewportEventsDatoviz(ViewportEventsBase):
             if self._is_closed:
                 return
 
+            # Set key focus to true if there is a mouse press is inside the viewport, otherwise remove key focus if mouse press is outside
+            if dvz_mouse_event.mouse_event() == "press":
+                if self._viewport_contains_dvz_mouse_event(dvz_mouse_event):
+                    self._has_key_focus = True
+                else:
+                    self._has_key_focus = False
+
+            # discard events outside the viewport
+            if self._viewport_contains_dvz_mouse_event(dvz_mouse_event) is False:
+                return
+
             # Read dvz_mouse_event properties
             dvz_event_name = dvz_mouse_event.mouse_event()
             dvz_mouse_pos = dvz_mouse_event.pos()
             dvz_button_name = dvz_mouse_event.button_name()
             dvz_wheel = dvz_mouse_event.wheel()
+
+            print("blabla", dvz_event_name, dvz_mouse_pos, dvz_button_name, dvz_wheel)
 
             # Convert fields to our MouseEvent
             if dvz_event_name == "press":
@@ -137,3 +151,26 @@ class ViewportEventsDatoviz(ViewportEventsBase):
 
         # Dont dispatch events (datoviz doesnt allow to disconnect events)
         self._is_closed = True
+
+    # =============================================================================
+    #
+    # =============================================================================
+
+    def _viewport_contains_dvz_mouse_event(self, dvz_mouse_event: dvz.MouseEvent) -> bool:
+        """Check if the matplotlib mouse event is inside this viewport"""
+
+        dvz_mouse_pos = dvz_mouse_event.pos()
+        dvz_mouse_x = dvz_mouse_pos[0]
+        dvz_mouse_y = dvz_mouse_pos[1]
+
+        mouse_x = dvz_mouse_x / UnitUtils.device_pixel_ratio()
+        mouse_y = dvz_mouse_y / UnitUtils.device_pixel_ratio()
+        if mouse_x < self._viewport.get_x():
+            return False
+        if mouse_x >= self._viewport.get_x() + self._viewport.get_width():
+            return False
+        if mouse_y < self._viewport.get_y():
+            return False
+        if mouse_y >= self._viewport.get_y() + self._viewport.get_height():
+            return False
+        return True
