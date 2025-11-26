@@ -8,7 +8,9 @@ import numpy as np
 # local imports
 from gsp.core import Canvas, Viewport, Camera
 from gsp.visuals import Segments, Points, Pixels
-from gsp.types import Buffer, BufferType, VisualBase, RendererBase, TransBuf, CapStyle
+from gsp.types import Buffer, BufferType, TransBuf, CapStyle
+from gsp.types.renderer_base import RendererBase
+from gsp.types.visual_base import VisualBase
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
 from gsp_network.renderer import NetworkRenderer
