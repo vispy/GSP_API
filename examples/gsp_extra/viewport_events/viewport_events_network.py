@@ -31,6 +31,7 @@ class ViewportEventsNetwork(ViewportEventsBase):
         "_mpl_button_press_cid",
         "_mpl_button_release_cid",
         "_mpl_mouse_move_cid",
+        "_mpl_mouse_scroll_cid",
     ]
 
     def __init__(self, renderer: NetworkRenderer, viewport: Viewport) -> None:
@@ -48,6 +49,7 @@ class ViewportEventsNetwork(ViewportEventsBase):
         self.button_press_event = Event[MouseEventCallback]()
         self.button_release_event = Event[MouseEventCallback]()
         self.mouse_move_event = Event[MouseEventCallback]()
+        self.mouse_scroll_event = Event[MouseEventCallback]()
 
         # event connections
         mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
@@ -56,6 +58,7 @@ class ViewportEventsNetwork(ViewportEventsBase):
         self._mpl_button_press_cid = mpl_canvas.mpl_connect("button_press_event", typing.cast(Any, self._on_button_press))
         self._mpl_button_release_cid = mpl_canvas.mpl_connect("button_release_event", typing.cast(Any, self._on_button_release))
         self._mpl_mouse_move_cid = mpl_canvas.mpl_connect("motion_notify_event", typing.cast(Any, self._on_mouse_move))
+        self._mpl_mouse_scroll_cid = mpl_canvas.mpl_connect("scroll_event", typing.cast(Any, self._on_mouse_scroll))
 
     def close(self):
         mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
@@ -74,6 +77,9 @@ class ViewportEventsNetwork(ViewportEventsBase):
         if self._mpl_mouse_move_cid is not None:
             mpl_canvas.mpl_disconnect(self._mpl_mouse_move_cid)
             self._mpl_mouse_move_cid = None
+        if self._mpl_mouse_scroll_cid is not None:
+            mpl_canvas.mpl_disconnect(self._mpl_mouse_scroll_cid)
+            self._mpl_mouse_scroll_cid = None
 
     # =============================================================================
     # Matplotlib event handler
@@ -125,6 +131,14 @@ class ViewportEventsNetwork(ViewportEventsBase):
         # convert and dispatch event
         mouse_event = self._mpl_mouse_event_to_gsp(mpl_mouse_event, EventType.MOUSE_MOVE)
         self.mouse_move_event.dispatch(mouse_event)
+
+    def _on_mouse_scroll(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> None:
+        # discard events outside the viewport
+        if self._viewport_contains_mpl_mouse_event(mpl_mouse_event) is False:
+            return
+        # convert and dispatch event
+        mouse_event = self._mpl_mouse_event_to_gsp(mpl_mouse_event, EventType.MOUSE_SCROLL)
+        self.mouse_scroll_event.dispatch(mouse_event)
 
     # =============================================================================
     #

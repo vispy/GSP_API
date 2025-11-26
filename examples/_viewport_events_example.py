@@ -109,6 +109,7 @@ def main():
     # =============================================================================
     # Subscribe to events
     # =============================================================================
+
     # callback functions
     def on_key_press(key_event: KeyEvent):
         print(f"Key press: {key_event}")
@@ -125,18 +126,24 @@ def main():
     def on_mouse_move(mouse_event: MouseEvent):
         print(f"Mouse move: {mouse_event}")
 
+    def on_mouse_scroll(mouse_event: MouseEvent):
+        print(f"Mouse scroll: {mouse_event}")
+
     # Subscribe to events 1
     viewport_events_1.key_press_event.subscribe(on_key_press)
     viewport_events_1.key_release_event.subscribe(on_key_release)
     viewport_events_1.button_press_event.subscribe(on_button_press)
     viewport_events_1.button_release_event.subscribe(on_button_release)
     viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
+    viewport_events_1.mouse_scroll_event.subscribe(on_mouse_scroll)
+
     # Subscribe to events 2
     viewport_events_2.key_press_event.subscribe(on_key_press)
     viewport_events_2.key_release_event.subscribe(on_key_release)
     viewport_events_2.button_press_event.subscribe(on_button_press)
     viewport_events_2.button_release_event.subscribe(on_button_release)
     viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
+    viewport_events_2.mouse_scroll_event.subscribe(on_mouse_scroll)
 
     # =============================================================================
     # Render and show the scene

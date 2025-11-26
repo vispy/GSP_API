@@ -10,7 +10,7 @@ import numpy as np
 
 
 # local imports
-from examples.common.example_helper import ExampleHelper
+from common.example_helper import ExampleHelper
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.types.visual_base import VisualBase
@@ -29,7 +29,7 @@ from gsp_extra.animator.animator_network import GspAnimatorNetwork
 __dirname__ = pathlib.Path(__file__).parent.resolve()
 
 
-def main(renderer_name: Literal["matplotlib", "datoviz", "network"], save_video: bool):
+def main(save_video: bool):
     # fix random seed for reproducibility
     np.random.seed(0)
 
@@ -80,6 +80,7 @@ def main(renderer_name: Literal["matplotlib", "datoviz", "network"], save_video:
     # Create the renderer
     # =============================================================================
 
+    renderer_name = ExampleHelper.get_renderer_name()
     renderer = ExampleHelper.create_renderer(renderer_name, canvas)
 
     # =============================================================================
@@ -108,12 +109,13 @@ def main(renderer_name: Literal["matplotlib", "datoviz", "network"], save_video:
         if renderer_name == "matplotlib":
             animator = GspAnimatorMatplotlib(typing.cast(MatplotlibRenderer, renderer), fps=60, video_duration=10.0, video_path=video_path)
         elif renderer_name == "datoviz":
-            raise NotImplementedError("Animator for Datoviz renderer is not implemented in this example.")
+            animator = GspAnimatorDatoviz(typing.cast(DatovizRenderer, renderer), fps=60, video_duration=10.0, video_path=video_path)
         elif renderer_name == "network":
             animator = GspAnimatorNetwork(typing.cast(NetworkRenderer, renderer), fps=60, video_duration=10.0, video_path=video_path)
         else:
             raise NotImplementedError(f"Animator for renderer {renderer_name} is not implemented in this example.")
 
+        # event notified when the video is saved/completed, to stop the animator and close the renderer
         @animator.on_video_saved.event_listener
         def on_save():
             # log the video path
@@ -150,14 +152,6 @@ if __name__ == "__main__":
         description="Run the animator matplotlib example.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    # --renderer matplotlib/datoviz/network
-    argParser.add_argument(
-        "--renderer",
-        "--r",
-        type=str,
-        choices=["matplotlib", "datoviz", "network"],
-        help="Renderer to use. if not set, use the GSP_RENDERER environment variable. Default to 'matplotlib' if not set.",
-    )
     argParser.add_argument(
         "--save-video",
         "--sv",
@@ -165,14 +159,6 @@ if __name__ == "__main__":
         help="Save the animation to a video file.",
     )
     args = argParser.parse_args()
-    # args = argParser.parse_args(["--renderer", "network", "--save-video"])  # for testing purpose, replace with args = argParser.parse_args()
-    # args = argParser.parse_args(["--renderer", "datoviz"])  # for testing purpose, replace with args = argParser.parse_args()
-    # args = argParser.parse_args(["--renderer", "network"])  # for testing purpose, replace with args = argParser.parse_args()
+    # args = argParser.parse_args(["--save-video"])  # for testing purpose, replace with args = argParser.parse_args()
 
-    renderer_name: Literal["matplotlib", "datoviz", "network"] = "matplotlib"
-    if os.environ.get("GSP_RENDERER") is not None:
-        renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], os.environ.get("GSP_RENDERER"))
-    if args.renderer is not None:
-        renderer_name = args.renderer
-
-    main(save_video=args.save_video, renderer_name=renderer_name)
+    main(save_video=args.save_video)

@@ -35,6 +35,7 @@ class ViewportEventsDatoviz(ViewportEventsBase):
         self.button_press_event = Event[MouseEventCallback]()
         self.button_release_event = Event[MouseEventCallback]()
         self.mouse_move_event = Event[MouseEventCallback]()
+        self.mouse_scroll_event = Event[MouseEventCallback]()
 
         dvz_app: dvz.App = self._renderer.get_dvz_app()
         dvz_figure: _DvzFigure = self._renderer.get_dvz_figure()
@@ -103,8 +104,6 @@ class ViewportEventsDatoviz(ViewportEventsBase):
             dvz_button_name = dvz_mouse_event.button_name()
             dvz_wheel = dvz_mouse_event.wheel()
 
-            print("blabla", dvz_event_name, dvz_mouse_pos, dvz_button_name, dvz_wheel)
-
             # Convert fields to our MouseEvent
             if dvz_event_name == "press":
                 event_type = EventType.BUTTON_PRESS
@@ -112,7 +111,10 @@ class ViewportEventsDatoviz(ViewportEventsBase):
                 event_type = EventType.BUTTON_RELEASE
             elif dvz_event_name == "move":
                 event_type = EventType.MOUSE_MOVE
+            elif dvz_event_name == "wheel":
+                event_type = EventType.MOUSE_SCROLL
             else:
+                print(f'"Unknown dvz mouse event name: {dvz_event_name}"')
                 return  # Unknown event
 
             event_x: float = dvz_mouse_pos[0]
@@ -143,6 +145,8 @@ class ViewportEventsDatoviz(ViewportEventsBase):
                 self.button_release_event.dispatch(mouse_event)
             elif mouse_event.event_type == EventType.MOUSE_MOVE:
                 self.mouse_move_event.dispatch(mouse_event)
+            elif mouse_event.event_type == EventType.MOUSE_SCROLL:
+                self.mouse_scroll_event.dispatch(mouse_event)
             else:
                 raise ValueError(f"Unknown mouse event type: {mouse_event.event_type}")
 

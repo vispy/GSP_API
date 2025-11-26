@@ -9,7 +9,7 @@ from .viewport_events_types import KeyEvent, MouseEvent, KeyboardEventCallback, 
 class ViewportEventsBase(ABC):
     """Base class for window event handlers for camera controls"""
 
-    __slots__ = ["key_press_event", "key_release_event", "button_press_event", "button_release_event", "mouse_move_event"]
+    __slots__ = ["key_press_event", "key_release_event", "button_press_event", "button_release_event", "mouse_move_event", "mouse_scroll_event"]
 
     key_press_event: Event[KeyboardEventCallback]
     """Event triggered on key press"""
@@ -21,3 +21,7 @@ class ViewportEventsBase(ABC):
     """Event triggered on mouse button release"""
     mouse_move_event: Event[MouseEventCallback]
     """Event triggered on mouse move"""
+    mouse_scroll_event: Event[MouseEventCallback]
+    """Event triggered on mouse scroll"""
+    mouse_scroll_event: Event[MouseEventCallback]
+    """Event triggered on mouse scroll"""

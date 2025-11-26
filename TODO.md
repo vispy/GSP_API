@@ -1,6 +1,4 @@
 
-- animator: handle datoviz animator
-- make an example of window_events
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
 - example launcher
@@ -68,6 +66,8 @@
 
 
 ---
+- DONE animator: handle datoviz animator
+- DONE make an example of viewport_events
 - DONE animator: handle saving video on network/matplotlib
 - DONE in trackball, notify -1 +1, not [0,+1]
 - DONE PR datoviz with the whole ./datoviz as pyright 0 errors

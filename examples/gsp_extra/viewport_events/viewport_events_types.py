@@ -9,6 +9,7 @@ class EventType(StrEnum):
     BUTTON_PRESS = "button_press"
     BUTTON_RELEASE = "button_release"
     MOUSE_MOVE = "mouse_move"
+    MOUSE_SCROLL = "mouse_scroll"
 
 
 @dataclass

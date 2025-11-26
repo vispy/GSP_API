@@ -16,7 +16,7 @@ class TransBufUtils:
         if isinstance(trans_buf, Buffer):
             buffer = typing.cast(Buffer, trans_buf)
             return buffer
-        elif isinstance(trans_buf, TransBuf):
+        elif isinstance(trans_buf, TransformChain):
             transform_chain = typing.cast(TransformChain, trans_buf)
             buffer = transform_chain.run()
             return buffer
