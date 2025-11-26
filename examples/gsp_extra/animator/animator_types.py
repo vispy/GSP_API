@@ -14,6 +14,7 @@ Arguments:
 """
 
 
-# TODO use the gsp.core.Event system instead?
 class VideoSavedCalledback(Protocol):
+    """Callback protocol for video saved event."""
+
     def __call__(self) -> None: ...  # type: ignore
