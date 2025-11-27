@@ -46,6 +46,7 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         self.button_press_event = Event[MouseEventCallback]()
         self.button_release_event = Event[MouseEventCallback]()
         self.mouse_move_event = Event[MouseEventCallback]()
+        self.mouse_scroll_event = Event[MouseEventCallback]()
 
         # event connections
         mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas

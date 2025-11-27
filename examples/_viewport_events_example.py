@@ -4,6 +4,7 @@ import typing
 
 # pip imports
 import numpy as np
+import colorama
 
 # local imports
 from common.example_helper import ExampleHelper
@@ -22,6 +23,17 @@ from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
 from gsp.utils.unit_utils import UnitUtils
+
+
+# =============================================================================
+# Colorama alias
+# =============================================================================
+def text_cyan(text: str) -> str:
+    return colorama.Fore.CYAN + text + colorama.Style.RESET_ALL
+
+
+def text_magenta(text: str) -> str:
+    return colorama.Fore.MAGENTA + text + colorama.Style.RESET_ALL
 
 
 def main():
@@ -53,8 +65,12 @@ def main():
     sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
 
     # all pixels red - Create buffer and fill it with a constant
-    face_colors_buffer = Buffer(point_count, BufferType.rgba8)
-    face_colors_buffer.set_data(bytearray([255, 0, 0, 255]) * point_count, 0, point_count)
+    face_colors_red_buffer = Buffer(point_count, BufferType.rgba8)
+    face_colors_red_buffer.set_data(Constants.Color.red * point_count, 0, point_count)
+
+    # all pixels green - Create buffer and fill it with a constant
+    face_colors_green_buffer = Buffer(point_count, BufferType.rgba8)
+    face_colors_green_buffer.set_data(Constants.Color.green * point_count, 0, point_count)
 
     # Edge colors - Create buffer and fill it with a constant
     edge_colors_buffer = Buffer(point_count, BufferType.rgba8)
@@ -65,7 +81,8 @@ def main():
     edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
     # Create the Points visual and add it to the viewport
-    points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
+    points_1 = Points(positions_buffer, sizes_buffer, face_colors_red_buffer, edge_colors_buffer, edge_widths_buffer)
+    points_2 = Points(positions_buffer, sizes_buffer, face_colors_green_buffer, edge_colors_buffer, edge_widths_buffer)
 
     # =============================================================================
     # Render the canvas
@@ -112,22 +129,22 @@ def main():
 
     # callback functions
     def on_key_press(key_event: KeyEvent):
-        print(f"Key press: {key_event}")
+        print(f"{text_cyan('Key press')}: {text_magenta(key_event.viewport_uuid)} {key_event}")
 
     def on_key_release(key_event: KeyEvent):
-        print(f"Key release: {key_event}")
+        print(f"{text_cyan('Key release')}: {text_magenta(key_event.viewport_uuid)} {key_event}")
 
     def on_button_press(mouse_event: MouseEvent):
-        print(f"Button press: {mouse_event}")
+        print(f"{text_cyan('Button press')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
 
     def on_button_release(mouse_event: MouseEvent):
-        print(f"Button release: {mouse_event}")
+        print(f"{text_cyan('Button release')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
 
     def on_mouse_move(mouse_event: MouseEvent):
-        print(f"Mouse move: {mouse_event}")
+        print(f"{text_cyan('Mouse move')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
 
     def on_mouse_scroll(mouse_event: MouseEvent):
-        print(f"Mouse scroll: {mouse_event}")
+        print(f"{text_cyan('Mouse scroll')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
 
     # Subscribe to events 1
     viewport_events_1.key_press_event.subscribe(on_key_press)
@@ -149,7 +166,7 @@ def main():
     # Render and show the scene
     # =============================================================================
 
-    renderer.render([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+    renderer.render([viewport_1, viewport_2], [points_1, points_2], [model_matrix_1, model_matrix_2], [camera, camera])
     renderer.show()
 
 
