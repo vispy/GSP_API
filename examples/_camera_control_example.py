@@ -123,18 +123,7 @@ def main():
     # Create animator
     # =============================================================================
 
-    if renderer_name == "matplotlib":
-        matplotlib_renderer = typing.cast(MatplotlibRenderer, renderer)
-        animator = AnimatorMatplotlib(matplotlib_renderer)
-    elif renderer_name == "datoviz":
-        datoviz_renderer = typing.cast(DatovizRenderer, renderer)
-        animator = AnimatorDatoviz(datoviz_renderer)
-    elif renderer_name == "network":
-        network_renderer = typing.cast(NetworkRenderer, renderer)
-        animator = AnimatorNetwork(network_renderer)
-    else:
-        raise ValueError(f"Unsupported renderer for this example: {renderer_name}")
-
+    animator = ExampleHelper.create_animator(renderer)
     animator.start([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
 
 
