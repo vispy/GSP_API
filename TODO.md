@@ -1,13 +1,7 @@
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
-- network animator with video save doesnt quit the scripts
-- DONE datoviz viewport is bad at diagnosticating sending events to the right viewport
-- DONE datoviz bug: viewport are not in the proper order
 - datoviz event: event are notified even when the mouse is outside of the figure
-- ExampleHelper: 
-  - `ExampleHelper.create_animator(rendererBase) -> AnimatorBase`
-  - `ExampleHelper.create_animator_save_video(rendererBase) -> WindowEventBase`
-- example launcher
+- example helper
   - with env variable GSP_RENDERER to select the renderer
   - matplotlib
   - datoviz
@@ -20,18 +14,6 @@
   - make an example of it
 - handle 3d rotation in datoviz
   - how to handle that ? maybe i set it up to orthographic camera
-- how to handle camera control in GSP, aka same events for various renderers matplotlib/datoviz/network
-  - with mouse events
-  - with API
-  - windowEventNetwork/Matplotlib/Datoviz, with a common base class
-  - handle pan/zoom/rotate
-  - matplotlib event doc https://matplotlib.org/stable/users/explain/figure/event_handling.html
-  - datoviz event doc 
-    - https://datoviz.org/guide/input
-    - https://datoviz.org/guide/interactivity/#camera-interactivity-3d
-- camera controller awsdqe on top of the windowEventBase
-- camera controller trackball on top of the windowEventBase
-  - https://github.com/rougier/matplotlib-3d/blob/master/mpl3d/trackball.py
 - do test with expected_screenshots
 - API design principles
   - "what are the good design principle to apply when designing an library API"
@@ -53,7 +35,7 @@
   - with depth color
   - aka with renderer events
 - transformChain with unit conversions - can this be done in user-space
-  - data in ndc by default
+  - data in ndc by default - aka -1 to 1 in current viewport
   - operation with scalar with unit pt/px/cm/inch
   - dpi canvas - === ppi on screen, dpi on print
   - dpi === PPI
@@ -69,6 +51,24 @@
 
 
 ---
+- DONE network animator with video save doesnt quit the scripts
+- DONE how to handle camera control in GSP, aka same events for various renderers matplotlib/datoviz/network
+  - with mouse events
+  - with API
+  - windowEventNetwork/Matplotlib/Datoviz, with a common base class
+  - handle pan/zoom/rotate
+  - matplotlib event doc https://matplotlib.org/stable/users/explain/figure/event_handling.html
+  - datoviz event doc 
+    - https://datoviz.org/guide/input
+    - https://datoviz.org/guide/interactivity/#camera-interactivity-3d
+- DONE camera controller awsdqe on top of the windowEventBase
+- DONE camera controller trackball on top of the windowEventBase
+  - https://github.com/rougier/matplotlib-3d/blob/master/mpl3d/trackball.py
+- DONE datoviz viewport is bad at diagnosticating sending events to the right viewport
+- DONE datoviz bug: viewport are not in the proper order
+- DONE ExampleHelper: 
+  - `ExampleHelper.create_animator(rendererBase) -> AnimatorBase`
+  - `ExampleHelper.create_animator_save_video(rendererBase) -> WindowEventBase`
 - DONE in animator, add a `AnimatorBase` in all animator 
 - DONE window events with multiple viewports
   - recode all the viewport events using the same structure

@@ -65,8 +65,11 @@ class NetworkRenderer(RendererBase):
         return self._canvas
 
     def close(self) -> None:
-        #
-        pass
+        # stop the event loop if any - thus .show(block=True) will return
+        self._figure.canvas.stop_event_loop()
+        # close the figure
+        matplotlib.pyplot.close(self._figure)
+        self._figure = None  # type: ignore
 
     def get_remote_renderer_name(self) -> Literal["matplotlib", "datoviz"]:
         return self._remote_renderer_name
