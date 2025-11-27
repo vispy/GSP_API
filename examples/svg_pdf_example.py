@@ -106,8 +106,8 @@ def main():
     # Save the rendered image to a PNG file
     example_basename = pathlib.Path(__file__).stem
     output_png_path = pathlib.Path(__file__).parent / "output" / f"{example_basename}_output.png"
-    with open(output_png_path, "wb") as f:
-        f.write(rendered_image_png)
+    with open(output_png_path, "wb") as file_writer:
+        file_writer.write(rendered_image_png)
     print(f"Saved rendered PNG image to: {output_png_path}")
 
     # =============================================================================
@@ -118,8 +118,8 @@ def main():
 
     # Save the rendered image to a PDF file
     output_pdf_path = pathlib.Path(__file__).parent / "output" / f"{example_basename}_output.pdf"
-    with open(output_pdf_path, "wb") as f:
-        f.write(rendered_image_pdf)
+    with open(output_pdf_path, "wb") as file_writer:
+        file_writer.write(rendered_image_pdf)
     print(f"Saved rendered PDF image to: {output_pdf_path}")
 
     # =============================================================================
@@ -129,8 +129,8 @@ def main():
     rendered_image_svg = renderer.render([viewport], [paths], [model_matrix], [camera], image_format="svg")
     # Save the rendered image to a SVG file
     output_svg_path = pathlib.Path(__file__).parent / "output" / f"{example_basename}_output.svg"
-    with open(output_svg_path, "wb") as f:
-        f.write(rendered_image_svg)
+    with open(output_svg_path, "wb") as file_writer:
+        file_writer.write(rendered_image_svg)
     print(f"Saved rendered SVG image to: {output_svg_path}")
 
 
