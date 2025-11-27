@@ -16,9 +16,11 @@ from gsp_network.renderer import NetworkRenderer
 
 class ExampleHelper:
 
+    default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "datoviz"
+
     @staticmethod
     def get_renderer_name() -> Literal["matplotlib", "datoviz", "network"]:
-        renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], os.environ.get("GSP_RENDERER", "matplotlib"))
+        renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], os.environ.get("GSP_RENDERER", ExampleHelper.default_renderer_name))
         # sanity check - ensure renderer_name is one of the expected valueszx
         assert renderer_name in ["matplotlib", "datoviz", "network"], f"Invalid renderer name: {renderer_name}"
         return typing.cast(Literal["matplotlib", "datoviz", "network"], renderer_name)

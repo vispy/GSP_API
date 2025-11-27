@@ -41,7 +41,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(512, 512, 72.0)
+    canvas = Canvas(256, 512, 72.0)
 
     canvas_half_width = int(canvas.get_width() / 2.0)
     canvas_half_height = int(canvas.get_height() / 2.0)

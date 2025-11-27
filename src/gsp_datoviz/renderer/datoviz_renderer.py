@@ -89,6 +89,13 @@ class DatovizRenderer(RendererBase):
         image_format: str = "png",
     ) -> bytes:
         # =============================================================================
+        # Create all viewport if needed
+        # =============================================================================
+
+        for viewport in viewports:
+            _dvz_panel = self._getOrCreateDvzPanel(viewport)
+
+        # =============================================================================
         # Render all visual
         # =============================================================================
 
@@ -154,9 +161,11 @@ class DatovizRenderer(RendererBase):
             return self._dvz_panels[viewport_uuid]
 
         # create the datoviz panel
+        dvz_offset = (viewport.get_x(), self.get_canvas().get_height() - viewport.get_y() - viewport.get_height())
+        dvz_size = (viewport.get_width(), viewport.get_height())
         dvz_panel = self._dvz_figure.panel(
-            offset=(viewport.get_x(), viewport.get_y()),
-            size=(viewport.get_width(), viewport.get_height()),
+            offset=dvz_offset,
+            size=dvz_size,
         )
 
         # store it

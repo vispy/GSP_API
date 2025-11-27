@@ -1,6 +1,7 @@
-
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
+- datoviz viewport is bad at diagnosticating sending events to the right viewport
+- datoviz bug: viewport are not in the proper order
 - example launcher
   - with env variable GSP_RENDERER to select the renderer
   - matplotlib
