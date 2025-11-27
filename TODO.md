@@ -109,3 +109,19 @@
   - cap: butt, round, square
 - DONE implement path in matplotlib + datoviz
   - issue to mix the multiple paths and the groups attributes
+
+
+---
+# Trying to figure out the DPI/PPI mess
+screen size in 
+- millimeter
+- hw pixel
+- logical pixel
+
+-  'from there find the formula for the other paramters' as a next steps
+
+the point is to get the minimal parmeters
+- then find the formula to get the other parameters
+- we need to progress slowly to be sure we understand/agree those concepts
+
+i dont see anything so hard, just messy
