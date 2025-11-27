@@ -153,7 +153,7 @@ class ViewportEventsDatoviz(ViewportEventsBase):
     def close(self):
         """Close the event handler and release resources"""
 
-        # Dont dispatch events (datoviz doesnt allow to disconnect events)
+        # no more dispatch events (datoviz doesnt allow to disconnect events)
         self._is_closed = True
 
     # =============================================================================
@@ -165,10 +165,12 @@ class ViewportEventsDatoviz(ViewportEventsBase):
 
         dvz_mouse_pos = dvz_mouse_event.pos()
         dvz_mouse_x = dvz_mouse_pos[0]
-        dvz_mouse_y = dvz_mouse_pos[1]
+        dvz_mouse_y = self._renderer.get_canvas().get_height() - dvz_mouse_pos[1]
 
-        mouse_x = dvz_mouse_x / UnitUtils.device_pixel_ratio()
-        mouse_y = dvz_mouse_y / UnitUtils.device_pixel_ratio()
+        print(f"dvz_mouse_x: {dvz_mouse_x}, dvz_mouse_y: {dvz_mouse_y}")
+
+        mouse_x = dvz_mouse_x
+        mouse_y = dvz_mouse_y
         if mouse_x < self._viewport.get_x():
             return False
         if mouse_x >= self._viewport.get_x() + self._viewport.get_width():

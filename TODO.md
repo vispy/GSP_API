@@ -1,21 +1,23 @@
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
-- datoviz viewport is bad at diagnosticating sending events to the right viewport
-- datoviz bug: viewport are not in the proper order
+- DONE datoviz viewport is bad at diagnosticating sending events to the right viewport
+- DONE datoviz bug: viewport are not in the proper order
+- datoviz event: event are notified even when the mouse is outside of the figure
+- ExampleHelper: 
+  - `ExampleHelper.create_animator(rendererBase) -> AnimatorBase`
+  - `ExampleHelper.create_animator_save_video(rendererBase) -> WindowEventBase`
+- in animator, add a `AnimatorBase` in all animator 
 - example launcher
   - with env variable GSP_RENDERER to select the renderer
   - matplotlib
   - datoviz
   - network
-  ```ExampleHelper.render_show(renderer_name, canvas, viewports, visuals, model_matrices, cameras)``` 
-  ```
-    # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(parsed_canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(parsed_canvas)
-    renderer.render(parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras)
-    renderer.show()
-  ```
-- window events with multiple viewports
-  - recode all the viewport events using the same structure
+- gsp_pydantic:
+  - doesnt support transform chain properly
+  - dont forget transform chain may be user-defined, take it into account in the serialization/deserialization
+  - make TransformLinkImmediate the only link in gsp
+  - code a transformLinkLoad in user space
+  - make an example of it
 - handle 3d rotation in datoviz
   - how to handle that ? maybe i set it up to orthographic camera
 - how to handle camera control in GSP, aka same events for various renderers matplotlib/datoviz/network
@@ -67,6 +69,8 @@
 
 
 ---
+- DONE window events with multiple viewports
+  - recode all the viewport events using the same structure
 - DONE animator: handle datoviz animator
 - DONE make an example of viewport_events
 - DONE animator: handle saving video on network/matplotlib

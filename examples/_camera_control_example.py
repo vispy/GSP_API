@@ -8,13 +8,13 @@ import numpy as np
 
 # local imports
 from common.example_helper import ExampleHelper
-from gsp_extra.animator.animator_datoviz import GspAnimatorDatoviz
+from gsp_extra.animator.animator_datoviz import AnimatorDatoviz
 from gsp_extra.viewport_events.viewport_events_datoviz import ViewportEventsDatoviz
 from gsp_datoviz.renderer.datoviz_renderer import DatovizRenderer
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_network.renderer import NetworkRenderer
-from gsp_extra.animator.animator_matplotlib import GspAnimatorMatplotlib
-from gsp_extra.animator.animator_network import GspAnimatorNetwork
+from gsp_extra.animator.animator_matplotlib import AnimatorMatplotlib
+from gsp_extra.animator.animator_network import AnimatorNetwork
 
 from gsp_extra.viewport_events.viewport_events_network import ViewportEventsNetwork
 from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
@@ -125,13 +125,13 @@ def main():
 
     if renderer_name == "matplotlib":
         matplotlib_renderer = typing.cast(MatplotlibRenderer, renderer)
-        animator = GspAnimatorMatplotlib(matplotlib_renderer)
+        animator = AnimatorMatplotlib(matplotlib_renderer)
     elif renderer_name == "datoviz":
         datoviz_renderer = typing.cast(DatovizRenderer, renderer)
-        animator = GspAnimatorDatoviz(datoviz_renderer)
+        animator = AnimatorDatoviz(datoviz_renderer)
     elif renderer_name == "network":
         network_renderer = typing.cast(NetworkRenderer, renderer)
-        animator = GspAnimatorNetwork(network_renderer)
+        animator = AnimatorNetwork(network_renderer)
     else:
         raise ValueError(f"Unsupported renderer for this example: {renderer_name}")
 

@@ -89,14 +89,31 @@ def main(save_video: bool):
 
     if save_video is False:
         # init the animator with the renderer
-        animator = ExampleHelper.create_animator(renderer)
+        if renderer_name == "matplotlib":
+            assert isinstance(renderer, MatplotlibRenderer), "Renderer is not a MatplotlibRenderer"
+            animator = AnimatorMatplotlib(typing.cast(MatplotlibRenderer, renderer))
+        elif renderer_name == "datoviz":
+            assert isinstance(renderer, DatovizRenderer), "Renderer is not a DatovizRenderer"
+            animator = AnimatorDatoviz(typing.cast(DatovizRenderer, renderer))
+        elif renderer_name == "network":
+            assert isinstance(renderer, NetworkRenderer), "Renderer is not a NetworkRenderer"
+            animator = AnimatorNetwork(typing.cast(NetworkRenderer, renderer))
+        else:
+            raise NotImplementedError(f"Animator for renderer {renderer_name} is not implemented in this example.")
     else:
         # Save the animation to a video file
         video_path = os.path.join(__dirname__, f"output/{os.path.basename(__file__).replace('.py', '')}_{renderer_name}.mp4")
         print(f"Saving video to {video_path}")
 
         # init the animator with the renderer
-        animator = ExampleHelper.create_animator_with_video(renderer, video_path, fps=60, video_duration=10.0)
+        if renderer_name == "matplotlib":
+            animator = AnimatorMatplotlib(typing.cast(MatplotlibRenderer, renderer), fps=60, video_duration=10.0, video_path=video_path)
+        elif renderer_name == "datoviz":
+            animator = AnimatorDatoviz(typing.cast(DatovizRenderer, renderer), fps=60, video_duration=10.0, video_path=video_path)
+        elif renderer_name == "network":
+            animator = AnimatorNetwork(typing.cast(NetworkRenderer, renderer), fps=60, video_duration=10.0, video_path=video_path)
+        else:
+            raise NotImplementedError(f"Animator for renderer {renderer_name} is not implemented in this example.")
 
         # event notified when the video is saved/completed, to stop the animator and close the renderer
         @animator.on_video_saved.event_listener
@@ -141,7 +158,7 @@ if __name__ == "__main__":
         action="store_true",
         help="Save the animation to a video file.",
     )
-    # args = argParser.parse_args()
-    args = argParser.parse_args(["--save-video"])  # for testing purpose, replace with args = argParser.parse_args()
+    args = argParser.parse_args()
+    # args = argParser.parse_args(["--save-video"])  # for testing purpose, replace with args = argParser.parse_args()
 
     main(save_video=args.save_video)

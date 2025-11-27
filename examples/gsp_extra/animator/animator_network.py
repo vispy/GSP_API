@@ -19,17 +19,15 @@ from gsp.core.camera import Camera
 from gsp.visuals.points import Points
 from gsp.core import Event
 from .animator_types import AnimatorFunc, VideoSavedCalledback
+from .animator_base import AnimatorBase
 
 __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
 
-class GspAnimatorNetwork:
+class AnimatorNetwork(AnimatorBase):
     """
     Animator for GSP scenes using a matplotlib renderer.
     """
-
-    on_video_saved = Event[VideoSavedCalledback]()
-    """Event triggered when the video is saved."""
 
     def __init__(
         self,
@@ -54,6 +52,9 @@ class GspAnimatorNetwork:
         self._visuals: Sequence[VisualBase] | None = None
         self._model_matrices: Sequence[TransBuf] | None = None
         self._cameras: Sequence[Camera] | None = None
+
+        self.on_video_saved = Event[VideoSavedCalledback]()
+        """Event triggered when the video is saved."""
 
         # guess the video writer from the file extension if not provided
         if self._video_path is not None:

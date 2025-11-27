@@ -9,6 +9,12 @@ from gsp.types.visual_base import VisualBase
 from gsp.core import Camera
 from gsp.types.transbuf import TransBuf
 
+from gsp_extra.animator.animator_base import AnimatorBase
+from gsp_extra.animator.animator_datoviz import AnimatorDatoviz
+from gsp_extra.animator.animator_matplotlib import AnimatorMatplotlib
+from gsp_extra.animator.animator_network import AnimatorNetwork
+
+from gsp.types.renderer_base import RendererBase
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
 from gsp_network.renderer import NetworkRenderer
@@ -63,3 +69,34 @@ class ExampleHelper:
         renderer.render(viewports, visuals, model_matrices, cameras)
         # show the rendered scene
         renderer.show()
+
+    @staticmethod
+    def create_animator(renderer: RendererBase) -> AnimatorBase:
+        # init the animator with the renderer
+        if isinstance(renderer, MatplotlibRenderer):
+            animator = AnimatorMatplotlib(typing.cast(MatplotlibRenderer, renderer))
+        elif isinstance(renderer, DatovizRenderer):
+            animator = AnimatorDatoviz(typing.cast(DatovizRenderer, renderer))
+        elif isinstance(renderer, NetworkRenderer):
+            animator = AnimatorNetwork(typing.cast(NetworkRenderer, renderer))
+        else:
+            raise NotImplementedError(f"Animator for renderer {renderer} is not implemented in this example.")
+        return animator
+
+    @staticmethod
+    def create_animator_with_video(
+        renderer: RendererBase,
+        video_path: str,
+        fps: int,
+        video_duration: float,
+    ) -> AnimatorBase:
+        # init the animator with the renderer
+        if isinstance(renderer, MatplotlibRenderer):
+            animator = AnimatorMatplotlib(typing.cast(MatplotlibRenderer, renderer), fps=fps, video_duration=video_duration, video_path=video_path)
+        elif isinstance(renderer, DatovizRenderer):
+            animator = AnimatorDatoviz(typing.cast(DatovizRenderer, renderer), fps=fps, video_duration=video_duration, video_path=video_path)
+        elif isinstance(renderer, NetworkRenderer):
+            animator = AnimatorNetwork(typing.cast(NetworkRenderer, renderer), fps=fps, video_duration=video_duration, video_path=video_path)
+        else:
+            raise NotImplementedError(f"Animator for renderer {renderer} is not implemented in this example.")
+        return animator

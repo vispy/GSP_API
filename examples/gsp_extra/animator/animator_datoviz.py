@@ -12,7 +12,6 @@ import matplotlib.artist
 import time
 
 # local imports
-import gsp
 from gsp.types.transbuf import TransBuf
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer.datoviz_renderer import DatovizRenderer
@@ -23,17 +22,15 @@ from gsp.core.camera import Camera
 from gsp.visuals.points import Points
 from gsp.core import Event
 from .animator_types import AnimatorFunc, VideoSavedCalledback
+from .animator_base import AnimatorBase
 
 __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
 
-class GspAnimatorDatoviz:
+class AnimatorDatoviz(AnimatorBase):
     """
     Animator for GSP scenes using a matplotlib renderer.
     """
-
-    on_video_saved = Event[VideoSavedCalledback]()
-    """Event triggered when the video is saved."""
 
     def __init__(
         self,
@@ -55,6 +52,9 @@ class GspAnimatorDatoviz:
         self._visuals: Sequence[VisualBase] | None = None
         self._model_matrices: Sequence[TransBuf] | None = None
         self._cameras: Sequence[Camera] | None = None
+
+        self.on_video_saved = Event[VideoSavedCalledback]()
+        """Event triggered when the video is saved."""
 
     # =============================================================================
     # .add_callback/.remove_callback/.decorator
