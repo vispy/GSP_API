@@ -3,7 +3,6 @@ import os
 
 # pip imports
 import numpy as np
-import matplotlib.pyplot
 
 # local imports
 from gsp.constants import Constants

@@ -162,6 +162,7 @@ class DatovizRenderer(RendererBase):
 
         # create the datoviz panel
         dvz_offset = (viewport.get_x(), self.get_canvas().get_height() - viewport.get_y() - viewport.get_height())
+        # dvz_offset = (viewport.get_x(), viewport.get_y())
         dvz_size = (viewport.get_width(), viewport.get_height())
         dvz_panel = self._dvz_figure.panel(
             offset=dvz_offset,
