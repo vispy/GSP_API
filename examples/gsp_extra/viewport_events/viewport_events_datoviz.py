@@ -167,7 +167,7 @@ class ViewportEventsDatoviz(ViewportEventsBase):
         dvz_mouse_x = dvz_mouse_pos[0]
         dvz_mouse_y = self._renderer.get_canvas().get_height() - dvz_mouse_pos[1]
 
-        print(f"dvz_mouse_x: {dvz_mouse_x}, dvz_mouse_y: {dvz_mouse_y}")
+        # print(f"dvz_mouse_x: {dvz_mouse_x}, dvz_mouse_y: {dvz_mouse_y}")
 
         mouse_x = dvz_mouse_x
         mouse_y = dvz_mouse_y

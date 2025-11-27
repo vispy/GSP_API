@@ -105,23 +105,8 @@ def main():
     # Create ViewportEvents for each viewport according to the renderer type
     # =============================================================================
 
-    if renderer_name == "matplotlib":
-        assert isinstance(renderer, MatplotlibRenderer), "renderer must be MatplotlibRenderer"
-        matplotlib_renderer = typing.cast(MatplotlibRenderer, renderer)
-        viewport_events_1 = ViewportEventsMatplotlib(matplotlib_renderer, viewport_1)
-        viewport_events_2 = ViewportEventsMatplotlib(matplotlib_renderer, viewport_2)
-    elif renderer_name == "datoviz":
-        assert isinstance(renderer, DatovizRenderer), "renderer must be DatovizRenderer"
-        datoviz_renderer = typing.cast(DatovizRenderer, renderer)
-        viewport_events_1 = ViewportEventsDatoviz(datoviz_renderer, viewport_1)
-        viewport_events_2 = ViewportEventsDatoviz(datoviz_renderer, viewport_2)
-    elif renderer_name == "network":
-        assert isinstance(renderer, NetworkRenderer), "renderer must be NetworkRenderer"
-        network_renderer = typing.cast(NetworkRenderer, renderer)
-        viewport_events_1 = ViewportEventsNetwork(network_renderer, viewport_1)
-        viewport_events_2 = ViewportEventsNetwork(network_renderer, viewport_2)
-    else:
-        raise NotImplementedError(f"Viewport events not implemented for renderer: {renderer_name}")
+    viewport_events_1 = ExampleHelper.create_viewport_events(renderer, viewport_1)
+    viewport_events_2 = ExampleHelper.create_viewport_events(renderer, viewport_2)
 
     # =============================================================================
     # Subscribe to events

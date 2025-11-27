@@ -9,20 +9,26 @@ from gsp.types.visual_base import VisualBase
 from gsp.core import Camera
 from gsp.types.transbuf import TransBuf
 
-from gsp_extra.animator.animator_base import AnimatorBase
-from gsp_extra.animator.animator_datoviz import AnimatorDatoviz
-from gsp_extra.animator.animator_matplotlib import AnimatorMatplotlib
-from gsp_extra.animator.animator_network import AnimatorNetwork
 
 from gsp.types.renderer_base import RendererBase
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
 from gsp_network.renderer import NetworkRenderer
 
+from gsp_extra.animator.animator_base import AnimatorBase
+from gsp_extra.animator.animator_datoviz import AnimatorDatoviz
+from gsp_extra.animator.animator_matplotlib import AnimatorMatplotlib
+from gsp_extra.animator.animator_network import AnimatorNetwork
+
+from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
+from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
+from gsp_extra.viewport_events.viewport_events_datoviz import ViewportEventsDatoviz
+from gsp_extra.viewport_events.viewport_events_network import ViewportEventsNetwork
+
 
 class ExampleHelper:
 
-    default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "datoviz"
+    default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "matplotlib"
 
     @staticmethod
     def get_renderer_name() -> Literal["matplotlib", "datoviz", "network"]:
@@ -70,6 +76,10 @@ class ExampleHelper:
         # show the rendered scene
         renderer.show()
 
+    # =============================================================================
+    #
+    # =============================================================================
+
     @staticmethod
     def create_animator(renderer: RendererBase) -> AnimatorBase:
         # init the animator with the renderer
@@ -100,3 +110,18 @@ class ExampleHelper:
         else:
             raise NotImplementedError(f"Animator for renderer {renderer} is not implemented in this example.")
         return animator
+
+    # =============================================================================
+    #
+    # =============================================================================
+
+    @staticmethod
+    def create_viewport_events(renderer: RendererBase, viewport: Viewport) -> ViewportEventsBase:
+        if isinstance(renderer, MatplotlibRenderer):
+            return ViewportEventsMatplotlib(typing.cast(MatplotlibRenderer, renderer), viewport)
+        elif isinstance(renderer, DatovizRenderer):
+            return ViewportEventsDatoviz(typing.cast(DatovizRenderer, renderer), viewport)
+        elif isinstance(renderer, NetworkRenderer):
+            return ViewportEventsNetwork(typing.cast(NetworkRenderer, renderer), viewport)
+        else:
+            raise NotImplementedError(f"Viewport events for renderer {renderer} is not implemented in this example.")
