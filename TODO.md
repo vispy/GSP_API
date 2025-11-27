@@ -1,12 +1,12 @@
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
+- network animator with video save doesnt quit the scripts
 - DONE datoviz viewport is bad at diagnosticating sending events to the right viewport
 - DONE datoviz bug: viewport are not in the proper order
 - datoviz event: event are notified even when the mouse is outside of the figure
 - ExampleHelper: 
   - `ExampleHelper.create_animator(rendererBase) -> AnimatorBase`
   - `ExampleHelper.create_animator_save_video(rendererBase) -> WindowEventBase`
-- in animator, add a `AnimatorBase` in all animator 
 - example launcher
   - with env variable GSP_RENDERER to select the renderer
   - matplotlib
@@ -69,6 +69,7 @@
 
 
 ---
+- DONE in animator, add a `AnimatorBase` in all animator 
 - DONE window events with multiple viewports
   - recode all the viewport events using the same structure
 - DONE animator: handle datoviz animator
