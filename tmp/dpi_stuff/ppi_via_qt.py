@@ -19,7 +19,14 @@ print(f"Geometry: {screen.geometry()}")
 print(f"Available Virtual Geometry: {screen.availableVirtualGeometry()}")
 print(f"Virtual Geometry: {screen.virtualGeometry()}")
 print(f"------------------------------------")
+
 print(f"Physical Size (mm): {screen.physicalSize()}")
+print(f"Virtual Size (pixels): {screen.virtualSize()}")
 print(f"Size (pixels): {screen.size()}")
+print(f"------------------------------------")
+
 print(f"Depth: {screen.depth()}")
 print(f"Refresh Rate: {screen.refreshRate()} Hz")
+print(f"------------------------------------")
+
+app.quit()

@@ -1,0 +1,3 @@
+- to get the screen type on macosx
+  - `system_profiler SPDisplaysDataType`
+  - `system_profiler SPHardwareDataType`
