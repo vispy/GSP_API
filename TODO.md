@@ -1,3 +1,22 @@
+- gsp_pydantic:
+  - doesnt support transform chain properly
+  - dont forget transform chain may be user-defined, take it into account in the serialization/deserialization
+  - make TransformLinkImmediate the only link in gsp
+  - code a transformLinkLoad in user space
+  - make an example of it
+- transform serialisation/deserialization
+  - implemented but not tested
+  - need serialisation/deserialization in transform chain
+  - need to use them in gsp_pydantic
+  - need serailization/deserialization tests 
+- transform serialisation/deserialization
+  - code a transformLinkLoad in user space
+  - link registry in transform link registry 
+  - thus can register user-defined transform link, important for deserialization
+    - register a name and a class
+    - https://github.com/jeromeetienne/gsp_01/blob/main/src/gsp/transform/transform_registry.py
+  - link MUST have `.deserialize()` and `.serialize()` methods
+
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
 - datoviz event: event are notified even when the mouse is outside of the figure
@@ -6,12 +25,6 @@
   - matplotlib
   - datoviz
   - network
-- gsp_pydantic:
-  - doesnt support transform chain properly
-  - dont forget transform chain may be user-defined, take it into account in the serialization/deserialization
-  - make TransformLinkImmediate the only link in gsp
-  - code a transformLinkLoad in user space
-  - make an example of it
 - handle 3d rotation in datoviz
   - how to handle that ? maybe i set it up to orthographic camera
 - do test with expected_screenshots
@@ -23,7 +36,6 @@
   - `system_profiler SPDisplaysDataType`
   - `system_profiler SPHardwareDataType`
 - test dynamic group in datoviz pixels
-- datoviz: add better python API (seems hard/complicated to do)
 - when datoviz core dump, DVZ_LOG_LEVEL=0
   - when creating a datoviz app with 350 pixelds visual, there is a segfault
 - handle the animation loop

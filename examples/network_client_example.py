@@ -16,6 +16,7 @@ from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
 from gsp_network.renderer.network_renderer import NetworkRenderer
+from common.example_helper import ExampleHelper
 
 
 def main():
@@ -61,8 +62,8 @@ def main():
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer_name = typing.cast(Literal["matplotlib", "datoviz"], os.environ.get("GSP_RENDERER", "matplotlib"))
-    renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", remote_renderer_name=renderer_name)
+    remote_renderer_name = ExampleHelper.get_remote_renderer_name()
+    renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", remote_renderer_name=remote_renderer_name)
     rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
 
     # Save the rendered image to a PNG file

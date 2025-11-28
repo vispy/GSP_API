@@ -9,10 +9,10 @@ import matplotlib.pyplot
 from gsp.core import Canvas, Viewport
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.visuals import Pixels
-import gsp_extra.mpl3d.glm as glm
+from gsp_extra.mpl3d import glm
+from common.example_helper import ExampleHelper
 
 
 def main():
@@ -61,15 +61,7 @@ def main():
     camera = Camera(view_matrix, projection_matrix)
 
     # Create a renderer and render the scene
-    matplotlibRenderer = MatplotlibRenderer(canvas)
-    matplotlibRenderer.render([viewport], [pixels], [model_matrix], [camera])
-
-    # handle non-interactive mode for tests
-    inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-    if inTest:
-        return
-
-    matplotlib.pyplot.show()
+    ExampleHelper.render_and_show(canvas, [viewport], [pixels], [model_matrix], [camera])
 
 
 if __name__ == "__main__":

@@ -1,6 +1,8 @@
 # local imports
+from typing import Any
 from ..types import BufferType, Buffer
-from .transform_link import TransformLink
+from .transform_link_base import TransformLinkBase
+from .transform_registry import TransformRegistry
 
 
 # =============================================================================
@@ -12,7 +14,7 @@ class TransformChain:
     __slots__ = ["__links", "__buffer_count", "__buffer_type"]
 
     def __init__(self, buffer_count: int, buffer_type: BufferType | None) -> None:
-        self.__links: list[TransformLink] = []
+        self.__links: list[TransformLinkBase] = []
         """Ordered list of links defining the transform."""
 
         # sanity check
@@ -61,11 +63,11 @@ class TransformChain:
     # .add/.remove/.clear the links
     # =============================================================================
 
-    def add(self, link: TransformLink) -> None:
+    def add(self, link: TransformLinkBase) -> None:
         """Add a TransformLink to the chain."""
         self.__links.append(link)
 
-    def remove(self, link: TransformLink) -> None:
+    def remove(self, link: TransformLinkBase) -> None:
         """Remove a TransformLink from the chain."""
         self.__links.remove(link)
 

@@ -1,12 +1,14 @@
 # pip imports
-from typing import Literal
+from typing import Literal, Any
+import base64
 
 # local imports
+from gsp.transforms.transform_registry import TransformRegistry
+from gsp.transforms.transform_link_base import TransformLinkBase
 from gsp.types import BufferType, Buffer
-from gsp.transforms.transform_link import TransformLink
 
 
-class TransformLinkImmediate(TransformLink):
+class TransformLinkImmediate(TransformLinkBase):
     """A TransformLink that immediately returns a predefined Buffer."""
 
     def __init__(self, buffer: Buffer) -> None:
@@ -14,3 +16,29 @@ class TransformLinkImmediate(TransformLink):
 
     def apply(self, buffer_src: Buffer | None) -> Buffer:
         return self._buffer
+
+    # =============================================================================
+    # Serialization functions
+    # =============================================================================
+
+    def serialize(self) -> dict[str, Any]:
+        data_base64 = base64.b64encode(self._buffer.to_bytearray()).decode("utf-8")
+        return {
+            "class_name": "TransformImmediate",
+            "buffer_count": str(self._buffer.get_count()),
+            "buffer_type": self._buffer.get_type().name,
+            "data_base64": data_base64,
+        }
+
+    @staticmethod
+    def deserialize(data: dict[str, Any]) -> "TransformLinkImmediate":
+        buffer_count = int(data["buffer_count"])
+        buffer_type = BufferType[data["buffer_type"]]
+        data_bytes = base64.b64decode(data["data_base64"].encode("utf-8"))
+        buffer = Buffer(buffer_count, buffer_type)
+        buffer.set_data(bytearray(data_bytes), 0, buffer_count)
+        return TransformLinkImmediate(buffer)
+
+
+# Register the TransformImmediate class in the TransformRegistry
+TransformRegistry.register_link("TransformImmediate", TransformLinkImmediate)

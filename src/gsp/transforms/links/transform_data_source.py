@@ -1,6 +1,6 @@
 # stdlib imports
 import os
-from typing import Literal
+from typing import Literal, Any
 
 # pip imports
 import requests
@@ -9,10 +9,11 @@ import imageio.v3
 # local imports
 from ...types.buffer import Buffer
 from ...types.buffer_type import BufferType
-from ..transform_link import TransformLink
+from ..transform_link_base import TransformLinkBase
+from ..transform_registry import TransformRegistry
 
 
-class TransformDataSource(TransformLink):
+class TransformDataSource(TransformLinkBase):
     """Load data from a URI into a Buffer. previous buffer is ignored."""
 
     __slots__ = ["_uri", "_buffer_type"]
@@ -52,3 +53,26 @@ class TransformDataSource(TransformLink):
             new_buffer = Buffer(count, self._buffer_type)
             new_buffer.set_data(bytearray(content), 0, count)
             return new_buffer
+
+    # =============================================================================
+    # Serialization functions
+    # =============================================================================
+
+    def serialize(self) -> dict[str, Any]:
+        return {
+            "type": "TransformDataSource",
+            "uri": self._uri,
+            "buffer_type": self._buffer_type.name,
+        }
+
+    @staticmethod
+    def deserialize(data: dict[str, Any]) -> "TransformDataSource":
+        assert data["type"] == "TransformDataSource", "Invalid type for TransformDataSource deserialization"
+        uri = data["uri"]
+        buffer_type_str = data["buffer_type"]
+        buffer_type = BufferType[buffer_type_str]
+        return TransformDataSource(uri, buffer_type)
+
+
+# Register the TransformDataSource class in the TransformRegistry
+TransformRegistry.register_link("TransformDataSource", TransformDataSource)

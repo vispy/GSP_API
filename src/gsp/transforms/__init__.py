@@ -1,3 +1,3 @@
-from .transform_link import TransformLink
+from .transform_link_base import TransformLinkBase
 from .transform_chain import TransformChain
 from .links import TransformDataSource
