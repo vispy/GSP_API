@@ -1,10 +1,13 @@
+# from https://chatgpt.com/c/6929a0d5-53dc-832d-a637-21268a368aa0
+
 import matplotlib.pyplot as plt
 
 # ---- screen physical size (your values) ----
+# obtained via PyQt5 in ppi_via_qt.py
 width_mm = 344.24470071231616
 height_mm = 222.52391822665348
-width_px = 3024
-height_px = 1964
+width_px = 3456
+height_px = 2234
 
 # compute screen PPI
 one_inch_in_mm = 25.4
@@ -18,7 +21,7 @@ ppi = (ppi_x + ppi_y) / 2  # average, OK for MacBooks
 print(f"Screen PPI: {ppi}")
 
 # ---- desired physical figure size ----
-W_in = 3  # width in inches
+W_in = 5  # width in inches
 H_in = 2  # height in inches
 
 W_mm = W_in * one_inch_in_mm
