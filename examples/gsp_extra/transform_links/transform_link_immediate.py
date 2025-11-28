@@ -24,17 +24,22 @@ class TransformLinkImmediate(TransformLinkBase):
     def serialize(self) -> dict[str, Any]:
         data_base64 = base64.b64encode(self._buffer.to_bytearray()).decode("utf-8")
         return {
-            "class_name": "TransformImmediate",
-            "buffer_count": str(self._buffer.get_count()),
-            "buffer_type": self._buffer.get_type().name,
-            "data_base64": data_base64,
+            "link_type": "TransformImmediate",
+            "link_data": {
+                "buffer_count": str(self._buffer.get_count()),
+                "buffer_type": self._buffer.get_type().name,
+                "data_base64": data_base64,
+            },
         }
 
     @staticmethod
     def deserialize(data: dict[str, Any]) -> "TransformLinkImmediate":
-        buffer_count = int(data["buffer_count"])
-        buffer_type = BufferType[data["buffer_type"]]
-        data_bytes = base64.b64decode(data["data_base64"].encode("utf-8"))
+        assert data["link_type"] == "TransformImmediate", "Invalid type for TransformImmediate deserialization"
+        buffer_count = int(data["link_data"]["buffer_count"])
+        buffer_type_str: str = data["link_data"]["buffer_type"]
+        buffer_type = BufferType[buffer_type_str]
+        data_base64: str = data["link_data"]["data_base64"]
+        data_bytes: bytes = base64.b64decode(data_base64.encode("utf-8"))
         buffer = Buffer(buffer_count, buffer_type)
         buffer.set_data(bytearray(data_bytes), 0, buffer_count)
         return TransformLinkImmediate(buffer)

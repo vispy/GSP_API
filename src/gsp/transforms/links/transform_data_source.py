@@ -60,16 +60,18 @@ class TransformDataSource(TransformLinkBase):
 
     def serialize(self) -> dict[str, Any]:
         return {
-            "type": "TransformDataSource",
-            "uri": self._uri,
-            "buffer_type": self._buffer_type.name,
+            "link_type": "TransformDataSource",
+            "link_data": {
+                "uri": self._uri,
+                "buffer_type": self._buffer_type.name,
+            },
         }
 
     @staticmethod
     def deserialize(data: dict[str, Any]) -> "TransformDataSource":
-        assert data["type"] == "TransformDataSource", "Invalid type for TransformDataSource deserialization"
-        uri = data["uri"]
-        buffer_type_str = data["buffer_type"]
+        assert data["link_type"] == "TransformDataSource", "Invalid type for TransformDataSource deserialization"
+        uri: str = data["link_data"]["uri"]
+        buffer_type_str: str = data["link_data"]["buffer_type"]
         buffer_type = BufferType[buffer_type_str]
         return TransformDataSource(uri, buffer_type)
 

@@ -16,7 +16,7 @@
     - register a name and a class
     - https://github.com/jeromeetienne/gsp_01/blob/main/src/gsp/transform/transform_registry.py
   - link MUST have `.deserialize()` and `.serialize()` methods
-
+- make tmp/dpi_stuff/mpl_accurate_figure_gemini_1.py a real example
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
 - datoviz event: event are notified even when the mouse is outside of the figure
