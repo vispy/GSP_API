@@ -7,11 +7,16 @@ import matplotlib.patches as patches
 
 # INPUT: Update this value based on your hardware (see table above)
 # This is the crucial link between software points and hardware reality.
-MY_SCREEN_PPI = 254  # Example for MacBook Pro 16" Retina
+MY_SCREEN_PPI = 254 / 2  # Example for MacBook Pro 16" Retina
+MY_SCREEN_WIDTH_CM = 344.24470071231616 / 10
+MY_SCREEN_HEIGHT_CM = 222.52391822665348 / 10
 
 # Target physical dimensions
-TARGET_WIDTH_INCH = 2.0
-TARGET_HEIGHT_INCH = 2.0
+# TARGET_WIDTH_INCH = (MY_SCREEN_WIDTH_CM - 0.5) / 2.54
+# TARGET_HEIGHT_INCH = (MY_SCREEN_HEIGHT_CM / 2) / 2.54
+
+TARGET_WIDTH_INCH = 1
+TARGET_HEIGHT_INCH = 1
 
 # --- 2. LOGIC & CONVERSION ---
 
@@ -28,28 +33,28 @@ def inch_to_cm(inch):
 
 # We create the figure using our calibrated PPI.
 # Matplotlib uses inches by default for figsize.
-fig = plt.figure(figsize=(TARGET_WIDTH_INCH, TARGET_HEIGHT_INCH), dpi=MY_SCREEN_PPI)
+mpl_figure = plt.figure(figsize=(TARGET_WIDTH_INCH, TARGET_HEIGHT_INCH), dpi=MY_SCREEN_PPI)
 
 # --- 4. VERIFICATION PLOT ---
 
 # Create an axes that fills the whole figure (no margins)
-ax = fig.add_axes((0, 0, 1, 1))
+mpl_axes = mpl_figure.add_axes((0, 0, 1, 1))
 
 # Draw a rectangle that should fill the exact space
 # (0,0) is bottom left, width=2, height=3
 rect = patches.Rectangle((0, 0), TARGET_WIDTH_INCH, TARGET_HEIGHT_INCH, linewidth=4, edgecolor="r", facecolor="none")
 
-ax.add_patch(rect)
+mpl_axes.add_patch(rect)
 
 # Set limits to match the size so the coordinates map 1:1 to inches
-ax.set_xlim(0, TARGET_WIDTH_INCH)
-ax.set_ylim(0, TARGET_HEIGHT_INCH)
+mpl_axes.set_xlim(0, TARGET_WIDTH_INCH)
+mpl_axes.set_ylim(0, TARGET_HEIGHT_INCH)
 
 # Remove ticks/labels for clean visualization
-ax.axis("off")
+mpl_axes.axis("off")
 
 # Add text to verify
-ax.text(
+mpl_axes.text(
     TARGET_WIDTH_INCH / 2,
     TARGET_HEIGHT_INCH / 2,
     f'Target: {TARGET_WIDTH_INCH}" x {TARGET_HEIGHT_INCH}"\n' f"PPI Set: {MY_SCREEN_PPI}",
