@@ -4,9 +4,7 @@ app = QApplication([])
 screen = app.primaryScreen()
 assert screen is not None, "screen MUST NOT be None"
 
-
-dpi = screen.physicalDotsPerInch()
-print(f"physical DotsPerInch: {dpi}")
+print(f"physical DotsPerInch: {screen.physicalDotsPerInch()}")
 print(f"logical  DotsPerInch: {screen.logicalDotsPerInch()}")
 print(f"------------------------------------")
 

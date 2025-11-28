@@ -1,3 +1,3 @@
 - to get the screen type on macosx
-  - `system_profiler SPDisplaysDataType`
-  - `system_profiler SPHardwareDataType`
+  - to get the display information `system_profiler SPDisplaysDataType`
+  - to get the laptop model `system_profiler SPHardwareDataType`

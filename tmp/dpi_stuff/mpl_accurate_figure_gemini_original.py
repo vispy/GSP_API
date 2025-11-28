@@ -1,12 +1,6 @@
 # from https://gemini.google.com/app/bf53f185ee3f725b
 
-import matplotlib
-
-# trick to disable the toolbar in matplotlib
-matplotlib.rcParams["toolbar"] = "none"
-
 import matplotlib.pyplot as plt
-
 import matplotlib.patches as patches
 
 # --- 1. CONFIGURATION ---
@@ -15,18 +9,8 @@ import matplotlib.patches as patches
 # This is the crucial link between software points and hardware reality.
 MY_SCREEN_PPI = 255 / 2  # Example for MacBook Pro 16" Retina
 
-# from `system_profiler SPDisplaysDataType`
-# MY_SCREEN_WIDTH_HW_PX = 3456
-# MY_SCREEN_HEIGHT_HW_PX = 2234
-# MY_SCREEN_WIDTH_CM = 344.24470071231616 / 10
-# MY_SCREEN_HEIGHT_CM = 222.52391822665348 / 10
-
-# # Target physical dimensions
-# TARGET_WIDTH_INCH = (MY_SCREEN_WIDTH_CM / 2) / 2.54
-# TARGET_HEIGHT_INCH = (MY_SCREEN_HEIGHT_CM / 2) / 2.54
-
-TARGET_WIDTH_INCH = 1
-TARGET_HEIGHT_INCH = 1
+TARGET_WIDTH_INCH = 3
+TARGET_HEIGHT_INCH = 3
 
 # --- 3. CREATING THE FIGURE ---
 
@@ -41,7 +25,7 @@ mpl_axes = mpl_figure.add_axes((0, 0, 1, 1))
 
 # Draw a rectangle that should fill the exact space
 # (0,0) is bottom left, width=2, height=3
-rect = patches.Rectangle((0, 0), TARGET_WIDTH_INCH, TARGET_HEIGHT_INCH, linewidth=5, edgecolor="r", facecolor="none")
+rect = patches.Rectangle((0, 0), TARGET_WIDTH_INCH, TARGET_HEIGHT_INCH, linewidth=4, edgecolor="r", facecolor="none")
 
 mpl_axes.add_patch(rect)
 
