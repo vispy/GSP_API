@@ -6,17 +6,17 @@
   - make an example of it
 - transform serialisation/deserialization
   - implemented but not tested
-  - make a actual examples, save
-  - need serialisation/deserialization in transform chain
-  - need to use them in gsp_pydantic
+  - DONE make a actual examples, save
+  - DONE need serialisation/deserialization in transform chain
+  - DONE need to use them in gsp_pydantic
   - need serailization/deserialization tests 
 - transform serialisation/deserialization
   - code a transformLinkLoad in user space
-  - link registry in transform link registry 
-  - thus can register user-defined transform link, important for deserialization
+  - DONE link registry in transform link registry 
+  - DONE thus can register user-defined transform link, important for deserialization
     - register a name and a class
     - https://github.com/jeromeetienne/gsp_01/blob/main/src/gsp/transform/transform_registry.py
-  - link MUST have `.deserialize()` and `.serialize()` methods
+  - DONE link MUST have `.deserialize()` and `.serialize()` methods
 - import the `./tools/check_expected_output.py`
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll

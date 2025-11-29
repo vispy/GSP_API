@@ -1,5 +1,5 @@
 # stdlib imports
-from typing import Literal, Union
+from typing import Literal, Union, Any
 
 # pip imports
 from pydantic import BaseModel
@@ -19,11 +19,11 @@ class PydanticBuffer(BaseModel):
 
 
 class PydanticTransformChain(BaseModel):
-    pass
+    transform_chain: dict[str, Any]
 
 
 class PydanticTransBuf(BaseModel):
-    type: Literal["buffer", "transformChain"]
+    type: Literal["buffer", "transform_chain"]
     transBuf: PydanticBuffer | PydanticTransformChain
 
 

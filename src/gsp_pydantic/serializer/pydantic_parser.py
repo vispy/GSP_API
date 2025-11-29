@@ -23,6 +23,7 @@ from gsp.visuals.markers import MarkerShape
 from gsp.types.transbuf import TransBuf
 from gsp.types.buffer import Buffer
 from gsp.types.buffer_type import BufferType
+from gsp.transforms.transform_chain import TransformChain
 from gsp.core.camera import Camera
 from ..types.pydantic_types import PydanticCanvas, PydanticViewport, PydanticModelMatrix, PydanticCamera, PydanticScene
 from ..types.pydantic_types import PydanticTransBuf, PydanticBuffer, PydanticTransformChain
@@ -163,6 +164,9 @@ class PydanticParser:
             assert buffer.get_count() == count, f"Buffer count mismatch: expected {count}, got {buffer.get_count()}"
             return buffer
         elif pydantic_transbuf.type == "transform_chain":
-            raise NotImplementedError("Parsing of TransformChain is not implemented yet.")
+            pydantic_transform_chain = typing.cast(PydanticTransformChain, pydantic_transbuf.transBuf)
+            deserialized_transform = TransformChain.deserialize(pydantic_transform_chain.transform_chain)
+            buffer = deserialized_transform.run()
+            return buffer
         else:
             raise ValueError(f"Unknown PydanticTransBuf type: {pydantic_transbuf.type}")

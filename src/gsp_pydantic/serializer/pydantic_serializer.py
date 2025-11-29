@@ -189,6 +189,13 @@ class PydanticSerializer(SerializerBase):
             )
             return pydantic_transbuf
         elif isinstance(transbuf, TransformChain):
-            raise NotImplementedError("TransformChain serialization not implemented yet")
+            transform_chain = typing.cast(TransformChain, transbuf)
+            pydantic_transbuf = PydanticTransBuf(
+                type="transform_chain",
+                transBuf=PydanticTransformChain(
+                    transform_chain=transform_chain.serialize(),
+                ),
+            )
+            return pydantic_transbuf
         else:
             raise ValueError("Unknown TransBuf type")

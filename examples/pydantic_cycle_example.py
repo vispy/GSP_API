@@ -18,6 +18,8 @@ from gsp.utils.group_utils import GroupUtils
 from gsp_pydantic.serializer.pydantic_parser import PydanticParser
 from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
 from gsp_pydantic.types.pydantic_dict import PydanticDict
+from gsp.transforms.transform_chain import TransformChain
+from gsp_extra.transform_links.transform_link_immediate import TransformLinkImmediate
 
 
 def main():
@@ -35,7 +37,7 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
 
-    point_count = 1_000
+    point_count = 10_000
     group_size = point_count
     group_count = GroupUtils.get_group_count(point_count, groups=group_size)
 
@@ -46,9 +48,11 @@ def main():
     # all pixels red - Create buffer and fill it with a constant
     colors_buffer = Buffer(group_count, BufferType.rgba8)
     colors_buffer.set_data(bytearray([255, 0, 0, 255]) * group_count, 0, group_count)
+    colors_transform = TransformChain(buffer_count=group_count, buffer_type=BufferType.rgba8)
+    colors_transform.add(TransformLinkImmediate(colors_buffer))
 
     # Create the Pixels visual and add it to the viewport
-    pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
+    pixels = Pixels(positions_buffer, colors_transform, groups=group_size)
 
     # =============================================================================
     # Render the canvas
