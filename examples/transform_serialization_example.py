@@ -25,18 +25,22 @@ def main():
     resulting_buffer = Buffer(4, BufferType.uint8)
     resulting_buffer.set_data(bytearray([1, 2, 3, 4]), 0, 4)
     transform_link_immediate = TransformLinkImmediate(resulting_buffer)
-
     transformChain.add(transform_link_immediate)
 
+    image_url = f"file://{__dirname__}/images/UV_Grid_Sm.jpg"
+    transformChain.add(TransformDataSource(image_url, BufferType.uint8))
+
     # =============================================================================
-    # Serialize the transformChain
+    # Serialize/deserialize the transformChain
     # =============================================================================
 
+    # Serialize the transform chain
     transform_serialized = transformChain.serialize()
-    print("Serialized TransformChain:", transform_serialized)
-    # display transform_serialized in json
+
+    # Display the serialized transformChain
     print("Serialized TransformChain (JSON):", json.dumps(transform_serialized, indent=4))
 
+    # Deserialize the transform chain
     transform_deserialized = TransformChain.deserialize(transform_serialized)
 
     # =============================================================================
@@ -55,8 +59,9 @@ def main():
     else:
         print("❌ Error: The original and deserialized transform chains produce different buffer data.")
 
-    print("Buffer Data Original (Hex):", [hex(byte_value) for byte_value in resulting_buffer_original.to_bytearray()])
-    print("Buffer Data Deserialized (Hex):", [hex(byte_value) for byte_value in resulting_buffer_deserialized.to_bytearray()])
+    # # Display the resulting buffer data in hex format
+    # print("Buffer Data Original (Hex):", [hex(byte_value) for byte_value in resulting_buffer_original.to_bytearray()])
+    # print("Buffer Data Deserialized (Hex):", [hex(byte_value) for byte_value in resulting_buffer_deserialized.to_bytearray()])
 
     # sanity check
     assert resulting_bytearray_original == resulting_bytearray_deserialized, "Buffer data mismatch after serialization/deserialization."
