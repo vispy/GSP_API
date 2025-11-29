@@ -29,7 +29,7 @@ def main():
     # Add random points
     # - various ways to create Buffers
     # =============================================================================
-    point_count = 1024
+    point_count = 10_000
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
@@ -62,15 +62,9 @@ def main():
     camera = Camera(view_matrix, projection_matrix)
 
     # Create a renderer and render the scene
-    matplotlibRenderer = MatplotlibRenderer(canvas)
-    matplotlibRenderer.render([viewport], [pixels], [model_matrix], [camera])
-
-    # handle non-interactive mode for tests
-    inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-    if inTest:
-        return
-
-    matplotlib.pyplot.show()
+    matplotlib_renderer = MatplotlibRenderer(canvas)
+    matplotlib_renderer.render([viewport], [pixels], [model_matrix], [camera])
+    matplotlib_renderer.show()
 
 
 if __name__ == "__main__":
