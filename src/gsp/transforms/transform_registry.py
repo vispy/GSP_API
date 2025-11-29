@@ -2,10 +2,12 @@ from .transform_link_base import TransformLinkBase
 
 
 class TransformRegistry:
+    # TODO to rename _name_to_class_db
     _database: dict[str, type["TransformLinkBase"]] = {}
     """
     A registry for transformation classes.
     Maps class names to transformation class types.
+    All links MUST register here, or they wont be serializable.
 
     Subclasses of TransformLinkBase should register themselves here.
     """

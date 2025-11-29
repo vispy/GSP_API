@@ -6,6 +6,7 @@
   - make an example of it
 - transform serialisation/deserialization
   - implemented but not tested
+  - make a actual examples, save
   - need serialisation/deserialization in transform chain
   - need to use them in gsp_pydantic
   - need serailization/deserialization tests 
@@ -16,7 +17,8 @@
     - register a name and a class
     - https://github.com/jeromeetienne/gsp_01/blob/main/src/gsp/transform/transform_registry.py
   - link MUST have `.deserialize()` and `.serialize()` methods
-- make tmp/dpi_stuff/mpl_accurate_figure_gemini_1.py a real example
+- make tmp/dpi_stuff/mpl_accurate_figure_gemini_1.py a real example on top of GSP
+- import the `./tools/check_expected_output.py`
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
 - datoviz event: event are notified even when the mouse is outside of the figure
