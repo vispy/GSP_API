@@ -17,16 +17,10 @@
     - register a name and a class
     - https://github.com/jeromeetienne/gsp_01/blob/main/src/gsp/transform/transform_registry.py
   - link MUST have `.deserialize()` and `.serialize()` methods
-- make tmp/dpi_stuff/mpl_accurate_figure_gemini_1.py a real example on top of GSP
 - import the `./tools/check_expected_output.py`
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
 - datoviz event: event are notified even when the mouse is outside of the figure
-- example helper
-  - with env variable GSP_RENDERER to select the renderer
-  - matplotlib
-  - datoviz
-  - network
 - handle 3d rotation in datoviz
   - how to handle that ? maybe i set it up to orthographic camera
 - do test with expected_screenshots
@@ -65,6 +59,13 @@
 
 
 ---
+- DONE example helper
+  - with env variable GSP_RENDERER to select the renderer
+  - matplotlib
+  - datoviz
+  - network
+- DONE make tmp/dpi_stuff/mpl_accurate_figure_gemini_1.py a real example on top of GSP
+  - done in `examples/figure_inch_matplotlib.py`
 - DONE network animator with video save doesnt quit the scripts
 - DONE how to handle camera control in GSP, aka same events for various renderers matplotlib/datoviz/network
   - with mouse events
