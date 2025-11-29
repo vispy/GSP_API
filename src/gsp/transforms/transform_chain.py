@@ -90,3 +90,35 @@ class TransformChain:
 
         # Return the final buffer
         return buffer
+
+    # =============================================================================
+    # Serialisation
+    # =============================================================================
+
+    def serialize(self) -> dict[str, Any]:
+        """Serialize the TransformChain to a dictionary."""
+        links_data = [link.serialize() for link in self.__links]
+        chain_serialized = {
+            "buffer_count": self.__buffer_count,
+            "buffer_type": self.__buffer_type.name if self.__buffer_type is not None else None,
+            "links": links_data,
+        }
+        return chain_serialized
+
+    @staticmethod
+    def deserialize(data: dict[str, Any]) -> "TransformChain":
+        """Deserialize a TransformChain from a dictionary."""
+        buffer_count = int(data["buffer_count"])
+        buffer_type_str: str | None = data["buffer_type"]
+        buffer_type = BufferType[buffer_type_str] if buffer_type_str is not None else None
+
+        transform_chain = TransformChain(buffer_count, buffer_type)
+
+        links_data: list[dict[str, Any]] = data["links"]
+        for link_data in links_data:
+            link_type: str = link_data["link_type"]
+            link_class: type[TransformLinkBase] = TransformRegistry.get_link_class(link_type)
+            link_instance = link_class.deserialize(link_data)
+            transform_chain.add(link_instance)
+
+        return transform_chain

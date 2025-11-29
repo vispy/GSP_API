@@ -2,8 +2,7 @@ from .transform_link_base import TransformLinkBase
 
 
 class TransformRegistry:
-    # TODO to rename _name_to_class_db
-    _database: dict[str, type["TransformLinkBase"]] = {}
+    _name_to_class_db: dict[str, type["TransformLinkBase"]] = {}
     """
     A registry for transformation classes.
     Maps class names to transformation class types.
@@ -17,13 +16,13 @@ class TransformRegistry:
         """
         Register a transformation class with a name.
         """
-        TransformRegistry._database[class_name] = transform_class
+        TransformRegistry._name_to_class_db[class_name] = transform_class
 
     @staticmethod
-    def get_link(class_name: str) -> type["TransformLinkBase"]:
+    def get_link_class(class_name: str) -> type["TransformLinkBase"]:
         """
         Retrieve a transformation class by name.
         """
-        if class_name not in TransformRegistry._database:
+        if class_name not in TransformRegistry._name_to_class_db:
             raise ValueError(f"Transform '{class_name}' not found in the database.")
-        return TransformRegistry._database[class_name]
+        return TransformRegistry._name_to_class_db[class_name]

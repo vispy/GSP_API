@@ -21,7 +21,7 @@ class TransformLinkBase(ABC):
     def serialize(self) -> dict[str, Any]:
         pass
 
-    # @abstractmethod
-    # @staticmethod
-    # def deserialize(data: dict[str, Any]) -> "TransformLinkBase":
-    #     pass
+    @staticmethod
+    @abstractmethod
+    def deserialize(data: dict[str, Any]) -> "TransformLinkBase":
+        pass
