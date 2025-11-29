@@ -11,10 +11,10 @@ from gsp.core import Canvas, Viewport
 from gsp.visuals import Pixels
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
+from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp_datoviz.renderer import DatovizRenderer
 from gsp_pydantic.serializer.pydantic_parser import PydanticParser
 from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
 from gsp_pydantic.types.pydantic_dict import PydanticDict
