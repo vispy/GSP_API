@@ -2,8 +2,6 @@
 import os
 import pathlib
 import argparse
-from typing import Literal
-import typing
 
 # pip imports
 import numpy as np
@@ -19,12 +17,6 @@ from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp.utils.unit_utils import UnitUtils
 from gsp_extra.bufferx import Bufferx
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_network.renderer.network_renderer import NetworkRenderer
-from gsp_datoviz.renderer.datoviz_renderer import DatovizRenderer
-from gsp_extra.animator.animator_matplotlib import AnimatorMatplotlib
-from gsp_extra.animator.animator_datoviz import AnimatorDatoviz
-from gsp_extra.animator.animator_network import AnimatorNetwork
 
 __dirname__ = pathlib.Path(__file__).parent.resolve()
 
@@ -141,7 +133,7 @@ if __name__ == "__main__":
         action="store_true",
         help="Save the animation to a video file.",
     )
-    # args = argParser.parse_args()
-    args = argParser.parse_args(["--save-video"])  # for testing purpose, replace with args = argParser.parse_args()
+    args = argParser.parse_args()
+    # args = argParser.parse_args(["--save-video"])  # for testing purpose, replace with args = argParser.parse_args()
 
     main(save_video=args.save_video)

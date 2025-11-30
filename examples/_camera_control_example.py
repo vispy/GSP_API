@@ -60,8 +60,12 @@ def main():
     sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
 
     # all pixels red - Create buffer and fill it with a constant
-    face_colors_buffer = Buffer(point_count, BufferType.rgba8)
-    face_colors_buffer.set_data(bytearray([255, 0, 0, 255]) * point_count, 0, point_count)
+    face_colors_red_buffer = Buffer(point_count, BufferType.rgba8)
+    face_colors_red_buffer.set_data(Constants.Color.red * point_count, 0, point_count)
+
+    # all pixels green - Create buffer and fill it with a constant
+    face_colors_green_buffer = Buffer(point_count, BufferType.rgba8)
+    face_colors_green_buffer.set_data(Constants.Color.green * point_count, 0, point_count)
 
     # Edge colors - Create buffer and fill it with a constant
     edge_colors_buffer = Buffer(point_count, BufferType.rgba8)
@@ -72,7 +76,8 @@ def main():
     edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
     # Create the Points visual and add it to the viewport
-    points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
+    points_1 = Points(positions_buffer, sizes_buffer, face_colors_red_buffer, edge_colors_buffer, edge_widths_buffer)
+    points_2 = Points(positions_buffer, sizes_buffer, face_colors_green_buffer, edge_colors_buffer, edge_widths_buffer)
 
     # =============================================================================
     # Render the canvas
@@ -124,7 +129,7 @@ def main():
     # =============================================================================
 
     animator = ExampleHelper.create_animator(renderer)
-    animator.start([viewport_1, viewport_2], [points, points], [model_matrix_1, model_matrix_2], [camera, camera])
+    animator.start([viewport_1, viewport_2], [points_1, points_2], [model_matrix_1, model_matrix_2], [camera, camera])
 
 
 if __name__ == "__main__":

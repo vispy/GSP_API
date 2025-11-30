@@ -61,12 +61,11 @@ def main():
     # Render
     # =============================================================================
 
-    GSP_RENDERER = os.environ.get("GSP_RENDERER", "datoviz")
+    GSP_RENDERER = os.environ.get("GSP_RENDERER", "matplotlib").lower()
 
     # Create a renderer and render the scene
     renderer = MatplotlibRenderer(canvas) if GSP_RENDERER == "matplotlib" else DatovizRenderer(canvas)
     rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
-    # renderer.show()
 
     # Save to file
     image_basename = f"{pathlib.Path(__file__).stem}_{GSP_RENDERER}.png"

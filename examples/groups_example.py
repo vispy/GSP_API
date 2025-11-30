@@ -10,8 +10,7 @@ from gsp.core import Canvas, Viewport
 from gsp.visuals import Pixels
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
+from common.example_helper import ExampleHelper
 from gsp_extra.bufferx import Bufferx
 from gsp.constants import Constants
 from gsp.utils.group_utils import GroupUtils
@@ -64,32 +63,8 @@ def main():
     # =============================================================================
     # Render
     # =============================================================================
-    gsp_renderer = os.environ.get("GSP_RENDERER", "matplotlib")
-    if gsp_renderer == "matplotlib":
-        # Create a renderer and render the scene
-        matplotlibRenderer = MatplotlibRenderer(canvas)
-        matplotlibRenderer.render([viewport], [pixels], [model_matrix], [camera])
 
-        # handle non-interactive mode for tests
-        inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-        if inTest:
-            return
-
-        matplotlib.pyplot.show()
-    elif gsp_renderer == "datoviz":
-        # Create a renderer and render the scene
-        datovizRenderer = DatovizRenderer(canvas)
-        rendered_image = datovizRenderer.render([viewport], [pixels], [model_matrix], [camera])
-
-        # handle non-interactive mode for tests
-        inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-        if inTest:
-            return
-
-        # run the datoviz app to show the window
-        datovizRenderer._dvz_app.run()
-    else:
-        raise ValueError(f"Unknown renderer: {gsp_renderer}")
+    ExampleHelper.render_and_show(canvas, [viewport], [pixels], [model_matrix], [camera])
 
 
 if __name__ == "__main__":
