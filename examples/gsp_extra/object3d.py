@@ -10,7 +10,7 @@ from gsp.types.visual_base import VisualBase
 from gsp.core.camera import Camera
 from .mpl3d import glm
 from gsp.core import Canvas, Viewport
-from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp.types.renderer_base import RendererBase
 from gsp.types import Buffer, BufferType
 from gsp.utils.uuid_utils import UuidUtils
 
@@ -177,7 +177,7 @@ class Object3D:
     #
     # =============================================================================
     @staticmethod
-    def render(matplotlibRenderer: MatplotlibRenderer, viewport: Viewport, scene: "Object3D", camera: Camera) -> Sequence[VisualBase]:
+    def render(renderer_base: RendererBase, viewport: Viewport, scene: "Object3D", camera: Camera) -> Sequence[VisualBase]:
         # update all world matrices
         scene.update_matrix_world()
 
@@ -196,7 +196,7 @@ class Object3D:
         cameras = [camera for _ in range(len(visuals))]
 
         # render all
-        matplotlibRenderer.render(viewports, visuals, model_matrices_buffer, cameras)
+        renderer_base.render(viewports, visuals, model_matrices_buffer, cameras)
 
         # return the modified visuals
         return visuals

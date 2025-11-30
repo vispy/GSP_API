@@ -58,6 +58,24 @@ class ExampleHelper:
             raise ValueError(f"Unknown renderer name: {renderer_name}")
 
     @staticmethod
+    def render(
+        canvas: Canvas,
+        viewports: list[Viewport],
+        visuals: list[VisualBase],
+        model_matrices: list[TransBuf],
+        cameras: list[Camera],
+        /,
+        renderer_name: Literal["matplotlib", "datoviz", "network"] | None = None,
+    ) -> bytes:
+        if renderer_name is None:
+            renderer_name = ExampleHelper.get_renderer_name()
+        # Create a renderer
+        renderer = ExampleHelper.create_renderer(renderer_name, canvas)
+        # render the scene
+        rendered_image = renderer.render(viewports, visuals, model_matrices, cameras)
+        return rendered_image
+
+    @staticmethod
     def render_and_show(
         canvas: Canvas,
         viewports: list[Viewport],

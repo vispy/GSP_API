@@ -9,10 +9,9 @@ from gsp.core import Canvas, Viewport
 from gsp.visuals import Paths
 from gsp.types import Buffer, BufferType, CapStyle, JoinStyle
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.cmap_utils import CmapUtils
+from common.example_helper import ExampleHelper
 
 
 def main():
@@ -97,9 +96,7 @@ def main():
     # =============================================================================
 
     # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
-    renderer.render([viewport], [paths], [model_matrix], [camera])
-    renderer.show()
+    ExampleHelper.render_and_show(canvas, [viewport], [paths], [model_matrix], [camera])
 
 
 if __name__ == "__main__":

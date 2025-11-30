@@ -11,10 +11,9 @@ from gsp.core import Canvas, Viewport
 from gsp.visuals import Pixels
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
+from common.example_helper import ExampleHelper
 
 
 def main():
@@ -61,14 +60,13 @@ def main():
     # Render
     # =============================================================================
 
-    GSP_RENDERER = os.environ.get("GSP_RENDERER", "matplotlib").lower()
-
-    # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if GSP_RENDERER == "matplotlib" else DatovizRenderer(canvas)
-    rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
+    # Create renderer and render
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+    rendered_image = renderer_base.render([viewport], [pixels], [model_matrix], [camera])
 
     # Save to file
-    image_basename = f"{pathlib.Path(__file__).stem}_{GSP_RENDERER}.png"
+    image_basename = f"{pathlib.Path(__file__).stem}_{renderer_name}.png"
     image_path = pathlib.Path(__file__).parent / "output" / image_basename
     with open(image_path, "wb") as file_writer:
         file_writer.write(rendered_image)

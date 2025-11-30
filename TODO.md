@@ -1,3 +1,4 @@
+- datoviz render to image doesnt work well
 - gsp_pydantic:
   - doesnt support transform chain properly
   - dont forget transform chain may be user-defined, take it into account in the serialization/deserialization
