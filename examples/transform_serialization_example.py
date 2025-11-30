@@ -7,9 +7,8 @@ import json
 # local imports
 from gsp.types.buffer import Buffer, BufferType
 from gsp.transforms.transform_chain import TransformChain
-from gsp.transforms.links.transform_data_source import TransformDataSource
-from gsp_extra.transform_links import TransformLinkImmediate
-
+from examples.gsp_extra.transform_links.transform_load import TransformLoad
+from gsp.transforms.links.transform_link_immediate import TransformLinkImmediate
 
 __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -28,7 +27,7 @@ def main():
     transformChain.add(transform_link_immediate)
 
     image_url = f"file://{__dirname__}/images/UV_Grid_Sm.jpg"
-    transformChain.add(TransformDataSource(image_url, BufferType.uint8))
+    transformChain.add(TransformLoad(image_url, BufferType.uint8))
 
     # =============================================================================
     # Serialize/deserialize the transformChain

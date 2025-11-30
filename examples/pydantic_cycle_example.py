@@ -19,7 +19,7 @@ from gsp_pydantic.serializer.pydantic_parser import PydanticParser
 from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
 from gsp_pydantic.types.pydantic_dict import PydanticDict
 from gsp.transforms.transform_chain import TransformChain
-from gsp_extra.transform_links.transform_link_immediate import TransformLinkImmediate
+from gsp.transforms.links.transform_link_immediate import TransformLinkImmediate
 
 
 def main():

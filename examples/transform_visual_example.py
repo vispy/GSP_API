@@ -14,7 +14,7 @@ from gsp.types import Buffer, BufferType
 from gsp.transforms import TransformChain
 from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
-from gsp_extra.transform_links import TransformLinkImmediate
+from gsp.transforms.links.transform_link_immediate import TransformLinkImmediate
 from gsp.utils import GroupUtils
 
 
