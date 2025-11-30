@@ -90,6 +90,8 @@ def main():
         file_writer.write(rendered_image)
     print(f"Rendered image saved to: {image_path}")
 
+    renderer_base.show()
+
 
 if __name__ == "__main__":
     main()

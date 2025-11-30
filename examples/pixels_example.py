@@ -21,7 +21,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(100, 100, 96.0)
+    canvas = Canvas(100, 100, 10.0)
 
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
@@ -71,6 +71,8 @@ def main():
     with open(image_path, "wb") as file_writer:
         file_writer.write(rendered_image)
     print(f"Rendered image saved to: {image_path}")
+
+    renderer_base.show()
 
 
 if __name__ == "__main__":

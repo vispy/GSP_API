@@ -99,14 +99,14 @@ def main():
 
     renderer_name = ExampleHelper.get_renderer_name()
     # Create a renderer and render the scene
-    renderer = ExampleHelper.create_renderer(renderer_name, canvas)
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
 
     # =============================================================================
     # Create ViewportEvents for each viewport according to the renderer type
     # =============================================================================
 
-    viewport_events_1 = ExampleHelper.create_viewport_events(renderer, viewport_1)
-    viewport_events_2 = ExampleHelper.create_viewport_events(renderer, viewport_2)
+    viewport_events_1 = ExampleHelper.create_viewport_events(renderer_base, viewport_1)
+    viewport_events_2 = ExampleHelper.create_viewport_events(renderer_base, viewport_2)
 
     # =============================================================================
     # Subscribe to events
@@ -151,8 +151,8 @@ def main():
     # Render and show the scene
     # =============================================================================
 
-    renderer.render([viewport_1, viewport_2], [points_1, points_2], [model_matrix_1, model_matrix_2], [camera, camera])
-    renderer.show()
+    renderer_base.render([viewport_1, viewport_2], [points_1, points_2], [model_matrix_1, model_matrix_2], [camera, camera])
+    renderer_base.show()
 
 
 if __name__ == "__main__":
