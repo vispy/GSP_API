@@ -4,7 +4,7 @@ import os
 # local imports
 from gsp.types.buffer import Buffer, BufferType
 from gsp.transforms.transform_chain import TransformChain
-from examples.gsp_extra.transform_links.transform_load import TransformLoad
+from gsp_extra.transform_links.transform_load import TransformLoad
 
 
 __dirname__ = os.path.dirname(os.path.abspath(__file__))

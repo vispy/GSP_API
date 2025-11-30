@@ -46,7 +46,7 @@ def main():
         # Make a 3d cube of points - only the edges - 10 points per edge
         edge_points = []
         cube_size = 0.3
-        points_per_edge = 20
+        points_per_edge = 200
         for x in [-cube_size, cube_size]:
             for y in [-cube_size, cube_size]:
                 for z in np.linspace(-cube_size, cube_size, points_per_edge):

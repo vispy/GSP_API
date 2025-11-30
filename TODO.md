@@ -23,7 +23,6 @@
 - datoviz event: event are notified even when the mouse is outside of the figure
 - handle 3d rotation in datoviz
   - how to handle that ? maybe i set it up to orthographic camera
-- do test with expected_screenshots
 - API design principles
   - "what are the good design principle to apply when designing an library API"
   - https://chatgpt.com/c/69162470-7220-8332-9df8-a928b77f0528
@@ -59,6 +58,7 @@
 
 
 ---
+- DONE do test with expected_screenshots
 - DONE example helper
   - with env variable GSP_RENDERER to select the renderer
   - matplotlib

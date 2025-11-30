@@ -54,8 +54,8 @@ def main():
     # This is the crucial link between software points and hardware reality.
     MY_SCREEN_PPI = QtHelper.get_screen_ppi()
 
-    canvas_width_in = 5
-    canvas_height_in = 5
+    canvas_width_in = 1
+    canvas_height_in = 1
     canvas_width_px = int(canvas_width_in * MY_SCREEN_PPI)
     canvas_height_px = int(canvas_height_in * MY_SCREEN_PPI)
 
