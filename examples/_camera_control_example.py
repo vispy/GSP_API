@@ -94,33 +94,17 @@ def main():
 
     # Create a renderer
     renderer_name = ExampleHelper.get_renderer_name()
-    renderer = ExampleHelper.create_renderer(renderer_name, canvas)
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
 
     # =============================================================================
     # Create Viewport events
     # =============================================================================
 
-    if renderer_name == "matplotlib":
-        matplotlib_renderer = typing.cast(MatplotlibRenderer, renderer)
-        viewport_events_1 = ViewportEventsMatplotlib(matplotlib_renderer, viewport_1)
-        viewport_events_2 = ViewportEventsMatplotlib(matplotlib_renderer, viewport_2)
-    elif renderer_name == "datoviz":
-        datoviz_renderer = typing.cast(DatovizRenderer, renderer)
-        viewport_events_1 = ViewportEventsDatoviz(datoviz_renderer, viewport_1)
-        viewport_events_2 = ViewportEventsDatoviz(datoviz_renderer, viewport_2)
-    elif renderer_name == "network":
-        network_renderer = typing.cast(NetworkRenderer, renderer)
-        viewport_events_1 = ViewportEventsNetwork(network_renderer, viewport_1)
-        viewport_events_2 = ViewportEventsNetwork(network_renderer, viewport_2)
-    else:
-        raise ValueError(f"Unsupported renderer for this example: {renderer_name}")
-
-    # =============================================================================
-    #
-    # =============================================================================
-
+    viewport_events_1 = ExampleHelper.create_viewport_events(renderer_base, viewport_1)
     # object_controls_1 = ObjectControlAwsd(model_matrix_1, viewport_events_1)
     object_controls_1 = ObjectControlsTrackball(model_matrix_1, viewport_events_1)
+
+    viewport_events_2 = ExampleHelper.create_viewport_events(renderer_base, viewport_2)
     # object_controls_2 = ObjectControlAwsd(model_matrix_2, viewport_events_2)
     object_controls_2 = ObjectControlsTrackball(model_matrix_2, viewport_events_2)
 
@@ -128,7 +112,7 @@ def main():
     # Create animator
     # =============================================================================
 
-    animator = ExampleHelper.create_animator(renderer)
+    animator = ExampleHelper.create_animator(renderer_base)
     animator.start([viewport_1, viewport_2], [points_1, points_2], [model_matrix_1, model_matrix_2], [camera, camera])
 
 

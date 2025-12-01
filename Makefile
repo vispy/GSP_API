@@ -18,7 +18,7 @@ check_expected_output: ## Check the output files against expected files
 	python3 ./tools/check_expected_output.py
 
 clean_output: ## Clean all generated output files png,json,pdf,svg
-	rm -f ./examples/output/*.{png,json,pdf,svg}
+	rm -f ./examples/output/*.{png,json,pdf,svg,mp4}
 
 ##############################################################################
 

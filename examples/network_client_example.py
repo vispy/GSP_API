@@ -68,10 +68,7 @@ def main():
 
     # Save the rendered image to a PNG file
     output_basename = f"{pathlib.Path(__file__).stem}.png"
-    output_path = pathlib.Path(__file__).parent / "output" / output_basename
-    with open(output_path, "wb") as file_writer:
-        file_writer.write(rendered_image)
-    print(f"Saved rendered image to: {output_path.relative_to(pathlib.Path.cwd())}")
+    ExampleHelper.save_output_image(rendered_image, output_basename)
 
 
 if __name__ == "__main__":

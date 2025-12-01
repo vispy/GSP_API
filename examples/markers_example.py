@@ -1,10 +1,11 @@
 # stdlib imports
-import os
+import pathlib
 
 # pip imports
 import numpy as np
 
 # local imports
+from common.example_helper import ExampleHelper
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Markers
 from gsp.types import Buffer, BufferType, CapStyle, JoinStyle, MarkerShape
@@ -68,10 +69,16 @@ def main():
     # Render
     # =============================================================================
 
-    # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(canvas)
-    renderer.render([viewport], [markers], [model_matrix], [camera])
-    renderer.show()
+    # Create renderer and render
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+    rendered_image = renderer_base.render([viewport], [markers], [model_matrix], [camera])
+
+    # Save to file
+    ExampleHelper.save_output_image(rendered_image, f"{pathlib.Path(__file__).stem}_{renderer_name}.png")
+
+    # Show the renderer
+    renderer_base.show()
 
 
 if __name__ == "__main__":

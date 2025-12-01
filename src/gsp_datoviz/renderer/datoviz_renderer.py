@@ -35,6 +35,7 @@ class DatovizRenderer(RendererBase):
     def __init__(self, canvas: Canvas, offscreen: bool = False) -> None:
         self._canvas = canvas
         self._dvz_app: dvz.App = dvz.App(background="white", offscreen=offscreen)
+        self._dvz_offscreen = offscreen
         self._dvz_figure: _DvzFigure = self._dvz_app.figure(
             width=canvas.get_width(),
             height=canvas.get_height(),
@@ -85,7 +86,7 @@ class DatovizRenderer(RendererBase):
         visuals: Sequence[VisualBase],
         model_matrices: Sequence[TransBuf],
         cameras: Sequence[Camera],
-        return_image: bool = False,  # NOTE: make False by default. datoviz screenshot can cause segmentation fault in some cases
+        return_image: bool = True,  # NOTE: make False by default. datoviz screenshot can cause segmentation fault in some cases
         image_format: str = "png",
     ) -> bytes:
         # =============================================================================
@@ -113,12 +114,20 @@ class DatovizRenderer(RendererBase):
 
         rendered_image = b""
         if return_image:
-            assert image_format in ["png"], f"Unsupported image format: {image_format}"
-            image_path = pathlib.Path(__file__).parent / "_datoviz_offscreen_python.png"
-            self._dvz_app.screenshot(self._dvz_figure, str(image_path))
-            with open(image_path, "rb") as file_reader:
-                rendered_image = file_reader.read()
-            image_path.unlink()
+            if self._dvz_offscreen is True:
+                assert image_format in ["png"], f"Unsupported image format: {image_format}"
+                image_path = pathlib.Path(__file__).parent / "_datoviz_offscreen_python.png"
+                self._dvz_app.screenshot(self._dvz_figure, str(image_path))
+                with open(image_path, "rb") as file_reader:
+                    rendered_image = file_reader.read()
+                image_path.unlink()
+            else:
+                # Init a temporary offscreen datoviz renderer to capture the image
+                _renderer_offscreen = DatovizRenderer(self._canvas, offscreen=True)
+                # do render call
+                rendered_image = _renderer_offscreen.render(viewports, visuals, model_matrices, cameras, return_image=True)
+                # close the offscreen renderer
+                _renderer_offscreen.close()
 
         return rendered_image
 

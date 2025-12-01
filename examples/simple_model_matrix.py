@@ -1,5 +1,6 @@
 # stdlib imports
 import os
+import pathlib
 
 # pip imports
 import numpy as np
@@ -70,8 +71,16 @@ def main():
     # Create a camera
     camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
 
-    # Create a renderer and render the scene
-    ExampleHelper.render_and_show(canvas, [viewport], [points], [model_matrix], [camera])
+    # Create renderer and render
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+    rendered_image = renderer_base.render([viewport], [points], [model_matrix], [camera])
+
+    # Save to file
+    ExampleHelper.save_output_image(rendered_image, f"{pathlib.Path(__file__).stem}_{renderer_name}.png")
+
+    # Show the renderer
+    renderer_base.show()
 
 
 if __name__ == "__main__":

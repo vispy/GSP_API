@@ -66,12 +66,9 @@ def main():
     rendered_image = renderer_base.render([viewport], [pixels], [model_matrix], [camera])
 
     # Save to file
-    image_basename = f"{pathlib.Path(__file__).stem}_{renderer_name}.png"
-    image_path = pathlib.Path(__file__).parent / "output" / image_basename
-    with open(image_path, "wb") as file_writer:
-        file_writer.write(rendered_image)
-    print(f"Rendered image saved to: {image_path}")
+    ExampleHelper.save_output_image(rendered_image, f"{pathlib.Path(__file__).stem}_{renderer_name}.png")
 
+    # Show the renderer
     renderer_base.show()
 
 

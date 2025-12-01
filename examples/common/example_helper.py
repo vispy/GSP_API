@@ -2,6 +2,7 @@
 import os
 from typing import Literal
 import typing
+import pathlib
 
 # local imports
 from gsp.core import Canvas, Viewport
@@ -46,7 +47,7 @@ class ExampleHelper:
         return typing.cast(Literal["matplotlib", "datoviz"], remote_renderer_name)
 
     @staticmethod
-    def create_renderer(renderer_name: Literal["matplotlib", "datoviz", "network"], canvas: Canvas):
+    def create_renderer(renderer_name: Literal["matplotlib", "datoviz", "network"], canvas: Canvas) -> RendererBase:
         if renderer_name == "matplotlib":
             return MatplotlibRenderer(canvas)
         elif renderer_name == "datoviz":
@@ -143,3 +144,15 @@ class ExampleHelper:
             return ViewportEventsNetwork(typing.cast(NetworkRenderer, renderer), viewport)
         else:
             raise NotImplementedError(f"Viewport events for renderer {renderer} is not implemented in this example.")
+
+    # =============================================================================
+    #
+    # =============================================================================
+
+    @staticmethod
+    def save_output_image(rendered_image: bytes, image_basename: str) -> None:
+        """Save rendered image to output path."""
+        image_path = pathlib.Path(__file__).parent / ".." / "output" / image_basename
+        with open(image_path, "wb") as file_writer:
+            file_writer.write(rendered_image)
+        print(f"Rendered image saved to: {image_path}")

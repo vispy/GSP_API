@@ -13,13 +13,12 @@ from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
 from gsp_pydantic.serializer.pydantic_parser import PydanticParser
 from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
 from gsp_pydantic.types.pydantic_dict import PydanticDict
 from gsp.transforms.transform_chain import TransformChain
 from gsp.transforms.links.transform_link_immediate import TransformLinkImmediate
+from common.example_helper import ExampleHelper
 
 
 def main():
@@ -94,13 +93,19 @@ def main():
     parsed_canvas, parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras = PydanticParser().parse(serialized_data)
 
     # =============================================================================
-    # Render the parsed scene
+    # Render
     # =============================================================================
 
-    # Create a renderer and render the scene
-    renderer = MatplotlibRenderer(parsed_canvas) if os.environ.get("GSP_RENDERER", "matplotlib") == "matplotlib" else DatovizRenderer(parsed_canvas)
-    renderer.render(parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras)
-    renderer.show()
+    # Create renderer and render
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, parsed_canvas)
+    rendered_image = renderer_base.render(parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras)
+
+    # Save to file
+    ExampleHelper.save_output_image(rendered_image, f"{pathlib.Path(__file__).stem}_{renderer_name}.png")
+
+    # Show the renderer
+    renderer_base.show()
 
 
 if __name__ == "__main__":
