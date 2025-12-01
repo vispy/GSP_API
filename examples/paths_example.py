@@ -41,8 +41,10 @@ def main():
             y = np.sin(x * 10 + line_index * 0.3) / line_count + line_index * 1.4 / line_count  # vertical offset for each line
             y -= 0.7
             z = np.zeros_like(x)
+
             # Make color vary along the line (map y to color)
-            colors_values = CmapUtils.get_color_map_numpy("plasma", y)
+            color_buffer = CmapUtils.get_color_map("plasma", y)
+            colors_values = Bufferx.to_numpy(color_buffer).reshape(-1, 4)
 
             # Vary linewidth by slope magnitude
             gradients = np.abs(np.gradient(y))
