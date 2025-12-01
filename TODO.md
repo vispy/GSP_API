@@ -1,4 +1,12 @@
+- autosave screenshots in show() ? or in .render() ?
 - datoviz render to image doesnt work well
+  - in the last .render() save all the parameters
+  - in the .show()
+- how to leverage big_tester ? 
+  - do i use it in a test suite ? or just as an example ?
+- all examples should produce a screenshot
+- how to leverage all the renderer
+  - matplotlib/datoviz/network(matplotlib backend)/network(datoviz backend)
 - gsp_pydantic:
   - doesnt support transform chain properly
   - dont forget transform chain may be user-defined, take it into account in the serialization/deserialization
@@ -18,7 +26,7 @@
     - register a name and a class
     - https://github.com/jeromeetienne/gsp_01/blob/main/src/gsp/transform/transform_registry.py
   - DONE link MUST have `.deserialize()` and `.serialize()` methods
-- import the `./tools/check_expected_output.py`
+- DONE import the `./tools/check_expected_output.py`
 - motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
 - datoviz event: event are notified even when the mouse is outside of the figure
