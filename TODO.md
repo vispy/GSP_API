@@ -1,4 +1,5 @@
 - autosave screenshots in show() ? or in .render() ?
+  - if in_test
 - datoviz render to image doesnt work well
   - in the last .render() save all the parameters
   - in the .show()
@@ -7,6 +8,8 @@
 - all examples should produce a screenshot
 - how to leverage all the renderer
   - matplotlib/datoviz/network(matplotlib backend)/network(datoviz backend)
+  - run_all_examples should set the GSP_RENDERER and GSP_REMOTE_RENDERER env variable
+  - do i limit them 
 - gsp_pydantic:
   - doesnt support transform chain properly
   - dont forget transform chain may be user-defined, take it into account in the serialization/deserialization

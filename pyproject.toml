@@ -32,5 +32,5 @@ line-length = 160   # to match the 79 character limit of PEP 8, but allow some e
 
 [dependency-groups]
 dev = [
-    "scikit-image (>=0.25.2,<0.26.0)"
+    "scikit-image (>=0.25.2,<0.26.0)",
 ]
