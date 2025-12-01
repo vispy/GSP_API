@@ -11,8 +11,6 @@ from http_constants.status import HttpStatus
 import numpy as np
 import matplotlib.pyplot
 import matplotlib.image
-import matplotlib.animation
-import matplotlib.artist
 import matplotlib.figure
 
 # local imports
@@ -130,7 +128,6 @@ class NetworkRenderer(RendererBase):
             return
 
         matplotlib.pyplot.show()
-        # self._figure.show()
 
     def get_mpl_figure(self) -> matplotlib.figure.Figure:
         return self._figure

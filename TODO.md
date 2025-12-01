@@ -1,5 +1,6 @@
 - autosave screenshots in show() ? or in .render() ?
   - if in_test
+- rename GSP_INTERACTIVE_MODE to GSP_TEST_MODE ?
 - datoviz render to image doesnt work well
   - in the last .render() save all the parameters
   - in the .show()
@@ -10,18 +11,7 @@
   - matplotlib/datoviz/network(matplotlib backend)/network(datoviz backend)
   - run_all_examples should set the GSP_RENDERER and GSP_REMOTE_RENDERER env variable
   - do i limit them 
-- gsp_pydantic:
-  - doesnt support transform chain properly
-  - dont forget transform chain may be user-defined, take it into account in the serialization/deserialization
-  - make TransformLinkImmediate the only link in gsp
-  - code a transformLinkLoad in user space
-  - make an example of it
-- transform serialisation/deserialization
-  - implemented but not tested
-  - DONE make a actual examples, save
-  - DONE need serialisation/deserialization in transform chain
-  - DONE need to use them in gsp_pydantic
-  - need serailization/deserialization tests 
+  - should i put a 'front matter' to controls that like datoviz
 - transform serialisation/deserialization
   - code a transformLinkLoad in user space
   - DONE link registry in transform link registry 
@@ -29,9 +19,6 @@
     - register a name and a class
     - https://github.com/jeromeetienne/gsp_01/blob/main/src/gsp/transform/transform_registry.py
   - DONE link MUST have `.deserialize()` and `.serialize()` methods
-- DONE import the `./tools/check_expected_output.py`
-- motion/scroll events in viewport_events_matplotlib/network
-  - Make a special event for scroll
 - datoviz event: event are notified even when the mouse is outside of the figure
 - handle 3d rotation in datoviz
   - how to handle that ? maybe i set it up to orthographic camera
@@ -70,6 +57,21 @@
 
 
 ---
+- DONE motion/scroll events in viewport_events_matplotlib/network
+  - Make a special event for scroll
+- DONE import the `./tools/check_expected_output.py`
+- DONE gsp_pydantic:
+  - DONE doesnt support transform chain properly
+  - DONE dont forget transform chain may be user-defined, take it into account in the serialization/deserialization
+  - DONE make TransformLinkImmediate the only link in gsp
+  - DONE code a transformLinkLoad in user space
+  - DONE make an example of it
+- DONE transform serialisation/deserialization
+  - DONE implemented but not tested
+  - DONE make a actual examples, save
+  - DONE need serialisation/deserialization in transform chain
+  - DONE need to use them in gsp_pydantic
+  - DONE need serialization/deserialization tests 
 - DONE do test with expected_screenshots
 - DONE example helper
   - with env variable GSP_RENDERER to select the renderer
