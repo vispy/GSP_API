@@ -8,12 +8,6 @@ import colorama
 
 # local imports
 from common.example_helper import ExampleHelper
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
-from gsp_network.renderer.network_renderer import NetworkRenderer
-from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
-from gsp_extra.viewport_events.viewport_events_network import ViewportEventsNetwork
-from gsp_extra.viewport_events.viewport_events_datoviz import ViewportEventsDatoviz
 from gsp_extra.viewport_events.viewport_events_types import KeyEvent, MouseEvent
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
@@ -21,7 +15,6 @@ from gsp.visuals import Points
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
-from gsp.utils.group_utils import GroupUtils
 from gsp.utils.unit_utils import UnitUtils
 
 
