@@ -134,7 +134,7 @@ class AnimatorDatoviz(AnimatorBase):
             main_script_name = os.path.basename(__main__.__file__) if hasattr(__main__, "__file__") else "interactive"
             main_script_basename = os.path.splitext(main_script_name)[0]
             # buid the output image path
-            image_path = os.path.join(__dirname__, "../../output", f"{main_script_basename}_animator.png")
+            image_path = os.path.join(__dirname__, "../../output", f"{main_script_basename}_animator_datoviz.png")
             image_path = os.path.abspath(image_path)
             # save image_png_data in a image file
             with open(image_path, "wb") as image_file:
