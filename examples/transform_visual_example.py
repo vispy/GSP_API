@@ -1,5 +1,6 @@
 # stdlib imports
 import os
+import pathlib
 
 # pip imports
 import numpy as np
@@ -12,10 +13,10 @@ from gsp.visuals import Pixels
 from gsp.constants import Constants
 from gsp.types import Buffer, BufferType
 from gsp.transforms import TransformChain
-from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.transforms.links.transform_link_immediate import TransformLinkImmediate
 from gsp.utils import GroupUtils
+from common.example_helper import ExampleHelper
 
 
 def main():
@@ -61,10 +62,16 @@ def main():
     projection_matrix = Bufferx.mat4_identity()
     camera = Camera(view_matrix, projection_matrix)
 
-    # Create a renderer and render the scene
-    matplotlib_renderer = MatplotlibRenderer(canvas)
-    matplotlib_renderer.render([viewport], [pixels], [model_matrix], [camera])
-    matplotlib_renderer.show()
+    # Create renderer and render
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+    rendered_image = renderer_base.render([viewport], [pixels], [model_matrix], [camera])
+
+    # Save to file
+    ExampleHelper.save_output_image(rendered_image, f"{pathlib.Path(__file__).stem}_{renderer_name}.png")
+
+    # Show the renderer
+    renderer_base.show()
 
 
 if __name__ == "__main__":
