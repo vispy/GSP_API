@@ -63,8 +63,8 @@ class DatovizRenderer(RendererBase):
     def show(self) -> None:
 
         # handle non-interactive mode for tests
-        inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-        if inTest:
+        in_test = os.environ.get("GSP_TEST") == "True"
+        if in_test:
             return
 
         # listen to keyboard events - if 'q' is pressed, stop the app

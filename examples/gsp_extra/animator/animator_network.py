@@ -127,14 +127,14 @@ class AnimatorNetwork(AnimatorBase):
         self._network_renderer.render(viewports, visuals, model_matrices, cameras)
 
         # =============================================================================
-        # Handle GSP_INTERACTIVE_MODE=False
+        # Handle GSP_TEST=True
         # =============================================================================
 
         # detect if we are in not interactive mode - used during testing
-        gsp_interactive_mode = "GSP_INTERACTIVE_MODE" not in os.environ or os.environ["GSP_INTERACTIVE_MODE"] != "False"
+        in_test = "GSP_TEST" not in os.environ or os.environ["GSP_TEST"] != "True"
 
         # if we are not in interactive mode, save a preview image and return
-        if gsp_interactive_mode == False:
+        if in_test == True:
             # notify all animator callbacks
             changed_visuals: list[VisualBase] = []
             for animator_callback in self._callbacks:

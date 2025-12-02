@@ -60,8 +60,8 @@ class MatplotlibRenderer(RendererBase):
 
     def show(self) -> None:
         # handle non-interactive mode for tests
-        inTest = os.environ.get("GSP_INTERACTIVE_MODE") == "False"
-        if inTest:
+        in_test = os.environ.get("GSP_TEST") == "True"
+        if in_test:
             return
 
         matplotlib.pyplot.show()

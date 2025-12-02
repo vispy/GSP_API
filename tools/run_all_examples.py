@@ -45,7 +45,7 @@ def launch_example(cmdline_args: list[str]) -> bool:
     """
     try:
         # Add a environment variable to disable interactive mode in the example
-        env = dict(**os.environ, GSP_UUID_COUNTER="True", GSP_INTERACTIVE_MODE="False")
+        env = dict(**os.environ, GSP_UUID_COUNTER="True", GSP_TEST="True")
 
         result = subprocess.run(
             cmdline_args,
