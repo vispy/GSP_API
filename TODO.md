@@ -1,10 +1,5 @@
 - how to leverage big_tester ? 
   - do i use it in a test suite ? or just as an example ?
-- how to leverage all the renderer
-  - matplotlib/datoviz/network(matplotlib backend)/network(datoviz backend)
-  - run_all_examples should set the GSP_RENDERER and GSP_REMOTE_RENDERER env variable
-  - do i limit them 
-  - should i put a 'front matter' to controls that like datoviz
 - transform serialisation/deserialization
   - code a transformLinkLoad in user space
   - DONE link registry in transform link registry 
@@ -50,6 +45,11 @@
 
 
 ---
+- DONE how to leverage all the renderer
+  - matplotlib/datoviz/network(matplotlib backend)/network(datoviz backend)
+  - run_all_examples should set the GSP_RENDERER and GSP_REMOTE_RENDERER env variable
+  - do i limit them 
+  - should i put a 'front matter' to controls that like datoviz
 - DONE datoviz render to image doesnt work well
   - in the last .render() save all the parameters
   - in the .show()

@@ -17,6 +17,7 @@ from gsp_extra.bufferx import Bufferx
 from gsp.transforms.links.transform_link_immediate import TransformLinkImmediate
 from gsp.utils import GroupUtils
 from common.example_helper import ExampleHelper
+from gsp_extra.transform_links.transform_load import TransformLoad
 
 
 def main():
@@ -35,6 +36,10 @@ def main():
     # Random positions - Create buffer from numpy array
     positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+    # positions_transform = TransformChain(buffer_count=-1, buffer_type=BufferType.vec3)
+    # positions_uri = f"file://{pathlib.Path(__file__).parent.resolve()}/images/UV_Grid_Sm.jpg"
+    # positions_transform.add(TransformLoad(positions_uri, BufferType.vec3))
 
     # define groups
     groups = [
