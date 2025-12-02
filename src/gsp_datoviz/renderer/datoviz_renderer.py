@@ -122,6 +122,9 @@ class DatovizRenderer(RendererBase):
                     rendered_image = file_reader.read()
                 image_path.unlink()
             else:
+                # NOTE: datoviz requires the datoviz App to be in offscreen mode to capture screenshot
+                # - this is a workaround to init a temporary offscreen datoviz App to capture the image
+
                 # Init a temporary offscreen datoviz renderer to capture the image
                 _renderer_offscreen = DatovizRenderer(self._canvas, offscreen=True)
                 # do render call
