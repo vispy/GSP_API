@@ -1,5 +1,4 @@
-- autosave screenshots in show() ? or in .render() ?
-  - if in_test
+
 - rename GSP_INTERACTIVE_MODE to GSP_TEST_MODE ?
 - datoviz render to image doesnt work well
   - in the last .render() save all the parameters
@@ -57,6 +56,8 @@
 
 
 ---
+- DONE autosave screenshots in show() ? or in .render() ?
+  - if in_test
 - DONE motion/scroll events in viewport_events_matplotlib/network
   - Make a special event for scroll
 - DONE import the `./tools/check_expected_output.py`
