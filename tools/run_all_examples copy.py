@@ -33,7 +33,7 @@ def text_red(text: str) -> str:
 # =============================================================================
 # launch example script
 # =============================================================================
-def launch_example(cmdline_args: list[str], env_variables: dict[str, str]) -> bool:
+def launch_example(cmdline_args: list[str]) -> bool:
     """
     Launches the example script with the given command line arguments.
 
@@ -45,7 +45,7 @@ def launch_example(cmdline_args: list[str], env_variables: dict[str, str]) -> bo
     """
     try:
         # Add a environment variable to disable interactive mode in the example
-        env = dict(**os.environ, **env_variables)
+        env = dict(**os.environ, GSP_UUID_COUNTER="True", GSP_TEST="True")
 
         result = subprocess.run(
             cmdline_args,
@@ -71,7 +71,7 @@ def launch_example(cmdline_args: list[str], env_variables: dict[str, str]) -> bo
 #
 
 
-def parse_argv_split():
+def split_argv():
     if "--" not in sys.argv:
         local_args = sys.argv[1:]
         example_args = []
@@ -84,7 +84,7 @@ def parse_argv_split():
 
 def main() -> None:
     # Split local args and launcher.py args
-    local_args, example_args = parse_argv_split()
+    local_args, example_args = split_argv()
 
     # parse command line arguments
     parser = argparse.ArgumentParser(
@@ -112,43 +112,19 @@ def main() -> None:
         basename_script = os.path.basename(script_path)
         script_relpath = os.path.relpath(script_path, start=project_rootpath)
 
-        print(f"Running {text_cyan(script_relpath)}")
+        print(f"Running {text_cyan(script_relpath)} ... ", end="", flush=True)
 
-        # =============================================================================
-        # Run the command with each renderers
-        # =============================================================================
-        env_variables_renderers = {
-            "matplotlib": {"GSP_RENDERER": "matplotlib"},
-            "datoviz": {"GSP_RENDERER": "datoviz"},
-            "network-matplotlib": {"GSP_RENDERER": "network", "GSP_REMOTE_RENDERER": "matplotlib"},
-            # "network-datoviz": {"GSP_RENDERER": "network", "GSP_REMOTE_RENDERER": "datoviz"},
-        }
+        # launch the example script
+        run_success = launch_example([sys.executable, script_path, *example_args])
 
-        for renderer_name, env_variables_renderer in env_variables_renderers.items():
-            print(f"  Renderer: {text_cyan(renderer_name)} ... ", end="", flush=True)
+        # display X in red if failed, or a check in green if successful
+        if run_success:
+            print(f"{text_green('OK')}")
+        else:
+            print(f"{text_red('Failed')}")
 
-            # =============================================================================
-            #
-            # =============================================================================
-            # merge env variables
-            env_variables = {
-                "GSP_UUID_COUNTER": "True",
-                "GSP_TEST": "True",
-                **env_variables_renderer,
-                # add other env variables here if needed
-            }
-
-            # launch the example script
-            run_success = launch_example([sys.executable, script_path, *example_args], env_variables=env_variables)
-
-            # display X in red if failed, or a check in green if successful
-            if run_success:
-                print(f"{text_green('OK')}")
-            else:
-                print(f"{text_red('Failed')}")
-
-            if not run_success:
-                sys.exit(1)
+        if not run_success:
+            sys.exit(1)
 
     print(f"All {text_cyan(str(len(script_paths)))} example scripts ran successfully. {text_green('OK')}")
 

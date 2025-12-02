@@ -1,10 +1,5 @@
-
-- datoviz render to image doesnt work well
-  - in the last .render() save all the parameters
-  - in the .show()
 - how to leverage big_tester ? 
   - do i use it in a test suite ? or just as an example ?
-- all examples should produce a screenshot
 - how to leverage all the renderer
   - matplotlib/datoviz/network(matplotlib backend)/network(datoviz backend)
   - run_all_examples should set the GSP_RENDERER and GSP_REMOTE_RENDERER env variable
@@ -55,6 +50,10 @@
 
 
 ---
+- DONE datoviz render to image doesnt work well
+  - in the last .render() save all the parameters
+  - in the .show()
+- DONE all examples should produce a screenshot
 - DONE rename GSP_INTERACTIVE_MODE to GSP_TEST_MODE ?
 - DONE autosave screenshots in show() ? or in .render() ?
   - if in_test
