@@ -36,7 +36,7 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
 
-    point_count = 10_000
+    point_count = 1_000
     group_size = point_count
     group_count = GroupUtils.get_group_count(point_count, groups=group_size)
 
