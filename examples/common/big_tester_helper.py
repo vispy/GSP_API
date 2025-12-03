@@ -270,17 +270,9 @@ class BigTesterSerializer:
         list[TransBuf],
         list[Camera],
     ]:
-        pydantic_serial: PydanticDict = BigTesterSerializer.serialize_visual(
-            canvas,
-            viewports,
-            visuals,
-            model_matrices,
-            cameras,
-        )
+        pydantic_serial: PydanticDict = BigTesterSerializer.serialize_visual(canvas, viewports, visuals, model_matrices, cameras)
 
-        parsed_canvas, parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras = BigTesterSerializer.deserialize_visual(
-            pydantic_serial,
-        )
+        parsed_canvas, parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras = BigTesterSerializer.deserialize_visual(pydantic_serial)
 
         return parsed_canvas, parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras
 
@@ -297,8 +289,24 @@ class BigTesterRunner:
         matplotlib_image_format: Literal["png", "svg", "pdf"],
         image_path: str | None,
         pydantic_serialize_cycle: bool,
-        scenes: Literal["random_points", "random_pixels", "random_segments", "spiral_pixels"],
+        scenes: list[Literal["random_points", "random_pixels", "random_segments", "spiral_pixels"]],
     ) -> None:
+        """
+        Run the big tester example.
+
+        :param viewport_count: Number of viewports to create
+        :type viewport_count: int
+        :param renderer_name: Name of the renderer to use
+        :type renderer_name: Literal["matplotlib", "datoviz", "network"]
+        :param matplotlib_image_format: Format of the matplotlib image. Used only if renderer_name is "matplotlib"
+        :type matplotlib_image_format: Literal["png", "svg", "pdf"]
+        :param image_path: Path to save the rendered image
+        :type image_path: str | None
+        :param pydantic_serialize_cycle: Whether to perform a pydantic serialization cycle
+        :type pydantic_serialize_cycle: bool
+        :param scenes: Scenes to include in the rendering
+        :type scenes: list[Literal["random_points", "random_pixels", "random_segments", "spiral_pixels"]]
+        """
         # fix random seed for reproducibility
         BigTesterBoilerplate.init_random_seed(0)
 
@@ -372,8 +380,8 @@ class BigTesterRunner:
         # =============================================================================
 
         # Create a renderer and render the scene
-        renderer = BigTesterRenderer.create_renderer(canvas, renderer_name=renderer_name)
-        rendered_image = BigTesterRenderer.render_scene(renderer, full_viewports, full_visuals, full_model_matrices, full_cameras)
+        renderer_base = BigTesterRenderer.create_renderer(canvas, renderer_name=renderer_name)
+        rendered_image = BigTesterRenderer.render_scene(renderer_base, full_viewports, full_visuals, full_model_matrices, full_cameras)
 
         # Save the rendered image to a file
         if image_path is not None:
@@ -384,6 +392,4 @@ class BigTesterRunner:
         in_test = os.environ.get("GSP_TEST") == "True"
 
         # Show the rendered image on screen
-        if not in_test and (renderer_name == "matplotlib" or renderer_name == "datoviz"):
-            typed_renderer = typing.cast(MatplotlibRenderer | DatovizRenderer, renderer)
-            typed_renderer.show()
+        renderer_base.show()

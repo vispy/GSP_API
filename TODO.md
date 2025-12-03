@@ -1,16 +1,16 @@
 - how to leverage big_tester ? 
   - do i use it in a test suite ? or just as an example ?
+  - what about having a big_tester_test.py which use it as a test suite and generate many cases
+  - `big_tester_example.py` as an example
+  - `big_tester_cmdline.py` as a test suite
 - handle 3d rotation in datoviz
   - how to handle that ? maybe i set it up to orthographic camera
   - dvz.visual_mvp(c_visual, mvp_pointer_to_48_float32)
   - you need to concatenate the 3 mat4
 - API design principles
   - "what are the good design principle to apply when designing an library API"
-  - https://chatgpt.com/c/69162470-7220-8332-9df8-a928b77f0528
   - https://gemini.google.com/app/8fe8f99d920a68b5
-- to get the screen type on macosx
-  - `system_profiler SPDisplaysDataType`
-  - `system_profiler SPHardwareDataType`
+  - https://chatgpt.com/c/69162470-7220-8332-9df8-a928b77f0528
 - test dynamic group in datoviz pixels
 - handle the animation loop
   - with decorator like datoviz? yes
@@ -37,6 +37,9 @@
 
 
 ---
+- DONE to get the screen type on macosx
+  - `system_profiler SPDisplaysDataType`
+  - `system_profiler SPHardwareDataType`
 - DONE when datoviz core dump, DVZ_LOG_LEVEL=0
   - when creating a datoviz app with 350 pixelds visual, there is a segfault
 - DONE transform serialisation/deserialization
