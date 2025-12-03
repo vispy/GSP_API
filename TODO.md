@@ -15,6 +15,14 @@
 - transformChain
   - with depth color
   - aka with renderer events
+- add 'resize_event' in viewport events
+- example of transformChain + unit conversion
+  - assume the canvas DPI is the screen one
+  - example: draw an axis with ticks every 1 cm using segments 
+  - multiple viewports
+  - redrawn on resize
+  - axis at 10px margin from the border
+  - ticks every 1cm
 - transformChain with unit conversions - can this be done in user-space
   - data in ndc by default - aka -1 to 1 in current viewport
   - operation with scalar with unit pt/px/cm/inch
@@ -32,7 +40,6 @@
   - how to pass the canvas to the transform chain?
     - can this be done in userspace
     - possibility: set by class or by instance
-
 
 
 ---
