@@ -5,6 +5,7 @@ from typing import Literal, Any
 
 # pip imports
 import requests
+import requests_file
 import imageio.v3
 import numpy as np
 
@@ -32,8 +33,14 @@ class TransformLoad(TransformLinkBase):
         if is_npy:
             # If the URI points to a .npy file, use numpy to load it
 
+            # 1. Create a session object
+            requests_session = requests.Session()
+            # 2. Mount the FileAdapter for the 'file://' scheme
+            requests_session.mount("file://", requests_file.FileAdapter())
+
             # Load numpy array
-            response = requests.get(self._uri)
+            response = requests_session.get(self._uri)
+
             response.raise_for_status()
             array = np.load(BytesIO(response.content))
 
