@@ -2,12 +2,11 @@
 import os
 import __main__
 from typing import Sequence
+import time
 
 # pip imports
-import matplotlib.pyplot
 import matplotlib.animation
 import matplotlib.artist
-import time
 
 # local imports
 from gsp.types.transbuf import TransBuf
@@ -16,7 +15,6 @@ from gsp.types.visual_base import VisualBase
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.core.camera import Camera
-from gsp.visuals.points import Points
 from gsp.core import Event
 from .animator_types import AnimatorFunc, VideoSavedCalledback
 from .animator_base import AnimatorBase

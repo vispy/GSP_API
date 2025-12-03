@@ -2,12 +2,11 @@
 import os
 import __main__
 from typing import Sequence
+import time
 
 # pip imports
-import matplotlib.pyplot
 import matplotlib.animation
 import matplotlib.artist
-import time
 
 # local imports
 import gsp
