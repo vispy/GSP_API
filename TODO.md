@@ -1,15 +1,9 @@
 - how to leverage big_tester ? 
   - do i use it in a test suite ? or just as an example ?
-- transform serialisation/deserialization
-  - code a transformLinkLoad in user space
-  - DONE link registry in transform link registry 
-  - DONE thus can register user-defined transform link, important for deserialization
-    - register a name and a class
-    - https://github.com/jeromeetienne/gsp_01/blob/main/src/gsp/transform/transform_registry.py
-  - DONE link MUST have `.deserialize()` and `.serialize()` methods
-- datoviz event: event are notified even when the mouse is outside of the figure
 - handle 3d rotation in datoviz
   - how to handle that ? maybe i set it up to orthographic camera
+  - dvz.visual_mvp(c_visual, mvp_pointer_to_48_float32)
+  - you need to concatenate the 3 mat4
 - API design principles
   - "what are the good design principle to apply when designing an library API"
   - https://chatgpt.com/c/69162470-7220-8332-9df8-a928b77f0528
@@ -18,8 +12,6 @@
   - `system_profiler SPDisplaysDataType`
   - `system_profiler SPHardwareDataType`
 - test dynamic group in datoviz pixels
-- when datoviz core dump, DVZ_LOG_LEVEL=0
-  - when creating a datoviz app with 350 pixelds visual, there is a segfault
 - handle the animation loop
   - with decorator like datoviz? yes
   - API from datoviz
@@ -45,6 +37,16 @@
 
 
 ---
+- DONE when datoviz core dump, DVZ_LOG_LEVEL=0
+  - when creating a datoviz app with 350 pixelds visual, there is a segfault
+- DONE transform serialisation/deserialization
+  - code a transformLinkLoad in user space
+  - DONE link registry in transform link registry 
+  - DONE thus can register user-defined transform link, important for deserialization
+    - register a name and a class
+    - https://github.com/jeromeetienne/gsp_01/blob/main/src/gsp/transform/transform_registry.py
+  - DONE link MUST have `.deserialize()` and `.serialize()` methods
+- DONE datoviz event: event are notified even when the mouse is outside of the figure
 - DONE how to leverage all the renderer
   - matplotlib/datoviz/network(matplotlib backend)/network(datoviz backend)
   - run_all_examples should set the GSP_RENDERER and GSP_REMOTE_RENDERER env variable
