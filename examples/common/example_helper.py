@@ -76,12 +76,7 @@ class ExampleHelper:
         return animator
 
     @staticmethod
-    def create_animator_with_video(
-        renderer: RendererBase,
-        video_path: str,
-        fps: int,
-        video_duration: float,
-    ) -> AnimatorBase:
+    def create_animator_with_video(renderer: RendererBase, video_path: str, fps: int, video_duration: float) -> AnimatorBase:
         # init the animator with the renderer
         if isinstance(renderer, MatplotlibRenderer):
             animator = AnimatorMatplotlib(typing.cast(MatplotlibRenderer, renderer), fps=fps, video_duration=video_duration, video_path=video_path)
