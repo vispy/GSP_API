@@ -1,26 +1,11 @@
-# stdlib imports
-import os
-from typing import Literal
-import typing
-
 # pip imports
 import numpy as np
 import matplotlib.patches
 from PyQt5.QtWidgets import QApplication
 
 # local imports
-from common.example_helper import ExampleHelper
-from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
-from gsp.visuals import Points
-from gsp.types import Buffer, BufferType
-from gsp.core import Camera
-from gsp_extra.bufferx import Bufferx
-from gsp.utils.unit_utils import UnitUtils
 from gsp_matplotlib.renderer import MatplotlibRenderer
-
-from gsp.utils.group_utils import GroupUtils
-from gsp.visuals import Pixels
 
 
 class QtHelper:
@@ -54,8 +39,11 @@ def main():
     # This is the crucial link between software points and hardware reality.
     MY_SCREEN_PPI = QtHelper.get_screen_ppi()
 
-    canvas_width_in = 1
-    canvas_height_in = 1
+    canvas_width_cm = 5
+    canvas_height_cm = 5
+
+    canvas_width_in = canvas_width_cm / 2.54
+    canvas_height_in = canvas_height_cm / 2.54
     canvas_width_px = int(canvas_width_in * MY_SCREEN_PPI)
     canvas_height_px = int(canvas_height_in * MY_SCREEN_PPI)
 
@@ -97,7 +85,7 @@ def main():
     mpl_axes.text(
         canvas_width_in / 2,
         canvas_height_in / 2,
-        f'Target: {canvas_width_in}" x {canvas_height_in}"\n' f"PPI Set: {MY_SCREEN_PPI}",
+        f'Target: {canvas_width_in:.4f}" x {canvas_height_in:.4f}"\n' f"PPI Set: {MY_SCREEN_PPI:.4f}",
         horizontalalignment="center",
         verticalalignment="center",
         fontsize=12,
