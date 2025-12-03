@@ -12,11 +12,6 @@
   - https://gemini.google.com/app/8fe8f99d920a68b5
   - https://chatgpt.com/c/69162470-7220-8332-9df8-a928b77f0528
 - test dynamic group in datoviz pixels
-- handle the animation loop
-  - with decorator like datoviz? yes
-  - API from datoviz
-  - API from matplotlib
-  - GSP API common
 - transformChain
   - with depth color
   - aka with renderer events
@@ -37,6 +32,11 @@
 
 
 ---
+- DONE handle the animation loop
+  - with decorator like datoviz? yes
+  - API from datoviz
+  - API from matplotlib
+  - GSP API common
 - DONE to get the screen type on macosx
   - `system_profiler SPDisplaysDataType`
   - `system_profiler SPHardwareDataType`
