@@ -18,6 +18,10 @@
 - transformChain with unit conversions - can this be done in user-space
   - data in ndc by default - aka -1 to 1 in current viewport
   - operation with scalar with unit pt/px/cm/inch
+    - pt - point - 1/72 inch
+    - cm - centimeter
+    - inch - inch
+    - px - pixel - screen pixel - ppi pre device-pixel-ratio
   - dpi canvas - === ppi on screen, dpi on print
   - dpi === PPI
   - in the transform chain, have a user data which store the current viewport size in px, and dpi
