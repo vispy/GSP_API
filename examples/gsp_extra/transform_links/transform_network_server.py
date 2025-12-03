@@ -5,7 +5,7 @@ from gsp_network.tools.network_server import ServerSample
 # import all user-space transform
 # - thus they get registered in the TransformRegistry
 # =============================================================================
-from gsp_extra.transform_links import TransformLoad
+from transform_load import TransformLoad
 
 
 if __name__ == "__main__":

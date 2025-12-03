@@ -1,7 +1,3 @@
-# stdlib imports
-import os
-import typing
-
 # pip imports
 import numpy as np
 import colorama

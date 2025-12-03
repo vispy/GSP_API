@@ -7,21 +7,6 @@ import typing
 import numpy as np
 
 # local imports
-from common.example_helper import ExampleHelper
-from gsp_extra.animator.animator_datoviz import AnimatorDatoviz
-from gsp_extra.viewport_events.viewport_events_datoviz import ViewportEventsDatoviz
-from gsp_datoviz.renderer.datoviz_renderer import DatovizRenderer
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_network.renderer import NetworkRenderer
-from gsp_extra.animator.animator_matplotlib import AnimatorMatplotlib
-from gsp_extra.animator.animator_network import AnimatorNetwork
-
-from gsp_extra.viewport_events.viewport_events_network import ViewportEventsNetwork
-from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
-
-from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
-from gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
-
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Points
@@ -29,6 +14,9 @@ from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.unit_utils import UnitUtils
+from common.example_helper import ExampleHelper
+from gsp_extra.camera_controls.object_controls_awsd import ObjectControlAwsd
+from gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
 
 
 def main():

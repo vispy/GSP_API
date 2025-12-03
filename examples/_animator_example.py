@@ -6,7 +6,6 @@ import argparse
 # pip imports
 import numpy as np
 
-
 # local imports
 from common.example_helper import ExampleHelper
 from gsp.constants import Constants

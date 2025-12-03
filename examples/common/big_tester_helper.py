@@ -1,4 +1,5 @@
 # stdlib imports
+import os
 from typing import Literal
 import typing
 
@@ -380,7 +381,9 @@ class BigTesterRunner:
                 image_file.write(rendered_image)
             print(f"Rendered image saved to: {image_path}")
 
+        in_test = os.environ.get("GSP_TEST") == "True"
+
         # Show the rendered image on screen
-        if renderer_name == "matplotlib" or renderer_name == "datoviz":
+        if not in_test and (renderer_name == "matplotlib" or renderer_name == "datoviz"):
             typed_renderer = typing.cast(MatplotlibRenderer | DatovizRenderer, renderer)
             typed_renderer.show()
