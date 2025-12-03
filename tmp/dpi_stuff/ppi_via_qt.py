@@ -5,11 +5,14 @@ screen = app.primaryScreen()
 assert screen is not None, "screen MUST NOT be None"
 
 print(f"physical DotsPerInch: {screen.physicalDotsPerInch()}")
+print(f"physical DotsPerInchX: {screen.physicalDotsPerInchX()}")
+print(f"physical DotsPerInchY: {screen.physicalDotsPerInchY()}")
 print(f"logical  DotsPerInch: {screen.logicalDotsPerInch()}")
+print(f"logical  DotsPerInchX: {screen.logicalDotsPerInchX()}")
+print(f"logical  DotsPerInchY: {screen.logicalDotsPerInchY()}")
 print(f"------------------------------------")
 
-device_pixel_ratio = screen.devicePixelRatio()
-print(f"Device Pixel Ratio: {device_pixel_ratio}")
+print(f"Device Pixel Ratio: {screen.devicePixelRatio()}")
 print(f"------------------------------------")
 
 print(f"Available Geometry: {screen.availableGeometry()}")
