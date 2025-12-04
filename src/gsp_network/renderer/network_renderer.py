@@ -57,7 +57,7 @@ class NetworkRenderer(RendererBase):
 
         # create an np.array to hold the image
         image_data_np = np.zeros((self._canvas.get_height(), self._canvas.get_width(), 3), dtype=np.uint8)
-        self._axes_image = self._mpl_axes.imshow(image_data_np)
+        self._axes_image = self._mpl_axes.imshow(image_data_np, aspect="auto")
 
     def get_canvas(self) -> Canvas:
         return self._canvas

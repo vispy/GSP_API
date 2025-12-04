@@ -11,6 +11,31 @@ import numpy as np
 
 
 class UnitUtils:
+
+    @staticmethod
+    def in_to_cm(inches: float) -> float:
+        """Convert inches to centimeters.
+
+        Args:
+            inches (float): Length in inches.
+
+        Returns:
+            float: Length in centimeters.
+        """
+        return inches * 2.54
+
+    @staticmethod
+    def cm_to_in(cm: float) -> float:
+        """Convert centimeters to inches.
+
+        Args:
+            cm (float): Length in centimeters.
+
+        Returns:
+            float: Length in inches.
+        """
+        return cm / 2.54
+
     @staticmethod
     def device_pixel_ratio() -> float:
         """Get the device pixel ratio for high-DPI displays.

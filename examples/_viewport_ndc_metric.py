@@ -54,13 +54,13 @@ class ViewportUnitConverter:
     def _get_canvas_width_cm(self) -> float:
         screen_ppi = self._canvas.get_dpi()
         canvas_width_in = self._canvas.get_width() / screen_ppi
-        canvas_width_cm = canvas_width_in * 2.54
+        canvas_width_cm = UnitUtils.in_to_cm(canvas_width_in)
         return canvas_width_cm
 
     def _get_canvas_height_cm(self) -> float:
         screen_ppi = self._canvas.get_dpi()
         canvas_height_in = self._canvas.get_height() / screen_ppi
-        canvas_height_cm = canvas_height_in * 2.54
+        canvas_height_cm = UnitUtils.in_to_cm(canvas_height_in)
         return canvas_height_cm
 
     def _get_viewport_width_px(self) -> int:
@@ -106,8 +106,8 @@ def main():
 
     def create_canvas(canvas_width_cm: float, canvas_height_cm: float) -> Canvas:
         screen_ppi = QtHelper.get_screen_ppi()
-        canvas_width_in = canvas_width_cm / 2.54
-        canvas_height_in = canvas_height_cm / 2.54
+        canvas_width_in = UnitUtils.cm_to_in(canvas_width_cm)
+        canvas_height_in = UnitUtils.cm_to_in(canvas_height_cm)
         canvas_width_px = round(canvas_width_in * screen_ppi)
         canvas_height_px = round(canvas_height_in * screen_ppi)
         canvas = Canvas(width=canvas_width_px, height=canvas_height_px, dpi=screen_ppi)
@@ -274,8 +274,48 @@ def main():
     #
     # =============================================================================
     def on_canvas_resize(canvas_resize_event: CanvasResizeEvent):
-        # TODO unsure of what to do here
+        nonlocal axes_segments
+        nonlocal tick_segments_horizontal
+        nonlocal tick_segments_vertical
+        nonlocal points
+        # TODO unsure of what to do here - try to keep the axes and ticks updated in cm units
+        # - so update canvas size in px, viewport size in px
+        #   - support .set_width(), .set_height() on canvas and viewport?
+        # - recompute all the segments and points positions
+        # - rerender
         print("canvas_resize_event", canvas_resize_event)
+
+        canvas.set_width(canvas_resize_event.canvas_width_px)
+        canvas.set_height(canvas_resize_event.canvas_height_px)
+
+        viewport.set_width(canvas.get_width())
+        viewport.set_height(canvas.get_height())
+
+        # get current uuids
+        axes_segments_uuid = axes_segments.get_uuid()
+        tick_segments_horizontal_uuid = tick_segments_horizontal.get_uuid()
+        tick_segments_vertical_uuid = tick_segments_vertical.get_uuid()
+        points_uuid = points.get_uuid()
+
+        # recreate all the visuals
+        axes_segments = generate_segments_axes(viewport_unit)
+        tick_segments_horizontal = generate_segments_ticks_horizontal(viewport_unit)
+        tick_segments_vertical = generate_segments_ticks_vertical(viewport_unit)
+        points = generate_points(viewport_unit)
+
+        # restore uuids for the new visuals
+        axes_segments._uuid = axes_segments_uuid
+        tick_segments_horizontal._uuid = tick_segments_horizontal_uuid
+        tick_segments_vertical._uuid = tick_segments_vertical_uuid
+        points._uuid = points_uuid
+
+        # rerender all the visuals
+        renderer_base.render(
+            [viewport, viewport, viewport, viewport],
+            [axes_segments, tick_segments_horizontal, tick_segments_vertical, points],
+            [model_matrix, model_matrix, model_matrix, model_matrix],
+            [camera, camera, camera, camera],
+        )
 
     viewport_events = ExampleHelper.create_viewport_events(renderer_base, viewport)
     viewport_events.canvas_resize_event.subscribe(on_canvas_resize)
