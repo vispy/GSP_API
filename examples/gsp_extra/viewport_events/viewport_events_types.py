@@ -10,6 +10,7 @@ class EventType(StrEnum):
     BUTTON_RELEASE = "button_release"
     MOUSE_MOVE = "mouse_move"
     MOUSE_SCROLL = "mouse_scroll"
+    CANVAS_RESIZE = "canvas_resize"
 
 
 @dataclass
@@ -31,6 +32,14 @@ class MouseEvent:
     scroll_steps: float = 0.0
 
 
+@dataclass
+class CanvasResizeEvent:
+    viewport_uuid: str
+    event_type: EventType
+    canvas_width_px: int
+    canvas_height_px: int
+
+
 # We can define the expected function signature using a Protocol for clarity.
 class KeyboardEventCallback(Protocol):
     def __call__(self, key_event: KeyEvent) -> None: ...
@@ -38,3 +47,7 @@ class KeyboardEventCallback(Protocol):
 
 class MouseEventCallback(Protocol):
     def __call__(self, mouse_event: MouseEvent) -> None: ...
+
+
+class CanvasResizeEventCallback(Protocol):
+    def __call__(self, canvas_resize_event: CanvasResizeEvent) -> None: ...

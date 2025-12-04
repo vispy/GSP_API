@@ -11,9 +11,10 @@ from gsp.core import Event
 from gsp.core import Canvas, Viewport
 from gsp.utils.unit_utils import UnitUtils
 from gsp_network.renderer import NetworkRenderer
-from .viewport_events_types import KeyEvent, MouseEvent, EventType
 from .viewport_events_base import ViewportEventsBase
-from .viewport_events_types import KeyEvent, MouseEvent, KeyboardEventCallback, MouseEventCallback
+from .viewport_events_types import EventType
+from .viewport_events_types import KeyEvent, MouseEvent, CanvasResizeEvent
+from .viewport_events_types import KeyboardEventCallback, MouseEventCallback, CanvasResizeEventCallback
 
 
 class ViewportEventsNetwork(ViewportEventsBase):
@@ -32,6 +33,7 @@ class ViewportEventsNetwork(ViewportEventsBase):
         "_mpl_button_release_cid",
         "_mpl_mouse_move_cid",
         "_mpl_mouse_scroll_cid",
+        "_mpl_resize_cid",
     ]
 
     def __init__(self, renderer: NetworkRenderer, viewport: Viewport) -> None:
@@ -50,6 +52,7 @@ class ViewportEventsNetwork(ViewportEventsBase):
         self.button_release_event = Event[MouseEventCallback]()
         self.mouse_move_event = Event[MouseEventCallback]()
         self.mouse_scroll_event = Event[MouseEventCallback]()
+        self.canvas_resize_event = Event[CanvasResizeEventCallback]()
 
         # event connections
         mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
@@ -59,6 +62,7 @@ class ViewportEventsNetwork(ViewportEventsBase):
         self._mpl_button_release_cid = mpl_canvas.mpl_connect("button_release_event", typing.cast(Any, self._on_button_release))
         self._mpl_mouse_move_cid = mpl_canvas.mpl_connect("motion_notify_event", typing.cast(Any, self._on_mouse_move))
         self._mpl_mouse_scroll_cid = mpl_canvas.mpl_connect("scroll_event", typing.cast(Any, self._on_mouse_scroll))
+        self._mpl_resize_cid = mpl_canvas.mpl_connect("resize_event", typing.cast(Any, self._on_canvas_resize))
 
     def close(self):
         mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
@@ -80,6 +84,9 @@ class ViewportEventsNetwork(ViewportEventsBase):
         if self._mpl_mouse_scroll_cid is not None:
             mpl_canvas.mpl_disconnect(self._mpl_mouse_scroll_cid)
             self._mpl_mouse_scroll_cid = None
+        if self._mpl_resize_cid is not None:
+            mpl_canvas.mpl_disconnect(self._mpl_resize_cid)
+            self._mpl_resize_cid = None
 
     # =============================================================================
     # Matplotlib event handler
@@ -140,6 +147,16 @@ class ViewportEventsNetwork(ViewportEventsBase):
         mouse_event = self._mpl_mouse_event_to_gsp(mpl_mouse_event, EventType.MOUSE_SCROLL)
         self.mouse_scroll_event.dispatch(mouse_event)
 
+    def _on_canvas_resize(self, mpl_resize_event: matplotlib.backend_bases.ResizeEvent) -> None:
+        # dispatch canvas resize event
+        canvas_resize_event = CanvasResizeEvent(
+            viewport_uuid=self._viewport.get_uuid(),
+            event_type=EventType.CANVAS_RESIZE,
+            canvas_width_px=mpl_resize_event.width,
+            canvas_height_px=mpl_resize_event.height,
+        )
+        self.canvas_resize_event.dispatch(canvas_resize_event)
+
     # =============================================================================
     #
     # =============================================================================
@@ -161,6 +178,15 @@ class ViewportEventsNetwork(ViewportEventsBase):
     # =============================================================================
     # Conversion matplotlib event to gsp events
     # =============================================================================
+    def _mpl_key_event_to_gsp(self, mpl_key_event: matplotlib.backend_bases.KeyEvent, event_type: EventType) -> KeyEvent:
+        assert mpl_key_event.key is not None
+        keyboard_event = KeyEvent(
+            viewport_uuid=self._viewport.get_uuid(),
+            event_type=event_type,
+            key_name=mpl_key_event.key,
+        )
+        return keyboard_event
+
     def _mpl_mouse_event_to_gsp(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent, event_type: EventType) -> MouseEvent:
         # Sanity check
         assert self._viewport_contains_mpl_mouse_event(mpl_mouse_event), "Mouse event is outside the viewport"
@@ -180,12 +206,3 @@ class ViewportEventsNetwork(ViewportEventsBase):
             scroll_steps=mpl_mouse_event.step if hasattr(mpl_mouse_event, "step") else 0.0,
         )
         return mouse_event
-
-    def _mpl_key_event_to_gsp(self, mpl_key_event: matplotlib.backend_bases.KeyEvent, event_type: EventType) -> KeyEvent:
-        assert mpl_key_event.key is not None
-        keyboard_event = KeyEvent(
-            viewport_uuid=self._viewport.get_uuid(),
-            event_type=event_type,
-            key_name=mpl_key_event.key,
-        )
-        return keyboard_event

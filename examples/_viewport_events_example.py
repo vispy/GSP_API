@@ -4,7 +4,7 @@ import colorama
 
 # local imports
 from common.example_helper import ExampleHelper
-from gsp_extra.viewport_events.viewport_events_types import KeyEvent, MouseEvent
+from gsp_extra.viewport_events.viewport_events_types import CanvasResizeEvent, KeyEvent, MouseEvent
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Points
@@ -120,6 +120,9 @@ def main():
     def on_mouse_scroll(mouse_event: MouseEvent):
         print(f"{text_cyan('Mouse scroll')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
 
+    def on_canvas_resize(canvas_resize_event: CanvasResizeEvent):
+        print(f"{text_cyan('Canvas resize')}: {text_magenta(canvas_resize_event.viewport_uuid)} {canvas_resize_event}")
+
     # Subscribe to events 1
     viewport_events_1.key_press_event.subscribe(on_key_press)
     viewport_events_1.key_release_event.subscribe(on_key_release)
@@ -127,6 +130,7 @@ def main():
     viewport_events_1.button_release_event.subscribe(on_button_release)
     viewport_events_1.mouse_move_event.subscribe(on_mouse_move)
     viewport_events_1.mouse_scroll_event.subscribe(on_mouse_scroll)
+    viewport_events_1.canvas_resize_event.subscribe(on_canvas_resize)
 
     # Subscribe to events 2
     viewport_events_2.key_press_event.subscribe(on_key_press)
@@ -135,6 +139,7 @@ def main():
     viewport_events_2.button_release_event.subscribe(on_button_release)
     viewport_events_2.mouse_move_event.subscribe(on_mouse_move)
     viewport_events_2.mouse_scroll_event.subscribe(on_mouse_scroll)
+    viewport_events_2.canvas_resize_event.subscribe(on_canvas_resize)
 
     # =============================================================================
     # Render and show the scene
