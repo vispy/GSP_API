@@ -130,7 +130,7 @@ class AnimatorMatplotlib(AnimatorBase):
         # =============================================================================
 
         # detect if we are in not interactive mode - used during testing
-        in_test = "GSP_TEST" not in os.environ or os.environ["GSP_TEST"] != "True"
+        in_test = "GSP_TEST" in os.environ and os.environ["GSP_TEST"] == "True"
 
         # if we are not in interactive mode, save a preview image and return
         if in_test == True:
