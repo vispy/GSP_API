@@ -27,7 +27,7 @@ class UnitUtils:
 
     @staticmethod
     def pixel_to_point(pixel_size: float, dpi: float) -> float:
-        """Convert pixel size to point size based on DPI.
+        """Convert pixel size to typographic point size based on DPI.
 
         Args:
             pixel_size (float): Size in pixels.
