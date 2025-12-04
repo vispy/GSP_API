@@ -30,7 +30,7 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         "_mpl_button_release_cid",
         "_mpl_mouse_move_cid",
         "_mpl_scroll_event_cid",
-        "_mpl_resize_cid",
+        "_mpl_resize_event_cid",
     ]
 
     def __init__(self, renderer: MatplotlibRenderer, viewport: Viewport) -> None:
@@ -59,7 +59,7 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         self._mpl_button_release_cid = mpl_canvas.mpl_connect("button_release_event", typing.cast(Any, self._on_button_release))
         self._mpl_mouse_move_cid = mpl_canvas.mpl_connect("motion_notify_event", typing.cast(Any, self._on_mouse_move))
         self._mpl_scroll_event_cid = mpl_canvas.mpl_connect("scroll_event", typing.cast(Any, self._on_mouse_scroll))
-        self._mpl_resize_cid = mpl_canvas.mpl_connect("resize_event", typing.cast(Any, self._on_canvas_resize))
+        self._mpl_resize_event_cid = mpl_canvas.mpl_connect("resize_event", typing.cast(Any, self._on_canvas_resize))
 
     def close(self):
         mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
@@ -81,9 +81,9 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         if self._mpl_scroll_event_cid is not None:
             mpl_canvas.mpl_disconnect(self._mpl_scroll_event_cid)
             self._mpl_scroll_event_cid = None
-        if self._mpl_resize_cid is not None:
-            mpl_canvas.mpl_disconnect(self._mpl_resize_cid)
-            self._mpl_resize_cid = None
+        if self._mpl_resize_event_cid is not None:
+            mpl_canvas.mpl_disconnect(self._mpl_resize_event_cid)
+            self._mpl_resize_event_cid = None
 
     # =============================================================================
     # Matplotlib event handler
