@@ -14,6 +14,7 @@ from gsp.types import BufferType
 from gsp.types import Buffer
 from gsp.constants import Constants
 from gsp.utils.unit_utils import UnitUtils
+from gsp_extra.viewport_events.viewport_events_types import CanvasResizeEvent
 
 
 class QtHelper:
@@ -113,7 +114,7 @@ def main():
         return canvas
 
     # Create a canvas
-    canvas_width_cm = 10
+    canvas_width_cm = 5
     canvas_height_cm = 5
     canvas = create_canvas(canvas_width_cm, canvas_height_cm)
 
@@ -238,10 +239,10 @@ def main():
 
         # Edge colors - Create buffer and fill it with a constant
         edge_colors_buffer = Buffer(point_count, BufferType.rgba8)
-        edge_colors_buffer.set_data(Constants.Color.blue * point_count, 0, point_count)
+        edge_colors_buffer.set_data(Constants.Color.black * point_count, 0, point_count)
 
         # Edge widths - Create buffer and fill it with a constant
-        edge_widths_numpy = np.array([UnitUtils.pixel_to_point(1, canvas.get_dpi())] * point_count, dtype=np.float32)
+        edge_widths_numpy = np.array([UnitUtils.pixel_to_point(0.5, canvas.get_dpi())] * point_count, dtype=np.float32)
         edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
         # Create the Points visual and add it to the viewport
@@ -262,15 +263,26 @@ def main():
 
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-
-    # viewport_events = ExampleHelper.create_viewport_events(renderer_base, viewport)
-
     renderer_base.render(
         [viewport, viewport, viewport, viewport],
         [axes_segments, tick_segments_horizontal, tick_segments_vertical, points],
         [model_matrix, model_matrix, model_matrix, model_matrix],
         [camera, camera, camera, camera],
     )
+
+    # =============================================================================
+    #
+    # =============================================================================
+    def on_canvas_resize(canvas_resize_event: CanvasResizeEvent):
+        # TODO unsure of what to do here
+        print("canvas_resize_event", canvas_resize_event)
+
+    viewport_events = ExampleHelper.create_viewport_events(renderer_base, viewport)
+    viewport_events.canvas_resize_event.subscribe(on_canvas_resize)
+
+    # =============================================================================
+    #
+    # =============================================================================
     renderer_base.show()
 
 
