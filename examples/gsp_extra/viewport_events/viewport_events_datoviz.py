@@ -5,12 +5,12 @@ from datoviz._figure import Figure as _DvzFigure
 
 # local imports
 from gsp.core import Event
-from gsp.core import Canvas, Viewport
-from gsp.utils.unit_utils import UnitUtils
+from gsp.core import Viewport
 from gsp_datoviz.renderer import DatovizRenderer
-from .viewport_events_types import KeyEvent, MouseEvent, EventType
 from .viewport_events_base import ViewportEventsBase
-from .viewport_events_types import KeyEvent, MouseEvent, KeyboardEventCallback, MouseEventCallback
+from .viewport_events_types import EventType
+from .viewport_events_types import KeyEvent, MouseEvent, CanvasResizeEvent
+from .viewport_events_types import KeyboardEventCallback, MouseEventCallback, CanvasResizeEventCallback
 
 
 class ViewportEventsDatoviz(ViewportEventsBase):
@@ -36,6 +36,7 @@ class ViewportEventsDatoviz(ViewportEventsBase):
         self.button_release_event = Event[MouseEventCallback]()
         self.mouse_move_event = Event[MouseEventCallback]()
         self.mouse_scroll_event = Event[MouseEventCallback]()
+        self.canvas_resize_event = Event[CanvasResizeEventCallback]()
 
         dvz_app: dvz.App = self._renderer.get_dvz_app()
         dvz_figure: _DvzFigure = self._renderer.get_dvz_figure()
@@ -149,6 +150,22 @@ class ViewportEventsDatoviz(ViewportEventsBase):
                 self.mouse_scroll_event.dispatch(mouse_event)
             else:
                 raise ValueError(f"Unknown mouse event type: {mouse_event.event_type}")
+
+        # =============================================================================
+        # Connect resize in dvz_app
+        # =============================================================================
+        @dvz_app.connect(dvz_figure)
+        def on_resize(dvz_resize_event: dvz.WindowEvent):
+            canvas_width_px = dvz_resize_event.screen_width()  # TODO may be a good idea to rename .screen_width() to .canvas_width() or similar in datoviz
+            canvas_height_px = dvz_resize_event.screen_height()
+            # dispatch canvas resize event
+            canvas_resize_event = CanvasResizeEvent(
+                viewport_uuid=self._viewport.get_uuid(),
+                event_type=EventType.CANVAS_RESIZE,
+                canvas_width_px=canvas_width_px,
+                canvas_height_px=canvas_height_px,
+            )
+            self.canvas_resize_event.dispatch(canvas_resize_event)
 
     def close(self):
         """Close the event handler and release resources"""
