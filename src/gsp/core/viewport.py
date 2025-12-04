@@ -40,11 +40,23 @@ class Viewport:
         """
         return self._x
 
+    def set_x(self, x: int) -> None:
+        """
+        Set the x offset (in pixels from left) of the viewport.
+        """
+        self._x = x
+
     def get_y(self) -> int:
         """
         Get the y offset (in pixels from bottom) of the viewport.
         """
         return self._y
+
+    def set_y(self, y: int) -> None:
+        """
+        Set the y offset (in pixels from bottom) of the viewport.
+        """
+        self._y = y
 
     def get_width(self) -> int:
         """
@@ -52,8 +64,20 @@ class Viewport:
         """
         return self._width
 
+    def set_width(self, width: int) -> None:
+        """
+        Set the width (in pixels) of the viewport.
+        """
+        self._width = width
+
     def get_height(self) -> int:
         """
         Get the height (in pixels) of the viewport.
         """
         return self._height
+
+    def set_height(self, height: int) -> None:
+        """
+        Set the height (in pixels) of the viewport.
+        """
+        self._height = height

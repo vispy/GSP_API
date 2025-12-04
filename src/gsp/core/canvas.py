@@ -31,8 +31,17 @@ class Canvas:
     def get_width(self) -> int:
         return self._width
 
+    def set_width(self, width: int) -> None:
+        self._width = width
+
     def get_height(self) -> int:
         return self._height
 
+    def set_height(self, height: int) -> None:
+        self._height = height
+
     def get_dpi(self) -> float:
         return self._dpi
+
+    def set_dpi(self, dpi: float) -> None:
+        self._dpi = dpi
