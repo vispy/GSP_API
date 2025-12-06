@@ -15,17 +15,6 @@
 - transformChain
   - with depth color
   - aka with renderer events
-- add 'resize_event' in viewport events 
-- unit_converter(canvas, viewport)
-  - viewport is always used in ndc
-    - +- X pixel (pre device pixel ratio)
-    - +- X cm
-  - so need to convert pixel to viewport-ndc
-  - so need to convert cm to viewport-ndc
-  - i got the canvas size in pixel and in cm
-    - viewport size in pixel (so i can get viewport size in cm)
-    - so i got a canvas/viewport ratio
-  - so i add the cm/pixel to viewport-ndc
 - example of transformChain + unit conversion
   - assume the canvas DPI is the screen one
   - example: draw an axis with ticks every 1 cm using segments 
@@ -53,6 +42,17 @@
 
 
 ---
+- DONE add 'resize_event' in viewport events 
+- DONE unit_converter(canvas, viewport)
+  - viewport is always used in ndc
+    - +- X pixel (pre device pixel ratio)
+    - +- X cm
+  - so need to convert pixel to viewport-ndc
+  - so need to convert cm to viewport-ndc
+  - i got the canvas size in pixel and in cm
+    - viewport size in pixel (so i can get viewport size in cm)
+    - so i got a canvas/viewport ratio
+  - so i add the cm/pixel to viewport-ndc
 - DONE handle the animation loop
   - with decorator like datoviz? yes
   - API from datoviz

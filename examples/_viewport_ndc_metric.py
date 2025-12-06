@@ -41,6 +41,10 @@ class QtHelper:
 
 
 class ViewportUnitConverter:
+    """
+    Convert between pixel/cm to ndc units in a viewport
+    """
+
     def __init__(self, canvas: Canvas, viewport: Viewport) -> None:
         self._canvas = canvas
         self._viewport = viewport
@@ -119,7 +123,7 @@ def main():
     canvas = create_canvas(canvas_width_cm, canvas_height_cm)
 
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport = Viewport(canvas.get_width() // 2, 0, canvas.get_width() // 2, canvas.get_height() // 2)
 
     viewport_unit = ViewportUnitConverter(canvas, viewport)
     print("Canvas width (px):", viewport_unit._get_canvas_width_px())
@@ -218,6 +222,13 @@ def main():
         segments = Segments(positions_buffer, line_widths_buffer, CapStyle.BUTT, colors_buffer)
         return segments
 
+    axes_segments = generate_segments_axes(viewport_unit)
+    tick_segments_horizontal = generate_segments_ticks_horizontal(viewport_unit)
+    tick_segments_vertical = generate_segments_ticks_vertical(viewport_unit)
+
+    # =============================================================================
+    #
+    # =============================================================================
     def generate_points(viewport_unit: ViewportUnitConverter) -> Points:
         point_count = 1
 
@@ -249,9 +260,6 @@ def main():
         points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
         return points
 
-    axes_segments = generate_segments_axes(viewport_unit)
-    tick_segments_horizontal = generate_segments_ticks_horizontal(viewport_unit)
-    tick_segments_vertical = generate_segments_ticks_vertical(viewport_unit)
     points = generate_points(viewport_unit)
 
     # =============================================================================
@@ -273,23 +281,32 @@ def main():
     # =============================================================================
     #
     # =============================================================================
+
+    # NOTE: it MUST be done as little as possible as those variables are in `int`
+    # - so there is a loss of precision everytime it is computed
+    viewport_canvas_ratio_x: float = viewport.get_x() / canvas.get_width()
+    viewport_canvas_ratio_y: float = viewport.get_y() / canvas.get_height()
+    viewport_canvas_ratio_w: float = viewport.get_width() / canvas.get_width()
+    viewport_canvas_ratio_h: float = viewport.get_height() / canvas.get_height()
+
     def on_canvas_resize(canvas_resize_event: CanvasResizeEvent):
+        nonlocal canvas, viewport
         nonlocal axes_segments
         nonlocal tick_segments_horizontal
         nonlocal tick_segments_vertical
         nonlocal points
-        # TODO unsure of what to do here - try to keep the axes and ticks updated in cm units
-        # - so update canvas size in px, viewport size in px
-        #   - support .set_width(), .set_height() on canvas and viewport?
-        # - recompute all the segments and points positions
-        # - rerender
+
         print("canvas_resize_event", canvas_resize_event)
 
+        # resize the canvas
         canvas.set_width(canvas_resize_event.canvas_width_px)
         canvas.set_height(canvas_resize_event.canvas_height_px)
 
-        viewport.set_width(canvas.get_width())
-        viewport.set_height(canvas.get_height())
+        # set viewport size according to previous ratios
+        viewport.set_x(int(canvas.get_width() * viewport_canvas_ratio_x))
+        viewport.set_y(int(canvas.get_height() * viewport_canvas_ratio_y))
+        viewport.set_width(int(canvas.get_width() * viewport_canvas_ratio_w))
+        viewport.set_height(int(canvas.get_height() * viewport_canvas_ratio_h))
 
         # get current uuids
         axes_segments_uuid = axes_segments.get_uuid()
@@ -317,6 +334,7 @@ def main():
             [camera, camera, camera, camera],
         )
 
+    # create viewport events and subscribe to canvas resize
     viewport_events = ExampleHelper.create_viewport_events(renderer_base, viewport)
     viewport_events.canvas_resize_event.subscribe(on_canvas_resize)
 
