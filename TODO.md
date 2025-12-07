@@ -1,3 +1,9 @@
+- transform chain + viewport unit conversion in .userData
+  - MathOpUnit link
+    - op_code: add/sub/mul/div
+    - scalar_value: float32
+    - scalar_unit: enum (ndc, px, cm, inch, pt)
+  - All in user space
 - how to leverage big_tester ? 
   - do i use it in a test suite ? or just as an example ?
   - what about having a big_tester_test.py which use it as a test suite and generate many cases
@@ -39,7 +45,6 @@
   - how to pass the canvas to the transform chain?
     - can this be done in userspace
     - possibility: set by class or by instance
-
 
 ---
 - DONE add 'resize_event' in viewport events 
