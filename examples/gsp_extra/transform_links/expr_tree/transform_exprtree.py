@@ -1,150 +1,160 @@
-# expr_tree.py
+from __future__ import annotations
 from abc import ABC, abstractmethod
-import math
+from typing import Dict, Any, Union
+
+Number = Union[int, float]
 
 
-# =========================
-# Base Node + DSL Overloads
-# =========================
+# ============================
+# Base Expression Node
+# ============================
 class Node(ABC):
     @abstractmethod
-    def evaluate(self, context=None) -> "Node":
-        pass
+    def eval(self, context: Dict[str, float]) -> float: ...
 
-    # Operator overloading for DSL
-    def __add__(self, other):
+    # --- Operator overloads to create DSL ---
+    def __add__(self, other: Union[Node, Number]) -> Node:
         return Add(self, _to_node(other))
 
-    # Operator overloading for DSL
-    def __radd__(self, other):
+    def __radd__(self, other: Number) -> Node:
         return Add(_to_node(other), self)
 
-    def __sub__(self, other):
+    def __sub__(self, other: Union[Node, Number]) -> Node:
         return Sub(self, _to_node(other))
 
-    def __mul__(self, other):
+    def __rsub__(self, other: Number) -> Node:
+        return Sub(_to_node(other), self)
+
+    def __mul__(self, other: Union[Node, Number]) -> Node:
         return Mul(self, _to_node(other))
 
-    def __truediv__(self, other):
+    def __rmul__(self, other: Number) -> Node:
+        return Mul(_to_node(other), self)
+
+    def __truediv__(self, other: Union[Node, Number]) -> Node:
         return Div(self, _to_node(other))
 
-    def __pow__(self, other):
-        return Pow(self, _to_node(other))
+    def __rtruediv__(self, other: Number) -> Node:
+        return Div(_to_node(other), self)
 
-    # Optional for nice string representation
-    def __repr__(self):
-        return f"{self.__class__.__name__}()"
-
-
-def _to_node(x):
-    """Convert raw values (int/float) to Value nodes automatically."""
-    return x if isinstance(x, Node) else Value(x)
+    # def pretty(self) -> str:
+    #     return pretty_print(self)
 
 
-# =========================
-# Node Implementations
-# =========================
+# helper to auto-convert literals into Value()
+def _to_node(x: Union[Node, Number]) -> Node:
+    return x if isinstance(x, Node) else Value(float(x))
+
+
+# ============================
+# Leaf nodes
+# ============================
 class Value(Node):
-    def __init__(self, value):
+    def __init__(self, value: float) -> None:
         self.value = value
 
-    def evaluate(self, context=None):
+    def eval(self, context: Dict[str, float]) -> float:
         return self.value
 
-    def __repr__(self):
-        return f"Value({self.value})"
+    def __repr__(self) -> str:
+        return f"{self.value}"
 
 
-class Var(Node):
-    def __init__(self, name):
+class Variable(Node):
+    def __init__(self, name: str) -> None:
         self.name = name
 
-    def evaluate(self, context=None):
-        if context and self.name in context:
-            return context[self.name]
-        raise ValueError(f"Variable '{self.name}' missing in context")
+    def eval(self, context: Dict[str, float]) -> float:
+        if self.name not in context:
+            raise KeyError(f"Variable '{self.name}' not found in context")
+        return context[self.name]
 
-    def __repr__(self):
-        return f"Var({self.name})"
-
-
-class BinOp(Node):
-    def __init__(self, left, right):
-        self.left = _to_node(left)
-        self.right = _to_node(right)
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.left}, {self.right})"
+    def __repr__(self) -> str:
+        return self.name
 
 
-class Add(BinOp):
-    def evaluate(self, context=None) -> Node:
-        return self.left.evaluate(context) + self.right.evaluate(context)
+# ============================
+# Operator base
+# ============================
+class BinaryOp(Node):
+    def __init__(self, left: Node, right: Node) -> None:
+        self.left = left
+        self.right = right
+
+    @property
+    @abstractmethod
+    def symbol(self) -> str:
+        pass
+
+    def __repr__(self) -> str:
+        return f"({self.left} {self.symbol} {self.right})"
 
 
-class Sub(BinOp):
-    def evaluate(self, context=None):
-        return self.left.evaluate(context) - self.right.evaluate(context)
+# ============================
+# Specific operators
+# ============================
+class Add(BinaryOp):
+    @property
+    def symbol(self) -> str:
+        return "+"
+
+    def eval(self, context: Dict[str, float]) -> float:
+        return self.left.eval(context) + self.right.eval(context)
 
 
-class Mul(BinOp):
-    def evaluate(self, context=None):
-        return self.left.evaluate(context) * self.right.evaluate(context)
+class Sub(BinaryOp):
+    @property
+    def symbol(self) -> str:
+        return "-"
+
+    def eval(self, context: Dict[str, float]) -> float:
+        return self.left.eval(context) - self.right.eval(context)
 
 
-class Div(BinOp):
-    def evaluate(self, context=None):
-        return self.left.evaluate(context) / self.right.evaluate(context)
+class Mul(BinaryOp):
+    @property
+    def symbol(self) -> str:
+        return "*"
+
+    def eval(self, context: Dict[str, float]) -> float:
+        return self.left.eval(context) * self.right.eval(context)
 
 
-class Pow(BinOp):
-    def evaluate(self, context=None):
-        return self.left.evaluate(context) ** self.right.evaluate(context)
+class Div(BinaryOp):
+    @property
+    def symbol(self) -> str:
+        return "/"
+
+    def eval(self, context: Dict[str, float]) -> float:
+        return self.left.eval(context) / self.right.eval(context)
 
 
-# =========================
-# Functions (sin, cos, ...)
-# =========================
-class Func(Node):
-    def __init__(self, func, node):
-        self.func = func
-        self.node = _to_node(node)
+# =============================================================================
+#
+# =============================================================================
+def pretty_print(node: Node, indent: str = "", last: bool = True) -> str:
+    """Return an ASCII representation of the expression tree."""
+    out = indent
+    out += "└── " if last else "├── "
+    out += repr(node) + "\n"
 
-    def evaluate(self, context=None) -> "Node":
-        return self.func(self.node.evaluate(context))
+    if isinstance(node, BinaryOp):
+        indent += "    " if last else "│   "
+        # left is printed first, then right
+        out += pretty_print(node.left, indent, False)
+        out += pretty_print(node.right, indent, True)
 
-    def __repr__(self):
-        return f"Func({self.func.__name__}, {self.node})"
-
-
-def sin(x):
-    return Func(math.sin, x)
-
-
-def cos(x):
-    return Func(math.cos, x)
+    return out
 
 
-# =========================
-# Standalone Test / Demo
-# =========================
+# ============================
+# Test Example
+# ============================
 if __name__ == "__main__":
-    # Create DSL variables
-    x = Var("x")
-    y = Var("y")
+    x, y = Variable("x"), Variable("y")
+    # (5 + x) * (y - 1)
+    expr = (5 + x) * (y - 1)
 
-    # Example expression: (x + 3) * (y - 1)^2 + sin(x)
-    expr = (x + 3) * (y - 1) ** 2 + sin(x)
-
-    print("Expression Tree:", expr)
-    print()
-
-    context = {"x": 1.57, "y": 5}  # sin(pi/2) approx 1
-    result = expr.evaluate(context)
-
-    print("Context:", context)
-    print("Result:", result)
-    print()
-    print("Manual check:")
-    print(f"  (1.57 + 3) * (5 - 1)^2 + sin(1.57)")
-    print(f"≈ 4.57 * 16 + 1 = {4.57*16 + 1}")
+    print("Expr =", expr)
+    print("Result =", expr.eval({"x": 3, "y": 2}))
+    print(pretty_print(expr))
