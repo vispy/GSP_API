@@ -37,9 +37,6 @@ class Node(ABC):
     def __rtruediv__(self, other: Number) -> Node:
         return Div(_to_node(other), self)
 
-    # def pretty(self) -> str:
-    #     return pretty_print(self)
-
 
 # helper to auto-convert literals into Value()
 def _to_node(x: Union[Node, Number]) -> Node:
