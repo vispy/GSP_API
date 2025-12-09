@@ -122,7 +122,8 @@ class MatplotlibRenderer(RendererBase):
         if return_image:
             # Render the image to a PNG buffer
             image_png_buffer = io.BytesIO()
-            matplotlib.pyplot.savefig(image_png_buffer, format=image_format)
+            self._figure.savefig(image_png_buffer, format=image_format, dpi=self.canvas.get_dpi())
+
             image_png_buffer.seek(0)
             image_png_data = image_png_buffer.getvalue()
             image_png_buffer.close()
