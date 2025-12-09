@@ -48,6 +48,7 @@ def main():
     font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
     anchors_numpy = np.array([[0.0, 1.0], [0.0, 1.0]], dtype=np.float32)
+    anchors_numpy = np.array([[0.0, 0.0], [0.0, 1.0]], dtype=np.float32)
     anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
 
     angles_numpy = np.array([+45, -45], dtype=np.float32)
