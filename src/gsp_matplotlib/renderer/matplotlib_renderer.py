@@ -7,6 +7,8 @@ import warnings
 # pip imports
 import matplotlib
 
+from gsp.visuals.texts import Texts
+
 # trick to disable the toolbar in matplotlib
 matplotlib.rcParams["toolbar"] = "none"
 
@@ -153,6 +155,11 @@ class MatplotlibRenderer(RendererBase):
             from gsp_matplotlib.renderer.matplotlib_renderer_segments import RendererSegments
 
             RendererSegments.render(self, viewport, visual, model_matrix, camera)
+
+        elif isinstance(visual, Texts):
+            from gsp_matplotlib.renderer.matplotlib_renderer_texts import RendererTexts
+
+            RendererTexts.render(self, viewport, visual, model_matrix, camera)
         else:
             raise NotImplementedError(f"Rendering for visual type {type(visual)} is not implemented.")
 
