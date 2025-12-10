@@ -1,3 +1,6 @@
+- serialize/deserialize texts
+  - test with network
+- support texts in datoviz
 - transform chain + viewport unit conversion in .userData
   - MathOpUnit link
     - op_code: add/sub/mul/div

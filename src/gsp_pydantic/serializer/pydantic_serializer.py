@@ -15,11 +15,21 @@ from gsp.visuals.paths import Paths
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
 from gsp.visuals.segments import Segments
+from gsp.visuals.texts import Texts
 from gsp.core.camera import Camera
 from gsp.types.transbuf import TransBuf
 from gsp.types.buffer import Buffer
 from gsp.transforms.transform_chain import TransformChain
-from ..types.pydantic_types import PydanticCanvas, PydanticMarkers, PydanticPaths, PydanticViewport, PydanticModelMatrix, PydanticCamera, PydanticScene
+from ..types.pydantic_types import (
+    PydanticCanvas,
+    PydanticMarkers,
+    PydanticPaths,
+    PydanticTexts,
+    PydanticViewport,
+    PydanticModelMatrix,
+    PydanticCamera,
+    PydanticScene,
+)
 from ..types.pydantic_types import PydanticVisual, PydanticPixels, PydanticPoints, PydanticSegments
 from ..types.pydantic_types import PydanticTransBuf, PydanticBuffer, PydanticTransformChain
 from ..types.pydantic_dict import PydanticDict
@@ -100,7 +110,37 @@ class PydanticSerializer(SerializerBase):
     def _visuals_to_pydantic(visuals: Sequence[VisualBase]) -> list[PydanticVisual]:
         pydantic_visuals: list[PydanticVisual] = []
         for visual in visuals:
-            if isinstance(visual, Pixels):
+            if isinstance(visual, Markers):
+                markers = typing.cast(Markers, visual)
+                pydantic_visual = PydanticVisual(
+                    type="markers",
+                    visual=PydanticMarkers(
+                        uuid=markers.get_uuid(),
+                        marker_shape=markers.get_marker_shape().name,
+                        positions=PydanticSerializer._transbuf_to_pydantic(markers.get_positions()),
+                        sizes=PydanticSerializer._transbuf_to_pydantic(markers.get_sizes()),
+                        face_colors=PydanticSerializer._transbuf_to_pydantic(markers.get_face_colors()),
+                        edge_colors=PydanticSerializer._transbuf_to_pydantic(markers.get_edge_colors()),
+                        edge_widths=PydanticSerializer._transbuf_to_pydantic(markers.get_edge_widths()),
+                    ),
+                )
+                pydantic_visuals.append(pydantic_visual)
+            elif isinstance(visual, Paths):
+                paths = typing.cast(Paths, visual)
+                pydantic_visual = PydanticVisual(
+                    type="paths",
+                    visual=PydanticPaths(
+                        uuid=paths.get_uuid(),
+                        positions=PydanticSerializer._transbuf_to_pydantic(paths.get_positions()),
+                        path_sizes=PydanticSerializer._transbuf_to_pydantic(paths.get_path_sizes()),
+                        colors=PydanticSerializer._transbuf_to_pydantic(paths.get_colors()),
+                        line_widths=PydanticSerializer._transbuf_to_pydantic(paths.get_line_widths()),
+                        cap_style=paths.get_cap_style().name,
+                        join_style=paths.get_join_style().name,
+                    ),
+                )
+                pydantic_visuals.append(pydantic_visual)
+            elif isinstance(visual, Pixels):
                 pixels = typing.cast(Pixels, visual)
                 pydantic_visual = PydanticVisual(
                     type="pixels",
@@ -139,33 +179,19 @@ class PydanticSerializer(SerializerBase):
                     ),
                 )
                 pydantic_visuals.append(pydantic_visual)
-            elif isinstance(visual, Paths):
-                paths = typing.cast(Paths, visual)
+            elif isinstance(visual, Texts):
+                texts = typing.cast(Texts, visual)
                 pydantic_visual = PydanticVisual(
-                    type="paths",
-                    visual=PydanticPaths(
-                        uuid=paths.get_uuid(),
-                        positions=PydanticSerializer._transbuf_to_pydantic(paths.get_positions()),
-                        path_sizes=PydanticSerializer._transbuf_to_pydantic(paths.get_path_sizes()),
-                        colors=PydanticSerializer._transbuf_to_pydantic(paths.get_colors()),
-                        line_widths=PydanticSerializer._transbuf_to_pydantic(paths.get_line_widths()),
-                        cap_style=paths.get_cap_style().name,
-                        join_style=paths.get_join_style().name,
-                    ),
-                )
-                pydantic_visuals.append(pydantic_visual)
-            elif isinstance(visual, Markers):
-                markers = typing.cast(Markers, visual)
-                pydantic_visual = PydanticVisual(
-                    type="markers",
-                    visual=PydanticMarkers(
-                        uuid=markers.get_uuid(),
-                        marker_shape=markers.get_marker_shape().name,
-                        positions=PydanticSerializer._transbuf_to_pydantic(markers.get_positions()),
-                        sizes=PydanticSerializer._transbuf_to_pydantic(markers.get_sizes()),
-                        face_colors=PydanticSerializer._transbuf_to_pydantic(markers.get_face_colors()),
-                        edge_colors=PydanticSerializer._transbuf_to_pydantic(markers.get_edge_colors()),
-                        edge_widths=PydanticSerializer._transbuf_to_pydantic(markers.get_edge_widths()),
+                    type="texts",
+                    visual=PydanticTexts(
+                        uuid=texts.get_uuid(),
+                        positions=PydanticSerializer._transbuf_to_pydantic(texts.get_positions()),
+                        texts=texts.get_texts(),
+                        colors=PydanticSerializer._transbuf_to_pydantic(texts.get_colors()),
+                        font_sizes=PydanticSerializer._transbuf_to_pydantic(texts.get_font_sizes()),
+                        anchors=PydanticSerializer._transbuf_to_pydantic(texts.get_anchors()),
+                        angles=PydanticSerializer._transbuf_to_pydantic(texts.get_angles()),
+                        font_name=texts.get_font_name(),
                     ),
                 )
                 pydantic_visuals.append(pydantic_visual)
