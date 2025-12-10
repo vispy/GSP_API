@@ -70,8 +70,8 @@ class RendererTexts:
         artist_uuid_sample = f"{viewport.get_uuid()}_{texts.get_uuid()}_0"
         if artist_uuid_sample not in renderer._artists:
             mpl_axes = renderer.get_mpl_axes_for_viewport(viewport)
-            for i in range(len(texts.get_texts())):
-                artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}_{i}"
+            for text_index in range(len(texts.get_strings())):
+                artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}_{text_index}"
                 mpl_text = matplotlib.text.Text()
                 mpl_text.set_visible(False)
                 # hide until properly positioned and sized
@@ -83,8 +83,8 @@ class RendererTexts:
         # =============================================================================
 
         changed_artists: list[matplotlib.artist.Artist] = []
-        for i in range(len(texts.get_texts())):
-            artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}_{i}"
+        for text_index in range(len(texts.get_strings())):
+            artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}_{text_index}"
             mpl_text = typing.cast(matplotlib.text.Text, renderer._artists[artist_uuid])
             mpl_text.set_visible(True)
 
@@ -92,18 +92,19 @@ class RendererTexts:
             # Update artists
             # =============================================================================
 
-            mpl_text.set_x(vertices_2d[i, 0])
-            mpl_text.set_y(vertices_2d[i, 1])
-            mpl_text.set_text(texts.get_texts()[i])
-            mpl_text.set_rotation(angles_numpy[i])
+            mpl_text.set_x(vertices_2d[text_index, 0])
+            mpl_text.set_y(vertices_2d[text_index, 1])
+            mpl_text.set_text(texts.get_strings()[text_index])
+            mpl_text.set_rotation(angles_numpy[text_index])
 
-            ha_label = "center" if anchors_numpy[i, 0] == 0.0 else "right" if anchors_numpy[i, 0] == 1.0 else "left"
+            ha_label = "center" if anchors_numpy[text_index, 0] == 0.0 else "right" if anchors_numpy[text_index, 0] == 1.0 else "left"
             mpl_text.set_horizontalalignment(ha_label)
-            va_label = "center" if anchors_numpy[i, 1] == 0.0 else "top" if anchors_numpy[i, 1] == 1.0 else "bottom"
+            va_label = "center" if anchors_numpy[text_index, 1] == 0.0 else "top" if anchors_numpy[text_index, 1] == 1.0 else "bottom"
             mpl_text.set_verticalalignment(va_label)
+
             mpl_text.set_fontfamily(texts.get_font_name())
-            mpl_text.set_fontsize(font_sizes_numpy[i])
-            mpl_text.set_color(typing.cast(tuple, colors_numpy[i]))
+            mpl_text.set_fontsize(font_sizes_numpy[text_index])
+            mpl_text.set_color(typing.cast(tuple, colors_numpy[text_index]))
 
             # Return the list of artists created/updated
             changed_artists.append(mpl_text)

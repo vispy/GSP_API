@@ -186,7 +186,7 @@ class PydanticSerializer(SerializerBase):
                     visual=PydanticTexts(
                         uuid=texts.get_uuid(),
                         positions=PydanticSerializer._transbuf_to_pydantic(texts.get_positions()),
-                        texts=texts.get_texts(),
+                        texts=texts.get_strings(),
                         colors=PydanticSerializer._transbuf_to_pydantic(texts.get_colors()),
                         font_sizes=PydanticSerializer._transbuf_to_pydantic(texts.get_font_sizes()),
                         anchors=PydanticSerializer._transbuf_to_pydantic(texts.get_anchors()),

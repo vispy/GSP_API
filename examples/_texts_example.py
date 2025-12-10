@@ -38,7 +38,7 @@ def main():
     positions_numpy = np.array([[-0.5, 0.0, 0.0], [0.5, 0.0, 0.0]], dtype=np.float32)
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
-    texts_content: list[str] = ["Hello", "World"]
+    strings: list[str] = ["Hello", "World"]
 
     # colors - Create buffer and fill it with a constant
     colors_buffer = Buffer(point_count, BufferType.rgba8)
@@ -57,7 +57,7 @@ def main():
     font_name = "Arial"
 
     # Create the Texts visual
-    texts = Texts(positions_buffer, texts_content, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+    texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
 
     # =============================================================================
     # Render the canvas

@@ -24,10 +24,11 @@ from gsp.core.viewport import Viewport
 from gsp.types.visual_base import VisualBase
 from gsp.types.transbuf import TransBuf
 from gsp.visuals.markers import Markers
+from gsp.visuals.paths import Paths
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
-from gsp.visuals.paths import Paths
 from gsp.visuals.segments import Segments
+from gsp.visuals.texts import Texts
 from gsp.types.renderer_base import RendererBase
 
 
@@ -159,6 +160,10 @@ class DatovizRenderer(RendererBase):
             from .datoviz_renderer_segments import DatovizRendererSegments
 
             DatovizRendererSegments.render(self, viewport, visual, model_matrix, camera)
+        elif isinstance(visual, Texts):
+            from .datoviz_renderer_texts import DatovizRendererTexts
+
+            DatovizRendererTexts.render(self, viewport, visual, model_matrix, camera)
         else:
             raise NotImplementedError(f"DatovizRenderer.render() does not support visual of type {type(visual)}")
 

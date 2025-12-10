@@ -7,12 +7,12 @@ from ..types.join_style import JoinStyle
 
 
 class Texts(VisualBase):
-    __slots__ = ["_positions", "_texts", "_colors", "_font_sizes", "_anchors", "_angles", "_font_name"]
+    __slots__ = ["_positions", "_strings", "_colors", "_font_sizes", "_anchors", "_angles", "_font_name"]
 
     def __init__(
         self,
         positions: TransBuf,
-        texts: list[str],
+        strings: list[str],
         colors: TransBuf,
         font_sizes: TransBuf,
         anchors: TransBuf,
@@ -22,7 +22,7 @@ class Texts(VisualBase):
         super().__init__()
 
         self._positions: TransBuf = positions
-        self._texts: list[str] = texts
+        self._strings: list[str] = strings
         self._colors: TransBuf = colors
         self._font_sizes: TransBuf = font_sizes
         self._anchors: TransBuf = anchors
@@ -41,11 +41,11 @@ class Texts(VisualBase):
         self._positions = positions
         self.check_attributes()
 
-    def get_texts(self) -> list[str]:
-        return self._texts
+    def get_strings(self) -> list[str]:
+        return self._strings
 
-    def set_texts(self, texts: list[str]) -> None:
-        self._texts = texts
+    def set_strings(self, strings: list[str]) -> None:
+        self._strings = strings
         self.check_attributes()
 
     def get_colors(self) -> TransBuf:
@@ -97,7 +97,7 @@ class Texts(VisualBase):
         if positions is not None:
             self._positions = positions
         if texts is not None:
-            self._texts = texts
+            self._strings = texts
         if colors is not None:
             self._colors = colors
         if font_sizes is not None:
@@ -116,7 +116,7 @@ class Texts(VisualBase):
 
     def check_attributes(self) -> None:
         """Check that the attributes are valid and consistent."""
-        self.sanity_check_attributes(self._positions, self._texts, self._colors, self._font_sizes, self._anchors, self._angles, self._font_name)
+        self.sanity_check_attributes(self._positions, self._strings, self._colors, self._font_sizes, self._anchors, self._angles, self._font_name)
 
     @staticmethod
     def sanity_check_attributes_buffer(
