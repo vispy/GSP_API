@@ -15,7 +15,6 @@ from gsp.visuals import Texts
 from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
-from gsp.utils.unit_utils import UnitUtils
 
 
 def main():

@@ -4,19 +4,16 @@ import typing
 
 # pip imports
 import numpy as np
-from datoviz.visuals import Point as _DvzPoints
+from datoviz.visuals import Glyph as _DvzGlyphs
 
 # local imports
 from gsp.core.camera import Camera
-from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp_matplotlib.extra.bufferx import Bufferx
 from gsp.types.transbuf import TransBuf
 from gsp.visuals.texts import Texts
 from gsp.utils.transbuf_utils import TransBufUtils
 from .datoviz_renderer import DatovizRenderer
-from gsp.utils.group_utils import GroupUtils
-from gsp.utils.unit_utils import UnitUtils
 
 
 class DatovizRendererTexts:
@@ -52,37 +49,41 @@ class DatovizRendererTexts:
         # Create the datoviz visual if needed
         # =============================================================================
 
-        artist_uuid_sample = f"{viewport.get_uuid()}_{texts.get_uuid()}_0"
+        artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}"
 
         # Create datoviz_visual if they do not exist
-        if artist_uuid_sample not in renderer._dvz_visuals:
-            for text_index in range(len(texts.get_strings())):
-                artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}_{text_index}"
-                dvz_points = renderer._dvz_app.point(
-                    position=dummy_position_numpy,
-                    color=dummy_color_numpy,
-                    size=dummy_size_numpy,
-                )
-                renderer._dvz_visuals[artist_uuid] = dvz_points
-                # Add the new visual to the panel
-                dvz_panel.add(dvz_points)
+        if artist_uuid not in renderer._dvz_visuals:
+            artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}"
+            dvz_glyphs = renderer._dvz_app.glyph(font_size=100)
+            # set dummy strings to initialize the visual
+            dvz_glyphs.set_strings(["dummy string"], string_pos=np.array([[0.0, 0.0, 0.0]], dtype=np.float32), scales=np.array([1.0], dtype=np.float32))
+            renderer._dvz_visuals[artist_uuid] = dvz_glyphs
+            # Add the new visual to the panel
+            dvz_panel.add(dvz_glyphs)
 
         # =============================================================================
         # Update all attributes
         # =============================================================================
 
-        # get the datoviz visual
-        dvz_points = typing.cast(_DvzPoints, renderer._dvz_visuals[artist_uuid])
+        # # get the datoviz visual
+        dvz_glyphs = typing.cast(_DvzGlyphs, renderer._dvz_visuals[artist_uuid])
 
-        # set attributes
-        group_vertices = vertices_numpy
-        dvz_points.set_position(group_vertices)
+        text_count = len(texts.get_strings())
+        glyph_count = sum(map(len, texts.get_strings()))
 
-        # set group_sizes
-        group_sizes = np.tile(diameter_px_numpy, group_vertices.__len__()).reshape((-1, 1))
-        group_sizes = group_sizes.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
-        dvz_points.set_size(group_sizes)
+        # build glyph scales from font sizes
+        glyph_scales = np.zeros((text_count,), dtype=np.float32)
+        for text_index in range(text_count):
+            # TODO font-size is in typographic points, have to convert to pixels ? relation with the font_size of the dvz visual ?
+            # glyph_scales[text_index] = font_sizes_numpy[text_index, 0]  # dvz visual default font size is 100
+            glyph_scales[text_index] = 1  # dvz visual default font size is 100
 
-        # set group_colors
-        group_colors = np.tile(face_colors_numpy, group_vertices.__len__()).reshape((-1, 4))
-        dvz_points.set_color(group_colors)
+        # build glyph colors from text colors
+        glyph_colors = np.zeros((glyph_count, 4), dtype=np.uint8)
+        for text_index in range(text_count):
+            for glyph_index in range(len(texts.get_strings()[text_index])):
+                global_glyph_index = sum(len(s) for s in texts.get_strings()[:text_index]) + glyph_index
+                glyph_colors[global_glyph_index, :] = colors_numpy[text_index, :]
+
+        dvz_glyphs.set_strings(texts.get_strings(), string_pos=vertices_numpy, scales=glyph_scales)
+        dvz_glyphs.set_color(glyph_colors)

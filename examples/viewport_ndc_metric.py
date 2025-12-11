@@ -123,7 +123,7 @@ def main():
     canvas = create_canvas(canvas_width_cm, canvas_height_cm)
 
     # Create a viewport and add it to the canvas
-    viewport = Viewport(canvas.get_width() // 2, 0, canvas.get_width() // 2, canvas.get_height() // 2)
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
 
     viewport_unit = ViewportUnitConverter(canvas, viewport)
     print("Canvas width (px):", viewport_unit._get_canvas_width_px())
