@@ -29,8 +29,8 @@ from gsp_extra.viewport_events.viewport_events_network import ViewportEventsNetw
 
 class ExampleHelper:
 
-    # default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "matplotlib"
-    default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "datoviz"
+    default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "matplotlib"
+    # default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "datoviz"
 
     @staticmethod
     def get_renderer_name() -> Literal["matplotlib", "datoviz", "network"]:

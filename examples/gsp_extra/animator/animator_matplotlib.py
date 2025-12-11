@@ -17,6 +17,7 @@ from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.core.camera import Camera
 from gsp.visuals.points import Points
+from gsp.visuals.texts import Texts
 from gsp.core import Event
 from .animator_types import AnimatorFunc, VideoSavedCalledback
 from .animator_base import AnimatorBase
@@ -248,6 +249,12 @@ class AnimatorMatplotlib(AnimatorBase):
             artist_uuid = f"{viewport.get_uuid()}_{points.get_uuid()}"
             mpl_artist = self._matplotlib_renderer._artists[artist_uuid]
             mpl_artists.append(mpl_artist)
+        elif isinstance(visual, Texts):
+            texts: Texts = visual
+            for text_index in range(len(texts.get_strings())):
+                artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}_{text_index}"
+                mpl_artist = self._matplotlib_renderer._artists[artist_uuid]
+                mpl_artists.append(mpl_artist)
         else:
             raise NotImplementedError(f"Getting mpl artists for visual type {type(visual)} is not implemented.")
 

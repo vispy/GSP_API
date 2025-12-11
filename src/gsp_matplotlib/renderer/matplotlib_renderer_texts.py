@@ -95,7 +95,8 @@ class RendererTexts:
             mpl_text.set_x(vertices_2d[text_index, 0])
             mpl_text.set_y(vertices_2d[text_index, 1])
             mpl_text.set_text(texts.get_strings()[text_index])
-            mpl_text.set_rotation(angles_numpy[text_index])
+            mpl_text.set_rotation(angles_numpy[text_index] / np.pi * 180.0)  # convert rad to deg
+            print("angles_numpy[text_index]:", angles_numpy[text_index], " for text_index:", text_index)
 
             ha_label = "center" if anchors_numpy[text_index, 0] == 0.0 else "right" if anchors_numpy[text_index, 0] == 1.0 else "left"
             mpl_text.set_horizontalalignment(ha_label)

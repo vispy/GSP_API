@@ -9,6 +9,7 @@ import numpy as np
 
 # local imports
 from common.example_helper import ExampleHelper
+from gsp.types.visual_base import VisualBase
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Texts
@@ -31,26 +32,26 @@ def main():
     # Add random points
     # - various ways to create Buffers
     # =============================================================================
-    point_count = 2
+    string_count = 2
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.array([[-0.5, 0.0, 0.0], [0.5, 0.0, 0.0]], dtype=np.float32)
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
+    # strings content
     strings: list[str] = ["Hello", "World"]
 
     # colors - Create buffer and fill it with a constant
-    colors_buffer = Buffer(point_count, BufferType.rgba8)
-    colors_buffer.set_data(Constants.Color.red + Constants.Color.green, 0, point_count)
+    colors_numpy = np.array([255, 0, 0, 255] + [0, 255, 0, 255], dtype=np.uint8).reshape((string_count, 4))
+    colors_buffer = Bufferx.from_numpy(colors_numpy, BufferType.rgba8)
 
     font_size_numpy = np.array([12, 12], dtype=np.float32)
     font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
-    anchors_numpy = np.array([[0.0, 1.0], [0.0, 1.0]], dtype=np.float32)
     anchors_numpy = np.array([[0.0, 0.0], [0.0, 1.0]], dtype=np.float32)
     anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
 
-    angles_numpy = np.array([+45, -45], dtype=np.float32)
+    angles_numpy = np.array([+np.pi / 4, -np.pi / 4], dtype=np.float32)
     angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
 
     font_name = "Arial"
@@ -73,13 +74,22 @@ def main():
     # Create renderer and render
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-    rendered_image = renderer_base.render([viewport], [texts], [model_matrix], [camera])
+    animator = ExampleHelper.create_animator(renderer_base)
 
-    # Save to file
-    ExampleHelper.save_output_image(rendered_image, f"{pathlib.Path(__file__).stem}_{renderer_name}.png")
+    @animator.event_listener
+    def animator_callback(delta_time: float) -> list[VisualBase]:
+        angles_numpy[0] += np.pi / 2 * delta_time
+        angles_numpy[0] = angles_numpy[0] % (2 * np.pi)
+        angles_buffer.set_data(bytearray(angles_numpy.tobytes()), 0, string_count)
+        print("angles_numpy[0]:", angles_numpy[0])
 
-    # Show the renderer
-    renderer_base.show()
+        font_size_numpy[0] = 12 + np.sin(angles_numpy[0]) * 4
+        font_size_buffer.set_data(bytearray(font_size_numpy.tobytes()), 0, string_count)
+
+        changed_visuals: list[VisualBase] = [texts]
+        return changed_visuals
+
+    animator.start([viewport], [texts], [model_matrix], [camera])
 
 
 if __name__ == "__main__":
