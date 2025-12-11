@@ -14,6 +14,7 @@ from gsp.types.transbuf import TransBuf
 from gsp.visuals.texts import Texts
 from gsp.utils.transbuf_utils import TransBufUtils
 from .datoviz_renderer import DatovizRenderer
+from gsp.utils.unit_utils import UnitUtils
 
 
 class DatovizRendererTexts:
@@ -68,8 +69,9 @@ class DatovizRendererTexts:
         # # get the datoviz visual
         dvz_glyphs = typing.cast(_DvzGlyphs, renderer._dvz_visuals[artist_uuid])
 
-        text_count = len(texts.get_strings())
-        glyph_count = sum(map(len, texts.get_strings()))
+        text_strings = texts.get_strings()
+        text_count = len(text_strings)
+        glyph_count = sum(map(len, text_strings))
 
         # build glyph scales from font sizes
         glyph_scales = np.zeros((text_count,), dtype=np.float32)
@@ -81,9 +83,16 @@ class DatovizRendererTexts:
         # build glyph colors from text colors
         glyph_colors = np.zeros((glyph_count, 4), dtype=np.uint8)
         for text_index in range(text_count):
-            for glyph_index in range(len(texts.get_strings()[text_index])):
-                global_glyph_index = sum(len(s) for s in texts.get_strings()[:text_index]) + glyph_index
+            for glyph_index in range(len(text_strings[text_index])):
+                global_glyph_index = sum(len(s) for s in text_strings[:text_index]) + glyph_index
                 glyph_colors[global_glyph_index, :] = colors_numpy[text_index, :]
 
-        dvz_glyphs.set_strings(texts.get_strings(), string_pos=vertices_numpy, scales=glyph_scales)
+        glyphs_angles = np.zeros((glyph_count,), dtype=np.float32)
+        for text_index in range(text_count):
+            for glyph_index in range(len(text_strings[text_index])):
+                global_glyph_index = sum(len(s) for s in text_strings[:text_index]) + glyph_index
+                glyphs_angles[global_glyph_index] = angles_numpy[text_index, 0] / 180 * np.pi  # convert to radians
+
+        dvz_glyphs.set_strings(text_strings, string_pos=vertices_numpy)
         dvz_glyphs.set_color(glyph_colors)
+        dvz_glyphs.set_angle(glyphs_angles)
