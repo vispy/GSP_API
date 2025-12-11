@@ -50,3 +50,14 @@ network_server: ## Run the network renderer server
 	
 network_server_user_transforms: ## Run the network renderer server with all the user transforms enabled
 	python3 ./examples/gsp_extra/transform_links/transform_network_server.py
+
+###############################################################################
+
+mkdocs_serve: ## Serve the MkDocs documentation locally
+	mkdocs serve
+
+mkdocs_build: ## Build the MkDocs documentation site
+	mkdocs build
+
+mkdocs_deploy: mkdocs_build ## Deploy the MkDocs documentation site to GitHub Pages
+	mkdocs gh-deploy --clean

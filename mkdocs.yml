@@ -1,0 +1,25 @@
+site_name: GSP
+
+docs_dir: mkdocs_source
+site_dir: mkdocs_build
+
+theme:
+  name: material # built-in theme
+
+nav:
+  - Home: index.md
+  - About: about.md
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - tables
+  - fenced_code
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/vispy/GSP_API
+
+repo_url: https://github.com/vispy/GSP_API
+repo_name: GSP_API
