@@ -11,6 +11,10 @@ nav:
   - About: about.md
   - API Reference:
       - GSP: api/gsp.md
+      - GSP Network: api/gsp_network.md
+      - GSP Pydantic: api/gsp_pydantic.md
+      - GSP Matplotlib: api/gsp_matplotlib.md
+      - GSP Datoviz: api/gsp_datoviz.md
 
 markdown_extensions:
   - toc:

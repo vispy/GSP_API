@@ -21,7 +21,6 @@ The core module contains the fundamental components for creating canvases, viewp
       show_root_heading: true
       show_source: true
       members_order: source
-
 ### Canvas
 
 ::: gsp.core.canvas
