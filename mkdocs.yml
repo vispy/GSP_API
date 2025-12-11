@@ -1,4 +1,4 @@
-site_name: GSP
+site_name: Graphic Server Protocol
 
 docs_dir: mkdocs_source
 site_dir: mkdocs_build
@@ -9,6 +9,8 @@ theme:
 nav:
   - Home: index.md
   - About: about.md
+  - API Reference:
+      - GSP: api/gsp.md
 
 markdown_extensions:
   - toc:
@@ -16,10 +18,21 @@ markdown_extensions:
   - tables
   - fenced_code
 
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+
+# Social media links
 extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/vispy/GSP_API
 
+# Github repository information
 repo_url: https://github.com/vispy/GSP_API
 repo_name: GSP_API
