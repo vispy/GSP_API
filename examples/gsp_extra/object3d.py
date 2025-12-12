@@ -128,7 +128,7 @@ class Object3D:
     # .update_matrix_*
     # =============================================================================
 
-    def update_matrix_local(self, force_update: bool = False):
+    def update_matrix_local(self, force_update: bool = False) -> None:
         """Upload the local matrix from position, euler and scale."""
 
         # honor dont_update_matrix_local flag
@@ -154,11 +154,12 @@ class Object3D:
         # set the local matrix
         self.matrix_local = translation_matrix @ rotation_matrix @ scale_matrix
 
-    def update_matrix_world(self, parent_matrix_world: np.ndarray | None = None, force_update: bool = False):
+    def update_matrix_world(self, parent_matrix_world: np.ndarray | None = None, force_update: bool = False) -> None:
         """Compute the world matrix from the local matrix and the parent's world matrix.
 
         Args:
             parent_matrix_world (np.ndarray | None): parent's world matrix. Defaults to None.
+            force_update (bool): if True, forces the update even if dont_update_matrix_world is True. Defaults to False.
         """
         # update local matrix
         self.update_matrix_local(force_update=force_update)

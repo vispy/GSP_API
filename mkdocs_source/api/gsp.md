@@ -2,10 +2,6 @@
 
 The Graphic Server Protocol (GSP) API provides a unified interface for creating and rendering graphics across different backends.
 
-## Overview
-
-::: gsp
-
 ## Core Module
 
 ::: gsp.core.canvas
@@ -40,46 +36,27 @@ The Graphic Server Protocol (GSP) API provides a unified interface for creating 
 
 ## Transforms Module
 
-The transforms module handles coordinate transformations and transform chains.
-
 ::: gsp.transforms
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-      members_order: source
-
-### Transform Chain
 
 ::: gsp.transforms.transform_chain
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Transform Links
 
 ::: gsp.transforms.transform_link_base
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
 ## Utilities Module
 
-The utils module provides helper functions and utilities.
-
 ::: gsp.utils
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-      members_order: source
+
+::: gsp.utils.cmap_utils
+
+::: gsp.utils.group_utils
+
+::: gsp.utils.math_utils
+
+::: gsp.utils.transbuf_utils
+
+::: gsp.utils.unit_utils
+
+::: gsp.utils.uuid_utils
 
 ## Constants
 
 ::: gsp.constants
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true

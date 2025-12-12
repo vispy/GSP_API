@@ -31,7 +31,7 @@ class TransformLinkBase(ABC):
         Serialize the TransformLink to a dictionary.
 
         Returns:
-            The serialized TransformLink.
+            dict[str, Any]: The serialized TransformLink.
         """
         pass
 

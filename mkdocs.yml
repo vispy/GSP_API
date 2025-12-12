@@ -24,6 +24,7 @@ plugins:
             docstring_style: google
             show_root_heading: true
             show_source: true
+            show_signature_annotations: true
             annotations_path: full
             napoleon_google_docstring: true
             napoleon_numpy_docstring: true

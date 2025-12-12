@@ -25,7 +25,7 @@ class Event(Generic[Callback]):
         Subscribes a callback to the event.
 
         Args:
-            callback: The function to be called when the event is dispatched.
+            callback (Callback): The function to be called when the event is dispatched.
                       Its signature should match the event's generic type.
         """
         self._callbacks.append(callback)
@@ -35,7 +35,7 @@ class Event(Generic[Callback]):
         Unsubscribes a previously subscribed callback from the event.
 
         Args:
-            callback: The function to be removed from the event's subscribers.
+            callback (Callback): The function to be removed from the event's subscribers.
         """
         self._callbacks.remove(callback)
 
@@ -44,8 +44,8 @@ class Event(Generic[Callback]):
         Dispatches the event, calling all subscribed callbacks with the given arguments.
 
         Args:
-            *args: Variable positional arguments to pass to the callbacks.
-            **kwargs: Variable keyword arguments to pass to the callbacks.
+            *args (Any): Positional arguments to pass to the callbacks.
+            **kwargs (Any): Keyword arguments to pass to the callbacks.
         """
         for callback in self._callbacks:
             callback(*args, **kwargs)
@@ -60,6 +60,12 @@ class Event(Generic[Callback]):
         Usage:
             @event.subscriber
             def handler(...): ...
+
+        Args:
+            callback (Callback): The function to be subscribed.
+
+        Returns:
+            Callback: The same function that was passed in.
         """
         self.subscribe(callback)
         return callback

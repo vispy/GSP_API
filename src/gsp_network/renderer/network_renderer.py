@@ -34,11 +34,19 @@ class NetworkPayload(TypedDict):
 
 class NetworkRenderer(RendererBase):
     """
-    Note: this requires a running gsp_network server. See the README for instructions.
-    IMPORTANT: it DOES NOT depends on GSP matplotlib renderer, it only uses pip matplotlib to display the remotely rendered images.
+    **Note**: this requires a running gsp_network server. See the README for instructions.
+
+    **IMPORTANT**: it DOES NOT depend on GSP matplotlib renderer, it only uses pip matplotlib to display the remotely rendered images.
     """
 
     def __init__(self, canvas: Canvas, server_base_url: str, remote_renderer_name: Literal["matplotlib", "datoviz"] = "matplotlib") -> None:
+        """Initialize the NetworkRenderer.
+
+        Args:
+            canvas (Canvas): _description_
+            server_base_url (str): _description_
+            remote_renderer_name (Literal["matplotlib", "datoviz"], optional): _description_. Defaults to "matplotlib".
+        """
         self._canvas = canvas
         self._server_base_url = server_base_url
         self._remote_renderer_name: Literal["matplotlib", "datoviz"] = remote_renderer_name
@@ -60,9 +68,15 @@ class NetworkRenderer(RendererBase):
         self._axes_image = self._mpl_axes.imshow(image_data_np, aspect="auto")
 
     def get_canvas(self) -> Canvas:
+        """Get the canvas associated with the network renderer.
+
+        Returns:
+            Canvas: The canvas associated with the network renderer.
+        """
         return self._canvas
 
     def close(self) -> None:
+        """Close the network renderer and release resources."""
         # stop the event loop if any - thus .show(block=True) will return
         self._figure.canvas.stop_event_loop()
         # close the figure
@@ -70,6 +84,11 @@ class NetworkRenderer(RendererBase):
         self._figure = None  # type: ignore
 
     def get_remote_renderer_name(self) -> Literal["matplotlib", "datoviz"]:
+        """Get the name of the remote renderer being used.
+
+        Returns:
+            Literal["matplotlib", "datoviz"]: The name of the remote renderer.
+        """
         return self._remote_renderer_name
 
     def render(
@@ -79,6 +98,20 @@ class NetworkRenderer(RendererBase):
         model_matrices: Sequence[TransBuf],
         cameras: Sequence[Camera],
     ) -> bytes:
+        """Render the scene remotely and update the matplotlib figure with the rendered image.
+
+        Args:
+            viewports (Sequence[Viewport]): The viewports to render.
+            visuals (Sequence[VisualBase]): The visuals to render.
+            model_matrices (Sequence[TransBuf]): The model matrices for the visuals.
+            cameras (Sequence[Camera]): The cameras to use for rendering.
+
+        Returns:
+            bytes: The rendered image data in PNG format.
+
+        Raises:
+            Exception: If the network request fails.
+        """
 
         # =============================================================================
         # Serialize the scene and create the payload

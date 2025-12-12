@@ -45,6 +45,9 @@ class GroupUtils:
         - int
         - list[int]
         - list[list[int]]
+
+        Returns:
+            is_group (bool): True if groups is a valid Groups object, False otherwise.
         """
 
         if isinstance(groups, int):
@@ -70,7 +73,7 @@ class GroupUtils:
         No check is done
 
         Returns:
-            str: "format_int", "format_list_int", "format_list_list_int"
+            group_format_name (str): "format_int", "format_list_int", "format_list_list_int"
         """
 
         if isinstance(groups, int):
@@ -132,7 +135,7 @@ class GroupUtils:
         same as .sanity_check_groups() but dont raise exceptions if not valid
 
         Returns:
-            bool: True if the groups object is valid, False otherwise.
+            is_sane (bool): True if the groups object is valid, False otherwise.
         """
 
         try:
@@ -149,8 +152,11 @@ class GroupUtils:
     def compute_indices_per_group(vertex_count: int, groups: Groups) -> list[list[int]]:
         """Compute indices_per_group for groups depending on the type of groups
 
+        Args:
+            vertex_count (int): number of vertices
+            groups (Groups): groups object
+
         Returns:
-            group_count (int): number of groups
             indices_per_group (list[list[int]]): list of vertex indices per group
         """
 
@@ -189,7 +195,6 @@ class GroupUtils:
           - indices_per_group = [[0, 1], [2, 3], [4, 5]]
 
         Returns:
-            group_count (int): number of groups
             indices_per_group (list[list[int]]): list of vertex indices per group
         """
 
@@ -218,7 +223,6 @@ class GroupUtils:
         indices_per_group = list[list[int]]
 
         Returns:
-            group_count (int): number of groups
             indices_per_group (list[list[int]]): list of vertex indices per group
         """
 
@@ -246,7 +250,6 @@ class GroupUtils:
         indices_per_group = list[list[int]]
 
         Returns:
-            group_count (int): number of groups
             indices_per_group (list[list[int]]): list of vertex indices per group
         """
 

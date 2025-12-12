@@ -16,6 +16,6 @@ class VisualBase:
         """Get the unique identifier of the visual object.
 
         Returns:
-            The unique identifier.
+            str: The unique identifier.
         """
         return self._uuid

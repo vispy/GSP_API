@@ -29,7 +29,9 @@ lint: ## Run pyright type checker on src and examples
 
 test: lint pytest_verbose run_all_examples check_expected_output ## Run all tests
 	@echo "All tests passed!"
-
+	
+pydoclint: ## Run pydocstyle to check for docstring style issues
+	pydoclint ./src/gsp ./src/gsp_matplotlib ./src/gsp_datoviz ./src/gsp_pydantic ./src/gsp_network ./examples/gsp_extra
 ###############################################################################
 
 stubs_clean: ## Remove all generated type stubs
@@ -63,3 +65,4 @@ mkdocs_build: ## Build the MkDocs documentation site
 
 mkdocs_deploy: mkdocs_build ## Deploy the MkDocs documentation site to GitHub Pages
 	mkdocs gh-deploy --clean
+
