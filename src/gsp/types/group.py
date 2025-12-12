@@ -9,5 +9,4 @@ Groups = Union[int, list[int], list[list[int]]]
   - len(groups) represents the number of groups
   - groups[0] represent the element indices of the first group
     - groups[1] represent the element indices of the second group
-
 """
