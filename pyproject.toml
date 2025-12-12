@@ -44,3 +44,4 @@ line-length = 160   # to match the 79 character limit of PEP 8, but allow some e
 [tool.pydoclint]
 style = 'google'
 check-style-mismatch = true
+allow-init-docstring = true

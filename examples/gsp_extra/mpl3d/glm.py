@@ -22,28 +22,15 @@ def viewport(x: int, y: int, w: int, h: int, d: float, dtype: np.dtype = np.dtyp
     """Viewport matrix
 
     Args:
-
-        x (int):
-            X origin (pixels) of the viewport (lower left)
-
-        y (int):
-            Y origin (pixels) of the viewport (lower left)
-
-        h (int):
-            Height (pixels) of the viewport
-
-        w (int):
-            Width (pixels) of the viewport
-
-        d (float):
-            Depth of the viewport.
-
-        dtype (np.dtype):
-            dtype of the resulting array
+        x (int): X origin (pixels) of the viewport (lower left)
+        y (int): Y origin (pixels) of the viewport (lower left)
+        w (int): Width (pixels) of the viewport
+        h (int): Height (pixels) of the viewport
+        d (float): Depth of the viewport.
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        Viewport matrix
+        np.ndarray: Viewport matrix
     """
 
     M = np.array(
@@ -70,31 +57,16 @@ def frustum(
     r"""View frustum matrix
 
     Args:
-
-        left (float):
-            Left coordinate of the field of view.
-
-        right (float):
-            Right coordinate of the field of view.
-
-        bottom (float):
-            Bottom coordinate of the field of view.
-
-        top (float):
-            Top coordinate of the field of view.
-
-        znear (float):
-            Near coordinate of the field of view.
-
-        zfar (float):
-            Far coordinate of the field of view.
-
-        dtype (numpy dtype):
-            dtype of the resulting array
+        left (float): Left coordinate of the field of view.
+        right (float): Right coordinate of the field of view.
+        bottom (float): Bottom coordinate of the field of view.
+        top (float): Top coordinate of the field of view.
+        znear (float): Near coordinate of the field of view.
+        zfar (float): Far coordinate of the field of view.
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        View frustum matrix
+        np.ndarray: View frustum matrix
     """
 
     M = np.zeros((4, 4), dtype=dtype)
@@ -119,25 +91,14 @@ def perspective(
     """Perspective projection matrix
 
     Args:
-
-        fovy (float):
-            The field of view along the y axis.
-
-        aspect (float):
-            Aspect ratio of the view.
-
-        znear (float):
-            Near coordinate of the field of view.
-
-        zfar (float):
-            Far coordinate of the field of view.
-
-        dtype (np.dtype):
-            dtype of the resulting array
+        fovy (float): The field of view along the y axis.
+        aspect (float): Aspect ratio of the view.
+        znear (float): Near coordinate of the field of view.
+        zfar (float): Far coordinate of the field of view.
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        Perspective projection matrix
+        np.ndarray: Perspective projection matrix
     """
 
     h = np.tan(0.5 * np.radians(fovy)) * znear
@@ -145,35 +106,20 @@ def perspective(
     return frustum(-w, w, -h, h, znear, zfar, dtype)
 
 
-def ortho(left, right, bottom, top, znear, zfar, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
+def ortho(left: float, right: float, bottom: float, top: float, znear: float, zfar: float, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
     """Create orthographic projection matrix
 
     Args:
-
-        left (float):
-            Left coordinate of the field of view.
-
-        right (float):
-            Right coordinate of the field of view.
-
-        bottom (float):
-            Bottom coordinate of the field of view.
-
-        top (float):
-            Top coordinate of the field of view.
-
-        znear (float):
-            Near coordinate of the field of view.
-
-        zfar (float):
-            Far coordinate of the field of view.
-
-        dtype (np.dtype):
-            dtype of the resulting array
+        left (float): Left coordinate of the field of view.
+        right (float): Right coordinate of the field of view.
+        bottom (float): Bottom coordinate of the field of view.
+        top (float): Top coordinate of the field of view.
+        znear (float): Near coordinate of the field of view.
+        zfar (float): Far coordinate of the field of view.
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        Orthographic projection matrix
+        np.ndarray: Orthographic projection matrix
     """
 
     M = np.zeros((4, 4), dtype=dtype)
@@ -188,55 +134,54 @@ def ortho(left, right, bottom, top, znear, zfar, dtype: np.dtype = np.dtype(np.f
     return M
 
 
-def lookat(eye=(0, 0, 4.5), center=(0, 0, 0), up=(0, 0, 1), dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
+def lookat(
+    eye: tuple[float, float, float] = (0, 0, 4.5),
+    center: tuple[float, float, float] = (0, 0, 0),
+    up: tuple[float, float, float] = (0, 0, 1),
+    dtype: np.dtype = np.dtype(np.float32),
+) -> np.ndarray:
     """
     Creates a viewing matrix derived from an eye point, a reference
     point indicating the center of the scene, and an up vector.
 
     Args:
-
-        eye (vec3):
-            Eye point
-
-        center (vec3):
-            Reference point
-
-        up (vec3):
-            Up vector
-
-        dtype (np.dtype):
-            dtype of the resulting array
+        eye (tuple[float, float, float]): Eye point
+        center (tuple[float, float, float]): Reference point
+        up (tuple[float, float, float]): Up vector
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        View matrix
+        np.ndarray: View matrix
     """
 
-    eye = np.array(eye)
-    center = np.array(center)
-    up = np.array(up)
+    eye_np = np.array(eye)
+    center_np = np.array(center)
+    up_np = np.array(up)
 
-    Z = normalize(eye - center)
-    Y = up
+    Z = normalize(eye_np - center_np)
+    Y = up_np
     X = normalize(np.cross(Y, Z))
     Y = normalize(np.cross(Z, X))
-    return np.array([[X[0], X[1], X[2], -np.dot(X, eye)], [Y[0], Y[1], Y[2], -np.dot(Y, eye)], [Z[0], Z[1], Z[2], -np.dot(Z, eye)], [0, 0, 0, 1]], dtype=dtype)
+    return np.array(
+        [
+            [X[0], X[1], X[2], -np.dot(X, eye_np)],
+            [Y[0], Y[1], Y[2], -np.dot(Y, eye_np)],
+            [Z[0], Z[1], Z[2], -np.dot(Z, eye_np)],
+            [0, 0, 0, 1],
+        ],
+        dtype=dtype,
+    )
 
 
 def scale(scale: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
     """Non-uniform scaling along the x, y, and z axes
 
     Args:
-
-        scale (vec3):
-            Scaling vector
-
-        dtype (np dtype):
-            dtype of the resulting array
+        scale (np.ndarray): Scaling vector
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        Scaling matrix
+        np.ndarray: Scaling matrix
     """
 
     x, y, z = np.array(scale)
@@ -257,12 +202,10 @@ def fit(vertices: np.ndarray) -> np.ndarray:
     """Fit vertices to the normalized cube
 
     Args:
-
-        vertices (np.array): Vertices to fit
+        vertices (np.ndarray): Vertices to fit
 
     Returns:
-
-        (np.ndarray): vertices contained in the normalize cube
+        np.ndarray: vertices contained in the normalize cube
     """
 
     Vmin = vertices.min(axis=0)
@@ -277,16 +220,11 @@ def translate(translate: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) -> 
     Translation by a given vector
 
     Args:
-
-        translate (vec3):
-            Translation vector.
-
-        dtype (np dtype):
-            dtype of the resulting array
+        translate (np.ndarray): Translation vector.
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        Translation matrix
+        np.ndarray: Translation matrix
     """
 
     x, y, z = np.array(translate)
@@ -299,12 +237,10 @@ def center(vertices: np.ndarray) -> np.ndarray:
     """Center vertices around the origin.
 
     Args:
-
-        vertices (np.array): Vertices to center
+        vertices (np.ndarray): Vertices to center
 
     Returns:
-
-        (np.ndarray): vertices centered
+        np.ndarray: vertices centered
     """
 
     vmin = vertices.min(axis=0)
@@ -316,16 +252,13 @@ def xrotate(angle_x: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.
     """Rotation about the X axis
 
     Args:
-
         angle_x (float):
             Specifies the angle of rotation, in degrees.
-
         dtype (np.dtype):
             dtype of the resulting array
 
     Returns:
-
-        Rotation matrix
+       np.ndarray: Rotation matrix
     """
 
     t = np.radians(angle_x)
@@ -339,16 +272,11 @@ def yrotate(angle_y: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.
     """Rotation about the Y axis
 
     Args:
-
-        angle_y (float):
-            Specifies the angle of rotation, in degrees.
-
-        dtype (np.dtype):
-            dtype of the resulting array
+        angle_y (float): Specifies the angle of rotation, in degrees.
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        Rotation matrix
+        np.ndarray: Rotation matrix
     """
 
     t = np.radians(angle_y)
@@ -362,16 +290,11 @@ def zrotate(angle_z: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.
     """Rotation about the Z axis
 
     Args:
-
-        angle_z (float):
-            Specifies the angle of rotation, in degrees.
-
-        dtype (np.dtype):
-            dtype of the resulting array
+        angle_z (float): Specifies the angle of rotation, in degrees.
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        Rotation matrix
+        np.ndarray: Rotation matrix
     """
 
     t = np.radians(angle_z)
@@ -385,19 +308,12 @@ def rotate(angle: float, axis: np.ndarray, dtype: np.dtype = np.dtype(np.float32
     """Rotation around an arbitrary axis of angle
 
     Args:
-
-        angle (float):
-            Specifies the angle of rotation, in degrees.
-
-        axis (vec3):
-            Axis of rotation
-
-        dtype (np.dtype):
-            dtype of the resulting array
+        angle (float): Specifies the angle of rotation, in degrees.
+        axis (np.ndarray): Axis of rotation
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        Rotation matrix
+        np.ndarray: Rotation matrix
     """
 
     t = np.radians(angle)
@@ -425,19 +341,12 @@ def align(U: np.ndarray, V: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) 
     Return the rotation matrix that aligns U to V
 
     Args:
-
-        U (vec[234]):
-            First vector
-
-        U (vec[234]):
-            Second vector
-
-        dtype (np.dtype):
-            dtype of the resulting array
+        U (np.ndarray): First vector
+        V (np.ndarray): Second vector
+        dtype (np.dtype): dtype of the resulting array
 
     Returns:
-
-        Rotation matrix
+        np.ndarray: Rotation matrix
     """
 
     a, b = normalize(U), normalize(V)
@@ -456,14 +365,11 @@ def frontback(triangles: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """
     Sort front and back facing triangles
 
-    Parameters:
-    -----------
-    T : (n,3) array
-       Triangles to sort
+    Args:
+        triangles (np.ndarray): Triangles to sort
 
     Returns:
-    --------
-    front and back facing triangles as (n1,3) and (n2,3) arrays (n1+n2=n)
+        tuple[np.ndarray, np.ndarray]: front and back facing triangles as (n1,3) and (n2,3) arrays (n1+n2=n)
     """
     Z = (
         (triangles[:, 1, 0] - triangles[:, 0, 0]) * (triangles[:, 1, 1] + triangles[:, 0, 1])
@@ -474,6 +380,20 @@ def frontback(triangles: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
 
 def camera(xrotation: float = 25.0, yrotation: float = 45.0, zoom: float = 1.0, mode: Literal["perspective", "ortho"] = "perspective") -> np.ndarray:
+    """Create a camera matrix
+
+    Args:
+        xrotation (float): Rotation around the X axis in degrees.
+        yrotation (float): Rotation around the Y axis in degrees.
+        zoom (float): Zoom factor.
+        mode (Literal["perspective", "ortho"]): Camera mode.
+
+    Returns:
+        np.ndarray: Camera matrix
+
+    Raises:
+        ValueError: If an unknown camera mode is provided.
+    """
     xrotation = min(max(xrotation, 0), 90)
     yrotation = min(max(yrotation, 0), 90)
     zoom = max(0.1, zoom)

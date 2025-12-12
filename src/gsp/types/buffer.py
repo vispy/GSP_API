@@ -51,7 +51,7 @@ class Buffer:
     def get_data(self, offset: int, count: int) -> "Buffer":
         """Return a buffer of count elements starting from offset.
 
-         Args:
+        Args:
             offset (int): The starting index.
             count (int): The number of elements to retrieve.
 
