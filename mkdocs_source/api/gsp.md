@@ -5,45 +5,14 @@ The Graphic Server Protocol (GSP) API provides a unified interface for creating 
 ## Overview
 
 ::: gsp
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-      members_order: source
-
-## Core Module
-
-The core module contains the fundamental components for creating canvases, viewports, and cameras.
 
 ::: gsp.core
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-      members_order: source
-### Canvas
 
 ::: gsp.core.canvas
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Viewport
 
 ::: gsp.core.viewport
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Camera
 
 ::: gsp.core.camera
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
 
 ### Events
 

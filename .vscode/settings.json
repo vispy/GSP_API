@@ -6,4 +6,6 @@
     "python.testing.pytestEnabled": true,
     // format on save
     "editor.formatOnSave": true,
+    // use "google" style for generating docstring with autoDocstring extension
+    "autoDocstring.docstringFormat": "google"
 }

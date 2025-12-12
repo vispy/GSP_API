@@ -1,20 +1,12 @@
 site_name: Graphic Server Protocol
+site_description: "⚡ GSP: A high-performance graphics server protocol for efficient rendering and visualization."
+site_author: GSP Team
+site_dir: mkdocs_build
 
 docs_dir: mkdocs_source
-site_dir: mkdocs_build
 
 theme:
   name: material # built-in theme
-
-nav:
-  - Home: index.md
-  - About: about.md
-  - API Reference:
-      - GSP: api/gsp.md
-      - GSP Network: api/gsp_network.md
-      - GSP Pydantic: api/gsp_pydantic.md
-      - GSP Matplotlib: api/gsp_matplotlib.md
-      - GSP Datoviz: api/gsp_datoviz.md
 
 markdown_extensions:
   - toc:
@@ -30,8 +22,11 @@ plugins:
           paths: [src]
           options:
             docstring_style: google
+            show_root_heading: true
+            show_source: true
+            annotations_path: full
 
-# Social media links
+# Social media links in the footer
 extra:
   social:
     - icon: fontawesome/brands/github
@@ -40,3 +35,14 @@ extra:
 # Github repository information
 repo_url: https://github.com/vispy/GSP_API
 repo_name: GSP_API
+
+# Navigation structure
+nav:
+  - Home: index.md
+  - About: about.md
+  - API Reference:
+      - GSP: api/gsp.md
+      - GSP Network: api/gsp_network.md
+      - GSP Pydantic: api/gsp_pydantic.md
+      - GSP Matplotlib: api/gsp_matplotlib.md
+      - GSP Datoviz: api/gsp_datoviz.md

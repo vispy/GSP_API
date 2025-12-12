@@ -12,14 +12,11 @@ class Viewport:
         """
         Create a viewport.
 
-        :param x: offset from left in pixels
-        :type x: int
-        :param y: offset from bottom in pixels
-        :type y: int
-        :param width: width in pixels
-        :type width: int
-        :param height: height in pixels
-        :type height: int
+        Args:
+            x (int): The x offset (in pixels from left) of the viewport.
+            y (int): The y offset (in pixels from bottom) of the viewport.
+            width (int): The width (in pixels) of the viewport.
+            height (int): The height (in pixels) of the viewport.
         """
         self._uuid: str = UuidUtils.generate_uuid()
         self._x: int = x
@@ -32,52 +29,81 @@ class Viewport:
         return f"Viewport(x={self._x}, y={self._y}, width={self._width}, height={self._height})"
 
     def get_uuid(self) -> str:
+        """Get the unique identifier of the viewport.
+
+        Returns:
+            str: The unique identifier.
+        """
         return self._uuid
 
     def get_x(self) -> int:
         """
         Get the x offset (in pixels from left) of the viewport.
+
+        Returns:
+            int: The x offset.
         """
         return self._x
 
     def set_x(self, x: int) -> None:
         """
         Set the x offset (in pixels from left) of the viewport.
+
+        Args:
+            x (int): The new x offset.
         """
         self._x = x
 
     def get_y(self) -> int:
         """
         Get the y offset (in pixels from bottom) of the viewport.
+
+        Returns:
+            int: The y offset.
         """
         return self._y
 
     def set_y(self, y: int) -> None:
         """
         Set the y offset (in pixels from bottom) of the viewport.
+
+        Args:
+            y (int): The new y offset.
         """
         self._y = y
 
     def get_width(self) -> int:
         """
         Get the width (in pixels) of the viewport.
+
+        Returns:
+            int: The width.
         """
         return self._width
 
     def set_width(self, width: int) -> None:
         """
         Set the width (in pixels) of the viewport.
+
+        Args:
+            width (int): The new width.
         """
         self._width = width
 
     def get_height(self) -> int:
         """
         Get the height (in pixels) of the viewport.
+
+        Returns:
+            int: The height.
         """
         return self._height
 
     def set_height(self, height: int) -> None:
         """
         Set the height (in pixels) of the viewport.
+
+        Args:
+            height (int): The new height.
         """
         self._height = height

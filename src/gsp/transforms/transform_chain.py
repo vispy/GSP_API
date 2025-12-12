@@ -96,7 +96,12 @@ class TransformChain:
     # =============================================================================
 
     def serialize(self) -> dict[str, Any]:
-        """Serialize the TransformChain to a dictionary."""
+        """
+        Serialize the TransformChain to a dictionary.
+
+        Returns:
+            dict[str, Any]: The serialized TransformChain.
+        """
         links_data = [link.serialize() for link in self.__links]
         chain_serialized = {
             "buffer_count": self.__buffer_count,
@@ -107,7 +112,12 @@ class TransformChain:
 
     @staticmethod
     def deserialize(data: dict[str, Any]) -> "TransformChain":
-        """Deserialize a TransformChain from a dictionary."""
+        """
+        Deserialize a TransformChain from a dictionary.
+        Args:
+            data (dict[str, Any]): The serialized TransformChain.
+        Returns:
+            TransformChain: The deserialized TransformChain instance."""
         buffer_count = int(data["buffer_count"])
         buffer_type_str: str | None = data["buffer_type"]
         buffer_type = BufferType[buffer_type_str] if buffer_type_str is not None else None
