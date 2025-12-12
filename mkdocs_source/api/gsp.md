@@ -6,7 +6,7 @@ The Graphic Server Protocol (GSP) API provides a unified interface for creating 
 
 ::: gsp
 
-::: gsp.core
+## Core Module
 
 ::: gsp.core.canvas
 
@@ -14,107 +14,29 @@ The Graphic Server Protocol (GSP) API provides a unified interface for creating 
 
 ::: gsp.core.camera
 
-### Events
-
 ::: gsp.core.event
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
 
 ## Types Module
 
-The types module defines the core data types and structures used throughout GSP.
-
-::: gsp.types
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-      members_order: source
-
-### Buffer
-
 ::: gsp.types.buffer
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Group
 
 ::: gsp.types.group
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Visual Base
 
 ::: gsp.types.visual_base
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
 
 ## Visuals Module
 
-The visuals module provides ready-to-use visual primitives for common graphics needs.
-
-::: gsp.visuals
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-      members_order: source
-
-### Points
-
 ::: gsp.visuals.points
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Markers
 
 ::: gsp.visuals.markers
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Segments
 
 ::: gsp.visuals.segments
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Paths
 
 ::: gsp.visuals.paths
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Pixels
 
 ::: gsp.visuals.pixels
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Texts
 
 ::: gsp.visuals.texts
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
 
 ## Transforms Module
 

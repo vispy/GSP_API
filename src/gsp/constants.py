@@ -3,10 +3,14 @@ from .types.buffer_type import BufferType
 
 
 class Constants:
-    """Common constants like colors."""
+    """Common constants in GSP. e.g. colors."""
 
     class Color:
-        """Common colors as RGBA bytearrays."""
+        """
+        Common colors as RGBA bytearrays. Each color is represented as a bytearray of four integers
+        corresponding to the red, green, blue, and alpha (opacity) channels, respectively.
+        Each channel value ranges from 0 to 255.
+        """
 
         white = bytearray([255, 255, 255, 255])
         black = bytearray([0, 0, 0, 255])

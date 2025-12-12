@@ -25,6 +25,8 @@ plugins:
             show_root_heading: true
             show_source: true
             annotations_path: full
+            napoleon_google_docstring: true
+            napoleon_numpy_docstring: true
 
 # Social media links in the footer
 extra:

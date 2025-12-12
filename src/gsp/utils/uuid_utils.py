@@ -6,11 +6,18 @@ import numpy as np
 
 
 class UuidUtils:
+    """Utility class for generating UUIDs."""
 
     GSP_UUID_COUNTER: int = 0
 
     @staticmethod
     def generate_uuid() -> str:
+        """Generate a UUID version 4.
+
+        Returns:
+            str: The generated UUID.
+        """
+
         # if GSP_UUID_COUNTER is set, use a deterministic uuid for testing purposes
         # - uuid becomes "uuid-counter-<counter>"
         if "GSP_UUID_COUNTER" in os.environ:

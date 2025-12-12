@@ -10,7 +10,11 @@ class GroupUtils:
 
     @staticmethod
     def get_group_count(vertex_count: int, groups: Groups) -> int:
-        """Return the number of groups from the groups object."""
+        """Return the number of groups from the groups object.
+
+        Returns:
+            group_count (int): number of groups
+        """
 
         groups_format = GroupUtils._groups_format(groups)
         if groups_format == GroupUtils.FORMAT_INT:

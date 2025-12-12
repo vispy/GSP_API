@@ -13,4 +13,9 @@ class VisualBase:
         self.userData: dict[str, Any] = {}
 
     def get_uuid(self) -> str:
+        """Get the unique identifier of the visual object.
+
+        Returns:
+            The unique identifier.
+        """
         return self._uuid
