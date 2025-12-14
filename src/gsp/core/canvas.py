@@ -14,7 +14,7 @@ class Canvas:
         Args:
             width (int): Width of the canvas in pixels.
             height (int): Height of the canvas in pixels.
-            dpi (float): Dots per inch (DPI) of the canvas.
+            dpi (float): Dots per inch (DPI) of the canvas. If set to the screen PPI, the 'inch' unit in will correspond to one physical inch on the screen.
         """
         self._uuid: str = UuidUtils.generate_uuid()
         self._width: int = width
