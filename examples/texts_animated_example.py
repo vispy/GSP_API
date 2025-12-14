@@ -75,7 +75,7 @@ def main():
         angles_numpy[0] += np.pi / 2 * delta_time
         angles_numpy[0] = angles_numpy[0] % (2 * np.pi)
         angles_buffer.set_data(bytearray(angles_numpy.tobytes()), 0, string_count)
-        print("angles_numpy[0]:", angles_numpy[0])
+        # print("angles_numpy[0]:", angles_numpy[0])q
 
         font_size_numpy[0] = 12 + np.sin(angles_numpy[0]) * 4
         font_size_buffer.set_data(bytearray(font_size_numpy.tobytes()), 0, string_count)
