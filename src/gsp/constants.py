@@ -22,4 +22,8 @@ class Constants:
         magenta = bytearray([255, 0, 255, 255])
         cyan = bytearray([0, 255, 255, 255])
 
+        light_gray = bytearray([211, 211, 211, 255])
+        gray = bytearray([128, 128, 128, 255])
+        dark_gray = bytearray([64, 64, 64, 255])
+
         transparent = bytearray([0, 0, 0, 0])
