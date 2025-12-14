@@ -1,5 +1,3 @@
-- DONE serialize/deserialize texts
-  - test with network
 - support texts in datoviz
 - transform chain + viewport unit conversion in .userData
   - MathOpUnit link
@@ -52,6 +50,8 @@
     - possibility: set by class or by instance
 
 ---
+- DONE serialize/deserialize texts
+  - test with network
 - DONE add 'resize_event' in viewport events 
 - DONE unit_converter(canvas, viewport)
   - viewport is always used in ndc
