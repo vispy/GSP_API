@@ -1,9 +1,3 @@
-# stdlib imports
-import os
-import pathlib
-from typing import Literal
-import typing
-
 # pip imports
 import numpy as np
 
@@ -42,8 +36,8 @@ def main():
     strings: list[str] = ["Hello", "World"]
 
     # colors - Create buffer and fill it with a constant
-    colors_numpy = np.array([255, 0, 0, 255] + [0, 255, 0, 255], dtype=np.uint8).reshape((string_count, 4))
-    colors_buffer = Bufferx.from_numpy(colors_numpy, BufferType.rgba8)
+    colors_buffer = Buffer(string_count, BufferType.rgba8)
+    colors_buffer.set_data(Constants.Color.red + Constants.Color.green, 0, string_count)
 
     font_size_numpy = np.array([12, 12], dtype=np.float32)
     font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
