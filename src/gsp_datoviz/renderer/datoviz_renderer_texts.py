@@ -55,7 +55,7 @@ class DatovizRendererTexts:
         # Create datoviz_visual if they do not exist
         if artist_uuid not in renderer._dvz_visuals:
             artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}"
-            dvz_glyphs = renderer._dvz_app.glyph(font_size=100)
+            dvz_glyphs = renderer._dvz_app.glyph(font_size=30)
             # set dummy strings to initialize the visual
             dvz_glyphs.set_strings(["dummy string"], string_pos=np.array([[0.0, 0.0, 0.0]], dtype=np.float32), scales=np.array([1.0], dtype=np.float32))
             renderer._dvz_visuals[artist_uuid] = dvz_glyphs
@@ -74,11 +74,13 @@ class DatovizRendererTexts:
         glyph_count = sum(map(len, text_strings))
 
         # build glyph scales from font sizes
-        glyph_scales = np.zeros((text_count,), dtype=np.float32)
+        glyph_scales = np.zeros((glyph_count,), dtype=np.float32)
         for text_index in range(text_count):
             # TODO font-size is in typographic points, have to convert to pixels ? relation with the font_size of the dvz visual ?
             # glyph_scales[text_index] = font_sizes_numpy[text_index, 0]  # dvz visual default font size is 100
-            glyph_scales[text_index] = 1  # dvz visual default font size is 100
+            for glyph_index in range(len(text_strings[text_index])):
+                global_glyph_index = sum(len(s) for s in text_strings[:text_index]) + glyph_index
+                glyph_scales[global_glyph_index] = font_sizes_numpy[text_index, 0] / 15  # dvz visual default font size is 100
 
         # build glyph colors from text colors
         glyph_colors = np.zeros((glyph_count, 4), dtype=np.uint8)
@@ -96,3 +98,4 @@ class DatovizRendererTexts:
         dvz_glyphs.set_strings(text_strings, string_pos=vertices_numpy)
         dvz_glyphs.set_color(glyph_colors)
         dvz_glyphs.set_angle(glyphs_angles)
+        dvz_glyphs.set_scale(glyph_scales)

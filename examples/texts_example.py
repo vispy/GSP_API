@@ -55,14 +55,7 @@ def main():
 
         # Random positions - Create buffer from numpy array
         positions_numpy = np.array(
-            [
-                [index_to_position_x(0, string_count), position_y, 0.0],
-                [index_to_position_x(1, string_count), position_y, 0.0],
-                [index_to_position_x(2, string_count), position_y, 0.0],
-                [index_to_position_x(3, string_count), position_y, 0.0],
-                [index_to_position_x(4, string_count), position_y, 0.0],
-                [index_to_position_x(5, string_count), position_y, 0.0],
-            ],
+            [[index_to_position_x(i, string_count), position_y, 0.0] for i in range(string_count)],
             dtype=np.float32,
         )
         positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
@@ -78,7 +71,9 @@ def main():
             string_count,
         )
 
-        font_size_numpy = np.array([12, 14, 16, 18, 20, 22], dtype=np.float32)
+        font_size_1 = 10
+        font_size_2 = 15
+        font_size_numpy = np.array([font_size_1, font_size_2, font_size_1, font_size_2, font_size_1, font_size_2], dtype=np.float32)
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
         if vertical_alignment == "top":
@@ -91,12 +86,14 @@ def main():
             raise ValueError(f"invalid vertical_alignment: {vertical_alignment}")
         anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
 
+        angle_1 = -np.pi / 6
+        angle_2 = +np.pi / 6
         if vertical_alignment == "top":
-            angles_numpy = np.array([-np.pi / 4, +np.pi / 4, 0.0, 0.0, +np.pi / 4, -np.pi / 4], dtype=np.float32)
+            angles_numpy = np.array([angle_1, angle_2, 0.0, 0.0, angle_2, angle_1], dtype=np.float32)
         elif vertical_alignment == "center":
             angles_numpy = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
         elif vertical_alignment == "bottom":
-            angles_numpy = np.array([+np.pi / 4, -np.pi / 4, 0.0, 0.0, -np.pi / 4, +np.pi / 4], dtype=np.float32)
+            angles_numpy = np.array([angle_2, angle_1, 0.0, 0.0, angle_1, angle_2], dtype=np.float32)
         else:
             raise ValueError(f"invalid vertical_alignment: {vertical_alignment}")
         # angles_numpy = np.array([+np.pi / 4, -np.pi / 4, 0.0], dtype=np.float32)
