@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QApplication
 from common.example_helper import ExampleHelper
 from gsp.core import Canvas, Viewport
 from gsp.core.camera import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer, matplotlib_renderer
 from gsp.visuals import Segments, Points
 from gsp.types import CapStyle
 from gsp_extra.bufferx import Bufferx
