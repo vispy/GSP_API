@@ -1,3 +1,8 @@
+- object3d with animator
+- object3d in datoviz
+  - object3d issue with .render()
+    - issue with the animation loop + .render()
+  - rotation in the datoviz_renderer_pixels
 - support texts in datoviz
 - transform chain + viewport unit conversion in .userData
   - MathOpUnit link

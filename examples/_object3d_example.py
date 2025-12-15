@@ -83,9 +83,6 @@ def main():
     # Create a camera
     camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
 
-    # Create a renderer and render the scene
-    matplotlibRenderer = MatplotlibRenderer(canvas)
-
     # =============================================================================
     # Build the scene
     # =============================================================================
@@ -110,6 +107,24 @@ def main():
     view_matrix_numpy = np.linalg.inv(camera_world)
     view_matrix_buffer = Bufferx.from_numpy(np.array([view_matrix_numpy]), BufferType.mat4)
     camera.set_view_matrix(view_matrix_buffer)
+
+    # =============================================================================
+    #
+    # =============================================================================
+
+    object3d_pixel.euler[0] = np.pi / 4
+    object3d_pixel.euler[1] = np.pi / 4
+    object3d_pixel.euler[2] = np.pi / 4
+
+    # Create a renderer and render the scene
+    # matplotlibRenderer = MatplotlibRenderer(canvas)
+    # object3d_scene.render_cooked(matplotlibRenderer, viewport, object3d_scene, camera)
+    # matplotlibRenderer.show()
+
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+    object3d_scene.render_cooked(renderer_base, viewport, object3d_scene, camera)
+    renderer_base.show()
 
     # =============================================================================
     # Create the renderer
@@ -138,27 +153,27 @@ def main():
     # # matplotlib animation
     # # =============================================================================
 
-    def update(frame) -> Sequence[matplotlib.artist.Artist]:
+    # def update(frame) -> Sequence[matplotlib.artist.Artist]:
 
-        # Rotate parent object
-        object3d_pixel.euler[0] = -time.time() % (1.0 * np.pi)
-        object3d_pixel.euler[1] = -time.time() % (2.0 * np.pi)
-        object3d_pixel.euler[2] = -time.time() % (3.0 * np.pi)
-        object3d_pixel.scale[:] = 0.8 + 0.5 * np.sin(time.time())
+    #     # Rotate parent object
+    #     object3d_pixel.euler[0] = -time.time() % (1.0 * np.pi)
+    #     object3d_pixel.euler[1] = -time.time() % (2.0 * np.pi)
+    #     object3d_pixel.euler[2] = -time.time() % (3.0 * np.pi)
+    #     object3d_pixel.scale[:] = 0.8 + 0.5 * np.sin(time.time())
 
-        changed_visual = Object3D.render_cooked(matplotlibRenderer, viewport, object3d_scene, camera)
+    #     changed_visual = Object3D.render_cooked(matplotlibRenderer, viewport, object3d_scene, camera)
 
-        modified_artists = list(matplotlibRenderer._artists.values())
-        return modified_artists
+    #     modified_artists = list(matplotlibRenderer._artists.values())
+    #     return modified_artists
 
-    funcAnimation = matplotlib.animation.FuncAnimation(matplotlibRenderer._figure, update, frames=180, interval=50)
+    # funcAnimation = matplotlib.animation.FuncAnimation(matplotlibRenderer._figure, update, frames=180, interval=50)
 
-    # handle non-interactive mode for tests
-    in_test = os.environ.get("GSP_TEST") == "True"
-    if in_test:
-        return
+    # # handle non-interactive mode for tests
+    # in_test = os.environ.get("GSP_TEST") == "True"
+    # if in_test:
+    #     return
 
-    matplotlib.pyplot.show()
+    # matplotlib.pyplot.show()
 
 
 if __name__ == "__main__":

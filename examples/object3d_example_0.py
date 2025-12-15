@@ -93,7 +93,7 @@ def main():
         # Rotate parent object
         object3d_pixel.euler[2] = -time.time() % (2.0 * np.pi)
 
-        object3d_scene.render(matplotlibRenderer, viewport, object3d_scene, camera)
+        object3d_scene.render_cooked(matplotlibRenderer, viewport, object3d_scene, camera)
 
         modified_artists = list(matplotlibRenderer._artists.values())
         return modified_artists

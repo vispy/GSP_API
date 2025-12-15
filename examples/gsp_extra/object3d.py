@@ -1,5 +1,5 @@
 # stdlib imports
-from typing import Sequence
+from typing import List, Sequence
 
 # pip imports
 import numpy as np
@@ -177,18 +177,22 @@ class Object3D:
     # =============================================================================
     #
     # =============================================================================
-    @staticmethod
-    def render(renderer_base: RendererBase, viewport: Viewport, scene: "Object3D", camera: Camera) -> Sequence[VisualBase]:
-        # update all world matrices
-        scene.update_matrix_world()
 
-        # update camera view matrices
+    @staticmethod
+    def update_camera_view_matrices(scene: "Object3D") -> None:
+        """Update the view matrices of all cameras attached to the Object3D hierarchy.
+
+        Args:
+            scene (Object3D): root Object3D of the scene.
+        """
         for object3d in scene.traverse():
-            for _camera in object3d.cameras:
+            for camera in object3d.cameras:
                 view_matrix_numpy = np.linalg.inv(object3d.matrix_world)
                 view_matrix_buffer = Bufferx.from_numpy(np.array([view_matrix_numpy]), BufferType.mat4)
-                _camera.set_view_matrix(view_matrix_buffer)
+                camera.set_view_matrix(view_matrix_buffer)
 
+    @staticmethod
+    def render(renderer_base: RendererBase, viewport: Viewport, scene: "Object3D", camera: Camera) -> bytes:
         # gather all visuals, model matrices and cameras
         visuals = [visual for object3d in scene.traverse() for visual in object3d.visuals]
         model_matrices_numpy = [object3d.matrix_world for object3d in scene.traverse() for _ in object3d.visuals]
@@ -196,8 +200,22 @@ class Object3D:
         viewports = [viewport for _ in range(len(visuals))]
         cameras = [camera for _ in range(len(visuals))]
 
-        # render all
-        renderer_base.render(viewports, visuals, model_matrices_buffer, cameras)
+        # render
+        rendererd_image = renderer_base.render(viewports, visuals, model_matrices_buffer, cameras)
+
+        return rendererd_image
+
+    @staticmethod
+    def render_cooked(renderer_base: RendererBase, viewport: Viewport, scene: "Object3D", camera: Camera) -> list[VisualBase]:
+        # update all world matrices
+        scene.update_matrix_world()
+
+        # update camera view matrices
+        Object3D.update_camera_view_matrices(scene)
+
+        # gather all visuals, model matrices and cameras
+        Object3D.render(renderer_base, viewport, scene, camera)
 
         # return the modified visuals
-        return visuals
+        changed_visuals = [visual for object3d in scene.traverse() for visual in object3d.visuals]
+        return changed_visuals
