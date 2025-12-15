@@ -48,7 +48,7 @@ class DatovizRendererPixels:
         # Apply Model-View-Projection transformation to the vertices
         vertices_3d_transformed = MathUtils.apply_mvp_to_vertices(vertices_numpy, model_matrix_numpy, view_matrix_numpy, projection_matrix_numpy)
 
-        # Convert 3D vertices to 2D - shape (N, 2)
+        # Convert 3D vertices to 3d - shape (N, 3)
         vertices_3d = vertices_3d_transformed[:, :3]
 
         # =============================================================================
@@ -56,11 +56,9 @@ class DatovizRendererPixels:
         # =============================================================================
 
         # get attributes from TransBuf to buffer
-        # positions_buffer = TransBufUtils.to_buffer(pixels.get_positions())
         colors_buffer = TransBufUtils.to_buffer(pixels.get_colors())
 
         # convert buffers to numpy arrays
-        # vertices_numpy = Bufferx.to_numpy(positions_buffer)
         colors_numpy = Bufferx.to_numpy(colors_buffer)
 
         # =============================================================================
@@ -119,7 +117,6 @@ class DatovizRendererPixels:
             # set attributes
             group_vertices = vertices_3d[indices_per_group[group_index]]
             dvz_pixels.set_position(group_vertices)
-            print("fff")
 
             # set group_colors
             group_colors = np.tile(colors_numpy[group_index], group_vertices.__len__()).reshape((-1, 4))
