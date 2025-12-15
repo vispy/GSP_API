@@ -72,7 +72,7 @@ def main(save_video: bool):
     # =============================================================================
 
     renderer_name = ExampleHelper.get_renderer_name()
-    renderer = ExampleHelper.create_renderer(renderer_name, canvas)
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
 
     # =============================================================================
     # Create the animator with/without save_video
@@ -80,14 +80,14 @@ def main(save_video: bool):
 
     if save_video is False:
         # init the animator with the renderer
-        animator = ExampleHelper.create_animator(renderer)
+        animator = ExampleHelper.create_animator(renderer_base)
     else:
         # Save the animation to a video file
         video_path = os.path.join(__dirname__, f"output/{os.path.basename(__file__).replace('.py', '')}_{renderer_name}.mp4")
         print(f"Saving video to {video_path}")
 
         # init the animator with the renderer
-        animator = ExampleHelper.create_animator_with_video(renderer, video_path, fps=60, video_duration=10.0)
+        animator = ExampleHelper.create_animator_with_video(renderer_base, video_path, fps=60, video_duration=10.0)
 
         # event notified when the video is saved/completed, to stop the animator and close the renderer
         @animator.on_video_saved.event_listener
@@ -99,7 +99,7 @@ def main(save_video: bool):
             animator.stop()
 
             # close the renderer
-            renderer.close()
+            renderer_base.close()
 
     # =============================================================================
     # Start the animator
