@@ -11,7 +11,10 @@ import matplotlib.artist
 # local imports
 import gsp
 from gsp.types.transbuf import TransBuf
+from gsp.utils.group_utils import GroupUtils
+from gsp.visuals.pixels import Pixels
 from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp.utils.transbuf_utils import TransBufUtils
 from gsp.types.visual_base import VisualBase
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
@@ -244,7 +247,15 @@ class AnimatorMatplotlib(AnimatorBase):
         visual = visuals[visual_index]
         viewport = viewports[visual_index]
 
-        if isinstance(visual, Points):
+        if isinstance(visual, Pixels):
+            pixels: Pixels = visual
+            positions_buffer = TransBufUtils.to_buffer(pixels.get_positions())
+            group_count = GroupUtils.get_group_count(positions_buffer.get_count(), pixels.get_groups())
+            artist_uuid_prefix = f"{viewport.get_uuid()}_{visual.get_uuid()}"
+            for group_index in range(group_count):
+                group_uuid = f"{artist_uuid_prefix}_group_{group_index}"
+                mpl_artists.append(self._matplotlib_renderer._artists[group_uuid])
+        elif isinstance(visual, Points):
             points: Points = visual
             artist_uuid = f"{viewport.get_uuid()}_{points.get_uuid()}"
             mpl_artist = self._matplotlib_renderer._artists[artist_uuid]

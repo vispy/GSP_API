@@ -1,5 +1,6 @@
 # stdlib imports
 from typing import List, Sequence
+from typing_extensions import deprecated
 
 # pip imports
 import numpy as np
@@ -13,6 +14,7 @@ from gsp.core import Canvas, Viewport
 from gsp.types.renderer_base import RendererBase
 from gsp.types import Buffer, BufferType
 from gsp.utils.uuid_utils import UuidUtils
+from gsp.types.transbuf import TransBuf
 
 
 class Object3D:
@@ -192,7 +194,20 @@ class Object3D:
                 camera.set_view_matrix(view_matrix_buffer)
 
     @staticmethod
-    def render(renderer_base: RendererBase, viewport: Viewport, scene: "Object3D", camera: Camera) -> bytes:
+    def to_render_args(
+        renderer_base: RendererBase, viewport: Viewport, scene: "Object3D", camera: Camera
+    ) -> tuple[Sequence[Viewport], Sequence[VisualBase], Sequence[TransBuf], Sequence[Camera]]:
+        """Render the scene using the provided renderer.
+
+        Args:
+            renderer_base (RendererBase): renderer to use.
+            viewport (Viewport): viewport to render to.
+            scene (Object3D): root Object3D of the scene.
+            camera (Camera): camera to use for rendering.
+
+        Returns:
+            tuple[Sequence[Viewport], Sequence[VisualBase], Sequence[TransBuf], Sequence[Camera]]: viewports, visuals, model matrices and cameras.
+        """
         # gather all visuals, model matrices and cameras
         visuals = [visual for object3d in scene.traverse() for visual in object3d.visuals]
         model_matrices_numpy = [object3d.matrix_world for object3d in scene.traverse() for _ in object3d.visuals]
@@ -200,13 +215,15 @@ class Object3D:
         viewports = [viewport for _ in range(len(visuals))]
         cameras = [camera for _ in range(len(visuals))]
 
-        # render
-        rendererd_image = renderer_base.render(viewports, visuals, model_matrices_buffer, cameras)
-
-        return rendererd_image
+        return viewports, visuals, model_matrices_buffer, cameras
 
     @staticmethod
-    def render_cooked(renderer_base: RendererBase, viewport: Viewport, scene: "Object3D", camera: Camera) -> list[VisualBase]:
+    def pre_render(
+        renderer_base: RendererBase,
+        viewport: Viewport,
+        scene: "Object3D",
+        camera: Camera,
+    ) -> tuple[Sequence[Viewport], Sequence[VisualBase], Sequence[TransBuf], Sequence[Camera]]:
         # update all world matrices
         scene.update_matrix_world()
 
@@ -214,7 +231,24 @@ class Object3D:
         Object3D.update_camera_view_matrices(scene)
 
         # gather all visuals, model matrices and cameras
-        Object3D.render(renderer_base, viewport, scene, camera)
+        viewports, visuals, model_matrices_buffer, cameras = Object3D.to_render_args(renderer_base, viewport, scene, camera)
+
+        return viewports, visuals, model_matrices_buffer, cameras
+
+    @staticmethod
+    @deprecated("DO NOT use. obsolete function. Use .update_matrix_world()+.update_camera_view_matrices()+.render() instead")
+    def render_scene(renderer_base: RendererBase, viewport: Viewport, scene: "Object3D", camera: Camera) -> list[VisualBase]:
+        # update all world matrices
+        scene.update_matrix_world()
+
+        # update camera view matrices
+        Object3D.update_camera_view_matrices(scene)
+
+        # gather all visuals, model matrices and cameras
+        viewports, visuals, model_matrices_buffer, cameras = Object3D.to_render_args(renderer_base, viewport, scene, camera)
+
+        # render
+        rendererd_image = renderer_base.render(viewports, visuals, model_matrices_buffer, cameras)
 
         # return the modified visuals
         changed_visuals = [visual for object3d in scene.traverse() for visual in object3d.visuals]

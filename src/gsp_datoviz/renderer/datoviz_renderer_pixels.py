@@ -16,6 +16,7 @@ from gsp.visuals.pixels import Pixels
 from gsp.utils.transbuf_utils import TransBufUtils
 from .datoviz_renderer import DatovizRenderer
 from gsp.utils.group_utils import GroupUtils
+from gsp.utils.math_utils import MathUtils
 
 
 class DatovizRendererPixels:
@@ -30,23 +31,44 @@ class DatovizRendererPixels:
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
 
         # =============================================================================
+        # Transform vertices with MVP matrix
+        # =============================================================================
+
+        vertices_buffer = TransBufUtils.to_buffer(pixels.get_positions())
+        model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
+        view_matrix_buffer = TransBufUtils.to_buffer(camera.get_view_matrix())
+        projection_matrix_buffer = TransBufUtils.to_buffer(camera.get_projection_matrix())
+
+        # convert all necessary buffers to numpy arrays
+        vertices_numpy = Bufferx.to_numpy(vertices_buffer)
+        model_matrix_numpy = Bufferx.to_numpy(model_matrix_buffer).squeeze()
+        view_matrix_numpy = Bufferx.to_numpy(view_matrix_buffer).squeeze()
+        projection_matrix_numpy = Bufferx.to_numpy(projection_matrix_buffer).squeeze()
+
+        # Apply Model-View-Projection transformation to the vertices
+        vertices_3d_transformed = MathUtils.apply_mvp_to_vertices(vertices_numpy, model_matrix_numpy, view_matrix_numpy, projection_matrix_numpy)
+
+        # Convert 3D vertices to 2D - shape (N, 2)
+        vertices_3d = vertices_3d_transformed[:, :3]
+
+        # =============================================================================
         # Get attributes
         # =============================================================================
 
         # get attributes from TransBuf to buffer
-        positions_buffer = TransBufUtils.to_buffer(pixels.get_positions())
+        # positions_buffer = TransBufUtils.to_buffer(pixels.get_positions())
         colors_buffer = TransBufUtils.to_buffer(pixels.get_colors())
 
         # convert buffers to numpy arrays
-        vertices_numpy = Bufferx.to_numpy(positions_buffer)
+        # vertices_numpy = Bufferx.to_numpy(positions_buffer)
         colors_numpy = Bufferx.to_numpy(colors_buffer)
 
         # =============================================================================
         #   Compute indices_per_group for groups depending on the type of groups
         # =============================================================================
 
-        indices_per_group = GroupUtils.compute_indices_per_group(vertices_numpy.__len__(), pixels.get_groups())
-        group_count = GroupUtils.get_group_count(vertices_numpy.__len__(), pixels.get_groups())
+        indices_per_group = GroupUtils.compute_indices_per_group(vertices_3d.__len__(), pixels.get_groups())
+        group_count = GroupUtils.get_group_count(vertices_3d.__len__(), pixels.get_groups())
 
         # =============================================================================
         # Create the datoviz pixels if needed
@@ -95,8 +117,9 @@ class DatovizRendererPixels:
             dvz_pixels = typing.cast(_DvzPixel, renderer._dvz_visuals[group_uuid])
 
             # set attributes
-            group_vertices = vertices_numpy[indices_per_group[group_index]]
+            group_vertices = vertices_3d[indices_per_group[group_index]]
             dvz_pixels.set_position(group_vertices)
+            print("fff")
 
             # set group_colors
             group_colors = np.tile(colors_numpy[group_index], group_vertices.__len__()).reshape((-1, 4))

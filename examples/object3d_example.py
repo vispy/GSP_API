@@ -146,7 +146,7 @@ def main():
         object3d_pixel.euler[2] = -time.time() % (3.0 * np.pi)
         object3d_pixel.scale[:] = 0.8 + 0.5 * np.sin(time.time())
 
-        changed_visual = Object3D.render_cooked(matplotlibRenderer, viewport, object3d_scene, camera)
+        changed_visual = Object3D.render_scene(matplotlibRenderer, viewport, object3d_scene, camera)
 
         modified_artists = list(matplotlibRenderer._artists.values())
         return modified_artists

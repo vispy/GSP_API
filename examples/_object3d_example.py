@@ -116,38 +116,41 @@ def main():
     object3d_pixel.euler[1] = np.pi / 4
     object3d_pixel.euler[2] = np.pi / 4
 
-    # Create a renderer and render the scene
-    # matplotlibRenderer = MatplotlibRenderer(canvas)
-    # object3d_scene.render_cooked(matplotlibRenderer, viewport, object3d_scene, camera)
-    # matplotlibRenderer.show()
+    # =============================================================================
+    # Render single image
+    # =============================================================================
 
-    renderer_name = ExampleHelper.get_renderer_name()
-    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-    object3d_scene.render_cooked(renderer_base, viewport, object3d_scene, camera)
-    renderer_base.show()
+    # renderer_name = ExampleHelper.get_renderer_name()
+    # renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+    # object3d_scene.render_scene(renderer_base, viewport, object3d_scene, camera)
+    # renderer_base.show()
 
     # =============================================================================
     # Create the renderer
     # =============================================================================
 
-    # renderer_name = ExampleHelper.get_renderer_name()
-    # renderer = ExampleHelper.create_renderer(renderer_name, canvas)
-    # # init the animator with the renderer
-    # animator = ExampleHelper.create_animator(renderer)
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+    animator = ExampleHelper.create_animator(renderer_base)
 
-    # @animator.event_listener
-    # def animator_callback(delta_time: float) -> list[VisualBase]:
-    #     # Rotate parent object
-    #     object3d_pixel.euler[0] = -time.time() % (1.0 * np.pi)
-    #     object3d_pixel.euler[1] = -time.time() % (2.0 * np.pi)
-    #     object3d_pixel.euler[2] = -time.time() % (3.0 * np.pi)
-    #     object3d_pixel.scale[:] = 0.8 + 0.5 * np.sin(time.time())
+    @animator.event_listener
+    def animator_callback(delta_time: float) -> list[VisualBase]:
+        # Rotate parent object
+        object3d_pixel.euler[0] = -time.time() % (1.0 * np.pi)
+        object3d_pixel.euler[1] = -time.time() % (2.0 * np.pi)
+        object3d_pixel.euler[2] = -time.time() % (3.0 * np.pi)
+        object3d_pixel.scale[:] = 0.8 + 0.5 * np.sin(time.time())
 
-    #     changed_visuals = Object3D.render_cooked(matplotlibRenderer, viewport, object3d_scene, camera)
-    #     return changed_visuals
+        print("Rendering frame...", object3d_pixel.euler)
 
-    # # start the animation loop
-    # animator.start([], [], [], [])
+        # return the modified visuals
+        changed_visuals = [visual for object3d in object3d_scene.traverse() for visual in object3d.visuals]
+        return changed_visuals
+
+    viewports, visuals, model_matrices, cameras = Object3D.pre_render(renderer_base, viewport, object3d_scene, camera)
+
+    # start the animation loop
+    animator.start(viewports, visuals, model_matrices, cameras)
 
     # # =============================================================================
     # # matplotlib animation

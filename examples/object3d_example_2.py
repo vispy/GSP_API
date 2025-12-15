@@ -99,7 +99,7 @@ def main():
     object3d_pixel.attach_visual(pixels)
     object3d_scene.add(object3d_pixel)
 
-    object3d_scene.render_cooked(matplotlibRenderer, viewport, object3d_scene, camera)
+    object3d_scene.render_scene(matplotlibRenderer, viewport, object3d_scene, camera)
 
     # =============================================================================
     #
@@ -128,7 +128,7 @@ def main():
         object3d_pixel.euler[2] = -time.time() % (3.0 * np.pi)
         object3d_pixel.scale[:] = 0.8 + 0.5 * np.sin(time.time())
 
-        object3d_scene.render_cooked(matplotlibRenderer, viewport, object3d_scene, camera)
+        object3d_scene.render_scene(matplotlibRenderer, viewport, object3d_scene, camera)
 
         modified_artists = list(matplotlibRenderer._artists.values())
         return modified_artists

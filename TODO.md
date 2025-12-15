@@ -1,4 +1,6 @@
-- object3d with animator
+- object3d single image with datoviz rotation
+- object3d with animator in matplotlib
+- object3d aninator animation with datoviz and matplotlib
 - object3d in datoviz
   - object3d issue with .render()
     - issue with the animation loop + .render()
