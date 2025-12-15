@@ -1,6 +1,5 @@
 # stdlib imports
-from typing import List, Sequence
-from typing_extensions import deprecated
+import typing
 
 # pip imports
 import numpy as np
@@ -10,9 +9,8 @@ from .bufferx import Bufferx
 from gsp.types.visual_base import VisualBase
 from gsp.core.camera import Camera
 from .mpl3d import glm
-from gsp.core import Canvas, Viewport
-from gsp.types.renderer_base import RendererBase
-from gsp.types import Buffer, BufferType
+from gsp.core import Viewport
+from gsp.types import BufferType
 from gsp.utils.uuid_utils import UuidUtils
 from gsp.types.transbuf import TransBuf
 
@@ -194,36 +192,29 @@ class Object3D:
                 camera.set_view_matrix(view_matrix_buffer)
 
     @staticmethod
-    def to_render_args(
-        renderer_base: RendererBase, viewport: Viewport, scene: "Object3D", camera: Camera
-    ) -> tuple[Sequence[Viewport], Sequence[VisualBase], Sequence[TransBuf], Sequence[Camera]]:
+    def to_render_args(viewport: Viewport, scene: "Object3D", camera: Camera) -> tuple[list[Viewport], list[VisualBase], list[TransBuf], list[Camera]]:
         """Render the scene using the provided renderer.
 
         Args:
-            renderer_base (RendererBase): renderer to use.
             viewport (Viewport): viewport to render to.
             scene (Object3D): root Object3D of the scene.
             camera (Camera): camera to use for rendering.
 
         Returns:
-            tuple[Sequence[Viewport], Sequence[VisualBase], Sequence[TransBuf], Sequence[Camera]]: viewports, visuals, model matrices and cameras.
+            tuple[list[Viewport], list[VisualBase], list[TransBuf], list[Camera]]: viewports, visuals, model matrices and cameras.
         """
         # gather all visuals, model matrices and cameras
         visuals = [visual for object3d in scene.traverse() for visual in object3d.visuals]
         model_matrices_numpy = [object3d.matrix_world for object3d in scene.traverse() for _ in object3d.visuals]
         model_matrices_buffer = [Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4) for model_matrix_numpy in model_matrices_numpy]
+        model_matrices = [typing.cast(TransBuf, model_matrix_buffer) for model_matrix_buffer in model_matrices_buffer]
         viewports = [viewport for _ in range(len(visuals))]
         cameras = [camera for _ in range(len(visuals))]
 
-        return viewports, visuals, model_matrices_buffer, cameras
+        return viewports, visuals, model_matrices, cameras
 
     @staticmethod
-    def pre_render(
-        renderer_base: RendererBase,
-        viewport: Viewport,
-        scene: "Object3D",
-        camera: Camera,
-    ) -> tuple[Sequence[Viewport], Sequence[VisualBase], Sequence[TransBuf], Sequence[Camera]]:
+    def pre_render(viewport: Viewport, scene: "Object3D", camera: Camera) -> tuple[list[Viewport], list[VisualBase], list[TransBuf], list[Camera]]:
         # update all world matrices
         scene.update_matrix_world()
 
@@ -231,25 +222,6 @@ class Object3D:
         Object3D.update_camera_view_matrices(scene)
 
         # gather all visuals, model matrices and cameras
-        viewports, visuals, model_matrices_buffer, cameras = Object3D.to_render_args(renderer_base, viewport, scene, camera)
+        viewports, visuals, model_matrices_buffer, cameras = Object3D.to_render_args(viewport, scene, camera)
 
         return viewports, visuals, model_matrices_buffer, cameras
-
-    @staticmethod
-    @deprecated("DO NOT use. obsolete function. Use .update_matrix_world()+.update_camera_view_matrices()+.render() instead")
-    def render_scene(renderer_base: RendererBase, viewport: Viewport, scene: "Object3D", camera: Camera) -> list[VisualBase]:
-        # update all world matrices
-        scene.update_matrix_world()
-
-        # update camera view matrices
-        Object3D.update_camera_view_matrices(scene)
-
-        # gather all visuals, model matrices and cameras
-        viewports, visuals, model_matrices_buffer, cameras = Object3D.to_render_args(renderer_base, viewport, scene, camera)
-
-        # render
-        rendererd_image = renderer_base.render(viewports, visuals, model_matrices_buffer, cameras)
-
-        # return the modified visuals
-        changed_visuals = [visual for object3d in scene.traverse() for visual in object3d.visuals]
-        return changed_visuals

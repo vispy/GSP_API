@@ -1,7 +1,6 @@
 # stdlib imports
-import os
-from typing import Sequence
 import time
+import typing
 
 # pip imports
 import numpy as np
@@ -83,9 +82,6 @@ def main():
     # Create a camera
     camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
 
-    # Create a renderer and render the scene
-    matplotlibRenderer = MatplotlibRenderer(canvas)
-
     # =============================================================================
     # Build the scene
     # =============================================================================
@@ -112,53 +108,59 @@ def main():
     camera.set_view_matrix(view_matrix_buffer)
 
     # =============================================================================
-    # Create the renderer
+    #
+    # =============================================================================
+
+    object3d_pixel.euler[0] = np.pi / 4
+    object3d_pixel.euler[1] = np.pi / 4
+    object3d_pixel.euler[2] = np.pi / 4
+
+    # =============================================================================
+    # Pre-compute render args
+    # =============================================================================
+
+    viewports, visuals, model_matrices, cameras = Object3D.pre_render(viewport, object3d_scene, camera)
+
+    # =============================================================================
+    # Render single image
     # =============================================================================
 
     # renderer_name = ExampleHelper.get_renderer_name()
-    # renderer = ExampleHelper.create_renderer(renderer_name, canvas)
-    # # init the animator with the renderer
-    # animator = ExampleHelper.create_animator(renderer)
+    # renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+    # renderer_base.render(viewports, visuals, model_matrices, cameras)
+    # renderer_base.show()
 
-    # @animator.event_listener
-    # def animator_callback(delta_time: float) -> list[VisualBase]:
-    #     # Rotate parent object
-    #     object3d_pixel.euler[0] = -time.time() % (1.0 * np.pi)
-    #     object3d_pixel.euler[1] = -time.time() % (2.0 * np.pi)
-    #     object3d_pixel.euler[2] = -time.time() % (3.0 * np.pi)
-    #     object3d_pixel.scale[:] = 0.8 + 0.5 * np.sin(time.time())
+    # =============================================================================
+    # Create the renderer
+    # =============================================================================
 
-    #     changed_visuals = Object3D.render_cooked(matplotlibRenderer, viewport, object3d_scene, camera)
-    #     return changed_visuals
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+    animator = ExampleHelper.create_animator(renderer_base)
 
-    # # start the animation loop
-    # animator.start([], [], [], [])
-
-    # # =============================================================================
-    # # matplotlib animation
-    # # =============================================================================
-
-    def update(frame) -> Sequence[matplotlib.artist.Artist]:
-
+    @animator.event_listener
+    def animator_callback(delta_time: float) -> list[VisualBase]:
+        nonlocal model_matrices
         # Rotate parent object
         object3d_pixel.euler[0] = -time.time() % (1.0 * np.pi)
         object3d_pixel.euler[1] = -time.time() % (2.0 * np.pi)
         object3d_pixel.euler[2] = -time.time() % (3.0 * np.pi)
         object3d_pixel.scale[:] = 0.8 + 0.5 * np.sin(time.time())
 
-        changed_visual = Object3D.render_scene(matplotlibRenderer, viewport, object3d_scene, camera)
+        # Re-compute render args
+        _, _, _model_matrices, _cameras = Object3D.pre_render(viewport, object3d_scene, camera)
 
-        modified_artists = list(matplotlibRenderer._artists.values())
-        return modified_artists
+        # Update model_matrices and cameras in the render args for the animator
+        for visual_index in range(model_matrices.__len__()):
+            model_matrices[visual_index] = _model_matrices[visual_index]
+            cameras[visual_index] = _cameras[visual_index]
 
-    funcAnimation = matplotlib.animation.FuncAnimation(matplotlibRenderer._figure, update, frames=180, interval=50)
+        # return the modified visuals
+        changed_visuals = [visual for object3d in object3d_scene.traverse() for visual in object3d.visuals]
+        return changed_visuals
 
-    # handle non-interactive mode for tests
-    in_test = os.environ.get("GSP_TEST") == "True"
-    if in_test:
-        return
-
-    matplotlib.pyplot.show()
+    # start the animation loop
+    animator.start(viewports, visuals, model_matrices, cameras)
 
 
 if __name__ == "__main__":
