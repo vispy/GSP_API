@@ -1,4 +1,4 @@
-- mvp for all visual in datoviz
+- transform mvp for all visual in datoviz
   - how to test that
   - in big_tester ?
 - support texts in datoviz
