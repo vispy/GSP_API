@@ -1,8 +1,5 @@
 # stdlib imports
-import os
 import pathlib
-from typing import Literal
-import typing
 
 # pip imports
 import numpy as np

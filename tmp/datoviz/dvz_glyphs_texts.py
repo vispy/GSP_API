@@ -3,7 +3,7 @@ import numpy as np
 import datoviz as dvz
 
 app = dvz.App(background="white")
-figure = app.figure(100, 30)
+figure = app.figure(300, 300)
 panel = figure.panel()
 panzoom = panel.panzoom()
 
