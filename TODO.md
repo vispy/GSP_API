@@ -1,11 +1,10 @@
-- object3d single image with datoviz rotation
-- object3d with animator in matplotlib
-- object3d aninator animation with datoviz and matplotlib
-- object3d in datoviz
-  - object3d issue with .render()
-    - issue with the animation loop + .render()
-  - rotation in the datoviz_renderer_pixels
+- mvp for all visual in datoviz
+  - how to test that
+  - in big_tester ?
 - support texts in datoviz
+  - identify what is wrong/missing
+  - write datoviz tests
+- get other visual API for the hollyday
 - transform chain + viewport unit conversion in .userData
   - MathOpUnit link
     - op_code: add/sub/mul/div
@@ -57,6 +56,13 @@
     - possibility: set by class or by instance
 
 ---
+- DONE object3d single image with datoviz rotation
+- DONE object3d with animator in matplotlib
+- DONE object3d aninator animation with datoviz and matplotlib
+- DONE object3d in datoviz
+  - object3d issue with .render()
+    - issue with the animation loop + .render()
+  - rotation in the datoviz_renderer_pixels
 - DONE serialize/deserialize texts
   - test with network
 - DONE add 'resize_event' in viewport events 
