@@ -16,6 +16,7 @@ from gsp.visuals.points import Points
 from gsp.utils.transbuf_utils import TransBufUtils
 from .datoviz_renderer import DatovizRenderer
 from gsp.utils.group_utils import GroupUtils
+from gsp.utils.math_utils import MathUtils
 from gsp.utils.unit_utils import UnitUtils
 
 
@@ -31,16 +32,35 @@ class DatovizRendererPoints:
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
 
         # =============================================================================
+        # Transform vertices with MVP matrix
+        # =============================================================================
+
+        vertices_buffer = TransBufUtils.to_buffer(points.get_positions())
+        model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
+        view_matrix_buffer = TransBufUtils.to_buffer(camera.get_view_matrix())
+        projection_matrix_buffer = TransBufUtils.to_buffer(camera.get_projection_matrix())
+
+        # convert all necessary buffers to numpy arrays
+        vertices_numpy = Bufferx.to_numpy(vertices_buffer)
+        model_matrix_numpy = Bufferx.to_numpy(model_matrix_buffer).squeeze()
+        view_matrix_numpy = Bufferx.to_numpy(view_matrix_buffer).squeeze()
+        projection_matrix_numpy = Bufferx.to_numpy(projection_matrix_buffer).squeeze()
+
+        # Apply Model-View-Projection transformation to the vertices
+        vertices_3d_transformed = MathUtils.apply_mvp_to_vertices(vertices_numpy, model_matrix_numpy, view_matrix_numpy, projection_matrix_numpy)
+
+        # Convert 3D vertices to 3d - shape (N, 3)
+        vertices_3d = np.ascontiguousarray(vertices_3d_transformed, dtype=np.float32)
+
+        # =============================================================================
         # Get attributes
         # =============================================================================
 
         # get attributes from TransBuf to buffer
-        positions_buffer = TransBufUtils.to_buffer(points.get_positions())
         sizes_buffer = TransBufUtils.to_buffer(points.get_sizes())
         face_colors_buffer = TransBufUtils.to_buffer(points.get_face_colors())
 
         # convert buffers to numpy arrays
-        vertices_numpy = Bufferx.to_numpy(positions_buffer)
         face_colors_numpy = Bufferx.to_numpy(face_colors_buffer)
 
         # Convert sizes from point^2 to pixel diameter
@@ -77,14 +97,13 @@ class DatovizRendererPoints:
         dvz_points = typing.cast(_DvzPoints, renderer._dvz_visuals[artist_uuid])
 
         # set attributes
-        group_vertices = vertices_numpy
-        dvz_points.set_position(group_vertices)
+        dvz_points.set_position(vertices_3d)
 
         # set group_sizes
-        group_sizes = np.tile(diameter_px_numpy, group_vertices.__len__()).reshape((-1, 1))
+        group_sizes = np.tile(diameter_px_numpy, vertices_3d.__len__()).reshape((-1, 1))
         group_sizes = group_sizes.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
         dvz_points.set_size(group_sizes)
 
         # set group_colors
-        group_colors = np.tile(face_colors_numpy, group_vertices.__len__()).reshape((-1, 4))
+        group_colors = np.tile(face_colors_numpy, vertices_3d.__len__()).reshape((-1, 4))
         dvz_points.set_color(group_colors)

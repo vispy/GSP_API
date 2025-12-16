@@ -15,6 +15,7 @@ from gsp.types.transbuf import TransBuf
 from gsp.visuals.segments import Segments
 from gsp.utils.transbuf_utils import TransBufUtils
 from gsp.utils.unit_utils import UnitUtils
+from gsp.utils.math_utils import MathUtils
 
 from .datoviz_renderer import DatovizRenderer
 from ..utils.converter_utils import ConverterUtils
@@ -32,16 +33,35 @@ class DatovizRendererSegments:
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
 
         # =============================================================================
+        # Transform vertices with MVP matrix
+        # =============================================================================
+
+        vertices_buffer = TransBufUtils.to_buffer(segments.get_positions())
+        model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
+        view_matrix_buffer = TransBufUtils.to_buffer(camera.get_view_matrix())
+        projection_matrix_buffer = TransBufUtils.to_buffer(camera.get_projection_matrix())
+
+        # convert all necessary buffers to numpy arrays
+        vertices_numpy = Bufferx.to_numpy(vertices_buffer)
+        model_matrix_numpy = Bufferx.to_numpy(model_matrix_buffer).squeeze()
+        view_matrix_numpy = Bufferx.to_numpy(view_matrix_buffer).squeeze()
+        projection_matrix_numpy = Bufferx.to_numpy(projection_matrix_buffer).squeeze()
+
+        # Apply Model-View-Projection transformation to the vertices
+        vertices_3d_transformed = MathUtils.apply_mvp_to_vertices(vertices_numpy, model_matrix_numpy, view_matrix_numpy, projection_matrix_numpy)
+
+        # Convert 3D vertices to 3d - shape (N, 3)
+        vertices_3d = np.ascontiguousarray(vertices_3d_transformed, dtype=np.float32)
+
+        # =============================================================================
         # Get attributes
         # =============================================================================
 
         # get attributes from TransBuf to buffer
-        positions_buffer = TransBufUtils.to_buffer(segments.get_positions())
         colors_buffer = TransBufUtils.to_buffer(segments.get_colors())
         line_widths_buffer = TransBufUtils.to_buffer(segments.get_line_widths())
 
         # convert buffers to numpy arrays
-        vertices_numpy = Bufferx.to_numpy(positions_buffer)
         colors_numpy = Bufferx.to_numpy(colors_buffer)
         line_widths_pt_numpy = Bufferx.to_numpy(line_widths_buffer)
 
@@ -71,9 +91,9 @@ class DatovizRendererSegments:
         dvz_segments = typing.cast(_DvzSegments, renderer._dvz_visuals[artist_uuid])
 
         # dvz_vertices_initial - the even indices are initial points
-        dvz_initial_vertices = np.ascontiguousarray(vertices_numpy[0::2])
+        dvz_initial_vertices = np.ascontiguousarray(vertices_3d[0::2])
         # dvz_vertices_terminal - the odd indices are terminal points
-        dvz_terminal_vertices = np.ascontiguousarray(vertices_numpy[1::2])
+        dvz_terminal_vertices = np.ascontiguousarray(vertices_3d[1::2])
         dvz_initial_cap = ConverterUtils.cap_style_gsp_to_dvz(segments.get_cap_style())
         dvz_terminal_cap = dvz_initial_cap  # same cap for initial and terminal
 

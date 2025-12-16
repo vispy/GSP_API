@@ -17,7 +17,8 @@
   - `big_tester_example.py` as an example
   - `big_tester_cmdline.py` as a test suite
 - RECORD + REPLAY
-  - MG4: GSP video recording (Q4). We will provide a Python example showing how to record a live interactive visualization video by saving the timestamped emitted GSP commands to a file, and replaying them in real time on another computer.
+  - MG4: GSP video recording (Q4). We will provide a Python example showing how to record a live interactive visualization 
+    video by saving the timestamped emitted GSP commands to a file, and replaying them in real time on another computer.
 - handle 3d rotation in datoviz
   - how to handle that ? maybe i set it up to orthographic camera
   - dvz.visual_mvp(c_visual, mvp_pointer_to_48_float32)

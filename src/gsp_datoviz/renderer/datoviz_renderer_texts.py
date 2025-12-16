@@ -9,6 +9,7 @@ from datoviz.visuals import Glyph as _DvzGlyphs
 # local imports
 from gsp.core.camera import Camera
 from gsp.core.viewport import Viewport
+from gsp.utils.math_utils import MathUtils
 from gsp_matplotlib.extra.bufferx import Bufferx
 from gsp.types.transbuf import TransBuf
 from gsp.visuals.texts import Texts
@@ -29,18 +30,37 @@ class DatovizRendererTexts:
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
 
         # =============================================================================
+        # Transform vertices with MVP matrix
+        # =============================================================================
+
+        vertices_buffer = TransBufUtils.to_buffer(texts.get_positions())
+        model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
+        view_matrix_buffer = TransBufUtils.to_buffer(camera.get_view_matrix())
+        projection_matrix_buffer = TransBufUtils.to_buffer(camera.get_projection_matrix())
+
+        # convert all necessary buffers to numpy arrays
+        vertices_numpy = Bufferx.to_numpy(vertices_buffer)
+        model_matrix_numpy = Bufferx.to_numpy(model_matrix_buffer).squeeze()
+        view_matrix_numpy = Bufferx.to_numpy(view_matrix_buffer).squeeze()
+        projection_matrix_numpy = Bufferx.to_numpy(projection_matrix_buffer).squeeze()
+
+        # Apply Model-View-Projection transformation to the vertices
+        vertices_3d_transformed = MathUtils.apply_mvp_to_vertices(vertices_numpy, model_matrix_numpy, view_matrix_numpy, projection_matrix_numpy)
+
+        # Convert 3D vertices to 3d - shape (N, 3)
+        vertices_3d = np.ascontiguousarray(vertices_3d_transformed, dtype=np.float32)
+
+        # =============================================================================
         # Get attributes
         # =============================================================================
 
         # get attributes from TransBuf to buffer
-        positions_buffer = TransBufUtils.to_buffer(texts.get_positions())
         colors_buffer = TransBufUtils.to_buffer(texts.get_colors())
         font_sizes_buffer = TransBufUtils.to_buffer(texts.get_font_sizes())
         anchors_buffer = TransBufUtils.to_buffer(texts.get_anchors())
         angles_buffer = TransBufUtils.to_buffer(texts.get_angles())
 
         # convert buffers to numpy arrays
-        vertices_numpy = Bufferx.to_numpy(positions_buffer)
         colors_numpy = Bufferx.to_numpy(colors_buffer)
         font_sizes_numpy = Bufferx.to_numpy(font_sizes_buffer)
         anchors_numpy = Bufferx.to_numpy(anchors_buffer)
@@ -95,7 +115,7 @@ class DatovizRendererTexts:
                 global_glyph_index = sum(len(s) for s in text_strings[:text_index]) + glyph_index
                 glyphs_angles[global_glyph_index] = angles_numpy[text_index, 0] / 180 * np.pi  # convert to radians
 
-        dvz_glyphs.set_strings(text_strings, string_pos=vertices_numpy)
+        dvz_glyphs.set_strings(text_strings, string_pos=vertices_3d)
         dvz_glyphs.set_color(glyph_colors)
         dvz_glyphs.set_angle(glyphs_angles)
         dvz_glyphs.set_scale(glyph_scales)

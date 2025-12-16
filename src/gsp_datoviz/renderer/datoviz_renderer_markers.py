@@ -8,15 +8,14 @@ from datoviz.visuals import Marker as _DvzMarkers
 
 # local imports
 from gsp.core.camera import Camera
-from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp_matplotlib.extra.bufferx import Bufferx
 from gsp.types.transbuf import TransBuf
 from gsp.visuals.markers import Markers
 from gsp.utils.transbuf_utils import TransBufUtils
 from .datoviz_renderer import DatovizRenderer
-from gsp.utils.group_utils import GroupUtils
 from gsp.utils.unit_utils import UnitUtils
+from gsp.utils.math_utils import MathUtils
 from gsp_datoviz.utils.converter_utils import ConverterUtils
 
 
@@ -32,10 +31,30 @@ class DatovizRendererMarkers:
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
 
         # =============================================================================
+        # Transform vertices with MVP matrix
+        # =============================================================================
+
+        vertices_buffer = TransBufUtils.to_buffer(markers.get_positions())
+        model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
+        view_matrix_buffer = TransBufUtils.to_buffer(camera.get_view_matrix())
+        projection_matrix_buffer = TransBufUtils.to_buffer(camera.get_projection_matrix())
+
+        # convert all necessary buffers to numpy arrays
+        vertices_numpy = Bufferx.to_numpy(vertices_buffer)
+        model_matrix_numpy = Bufferx.to_numpy(model_matrix_buffer).squeeze()
+        view_matrix_numpy = Bufferx.to_numpy(view_matrix_buffer).squeeze()
+        projection_matrix_numpy = Bufferx.to_numpy(projection_matrix_buffer).squeeze()
+
+        # Apply Model-View-Projection transformation to the vertices
+        vertices_3d_transformed = MathUtils.apply_mvp_to_vertices(vertices_numpy, model_matrix_numpy, view_matrix_numpy, projection_matrix_numpy)
+
+        # Convert 3D vertices to 3d - shape (N, 3)
+        vertices_3d = np.ascontiguousarray(vertices_3d_transformed, dtype=np.float32)
+
+        # =============================================================================
         # Convert all attributes to numpy arrays
         # =============================================================================
 
-        positions_buffer = TransBufUtils.to_buffer(markers.get_positions())
         sizes_buffer = TransBufUtils.to_buffer(markers.get_sizes())
         face_colors_buffer = TransBufUtils.to_buffer(markers.get_face_colors())
         edge_colors_buffer = TransBufUtils.to_buffer(markers.get_edge_colors())
@@ -43,7 +62,6 @@ class DatovizRendererMarkers:
 
         # Convert buffers to numpy arrays)
         sizes_pt2_numpy = Bufferx.to_numpy(sizes_buffer)
-        positions_numpy = Bufferx.to_numpy(positions_buffer)
         face_colors_numpy = Bufferx.to_numpy(face_colors_buffer)
         edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer)
         edge_widths_pt_numpy = Bufferx.to_numpy(edge_widths_buffer)
@@ -80,7 +98,7 @@ class DatovizRendererMarkers:
         dvz_markers = typing.cast(_DvzMarkers, renderer._dvz_visuals[artist_uuid])
 
         # set attributes
-        dvz_markers.set_position(positions_numpy)
+        dvz_markers.set_position(vertices_3d)
 
         # Set the proper parameters
         dvz_markers.set_size(diameter_px_numpy)

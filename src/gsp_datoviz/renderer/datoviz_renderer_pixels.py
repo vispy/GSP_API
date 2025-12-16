@@ -49,7 +49,7 @@ class DatovizRendererPixels:
         vertices_3d_transformed = MathUtils.apply_mvp_to_vertices(vertices_numpy, model_matrix_numpy, view_matrix_numpy, projection_matrix_numpy)
 
         # Convert 3D vertices to 3d - shape (N, 3)
-        vertices_3d = vertices_3d_transformed[:, :3]
+        vertices_3d = np.ascontiguousarray(vertices_3d_transformed, dtype=np.float32)
 
         # =============================================================================
         # Get attributes
