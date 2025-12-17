@@ -1,3 +1,4 @@
+"""Matplotlib renderer for Paths objects."""
 # pip imports
 import typing
 import matplotlib.axes
@@ -18,6 +19,8 @@ from ..utils.converter_utils import ConverterUtils
 
 
 class RendererPaths:
+    """Renderer for Paths objects using Matplotlib."""
+
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
@@ -26,7 +29,7 @@ class RendererPaths:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
-        """ Render the given Paths object onto the specified viewport using Matplotlib. 
+        """Render the given Paths object onto the specified viewport using Matplotlib.
         
         Args:
             renderer (MatplotlibRenderer): The renderer instance.

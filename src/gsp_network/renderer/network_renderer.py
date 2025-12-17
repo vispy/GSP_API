@@ -1,3 +1,5 @@
+"""Network renderer that sends rendering requests to a remote server and displays the results using Matplotlib."""
+
 # typing imports
 import io
 import os
@@ -27,13 +29,13 @@ from gsp_pydantic.types.pydantic_dict import PydanticDict
 #   Type for the network payload
 #
 class NetworkPayload(TypedDict):
+    """Type definition for the network payload sent to the server."""
     renderer_name: Literal["matplotlib", "datoviz"]
     data: PydanticDict
 
 
 class NetworkRenderer(RendererBase):
-    """
-    **Note**: this requires a running gsp_network server. See the README for instructions.
+    """**Note**: this requires a running gsp_network server. See the README for instructions.
 
     **IMPORTANT**: it DOES NOT depend on GSP matplotlib renderer, it only uses pip matplotlib to display the remotely rendered images.
     """
@@ -111,7 +113,6 @@ class NetworkRenderer(RendererBase):
         Raises:
             Exception: If the network request fails.
         """
-
         # =============================================================================
         # Serialize the scene and create the payload
         # =============================================================================
@@ -154,6 +155,7 @@ class NetworkRenderer(RendererBase):
         return image_png_data
 
     def show(self) -> None:
+        """Show the rendered canvas (blocking call)."""
         # handle non-interactive mode for tests
         in_test = os.environ.get("GSP_TEST") == "True"
         if in_test:
@@ -162,4 +164,9 @@ class NetworkRenderer(RendererBase):
         matplotlib.pyplot.show()
 
     def get_mpl_figure(self) -> matplotlib.figure.Figure:
+        """Get the underlying Matplotlib figure.
+        
+        Returns:
+            matplotlib.figure.Figure: The Matplotlib figure used by the renderer.
+        """
         return self._figure

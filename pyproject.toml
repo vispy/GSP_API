@@ -46,3 +46,9 @@ line-length = 160   # to match the 79 character limit of PEP 8, but allow some e
 style = 'numpy'
 check-style-mismatch = true
 allow-init-docstring = true
+
+[tool.ruff]
+select = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

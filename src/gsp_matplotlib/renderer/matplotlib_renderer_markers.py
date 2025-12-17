@@ -1,3 +1,5 @@
+"""Matplotlib renderer for Markers objects."""
+
 # pip imports
 import typing
 import matplotlib.collections
@@ -16,6 +18,7 @@ from ..utils.converter_utils import ConverterUtils
 
 
 class RendererMarkers:
+    """Renderer for Markers objects using Matplotlib."""
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
@@ -24,6 +27,18 @@ class RendererMarkers:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
+        """Render the given Markers object onto the specified viewport using Matplotlib.
+        
+        Args:
+            renderer (MatplotlibRenderer): The renderer instance.
+            viewport (Viewport): The viewport to render onto.
+            markers (Markers): The Markers object containing marker data.
+            model_matrix (TransBuf): The model transformation matrix.           
+            camera (Camera): The camera providing view and projection matrices.
+
+        Returns:
+            list[matplotlib.artist.Artist]: A list of Matplotlib artist objects created or updated
+        """
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================

@@ -1,5 +1,4 @@
-"""
-Kill any process using port 5000 (commonly used for flask server)
+"""Kill any process using port 5000 (commonly used for flask server).
 
 in shell: `lsof -ti tcp:5000 | xargs kill`
 """
@@ -18,7 +17,11 @@ import argparse
 
 
 def main() -> int:
-
+    """Main function to kill processes using port 5000.
+    
+    Returns:
+        int: Exit code (0 for success, 1 for failure).
+    """
     # parse command line arguments
     parser = argparse.ArgumentParser(description="Kill any process using port 5000 (commonly used for flask server).")
     _ = parser.parse_args()

@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-"""
-Server example using Flask to render a scene from JSON input.
+"""Server example using Flask to render a scene from JSON input.
 
 - use Flask to create a simple web server
 - render with matplotlib or datoviz based on environment variable
 """
-
 # stdlib imports
 import io
 
@@ -28,6 +26,14 @@ flask_app = Flask(__name__)
 # Colorama alias
 # =============================================================================
 def text_cyan(text: str) -> str:
+    """Return the given text string wrapped in ANSI escape codes for cyan color.
+    
+    Args:
+        text (str): The text to color.
+
+    Returns:
+        str: The colored text string.
+    """
     return colorama.Fore.CYAN + text + colorama.Style.RESET_ALL
 
 
@@ -36,6 +42,11 @@ def text_cyan(text: str) -> str:
 # =============================================================================
 @flask_app.route("/render", methods=["POST"])
 def render_scene_json() -> Response:
+    """Flask route to render a scene from JSON input.
+
+    Returns:
+        Response: Flask response containing the rendered PNG image.
+    """
     payload: NetworkPayload = request.get_json()
 
     # Log the received payload for debugging
@@ -79,14 +90,13 @@ def render_scene_json() -> Response:
 
 
 class ServerSample:
-    """
-    Sample class to demonstrate server functionality.
-    """
-
+    """Sample class to demonstrate server functionality."""
     def __init__(self):
+        """Initialize the server sample."""
         pass
 
     def run(self):
+        """Run the Flask server."""
         flask_app.run(threaded=False, debug=False)  # Enable debug mode if desired
 
 
