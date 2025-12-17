@@ -32,6 +32,7 @@ class PydanticTransBuf(BaseModel):
 # =============================================================================
 
 PydanticGroups = Union[int, list[int], list[list[int]]]
+"""Type alias for groups which can be an int, a list of ints, or a list of list of ints."""
 
 # =============================================================================
 #
