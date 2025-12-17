@@ -2,24 +2,44 @@
 # GL Mathematics for numpy
 # Copyright 2023 Nicolas P. Rougier - BSD 2 Clauses licence
 # -----------------------------------------------------------------------------
+"""OpenGL Mathematics (GLM) utilities for numpy.
+
+This module provides mathematical functions commonly used in 3D graphics,
+including matrix transformations, projections, rotations, and vector operations.
+All operations are implemented using numpy for efficient computation.
+"""
 import numpy as np
 from typing import Literal
 
 
 def normalize(V: np.ndarray) -> np.ndarray:
-    """Normalize V"""
-
+    """Normalize a vector or array of vectors to unit length.
+    
+    Args:
+        V: Vector or array of vectors to normalize.
+        
+    Returns:
+        Normalized vector(s) with unit length.
+    """
     return V / (1e-16 + np.sqrt((np.array(V) ** 2).sum(axis=-1)))[..., np.newaxis]
 
 
 def clamp(V: np.ndarray, vmin: float = 0, vmax: float = 1) -> np.ndarray:
-    """Clamp V between vmin and vmax"""
-
+    """Clamp values between minimum and maximum bounds.
+    
+    Args:
+        V: Array of values to clamp.
+        vmin: Minimum value (default: 0).
+        vmax: Maximum value (default: 1).
+        
+    Returns:
+        Array with values clamped to [vmin, vmax].
+    """
     return np.minimum(np.maximum(V, vmin), vmax)
 
 
 def viewport(x: int, y: int, w: int, h: int, d: float, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
-    """Viewport matrix
+    """Create a viewport transformation matrix.
 
     Args:
         x (int): X origin (pixels) of the viewport (lower left)
@@ -32,7 +52,6 @@ def viewport(x: int, y: int, w: int, h: int, d: float, dtype: np.dtype = np.dtyp
     Returns:
         np.ndarray: Viewport matrix
     """
-
     M = np.array(
         [
             [w / 2, 0, 0, x + w / 2],
@@ -54,7 +73,7 @@ def frustum(
     zfar: float,
     dtype: np.dtype = np.dtype(np.float32),
 ) -> np.ndarray:
-    r"""View frustum matrix
+    r"""Create a view frustum projection matrix.
 
     Args:
         left (float): Left coordinate of the field of view.
@@ -68,7 +87,6 @@ def frustum(
     Returns:
         np.ndarray: View frustum matrix
     """
-
     M = np.zeros((4, 4), dtype=dtype)
     M[0, 0] = +2.0 * znear / (right - left)
     M[1, 1] = +2.0 * znear / (top - bottom)
@@ -88,7 +106,7 @@ def perspective(
     zfar: float,
     dtype: np.dtype = np.dtype(np.float32),
 ) -> np.ndarray:
-    """Perspective projection matrix
+    """Create a perspective projection matrix.
 
     Args:
         fovy (float): The field of view along the y axis.
@@ -100,14 +118,13 @@ def perspective(
     Returns:
         np.ndarray: Perspective projection matrix
     """
-
     h = np.tan(0.5 * np.radians(fovy)) * znear
     w = h * aspect
     return frustum(-w, w, -h, h, znear, zfar, dtype)
 
 
 def ortho(left: float, right: float, bottom: float, top: float, znear: float, zfar: float, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
-    """Create orthographic projection matrix
+    """Create an orthographic projection matrix.
 
     Args:
         left (float): Left coordinate of the field of view.
@@ -121,7 +138,6 @@ def ortho(left: float, right: float, bottom: float, top: float, znear: float, zf
     Returns:
         np.ndarray: Orthographic projection matrix
     """
-
     M = np.zeros((4, 4), dtype=dtype)
     M[0, 0] = +2.0 / (right - left)
     M[1, 1] = +2.0 / (top - bottom)
@@ -140,10 +156,8 @@ def lookat(
     up: tuple[float, float, float] = (0, 0, 1),
     dtype: np.dtype = np.dtype(np.float32),
 ) -> np.ndarray:
-    """
-    Creates a viewing matrix derived from an eye point, a reference
-    point indicating the center of the scene, and an up vector.
-
+    """Create a viewing matrix derived from an eye point, reference point, and up vector.
+    
     Args:
         eye (tuple[float, float, float]): Eye point
         center (tuple[float, float, float]): Reference point
@@ -153,7 +167,6 @@ def lookat(
     Returns:
         np.ndarray: View matrix
     """
-
     eye_np = np.array(eye)
     center_np = np.array(center)
     up_np = np.array(up)
@@ -174,7 +187,7 @@ def lookat(
 
 
 def scale(scale: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
-    """Non-uniform scaling along the x, y, and z axes
+    """Create a non-uniform scaling matrix along the x, y, and z axes.
 
     Args:
         scale (np.ndarray): Scaling vector
@@ -183,7 +196,6 @@ def scale(scale: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarr
     Returns:
         np.ndarray: Scaling matrix
     """
-
     x, y, z = np.array(scale)
     S = np.array(
         [
@@ -199,7 +211,7 @@ def scale(scale: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarr
 
 
 def fit(vertices: np.ndarray) -> np.ndarray:
-    """Fit vertices to the normalized cube
+    """Fit vertices to the normalized cube.
 
     Args:
         vertices (np.ndarray): Vertices to fit
@@ -207,7 +219,6 @@ def fit(vertices: np.ndarray) -> np.ndarray:
     Returns:
         np.ndarray: vertices contained in the normalize cube
     """
-
     Vmin = vertices.min(axis=0)
     Vmax = vertices.max(axis=0)
     # return 2*(vertices-vmin) / max(vmax-vmin)-1
@@ -216,8 +227,7 @@ def fit(vertices: np.ndarray) -> np.ndarray:
 
 
 def translate(translate: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
-    """
-    Translation by a given vector
+    """Create a translation matrix by a given vector.
 
     Args:
         translate (np.ndarray): Translation vector.
@@ -226,7 +236,6 @@ def translate(translate: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) -> 
     Returns:
         np.ndarray: Translation matrix
     """
-
     x, y, z = np.array(translate)
     T = np.array([[1, 0, 0, x], [0, 1, 0, y], [0, 0, 1, z], [0, 0, 0, 1]], dtype=dtype)
 
@@ -242,14 +251,13 @@ def center(vertices: np.ndarray) -> np.ndarray:
     Returns:
         np.ndarray: vertices centered
     """
-
     vmin = vertices.min(axis=0)
     vmax = vertices.max(axis=0)
     return vertices - (vmax + vmin) / 2
 
 
 def xrotate(angle_x: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
-    """Rotation about the X axis
+    """Create a rotation matrix about the X axis.
 
     Args:
         angle_x (float):
@@ -260,7 +268,6 @@ def xrotate(angle_x: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.
     Returns:
        np.ndarray: Rotation matrix
     """
-
     t = np.radians(angle_x)
     c, s = np.cos(t), np.sin(t)
     R = np.array([[1, 0, 0, 0], [0, c, -s, 0], [0, s, c, 0], [0, 0, 0, 1]], dtype=dtype)
@@ -269,7 +276,7 @@ def xrotate(angle_x: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.
 
 
 def yrotate(angle_y: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
-    """Rotation about the Y axis
+    """Create a rotation matrix about the Y axis.
 
     Args:
         angle_y (float): Specifies the angle of rotation, in degrees.
@@ -278,7 +285,6 @@ def yrotate(angle_y: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.
     Returns:
         np.ndarray: Rotation matrix
     """
-
     t = np.radians(angle_y)
     c, s = np.cos(t), np.sin(t)
     R = np.array([[c, 0, s, 0], [0, 1, 0, 0], [-s, 0, c, 0], [0, 0, 0, 1]], dtype=dtype)
@@ -287,7 +293,7 @@ def yrotate(angle_y: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.
 
 
 def zrotate(angle_z: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
-    """Rotation about the Z axis
+    """Create a rotation matrix about the Z axis.
 
     Args:
         angle_z (float): Specifies the angle of rotation, in degrees.
@@ -296,7 +302,6 @@ def zrotate(angle_z: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.
     Returns:
         np.ndarray: Rotation matrix
     """
-
     t = np.radians(angle_z)
     c, s = np.cos(t), np.sin(t)
     R = np.array([[c, -s, 0, 0], [s, c, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]], dtype=dtype)
@@ -305,7 +310,7 @@ def zrotate(angle_z: float = 0.0, dtype: np.dtype = np.dtype(np.float32)) -> np.
 
 
 def rotate(angle: float, axis: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
-    """Rotation around an arbitrary axis of angle
+    """Create a rotation matrix around an arbitrary axis.
 
     Args:
         angle (float): Specifies the angle of rotation, in degrees.
@@ -315,7 +320,6 @@ def rotate(angle: float, axis: np.ndarray, dtype: np.dtype = np.dtype(np.float32
     Returns:
         np.ndarray: Rotation matrix
     """
-
     t = np.radians(angle)
 
     axis = normalize(np.array(axis))
@@ -337,8 +341,7 @@ def rotate(angle: float, axis: np.ndarray, dtype: np.dtype = np.dtype(np.float32
 
 
 def align(U: np.ndarray, V: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) -> np.ndarray:
-    """
-    Return the rotation matrix that aligns U to V
+    """Return the rotation matrix that aligns vector U to vector V.
 
     Args:
         U (np.ndarray): First vector
@@ -348,7 +351,6 @@ def align(U: np.ndarray, V: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) 
     Returns:
         np.ndarray: Rotation matrix
     """
-
     a, b = normalize(U), normalize(V)
     v = np.cross(a, b)
     c = np.dot(a, b)
@@ -362,8 +364,7 @@ def align(U: np.ndarray, V: np.ndarray, dtype: np.dtype = np.dtype(np.float32)) 
 
 
 def frontback(triangles: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Sort front and back facing triangles
+    """Sort front and back facing triangles.
 
     Args:
         triangles (np.ndarray): Triangles to sort
@@ -380,7 +381,7 @@ def frontback(triangles: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
 
 def camera(xrotation: float = 25.0, yrotation: float = 45.0, zoom: float = 1.0, mode: Literal["perspective", "ortho"] = "perspective") -> np.ndarray:
-    """Create a camera matrix
+    """Create a camera transformation matrix.
 
     Args:
         xrotation (float): Rotation around the X axis in degrees.

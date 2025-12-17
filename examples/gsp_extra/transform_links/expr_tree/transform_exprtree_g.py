@@ -1,3 +1,9 @@
+"""Expression tree DSL with unit-aware arithmetic.
+
+This module provides a domain-specific language for building and evaluating
+mathematical expressions with optional unit tracking. It supports basic arithmetic
+operations with unit validation to prevent operations on incompatible units.
+"""
 from abc import ABC, abstractmethod
 from typing import Dict, Tuple, Union, Any, Optional
 
@@ -23,28 +29,34 @@ class Node(ABC):
 
 # --- DSL Enabling Base Class ---
 class ExpressionNode(Node):
-    """
-    Implements DSL by overloading arithmetic operators to build the tree.
-    All concrete nodes (NumberNode, VariableNode) must inherit this.
+    """Implements DSL by overloading arithmetic operators to build the tree.
+    
+    All concrete nodes (NumberNode, VariableNode) must inherit this class
+    to enable natural mathematical syntax for expression construction.
     """
 
     def __add__(self, other: Union["Node", Value]) -> "OperatorNode":
+        """Overload addition operator to create an addition node."""
         other_node: Node = other if isinstance(other, Node) else NumberNode(other)
         return OperatorNode("+", self, other_node)
 
     def __sub__(self, other: Union["Node", Value]) -> "OperatorNode":
+        """Overload subtraction operator to create a subtraction node."""
         other_node: Node = other if isinstance(other, Node) else NumberNode(other)
         return OperatorNode("-", self, other_node)
 
     def __mul__(self, other: Union["Node", Value]) -> "OperatorNode":
+        """Overload multiplication operator to create a multiplication node."""
         other_node: Node = other if isinstance(other, Node) else NumberNode(other)
         return OperatorNode("*", self, other_node)
 
     # Right-side operators handle cases like `5 + x` or `5 * x`
     def __radd__(self, other: Value) -> "OperatorNode":
+        """Overload reflected addition for Value + Node."""
         return self.__add__(other)
 
     def __rmul__(self, other: Value) -> "OperatorNode":
+        """Overload reflected multiplication for Value * Node."""
         return self.__mul__(other)
 
     # Note: Division (__, __rdiv__) and power (__, __rpow__) can be added similarly
@@ -57,6 +69,12 @@ class NumberNode(ExpressionNode):
     """Represents a final numerical value (a leaf node) with an optional unit."""
 
     def __init__(self, value: Value, unit: UnitName = None):
+        """Initialize a number node with a value and optional unit.
+        
+        Args:
+            value: The numeric value to store.
+            unit: Optional unit name for the value.
+        """
         self.value = value
         self.unit = unit
 
@@ -65,6 +83,7 @@ class NumberNode(ExpressionNode):
         return (self.value, self.unit)
 
     def __repr__(self) -> str:
+        """Return string representation of the number with its unit."""
         unit_str = f"'{self.unit}'" if self.unit else ""
         return f"{self.value}{unit_str}"
 
@@ -73,6 +92,11 @@ class VariableNode(ExpressionNode):
     """Represents a variable whose value must be looked up in the context."""
 
     def __init__(self, name: str):
+        """Initialize a variable node with a name.
+        
+        Args:
+            name: The variable name to look up during evaluation.
+        """
         self.name = name
 
     def evaluate(self, context: Context) -> EvalResult:
@@ -85,6 +109,7 @@ class VariableNode(ExpressionNode):
         raise KeyError(f"Variable '{self.name}' not found in context.")
 
     def __repr__(self) -> str:
+        """Return the variable name as its string representation."""
         return self.name
 
 
@@ -92,6 +117,13 @@ class OperatorNode(ExpressionNode):
     """Represents an operation (+, -, *, /) (an internal node)."""
 
     def __init__(self, operator: str, left: Node, right: Node):
+        """Initialize an operator node with an operator and two operands.
+        
+        Args:
+            operator: The operator symbol ('+', '-', '*', '/').
+            left: The left operand node.
+            right: The right operand node.
+        """
         self.operator = operator
         self.left = left
         self.right = right
@@ -124,16 +156,20 @@ class OperatorNode(ExpressionNode):
         return (result_value, result_unit)
 
     def __repr__(self) -> str:
+        """Return string representation of the operation with parentheses."""
         return f"({self.left!r} {self.operator} {self.right!r})"
 
 
 # --- Unit DSL Helper ---
 class Unit:
-    """
-    Unit wrapper. Allows syntax like `5 * cm` to create `NumberNode(5, 'cm')`.
-    """
+    """Unit wrapper allowing syntax like `5 * cm` to create `NumberNode(5, 'cm')`."""
 
     def __init__(self, name: str):
+        """Initialize a unit with a name.
+        
+        Args:
+            name: The name of the unit (e.g., 'cm', 'inch').
+        """
         self.name = name
 
     def __rmul__(self, value: Union[Value, Node]) -> Union[NumberNode, OperatorNode, Any]:
@@ -150,6 +186,7 @@ class Unit:
         return NotImplemented
 
     def __repr__(self) -> str:
+        """Return the unit name as its string representation."""
         return self.name
 
 

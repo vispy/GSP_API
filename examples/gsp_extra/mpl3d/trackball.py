@@ -78,30 +78,91 @@ import numpy as np
 # Some useful functions on vectors
 # -----------------------------------------------------------------------------
 def _v_add(v1, v2):
+    """Add two 3D vectors.
+    
+    Args:
+        v1: First vector as a list of 3 floats.
+        v2: Second vector as a list of 3 floats.
+        
+    Returns:
+        The sum of v1 and v2 as a list of 3 floats.
+    """
     return [v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]]
 
 
 def _v_sub(v1, v2):
+    """Subtract two 3D vectors.
+    
+    Args:
+        v1: First vector as a list of 3 floats.
+        v2: Second vector as a list of 3 floats.
+        
+    Returns:
+        The difference v1 - v2 as a list of 3 floats.
+    """
     return [v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]]
 
 
 def _v_mul(v, s):
+    """Multiply a 3D vector by a scalar.
+    
+    Args:
+        v: Vector as a list of 3 floats.
+        s: Scalar multiplier.
+        
+    Returns:
+        The product v * s as a list of 3 floats.
+    """
     return [v[0] * s, v[1] * s, v[2] * s]
 
 
 def _v_dot(v1, v2):
+    """Compute the dot product of two 3D vectors.
+    
+    Args:
+        v1: First vector as a list of 3 floats.
+        v2: Second vector as a list of 3 floats.
+        
+    Returns:
+        The dot product of v1 and v2 as a float.
+    """
     return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2]
 
 
 def _v_cross(v1, v2):
+    """Compute the cross product of two 3D vectors.
+    
+    Args:
+        v1: First vector as a list of 3 floats.
+        v2: Second vector as a list of 3 floats.
+        
+    Returns:
+        The cross product v1 × v2 as a list of 3 floats.
+    """
     return [(v1[1] * v2[2]) - (v1[2] * v2[1]), (v1[2] * v2[0]) - (v1[0] * v2[2]), (v1[0] * v2[1]) - (v1[1] * v2[0])]
 
 
 def _v_length(v):
+    """Compute the length (magnitude) of a 3D vector.
+    
+    Args:
+        v: Vector as a list of 3 floats.
+        
+    Returns:
+        The length of v as a float.
+    """
     return math.sqrt(_v_dot(v, v))
 
 
 def _v_normalize(v):
+    """Normalize a 3D vector to unit length.
+    
+    Args:
+        v: Vector as a list of 3 floats.
+        
+    Returns:
+        The normalized vector. Returns the original vector if length is zero.
+    """
     try:
         return _v_mul(v, 1.0 / _v_length(v))
     except ZeroDivisionError:
@@ -111,6 +172,15 @@ def _v_normalize(v):
 # Some useful functions on quaternions
 # -----------------------------------------------------------------------------
 def _q_add(q1, q2):
+    """Add (multiply) two quaternions.
+    
+    Args:
+        q1: First quaternion as a list of 4 floats [x, y, z, w].
+        q2: Second quaternion as a list of 4 floats [x, y, z, w].
+        
+    Returns:
+        The quaternion product q1 * q2 as a list of 4 floats.
+    """
     t1 = _v_mul(q1, q2[3])
     t2 = _v_mul(q2, q1[3])
     t3 = _v_cross(q2, q1)
@@ -121,18 +191,52 @@ def _q_add(q1, q2):
 
 
 def _q_mul(q, s):
+    """Multiply a quaternion by a scalar.
+    
+    Args:
+        q: Quaternion as a list of 4 floats [x, y, z, w].
+        s: Scalar multiplier.
+        
+    Returns:
+        The product q * s as a list of 4 floats.
+    """
     return [q[0] * s, q[1] * s, q[2] * s, q[3] * s]
 
 
 def _q_dot(q1, q2):
+    """Compute the dot product of two quaternions.
+    
+    Args:
+        q1: First quaternion as a list of 4 floats [x, y, z, w].
+        q2: Second quaternion as a list of 4 floats [x, y, z, w].
+        
+    Returns:
+        The dot product of q1 and q2 as a float.
+    """
     return q1[0] * q2[0] + q1[1] * q2[1] + q1[2] * q2[2] + q1[3] * q2[3]
 
 
 def _q_length(q):
+    """Compute the length (magnitude) of a quaternion.
+    
+    Args:
+        q: Quaternion as a list of 4 floats [x, y, z, w].
+        
+    Returns:
+        The length of q as a float.
+    """
     return math.sqrt(_q_dot(q, q))
 
 
 def _q_normalize(q):
+    """Normalize a quaternion to unit length.
+    
+    Args:
+        q: Quaternion as a list of 4 floats [x, y, z, w].
+        
+    Returns:
+        The normalized quaternion. Returns the original if length is zero.
+    """
     try:
         return _q_mul(q, 1.0 / _q_length(q))
     except ZeroDivisionError:
@@ -140,12 +244,29 @@ def _q_normalize(q):
 
 
 def _q_from_axis_angle(v, phi):
+    """Create a quaternion from an axis-angle representation.
+    
+    Args:
+        v: Rotation axis as a list of 3 floats.
+        phi: Rotation angle in radians.
+        
+    Returns:
+        A quaternion representing the rotation as a list of 4 floats.
+    """
     q = _v_mul(_v_normalize(v), math.sin(phi / 2.0))
     q.append(math.cos(phi / 2.0))
     return q
 
 
 def _q_rotmatrix(q):
+    """Convert a quaternion to a 4x4 rotation matrix.
+    
+    Args:
+        q: Quaternion as a list of 4 floats [x, y, z, w].
+        
+    Returns:
+        A 4x4 numpy array representing the rotation matrix.
+    """
     m = np.zeros(16, float)
     m[0 * 4 + 0] = 1.0 - 2.0 * (q[1] * q[1] + q[2] * q[2])
     m[0 * 4 + 1] = 2.0 * (q[0] * q[1] - q[2] * q[3])
@@ -163,7 +284,7 @@ def _q_rotmatrix(q):
 
 
 class Trackball(object):
-    """Virtual trackball for 3D scene viewing"""
+    """Virtual trackball for 3D scene viewing."""
 
     def __init__(self, theta: float = 0, phi: float = 0):
         """Build a new trackball with specified view.
@@ -182,9 +303,11 @@ class Trackball(object):
     def drag_to(self, x: float, y: float, dx: float, dy: float):
         """Move trackball view from x,y to x+dx,y+dy.
         
+        Updates the trackball rotation based on mouse drag movement.
+        
         Args:
-            x: Current x position.
-            y: Current y position.
+            x: Current x position in normalized coordinates [-1, 1].
+            y: Current y position in normalized coordinates [-1, 1].
             dx: Change in x position.
             dy: Change in y position.
         """
@@ -217,7 +340,7 @@ class Trackball(object):
 
     @property
     def phi(self):
-        """Angle (in degrees) around the x axis"""
+        """Angle (in degrees) around the x axis."""
         _, self._phi = self._get_orientation()
         return self._phi
 
@@ -227,7 +350,6 @@ class Trackball(object):
 
     def _get_orientation(self):
         """Return current computed orientation (theta,phi)."""
-
         q0, q1, q2, q3 = self._rotation
         ax = math.atan(2 * (q0 * q1 + q2 * q3) / (1 - 2 * (q1 * q1 + q2 * q2))) * 180.0 / math.pi
         az = math.atan(2 * (q0 * q3 + q1 * q2) / (1 - 2 * (q2 * q2 + q3 * q3))) * 180.0 / math.pi
@@ -235,7 +357,6 @@ class Trackball(object):
 
     def _set_orientation(self, theta: float, phi: float):
         """Computes rotation corresponding to theta and phi."""
-
         self._theta = theta
         self._phi = phi
         angle = self._theta * (math.pi / 180.0)
@@ -248,8 +369,17 @@ class Trackball(object):
         self._model = _q_rotmatrix(self._rotation)
 
     def _project(self, r: float, x: float, y: float):
-        """Project an x,y pair onto a sphere of radius r OR a hyperbolic sheet
-        if we are away from the center of the sphere.
+        """Project an x,y pair onto a sphere of radius r or a hyperbolic sheet.
+        
+        Projects onto a hyperbolic sheet if we are away from the center of the sphere.
+        
+        Args:
+            r: Sphere radius.
+            x: X coordinate.
+            y: Y coordinate.
+            
+        Returns:
+            The z coordinate of the projection.
         """
         d = math.sqrt(x * x + y * y)
         if d < r * 0.70710678118654752440:  # Inside sphere
