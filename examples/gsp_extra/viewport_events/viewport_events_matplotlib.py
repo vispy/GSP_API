@@ -1,3 +1,5 @@
+""""MatplotlibRenderer event handler for viewport events."""
+
 # stdlib imports
 from typing import Any
 import typing
@@ -18,7 +20,7 @@ from .viewport_events_types import KeyboardEventCallback, MouseEventCallback, Ca
 
 
 class ViewportEventsMatplotlib(ViewportEventsBase):
-    """MatplotlibRenderer event handler for viewport"""
+    """MatplotlibRenderer event handler for viewport."""
 
     __slots__ = [
         "_renderer",
@@ -34,7 +36,12 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
     ]
 
     def __init__(self, renderer: MatplotlibRenderer, viewport: Viewport) -> None:
-
+        """Initialize the Matplotlib viewport event handler.
+        
+        Args:
+            renderer: MatplotlibRenderer associated with this event handler.
+            viewport: Viewport associated with this event handler.
+        """
         self._renderer = renderer
         """MatplotlibRenderer associated with this event handler"""
         self._viewport = viewport
@@ -62,6 +69,7 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
         self._mpl_resize_event_cid = mpl_canvas.mpl_connect("resize_event", typing.cast(Any, self._on_canvas_resize))
 
     def close(self):
+        """Close the event handler and release resources."""
         mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
         if self._mpl_key_press_cid is not None:
             mpl_canvas.mpl_disconnect(self._mpl_key_press_cid)
@@ -162,7 +170,14 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
     # =============================================================================
 
     def _viewport_contains_mpl_mouse_event(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> bool:
-        """Check if the matplotlib mouse event is inside this viewport"""
+        """Check if the matplotlib mouse event is inside this viewport.
+        
+        Args:
+            mpl_mouse_event: Matplotlib mouse event.
+            
+        Returns:
+            True if the mouse event is inside this viewport, False otherwise.
+        """
         mouse_x = mpl_mouse_event.x / UnitUtils.device_pixel_ratio()
         mouse_y = mpl_mouse_event.y / UnitUtils.device_pixel_ratio()
         if mouse_x < self._viewport.get_x():

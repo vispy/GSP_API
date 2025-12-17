@@ -1,3 +1,5 @@
+"""DatovizRenderer event handler for viewport events."""
+
 # pip imports
 import datoviz as dvz
 from datoviz._figure import Figure as _DvzFigure
@@ -14,12 +16,12 @@ from .viewport_events_types import KeyboardEventCallback, MouseEventCallback, Ca
 
 
 class ViewportEventsDatoviz(ViewportEventsBase):
-    """DatovizRenderer event handler for viewport"""
+    """DatovizRenderer event handler for viewport."""
 
     __slots__ = ("_renderer", "_viewport", "_has_key_focus", "_is_closed")
 
     def __init__(self, renderer: DatovizRenderer, viewport: Viewport) -> None:
-
+        """Initialize the Datoviz viewport event handler."""
         self._renderer = renderer
         """MatplotlibRenderer associated with this event handler"""
         self._viewport = viewport
@@ -168,8 +170,7 @@ class ViewportEventsDatoviz(ViewportEventsBase):
             self.canvas_resize_event.dispatch(canvas_resize_event)
 
     def close(self):
-        """Close the event handler and release resources"""
-
+        """Close the event handler and release resources."""
         # no more dispatch events (datoviz doesnt allow to disconnect events)
         self._is_closed = True
 
@@ -178,8 +179,14 @@ class ViewportEventsDatoviz(ViewportEventsBase):
     # =============================================================================
 
     def _viewport_contains_dvz_mouse_event(self, dvz_mouse_event: dvz.MouseEvent) -> bool:
-        """Check if the matplotlib mouse event is inside this viewport"""
-
+        """Check if the matplotlib mouse event is inside this viewport.
+        
+        Args:
+            dvz_mouse_event: Datoviz mouse event.
+        
+        Returns:
+            True if the mouse event is inside this viewport, False otherwise.
+        """
         dvz_mouse_pos = dvz_mouse_event.pos()
         dvz_mouse_x = dvz_mouse_pos[0]
         dvz_mouse_y = self._renderer.get_canvas().get_height() - dvz_mouse_pos[1]
