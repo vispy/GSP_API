@@ -3,7 +3,6 @@ import io
 import os
 from typing import Sequence, TypedDict, Literal
 import json
-import warnings
 
 # pip imports
 import requests
@@ -55,7 +54,7 @@ class NetworkRenderer(RendererBase):
         figure_width = self._canvas.get_width() / self._canvas.get_dpi()
         figure_height = self._canvas.get_height() / self._canvas.get_dpi()
         self._figure: matplotlib.figure.Figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=self._canvas.get_dpi())
-        assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
+        assert self._figure.canvas.manager is not None, "matplotlib figure canvas manager is None"
         self._figure.canvas.manager.set_window_title(f"Network ({self._remote_renderer_name})")
 
         # get the only axes in the figure
@@ -145,7 +144,7 @@ class NetworkRenderer(RendererBase):
         # =============================================================================
         # Render the image in the matplotlib figure
         # =============================================================================
-        assert self._axes_image is not None, f"PANIC self._axes_image is None"
+        assert self._axes_image is not None, "PANIC self._axes_image is None"
         # update the image data
         image_data_io = io.BytesIO(image_png_data)
         image_data_np = matplotlib.image.imread(image_data_io, format="png")

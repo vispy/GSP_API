@@ -8,7 +8,6 @@ in shell: `lsof -ti tcp:5000 | xargs kill`
 import os
 import signal
 import subprocess
-import sys
 
 # pip imports
 import argparse
@@ -22,7 +21,7 @@ def main() -> int:
 
     # parse command line arguments
     parser = argparse.ArgumentParser(description="Kill any process using port 5000 (commonly used for flask server).")
-    args = parser.parse_args()
+    _ = parser.parse_args()
 
     port = 5000
 

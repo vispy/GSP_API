@@ -1,7 +1,6 @@
 # pip imports
 import typing
 import matplotlib.text
-import matplotlib.collections
 import matplotlib.artist
 import numpy as np
 
@@ -12,7 +11,6 @@ from gsp.utils.math_utils import MathUtils
 from gsp.visuals.texts import Texts
 from gsp.utils.transbuf_utils import TransBufUtils
 from gsp.types.transbuf import TransBuf
-from gsp.types.buffer_type import BufferType
 from .matplotlib_renderer import MatplotlibRenderer
 from ..extra.bufferx import Bufferx
 

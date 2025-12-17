@@ -1,7 +1,3 @@
-from .types.buffer import Buffer
-from .types.buffer_type import BufferType
-
-
 class Constants:
     """Common constants in GSP. e.g. colors."""
 

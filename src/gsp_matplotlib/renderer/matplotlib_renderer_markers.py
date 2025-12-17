@@ -1,19 +1,15 @@
 # pip imports
 import typing
-import matplotlib.axes
 import matplotlib.collections
 import matplotlib.artist
-import numpy as np
 
 # local imports
 from gsp.core.camera import Camera
 from gsp.core.viewport import Viewport
-from gsp.utils.group_utils import GroupUtils
 from gsp.utils.math_utils import MathUtils
 from gsp.visuals import Markers
 from gsp.utils.transbuf_utils import TransBufUtils
 from gsp.types.transbuf import TransBuf
-from gsp.types.buffer_type import BufferType
 from .matplotlib_renderer import MatplotlibRenderer
 from ..extra.bufferx import Bufferx
 from ..utils.converter_utils import ConverterUtils

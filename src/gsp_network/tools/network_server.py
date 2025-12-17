@@ -8,9 +8,6 @@ Server example using Flask to render a scene from JSON input.
 
 # stdlib imports
 import io
-import os
-from typing import Literal
-import typing
 
 # pip imports
 from flask import Flask, request, send_file, Response
@@ -42,7 +39,7 @@ def render_scene_json() -> Response:
     payload: NetworkPayload = request.get_json()
 
     # Log the received payload for debugging
-    print(f"Received payload")
+    print("Received payload")
 
     ###############################################################################
     # Load the scene from JSON

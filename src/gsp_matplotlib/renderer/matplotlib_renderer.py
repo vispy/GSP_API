@@ -2,15 +2,11 @@
 import os
 import io
 from typing import Sequence
-import warnings
 
 # pip imports
 import matplotlib
 
 from gsp.visuals.texts import Texts
-
-# trick to disable the toolbar in matplotlib
-matplotlib.rcParams["toolbar"] = "none"
 
 import matplotlib.pyplot
 import matplotlib.axes
@@ -30,6 +26,9 @@ from gsp.visuals.paths import Paths
 from gsp.visuals.segments import Segments
 from gsp.types.renderer_base import RendererBase
 
+# trick to disable the toolbar in matplotlib
+matplotlib.rcParams["toolbar"] = "none"
+
 
 class MatplotlibRenderer(RendererBase):
 
@@ -46,7 +45,7 @@ class MatplotlibRenderer(RendererBase):
         figure_width = canvas.get_width() / canvas.get_dpi()
         figure_height = canvas.get_height() / canvas.get_dpi()
         self._figure: matplotlib.figure.Figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=canvas.get_dpi())
-        assert self._figure.canvas.manager is not None, f"matplotlib figure canvas manager is None"
+        assert self._figure.canvas.manager is not None, "matplotlib figure canvas manager is None"
         self._figure.canvas.manager.set_window_title("Matplotlib")
 
     def get_canvas(self) -> Canvas:

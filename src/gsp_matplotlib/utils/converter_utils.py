@@ -1,5 +1,4 @@
 # stdlib imports
-import typing
 from typing import Literal
 
 # local imports
