@@ -26,6 +26,18 @@ class RendererPaths:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
+        """ Render the given Paths object onto the specified viewport using Matplotlib. 
+        
+        Args:
+            renderer (MatplotlibRenderer): The renderer instance.
+            viewport (Viewport): The viewport to render onto.
+            paths (Paths): The Paths object containing path data.
+            model_matrix (TransBuf): The model transformation matrix.
+            camera (Camera): The camera providing view and projection matrices.
+
+        Returns:
+            list[matplotlib.artist.Artist]: A list of Matplotlib artist objects created or updated
+        """
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================
