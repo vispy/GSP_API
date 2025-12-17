@@ -208,12 +208,14 @@ class AnimatorNetwork(AnimatorBase):
         self._time_last_update = present
 
         # notify all animator callbacks
+        changed_visuals: list[VisualBase] = []
         for callback in self._callbacks:
             _changed_visuals = callback(delta_time)
-            # _changed_visuals is ignored for NetworkRenderer since all visuals are re-rendered anyway
+            changed_visuals.extend(_changed_visuals)
 
         # Render the scene to update the visuals
-        self._network_renderer.render(self._viewports, self._visuals, self._model_matrices, self._cameras)
+        if len(changed_visuals) > 0:
+            self._network_renderer.render(self._viewports, self._visuals, self._model_matrices, self._cameras)
 
         # return the changed mpl artists
         return [self._network_renderer._axes_image]

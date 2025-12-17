@@ -1,3 +1,20 @@
+- rewrite all the docstrings to follow numpydoc style
+  - https://numpydoc.readthedocs.io/en/latest/format.html
+  - document all functions/member/types public to the class
+- GSP doc
+  - concise
+  - resume of the existing white paper
+- follow the deliverable
+  - follow the Quarter order
+  - https://docs.google.com/document/d/1KbAgU9t96Qw6l3JP09zSZyy3bTbAavpLq0WOTUkp3E4/edit
+- basic for vispy 2.0 - minimal - all in GSP
+  - in src/gsp_vispy2
+  - imgshow, scatter
+- record a session with matplotlib + camera controls + animator
+  - in the animator callback, get all the rendering _args, in a file with timestamps
+  - then write a player of this gsp_session.json file
+  - session_recorder.py
+  - session_player.py
 - transform mvp for all visual in datoviz
   - how to test that
   - in big_tester ?
