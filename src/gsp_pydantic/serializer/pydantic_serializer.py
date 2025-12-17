@@ -1,3 +1,5 @@
+"""Pydantic serializer for GSP data structures."""
+
 # stdlib imports
 from typing import Sequence
 import typing
@@ -39,8 +41,14 @@ from ..types.pydantic_dict import PydanticDict
 #
 # =============================================================================
 class PydanticSerializer(SerializerBase):
+    """Serializer that converts GSP data structures into Pydantic models."""
 
     def __init__(self, canvas: Canvas):
+        """Initialize the PydanticSerializer with a canvas.
+        
+        Args:
+            canvas (Canvas): The canvas to be used in the serialization.
+        """
         self._canvas = canvas
 
     def serialize(
@@ -50,7 +58,17 @@ class PydanticSerializer(SerializerBase):
         model_matrices: Sequence[TransBuf],
         cameras: Sequence[Camera],
     ) -> PydanticDict:
+        """Serialize the provided GSP data structures into a PydanticDict.
 
+        Args:
+            viewports (Sequence[Viewport]): The list of viewports to serialize.
+            visuals (Sequence[VisualBase]): The list of visual elements to serialize.
+            model_matrices (Sequence[TransBuf]): The list of model transformation matrices to serialize.
+            cameras (Sequence[Camera]): The list of cameras to serialize.
+        
+        Returns:
+            PydanticDict: The serialized data as a PydanticDict.
+        """
         # =============================================================================
         #
         # =============================================================================

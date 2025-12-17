@@ -1,3 +1,5 @@
+"""Pydantic parser for GSP data structures."""
+
 # stdlib imports
 from typing import Sequence, Any
 import typing
@@ -33,7 +35,9 @@ from ..types.pydantic_dict import PydanticDict
 
 
 class PydanticParser:
+    """Parser that converts Pydantic models into GSP data structures."""
     def __init__(self):
+        """Initialize the PydanticParser."""
         pass
 
     def parse(self, json_dict: PydanticDict) -> tuple[
@@ -43,7 +47,20 @@ class PydanticParser:
         list[TransBuf],
         list[Camera],
     ]:
+        """Parse a Pydantic JSON dictionary into GSP data structures.
 
+        Args:
+            json_dict (PydanticDict): The Pydantic JSON dictionary representing the scene.
+
+        Returns:
+            tuple[
+                Canvas,
+                list[Viewport],
+                list[VisualBase],
+                list[TransBuf],
+                list[Camera],
+            ]: The parsed GSP data structures.
+        """
         json_str = json.dumps(json_dict, indent=4)
         pydantic_scene = PydanticScene.model_validate(pydantic_core.from_json(json_str, allow_partial=True))
 
