@@ -42,6 +42,6 @@ line-length = 160   # to match the 79 character limit of PEP 8, but allow some e
 
 # Configuration for Pydoclint - https://jsh9.github.io/pydoclint/
 [tool.pydoclint]
-style = 'google'
+style = 'numpy'
 check-style-mismatch = true
 allow-init-docstring = true
