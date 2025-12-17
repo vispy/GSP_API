@@ -1,3 +1,4 @@
+"""Base class for viewport event handlers."""
 # stdlib imports
 from abc import ABC, abstractmethod
 
@@ -7,7 +8,7 @@ from .viewport_events_types import KeyboardEventCallback, MouseEventCallback, Ca
 
 
 class ViewportEventsBase(ABC):
-    """Base class for window event handlers for camera controls"""
+    """Base class for window event handlers for camera controls."""
 
     __slots__ = [
         "key_press_event",
