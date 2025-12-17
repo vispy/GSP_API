@@ -46,7 +46,7 @@
 # - Pletinckx, D., Quaternion calculus as a basic tool in computer
 #   graphics, The Visual Computer 5, 2-13, 1989.
 # -----------------------------------------------------------------------------
-"""Provides a virtual trackball for 3D scene viewing
+"""Provides a virtual trackball for 3D scene viewing.
 
 Example usage:
 
@@ -166,8 +166,12 @@ class Trackball(object):
     """Virtual trackball for 3D scene viewing"""
 
     def __init__(self, theta: float = 0, phi: float = 0):
-        """Build a new trackball with specified view"""
+        """Build a new trackball with specified view.
 
+        Args:
+            theta: Initial rotation angle around the X axis in degrees.
+            phi: Initial rotation angle around the Z axis in degrees.
+        """
         self._rotation = [0, 0, 0, 1]
         self._count = 0
         self._model = np.zeros((4, 4), float)
@@ -176,8 +180,14 @@ class Trackball(object):
         self._set_orientation(theta, phi)
 
     def drag_to(self, x: float, y: float, dx: float, dy: float):
-        """Move trackball view from x,y to x+dx,y+dy."""
-
+        """Move trackball view from x,y to x+dx,y+dy.
+        
+        Args:
+            x: Current x position.
+            y: Current y position.
+            dx: Change in x position.
+            dy: Change in y position.
+        """
         q = self._rotate(x, y, dx, dy)
         self._rotation = _q_add(q, self._rotation)
         self._count += 1
@@ -187,13 +197,17 @@ class Trackball(object):
         self._model = _q_rotmatrix(self._rotation)
 
     @property
-    def model(self):
-        """Model transformation (read-only)"""
+    def model(self) -> np.ndarray:
+        """Model transformation (read-only).
+        
+        Returns:
+            The current model transformation matrix as a 4x4 numpy array.
+        """
         return self._model
 
     @property
     def theta(self):
-        """Angle (in degrees) around the z axis"""
+        """Angle (in degrees) around the z axis."""
         self._theta, _ = self._get_orientation()
         return self._theta
 
@@ -237,7 +251,6 @@ class Trackball(object):
         """Project an x,y pair onto a sphere of radius r OR a hyperbolic sheet
         if we are away from the center of the sphere.
         """
-
         d = math.sqrt(x * x + y * y)
         if d < r * 0.70710678118654752440:  # Inside sphere
             z = math.sqrt(r * r - d * d)
@@ -256,8 +269,13 @@ class Trackball(object):
         center, but is deformed into a hyperbolic sheet of rotation away
         from the center.  This particular function was chosen after trying
         out several variations.
-        """
 
+        Args:
+            x: Current x position.
+            y: Current y position.
+            dx: Change in x position.
+            dy: Change in y position.
+        """
         if not dx and not dy:
             return [0.0, 0.0, 0.0, 1.0]
         last = [x, y, self._project(self._TRACKBALLSIZE, x, y)]

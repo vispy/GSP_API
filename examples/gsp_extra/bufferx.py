@@ -1,3 +1,5 @@
+"""Bufferx extra module re-exporting Bufferx from gsp_matplotlib.extra.bufferx."""
+
 import gsp_matplotlib.extra.bufferx
 
 # re-export Bufferx here

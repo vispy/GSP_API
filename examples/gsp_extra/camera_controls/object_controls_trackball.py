@@ -1,3 +1,5 @@
+""""Implements camera controls using AWSD keys for movement and mouse for orientation."""
+
 import numpy as np
 
 from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
@@ -14,6 +16,12 @@ class ObjectControlsTrackball:
     """Implements camera controls using AWSD keys for movement and mouse for orientation."""
 
     def __init__(self, model_matrix_buffer: Buffer, viewport_events: ViewportEventsBase):
+        """Initialize the ObjectControlsTrackball.
+
+        Args:
+            model_matrix_buffer (Buffer): The buffer containing the model matrix to control.
+            viewport_events (ViewportEventsBase): The viewport events to subscribe to for mouse input.
+        """
         # sanity checks
         assert model_matrix_buffer.get_type() == BufferType.mat4, "model_matrix must be of type mat4"
         assert model_matrix_buffer.get_count() == 1, "model_matrix must have a count of 1"
@@ -34,6 +42,7 @@ class ObjectControlsTrackball:
         self._viewport_events.mouse_move_event.subscribe(self._on_mouse_move)
 
     def close(self):
+        """Unsubscribe from events."""
         self._viewport_events.button_press_event.unsubscribe(self._on_button_press)
         self._viewport_events.button_release_event.unsubscribe(self._on_button_release)
         self._viewport_events.mouse_move_event.unsubscribe(self._on_mouse_move)

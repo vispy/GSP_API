@@ -1,3 +1,5 @@
+"""Object3D class for managing 3D objects, their transformations, visuals, and cameras."""
+
 # stdlib imports
 import typing
 
@@ -16,8 +18,14 @@ from gsp.types.transbuf import TransBuf
 
 
 class Object3D:
+    """Class representing a 3D object with transformation, visuals, and cameras."""
 
     def __init__(self, name: str | None = None):
+        """Initialize the Object3D.
+
+        Args:
+            name (str | None): Optional name for the Object3D. If None, a default name is generated.
+        """
         self.uuid = UuidUtils.generate_uuid()
         """uuid of the visual being wrapped."""
 
@@ -52,6 +60,7 @@ class Object3D:
         """list of cameras attached to this Object3D."""
 
     def __repr__(self) -> str:
+        """String representation of the Object3D."""
         return f"Object3D(name={self.name})"
 
     # =============================================================================
@@ -129,8 +138,11 @@ class Object3D:
     # =============================================================================
 
     def update_matrix_local(self, force_update: bool = False) -> None:
-        """Upload the local matrix from position, euler and scale."""
-
+        """Upload the local matrix from position, euler and scale.
+        
+        Args:
+            force_update (bool): if True, forces the update even if dont_update_matrix_local is True. Defaults to False.
+        """
         # honor dont_update_matrix_local flag
         if self.dont_update_matrix_local and not force_update:
             return
@@ -215,6 +227,16 @@ class Object3D:
 
     @staticmethod
     def pre_render(viewport: Viewport, scene: "Object3D", camera: Camera) -> tuple[list[Viewport], list[VisualBase], list[TransBuf], list[Camera]]:
+        """Prepare the scene for rendering by updating matrices and gathering render arguments.
+
+        Args:
+            viewport (Viewport): viewport to render to.
+            scene (Object3D): root Object3D of the scene.
+            camera (Camera): camera to use for rendering.
+
+        Returns:
+            tuple[list[Viewport], list[VisualBase], list[TransBuf], list[Camera]]: viewports, visuals, model matrices and cameras.
+        """
         # update all world matrices
         scene.update_matrix_world()
 

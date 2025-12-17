@@ -1,3 +1,4 @@
+"""TransformLink that loads data from a URI into a Buffer."""
 # stdlib imports
 from io import BytesIO
 import os
@@ -22,10 +23,24 @@ class TransformLoad(TransformLinkBase):
     __slots__ = ["_uri", "_buffer_type"]
 
     def __init__(self, uri: str, buffer_type: BufferType) -> None:
+        """Initialize the TransformLoad.
+        
+        Args:
+            uri (str): The URI to load data from.
+            buffer_type (BufferType): The type of buffer to create.
+        """
         self._uri = uri
         self._buffer_type = buffer_type
 
     def apply(self, buffer_src: Buffer | None) -> Buffer:
+        """Load data from the URI into a new Buffer.
+
+        Args:
+            buffer_src (Buffer | None): Ignored.
+
+        Returns:
+            Buffer: The loaded buffer.
+        """
         item_size = BufferType.get_item_size(self._buffer_type)
 
         is_image = os.path.splitext(self._uri)[1].lower() in [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]
@@ -85,6 +100,11 @@ class TransformLoad(TransformLinkBase):
     # =============================================================================
 
     def serialize(self) -> dict[str, Any]:
+        """Serialize the TransformLoad to a dictionary.
+        
+        Returns:
+            dict[str, Any]: The serialized TransformLoad.
+        """
         return {
             "link_type": "TransformLoad",
             "link_data": {
@@ -95,6 +115,14 @@ class TransformLoad(TransformLinkBase):
 
     @staticmethod
     def deserialize(data: dict[str, Any]) -> "TransformLoad":
+        """Deserialize a TransformLoad from a dictionary.
+
+        Args:
+            data (dict[str, Any]): The serialized TransformLoad.
+        
+        Returns:
+            TransformLoad: The deserialized TransformLoad instance.
+        """
         assert data["link_type"] == "TransformLoad", "Invalid type for TransformLoad deserialization"
         uri: str = data["link_data"]["uri"]
         buffer_type_str: str = data["link_data"]["buffer_type"]

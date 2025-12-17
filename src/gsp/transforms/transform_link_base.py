@@ -14,8 +14,7 @@ class TransformLinkBase(ABC):
 
     @abstractmethod
     def apply(self, buffer_src: Buffer | None) -> Buffer:
-        """
-        Apply the transformation to the given buffer and return a new buffer.
+        """Apply the transformation to the given buffer and return a new buffer.
 
         Args:
             buffer_src (Buffer | None): The source buffer to transform. Can be None.
@@ -27,8 +26,7 @@ class TransformLinkBase(ABC):
 
     @abstractmethod
     def serialize(self) -> dict[str, Any]:
-        """
-        Serialize the TransformLink to a dictionary.
+        """Serialize the TransformLink to a dictionary.
 
         Returns:
             dict[str, Any]: The serialized TransformLink.
@@ -38,11 +36,11 @@ class TransformLinkBase(ABC):
     @staticmethod
     @abstractmethod
     def deserialize(data: dict[str, Any]) -> "TransformLinkBase":
-        """
-        Deserialize a TransformLink from a dictionary.
+        """Deserialize a TransformLink from a dictionary.
 
         Args:
             data (dict[str, Any]): The serialized TransformLink.
+
         Returns:
             TransformLinkBase: The deserialized TransformLink instance.
         """
