@@ -1,3 +1,5 @@
+"""Animator for GSP scenes using a matplotlib renderer."""
+
 # stdlib imports
 from logging import warning
 import os
@@ -20,9 +22,7 @@ __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
 
 class AnimatorDatoviz(AnimatorBase):
-    """
-    Animator for GSP scenes using a matplotlib renderer.
-    """
+    """Animator for GSP scenes using a matplotlib renderer."""
 
     def __init__(
         self,
@@ -31,6 +31,14 @@ class AnimatorDatoviz(AnimatorBase):
         video_duration: float | None = None,
         video_path: str | None = None,
     ):
+        """Initialize the animator.
+
+        Args:
+            datoviz_renderer (DatovizRenderer): The datoviz renderer to use for rendering.
+            fps (int, optional): Frames per second. Defaults to 50.
+            video_duration (float | None, optional): Duration of the video to save. Defaults to None.
+            video_path (str | None, optional): Path to save the video. Defaults to None.
+        """
         self._callbacks: list[AnimatorFunc] = []
         self._datoviz_renderer = datoviz_renderer
         self._fps = fps
@@ -73,7 +81,6 @@ class AnimatorDatoviz(AnimatorBase):
                 animation_loop.remove_callback(my_callback)
             ```
         """
-
         self.add_callback(func)
 
         def wrapper(delta_time: float) -> Sequence[VisualBase]:
@@ -88,10 +95,7 @@ class AnimatorDatoviz(AnimatorBase):
     # .start()
     # =============================================================================
     def start(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], model_matrices: Sequence[TransBuf], cameras: Sequence[Camera]) -> None:
-        """
-        Animate the given canvas and camera using the provided callbacks to update visuals.
-        """
-
+        """Animate the given canvas and camera using the provided callbacks to update visuals."""
         self._canvas = self._datoviz_renderer.get_canvas()
         self._viewports = viewports
         self._visuals = visuals
@@ -157,6 +161,7 @@ class AnimatorDatoviz(AnimatorBase):
     # .stop()
     # =============================================================================
     def stop(self):
+        """Stop the animation."""
         self._canvas = None
         self._viewports = None
         self._time_last_update = None
