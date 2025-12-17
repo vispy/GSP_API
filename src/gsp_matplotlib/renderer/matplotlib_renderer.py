@@ -1,3 +1,5 @@
+"""Matplotlib renderer for GSP visuals."""
+
 # stdlib imports
 import os
 import io
@@ -31,8 +33,19 @@ matplotlib.rcParams["toolbar"] = "none"
 
 
 class MatplotlibRenderer(RendererBase):
+    """Matplotlib-based renderer for GSP visuals.
+    
+    This renderer implements the GSP rendering interface using Matplotlib as the backend.
+    It creates and manages a Matplotlib figure with multiple axes for different viewports,
+    and renders various visual types (pixels, points, paths, markers, segments, texts) into them.
+    """
 
     def __init__(self, canvas: Canvas):
+        """Initialize the Matplotlib renderer.
+        
+        Args:
+            canvas: The canvas defining the rendering surface dimensions and DPI.
+        """
         self.canvas = canvas
         # Store mapping of viewport UUIDs to axes
         self._axes: dict[str, matplotlib.axes.Axes] = {}
@@ -49,9 +62,18 @@ class MatplotlibRenderer(RendererBase):
         self._figure.canvas.manager.set_window_title("Matplotlib")
 
     def get_canvas(self) -> Canvas:
+        """Get the canvas associated with this renderer.
+        
+        Returns:
+            The canvas instance.
+        """
         return self.canvas
 
     def close(self) -> None:
+        """Close the renderer and release resources.
+        
+        Stops the Matplotlib event loop and closes the figure.
+        """
         # warnings.warn(f"Closing NetworkRenderer does not release any resources.", UserWarning)
         # stop the event loop if any - thus .show(block=True) will return
         self._figure.canvas.stop_event_loop()
@@ -60,6 +82,11 @@ class MatplotlibRenderer(RendererBase):
         self._figure = None  # type: ignore
 
     def show(self) -> None:
+        """Display the rendered figure in an interactive window.
+        
+        This method shows the Matplotlib figure. It does nothing when running
+        in test mode (GSP_TEST environment variable set to "True").
+        """
         # handle non-interactive mode for tests
         in_test = os.environ.get("GSP_TEST") == "True"
         if in_test:
@@ -76,7 +103,22 @@ class MatplotlibRenderer(RendererBase):
         return_image: bool = True,
         image_format: str = "png",
     ) -> bytes:
-
+        """Render the scene to an image.
+        
+        Args:
+            viewports: Sequence of viewport regions to render into.
+            visuals: Sequence of visual elements to render.
+            model_matrices: Sequence of model transformation matrices for each visual.
+            cameras: Sequence of cameras defining view and projection for each visual.
+            return_image: Whether to return the rendered image as bytes.
+            image_format: Format for the output image (e.g., "png", "jpg").
+            
+        Returns:
+            The rendered image as bytes in the specified format, or empty bytes if return_image is False.
+            
+        Raises:
+            AssertionError: If the sequences don't all have the same length.
+        """
         # =============================================================================
         # Sanity checks
         # =============================================================================
@@ -133,7 +175,6 @@ class MatplotlibRenderer(RendererBase):
 
     def _render_visual(self, viewport: Viewport, visual: VisualBase, model_matrix: TransBuf, camera: Camera):
         """Render a single visual in a given viewport using the specified camera."""
-
         if isinstance(visual, Pixels):
             from gsp_matplotlib.renderer.matplotlib_renderer_pixels import RendererPixels
 
@@ -167,7 +208,20 @@ class MatplotlibRenderer(RendererBase):
     # =============================================================================
 
     def get_mpl_axes_for_viewport(self, viewport: Viewport) -> matplotlib.axes.Axes:
+        """Get the Matplotlib axes associated with a viewport.
+        
+        Args:
+            viewport: The viewport to get axes for.
+            
+        Returns:
+            The Matplotlib Axes object for the given viewport.
+        """
         return self._axes[viewport.get_uuid()]
 
     def get_mpl_figure(self) -> matplotlib.figure.Figure:
+        """Get the underlying Matplotlib figure.
+        
+        Returns:
+            The Matplotlib Figure object used by this renderer.
+        """
         return self._figure

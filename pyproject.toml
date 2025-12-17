@@ -48,7 +48,7 @@ check-style-mismatch = true
 allow-init-docstring = true
 
 [tool.ruff]
-select = ["D"]
+lint.select = ["D"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

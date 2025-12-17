@@ -1,3 +1,5 @@
+""""Renderer for Pixels using Matplotlib."""
+
 # pip imports
 import typing
 import matplotlib.axes
@@ -19,6 +21,7 @@ from ..extra.bufferx import Bufferx
 
 
 class RendererPixels:
+    """Renderer for Pixels using Matplotlib."""
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
@@ -27,6 +30,18 @@ class RendererPixels:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
+        """Render Pixels visual using Matplotlib.
+
+        Args:
+            renderer: The MatplotlibRenderer instance.
+            viewport: The Viewport in which to render.
+            pixels: The Pixels visual to render.
+            model_matrix: The model transformation matrix as a TransBuf.
+            camera: The Camera providing view and projection matrices.      
+
+        Returns:
+            list[matplotlib.artist.Artist]: List of Matplotlib artists created/updated.
+        """
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================
@@ -121,8 +136,14 @@ class RendererPixels:
 
     @staticmethod
     def create_artists(renderer: MatplotlibRenderer, viewport: Viewport, visual: VisualBase, group_count: int) -> None:
-        """Create the artists associated with the given visual and group count."""
-
+        """Create the artists associated with the given visual and group count.
+        
+        Args:
+            renderer: The Matplotlib renderer.
+            viewport: The viewport for which to create the artists.
+            visual: The visual for which to create the artists.
+            group_count: The number of groups in the visual.
+        """
         axes = renderer.get_mpl_axes_for_viewport(viewport)
         artist_uuid_prefix = f"{viewport.get_uuid()}_{visual.get_uuid()}"
         # compute 1 pixel size in points squared for matplotlib sizing

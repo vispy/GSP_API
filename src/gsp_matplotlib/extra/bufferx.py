@@ -1,3 +1,5 @@
+"""Utility class for Buffer extended functionality using numpy."""
+
 from gsp.types import Buffer, BufferType
 import numpy as np
 

@@ -1,3 +1,5 @@
+"""GSP Matplotlib package initialization."""
+
 __all__ = ["extra", "renderer", "utils"]
 
 from . import extra

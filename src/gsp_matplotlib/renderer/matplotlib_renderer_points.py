@@ -1,3 +1,5 @@
+"""Renderer for Points using Matplotlib."""
+
 # pip imports
 import typing
 import matplotlib.collections
@@ -15,6 +17,8 @@ from ..extra.bufferx import Bufferx
 
 
 class RendererPoints:
+    """Renderer for Points using Matplotlib."""
+
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
@@ -23,6 +27,18 @@ class RendererPoints:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
+        """Render Points visual using Matplotlib.
+
+        Args:
+            renderer: The MatplotlibRenderer instance.
+            viewport: The Viewport in which to render.
+            points: The Points visual to render.
+            model_matrix: The model transformation matrix as a TransBuf.
+            camera: The Camera providing view and projection matrices.
+        
+        Returns:
+            list[matplotlib.artist.Artist]: List of Matplotlib artists created/updated.
+        """
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================

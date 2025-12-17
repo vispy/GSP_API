@@ -1,3 +1,5 @@
+"""Renderer for Texts using Matplotlib."""
+
 # pip imports
 import typing
 import matplotlib.text
@@ -16,6 +18,8 @@ from ..extra.bufferx import Bufferx
 
 
 class RendererTexts:
+    """Renderer for Texts using Matplotlib."""
+
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
@@ -24,6 +28,18 @@ class RendererTexts:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
+        """Render Texts visual using Matplotlib.
+
+        Args:
+            renderer: The MatplotlibRenderer instance.
+            viewport: The Viewport in which to render.
+            texts: The Texts visual to render.
+            model_matrix: The model transformation matrix as a TransBuf.
+            camera: The Camera providing view and projection matrices.
+        
+        Returns:
+            list[matplotlib.artist.Artist]: List of Matplotlib artists created/updated.
+        """
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================
