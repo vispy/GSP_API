@@ -1,3 +1,5 @@
+"""Datoviz renderer for Pixels visuals."""
+
 # stdlib imports
 from typing import Sequence
 import typing
@@ -20,6 +22,7 @@ from gsp.utils.math_utils import MathUtils
 
 
 class DatovizRendererPixels:
+    """Datoviz renderer for Pixels visuals."""
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -28,6 +31,15 @@ class DatovizRendererPixels:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
+        """Render Pixels visuals using Datoviz.
+
+        Args:
+            renderer (DatovizRenderer): The Datoviz renderer instance.
+            viewport (Viewport): The viewport to render in.
+            pixels (Pixels): The Pixels visual to render.
+            model_matrix (TransBuf): The model matrix for the visual.
+            camera (Camera): The camera used for rendering.
+        """
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
 
         # =============================================================================

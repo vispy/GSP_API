@@ -1,3 +1,5 @@
+"""Pixels visual module."""
+
 from ..types.visual_base import VisualBase
 from ..types.transbuf import TransBuf
 from ..types.buffer import Buffer
@@ -7,9 +9,21 @@ from ..utils.group_utils import GroupUtils
 
 
 class Pixels(VisualBase):
+    """Pixels visual for rendering individual colored pixels.
+    
+    This visual represents a collection of pixels with configurable positions,
+    colors, and groups for efficient rendering.
+    """
     __slots__ = ["__positions", "__colors", "__groups"]
 
     def __init__(self, positions: TransBuf, colors: TransBuf, groups: Groups):
+        """Initialize Pixels visual.
+        
+        Args:
+            positions: Positions of the pixels.
+            colors: Colors of the pixels.
+            groups: Groups for organizing pixels.
+        """
         super().__init__()
 
         self.__positions: TransBuf = positions
@@ -19,6 +33,7 @@ class Pixels(VisualBase):
         self.check_attributes()
 
     def __repr__(self) -> str:
+        """Return string representation of the Pixels visual."""
         return f"Pixels(positions={self.__positions}, colors={self.__colors}, groups={self.__groups})"
 
     # =============================================================================
@@ -26,23 +41,41 @@ class Pixels(VisualBase):
     # =============================================================================
 
     def get_positions(self) -> TransBuf:
+        """Get positions of the pixels."""
         return self.__positions
 
     def set_positions(self, positions: TransBuf) -> None:
+        """Set positions of the pixels.
+        
+        Args:
+            positions: New positions for the pixels.
+        """
         self.__positions = positions
         self.check_attributes()
 
     def get_colors(self) -> TransBuf:
+        """Get colors of the pixels."""
         return self.__colors
 
     def set_colors(self, colors: TransBuf) -> None:
+        """Set colors of the pixels.
+        
+        Args:
+            colors: New colors for the pixels.
+        """
         self.__colors = colors
         self.check_attributes()
 
     def get_groups(self) -> Groups:
+        """Get groups for organizing pixels."""
         return self.__groups
 
     def set_groups(self, groups: Groups) -> None:
+        """Set groups for organizing pixels.
+        
+        Args:
+            groups: New groups for the pixels.
+        """
         self.__groups = groups
         self.check_attributes()
 
@@ -66,7 +99,7 @@ class Pixels(VisualBase):
 
     @staticmethod
     def sanity_check_attribute_buffers(positions: Buffer, colors: Buffer, groups: Groups):
-        """same as .sanity_check_attributes() but accept only Buffers.
+        """Same as .sanity_check_attributes() but accept only Buffers.
 
         - It is meant to be used after converting TransBuf to Buffer.
         """
@@ -78,7 +111,13 @@ class Pixels(VisualBase):
 
     @staticmethod
     def sanity_check_attributes(positions: TransBuf, colors: TransBuf, groups: Groups):
-
+        """Check that the attributes are valid and consistent.
+        
+        Args:
+            positions: Positions of the pixels.
+            colors: Colors of the pixels.
+            groups: Groups for organizing pixels.
+        """
         # =============================================================================
         # if any of the attributes is a TransformChain not fully defined, skip the sanity check
         # =============================================================================

@@ -1,3 +1,4 @@
+"""Datoviz renderer for Points visuals."""
 # stdlib imports
 from typing import Sequence
 import typing
@@ -21,6 +22,7 @@ from gsp.utils.unit_utils import UnitUtils
 
 
 class DatovizRendererPoints:
+    """Datoviz renderer for Points visuals."""
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -29,6 +31,15 @@ class DatovizRendererPoints:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
+        """Render Points visuals using Datoviz.
+
+        Args:
+            renderer (DatovizRenderer): The Datoviz renderer instance.
+            viewport (Viewport): The viewport to render in.
+            points (Points): The Points visual to render.
+            model_matrix (TransBuf): The model matrix for the visual.
+            camera (Camera): The camera used for rendering.
+        """
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
 
         # =============================================================================

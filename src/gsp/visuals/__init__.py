@@ -1,3 +1,5 @@
+""""Visual elements for graphical representation in GSP."""
+
 from .pixels import Pixels
 from .points import Points
 from .paths import Paths

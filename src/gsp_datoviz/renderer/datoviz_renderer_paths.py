@@ -1,3 +1,4 @@
+"""Datoviz renderer for Paths visuals."""
 # stdlib imports
 import typing
 
@@ -19,6 +20,7 @@ from ..utils.converter_utils import ConverterUtils
 
 
 class DatovizRendererPaths:
+    """Datoviz renderer for Paths visuals."""
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -27,6 +29,15 @@ class DatovizRendererPaths:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
+        """Render Paths visuals using Datoviz.
+
+        Args:
+            renderer (DatovizRenderer): The Datoviz renderer instance.
+            viewport (Viewport): The viewport to render in.
+            paths (Paths): The Paths visual to render.
+            model_matrix (TransBuf): The model matrix for the visual.
+            camera (Camera): The camera used for rendering.
+        """
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
         # =============================================================================
         # Transform vertices with MVP matrix

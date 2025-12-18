@@ -1,3 +1,5 @@
+"""Segments visual module."""
+
 from ..types.visual_base import VisualBase
 from ..types.transbuf import TransBuf
 from ..types.buffer import Buffer
@@ -7,9 +9,22 @@ from ..types.join_style import JoinStyle
 
 
 class Segments(VisualBase):
+    """Segments visual for rendering line segments.
+    
+    This visual represents a collection of line segments with configurable
+    positions, line widths, cap styles, and colors.
+    """
     __slots__ = ["_positions", "_colors", "_line_widths", "_cap_style"]
 
     def __init__(self, positions: TransBuf, line_widths: TransBuf, cap_style: CapStyle, colors: TransBuf) -> None:
+        """Initialize Segments visual.
+        
+        Args:
+            positions: Positions of the segment endpoints.
+            line_widths: Widths of the line segments.
+            cap_style: Cap style for the line segments.
+            colors: Colors of the segments.
+        """
         super().__init__()
 
         self._positions: TransBuf = positions
@@ -22,30 +37,54 @@ class Segments(VisualBase):
     # =============================================================================
 
     def get_positions(self) -> TransBuf:
+        """Get positions of the segment endpoints."""
         return self._positions
 
     def set_positions(self, positions: TransBuf) -> None:
+        """Set positions of the segment endpoints.
+        
+        Args:
+            positions: New positions for the segments.
+        """
         self._positions = positions
         self.check_attributes()
 
     def get_line_widths(self) -> TransBuf:
+        """Get line widths of the segments."""
         return self._line_widths
 
     def set_line_widths(self, line_widths: TransBuf) -> None:
+        """Set line widths of the segments.
+        
+        Args:
+            line_widths: New line widths for the segments.
+        """
         self._line_widths = line_widths
         self.check_attributes()
 
     def get_cap_style(self) -> CapStyle:
+        """Get cap style of the segments."""
         return self._cap_style
 
     def set_cap_style(self, cap_style: CapStyle) -> None:
+        """Set cap style of the segments.
+        
+        Args:
+            cap_style: New cap style for the segments.
+        """
         self._cap_style = cap_style
         self.check_attributes()
 
     def get_colors(self) -> TransBuf:
+        """Get colors of the segments."""
         return self._colors
 
     def set_colors(self, colors: TransBuf) -> None:
+        """Set colors of the segments.
+        
+        Args:
+            colors: New colors for the segments.
+        """
         self._colors = colors
         self.check_attributes()
 
@@ -77,7 +116,7 @@ class Segments(VisualBase):
 
     @staticmethod
     def sanity_check_attributes_buffer(positions: Buffer, line_widths: Buffer, cap_style: CapStyle, colors: Buffer) -> None:
-        """same as .sanity_check_attributes() but accept only Buffers.
+        """Same as .sanity_check_attributes() but accept only Buffers.
 
         - It is meant to be used after converting TransBuf to Buffer.
         """
@@ -95,5 +134,12 @@ class Segments(VisualBase):
         cap_style: CapStyle,
         colors: TransBuf,
     ) -> None:
-
+        """Check that the attributes are valid and consistent.
+        
+        Args:
+            positions: Positions of the segment endpoints.
+            line_widths: Widths of the line segments.
+            cap_style: Cap style for the line segments.
+            colors: Colors of the segments.
+        """
         pass

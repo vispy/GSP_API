@@ -1,3 +1,5 @@
+""""Datoviz renderer for Markers visuals."""
+
 # stdlib imports
 import typing
 import warnings
@@ -20,6 +22,7 @@ from gsp_datoviz.utils.converter_utils import ConverterUtils
 
 
 class DatovizRendererMarkers:
+    """Datoviz renderer for Markers visuals."""
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -28,6 +31,15 @@ class DatovizRendererMarkers:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
+        """Render Markers visuals using Datoviz.
+
+        Args:
+            renderer (DatovizRenderer): The Datoviz renderer instance.
+            viewport (Viewport): The viewport to render in.
+            markers (Markers): The Markers visual to render.
+            model_matrix (TransBuf): The model matrix for the visual.
+            camera (Camera): The camera used for rendering.
+        """
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
 
         # =============================================================================

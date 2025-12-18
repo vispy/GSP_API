@@ -1,3 +1,5 @@
+"""Datoviz renderer for Segments visuals."""
+
 # stdlib imports
 from typing import Sequence
 import typing
@@ -22,6 +24,7 @@ from ..utils.converter_utils import ConverterUtils
 
 
 class DatovizRendererSegments:
+    """Datoviz renderer for Segments visuals."""
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -30,6 +33,15 @@ class DatovizRendererSegments:
         model_matrix: TransBuf,
         camera: Camera,
     ) -> None:
+        """Render Segments visuals using Datoviz.
+
+        Args:
+            renderer (DatovizRenderer): The Datoviz renderer instance.
+            viewport (Viewport): The viewport to render in.
+            segments (Segments): The Segments visual to render.
+            model_matrix (TransBuf): The model matrix for the visual.
+            camera (Camera): The camera used for rendering.
+        """
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
 
         # =============================================================================

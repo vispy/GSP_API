@@ -1,3 +1,4 @@
+"""Datoviz renderer implementation."""
 # stdlib imports
 import os
 from typing import Sequence
@@ -33,7 +34,14 @@ from gsp.types.renderer_base import RendererBase
 
 
 class DatovizRenderer(RendererBase):
+    """Datoviz renderer implementation."""
     def __init__(self, canvas: Canvas, offscreen: bool = False) -> None:
+        """Initialize the Datoviz renderer.
+        
+        Args:
+            canvas (Canvas): The GSP canvas to render on.
+            offscreen (bool, optional): Whether to run the datoviz App in offscreen mode. Defaults to False.
+        """
         self._canvas = canvas
         self._dvz_app: dvz.App = dvz.App(background="white", offscreen=offscreen)
         self._dvz_offscreen = offscreen
@@ -50,19 +58,23 @@ class DatovizRenderer(RendererBase):
         """group count per visual UUID"""
 
     def close(self) -> None:
+        """Close the datoviz renderer and its app."""
         self._dvz_app.destroy()
 
     def get_canvas(self) -> Canvas:
+        """Get the GSP canvas associated with the renderer."""
         return self._canvas
 
     def get_dvz_app(self) -> dvz.App:
+        """Get the datoviz App associated with the renderer."""
         return self._dvz_app
 
     def get_dvz_figure(self) -> _DvzFigure:
+        """Get the datoviz Figure associated with the renderer."""
         return self._dvz_figure
 
     def show(self) -> None:
-
+        """Show the datoviz window and start the app."""
         # handle non-interactive mode for tests
         in_test = os.environ.get("GSP_TEST") == "True"
         if in_test:
@@ -90,6 +102,19 @@ class DatovizRenderer(RendererBase):
         return_image: bool = True,  # NOTE: make False by default. datoviz screenshot can cause segmentation fault in some cases
         image_format: str = "png",
     ) -> bytes:
+        """Render the given viewports and visuals using datoviz.
+
+        Args:
+            viewports (Sequence[Viewport]): Sequence of viewports to render.
+            visuals (Sequence[VisualBase]): Sequence of visual objects to render.
+            model_matrices (Sequence[TransBuf]): Sequence of transformation buffers for the visuals.
+            cameras (Sequence[Camera]): Sequence of cameras for each viewport.
+            return_image (bool, optional): Whether to return the rendered image as bytes. Defaults to True.
+            image_format (str, optional): The image format to return ("png"). Defaults to "png".
+        
+        Returns:
+            bytes: The rendered image data if return_image is True, else empty bytes.
+        """
         # =============================================================================
         # Create all viewport if needed
         # =============================================================================

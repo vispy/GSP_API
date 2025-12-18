@@ -1,3 +1,4 @@
+"""Utility functions for UUID generation."""
 # stdlib imports
 import os
 
@@ -17,7 +18,6 @@ class UuidUtils:
         Returns:
             str: The generated UUID.
         """
-
         # if GSP_UUID_COUNTER is set, use a deterministic uuid for testing purposes
         # - uuid becomes "uuid-counter-<counter>"
         if "GSP_UUID_COUNTER" in os.environ:
@@ -31,7 +31,7 @@ class UuidUtils:
 
     @staticmethod
     def _generate_uuid_v4_with_numpy() -> str:
-        """generate a UUID version 4 using numpy for random byte generation.
+        """Generate a UUID version 4 using numpy for random byte generation.
 
         Thus it can be made deterministic by setting the numpy random seed.
         """

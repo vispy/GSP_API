@@ -1,3 +1,5 @@
+"""Marker visual for rendering 2D/3D markers with customizable shapes, sizes, and colors."""
+
 from ..types.visual_base import VisualBase
 from ..types.transbuf import TransBuf
 from ..types.buffer import Buffer
@@ -6,9 +8,32 @@ from ..types.marker_shape import MarkerShape
 
 
 class Markers(VisualBase):
+    """Visual representation of markers with configurable properties.
+
+    This class manages marker visualization with properties including shape,
+    positions, sizes, face colors, edge colors, and edge widths.
+
+    Attributes:
+        _marker_shape (MarkerShape): The shape of the markers.
+        _positions (TransBuf): The positions of the markers.
+        _sizes (TransBuf): The sizes of the markers.
+        _face_colors (TransBuf): The face colors of the markers.
+        _edge_colors (TransBuf): The edge colors of the markers.
+        _edge_widths (TransBuf): The edge widths of the markers.
+    """
     __slots__ = ["_marker_shape", "_positions", "_sizes", "_face_colors", "_edge_colors", "_edge_widths"]
 
     def __init__(self, marker_shape: MarkerShape, positions: TransBuf, sizes: TransBuf, face_colors: TransBuf, edge_colors: TransBuf, edge_widths: TransBuf):
+        """Initialize a Markers visual.
+
+        Args:
+            marker_shape (MarkerShape): The shape of the markers.
+            positions (TransBuf): The positions of the markers.
+            sizes (TransBuf): The sizes of the markers.
+            face_colors (TransBuf): The face colors of the markers.
+            edge_colors (TransBuf): The edge colors of the markers.
+            edge_widths (TransBuf): The edge widths of the markers.
+        """
         super().__init__()
 
         self._marker_shape: MarkerShape = marker_shape
@@ -25,44 +50,104 @@ class Markers(VisualBase):
     # =============================================================================
 
     def get_marker_shape(self) -> MarkerShape:
+        """Get the marker shape.
+
+        Returns:
+            MarkerShape: The marker shape.
+        """
         return self._marker_shape
 
     def set_marker_shape(self, marker_shape: MarkerShape) -> None:
+        """Set the marker shape.
+
+        Args:
+            marker_shape (MarkerShape): The new marker shape.
+        """
         self._marker_shape = marker_shape
         self.check_attributes()
 
     def get_positions(self) -> TransBuf:
+        """Get the marker positions.
+
+        Returns:
+            TransBuf: The marker positions.
+        """
         return self._positions
 
     def set_positions(self, positions: TransBuf) -> None:
+        """Set the marker positions.
+
+        Args:
+            positions (TransBuf): The new marker positions.
+        """
         self._positions = positions
         self.check_attributes()
 
     def get_sizes(self) -> TransBuf:
+        """Get the marker sizes.
+
+        Returns:
+            TransBuf: The marker sizes.
+        """
         return self._sizes
 
     def set_sizes(self, sizes: TransBuf) -> None:
+        """Set the marker sizes.
+
+        Args:
+            sizes (TransBuf): The new marker sizes.
+        """
         self._sizes = sizes
         self.check_attributes()
 
     def get_face_colors(self) -> TransBuf:
+        """Get the marker face colors.
+
+        Returns:
+            TransBuf: The marker face colors.
+        """
         return self._face_colors
 
     def set_face_colors(self, face_colors: TransBuf) -> None:
+        """Set the marker face colors.
+
+        Args:
+            face_colors (TransBuf): The new marker face colors.
+        """
         self._face_colors = face_colors
         self.check_attributes()
 
     def get_edge_colors(self) -> TransBuf:
+        """Get the marker edge colors.
+
+        Returns:
+            TransBuf: The marker edge colors.
+        """
         return self._edge_colors
 
     def set_edge_colors(self, edge_colors: TransBuf) -> None:
+        """Set the marker edge colors.
+
+        Args:
+            edge_colors (TransBuf): The new marker edge colors.
+        """
         self._edge_colors = edge_colors
         self.check_attributes()
 
     def get_edge_widths(self) -> TransBuf:
+        """Get the marker edge widths.
+
+        Returns:
+            TransBuf: The marker edge widths.
+        """
         return self._edge_widths
 
     def set_edge_widths(self, edge_widths: TransBuf) -> None:
+        """Set the marker edge widths.
+
+        Args:
+            edge_widths (TransBuf): The new marker edge widths.
+        """
         self._edge_widths = edge_widths
         self.check_attributes()
 
@@ -102,9 +187,17 @@ class Markers(VisualBase):
     def sanity_check_attributes_buffer(
         marker_shape: MarkerShape, positions: Buffer, sizes: Buffer, face_colors: Buffer, edge_colors: Buffer, edge_widths: Buffer
     ):
-        """same as .sanity_check_attributes() but accept only Buffers.
+        """Same as .sanity_check_attributes() but accept only Buffers.
 
-        - It is meant to be used after converting TransBuf to Buffer.
+        This method is meant to be used after converting TransBuf to Buffer.
+
+        Args:
+            marker_shape (MarkerShape): The marker shape.
+            positions (Buffer): The marker positions as a Buffer.
+            sizes (Buffer): The marker sizes as a Buffer.
+            face_colors (Buffer): The marker face colors as a Buffer.
+            edge_colors (Buffer): The marker edge colors as a Buffer.
+            edge_widths (Buffer): The marker edge widths as a Buffer.
         """
         # sanity check - each attribute must be a Buffer (not a transform chain)
         assert isinstance(positions, Buffer), "Positions must be a Buffer"
@@ -124,5 +217,14 @@ class Markers(VisualBase):
         edge_colors: TransBuf,
         edge_widths: TransBuf,
     ) -> None:
+        """Check that the marker attributes are valid and consistent.
 
+        Args:
+            marker_shape (MarkerShape): The marker shape.
+            positions (TransBuf): The marker positions.
+            sizes (TransBuf): The marker sizes.
+            face_colors (TransBuf): The marker face colors.
+            edge_colors (TransBuf): The marker edge colors.
+            edge_widths (TransBuf): The marker edge widths.
+        """
         pass

@@ -14,14 +14,12 @@ class TransformChain:
     __slots__ = ["__links", "__buffer_count", "__buffer_type"]
 
     def __init__(self, buffer_count: int, buffer_type: BufferType | None) -> None:
-        """
-        Initialize a TransformChain.
+        """Initialize a TransformChain.
 
         Args:
             buffer_count (int): Number of elements in the output Buffer. -1 if not defined yet.
             buffer_type (BufferType | None): Type of the output Buffer. None if not defined yet.
         """
-
         self.__links: list[TransformLinkBase] = []
         """Ordered list of links defining the transform."""
 
@@ -120,12 +118,14 @@ class TransformChain:
 
     @staticmethod
     def deserialize(data: dict[str, Any]) -> "TransformChain":
-        """
-        Deserialize a TransformChain from a dictionary.
+        """Deserialize a TransformChain from a dictionary.
+
         Args:
             data (dict[str, Any]): The serialized TransformChain.
+
         Returns:
-            TransformChain: The deserialized TransformChain instance."""
+            TransformChain: The deserialized TransformChain instance.
+        """
         buffer_count = int(data["buffer_count"])
         buffer_type_str: str | None = data["buffer_type"]
         buffer_type = BufferType[buffer_type_str] if buffer_type_str is not None else None
