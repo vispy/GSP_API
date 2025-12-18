@@ -1,3 +1,5 @@
+"""GSP Types Package."""
+
 from .buffer_type import BufferType
 from .buffer import Buffer
 from .cap_style import CapStyle

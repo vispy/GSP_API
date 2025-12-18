@@ -1,3 +1,9 @@
+"""Transform chain module for composing transformations.
+
+This module provides the TransformChain class which allows chaining multiple
+transform links to process data through a series of transformations.
+"""
+
 # local imports
 from typing import Any
 from ..types import BufferType, Buffer
@@ -38,7 +44,14 @@ class TransformChain:
     # =============================================================================
 
     def is_fully_defined(self) -> bool:
-        """Check if the TransformChain is fully defined (i.e., buffer_type is not None and buffer_count >= 0)."""
+        """Check if the TransformChain is fully defined.
+
+        A TransformChain is fully defined when both buffer_type is not None
+        and buffer_count is >= 0.
+
+        Returns:
+            bool: True if fully defined, False otherwise.
+        """
         if self.__buffer_type is None:
             return False
         if self.__buffer_count < 0:
@@ -46,8 +59,17 @@ class TransformChain:
         return True
 
     def get_buffer_count(self) -> int:
-        """Get the number of elements in the output Buffer. use this only if .is_fully_defined() is True."""
+        """Get the number of elements in the output Buffer.
 
+        Note:
+            This method should only be called if is_fully_defined() returns True.
+
+        Returns:
+            int: The number of elements in the output Buffer.
+
+        Raises:
+            AssertionError: If buffer_type is None or buffer_count is negative.
+        """
         # sanity check - buffer_count MUST be defined
         assert self.__buffer_type is not None, "TransformChain.get_buffer_count: buffer_type is None. use .is_fully_defined() to check."
         assert self.__buffer_count >= 0, "TransformChain.get_buffer_count: buffer_count is negative. use .is_fully_defined() to check."
@@ -56,8 +78,17 @@ class TransformChain:
         return self.__buffer_count
 
     def get_buffer_type(self) -> BufferType:
-        """Get the type of the output Buffer. use this only if .is_fully_defined() is True."""
+        """Get the type of the output Buffer.
 
+        Note:
+            This method should only be called if is_fully_defined() returns True.
+
+        Returns:
+            BufferType: The type of the output Buffer.
+
+        Raises:
+            AssertionError: If buffer_type is None or buffer_count is negative.
+        """
         # sanity check - buffer_type MUST be defined
         assert self.__buffer_type is not None, "TransformChain.get_buffer_type: buffer_type is None. use .is_fully_defined() to check."
         assert self.__buffer_count >= 0, "TransformChain.get_buffer_count: buffer_count is negative. use .is_fully_defined() to check."
@@ -70,11 +101,22 @@ class TransformChain:
     # =============================================================================
 
     def add(self, link: TransformLinkBase) -> None:
-        """Add a TransformLink to the chain."""
+        """Add a TransformLink to the chain.
+
+        Args:
+            link: The TransformLink to add to the chain.
+        """
         self.__links.append(link)
 
     def remove(self, link: TransformLinkBase) -> None:
-        """Remove a TransformLink from the chain."""
+        """Remove a TransformLink from the chain.
+
+        Args:
+            link: The TransformLink to remove from the chain.
+
+        Raises:
+            ValueError: If the link is not found in the chain.
+        """
         self.__links.remove(link)
 
     # =============================================================================
@@ -82,8 +124,17 @@ class TransformChain:
     # =============================================================================
 
     def run(self) -> Buffer:
-        """Compute the transform and return a Buffer with the result."""
+        """Compute the transform and return a Buffer with the result.
 
+        Applies each link in the chain sequentially, passing the output of
+        each link to the next link in the chain.
+
+        Returns:
+            Buffer: The final transformed buffer.
+
+        Raises:
+            AssertionError: If no buffer is produced by the transform chain.
+        """
         # Create a new Buffer to hold the transformed data
         buffer = None
 
@@ -102,11 +153,11 @@ class TransformChain:
     # =============================================================================
 
     def serialize(self) -> dict[str, Any]:
-        """
-        Serialize the TransformChain to a dictionary.
+        """Serialize the TransformChain to a dictionary.
 
         Returns:
-            dict[str, Any]: The serialized TransformChain.
+            dict[str, Any]: The serialized TransformChain containing buffer_count,
+                buffer_type, and links.
         """
         links_data = [link.serialize() for link in self.__links]
         chain_serialized = {
