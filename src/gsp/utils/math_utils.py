@@ -1,3 +1,10 @@
+"""Mathematical utility functions for GSP.
+
+This module provides mathematical operations and transformations
+used throughout the GSP library, including:
+- Model-View-Projection (MVP) transformations for 3D graphics
+"""
+
 # pip imports
 import numpy as np
 
@@ -6,6 +13,12 @@ from ..types.buffer import Buffer
 
 
 class MathUtils:
+    """Utility class for mathematical operations in GSP.
+
+    This class provides static methods for common mathematical operations
+    used in graphics programming, such as matrix transformations.
+    """
+
     @staticmethod
     def apply_mvp_to_vertices(vertices: np.ndarray, model_matrix: np.ndarray, view_matrix: np.ndarray, projection_matrix: np.ndarray) -> np.ndarray:
         """Applies Model-View-Projection transformation to the vertices.
@@ -15,10 +28,10 @@ class MathUtils:
             model_matrix (np.ndarray): Model matrix of shape (4, 4).
             view_matrix (np.ndarray): View matrix of shape (4, 4).
             projection_matrix (np.ndarray): Projection matrix of shape (4, 4).
+
         Returns:
             np.ndarray: Transformed vertices of shape (N, 3).
         """
-
         # sanity checks
         assert vertices.ndim == 2 and vertices.shape[1] == 3, f"Expected vertices shape (N, 3), got {vertices.shape}"
         assert model_matrix.shape == (4, 4), f"Expected model_matrix shape (4, 4), got {model_matrix.shape}"

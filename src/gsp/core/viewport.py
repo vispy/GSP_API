@@ -1,3 +1,5 @@
+"""Viewport class representing a rectangular area on the canvas."""
+
 # stdlib imports
 from typing import Any
 
@@ -6,11 +8,12 @@ from ..utils.uuid_utils import UuidUtils
 
 
 class Viewport:
+    """Viewport class representing a rectangular area on the canvas."""
+
     __slots__ = ["_uuid", "_x", "_y", "_width", "_height", "userData"]
 
     def __init__(self, x: int, y: int, width: int, height: int):
-        """
-        Create a viewport.
+        """Create a viewport.
 
         Args:
             x (int): The x offset (in pixels from left) of the viewport.
@@ -26,6 +29,7 @@ class Viewport:
         self.userData: dict[str, Any] = {}
 
     def __repr__(self) -> str:
+        """Return string representation of the Viewport instance."""
         return f"Viewport(x={self._x}, y={self._y}, width={self._width}, height={self._height})"
 
     def get_uuid(self) -> str:
@@ -37,8 +41,7 @@ class Viewport:
         return self._uuid
 
     def get_x(self) -> int:
-        """
-        Get the x offset (in pixels from left) of the viewport.
+        """Get the x offset (in pixels from left) of the viewport.
 
         Returns:
             int: The x offset.
@@ -46,8 +49,7 @@ class Viewport:
         return self._x
 
     def set_x(self, x: int) -> None:
-        """
-        Set the x offset (in pixels from left) of the viewport.
+        """Set the x offset (in pixels from left) of the viewport.
 
         Args:
             x (int): The new x offset.
@@ -55,8 +57,7 @@ class Viewport:
         self._x = x
 
     def get_y(self) -> int:
-        """
-        Get the y offset (in pixels from bottom) of the viewport.
+        """Get the y offset (in pixels from bottom) of the viewport.
 
         Returns:
             int: The y offset.
@@ -64,8 +65,7 @@ class Viewport:
         return self._y
 
     def set_y(self, y: int) -> None:
-        """
-        Set the y offset (in pixels from bottom) of the viewport.
+        """Set the y offset (in pixels from bottom) of the viewport.
 
         Args:
             y (int): The new y offset.
@@ -73,8 +73,7 @@ class Viewport:
         self._y = y
 
     def get_width(self) -> int:
-        """
-        Get the width (in pixels) of the viewport.
+        """Get the width (in pixels) of the viewport.
 
         Returns:
             int: The width.
@@ -82,8 +81,7 @@ class Viewport:
         return self._width
 
     def set_width(self, width: int) -> None:
-        """
-        Set the width (in pixels) of the viewport.
+        """Set the width (in pixels) of the viewport.
 
         Args:
             width (int): The new width.
@@ -91,8 +89,7 @@ class Viewport:
         self._width = width
 
     def get_height(self) -> int:
-        """
-        Get the height (in pixels) of the viewport.
+        """Get the height (in pixels) of the viewport.
 
         Returns:
             int: The height.
@@ -100,8 +97,7 @@ class Viewport:
         return self._height
 
     def set_height(self, height: int) -> None:
-        """
-        Set the height (in pixels) of the viewport.
+        """Set the height (in pixels) of the viewport.
 
         Args:
             height (int): The new height.

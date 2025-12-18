@@ -1,3 +1,9 @@
+"""Utility functions for handling and manipulating group objects.
+
+This module provides utilities for working with Groups, which can be represented
+in multiple formats: int, list[int], or list[list[int]].
+"""
+
 # stdlib imports
 from typing import Literal
 import typing
@@ -7,6 +13,13 @@ from ..types.group import Groups
 
 
 class GroupUtils:
+    """Utility class for group operations and validation.
+
+    This class provides static methods for:
+    - Validating group objects
+    - Computing group counts and indices
+    - Converting between different group formats
+    """
 
     @staticmethod
     def get_group_count(vertex_count: int, groups: Groups) -> int:
@@ -22,7 +35,6 @@ class GroupUtils:
         Raises:
             NotImplementedError: if the groups object type is not supported
         """
-
         groups_format = GroupUtils._groups_format(groups)
         if groups_format == GroupUtils.FORMAT_INT:
             groups_typed = typing.cast(int, groups)
@@ -44,11 +56,12 @@ class GroupUtils:
 
     @staticmethod
     def is_instance_of_groups(groups: Groups) -> bool:
-        """Check if the type  of groups.
-        - Deep check where all elements are checked.
-        - Dont check the values themselves, only the types
+        """Check if the type of groups is valid.
 
-        groups can be:
+        Deep check where all elements are checked.
+        Does not check the values themselves, only the types.
+
+        Groups can be:
         - int
         - list[int]
         - list[list[int]]
@@ -59,7 +72,6 @@ class GroupUtils:
         Returns:
             bool: True if groups is a valid Groups object, False otherwise.
         """
-
         if isinstance(groups, int):
             return True
         elif isinstance(groups, list) and all(isinstance(int_value, int) for int_value in groups):
@@ -80,7 +92,8 @@ class GroupUtils:
     @staticmethod
     def _groups_format(groups: Groups) -> Literal["format_int", "format_list_int", "format_list_list_int"]:
         """Return the format of the groups object as a string.
-        No check is done
+
+        No check is done.
 
         Args:
             groups (Groups): groups object
@@ -91,7 +104,6 @@ class GroupUtils:
         Raises:
             ValueError: if the groups object is not valid
         """
-
         if isinstance(groups, int):
             return GroupUtils.FORMAT_INT
         elif isinstance(groups, list) and groups.__len__() > 0 and isinstance(groups[0], int):
@@ -112,7 +124,6 @@ class GroupUtils:
         Raise:
             ValueError: if the groups object is not valid.
         """
-
         if not GroupUtils.is_instance_of_groups(groups):
             raise ValueError(f"Groups object is not valid: {type(groups)}")
 
@@ -148,7 +159,8 @@ class GroupUtils:
     @staticmethod
     def sanity_check_safe(vertex_count: int, groups: Groups) -> bool:
         """Perform sanity checks on the groups object.
-        same as .sanity_check_groups() but dont raise exceptions if not valid
+
+        Same as .sanity_check_groups() but does not raise exceptions if not valid.
 
         Args:
             vertex_count (int): number of vertices
@@ -157,7 +169,6 @@ class GroupUtils:
         Returns:
             bool: True if the groups object is valid, False otherwise.
         """
-
         try:
             GroupUtils.sanity_check(vertex_count, groups)
             return True
@@ -170,7 +181,7 @@ class GroupUtils:
 
     @staticmethod
     def compute_indices_per_group(vertex_count: int, groups: Groups) -> list[list[int]]:
-        """Compute indices_per_group for groups depending on the type of groups
+        """Compute indices_per_group for groups depending on the type of groups.
 
         Args:
             vertex_count (int): number of vertices
@@ -182,7 +193,6 @@ class GroupUtils:
         Raises:
             NotImplementedError: if the groups object type is not supported
         """
-
         # sanity check
         assert GroupUtils.sanity_check_safe(vertex_count, groups), "groups failed sanity check"
 
@@ -208,6 +218,7 @@ class GroupUtils:
     @staticmethod
     def _compute_indices_per_group_int(vertex_count: int, groups: int) -> list[list[int]]:
         """Compute indices_per_group for groups as int.
+
         The int represents the size of each group.
 
         group_count = vertex_count // groups
@@ -224,7 +235,6 @@ class GroupUtils:
         Returns:
             list[list[int]]: list of vertex indices per group
         """
-
         # Initialize output variables
         group_count: int = vertex_count // groups
         indices_per_group: list[list[int]] = []
@@ -244,6 +254,7 @@ class GroupUtils:
     @staticmethod
     def _compute_indices_per_group_list_int(vertex_count: int, groups: list[int]) -> list[list[int]]:
         """Compute indices_per_group for groups as list[int].
+
         In this case, each int represents the size of each group.
 
         group_count = len(groups)
@@ -256,7 +267,6 @@ class GroupUtils:
         Returns:
             list[list[int]]: list of vertex indices per group
         """
-
         # Initialize output variables
         indices_per_group: list[list[int]] = []
 
@@ -275,6 +285,7 @@ class GroupUtils:
     @staticmethod
     def _compute_indices_per_group_list_list_int(vertex_count: int, groups: list[list[int]]) -> list[list[int]]:
         """Compute indices_per_group for groups as list[list[int]].
+
         In this case, the groups are directly the indices per group themselves.
 
         group_count = len(groups)
@@ -287,7 +298,6 @@ class GroupUtils:
         Returns:
             list[list[int]]: list of vertex indices per group
         """
-
         # Initialize output variables
         indices_per_group: list[list[int]] = groups
 

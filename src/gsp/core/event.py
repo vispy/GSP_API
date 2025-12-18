@@ -1,3 +1,5 @@
+"""A simple, standalone event implementation with subscribe and dispatch methods."""
+
 from typing import Callable, Generic, TypeVar, Any
 
 # A type variable to represent the callable signature of the event.
@@ -6,8 +8,7 @@ Callback = TypeVar("Callback", bound=Callable[..., Any])
 
 
 class Event(Generic[Callback]):
-    """
-    A simple, standalone event implementation with subscribe and dispatch methods.
+    """A simple, standalone event implementation with subscribe and dispatch methods.
 
     This class allows for a "one-to-many" communication pattern where a single event
     can notify multiple listeners (subscribers) that an action has occurred.
@@ -15,14 +16,13 @@ class Event(Generic[Callback]):
     The generic type `Callback` allows the event to be type-hinted with the
     specific signature of the functions it will dispatch to, ensuring type safety.
     """
-
     def __init__(self):
+        """Initialize the Event with an empty list of callbacks."""
         # A list to store the subscribed callback functions.
         self._callbacks: list[Callback] = []
 
     def subscribe(self, callback: Callback) -> None:
-        """
-        Subscribes a callback to the event.
+        """Subscribes a callback to the event.
 
         Args:
             callback (Callback): The function to be called when the event is dispatched.
@@ -31,8 +31,7 @@ class Event(Generic[Callback]):
         self._callbacks.append(callback)
 
     def unsubscribe(self, callback: Callback) -> None:
-        """
-        Unsubscribes a previously subscribed callback from the event.
+        """Unsubscribes a previously subscribed callback from the event.
 
         Args:
             callback (Callback): The function to be removed from the event's subscribers.
@@ -40,8 +39,7 @@ class Event(Generic[Callback]):
         self._callbacks.remove(callback)
 
     def dispatch(self, *args: Any, **kwargs: Any) -> None:
-        """
-        Dispatches the event, calling all subscribed callbacks with the given arguments.
+        """Dispatches the event, calling all subscribed callbacks with the given arguments.
 
         Args:
             *args (Any): Positional arguments to pass to the callbacks.
@@ -51,10 +49,9 @@ class Event(Generic[Callback]):
             callback(*args, **kwargs)
 
     def event_listener(self, callback: Callback) -> Callback:
-        """
-        Decorator to subscribe a function to the event. This is a convenience method.
-        It still ensure static type checking on the decorated function.
+        """Decorator to subscribe a function to the event. This is a convenience method.
 
+        It still ensure static type checking on the decorated function.
         **NOTE**: it is possible to unsubscribe the function later using `event.unsubscribe(handler)`.
 
         Usage:
@@ -77,6 +74,7 @@ class Event(Generic[Callback]):
 
 
 def main() -> None:
+    """Example usage of the Event class."""
     from typing import Protocol
 
     # We can define the expected function signature using a Protocol for clarity.

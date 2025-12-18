@@ -1,3 +1,4 @@
+"""Camera module for the GSP library."""
 # stdlib imports
 from typing import Any
 
@@ -7,6 +8,7 @@ from ..utils.uuid_utils import UuidUtils
 
 
 class Camera:
+    """Camera class representing a view and projection matrix for 3D rendering."""
     __slots__ = ["_uuid", "_view_matrix", "_projection_matrix", "userData"]
 
     def __init__(self, view_matrix: TransBuf, projection_matrix: TransBuf):
@@ -23,6 +25,7 @@ class Camera:
         """A dictionary for storing custom user data associated with the Camera instance."""
 
     def __repr__(self) -> str:
+        """Return string representation of the Camera instance."""
         return f"Camera(uuid={self._uuid})"
 
     def get_uuid(self) -> str:

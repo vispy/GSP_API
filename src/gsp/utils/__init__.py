@@ -1,3 +1,5 @@
+"""Utility modules for GSP."""
+
 from .cmap_utils import CmapUtils
 from .group_utils import GroupUtils
 from .math_utils import MathUtils

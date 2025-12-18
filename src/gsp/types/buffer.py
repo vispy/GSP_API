@@ -1,3 +1,5 @@
+"""Buffer module for typed array with single dimension."""
+
 # stdlib imports
 from enum import Enum
 
@@ -9,8 +11,9 @@ from .buffer_type import BufferType
 
 
 class Buffer:
-    """typed array with single dimension
-    - it is immutable in count and type, but mutable in content
+    """Typed array with single dimension.
+
+    It is immutable in count and type, but mutable in content.
     """
 
     def __init__(self, count: int, buffer_type: BufferType) -> None:
@@ -26,6 +29,11 @@ class Buffer:
         self._bytearray: bytearray = bytearray(count * item_size)
 
     def __repr__(self) -> str:
+        """Return a string representation of the Buffer.
+
+        Returns:
+            str: A string representation showing count and type.
+        """
         return f"Buffer(count={self._count}, type={self._type})"
 
     def get_count(self) -> int:
@@ -102,6 +110,7 @@ class Buffer:
         Args:
             _bytearray (bytearray): The source bytearray.
             buffer_type (BufferType): The type of elements in the buffer.
+
         Returns:
             Buffer: The created Buffer instance.
         """

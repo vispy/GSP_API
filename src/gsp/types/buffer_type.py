@@ -1,3 +1,9 @@
+"""Buffer type definitions for GSP.
+
+This module provides BufferType enum for representing different data types
+used in graphics buffers, heavily inspired by GLSL types and numpy.
+"""
+
 # stdlib imports
 from enum import Enum
 
@@ -29,7 +35,17 @@ class BufferType(Enum):
 
     @staticmethod
     def get_item_size(buffer_type: "BufferType") -> int:
-        """Return the size in bytes of a single item of the given BufferType."""
+        """Return the size in bytes of a single item of the given BufferType.
+        
+        Args:
+            buffer_type: The BufferType to get the item size for.
+            
+        Returns:
+            The size in bytes of a single item.
+            
+        Raises:
+            ValueError: If the buffer_type is unknown.
+        """
         if buffer_type == BufferType.float32:
             return 4
         elif buffer_type == BufferType.uint32:
@@ -57,6 +73,17 @@ class BufferType(Enum):
 
     @staticmethod
     def to_numpy_dtype(buffer_type: "BufferType") -> np.dtype:
+        """Convert a BufferType to its corresponding numpy dtype.
+        
+        Args:
+            buffer_type: The BufferType to convert.
+            
+        Returns:
+            The corresponding numpy dtype.
+            
+        Raises:
+            ValueError: If the buffer_type cannot be converted.
+        """
         if buffer_type == BufferType.float32:
             return np.dtype(np.float32)
         elif buffer_type == BufferType.uint32:
@@ -76,6 +103,17 @@ class BufferType(Enum):
 
     @staticmethod
     def from_numpy(ndarray: np.ndarray) -> "BufferType":
+        """Infer BufferType from a numpy array's shape and dtype.
+        
+        Args:
+            ndarray: The numpy array to infer the BufferType from.
+            
+        Returns:
+            The inferred BufferType.
+            
+        Raises:
+            ValueError: If the numpy array cannot be converted to a BufferType.
+        """
         if len(ndarray.shape) == 2 and ndarray.dtype == np.dtype(np.float32) and ndarray.shape[1] == 2:
             return BufferType.vec2
         elif len(ndarray.shape) == 2 and ndarray.dtype == np.dtype(np.float32) and ndarray.shape[1] == 3:
@@ -89,6 +127,14 @@ class BufferType(Enum):
 
     @staticmethod
     def to_numpy_shape(buffer_type: "BufferType") -> tuple:
+        """Get the numpy shape for a given BufferType.
+        
+        Args:
+            buffer_type: The BufferType to get the shape for.
+            
+        Returns:
+            A tuple representing the shape for numpy array elements.
+        """
         if buffer_type == BufferType.vec2:
             return (2,)
         elif buffer_type == BufferType.vec3:

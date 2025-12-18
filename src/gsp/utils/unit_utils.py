@@ -1,3 +1,4 @@
+""""Utility functions for unit conversions related to display and typography."""
 # stdlib imports
 import sys
 
@@ -11,7 +12,7 @@ import numpy as np
 
 
 class UnitUtils:
-
+    """Utility class for unit conversions related to display and typography."""
     @staticmethod
     def in_to_cm(inches: float) -> float:
         """Convert inches to centimeters.
@@ -89,9 +90,11 @@ class UnitUtils:
     @staticmethod
     def pixel_to_point_numpy(pixel_sizes: np.ndarray, dpi: float) -> np.ndarray:
         """Convert an array of pixel sizes to point sizes based on DPI.
+
         Args:
             pixel_sizes (np.ndarray): Array of sizes in pixels.
             dpi (float): Dots per inch of the display.
+
         Returns:
             np.ndarray: Array of sizes in points.
         """

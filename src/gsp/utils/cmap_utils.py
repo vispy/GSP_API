@@ -1,3 +1,5 @@
+"""Colormap utilities for mapping values to colors using matplotlib colormaps."""
+
 # pip imports
 import matplotlib.cm
 import numpy as np
@@ -38,7 +40,6 @@ class CmapUtils:
         Returns:
             Buffer: A Buffer containing the RGBA8 colors mapped from the input values.
         """
-
         # Handle default parameters
         vmin = vmin if vmin is not None else values.min()
         vmax = vmax if vmax is not None else values.max()
