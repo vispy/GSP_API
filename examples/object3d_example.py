@@ -1,12 +1,9 @@
+"""Example showing how to use Object3D to create a 3D scene with rotating points."""
 # stdlib imports
 import time
-import typing
 
 # pip imports
 import numpy as np
-import matplotlib.pyplot
-import matplotlib.animation
-import matplotlib.artist
 
 
 # local imports
