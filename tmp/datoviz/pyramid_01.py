@@ -131,7 +131,7 @@ def load_data(resolution_level: int, sample_index_start: int, sample_index_end: 
     return dvz.to_byte(out, vmin, vmax)  # Convert float values to uint8
 
 
-def find_indices(res: int, t0: float, t1: float) -> Tuple[int, int]:
+def find_indices(resolution_level: int, t0: float, t1: float) -> Tuple[int, int]:
     """Convert time range to sample indices at a specific resolution level.
     
     At resolution level 0, the sample rate is full (2500 Hz).
@@ -139,20 +139,20 @@ def find_indices(res: int, t0: float, t1: float) -> Tuple[int, int]:
     This downsampling allows efficient viewing of large time ranges.
     
     Args:
-        res: Resolution level (0-11)
+        resolution_level: Resolution level (0-11)
         t0: Start time in seconds
         t1: End time in seconds
     
     Returns:
         Tuple (i0, i1) of sample indices at this resolution level
     """
-    assert res >= 0
-    assert res <= max_resolution
-    res, t0, t1  # Statement with no effect (could be removed)
+    assert resolution_level >= 0
+    assert resolution_level <= max_resolution
+    resolution_level, t0, t1  # Statement with no effect (could be removed)
     assert t0 < t1
     # Convert time to sample index, accounting for downsampling at this resolution
-    i0 = int(round(t0 * sample_rate / 2.0**res))
-    i1 = int(round(t1 * sample_rate / 2.0**res))
+    i0 = int(round(t0 * sample_rate / 2.0**resolution_level))
+    i1 = int(round(t1 * sample_rate / 2.0**resolution_level))
     return i0, i1
 
 
@@ -179,7 +179,7 @@ def make_texture(app: dvz.App, width: int, height: int) -> _DvzTexture:
     return texture
 
 
-def make_visual(x: float, y: float, w: float, h: float, texture: _DvzTexture, app: Optional[dvz.App] = None) -> _DvzVisual:
+def make_visual(axes:_DvzAxes,x: float, y: float, w: float, h: float, texture: _DvzTexture, app: Optional[dvz.App] = None) -> _DvzVisual:
     """Create a visual element for rendering the signal texture.
     
     This creates an image visual that displays the texture in the scene.
@@ -217,7 +217,7 @@ def make_visual(x: float, y: float, w: float, h: float, texture: _DvzTexture, ap
     return visual
 
 
-def update_image(res: int, i0: int, i1: int) -> Optional[bool]:
+def update_image(visual: _DvzVisual, texture: _DvzTexture, res: int, i0: int, i1: int) -> Optional[bool]:
     """Update the GPU texture with new data from the specified resolution and time range.
     
     This function:
@@ -308,7 +308,7 @@ def update_image_position(visual: _DvzVisual, axes: _DvzAxes) -> None:
 # -------------------------------------------------------------------------------------------------
 # Main Application Setup
 # -------------------------------------------------------------------------------------------------
-
+axes: _DvzAxes
 def main():
     # Initial view parameters
     time_min: float
@@ -325,12 +325,11 @@ def main():
 
     # Create GPU texture and visual for displaying the signals
     texture: _DvzTexture = make_texture(app, n_channels, texture_size)
-    visual: _DvzVisual = make_visual(time_min, n_channels, 2.0, 2.0, texture, app=app)
-
+    visual: _DvzVisual = make_visual(axes, time_min, n_channels, 2.0, 2.0, texture, app=app)
     # Load and display initial data
     i0, i1 = find_indices(current_resolution, time_min, time_max)
     assert i1 - i0 <= texture_size  # Ensure data fits in texture
-    update_image(current_resolution, i0, i1)
+    update_image(visual, texture, current_resolution, i0, i1)
     panel.add(visual)  # Add visual to the panel
 
 
@@ -362,7 +361,7 @@ def main():
         # 2. Panned more than 25% of the visible width
         if new_res != current_resolution or np.abs((new_tmin - time_min) / (time_max - time_min)) > 0.25:
             i0, i1 = find_indices(new_res, new_tmin, new_tmax)
-            if update_image(new_res, i0, i1) is None:
+            if update_image(visual, texture, new_res, i0, i1) is None:
                 return
             print(f"Update image, res {new_res}")
             update_image_position(visual, axes)  # Reposition the visual
