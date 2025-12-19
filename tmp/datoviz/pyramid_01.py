@@ -8,6 +8,14 @@ import numpy as np
 import numpy.typing as npt
 import datoviz as dvz  # Datoviz graphics library for high-performance visualization
 
+from datoviz._panel import Panel as _DvzPanel  # TODO _panel to fix in datoviz ?
+from datoviz._figure import Figure as _DvzFigure
+from datoviz._texture import Texture as _DvzTexture
+from datoviz.visuals import Visual as _DvzVisual
+from datoviz._axes import Axes as _DvzAxes
+from datoviz._event import Event as _DvzEvent
+from datoviz.interact import Panzoom
+
 # Configuration constants
 CUR_DIR: Path = Path(__file__).resolve().parent  # Directory containing this script
 n_channels: int = 384  # Number of recording channels (typical for Neuropixels probes)
@@ -91,7 +99,7 @@ def safe_slice(data: npt.NDArray, i0: int, i1: int, fill_value: float = 0.0) -> 
     return result
 
 
-def load_data(res: int, i0: int, i1: int) -> Optional[npt.NDArray[np.uint8]]:
+def load_data(resolution_level: int, sample_index_start: int, sample_index_end: int) -> Optional[npt.NDArray[np.uint8]]:
     """Load and normalize a time slice of data at a specific resolution level.
     
     This function:
@@ -100,22 +108,22 @@ def load_data(res: int, i0: int, i1: int) -> Optional[npt.NDArray[np.uint8]]:
     3. Normalizes values to 0-255 for GPU texture upload
     
     Args:
-        res: Resolution level (0 = full resolution, higher = more downsampled)
-        i0: Start sample index at this resolution
-        i1: End sample index at this resolution
+        resolution_level: Resolution level (0 = full resolution, higher = more downsampled)
+        sample_index_start: Start sample index at this resolution
+        sample_index_end: End sample index at this resolution
     
     Returns:
         Uint8 array of shape (i1-i0, n_channels) suitable for GPU texture, or None if no data
     """
-    assert i0 < i1
+    assert sample_index_start < sample_index_end
     # Load file if not already cached
-    if res not in files:
-        files[res] = load_file(res)
-    data = files[res]
+    if resolution_level not in files:
+        files[resolution_level] = load_file(resolution_level)
+    data = files[resolution_level]
     if data is None or data.size == 0:
         return
     # Extract the requested time range with bounds checking
-    out = safe_slice(data, i0, i1)
+    out = safe_slice(data, sample_index_start, sample_index_end)
     if out.size == 0:
         return
     # Normalize to 0-255 range for texture upload
@@ -153,7 +161,7 @@ def find_indices(res: int, t0: float, t1: float) -> Tuple[int, int]:
 # -------------------------------------------------------------------------------------------------
 
 
-def make_texture(app: dvz.App, width: int, height: int) -> dvz.Texture:
+def make_texture(app: dvz.App, width: int, height: int) -> _DvzTexture:
     """Create a GPU texture for displaying the signal data.
     
     The texture stores the 2D image of signals (time x channels) that will be
@@ -167,11 +175,11 @@ def make_texture(app: dvz.App, width: int, height: int) -> dvz.Texture:
     Returns:
         Datoviz texture object
     """
-    texture = app.texture(ndim=2, shape=(width, height), n_channels=1, dtype=np.uint8)
+    texture = app.texture(ndim=2, shape=(width, height), n_channels=1, dtype=np.dtype(np.uint8))
     return texture
 
 
-def make_visual(x: float, y: float, w: float, h: float, texture: dvz.Texture, app: Optional[dvz.App] = None) -> dvz.Visual:
+def make_visual(x: float, y: float, w: float, h: float, texture: _DvzTexture, app: Optional[dvz.App] = None) -> _DvzVisual:
     """Create a visual element for rendering the signal texture.
     
     This creates an image visual that displays the texture in the scene.
@@ -251,7 +259,7 @@ def update_image(res: int, i0: int, i1: int) -> Optional[bool]:
     return True
 
 
-def get_extent(axes: dvz.Axes) -> Tuple[float, float, float, float]:
+def get_extent(axes: _DvzAxes) -> Tuple[float, float, float, float]:
     """Get the visible extent with padding added horizontally.
     
     Adds 50% padding on each side of the time axis to enable smooth panning.
@@ -271,7 +279,7 @@ def get_extent(axes: dvz.Axes) -> Tuple[float, float, float, float]:
     return (xmin, xmax, ymin, ymax)
 
 
-def update_image_position(visual: dvz.Visual, axes: dvz.Axes) -> None:
+def update_image_position(visual: _DvzVisual, axes: _DvzAxes) -> None:
     """Update the position and size of the image visual to match the current view.
     
     Recalculates the visual's position and size in NDC coordinates based on the
@@ -302,31 +310,31 @@ def update_image_position(visual: dvz.Visual, axes: dvz.Axes) -> None:
 # -------------------------------------------------------------------------------------------------
 
 # Initial view parameters
-tmin: float
-tmax: float
-tmin, tmax = 1000.0, 1500.0  # Initial time window (seconds)
-res: int = 11  # Start at lowest resolution (most downsampled)
+time_min: float
+time_max: float
+time_min, time_max = 1000.0, 1500.0  # Initial time window (seconds)
+current_resolution: int = 11  # Start at lowest resolution (most downsampled)
 
 # Create the Datoviz application and scene hierarchy
 app: dvz.App = dvz.App(background="white")  # Main application window
-figure: dvz.Figure = app.figure()  # Figure container
-panel: dvz.Panel = figure.panel()  # Panel for rendering
-panzoom: dvz.PanZoom = panel.panzoom(fixed="y")  # Enable pan/zoom with fixed Y axis (channels don't zoom)
-axes: dvz.Axes = panel.axes((tmin, tmax), (0, n_channels))  # Set up coordinate system
+figure: _DvzFigure = app.figure()  # Figure container
+panel: _DvzPanel = figure.panel()  # Panel for rendering
+panzoom: Panzoom = panel.panzoom(fixed="y")  # Enable pan/zoom with fixed Y axis (channels don't zoom)
+axes: _DvzAxes = panel.axes((time_min, time_max), (0, n_channels))  # Set up coordinate system
 
 # Create GPU texture and visual for displaying the signals
-texture: dvz.Texture = make_texture(app, n_channels, texture_size)
-visual: dvz.Visual = make_visual(tmin, n_channels, 2.0, 2.0, texture, app=app)
+texture: _DvzTexture = make_texture(app, n_channels, texture_size)
+visual: _DvzVisual = make_visual(time_min, n_channels, 2.0, 2.0, texture, app=app)
 
 # Load and display initial data
-i0, i1 = find_indices(res, tmin, tmax)
+i0, i1 = find_indices(current_resolution, time_min, time_max)
 assert i1 - i0 <= texture_size  # Ensure data fits in texture
-update_image(res, i0, i1)
+update_image(current_resolution, i0, i1)
 panel.add(visual)  # Add visual to the panel
 
 
 @app.connect(figure)
-def on_frame(ev: dvz.Event) -> None:
+def on_frame(ev:_DvzEvent) -> None:
     """Frame callback for dynamic level-of-detail updates.
     
     This callback runs every frame and:
@@ -338,7 +346,7 @@ def on_frame(ev: dvz.Event) -> None:
     - Zoomed out: use downsampled data (higher res level) - less detail, more time coverage
     - Zoomed in: use full resolution data (lower res level) - more detail, less time coverage
     """
-    global res, tmin, tmax
+    global current_resolution, time_min, time_max
     new_tmin, new_tmax, _, _ = get_extent(axes)
 
     # Find the appropriate resolution level for the current view
@@ -351,15 +359,15 @@ def on_frame(ev: dvz.Event) -> None:
     # Update texture if:
     # 1. Resolution changed (zoomed in/out significantly)
     # 2. Panned more than 25% of the visible width
-    if new_res != res or np.abs((new_tmin - tmin) / (tmax - tmin)) > 0.25:
+    if new_res != current_resolution or np.abs((new_tmin - time_min) / (time_max - time_min)) > 0.25:
         i0, i1 = find_indices(new_res, new_tmin, new_tmax)
         if update_image(new_res, i0, i1) is None:
             return
         print(f"Update image, res {new_res}")
         update_image_position(visual, axes)  # Reposition the visual
         visual.update()  # Trigger visual refresh
-        res = new_res  # Update current resolution
-        tmin, tmax = new_tmin, new_tmax  # Update current time range
+        current_resolution = new_res  # Update current resolution
+        time_min, time_max = new_tmin, new_tmax  # Update current time range
 
 
 # Run the application event loop
