@@ -309,67 +309,75 @@ def update_image_position(visual: _DvzVisual, axes: _DvzAxes) -> None:
 # Main Application Setup
 # -------------------------------------------------------------------------------------------------
 
-# Initial view parameters
-time_min: float
-time_max: float
-time_min, time_max = 1000.0, 1500.0  # Initial time window (seconds)
-current_resolution: int = 11  # Start at lowest resolution (most downsampled)
+def main():
+    # Initial view parameters
+    time_min: float
+    time_max: float
+    time_min, time_max = 1000.0, 1500.0  # Initial time window (seconds)
+    current_resolution: int = 11  # Start at lowest resolution (most downsampled)
 
-# Create the Datoviz application and scene hierarchy
-app: dvz.App = dvz.App(background="white")  # Main application window
-figure: _DvzFigure = app.figure()  # Figure container
-panel: _DvzPanel = figure.panel()  # Panel for rendering
-panzoom: Panzoom = panel.panzoom(fixed="y")  # Enable pan/zoom with fixed Y axis (channels don't zoom)
-axes: _DvzAxes = panel.axes((time_min, time_max), (0, n_channels))  # Set up coordinate system
+    # Create the Datoviz application and scene hierarchy
+    app: dvz.App = dvz.App(background="white")  # Main application window
+    figure: _DvzFigure = app.figure()  # Figure container
+    panel: _DvzPanel = figure.panel()  # Panel for rendering
+    panzoom: Panzoom = panel.panzoom(fixed="y")  # Enable pan/zoom with fixed Y axis (channels don't zoom)
+    axes: _DvzAxes = panel.axes((time_min, time_max), (0, n_channels))  # Set up coordinate system
 
-# Create GPU texture and visual for displaying the signals
-texture: _DvzTexture = make_texture(app, n_channels, texture_size)
-visual: _DvzVisual = make_visual(time_min, n_channels, 2.0, 2.0, texture, app=app)
+    # Create GPU texture and visual for displaying the signals
+    texture: _DvzTexture = make_texture(app, n_channels, texture_size)
+    visual: _DvzVisual = make_visual(time_min, n_channels, 2.0, 2.0, texture, app=app)
 
-# Load and display initial data
-i0, i1 = find_indices(current_resolution, time_min, time_max)
-assert i1 - i0 <= texture_size  # Ensure data fits in texture
-update_image(current_resolution, i0, i1)
-panel.add(visual)  # Add visual to the panel
-
-
-@app.connect(figure)
-def on_frame(ev:_DvzEvent) -> None:
-    """Frame callback for dynamic level-of-detail updates.
-    
-    This callback runs every frame and:
-    1. Checks if the view has changed significantly (zoom or pan)
-    2. Determines the appropriate resolution level for the current zoom
-    3. Reloads data if resolution changed or view shifted significantly
-    
-    The pyramid approach ensures:
-    - Zoomed out: use downsampled data (higher res level) - less detail, more time coverage
-    - Zoomed in: use full resolution data (lower res level) - more detail, less time coverage
-    """
-    global current_resolution, time_min, time_max
-    new_tmin, new_tmax, _, _ = get_extent(axes)
-
-    # Find the appropriate resolution level for the current view
-    # Start from full resolution (0) and increase until data fits in texture
-    for new_res in range(0, max_resolution + 1):
-        i0, i1 = find_indices(new_res, new_tmin, new_tmax)
-        if i1 - i0 <= texture_size:  # Data fits in texture at this resolution
-            break
-
-    # Update texture if:
-    # 1. Resolution changed (zoomed in/out significantly)
-    # 2. Panned more than 25% of the visible width
-    if new_res != current_resolution or np.abs((new_tmin - time_min) / (time_max - time_min)) > 0.25:
-        i0, i1 = find_indices(new_res, new_tmin, new_tmax)
-        if update_image(new_res, i0, i1) is None:
-            return
-        print(f"Update image, res {new_res}")
-        update_image_position(visual, axes)  # Reposition the visual
-        visual.update()  # Trigger visual refresh
-        current_resolution = new_res  # Update current resolution
-        time_min, time_max = new_tmin, new_tmax  # Update current time range
+    # Load and display initial data
+    i0, i1 = find_indices(current_resolution, time_min, time_max)
+    assert i1 - i0 <= texture_size  # Ensure data fits in texture
+    update_image(current_resolution, i0, i1)
+    panel.add(visual)  # Add visual to the panel
 
 
-# Run the application event loop
-app.run()  # Start interactive visualization
-app.destroy()  # Clean up resources when window is closed
+    @app.connect(figure)
+    def on_frame(ev:_DvzEvent) -> None:
+        """Frame callback for dynamic level-of-detail updates.
+        
+        This callback runs every frame and:
+        1. Checks if the view has changed significantly (zoom or pan)
+        2. Determines the appropriate resolution level for the current zoom
+        3. Reloads data if resolution changed or view shifted significantly
+        
+        The pyramid approach ensures:
+        - Zoomed out: use downsampled data (higher res level) - less detail, more time coverage
+        - Zoomed in: use full resolution data (lower res level) - more detail, less time coverage
+        """
+        nonlocal current_resolution, time_min, time_max
+        new_tmin, new_tmax, _, _ = get_extent(axes)
+
+        # Find the appropriate resolution level for the current view
+        # Start from full resolution (0) and increase until data fits in texture
+        for new_res in range(0, max_resolution + 1):
+            i0, i1 = find_indices(new_res, new_tmin, new_tmax)
+            if i1 - i0 <= texture_size:  # Data fits in texture at this resolution
+                break
+
+        # Update texture if:
+        # 1. Resolution changed (zoomed in/out significantly)
+        # 2. Panned more than 25% of the visible width
+        if new_res != current_resolution or np.abs((new_tmin - time_min) / (time_max - time_min)) > 0.25:
+            i0, i1 = find_indices(new_res, new_tmin, new_tmax)
+            if update_image(new_res, i0, i1) is None:
+                return
+            print(f"Update image, res {new_res}")
+            update_image_position(visual, axes)  # Reposition the visual
+            visual.update()  # Trigger visual refresh
+            current_resolution = new_res  # Update current resolution
+            time_min, time_max = new_tmin, new_tmax  # Update current time range
+
+
+    # Run the application event loop
+    app.run()  # Start interactive visualization
+    app.destroy()  # Clean up resources when window is closed
+
+# =============================================================================
+# 
+# =============================================================================
+
+if __name__ == "__main__":
+    main()
