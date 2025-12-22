@@ -1,3 +1,5 @@
+- about porting pyramid
+  - sub sample data to make it addable on github data (aka less 2gb limit)
 - rewrite all the docstrings to follow numpydoc style
   - https://numpydoc.readthedocs.io/en/latest/format.html
   - document all functions/member/types public to the class

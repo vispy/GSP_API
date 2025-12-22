@@ -17,7 +17,6 @@ from datoviz._event import Event as _DvzEvent
 from datoviz.interact import Panzoom
 
 # Configuration constants
-CUR_DIR: Path = Path(__file__).resolve().parent  # Directory containing this script
 n_channels: int = 384  # Number of recording channels (typical for Neuropixels probes)
 sample_rate: int = 2500  # Sampling rate in Hz
 data_dtype: type = np.float16  # Data type for memory-efficient storage
@@ -41,6 +40,7 @@ def file_path_build(resolution_level: int) -> Path:
     Returns:
         Path to the binary data file for this resolution
     """
+    CUR_DIR: Path = Path(__file__).resolve().parent  # Directory containing this script
     return Path(CUR_DIR / f"pyramid/res_{resolution_level:02d}.bin")
 
 
@@ -131,7 +131,7 @@ def load_data(resolution_level: int, sample_index_start: int, sample_index_end: 
     return dvz.to_byte(out, vmin, vmax)  # Convert float values to uint8
 
 
-def find_indices(resolution_level: int, t0: float, t1: float) -> Tuple[int, int]:
+def find_indices(resolution_level: int, time_min: float, time_max: float) -> Tuple[int, int]:
     """Convert time range to sample indices at a specific resolution level.
     
     At resolution level 0, the sample rate is full (2500 Hz).
@@ -140,20 +140,20 @@ def find_indices(resolution_level: int, t0: float, t1: float) -> Tuple[int, int]
     
     Args:
         resolution_level: Resolution level (0-11)
-        t0: Start time in seconds
-        t1: End time in seconds
+        time_min: Start time in seconds
+        time_max: End time in seconds
     
     Returns:
-        Tuple (i0, i1) of sample indices at this resolution level
+        Tuple (sample_index_min, sample_index_max) of sample indices at this resolution level
     """
     assert resolution_level >= 0
     assert resolution_level <= max_resolution
-    resolution_level, t0, t1  # Statement with no effect (could be removed)
-    assert t0 < t1
+    # resolution_level, time_min, time_max  # Statement with no effect (could be removed)
+    assert time_min < time_max
     # Convert time to sample index, accounting for downsampling at this resolution
-    i0 = int(round(t0 * sample_rate / 2.0**resolution_level))
-    i1 = int(round(t1 * sample_rate / 2.0**resolution_level))
-    return i0, i1
+    sample_index_min = int(round(time_min * sample_rate / 2.0**resolution_level))
+    sample_index_max = int(round(time_max * sample_rate / 2.0**resolution_level))
+    return sample_index_min, sample_index_max
 
 
 # -------------------------------------------------------------------------------------------------
@@ -179,13 +179,14 @@ def make_texture(app: dvz.App, width: int, height: int) -> _DvzTexture:
     return texture
 
 
-def make_visual(axes:_DvzAxes,x: float, y: float, w: float, h: float, texture: _DvzTexture, app: Optional[dvz.App] = None) -> _DvzVisual:
+def make_visual(axes:_DvzAxes,x: float, y: float, w: float, h: float, texture: _DvzTexture, app: dvz.App) -> _DvzVisual:
     """Create a visual element for rendering the signal texture.
     
     This creates an image visual that displays the texture in the scene.
     The image is positioned in data coordinates but sized in NDC (Normalized Device Coordinates).
     
     Args:
+        axes: Datoviz axes object for coordinate transformations
         x: X position in data coordinates (time)
         y: Y position in data coordinates (channel number)
         w: Width in NDC coordinates
@@ -197,11 +198,11 @@ def make_visual(axes:_DvzAxes,x: float, y: float, w: float, h: float, texture: _
         Datoviz image visual object
     """
     # Convert scalar coordinates to required 2D array format
-    x = np.atleast_2d([x])
-    y = np.atleast_2d([y])
+    x_numpy = np.atleast_2d([x])
+    y_numpy = np.atleast_2d([y])
     size = np.array([[w, h]])  # Size in NDC coordinates
     anchor = np.array([[-1.0, +1.0]])  # Top-left anchor point
-    position = axes.normalize(x, y)  # Convert data coords to normalized coords
+    position = axes.normalize(x_numpy, y_numpy)  # Convert data coords to normalized coords
     
     visual = app.image(
         position=position,
@@ -209,7 +210,7 @@ def make_visual(axes:_DvzAxes,x: float, y: float, w: float, h: float, texture: _
         anchor=anchor,  # Anchor at top-left
         texture=texture,
         permutation=(1, 0),  # Transpose texture (swap width/height)
-        rescale=True,  # Enable texture rescaling
+        rescale="rescale",  # Enable texture rescaling
         unit="ndc",  # Size specified in Normalized Device Coordinates
         mode="colormap",  # Apply colormap to grayscale data
         colormap="binary",  # Black-to-white colormap
@@ -217,7 +218,7 @@ def make_visual(axes:_DvzAxes,x: float, y: float, w: float, h: float, texture: _
     return visual
 
 
-def update_image(visual: _DvzVisual, texture: _DvzTexture, res: int, i0: int, i1: int) -> Optional[bool]:
+def update_image(visual: _DvzVisual, texture: _DvzTexture, res: int, sample_index_min: int, sample_index_max: int) -> Optional[bool]:
     """Update the GPU texture with new data from the specified resolution and time range.
     
     This function:
@@ -226,16 +227,18 @@ def update_image(visual: _DvzVisual, texture: _DvzTexture, res: int, i0: int, i1
     3. Adjusts texture coordinates to show only the used portion of the texture
     
     Args:
+        visual: Datoviz image visual to update
+        texture: GPU texture to update
         res: Resolution level to load
-        i0: Start sample index
-        i1: End sample index
+        sample_index_min: Start sample index
+        sample_index_max: End sample index
     
     Returns:
         True if successful, None if failed
     """
     if res < 0 or res > max_resolution:
         return None
-    image = load_data(res, i0, i1)
+    image = load_data(res, sample_index_min, sample_index_max)
     if image is None:
         print("Error loading data")
         return
@@ -252,7 +255,7 @@ def update_image(visual: _DvzVisual, texture: _DvzTexture, res: int, i0: int, i1
 
     # Adjust texture coordinates to use only the filled portion
     # t represents the fraction of the texture height that contains data
-    t = (i1 - i0) / float(texture_size)
+    t = (sample_index_max - sample_index_min) / float(texture_size)
     texcoords = np.array([[0, 0, t, 1]], dtype=np.float32)  # (u0, v0, u1, v1)
     visual.set_texcoords(texcoords)
 
@@ -308,8 +311,8 @@ def update_image_position(visual: _DvzVisual, axes: _DvzAxes) -> None:
 # -------------------------------------------------------------------------------------------------
 # Main Application Setup
 # -------------------------------------------------------------------------------------------------
-axes: _DvzAxes
 def main():
+    """Main function to set up and run the pyramid data visualization application."""
     # Initial view parameters
     time_min: float
     time_max: float
