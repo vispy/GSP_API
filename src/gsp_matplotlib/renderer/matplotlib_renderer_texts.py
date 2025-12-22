@@ -95,16 +95,25 @@ class RendererTexts:
         # Create the artists if needed
         # =============================================================================
 
-        mpl_axes = renderer.get_mpl_axes_for_viewport(viewport)
+        artist_uuid_base = f"{viewport.get_uuid()}_{texts.get_uuid()}"
         for text_index in range(len(texts.get_strings())):
-            artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}_{text_index}"
+            artist_uuid = f"{artist_uuid_base}_{text_index}"
             if artist_uuid in renderer._artists:
                 continue
             mpl_text = matplotlib.text.Text()
             mpl_text.set_visible(False)
             # hide until properly positioned and sized
             renderer._artists[artist_uuid] = mpl_text
+            mpl_axes = renderer.get_mpl_axes_for_viewport(viewport)
             mpl_axes.add_artist(mpl_text)
+
+        # Remove extra artists if the number of text strings has decreased
+        existing_artist_uuids = [f"{artist_uuid_base}_{i}" for i in range(len(texts.get_strings()))]
+        artists_to_remove = [uuid for uuid in renderer._artists.keys() if uuid.startswith(artist_uuid_base) and uuid not in existing_artist_uuids]
+        for artist_uuid in artists_to_remove:
+            mpl_text = typing.cast(matplotlib.text.Text, renderer._artists[artist_uuid])
+            mpl_text.remove()  # remove from axes
+            del renderer._artists[artist_uuid]  # remove from renderer's artist dict
 
         # =============================================================================
         # Get existing artists
@@ -124,7 +133,7 @@ class RendererTexts:
             mpl_text.set_y(vertices_2d[text_index, 1])
             mpl_text.set_text(texts.get_strings()[text_index])
             mpl_text.set_rotation(angles_numpy[text_index] / np.pi * 180.0)  # convert rad to deg
-            print(f"angles_numpy[{text_index}]: {angles_numpy[text_index]}")
+            # print(f"angles_numpy[{text_index}]: {angles_numpy[text_index]}")
 
             ha_label = "center" if anchors_numpy[text_index, 0] == 0.0 else "right" if anchors_numpy[text_index, 0] == 1.0 else "left"
             mpl_text.set_horizontalalignment(ha_label)

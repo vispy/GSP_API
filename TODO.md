@@ -1,5 +1,11 @@
 - about porting pyramid
   - sub sample data to make it addable on github data (aka less 2gb limit)
+- rendering visual MUST call the `.sanity_check_attributes_buffer()`
+  - to be done in matplotlib and in datoviz
+  - see matplotlib_renderer_texts.py for an example
+- for the visual which requires multiple artists, think about what happen when the number of artists is reduced
+  - one need to destroy/hide the older extra artists
+  - see matplotlib_renderer_texts.py for an example
 - rewrite all the docstrings to follow numpydoc style
   - https://numpydoc.readthedocs.io/en/latest/format.html
   - document all functions/member/types public to the class
