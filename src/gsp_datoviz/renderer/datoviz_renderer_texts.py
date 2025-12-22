@@ -22,6 +22,7 @@ from gsp.utils.unit_utils import UnitUtils
 
 class DatovizRendererTexts:
     """Datoviz renderer for Texts visuals."""
+
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -77,6 +78,20 @@ class DatovizRendererTexts:
         font_sizes_numpy = Bufferx.to_numpy(font_sizes_buffer)
         anchors_numpy = Bufferx.to_numpy(anchors_buffer)
         angles_numpy = Bufferx.to_numpy(angles_buffer)
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Texts.sanity_check_attributes_buffer(
+            vertices_buffer,
+            texts.get_strings(),
+            colors_buffer,
+            font_sizes_buffer,
+            anchors_buffer,
+            angles_buffer,
+            texts.get_font_name(),
+        )
 
         # =============================================================================
         # Create the datoviz visual if needed

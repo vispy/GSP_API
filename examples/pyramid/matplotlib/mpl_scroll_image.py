@@ -2,9 +2,11 @@
 
 # stdlib imports
 from typing import Optional
+import pathlib
 
 # pip imports
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+import matplotlib.pyplot
 from matplotlib.axes import Axes
 from matplotlib.backend_bases import MouseEvent
 
@@ -20,14 +22,17 @@ class PanAndZoom:
         self._button_press_y: Optional[float] = None
 
         # Connect events
-        self._mpl_axes.figure.canvas.mpl_connect("scroll_event", self.zoom)  # type: ignore
+        self._mpl_axes.figure.canvas.mpl_connect("scroll_event", self.on_scroll)  # type: ignore
         self._mpl_axes.figure.canvas.mpl_connect("button_press_event", self.on_press)  # type: ignore
         self._mpl_axes.figure.canvas.mpl_connect("button_release_event", self.on_release)  # type: ignore
         self._mpl_axes.figure.canvas.mpl_connect("motion_notify_event", self.on_motion)  # type: ignore
 
-    def zoom(self, event: MouseEvent) -> None:
+    def on_scroll(self, event: MouseEvent) -> None:
         """Zoom in or out around the mouse pointer."""
         # sanity check - ensure the event is within the axes
+        if event.inaxes != self._mpl_axes:
+            return
+        # sanity check - ensure xdata and ydata are not None
         assert event.xdata is not None, "MouseEvent xdata should not be None"
         assert event.ydata is not None, "MouseEvent ydata should not be None"
 
@@ -46,6 +51,7 @@ class PanAndZoom:
 
     def on_press(self, event: MouseEvent) -> None:
         """Store the mouse press position."""
+        # sanity check - ensure the event is within the axes
         if event.inaxes != self._mpl_axes:
             return
         # Store pixel coordinates instead of data coordinates
@@ -92,10 +98,20 @@ class PanAndZoom:
 def main():
     """Main function to demonstrate PanAndZoom functionality."""
     # Example Usage
-    mpl_figure, mpl_axes = plt.subplots()
+    mpl_figure, mpl_axes = matplotlib.pyplot.subplots()
+
+    # set dimensions of the axes
+    mpl_axes.set_xlim(-100, 100)
+    mpl_axes.set_ylim(0, 384)
+
+    image_path = pathlib.Path(__file__).resolve().parent / "../.." / "images" / "image.png"
+    mpl_axes_image = matplotlib.pyplot.imread(image_path)
+    mpl_axes.imshow(mpl_axes_image, extent=(-500, 500, -500, 500), interpolation="bicubic")
+
     mpl_axes.plot(range(-100, +100), [x**2 for x in range(-100, +100)])
+
     pan_zoom = PanAndZoom(mpl_axes)
-    plt.show()
+    matplotlib.pyplot.show()
 
 
 if __name__ == "__main__":

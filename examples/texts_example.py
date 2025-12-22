@@ -1,3 +1,5 @@
+"""Example demonstrating the Texts visual with various alignments and rotations."""
+
 # stdlib imports
 import os
 import pathlib
@@ -22,6 +24,7 @@ from gsp.utils.unit_utils import UnitUtils
 
 
 def main():
+    """Example demonstrating the Texts visual with various alignments and rotations."""
     # fix random seed for reproducibility
     np.random.seed(0)
 

@@ -1,3 +1,5 @@
+"""Example demonstrating viewport NDC metric conversions."""
+
 # pip imports
 import numpy as np
 from PyQt5.QtWidgets import QApplication
@@ -6,7 +8,7 @@ from PyQt5.QtWidgets import QApplication
 from common.example_helper import ExampleHelper
 from gsp.core import Canvas, Viewport
 from gsp.core.camera import Camera
-from gsp.visuals import Segments, Points
+from gsp.visuals import Segments, Points, Texts
 from gsp.types import CapStyle
 from gsp_extra.bufferx import Bufferx
 from gsp.types import BufferType
@@ -17,11 +19,11 @@ from gsp_extra.viewport_events.viewport_events_types import CanvasResizeEvent
 
 
 class QtHelper:
-    """Get screen properties via Qt"""
+    """Get screen properties via Qt."""
 
     @staticmethod
     def get_screen_ppi() -> float:
-
+        """Get the screen pixels per inch (PPI) using Qt."""
         qt_app = QApplication([])
         screen = qt_app.primaryScreen()
         assert screen is not None, "screen MUST NOT be None"
@@ -31,6 +33,7 @@ class QtHelper:
 
     @staticmethod
     def get_device_pixel_ratio() -> float:
+        """Get the screen device pixel ratio using Qt."""
         qt_app = QApplication([])
         screen = qt_app.primaryScreen()
         assert screen is not None, "screen MUST NOT be None"
@@ -40,11 +43,10 @@ class QtHelper:
 
 
 class ViewportUnitConverter:
-    """
-    Convert between pixel/cm to ndc units in a viewport
-    """
+    """Convert between pixel/cm to ndc units in a viewport."""
 
     def __init__(self, canvas: Canvas, viewport: Viewport) -> None:
+        """Initialize the converter with a canvas and viewport."""
         self._canvas = canvas
         self._viewport = viewport
 
@@ -85,6 +87,7 @@ class ViewportUnitConverter:
         return viewport_height_cm
 
     def pixel_to_ndc(self, delta_pixel_x: float, delta_pixel_y: float) -> tuple[float, float]:
+        """Convert a delta in pixels to a delta in NDC units."""
         viewport_range_ndc_x = 2.0
         viewport_range_ndc_y = 2.0
 
@@ -94,6 +97,7 @@ class ViewportUnitConverter:
         return (delta_ndc_x, delta_ndc_y)
 
     def cm_to_ndc(self, delta_cm_x: float, delta_cm_y: float) -> tuple[float, float]:
+        """Convert a delta in cm to a delta in NDC units."""
         viewport_range_ndc_x = 2.0
         viewport_range_ndc_y = 2.0
 
@@ -104,6 +108,7 @@ class ViewportUnitConverter:
 
 
 def main():
+    """Example demonstrating viewport NDC metric conversions."""
     # fix random seed for reproducibility
     np.random.seed(0)
 
@@ -134,7 +139,7 @@ def main():
     #
     # =============================================================================
 
-    def generate_segments_axes(viewport_unit: ViewportUnitConverter) -> Segments:
+    def generate_axes_segments(viewport_unit: ViewportUnitConverter) -> Segments:
         segments_count = 2
 
         positions_numpy = np.array(
@@ -157,7 +162,7 @@ def main():
         segments = Segments(positions_buffer, line_widths_buffer, CapStyle.BUTT, colors_buffer)
         return segments
 
-    def generate_segments_ticks_horizontal(viewport_unit: ViewportUnitConverter) -> Segments:
+    def generate_ticks_horizontal(viewport_unit: ViewportUnitConverter) -> Segments:
         viewport_width_cm = viewport_unit._get_viewport_width_cm()
         num_ticks = int(viewport_width_cm)
 
@@ -189,7 +194,7 @@ def main():
         segments = Segments(positions_buffer, line_widths_buffer, CapStyle.BUTT, colors_buffer)
         return segments
 
-    def generate_segments_ticks_vertical(viewport_unit: ViewportUnitConverter) -> Segments:
+    def generate_ticks_vertical(viewport_unit: ViewportUnitConverter) -> Segments:
         viewport_height_cm = viewport_unit._get_viewport_height_cm()
         num_ticks = int(viewport_height_cm)
 
@@ -221,9 +226,99 @@ def main():
         segments = Segments(positions_buffer, line_widths_buffer, CapStyle.BUTT, colors_buffer)
         return segments
 
-    axes_segments = generate_segments_axes(viewport_unit)
-    tick_segments_horizontal = generate_segments_ticks_horizontal(viewport_unit)
-    tick_segments_vertical = generate_segments_ticks_vertical(viewport_unit)
+    def generate_axes_texts_horizontal(viewport_unit: ViewportUnitConverter) -> Texts:
+        viewport_width_cm = viewport_unit._get_viewport_width_cm()
+        num_ticks = int(viewport_width_cm)
+
+        delta_ndc_x, delta_ndc_y = viewport_unit.cm_to_ndc(1.0, 0.2)
+
+        # Create positions for ticks from -num_ticks/2 to +num_ticks/2
+        positions_array = []
+        for tick_index in range(-num_ticks // 2, num_ticks // 2 + 1):
+            if tick_index == 0:
+                continue
+            tick_x = delta_ndc_x * tick_index
+            positions_array.append([tick_x, -delta_ndc_y * 1.3, 0.0])
+
+        positions_numpy = np.array(positions_array, dtype=np.float32)
+        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+        strings = []
+        for tick_index in range(-num_ticks // 2, num_ticks // 2 + 1):
+            if tick_index == 0:
+                continue
+            strings.append(f"{tick_index}")
+        string_count = len(strings)
+
+        colors_buffer = Buffer(string_count, BufferType.rgba8)
+        colors_buffer.set_data(Constants.Color.black * string_count, 0, string_count)
+
+        font_size_numpy = np.array([UnitUtils.pixel_to_point(12, canvas.get_dpi())] * string_count, dtype=np.float32)
+        font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
+
+        # Create a anchor_numpy for each string with a bottom-left anchor
+        anchors_numpy = np.array([[0, 1] for _ in range(string_count)], dtype=np.float32)
+        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+
+        angles_numpy = np.array([[0] for _ in range(string_count)], dtype=np.float32)
+        angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
+
+        font_name = "Arial"
+
+        # Create the Texts visual
+        texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+
+        return texts
+
+    def generate_axes_texts_vertical(viewport_unit: ViewportUnitConverter) -> Texts:
+        viewport_height_cm = viewport_unit._get_viewport_height_cm()
+        num_ticks = int(viewport_height_cm)
+
+        delta_ndc_x, delta_ndc_y = viewport_unit.cm_to_ndc(0.2, 1.0)
+
+        # Create positions for ticks from -num_ticks/2 to +num_ticks/2
+        positions_array = []
+        for tick_index in range(-num_ticks // 2, num_ticks // 2 + 1):
+            if tick_index == 0:
+                continue
+            tick_y = delta_ndc_y * tick_index
+            positions_array.append([-delta_ndc_x * 1.3, tick_y, 0.0])
+
+        positions_numpy = np.array(positions_array, dtype=np.float32)
+        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+        strings = []
+        for tick_index in range(-num_ticks // 2, num_ticks // 2 + 1):
+            if tick_index == 0:
+                continue
+            strings.append(f"{tick_index}")
+        string_count = len(strings)
+
+        colors_buffer = Buffer(string_count, BufferType.rgba8)
+        colors_buffer.set_data(Constants.Color.black * string_count, 0, string_count)
+
+        font_size_numpy = np.array([UnitUtils.pixel_to_point(12, canvas.get_dpi())] * string_count, dtype=np.float32)
+        font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
+
+        # Create a anchor_numpy for each string with a bottom-left anchor
+        anchors_numpy = np.array([[1, 0] for _ in range(string_count)], dtype=np.float32)
+        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+
+        angles_numpy = np.array([[0] for _ in range(string_count)], dtype=np.float32)
+        angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
+
+        font_name = "Arial"
+
+        # Create the Texts visual
+        texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+
+        return texts
+
+    axes_segments = generate_axes_segments(viewport_unit)
+    axes_ticks_horizontal = generate_ticks_horizontal(viewport_unit)
+    axes_ticks_vertical = generate_ticks_vertical(viewport_unit)
+    axes_texts_horizontal = generate_axes_texts_horizontal(viewport_unit)
+    axes_texts_vertical = generate_axes_texts_vertical(viewport_unit)
 
     # =============================================================================
     #
@@ -271,10 +366,10 @@ def main():
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
     renderer_base.render(
-        [viewport, viewport, viewport, viewport],
-        [axes_segments, tick_segments_horizontal, tick_segments_vertical, points],
-        [model_matrix, model_matrix, model_matrix, model_matrix],
-        [camera, camera, camera, camera],
+        [viewport, viewport, viewport, viewport, viewport, viewport],
+        [axes_segments, axes_ticks_horizontal, axes_ticks_vertical, axes_texts_horizontal, axes_texts_vertical, points],
+        [model_matrix, model_matrix, model_matrix, model_matrix, model_matrix, model_matrix],
+        [camera, camera, camera, camera, camera, camera],
     )
 
     # =============================================================================
@@ -291,8 +386,10 @@ def main():
     def on_canvas_resize(canvas_resize_event: CanvasResizeEvent):
         nonlocal canvas, viewport
         nonlocal axes_segments
-        nonlocal tick_segments_horizontal
-        nonlocal tick_segments_vertical
+        nonlocal axes_ticks_horizontal
+        nonlocal axes_ticks_vertical
+        nonlocal axes_texts_horizontal
+        nonlocal axes_texts_vertical
         nonlocal points
 
         print("canvas_resize_event", canvas_resize_event)
@@ -309,28 +406,34 @@ def main():
 
         # get current uuids
         axes_segments_uuid = axes_segments.get_uuid()
-        tick_segments_horizontal_uuid = tick_segments_horizontal.get_uuid()
-        tick_segments_vertical_uuid = tick_segments_vertical.get_uuid()
+        axes_ticks_horizontal_uuid = axes_ticks_horizontal.get_uuid()
+        axes_ticks_vertical_uuid = axes_ticks_vertical.get_uuid()
+        axes_texts_horizontal_uuid = axes_texts_horizontal.get_uuid()
+        axes_texts_vertical_uuid = axes_texts_vertical.get_uuid()
         points_uuid = points.get_uuid()
 
         # recreate all the visuals
-        axes_segments = generate_segments_axes(viewport_unit)
-        tick_segments_horizontal = generate_segments_ticks_horizontal(viewport_unit)
-        tick_segments_vertical = generate_segments_ticks_vertical(viewport_unit)
+        axes_segments = generate_axes_segments(viewport_unit)
+        axes_ticks_horizontal = generate_ticks_horizontal(viewport_unit)
+        axes_ticks_vertical = generate_ticks_vertical(viewport_unit)
+        axes_texts_horizontal = generate_axes_texts_horizontal(viewport_unit)
+        axes_texts_vertical = generate_axes_texts_vertical(viewport_unit)
         points = generate_points(viewport_unit)
 
         # restore uuids for the new visuals
         axes_segments._uuid = axes_segments_uuid
-        tick_segments_horizontal._uuid = tick_segments_horizontal_uuid
-        tick_segments_vertical._uuid = tick_segments_vertical_uuid
+        axes_ticks_horizontal._uuid = axes_ticks_horizontal_uuid
+        axes_ticks_vertical._uuid = axes_ticks_vertical_uuid
+        axes_texts_horizontal._uuid = axes_texts_horizontal_uuid
+        axes_texts_vertical._uuid = axes_texts_vertical_uuid
         points._uuid = points_uuid
 
         # rerender all the visuals
         renderer_base.render(
-            [viewport, viewport, viewport, viewport],
-            [axes_segments, tick_segments_horizontal, tick_segments_vertical, points],
-            [model_matrix, model_matrix, model_matrix, model_matrix],
-            [camera, camera, camera, camera],
+            [viewport, viewport, viewport, viewport, viewport, viewport],
+            [axes_segments, axes_ticks_horizontal, axes_ticks_vertical, axes_texts_horizontal, axes_texts_vertical, points],
+            [model_matrix, model_matrix, model_matrix, model_matrix, model_matrix, model_matrix],
+            [camera, camera, camera, camera, camera, camera],
         )
 
     # create viewport events and subscribe to canvas resize

@@ -36,7 +36,7 @@ class RendererTexts:
             texts: The Texts visual to render.
             model_matrix: The model transformation matrix as a TransBuf.
             camera: The Camera providing view and projection matrices.
-        
+
         Returns:
             list[matplotlib.artist.Artist]: List of Matplotlib artists created/updated.
         """
@@ -78,19 +78,33 @@ class RendererTexts:
         angles_numpy = Bufferx.to_numpy(angles_buffer).flatten()
 
         # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Texts.sanity_check_attributes_buffer(
+            vertices_buffer,
+            texts.get_strings(),
+            colors_buffer,
+            font_sizes_buffer,
+            anchors_buffer,
+            angles_buffer,
+            texts.get_font_name(),
+        )
+
+        # =============================================================================
         # Create the artists if needed
         # =============================================================================
 
-        artist_uuid_sample = f"{viewport.get_uuid()}_{texts.get_uuid()}_0"
-        if artist_uuid_sample not in renderer._artists:
-            mpl_axes = renderer.get_mpl_axes_for_viewport(viewport)
-            for text_index in range(len(texts.get_strings())):
-                artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}_{text_index}"
-                mpl_text = matplotlib.text.Text()
-                mpl_text.set_visible(False)
-                # hide until properly positioned and sized
-                renderer._artists[artist_uuid] = mpl_text
-                mpl_axes.add_artist(mpl_text)
+        mpl_axes = renderer.get_mpl_axes_for_viewport(viewport)
+        for text_index in range(len(texts.get_strings())):
+            artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}_{text_index}"
+            if artist_uuid in renderer._artists:
+                continue
+            mpl_text = matplotlib.text.Text()
+            mpl_text.set_visible(False)
+            # hide until properly positioned and sized
+            renderer._artists[artist_uuid] = mpl_text
+            mpl_axes.add_artist(mpl_text)
 
         # =============================================================================
         # Get existing artists
