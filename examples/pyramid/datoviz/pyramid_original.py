@@ -18,7 +18,7 @@ files = {}
 
 
 def path(i):
-    return Path(CUR_DIR / f"pyramid/res_{i:02d}.bin")
+    return Path(CUR_DIR / f"../pyramid/res_{i:02d}.bin")
 
 
 def load_file(res):
