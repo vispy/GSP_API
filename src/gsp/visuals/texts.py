@@ -205,8 +205,8 @@ class Texts(VisualBase):
         assert isinstance(font_name, str), "Font name must be a string"
 
         # check all strings are indeed strings
-        for s in strings:
-            assert isinstance(s, str), "All elements in strings must be of type str"
+        for string in strings:
+            assert isinstance(string, str), "All elements in strings must be of type str"
 
     @staticmethod
     def sanity_check_attributes(

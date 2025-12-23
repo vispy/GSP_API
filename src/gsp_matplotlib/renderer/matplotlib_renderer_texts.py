@@ -121,7 +121,7 @@ class RendererTexts:
 
         changed_artists: list[matplotlib.artist.Artist] = []
         for text_index in range(len(texts.get_strings())):
-            artist_uuid = f"{viewport.get_uuid()}_{texts.get_uuid()}_{text_index}"
+            artist_uuid = f"{artist_uuid_base}_{text_index}"
             mpl_text = typing.cast(matplotlib.text.Text, renderer._artists[artist_uuid])
             mpl_text.set_visible(True)
 

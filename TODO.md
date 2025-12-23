@@ -6,9 +6,6 @@
 - for the visual which requires multiple artists, think about what happen when the number of artists is reduced
   - one need to destroy/hide the older extra artists
   - see matplotlib_renderer_texts.py for an example
-- rewrite all the docstrings to follow numpydoc style
-  - https://numpydoc.readthedocs.io/en/latest/format.html
-  - document all functions/member/types public to the class
 - GSP doc
   - concise
   - resume of the existing white paper
@@ -82,6 +79,9 @@
     - possibility: set by class or by instance
 
 ---
+- DONE rewrite all the docstrings to follow numpydoc style
+  - https://numpydoc.readthedocs.io/en/latest/format.html
+  - document all functions/member/types public to the class
 - DONE object3d single image with datoviz rotation
 - DONE object3d with animator in matplotlib
 - DONE object3d aninator animation with datoviz and matplotlib
