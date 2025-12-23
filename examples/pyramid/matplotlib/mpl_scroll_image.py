@@ -101,10 +101,10 @@ def main():
     mpl_figure, mpl_axes = matplotlib.pyplot.subplots()
 
     # set dimensions of the axes
-    mpl_axes.set_xlim(-100, 100)
+    mpl_axes.set_xlim(-500, 500)
     mpl_axes.set_ylim(0, 384)
 
-    image_path = pathlib.Path(__file__).resolve().parent / "../.." / "images" / "image.png"
+    image_path = pathlib.Path(__file__).resolve().parent / ".." / ".." / "images" / "image.png"
     mpl_axes_image = matplotlib.pyplot.imread(image_path)
     mpl_axes.imshow(mpl_axes_image, extent=(-500, 500, -500, 500), interpolation="bicubic")
 
