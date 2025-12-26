@@ -1,3 +1,5 @@
+"""Example showing how to use a model matrix to transform a visual."""
+
 # stdlib imports
 import os
 import pathlib
@@ -19,6 +21,7 @@ from common.example_helper import ExampleHelper
 
 
 def main():
+    """Main function to run the example."""
     # Create a canvas
     canvas = Canvas(100, 100, 72.0)
 
@@ -60,8 +63,13 @@ def main():
     # Create the Points visual and add it to the viewport
     points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
 
-    # model_matrix_numpy = np.eye(4, dtype=np.float32)
+    # =============================================================================
+    # Create a model matrix which perform a rotation of 20degree around z
+    # =============================================================================
+
     model_matrix_numpy = glm.zrotate(20.0)
+    # axes_transform_numpy = glm.translate(np.array([0.0, 0.0, 0.0])) @ glm.scale(np.array([0.5, 2, 0.5]))
+    # model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
     model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
 
     # =============================================================================

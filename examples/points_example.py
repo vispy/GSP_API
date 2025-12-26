@@ -1,3 +1,5 @@
+"""Example showing how to render points on a canvas."""
+
 # stdlib imports
 import pathlib
 
@@ -16,6 +18,7 @@ from gsp.utils.unit_utils import UnitUtils
 
 
 def main():
+    """Main function for the points example."""
     # fix random seed for reproducibility
     np.random.seed(0)
 

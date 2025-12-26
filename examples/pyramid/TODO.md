@@ -8,9 +8,43 @@
   - output a translation/scale matrix for the axes
 - combine axes transform with visual model_matrix transform to get final position
 
+## TODO
+- display axes in viewport
+  - which viewport ?
+    - global viewport
+  - ROADMAP:
+    - take `examples/viewport_ndc_metric.py` code and change it
+    - modify it to use x,y,width,height in pixels within the viewport
+    - this is the inner viewport of the axes
+    - `axes.setLimits(xmin,xmax,ymin,ymax)` in data space
+    - then use that to follow the ndc_metric example
+  - which API
+    - location in canvas
+    - tick start/end in horizontal/vertical
+    - location of origin
+- dataclass render item
+  - used to add visual to axes
+  - members
+    - viewport
+    - visual
+    - model_matrix
+    - camera
+- clipping by multiple viewports
+  - one for inside axes
+  - one for outside axes
+  - try in matplotlib/datoviz
+- DONE test overlapping viewport in GSP
+  - make that an example `viewport_overlapping.py`
+- DONE scaling/translation with model_matrix
+  - `model_matrix_numpy = glm.translate(np.array([0.0, 0.0, 0.0])) @ glm.scale(np.array([0.5, 0.5, 0.5])) @ model_matrix_numpy`
+- pan/zoom controls
+  - with viewportEvents + axes.setLimits()
+  - combine axes transform with visual model_matrix transform to get final position
+- make a image visual in GSP
+
 ## What is needed
 - image visual
-  - done in GSP. 
+  - done in GSP.
   - how to clip it to be inside the axes
     - what about axes create 2 viewports
       - one for the inside of the axes
