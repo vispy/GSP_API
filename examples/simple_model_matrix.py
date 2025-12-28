@@ -1,12 +1,10 @@
 """Example showing how to use a model matrix to transform a visual."""
 
 # stdlib imports
-import os
 import pathlib
 
 # pip imports
 import numpy as np
-import matplotlib.pyplot
 
 # local imports
 from gsp.core import Canvas, Viewport
