@@ -24,30 +24,6 @@ from gsp_extra.viewport_events.viewport_events_types import CanvasResizeEvent
 from gsp_extra.mpl3d import glm
 
 
-class QtHelper:
-    """Get screen properties via Qt."""
-
-    @staticmethod
-    def get_screen_ppi() -> float:
-        """Get the screen pixels per inch (PPI) using Qt."""
-        qt_app = QApplication([])
-        screen = qt_app.primaryScreen()
-        assert screen is not None, "screen MUST NOT be None"
-        screen_ppi = screen.physicalDotsPerInch()
-        qt_app.quit()
-        return screen_ppi
-
-    @staticmethod
-    def get_device_pixel_ratio() -> float:
-        """Get the screen device pixel ratio using Qt."""
-        qt_app = QApplication([])
-        screen = qt_app.primaryScreen()
-        assert screen is not None, "screen MUST NOT be None"
-        device_pixel_ratio = screen.devicePixelRatio()
-        qt_app.quit()
-        return device_pixel_ratio
-
-
 class ViewportUnitConverter:
     """Convert between pixel/cm to ndc units in a viewport."""
 
@@ -528,8 +504,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    screen_ppi = QtHelper.get_screen_ppi()
-    canvas = Canvas(width=400, height=400, dpi=screen_ppi)
+    canvas = Canvas(width=400, height=400, dpi=127)
 
     # =============================================================================
     #
