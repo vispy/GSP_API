@@ -9,6 +9,36 @@
 - combine axes transform with visual model_matrix transform to get final position
 
 ## TODO
+- pan/zoom controls using viewportEvents
+  - with viewportEvents + axes.setLimits()
+  - combine axes transform with visual model_matrix transform to get final position
+  - based on `examples/pyramid/matplotlib/mpl_scroll_image.py` `PanAndZoom` class on top of viewportEvents
+  - panZoom calls `axesDisplay.setLimits(xmin,xmax,ymin,ymax)` which trigger an event
+- on axesDisplay.setLimits(), trigger an event to `.onLimitsChange()`
+  - which will update the visual positions
+- make a image visual in GSP
+
+## What is needed
+- image visual
+  - done in GSP.
+  - how to clip it to be inside the axes
+    - what about axes create 2 viewports
+      - one for the inside of the axes
+      - one for the outside of the axes
+  - may be done later. for now use basic segments
+  - datoviz docs - https://datoviz.org/visuals/image/
+- pan/zoom controls
+  - not mandatory at first
+  - done with viewportEvents + axes.setLimits()
+- axes visual using x,y,width,height in pixels within the viewport
+  - setLimits xmin,xmax,ymin,ymax in data space
+    - this provide a transform from data space to viewport space
+    - this axes transform will be combined with the visual model_matrix transform to get final position
+  - display the axes itself
+  - display ticks + labels
+  - reuse `./examples/viewport_ndc_metric.py`
+
+## Done
 - DONE display axes in viewport
   - which viewport ?
     - global viewport
@@ -37,27 +67,3 @@
   - make that an example `viewport_overlapping.py`
 - DONE scaling/translation with model_matrix
   - `model_matrix_numpy = glm.translate(np.array([0.0, 0.0, 0.0])) @ glm.scale(np.array([0.5, 0.5, 0.5])) @ model_matrix_numpy`
-- pan/zoom controls
-  - with viewportEvents + axes.setLimits()
-  - combine axes transform with visual model_matrix transform to get final position
-- make a image visual in GSP
-
-## What is needed
-- image visual
-  - done in GSP.
-  - how to clip it to be inside the axes
-    - what about axes create 2 viewports
-      - one for the inside of the axes
-      - one for the outside of the axes
-  - may be done later. for now use basic segments
-  - datoviz docs - https://datoviz.org/visuals/image/
-- pan/zoom controls
-  - not mandatory at first
-  - done with viewportEvents + axes.setLimits()
-- axes visual using x,y,width,height in pixels within the viewport
-  - setLimits xmin,xmax,ymin,ymax in data space
-    - this provide a transform from data space to viewport space
-    - this axes transform will be combined with the visual model_matrix transform to get final position
-  - display the axes itself
-  - display ticks + labels
-  - reuse `./examples/viewport_ndc_metric.py`
