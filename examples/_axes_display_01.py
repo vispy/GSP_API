@@ -151,15 +151,14 @@ class AxesDisplay:
         """Get the axes limits in data units."""
         return (self._x_min, self._x_max, self._y_min, self._y_max)
 
-    def get_axes_transform_matrix(self) -> np.ndarray:
-        axes_transform_numpy = np.eye(4, dtype=np.float32)
-        # axes_transform_numpy = glm.scale(np.array([1.0, 1.0, 1.0])) @ axes_transform_numpy
-        # translation_matrix = glm.translate(np.array([0.0, 0.0, 0.0]))
+    def get_transform_matrix(self) -> np.ndarray:
+        # Compute translation matrix
         translation_matrix = glm.translate(np.array([-(self._x_max + self._x_min) / 2.0, -(self._y_max + self._y_min) / 2.0, 0.0]))
-        # scale_matrix = glm.scale(np.array([1.0, 1.0, 1.0]))
+        # Compute scale matrix
         scale_matrix = glm.scale(np.array([2.0 / (self._x_max - self._x_min), 2.0 / (self._y_max - self._y_min), 1.0]))
+        # Combine translation and scale to get the final transform matrix
         axes_transform_numpy = scale_matrix @ translation_matrix
-
+        # Return the transform matrix
         return axes_transform_numpy
 
     def get_inner_viewport(self) -> Viewport:
@@ -516,16 +515,14 @@ def main():
     # inner_viewport = Viewport(int(canvas.get_width() / 3), int(canvas.get_height() / 4), int(canvas.get_width() / 3), int(canvas.get_height() / 2))
 
     axes_display = AxesDisplay(canvas, inner_viewport)
-    axes_x_min, axes_x_max, axes_y_min, axes_y_max = -0.2, +2.0, -2.0, +1.5
-    # axes_x_min, axes_x_max, axes_y_min, axes_y_max = -2.2, +1.3, -2.0, +3.0
-    axes_display.set_limits(axes_x_min, axes_x_max, axes_y_min, axes_y_max)
+    axes_display.set_limits(-0.2, +2.0, -2.0, +1.5)
     render_items_axes = axes_display.get_render_items()
 
     # =============================================================================
     #
     # =============================================================================
 
-    def generate_points(point_count: int, viewport: Viewport, axes_transform_numpy: np.ndarray) -> list[RenderItem]:
+    def generate_visual_points(point_count: int, viewport: Viewport, axes_transform_numpy: np.ndarray) -> list[RenderItem]:
         # Generate a sinusoidal distribution of points
         x_values = np.linspace(-1.0, +1.0, point_count, dtype=np.float32)
         y_values = np.sin(x_values * 2.0 * 2.0 * np.pi).astype(np.float32)
@@ -567,8 +564,8 @@ def main():
         render_items.append(RenderItem(viewport, points, model_matrix, camera))
         return render_items
 
-    axes_transform_numpy = axes_display.get_axes_transform_matrix()
-    render_items_points = generate_points(500, inner_viewport, axes_transform_numpy)
+    axes_transform_numpy = axes_display.get_transform_matrix()
+    render_items_points = generate_visual_points(500, inner_viewport, axes_transform_numpy)
 
     # =============================================================================
     #
