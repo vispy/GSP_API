@@ -9,7 +9,7 @@
 - combine axes transform with visual model_matrix transform to get final position
 
 ## TODO
-- display axes in viewport
+- DONE display axes in viewport
   - which viewport ?
     - global viewport
   - ROADMAP:
@@ -22,14 +22,14 @@
     - location in canvas
     - tick start/end in horizontal/vertical
     - location of origin
-- dataclass render item
+- DONE dataclass render item
   - used to add visual to axes
   - members
     - viewport
     - visual
     - model_matrix
     - camera
-- clipping by multiple viewports
+- DONE clipping by multiple viewports
   - one for inside axes
   - one for outside axes
   - try in matplotlib/datoviz

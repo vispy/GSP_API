@@ -361,7 +361,7 @@ class AxesDisplay:
         line_widths_buffer = Bufferx.from_numpy(line_widths_numpy, BufferType.float32)
 
         colors_buffer = Buffer(segments_count, BufferType.rgba8)
-        colors_buffer.set_data(Constants.Color.red * segments_count, 0, segments_count)
+        colors_buffer.set_data(Constants.Color.black * segments_count, 0, segments_count)
 
         segments = Segments(positions_buffer, line_widths_buffer, CapStyle.BUTT, colors_buffer)
         return segments
@@ -516,7 +516,7 @@ def main():
     # inner_viewport = Viewport(int(canvas.get_width() / 3), int(canvas.get_height() / 4), int(canvas.get_width() / 3), int(canvas.get_height() / 2))
 
     axes_display = AxesDisplay(canvas, inner_viewport)
-    axes_x_min, axes_x_max, axes_y_min, axes_y_max = -1.2, +2.0, -2.0, +1.5
+    axes_x_min, axes_x_max, axes_y_min, axes_y_max = -0.2, +2.0, -2.0, +1.5
     # axes_x_min, axes_x_max, axes_y_min, axes_y_max = -2.2, +1.3, -2.0, +3.0
     axes_display.set_limits(axes_x_min, axes_x_max, axes_y_min, axes_y_max)
     render_items_axes = axes_display.get_render_items()
@@ -527,12 +527,12 @@ def main():
 
     def generate_points(point_count: int, viewport: Viewport, axes_transform_numpy: np.ndarray) -> list[RenderItem]:
         # Generate a sinusoidal distribution of points
-        # x_values = np.linspace(-1.0, +1.0, point_count, dtype=np.float32)
-        # y_values = np.sin(x_values * 2.0 * 2.0 * np.pi).astype(np.float32)
-        # z_values = np.zeros(point_count, dtype=np.float32)
-        # positions_numpy = np.vstack((x_values, y_values, z_values)).T.astype(np.float32)
+        x_values = np.linspace(-1.0, +1.0, point_count, dtype=np.float32)
+        y_values = np.sin(x_values * 2.0 * 2.0 * np.pi).astype(np.float32)
+        z_values = np.zeros(point_count, dtype=np.float32)
+        positions_numpy = np.vstack((x_values, y_values, z_values)).T.astype(np.float32)
 
-        positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
+        # positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
         positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
         # Sizes - Create buffer and set data with numpy array
@@ -584,10 +584,10 @@ def main():
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
     renderer_base.render(
-        [item.viewport for item in render_items],
-        [item.visual_base for item in render_items],
-        [item.model_matrix for item in render_items],
-        [item.camera for item in render_items],
+        [render_item.viewport for render_item in render_items],
+        [render_item.visual_base for render_item in render_items],
+        [render_item.model_matrix for render_item in render_items],
+        [render_item.camera for render_item in render_items],
     )
 
     # =============================================================================
