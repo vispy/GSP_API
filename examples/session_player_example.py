@@ -5,23 +5,12 @@ import sys
 
 # pip imports
 import numpy as np
-from pydantic import BaseModel
 
 
 # local imports
-from gsp.constants import Constants
-from gsp.core import Canvas, Viewport
-from gsp.visuals import Points
-from gsp.types import Buffer, BufferType
-from gsp.core import Camera
-from gsp_extra.bufferx import Bufferx
-from gsp.utils.unit_utils import UnitUtils
 from common.example_helper import ExampleHelper
-from gsp_extra.camera_controls.object_controls_trackball import ObjectControlsTrackball
 from gsp.types.visual_base import VisualBase
-from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
 from gsp_pydantic.serializer.pydantic_parser import PydanticParser
-from gsp_pydantic.types.pydantic_dict import PydanticDict
 from session_record_example import PydanticSession, PydanticSessionItem
 
 
