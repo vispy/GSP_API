@@ -17,12 +17,12 @@ class PanAndZoom:
         self._button_press_xy: Optional[tuple[float, float]] = None
 
         # Connect events
-        self._axes.figure.canvas.mpl_connect("scroll_event", self.zoom)  # type: ignore
+        self._axes.figure.canvas.mpl_connect("scroll_event", self.on_scroll)  # type: ignore
         self._axes.figure.canvas.mpl_connect("button_press_event", self.on_press)  # type: ignore
         self._axes.figure.canvas.mpl_connect("button_release_event", self.on_release)  # type: ignore
         self._axes.figure.canvas.mpl_connect("motion_notify_event", self.on_motion)  # type: ignore
 
-    def zoom(self, event: MouseEvent) -> None:
+    def on_scroll(self, event: MouseEvent) -> None:
         """Zoom in or out around the mouse pointer."""
         # sanity check - ensure the event is within the axes
         assert event.xdata is not None, "MouseEvent xdata should not be None"
