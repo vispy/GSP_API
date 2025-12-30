@@ -9,6 +9,7 @@
 - combine axes transform with visual model_matrix transform to get final position
 
 ## TODO
+- in pan/zoom, reuse the uuid
 - pan/zoom controls using viewportEvents
   - with viewportEvents + axes.setLimits()
   - combine axes transform with visual model_matrix transform to get final position

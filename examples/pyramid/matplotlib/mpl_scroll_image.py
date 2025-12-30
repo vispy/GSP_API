@@ -58,6 +58,12 @@ class PanAndZoom:
         self._button_press_x = event.x
         self._button_press_y = event.y
 
+    def on_release(self, event: MouseEvent) -> None:
+        """Clear the stored mouse press position."""
+        self._button_press_x = None
+        self._button_press_y = None
+        self._mpl_axes.figure.canvas.draw_idle()
+
     def on_motion(self, event: MouseEvent) -> None:
         """Pan the plot based on mouse movement."""
         if self._button_press_x is None or self._button_press_y is None or event.inaxes != self._mpl_axes:
@@ -88,12 +94,6 @@ class PanAndZoom:
         self._button_press_y = event.y
         self._mpl_axes.figure.canvas.draw_idle()
 
-    def on_release(self, event: MouseEvent) -> None:
-        """Clear the stored mouse press position."""
-        self._button_press_x = None
-        self._button_press_y = None
-        self._mpl_axes.figure.canvas.draw_idle()
-
 
 def main():
     """Main function to demonstrate PanAndZoom functionality."""
@@ -110,7 +110,7 @@ def main():
 
     mpl_axes.plot(range(-100, +100), [x**2 for x in range(-100, +100)])
 
-    pan_zoom = PanAndZoom(mpl_axes)
+    pan_zoom = PanAndZoom(mpl_axes, base_scale=1.2)
     matplotlib.pyplot.show()
 
 

@@ -4,6 +4,7 @@ This module provides the foundational VisualBase class that all visual
 objects inherit from, providing common functionality like UUID generation
 and user data storage.
 """
+
 # stdlib imports
 from typing import Any
 
@@ -18,6 +19,7 @@ class VisualBase:
     automatic UUID generation and a userData dictionary for storing custom
     metadata.
     """
+
     __slots__ = ["_uuid", "userData"]
 
     def __init__(self):
@@ -36,3 +38,11 @@ class VisualBase:
             str: The unique identifier.
         """
         return self._uuid
+
+    def set_uuid(self, uuid: str) -> None:
+        """Set the unique identifier of the visual object.
+
+        Args:
+            uuid: The new unique identifier.
+        """
+        self._uuid = uuid

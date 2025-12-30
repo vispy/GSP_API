@@ -62,7 +62,7 @@ class Bufferx:
         """Create a Buffer from a numpy array."""
         if bufferType == BufferType.float32:
             # sanity check
-            assert array_numpy.dtype == np.float32, "Numpy array must be of dtype float32"
+            assert array_numpy.dtype == np.float32, f"Numpy array must be of dtype float32, got {array_numpy.dtype}"
 
             count = array_numpy.shape[0]
             buffer = Buffer(count, bufferType)
@@ -70,7 +70,7 @@ class Bufferx:
             return buffer
         elif bufferType == BufferType.uint32:
             # sanity check
-            assert array_numpy.dtype == np.uint32, "Numpy array must be of dtype uint32"
+            assert array_numpy.dtype == np.uint32, f"Numpy array must be of dtype uint32, got {array_numpy.dtype}"
 
             count = array_numpy.shape[0]
             buffer = Buffer(count, bufferType)
@@ -78,7 +78,7 @@ class Bufferx:
             return buffer
         elif bufferType == BufferType.vec2:
             # sanity check
-            assert array_numpy.shape.__len__() == 2 and array_numpy.shape[1] == 2, "Numpy array must be of shape (2,)"
+            assert array_numpy.shape.__len__() == 2 and array_numpy.shape[1] == 2, f"Numpy array must be of shape (2,), got {array_numpy.shape}"
 
             count = array_numpy.shape[0]
             buffer = Buffer(count, bufferType)
@@ -86,7 +86,7 @@ class Bufferx:
             return buffer
         elif bufferType == BufferType.vec3:
             # sanity check
-            assert array_numpy.shape.__len__() == 2 and array_numpy.shape[1] == 3, "Numpy array must be of shape (3,)"
+            assert array_numpy.shape.__len__() == 2 and array_numpy.shape[1] == 3, f"Numpy array must be of shape (3,), got {array_numpy.shape}"
 
             count = array_numpy.shape[0]
             buffer = Buffer(count, bufferType)
@@ -94,7 +94,9 @@ class Bufferx:
             return buffer
         elif bufferType == BufferType.mat4:
             # sanity check
-            assert array_numpy.shape.__len__() == 3 and array_numpy.shape[1] == 4 and array_numpy.shape[2] == 4, "Numpy array must be of shape (4, 4)"
+            assert (
+                array_numpy.shape.__len__() == 3 and array_numpy.shape[1] == 4 and array_numpy.shape[2] == 4
+            ), f"Numpy array must be of shape (4, 4), got {array_numpy.shape}"
 
             count = array_numpy.shape[0]
             buffer = Buffer(count, bufferType)
@@ -102,7 +104,7 @@ class Bufferx:
             return buffer
         elif bufferType == BufferType.rgba8:
             # sanity check
-            assert array_numpy.shape.__len__() == 2 and array_numpy.shape[1] == 4, "Numpy array must be of shape (4,)"
+            assert array_numpy.shape.__len__() == 2 and array_numpy.shape[1] == 4, f"Numpy array must be of shape (4,), got {array_numpy.shape} "
 
             count = array_numpy.shape[0]
             buffer = Buffer(count, bufferType)

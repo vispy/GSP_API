@@ -7,6 +7,7 @@ import math
 import numpy as np
 from PyQt5.QtWidgets import QApplication
 from dataclasses import dataclass
+import colorama
 
 # local imports
 from common.example_helper import ExampleHelper
@@ -22,6 +23,19 @@ from gsp.constants import Constants
 from gsp.utils.unit_utils import UnitUtils
 from gsp_extra.viewport_events.viewport_events_types import CanvasResizeEvent
 from gsp_extra.mpl3d import glm
+from gsp_extra.viewport_events.viewport_events_types import CanvasResizeEvent, KeyEvent, MouseEvent
+from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
+
+
+# =============================================================================
+# Colorama alias
+# =============================================================================
+def text_cyan(text: str) -> str:
+    return colorama.Fore.CYAN + text + colorama.Style.RESET_ALL
+
+
+def text_magenta(text: str) -> str:
+    return colorama.Fore.MAGENTA + text + colorama.Style.RESET_ALL
 
 
 class ViewportUnitConverter:
@@ -105,6 +119,18 @@ class RenderItem:
     camera: Camera
 
 
+from gsp.core import Event
+from typing import Protocol
+
+
+class AxesDisplayNewLimitsEventCallback(Protocol):
+    """Protocol for axes display new limits event callback functions."""
+
+    def __call__(self) -> None:
+        """Handle a new limits event."""
+        ...
+
+
 class AxesDisplay:
     """Class to display axes in a viewport using NDC conversions."""
 
@@ -121,22 +147,30 @@ class AxesDisplay:
         """Unit converter for inner viewport."""
         self._outter_viewport_unit = ViewportUnitConverter(self._canvas, self._outter_viewport)
         """Unit converter for outter viewport."""
-        self._x_min = -5.0
+        self._x_min = -1.0
         """x minimum in data units."""
-        self._x_max = +5.0
+        self._x_max = +1.0
         """x maximum in data units."""
-        self._y_min = -5.0
+        self._y_min = -1.0
         """y minimum in data units."""
-        self._y_max = +5.0
+        self._y_max = +1.0
         """y maximum in data units."""
 
-        self._render_items: list[RenderItem] = self._build_render_items()
+        self.new_limits_event = Event[AxesDisplayNewLimitsEventCallback]()
+
+        self._axes_segments_render_item: RenderItem | None = None
+        self._ticks_horizontal_render_item: RenderItem | None = None
+        self._ticks_vertical_render_item: RenderItem | None = None
+        self._texts_horizontal_render_item: RenderItem | None = None
+        self._texts_vertical_render_item: RenderItem | None = None
+
+        self._build_render_items()
 
     def set_limits(self, x_min: float, x_max: float, y_min: float, y_max: float) -> None:
         """Set the axes limits in data units."""
         # sanity checks
-        assert x_min < x_max, "x_min MUST be less than x_max"
-        assert y_min < y_max, "y_min MUST be less than y_max"
+        assert x_min < x_max, f"x_min MUST be less than x_max, got x_min={x_min}, x_max={x_max}"
+        assert y_min < y_max, f"y_min MUST be less than y_max, got y_min={y_min}, y_max={y_max}"
 
         # set limits
         self._x_min = x_min
@@ -145,7 +179,10 @@ class AxesDisplay:
         self._y_max = y_max
 
         # rebuild render items
-        self._render_items = self._build_render_items()
+        self._build_render_items()
+
+        # Notify event listeners
+        self.new_limits_event.dispatch()
 
     def get_limits(self) -> tuple[float, float, float, float]:
         """Get the axes limits in data units."""
@@ -171,58 +208,98 @@ class AxesDisplay:
 
     def get_render_items(self) -> list[RenderItem]:
         """Get the render items for the axes display."""
-        return self._render_items
+        render_items: list[RenderItem] = []
+
+        # sanity check
+        assert self._axes_segments_render_item is not None, "Axes segments render item MUST be initialized"
+        assert self._ticks_horizontal_render_item is not None, "Ticks horizontal render item MUST be initialized"
+        assert self._ticks_vertical_render_item is not None, "Ticks vertical render item MUST be initialized"
+        assert self._texts_horizontal_render_item is not None, "Texts horizontal render item MUST be initialized"
+        assert self._texts_vertical_render_item is not None, "Texts vertical render item MUST be initialized"
+
+        render_items.append(self._axes_segments_render_item)
+        render_items.append(self._ticks_horizontal_render_item)
+        render_items.append(self._ticks_vertical_render_item)
+        render_items.append(self._texts_horizontal_render_item)
+        render_items.append(self._texts_vertical_render_item)
+
+        return render_items
 
     # =============================================================================
     #
     # =============================================================================
 
-    def _build_render_items(self) -> list[RenderItem]:
+    def _build_render_items(self) -> None:
         """Build the render items for the axes display."""
         # Create axes segments
-        axes_segments_render_item = RenderItem(
+        # =============================================================================
+        #
+        # =============================================================================
+        axes_segments_uuid: str | None = self._axes_segments_render_item.visual_base.get_uuid() if self._axes_segments_render_item is not None else None
+        self._axes_segments_render_item = RenderItem(
             self._outter_viewport_unit.get_viewport(),
             AxesDisplay._generate_axes_segments(self._inner_viewport_unit, self._outter_viewport_unit),
             Bufferx.mat4_identity(),
             Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
         )
+        if axes_segments_uuid is not None:
+            self._axes_segments_render_item.visual_base.set_uuid(axes_segments_uuid)
 
-        ticks_horizontal_render_item = RenderItem(
+        # =============================================================================
+        #
+        # =============================================================================
+        ticks_horizontal_uuid: str | None = (
+            self._ticks_horizontal_render_item.visual_base.get_uuid() if self._ticks_horizontal_render_item is not None else None
+        )
+        self._ticks_horizontal_render_item = RenderItem(
             self._outter_viewport_unit.get_viewport(),
             AxesDisplay._generate_ticks_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min, self._x_max),
             Bufferx.mat4_identity(),
             Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
         )
+        if ticks_horizontal_uuid is not None:
+            self._ticks_horizontal_render_item.visual_base.set_uuid(ticks_horizontal_uuid)
 
-        ticks_vertical_render_item = RenderItem(
+        # =============================================================================
+        #
+        # =============================================================================
+        ticks_vertical_uuid: str | None = self._ticks_vertical_render_item.visual_base.get_uuid() if self._ticks_vertical_render_item is not None else None
+        self._ticks_vertical_render_item = RenderItem(
             self._outter_viewport_unit.get_viewport(),
             AxesDisplay._generate_ticks_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min, self._y_max),
             Bufferx.mat4_identity(),
             Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
         )
+        if ticks_vertical_uuid is not None:
+            self._ticks_vertical_render_item.visual_base.set_uuid(ticks_vertical_uuid)
 
-        texts_horizontal_render_item = RenderItem(
+        # =============================================================================
+        #
+        # =============================================================================
+        texts_horizontal_uuid: str | None = (
+            self._texts_horizontal_render_item.visual_base.get_uuid() if self._texts_horizontal_render_item is not None else None
+        )
+        self._texts_horizontal_render_item = RenderItem(
             self._outter_viewport_unit.get_viewport(),
             AxesDisplay._generate_texts_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min, self._x_max),
             Bufferx.mat4_identity(),
             Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
         )
+        if texts_horizontal_uuid is not None:
+            self._texts_horizontal_render_item.visual_base.set_uuid(texts_horizontal_uuid)
 
-        texts_vertical_render_item = RenderItem(
+        # =============================================================================
+        #
+        # =============================================================================
+        texts_vertical_uuid: str | None = self._texts_vertical_render_item.visual_base.get_uuid() if self._texts_vertical_render_item is not None else None
+        self._texts_vertical_render_item = RenderItem(
             self._outter_viewport_unit.get_viewport(),
             AxesDisplay._generate_texts_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min, self._y_max),
             Bufferx.mat4_identity(),
             Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
         )
-
-        render_items: list[RenderItem] = []
-        render_items.append(axes_segments_render_item)
-        render_items.append(ticks_horizontal_render_item)
-        render_items.append(ticks_vertical_render_item)
-        render_items.append(texts_horizontal_render_item)
-        render_items.append(texts_vertical_render_item)
-
-        return render_items
+        if texts_vertical_uuid is not None:
+            self._texts_vertical_render_item.visual_base.set_uuid(texts_vertical_uuid)
 
     @staticmethod
     def _generate_axes_segments(inner_viewport_unit: ViewportUnitConverter, outter_viewport_unit: ViewportUnitConverter) -> Segments:
@@ -497,6 +574,58 @@ class AxesDisplay:
         return texts
 
 
+class AxesPanZoom:
+    """Class to handle panning and zooming in a viewport."""
+
+    def __init__(self, viewport_events: ViewportEventsBase, base_scale: float, axes_display: AxesDisplay) -> None:
+        """Initialize the PanAndZoom example."""
+        self._viewport_events = viewport_events
+        """Viewport events to listen to."""
+        self._base_scale = base_scale
+        """Base scale for zooming."""
+        self._axes_display = axes_display
+        """Axes display to update."""
+
+        self._viewport_events.button_press_event.subscribe(self._on_button_press)
+        self._viewport_events.button_release_event.subscribe(self._on_button_release)
+        self._viewport_events.mouse_move_event.subscribe(self._on_button_move)
+        self._viewport_events.mouse_scroll_event.subscribe(self._on_mouse_scroll)
+
+    def close(self) -> None:
+        """Close the PanAndZoom example."""
+        pass
+
+    def _on_button_press(self, mouse_event: MouseEvent):
+        print(f"{text_cyan('Button press')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
+
+    def _on_button_release(self, mouse_event: MouseEvent):
+        print(f"{text_cyan('Button release')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
+
+    def _on_button_move(self, mouse_event: MouseEvent):
+        print(f"{text_cyan('Button move')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
+
+    def _on_mouse_scroll(self, mouse_event: MouseEvent):
+        # print(f"{text_cyan('Mouse scroll')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
+
+        x_min, x_max, y_min, y_max = self._axes_display.get_limits()
+        scale_factor: float = 1 / self._base_scale if mouse_event.scroll_steps >= 0 else self._base_scale
+
+        print(f"scale_factor: {scale_factor}")
+
+        new_width: float = (x_max - x_min) * scale_factor
+        new_height: float = (y_max - y_min) * scale_factor
+        relx: float = (x_max - mouse_event.x) / (x_max - x_min)
+        rely: float = (y_max - mouse_event.y) / (y_max - y_min)
+
+        new_x_min: float = mouse_event.x - new_width * (1 - relx)
+        new_x_max: float = mouse_event.x + new_width * (relx)
+        new_y_min: float = mouse_event.y - new_height * (1 - rely)
+        new_y_max: float = mouse_event.y + new_height * (rely)
+        self._axes_display.set_limits(new_x_min, new_x_max, new_y_min, new_y_max)
+
+        print(f"New limits: x[{new_x_min}, {new_x_max}] y[{new_y_min}, {new_y_max}]")
+
+
 def main():
     """Example demonstrating viewport NDC metric conversions."""
     # fix random seed for reproducibility
@@ -517,6 +646,12 @@ def main():
     axes_display = AxesDisplay(canvas, inner_viewport)
     axes_display.set_limits(-0.2, +2.0, -2.0, +1.5)
     render_items_axes = axes_display.get_render_items()
+
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+
+    viewport_events = ExampleHelper.create_viewport_events(renderer_base, axes_display.get_inner_viewport())
+    axes_pan_zoom = AxesPanZoom(viewport_events, base_scale=1.1, axes_display=axes_display)
 
     # =============================================================================
     #
@@ -565,7 +700,7 @@ def main():
         return render_items
 
     axes_transform_numpy = axes_display.get_transform_matrix()
-    render_items_points = generate_visual_points(500, inner_viewport, axes_transform_numpy)
+    render_items_points = generate_visual_points(100, inner_viewport, axes_transform_numpy)
 
     # =============================================================================
     #
@@ -577,20 +712,63 @@ def main():
     # =============================================================================
     #
     # =============================================================================
+    def on_new_limits():
+        print(f"{text_cyan('New limits event received')}")
+        axes_transform_numpy = axes_display.get_transform_matrix()
 
-    renderer_name = ExampleHelper.get_renderer_name()
-    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-    renderer_base.render(
-        [render_item.viewport for render_item in render_items],
-        [render_item.visual_base for render_item in render_items],
-        [render_item.model_matrix for render_item in render_items],
-        [render_item.camera for render_item in render_items],
-    )
+        for render_item in render_items_points:
+            model_matrix_numpy = np.eye(4, dtype=np.float32)
+            model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
+            render_item.model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
+
+        render_items_axes = axes_display.get_render_items()
+        render_items = render_items_points + render_items_axes
+
+        renderer_base.render(
+            [render_item.viewport for render_item in render_items],
+            [render_item.visual_base for render_item in render_items],
+            [render_item.model_matrix for render_item in render_items],
+            [render_item.camera for render_item in render_items],
+        )
+
+    axes_display.new_limits_event.subscribe(on_new_limits)
 
     # =============================================================================
     #
     # =============================================================================
-    renderer_base.show()
+
+    # renderer_base.render(
+    #     [render_item.viewport for render_item in render_items],
+    #     [render_item.visual_base for render_item in render_items],
+    #     [render_item.model_matrix for render_item in render_items],
+    #     [render_item.camera for render_item in render_items],
+    # )
+
+    # =============================================================================
+    #
+    # =============================================================================
+    # renderer_base.show()
+
+    animator = ExampleHelper.create_animator(renderer_base)
+
+    @animator.event_listener
+    def animator_callback(delta_time: float) -> list[VisualBase]:
+        print(f"{text_cyan('Animator callback')}: delta_time={delta_time:.4f} sec")
+
+        changed_visuals: list[VisualBase] = []
+        return changed_visuals
+
+    # start the animation loop
+    animator.start(
+        [],
+        [],
+        [],
+        [],
+        # [render_item.viewport for render_item in render_items],
+        # [render_item.visual_base for render_item in render_items],
+        # [render_item.model_matrix for render_item in render_items],
+        # [render_item.camera for render_item in render_items],
+    )
 
 
 if __name__ == "__main__":
