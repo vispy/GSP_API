@@ -166,7 +166,7 @@ class AxesDisplay:
 
         self._build_render_items()
 
-    def set_limits(self, x_min: float, x_max: float, y_min: float, y_max: float) -> None:
+    def set_limits_data_space(self, x_min: float, x_max: float, y_min: float, y_max: float) -> None:
         """Set the axes limits in data units."""
         # sanity checks
         assert x_min < x_max, f"x_min MUST be less than x_max, got x_min={x_min}, x_max={x_max}"
@@ -184,7 +184,7 @@ class AxesDisplay:
         # Notify event listeners
         self.new_limits_event.dispatch()
 
-    def get_limits(self) -> tuple[float, float, float, float]:
+    def get_limits_data_space(self) -> tuple[float, float, float, float]:
         """Get the axes limits in data units."""
         return (self._x_min, self._x_max, self._y_min, self._y_max)
 
@@ -586,6 +586,20 @@ class AxesPanZoom:
         self._axes_display = axes_display
         """Axes display to update."""
 
+        self._button_press_x: float | None = None
+        """X coordinate of the button press in NDC units."""
+        self._button_press_y: float | None = None
+        """Y coordinate of the button press in NDC units."""
+
+        self._x_min_data_space: float | None = None
+        """Current x minimum viewport in data space."""
+        self._x_max_data_space: float | None = None
+        """Current x maximum viewport in data space."""
+        self._y_min_data_space: float | None = None
+        """Current y minimum viewport in data space."""
+        self._y_max_data_space: float | None = None
+        """Current y maximum viewport in data space."""
+
         self._viewport_events.button_press_event.subscribe(self._on_button_press)
         self._viewport_events.button_release_event.subscribe(self._on_button_release)
         self._viewport_events.mouse_move_event.subscribe(self._on_button_move)
@@ -593,21 +607,61 @@ class AxesPanZoom:
 
     def close(self) -> None:
         """Close the PanAndZoom example."""
-        pass
+        self._viewport_events.button_press_event.unsubscribe(self._on_button_press)
+        self._viewport_events.button_release_event.unsubscribe(self._on_button_release)
+        self._viewport_events.mouse_move_event.unsubscribe(self._on_button_move)
+        self._viewport_events.mouse_scroll_event.unsubscribe(self._on_mouse_scroll)
 
     def _on_button_press(self, mouse_event: MouseEvent):
-        print(f"{text_cyan('Button press')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
+        # print(f"{text_cyan('Button press')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
+        # Store pixel coordinates instead of data coordinates
+        self._button_press_x = mouse_event.x
+        self._button_press_y = mouse_event.y
+
+        self._x_min_data_space, self._x_max_data_space, self._y_min_data_space, self._y_max_data_space = self._axes_display.get_limits_data_space()
 
     def _on_button_release(self, mouse_event: MouseEvent):
-        print(f"{text_cyan('Button release')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
+        # print(f"{text_cyan('Button release')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
+        self._button_press_x = None
+        self._button_press_y = None
+        self._x_min_data_space = None
+        self._x_max_data_space = None
+        self._y_min_data_space = None
+        self._y_max_data_space = None
 
     def _on_button_move(self, mouse_event: MouseEvent):
-        print(f"{text_cyan('Button move')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
+        # print(f"{text_cyan('Button move')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
+        if self._button_press_x is None or self._button_press_y is None:
+            return
+        if self._x_min_data_space is None or self._x_max_data_space is None or self._y_min_data_space is None or self._y_max_data_space is None:
+            return
+
+        # Calculate the delta
+        delta_x_ndc: float = mouse_event.x - self._button_press_x
+        delta_y_ndc: float = mouse_event.y - self._button_press_y
+
+        print(f"Delta pixel: x={delta_x_ndc}")
+
+        # cur_x_min_data_space, cur_x_max_data_space, cur_y_min_data_space, cur_y_max_data_space = self._axes_display.get_limits()
+
+        new_x_min_data_space: float = self._x_min_data_space - (delta_x_ndc / 2.0) * (self._x_max_data_space - self._x_min_data_space)
+        new_x_max_data_space: float = self._x_max_data_space - (delta_x_ndc / 2.0) * (self._x_max_data_space - self._x_min_data_space)
+        new_y_min_data_space: float = self._y_min_data_space - (delta_y_ndc / 2.0) * (self._y_max_data_space - self._y_min_data_space)
+        new_y_max_data_space: float = self._y_max_data_space - (delta_y_ndc / 2.0) * (self._y_max_data_space - self._y_min_data_space)
+
+        self._axes_display.set_limits_data_space(
+            new_x_min_data_space,
+            new_x_max_data_space,
+            new_y_min_data_space,
+            new_y_max_data_space,
+        )
+
+        # print(f"Delta NDC: x={delta_x_ndc}, y={delta_y_ndc}")
 
     def _on_mouse_scroll(self, mouse_event: MouseEvent):
         # print(f"{text_cyan('Mouse scroll')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
 
-        x_min, x_max, y_min, y_max = self._axes_display.get_limits()
+        x_min, x_max, y_min, y_max = self._axes_display.get_limits_data_space()
         scale_factor: float = 1 / self._base_scale if mouse_event.scroll_steps >= 0 else self._base_scale
 
         print(f"scale_factor: {scale_factor}")
@@ -621,7 +675,7 @@ class AxesPanZoom:
         new_x_max: float = mouse_event.x + new_width * (relx)
         new_y_min: float = mouse_event.y - new_height * (1 - rely)
         new_y_max: float = mouse_event.y + new_height * (rely)
-        self._axes_display.set_limits(new_x_min, new_x_max, new_y_min, new_y_max)
+        self._axes_display.set_limits_data_space(new_x_min, new_x_max, new_y_min, new_y_max)
 
         print(f"New limits: x[{new_x_min}, {new_x_max}] y[{new_y_min}, {new_y_max}]")
 
@@ -644,7 +698,7 @@ def main():
     # inner_viewport = Viewport(int(canvas.get_width() / 3), int(canvas.get_height() / 4), int(canvas.get_width() / 3), int(canvas.get_height() / 2))
 
     axes_display = AxesDisplay(canvas, inner_viewport)
-    axes_display.set_limits(-0.2, +2.0, -2.0, +1.5)
+    axes_display.set_limits_data_space(-0.2, +2.0, -2.0, +1.5)
     render_items_axes = axes_display.get_render_items()
 
     renderer_name = ExampleHelper.get_renderer_name()
@@ -732,7 +786,7 @@ def main():
         )
 
     axes_display.new_limits_event.subscribe(on_new_limits)
-
+    on_new_limits()
     # =============================================================================
     #
     # =============================================================================
@@ -751,12 +805,12 @@ def main():
 
     animator = ExampleHelper.create_animator(renderer_base)
 
-    @animator.event_listener
-    def animator_callback(delta_time: float) -> list[VisualBase]:
-        print(f"{text_cyan('Animator callback')}: delta_time={delta_time:.4f} sec")
+    # @animator.event_listener
+    # def animator_callback(delta_time: float) -> list[VisualBase]:
+    #     # print(f"{text_cyan('Animator callback')}: delta_time={delta_time:.4f} sec")
 
-        changed_visuals: list[VisualBase] = []
-        return changed_visuals
+    #     changed_visuals: list[VisualBase] = []
+    #     return changed_visuals
 
     # start the animation loop
     animator.start(

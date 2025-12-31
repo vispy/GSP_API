@@ -46,9 +46,9 @@ class MouseEvent:
     event_type: EventType
     """The type of mouse event (BUTTON_PRESS, BUTTON_RELEASE, MOUSE_MOVE, or MOUSE_SCROLL)"""
     x: float
-    """The x-coordinate of the mouse position in the viewport."""
+    """The x-coordinate of the mouse position in the viewport in NDC units."""
     y: float
-    """The y-coordinate of the mouse position in the viewport."""
+    """The y-coordinate of the mouse position in the viewport in NDC units."""
     left_button: bool = False
     """Whether the left mouse button is pressed."""
     middle_button: bool = False

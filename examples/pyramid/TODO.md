@@ -9,6 +9,9 @@
 - combine axes transform with visual model_matrix transform to get final position
 
 ## TODO
+- display the first image before animator
+- do the panning in the controls
+- make the zoom centered on mouse position
 - in pan/zoom, reuse the uuid
 - pan/zoom controls using viewportEvents
   - with viewportEvents + axes.setLimits()
