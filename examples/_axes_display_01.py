@@ -636,27 +636,18 @@ class AxesPanZoom:
         if self._x_min_data_space is None or self._x_max_data_space is None or self._y_min_data_space is None or self._y_max_data_space is None:
             return
 
-        # Calculate the delta
+        # Calculate the delta in NDC units
         delta_x_ndc: float = mouse_event.x - self._button_press_x
         delta_y_ndc: float = mouse_event.y - self._button_press_y
 
-        print(f"Delta pixel: x={delta_x_ndc}")
-
-        # cur_x_min_data_space, cur_x_max_data_space, cur_y_min_data_space, cur_y_max_data_space = self._axes_display.get_limits()
-
+        # Compute new limits in data space for the viewports
         new_x_min_data_space: float = self._x_min_data_space - (delta_x_ndc / 2.0) * (self._x_max_data_space - self._x_min_data_space)
         new_x_max_data_space: float = self._x_max_data_space - (delta_x_ndc / 2.0) * (self._x_max_data_space - self._x_min_data_space)
         new_y_min_data_space: float = self._y_min_data_space - (delta_y_ndc / 2.0) * (self._y_max_data_space - self._y_min_data_space)
         new_y_max_data_space: float = self._y_max_data_space - (delta_y_ndc / 2.0) * (self._y_max_data_space - self._y_min_data_space)
 
-        self._axes_display.set_limits_data_space(
-            new_x_min_data_space,
-            new_x_max_data_space,
-            new_y_min_data_space,
-            new_y_max_data_space,
-        )
-
-        # print(f"Delta NDC: x={delta_x_ndc}, y={delta_y_ndc}")
+        # Update the axes limits in data space
+        self._axes_display.set_limits_data_space(new_x_min_data_space, new_x_max_data_space, new_y_min_data_space, new_y_max_data_space)
 
     def _on_mouse_scroll(self, mouse_event: MouseEvent):
         # print(f"{text_cyan('Mouse scroll')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
