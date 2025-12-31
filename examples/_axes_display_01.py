@@ -652,20 +652,22 @@ class AxesPanZoom:
     def _on_mouse_scroll(self, mouse_event: MouseEvent):
         # print(f"{text_cyan('Mouse scroll')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
 
-        x_min, x_max, y_min, y_max = self._axes_display.get_limits_data_space()
         scale_factor: float = 1 / self._base_scale if mouse_event.scroll_steps >= 0 else self._base_scale
+
+        x_min_data_space, x_max_data_space, y_min_data_space, y_max_data_space = self._axes_display.get_limits_data_space()
 
         print(f"scale_factor: {scale_factor}")
 
-        new_width: float = (x_max - x_min) * scale_factor
-        new_height: float = (y_max - y_min) * scale_factor
-        relx: float = (x_max - mouse_event.x) / (x_max - x_min)
-        rely: float = (y_max - mouse_event.y) / (y_max - y_min)
+        new_width: float = (x_max_data_space - x_min_data_space) * scale_factor
+        new_height: float = (y_max_data_space - y_min_data_space) * scale_factor
+        relative_x: float = (x_max_data_space - mouse_event.x) / (x_max_data_space - x_min_data_space)
+        relative_y: float = (y_max_data_space - mouse_event.y) / (y_max_data_space - y_min_data_space)
 
-        new_x_min: float = mouse_event.x - new_width * (1 - relx)
-        new_x_max: float = mouse_event.x + new_width * (relx)
-        new_y_min: float = mouse_event.y - new_height * (1 - rely)
-        new_y_max: float = mouse_event.y + new_height * (rely)
+        new_x_min: float = mouse_event.x - new_width * (1 - relative_x)
+        new_x_max: float = mouse_event.x + new_width * (relative_x)
+        new_y_min: float = mouse_event.y - new_height * (1 - relative_y)
+        new_y_max: float = mouse_event.y + new_height * (relative_y)
+
         self._axes_display.set_limits_data_space(new_x_min, new_x_max, new_y_min, new_y_max)
 
         print(f"New limits: x[{new_x_min}, {new_x_max}] y[{new_y_min}, {new_y_max}]")
