@@ -12,20 +12,11 @@ from gsp.types import Buffer, BufferType
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.unit_utils import UnitUtils
-
-
-# =============================================================================
-# Colorama alias
-# =============================================================================
-def text_cyan(text: str) -> str:
-    return colorama.Fore.CYAN + text + colorama.Style.RESET_ALL
-
-
-def text_magenta(text: str) -> str:
-    return colorama.Fore.MAGENTA + text + colorama.Style.RESET_ALL
+from gsp_extra.misc.colorama_utils import text_cyan, text_magenta
 
 
 def main():
+    """Example demonstrating viewport events."""
     # fix random seed for reproducibility
     np.random.seed(0)
 

@@ -3,119 +3,23 @@
 # stdlib imports
 import math
 from typing import Protocol
-from dataclasses import dataclass
 
 # pip imports
 import numpy as np
-import colorama
 
 # local imports
-from common.example_helper import ExampleHelper
 from gsp.core import Canvas, Viewport, Event
 from gsp.core.camera import Camera
-from gsp.visuals import Segments, Points, Texts
-from gsp.types.visual_base import VisualBase
+from gsp.visuals import Segments, Texts
 from gsp.types import CapStyle
 from gsp_extra.bufferx import Bufferx
 from gsp.types import BufferType
 from gsp.types import Buffer
 from gsp.constants import Constants
 from gsp.utils.unit_utils import UnitUtils
+from gsp_extra.misc.viewport_unit_utils import ViewportUnitUtils
 from gsp_extra.mpl3d import glm
-from gsp_extra.viewport_events.viewport_events_types import CanvasResizeEvent, KeyEvent, MouseEvent
-from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
-
-
-# =============================================================================
-# Colorama alias
-# =============================================================================
-def text_cyan(text: str) -> str:
-    return colorama.Fore.CYAN + text + colorama.Style.RESET_ALL
-
-
-def text_magenta(text: str) -> str:
-    return colorama.Fore.MAGENTA + text + colorama.Style.RESET_ALL
-
-
-class ViewportUnitConverter:
-    """Convert between pixel/cm to ndc units in a viewport."""
-
-    def __init__(self, canvas: Canvas, viewport: Viewport) -> None:
-        """Initialize the converter with a canvas and viewport."""
-        self._canvas = canvas
-        self._viewport = viewport
-
-    def get_canvas(self) -> Canvas:
-        """Get the canvas."""
-        return self._canvas
-
-    def get_viewport(self) -> Viewport:
-        """Get the viewport."""
-        return self._viewport
-
-    def _get_canvas_width_px(self) -> int:
-        return self._canvas.get_width()
-
-    def _get_canvas_height_px(self) -> int:
-        return self._canvas.get_height()
-
-    def _get_canvas_width_cm(self) -> float:
-        screen_ppi = self._canvas.get_dpi()
-        canvas_width_in = self._canvas.get_width() / screen_ppi
-        canvas_width_cm = UnitUtils.in_to_cm(canvas_width_in)
-        return canvas_width_cm
-
-    def _get_canvas_height_cm(self) -> float:
-        screen_ppi = self._canvas.get_dpi()
-        canvas_height_in = self._canvas.get_height() / screen_ppi
-        canvas_height_cm = UnitUtils.in_to_cm(canvas_height_in)
-        return canvas_height_cm
-
-    def _get_viewport_width_px(self) -> int:
-        return self._viewport.get_width()
-
-    def _get_viewport_height_px(self) -> int:
-        return self._viewport.get_height()
-
-    def _get_viewport_width_cm(self) -> float:
-        canvas_viewport_ratio = self._viewport.get_width() / self._canvas.get_width()
-        canvas_width_cm = self._get_canvas_width_cm()
-        viewport_width_cm = canvas_viewport_ratio * canvas_width_cm
-        return viewport_width_cm
-
-    def _get_viewport_height_cm(self) -> float:
-        canvas_viewport_ratio = self._viewport.get_height() / self._canvas.get_height()
-        canvas_height_cm = self._get_canvas_height_cm()
-        viewport_height_cm = canvas_viewport_ratio * canvas_height_cm
-        return viewport_height_cm
-
-    def delta_pixel_to_ndc(self, delta_pixel_x: float, delta_pixel_y: float) -> tuple[float, float]:
-        """Convert a delta in pixels to a delta in NDC units."""
-        viewport_range_ndc_x = 2.0
-        viewport_range_ndc_y = 2.0
-
-        delta_ndc_x = (delta_pixel_x / self._get_viewport_width_px()) * viewport_range_ndc_x
-        delta_ndc_y = (delta_pixel_y / self._get_viewport_height_px()) * viewport_range_ndc_y
-
-        return (delta_ndc_x, delta_ndc_y)
-
-    def delta_cm_to_ndc(self, delta_cm_x: float, delta_cm_y: float) -> tuple[float, float]:
-        """Convert a delta in cm to a delta in NDC units."""
-        viewport_range_ndc_x = 2.0
-        viewport_range_ndc_y = 2.0
-
-        delta_ndc_x = (delta_cm_x / self._get_viewport_width_cm()) * viewport_range_ndc_x
-        delta_ndc_y = (delta_cm_y / self._get_viewport_height_cm()) * viewport_range_ndc_y
-
-        return (delta_ndc_x, delta_ndc_y)
-
-
-@dataclass
-class RenderItem:
-    viewport: Viewport
-    visual_base: VisualBase
-    model_matrix: Buffer
-    camera: Camera
+from gsp_extra.misc.render_item import RenderItem
 
 
 class AxesDisplayNewLimitsEventCallback(Protocol):
@@ -138,9 +42,9 @@ class AxesDisplay:
         self._outter_viewport = Viewport(0, 0, self._canvas.get_width(), self._canvas.get_height())
         """Outter viewport to render axes in (arround inner viewport)."""
 
-        self._inner_viewport_unit = ViewportUnitConverter(self._canvas, self._inner_viewport)
+        self._inner_viewport_unit = ViewportUnitUtils(self._canvas, self._inner_viewport)
         """Unit converter for inner viewport."""
-        self._outter_viewport_unit = ViewportUnitConverter(self._canvas, self._outter_viewport)
+        self._outter_viewport_unit = ViewportUnitUtils(self._canvas, self._outter_viewport)
         """Unit converter for outter viewport."""
         self._x_min = -1.0
         """x minimum in data units."""
@@ -297,7 +201,7 @@ class AxesDisplay:
             self._texts_vertical_render_item.visual_base.set_uuid(texts_vertical_uuid)
 
     @staticmethod
-    def _generate_axes_segments(inner_viewport_unit: ViewportUnitConverter, outter_viewport_unit: ViewportUnitConverter) -> Segments:
+    def _generate_axes_segments(inner_viewport_unit: ViewportUnitUtils, outter_viewport_unit: ViewportUnitUtils) -> Segments:
         """Generate axes segments in NDC units for the given viewport."""
         inner_viewport = inner_viewport_unit.get_viewport()
         canvas = inner_viewport_unit.get_canvas()
@@ -335,8 +239,8 @@ class AxesDisplay:
 
     @staticmethod
     def _generate_ticks_horizontal(
-        inner_viewport_unit: ViewportUnitConverter,
-        outter_viewport_unit: ViewportUnitConverter,
+        inner_viewport_unit: ViewportUnitUtils,
+        outter_viewport_unit: ViewportUnitUtils,
         x_min_dunit: float,
         x_max_dunit: float,
     ) -> Segments:
@@ -387,8 +291,8 @@ class AxesDisplay:
 
     @staticmethod
     def _generate_ticks_vertical(
-        inner_viewport_unit: ViewportUnitConverter,
-        outter_viewport_unit: ViewportUnitConverter,
+        inner_viewport_unit: ViewportUnitUtils,
+        outter_viewport_unit: ViewportUnitUtils,
         y_min_dunit: float,
         y_max_dunit: float,
     ) -> Segments:
@@ -439,8 +343,8 @@ class AxesDisplay:
 
     @staticmethod
     def _generate_texts_horizontal(
-        inner_viewport_unit: ViewportUnitConverter,
-        outter_viewport_unit: ViewportUnitConverter,
+        inner_viewport_unit: ViewportUnitUtils,
+        outter_viewport_unit: ViewportUnitUtils,
         x_min_dunit: float,
         x_max_dunit: float,
     ) -> Texts:
@@ -505,8 +409,8 @@ class AxesDisplay:
 
     @staticmethod
     def _generate_texts_vertical(
-        inner_viewport_unit: ViewportUnitConverter,
-        outter_viewport_unit: ViewportUnitConverter,
+        inner_viewport_unit: ViewportUnitUtils,
+        outter_viewport_unit: ViewportUnitUtils,
         y_min_dunit: float,
         y_max_dunit: float,
     ) -> Texts:
@@ -567,255 +471,3 @@ class AxesDisplay:
         texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
 
         return texts
-
-
-class AxesPanZoom:
-    """Class to handle panning and zooming in a viewport."""
-
-    def __init__(self, viewport_events: ViewportEventsBase, base_scale: float, axes_display: AxesDisplay) -> None:
-        """Initialize the PanAndZoom example."""
-        self._viewport_events = viewport_events
-        """Viewport events to listen to."""
-        self._base_scale = base_scale
-        """Base scale for zooming."""
-        self._axes_display = axes_display
-        """Axes display to update."""
-
-        self._button_press_x: float | None = None
-        """X coordinate of the button press in NDC units."""
-        self._button_press_y: float | None = None
-        """Y coordinate of the button press in NDC units."""
-
-        self._x_min_dunit: float | None = None
-        """Current x minimum viewport in data space."""
-        self._x_max_dunit: float | None = None
-        """Current x maximum viewport in data space."""
-        self._y_min_dunit: float | None = None
-        """Current y minimum viewport in data space."""
-        self._y_max_dunit: float | None = None
-        """Current y maximum viewport in data space."""
-
-        self._viewport_events.button_press_event.subscribe(self._on_button_press)
-        self._viewport_events.button_release_event.subscribe(self._on_button_release)
-        self._viewport_events.mouse_move_event.subscribe(self._on_button_move)
-        self._viewport_events.mouse_scroll_event.subscribe(self._on_mouse_scroll)
-
-    def close(self) -> None:
-        """Close the PanAndZoom example."""
-        self._viewport_events.button_press_event.unsubscribe(self._on_button_press)
-        self._viewport_events.button_release_event.unsubscribe(self._on_button_release)
-        self._viewport_events.mouse_move_event.unsubscribe(self._on_button_move)
-        self._viewport_events.mouse_scroll_event.unsubscribe(self._on_mouse_scroll)
-
-    def _on_button_press(self, mouse_event: MouseEvent):
-        # print(f"{text_cyan('Button press')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
-        # Store pixel coordinates instead of data coordinates
-        self._button_press_x = mouse_event.x
-        self._button_press_y = mouse_event.y
-
-        self._x_min_dunit, self._x_max_dunit, self._y_min_dunit, self._y_max_dunit = self._axes_display.get_limits_dunit()
-
-    def _on_button_release(self, mouse_event: MouseEvent):
-        # print(f"{text_cyan('Button release')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
-        self._button_press_x = None
-        self._button_press_y = None
-        self._x_min_dunit = None
-        self._x_max_dunit = None
-        self._y_min_dunit = None
-        self._y_max_dunit = None
-
-    def _on_button_move(self, mouse_event: MouseEvent):
-        # print(f"{text_cyan('Button move')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
-        if self._button_press_x is None or self._button_press_y is None:
-            return
-        if self._x_min_dunit is None or self._x_max_dunit is None or self._y_min_dunit is None or self._y_max_dunit is None:
-            return
-
-        # Calculate the delta in NDC units
-        delta_x_ndc: float = mouse_event.x - self._button_press_x
-        delta_y_ndc: float = mouse_event.y - self._button_press_y
-
-        # Compute new limits in data space for the viewports
-        new_x_min_dunit: float = self._x_min_dunit - (delta_x_ndc / 2.0) * (self._x_max_dunit - self._x_min_dunit)
-        new_x_max_dunit: float = self._x_max_dunit - (delta_x_ndc / 2.0) * (self._x_max_dunit - self._x_min_dunit)
-        new_y_min_dunit: float = self._y_min_dunit - (delta_y_ndc / 2.0) * (self._y_max_dunit - self._y_min_dunit)
-        new_y_max_dunit: float = self._y_max_dunit - (delta_y_ndc / 2.0) * (self._y_max_dunit - self._y_min_dunit)
-
-        # Update the axes limits in data space
-        self._axes_display.set_limits_dunit(new_x_min_dunit, new_x_max_dunit, new_y_min_dunit, new_y_max_dunit)
-
-    def _on_mouse_scroll(self, mouse_event: MouseEvent):
-        # print(f"{text_cyan('Mouse scroll')}: {text_magenta(mouse_event.viewport_uuid)} {mouse_event}")
-
-        scale_factor: float = 1 / self._base_scale if mouse_event.scroll_steps >= 0 else self._base_scale
-
-        x_min_dunit, x_max_dunit, y_min_dunit, y_max_dunit = self._axes_display.get_limits_dunit()
-
-        print(f"scale_factor: {scale_factor}")
-
-        mouse_x_dunit: float = x_min_dunit + (mouse_event.x + 1.0) / 2.0 * (x_max_dunit - x_min_dunit)
-        mouse_y_dunit: float = y_min_dunit + (mouse_event.y + 1.0) / 2.0 * (y_max_dunit - y_min_dunit)
-
-        new_width: float = (x_max_dunit - x_min_dunit) * scale_factor
-        new_height: float = (y_max_dunit - y_min_dunit) * scale_factor
-        relative_x: float = (x_max_dunit - mouse_x_dunit) / (x_max_dunit - x_min_dunit)
-        relative_y: float = (y_max_dunit - mouse_y_dunit) / (y_max_dunit - y_min_dunit)
-
-        new_x_min: float = mouse_x_dunit - new_width * (1 - relative_x)
-        new_x_max: float = mouse_x_dunit + new_width * (relative_x)
-        new_y_min: float = mouse_y_dunit - new_height * (1 - relative_y)
-        new_y_max: float = mouse_y_dunit + new_height * (relative_y)
-
-        self._axes_display.set_limits_dunit(new_x_min, new_x_max, new_y_min, new_y_max)
-
-        # print(f"New limits: x[{new_x_min}, {new_x_max}] y[{new_y_min}, {new_y_max}]")
-
-
-def main():
-    """Example demonstrating viewport NDC metric conversions."""
-    # fix random seed for reproducibility
-    np.random.seed(0)
-
-    # Create a canvas
-    canvas = Canvas(width=400, height=400, dpi=127)
-
-    # =============================================================================
-    #
-    # =============================================================================
-
-    # Create a inner viewport
-    inner_viewport = Viewport(int(canvas.get_width() / 4), int(canvas.get_height() / 4), int(canvas.get_width() / 2), int(canvas.get_height() / 2))
-    # inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
-    # inner_viewport = Viewport(int(canvas.get_width() / 3), int(canvas.get_height() / 4), int(canvas.get_width() / 3), int(canvas.get_height() / 2))
-
-    axes_display = AxesDisplay(canvas, inner_viewport)
-    axes_display.set_limits_dunit(-2.0, +2.0, -2.0, +2.0)
-    render_items_axes = axes_display.get_render_items()
-
-    renderer_name = ExampleHelper.get_renderer_name()
-    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-
-    viewport_events = ExampleHelper.create_viewport_events(renderer_base, axes_display.get_inner_viewport())
-    axes_pan_zoom = AxesPanZoom(viewport_events, base_scale=1.1, axes_display=axes_display)
-
-    # =============================================================================
-    #
-    # =============================================================================
-
-    def generate_visual_points(point_count: int, viewport: Viewport, axes_transform_numpy: np.ndarray) -> list[RenderItem]:
-        # Generate a sinusoidal distribution of points
-        sin_scale = 3.0
-        x_values = np.linspace(-1.0, +1.0, point_count, dtype=np.float32)
-        y_values = np.sin(x_values * np.pi * sin_scale).astype(np.float32)
-        z_values = np.zeros(point_count, dtype=np.float32)
-        positions_numpy = np.vstack((x_values, y_values, z_values)).T.astype(np.float32)
-
-        # positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1
-        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
-
-        # Sizes - Create buffer and set data with numpy array
-        sizes_numpy = np.array([10] * point_count, dtype=np.float32)
-        sizes_buffer = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
-
-        # all pixels red - Create buffer and fill it with a constant
-        face_colors_buffer = Buffer(point_count, BufferType.rgba8)
-        face_colors_buffer.set_data(bytearray([255, 0, 0, 255]) * point_count, 0, point_count)
-
-        # Edge colors - Create buffer and fill it with a constant
-        edge_colors_buffer = Buffer(point_count, BufferType.rgba8)
-        edge_colors_buffer.set_data(Constants.Color.blue * point_count, 0, point_count)
-
-        # Edge widths - Create buffer and fill it with a constant
-        edge_widths_numpy = np.array([UnitUtils.pixel_to_point(1, canvas.get_dpi())] * point_count, dtype=np.float32)
-        edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
-
-        # Create the Points visual and add it to the viewport
-        points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
-
-        # Create model matrix to transform points into axes data space
-        model_matrix_numpy = np.eye(4, dtype=np.float32)
-        model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
-        model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
-
-        # model_matrix = Bufferx.mat4_identity()
-
-        camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
-
-        render_items: list[RenderItem] = []
-        render_items.append(RenderItem(viewport, points, model_matrix, camera))
-        return render_items
-
-    axes_transform_numpy = axes_display.get_transform_matrix()
-    render_items_points = generate_visual_points(100, inner_viewport, axes_transform_numpy)
-
-    # =============================================================================
-    #
-    # =============================================================================
-
-    render_items = render_items_points + render_items_axes
-    # render_items = render_items_axes
-
-    # =============================================================================
-    #
-    # =============================================================================
-    def on_new_limits():
-        # print(f"{text_cyan('New limits event received')}")
-        axes_transform_numpy = axes_display.get_transform_matrix()
-
-        for render_item in render_items_points:
-            model_matrix_numpy = np.eye(4, dtype=np.float32)
-            model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
-            render_item.model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
-
-        render_items_axes = axes_display.get_render_items()
-        render_items = render_items_points + render_items_axes
-
-        renderer_base.render(
-            [render_item.viewport for render_item in render_items],
-            [render_item.visual_base for render_item in render_items],
-            [render_item.model_matrix for render_item in render_items],
-            [render_item.camera for render_item in render_items],
-        )
-
-    axes_display.new_limits_event.subscribe(on_new_limits)
-    on_new_limits()
-    # =============================================================================
-    #
-    # =============================================================================
-
-    # renderer_base.render(
-    #     [render_item.viewport for render_item in render_items],
-    #     [render_item.visual_base for render_item in render_items],
-    #     [render_item.model_matrix for render_item in render_items],
-    #     [render_item.camera for render_item in render_items],
-    # )
-
-    # =============================================================================
-    #
-    # =============================================================================
-    # renderer_base.show()
-
-    animator = ExampleHelper.create_animator(renderer_base)
-
-    # @animator.event_listener
-    # def animator_callback(delta_time: float) -> list[VisualBase]:
-    #     # print(f"{text_cyan('Animator callback')}: delta_time={delta_time:.4f} sec")
-
-    #     changed_visuals: list[VisualBase] = []
-    #     return changed_visuals
-
-    # start the animation loop
-    animator.start(
-        [],
-        [],
-        [],
-        [],
-        # [render_item.viewport for render_item in render_items],
-        # [render_item.visual_base for render_item in render_items],
-        # [render_item.model_matrix for render_item in render_items],
-        # [render_item.camera for render_item in render_items],
-    )
-
-
-if __name__ == "__main__":
-    main()
