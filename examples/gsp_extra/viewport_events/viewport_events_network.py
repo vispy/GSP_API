@@ -1,4 +1,4 @@
-""""NetworkRenderer event handler for viewport events."""
+""" "NetworkRenderer event handler for viewport events."""
 
 # stdlib imports
 from typing import Any
@@ -40,7 +40,7 @@ class ViewportEventsNetwork(ViewportEventsBase):
 
     def __init__(self, renderer: NetworkRenderer, viewport: Viewport) -> None:
         """Initialize the event handler with a renderer and viewport.
-        
+
         Args:
             renderer: NetworkRenderer associated with this event handler.
             viewport: Viewport associated with this event handler.
@@ -171,10 +171,10 @@ class ViewportEventsNetwork(ViewportEventsBase):
 
     def _viewport_contains_mpl_mouse_event(self, mpl_mouse_event: matplotlib.backend_bases.MouseEvent) -> bool:
         """Check if the matplotlib mouse event is inside this viewport.
-        
+
         Args:
             mpl_mouse_event: Matplotlib mouse event.
-        
+
         Returns:
             True if the mouse event is inside this viewport, False otherwise.
         """
@@ -213,8 +213,8 @@ class ViewportEventsNetwork(ViewportEventsBase):
         mouse_event = MouseEvent(
             viewport_uuid=self._viewport.get_uuid(),
             event_type=event_type,
-            x=(x_viewport / self._viewport.get_width() - 0.5) * 2.0,
-            y=(y_viewport / self._viewport.get_height() - 0.5) * 2.0,
+            x_ndc=(x_viewport / self._viewport.get_width() - 0.5) * 2.0,
+            y_ndc=(y_viewport / self._viewport.get_height() - 0.5) * 2.0,
             left_button=mpl_mouse_event.button == 1,
             middle_button=mpl_mouse_event.button == 2,
             right_button=mpl_mouse_event.button == 3,

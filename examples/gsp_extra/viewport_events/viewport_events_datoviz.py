@@ -133,8 +133,8 @@ class ViewportEventsDatoviz(ViewportEventsBase):
             mouse_event = MouseEvent(
                 viewport_uuid=self._viewport.get_uuid(),
                 event_type=event_type,
-                x=event_x,
-                y=event_y,
+                x_ndc=event_x,
+                y_ndc=event_y,
                 left_button=left_button,
                 middle_button=middle_button,
                 right_button=right_button,
@@ -180,10 +180,10 @@ class ViewportEventsDatoviz(ViewportEventsBase):
 
     def _viewport_contains_dvz_mouse_event(self, dvz_mouse_event: dvz.MouseEvent) -> bool:
         """Check if the matplotlib mouse event is inside this viewport.
-        
+
         Args:
             dvz_mouse_event: Datoviz mouse event.
-        
+
         Returns:
             True if the mouse event is inside this viewport, False otherwise.
         """

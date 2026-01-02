@@ -1,4 +1,4 @@
-""""Implements camera controls using AWSD keys for movement and mouse for orientation."""
+"""Implements camera controls using AWSD keys for movement and mouse for orientation."""
 
 import numpy as np
 
@@ -49,8 +49,8 @@ class ObjectControlsTrackball:
 
     def _on_button_press(self, mouse_event: MouseEvent):
         self._button_pressed = True
-        self._start_x = mouse_event.x
-        self._start_y = mouse_event.y
+        self._start_x = mouse_event.x_ndc
+        self._start_y = mouse_event.y_ndc
 
     def _on_button_release(self, mouse_event: MouseEvent):
         self._button_pressed = False
@@ -60,11 +60,11 @@ class ObjectControlsTrackball:
         if self._button_pressed is False:
             return
 
-        dx = mouse_event.x - self._start_x
-        dy = mouse_event.y - self._start_y
+        dx = mouse_event.x_ndc - self._start_x
+        dy = mouse_event.y_ndc - self._start_y
         self._trackball.drag_to(self._start_x, self._start_y, dx, dy)
-        self._start_x = mouse_event.x
-        self._start_y = mouse_event.y
+        self._start_x = mouse_event.x_ndc
+        self._start_y = mouse_event.y_ndc
         # update the model matrix
         np.copyto(self._model_matrix_numpy, self._trackball.model.T)
         self._model_matrix_buffer.set_data(bytearray(self._model_matrix_numpy.tobytes()), 0, 1)

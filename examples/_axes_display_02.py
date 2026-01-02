@@ -1,10 +1,5 @@
 """Example demonstrating viewport NDC metric conversions."""
 
-# stdlib imports
-import math
-from typing import Protocol
-from dataclasses import dataclass
-
 # pip imports
 import numpy as np
 
@@ -24,7 +19,7 @@ from gsp_extra.vispy_2.axes.axes_pan_zoom import AxesPanZoom
 
 
 def main():
-    """Example demonstrating viewport NDC metric conversions."""
+    """Main function to run the example."""
     # fix random seed for reproducibility
     np.random.seed(0)
 
@@ -36,8 +31,8 @@ def main():
     # =============================================================================
 
     # Create a inner viewport
-    inner_viewport = Viewport(int(canvas.get_width() / 4), int(canvas.get_height() / 4), int(canvas.get_width() / 2), int(canvas.get_height() / 2))
-    # inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
+    # inner_viewport = Viewport(int(canvas.get_width() / 4), int(canvas.get_height() / 4), int(canvas.get_width() / 2), int(canvas.get_height() / 2))
+    inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
     # inner_viewport = Viewport(int(canvas.get_width() / 3), int(canvas.get_height() / 4), int(canvas.get_width() / 3), int(canvas.get_height() / 2))
 
     axes_display = AxesDisplay(canvas, inner_viewport)

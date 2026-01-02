@@ -18,9 +18,9 @@ class AxesPanZoom:
         self._axes_display = axes_display
         """Axes display to update."""
 
-        self._button_press_x: float | None = None
+        self._button_press_x_ndc: float | None = None
         """X coordinate of the button press in NDC units."""
-        self._button_press_y: float | None = None
+        self._button_press_y_ndc: float | None = None
         """Y coordinate of the button press in NDC units."""
 
         self._x_min_dunit: float | None = None
@@ -46,14 +46,14 @@ class AxesPanZoom:
 
     def _on_button_press(self, mouse_event: MouseEvent):
         # Store pixel coordinates instead of data coordinates
-        self._button_press_x = mouse_event.x
-        self._button_press_y = mouse_event.y
+        self._button_press_x_ndc = mouse_event.x_ndc
+        self._button_press_y_ndc = mouse_event.y_ndc
 
         self._x_min_dunit, self._x_max_dunit, self._y_min_dunit, self._y_max_dunit = self._axes_display.get_limits_dunit()
 
     def _on_button_release(self, mouse_event: MouseEvent):
-        self._button_press_x = None
-        self._button_press_y = None
+        self._button_press_x_ndc = None
+        self._button_press_y_ndc = None
         self._x_min_dunit = None
         self._x_max_dunit = None
         self._y_min_dunit = None
@@ -61,14 +61,14 @@ class AxesPanZoom:
 
     def _on_button_move(self, mouse_event: MouseEvent):
         # sanity check
-        if self._button_press_x is None or self._button_press_y is None:
+        if self._button_press_x_ndc is None or self._button_press_y_ndc is None:
             return
         if self._x_min_dunit is None or self._x_max_dunit is None or self._y_min_dunit is None or self._y_max_dunit is None:
             return
 
         # Calculate the delta in NDC units
-        delta_x_ndc: float = mouse_event.x - self._button_press_x
-        delta_y_ndc: float = mouse_event.y - self._button_press_y
+        delta_x_ndc: float = mouse_event.x_ndc - self._button_press_x_ndc
+        delta_y_ndc: float = mouse_event.y_ndc - self._button_press_y_ndc
 
         # Compute new limits in data space for the viewports
         new_x_min_dunit: float = self._x_min_dunit - (delta_x_ndc / 2.0) * (self._x_max_dunit - self._x_min_dunit)
@@ -86,8 +86,8 @@ class AxesPanZoom:
 
         print(f"scale_factor: {scale_factor}")
 
-        mouse_x_dunit: float = x_min_dunit + (mouse_event.x + 1.0) / 2.0 * (x_max_dunit - x_min_dunit)
-        mouse_y_dunit: float = y_min_dunit + (mouse_event.y + 1.0) / 2.0 * (y_max_dunit - y_min_dunit)
+        mouse_x_dunit: float = x_min_dunit + (mouse_event.x_ndc + 1.0) / 2.0 * (x_max_dunit - x_min_dunit)
+        mouse_y_dunit: float = y_min_dunit + (mouse_event.y_ndc + 1.0) / 2.0 * (y_max_dunit - y_min_dunit)
 
         new_width: float = (x_max_dunit - x_min_dunit) * scale_factor
         new_height: float = (y_max_dunit - y_min_dunit) * scale_factor
