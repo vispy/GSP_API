@@ -1,4 +1,4 @@
-"""Example demonstrating viewport NDC metric conversions."""
+"""Module providing an AxesDisplay class to display axes in a viewport using NDC conversions."""
 
 # stdlib imports
 import math
@@ -17,7 +17,7 @@ from gsp.types import BufferType
 from gsp.types import Buffer
 from gsp.constants import Constants
 from gsp.utils.unit_utils import UnitUtils
-from gsp_extra.misc.viewport_unit_utils import ViewportUnitUtils
+from gsp.utils.viewport_unit_utils import ViewportUnitUtils
 from gsp_extra.mpl3d import glm
 from gsp_extra.misc.render_item import RenderItem
 
@@ -46,36 +46,41 @@ class AxesDisplay:
         """Unit converter for inner viewport."""
         self._outter_viewport_unit = ViewportUnitUtils(self._canvas, self._outter_viewport)
         """Unit converter for outter viewport."""
-        self._x_min = -1.0
+        self._x_min_dunit = -1.0
         """x minimum in data units."""
-        self._x_max = +1.0
+        self._x_max_dunit = +1.0
         """x maximum in data units."""
-        self._y_min = -1.0
+        self._y_min_dunit = -1.0
         """y minimum in data units."""
-        self._y_max = +1.0
+        self._y_max_dunit = +1.0
         """y maximum in data units."""
 
         self.new_limits_event = Event[AxesDisplayNewLimitsEventCallback]()
+        """Event triggered when the axes limits are changed.
+        
+        Allow to render visuals and axes synchronously when axes limits change."""
 
+        # Initialize render items
         self._axes_segments_render_item: RenderItem | None = None
         self._ticks_horizontal_render_item: RenderItem | None = None
         self._ticks_vertical_render_item: RenderItem | None = None
         self._texts_horizontal_render_item: RenderItem | None = None
         self._texts_vertical_render_item: RenderItem | None = None
 
+        # Build render items
         self._build_render_items()
 
-    def set_limits_dunit(self, x_min: float, x_max: float, y_min: float, y_max: float) -> None:
+    def set_limits_dunit(self, x_min_dunit: float, x_max_dunit: float, y_min_dunit: float, y_max_dunit: float) -> None:
         """Set the axes limits in data units."""
         # sanity checks
-        assert x_min < x_max, f"x_min MUST be less than x_max, got x_min={x_min}, x_max={x_max}"
-        assert y_min < y_max, f"y_min MUST be less than y_max, got y_min={y_min}, y_max={y_max}"
+        assert x_min_dunit < x_max_dunit, f"x_min MUST be less than x_max, got x_min_dunit={x_min_dunit}, x_max_dunit={x_max_dunit}"
+        assert y_min_dunit < y_max_dunit, f"y_min MUST be less than y_max, got y_min_dunit={y_min_dunit}, y_max_dunit={y_max_dunit}"
 
         # set limits
-        self._x_min = x_min
-        self._x_max = x_max
-        self._y_min = y_min
-        self._y_max = y_max
+        self._x_min_dunit = x_min_dunit
+        self._x_max_dunit = x_max_dunit
+        self._y_min_dunit = y_min_dunit
+        self._y_max_dunit = y_max_dunit
 
         # rebuild render items
         self._build_render_items()
@@ -85,13 +90,14 @@ class AxesDisplay:
 
     def get_limits_dunit(self) -> tuple[float, float, float, float]:
         """Get the axes limits in data units."""
-        return (self._x_min, self._x_max, self._y_min, self._y_max)
+        return (self._x_min_dunit, self._x_max_dunit, self._y_min_dunit, self._y_max_dunit)
 
-    def get_transform_matrix(self) -> np.ndarray:
+    def get_transform_matrix_numpy(self) -> np.ndarray:
+        """Get the transform matrix from data units to NDC units for the inner viewport."""
         # Compute translation matrix
-        translation_matrix = glm.translate(np.array([-(self._x_max + self._x_min) / 2.0, -(self._y_max + self._y_min) / 2.0, 0.0]))
+        translation_matrix = glm.translate(np.array([-(self._x_max_dunit + self._x_min_dunit) / 2.0, -(self._y_max_dunit + self._y_min_dunit) / 2.0, 0.0]))
         # Compute scale matrix
-        scale_matrix = glm.scale(np.array([2.0 / (self._x_max - self._x_min), 2.0 / (self._y_max - self._y_min), 1.0]))
+        scale_matrix = glm.scale(np.array([2.0 / (self._x_max_dunit - self._x_min_dunit), 2.0 / (self._y_max_dunit - self._y_min_dunit), 1.0]))
         # Combine translation and scale to get the final transform matrix
         axes_transform_numpy = scale_matrix @ translation_matrix
         # Return the transform matrix
@@ -107,8 +113,6 @@ class AxesDisplay:
 
     def get_render_items(self) -> list[RenderItem]:
         """Get the render items for the axes display."""
-        render_items: list[RenderItem] = []
-
         # sanity check
         assert self._axes_segments_render_item is not None, "Axes segments render item MUST be initialized"
         assert self._ticks_horizontal_render_item is not None, "Ticks horizontal render item MUST be initialized"
@@ -116,12 +120,15 @@ class AxesDisplay:
         assert self._texts_horizontal_render_item is not None, "Texts horizontal render item MUST be initialized"
         assert self._texts_vertical_render_item is not None, "Texts vertical render item MUST be initialized"
 
+        # Collect all render items into a list
+        render_items: list[RenderItem] = []
         render_items.append(self._axes_segments_render_item)
         render_items.append(self._ticks_horizontal_render_item)
         render_items.append(self._ticks_vertical_render_item)
         render_items.append(self._texts_horizontal_render_item)
         render_items.append(self._texts_vertical_render_item)
 
+        # Retrun the render items
         return render_items
 
     # =============================================================================
@@ -152,7 +159,7 @@ class AxesDisplay:
         )
         self._ticks_horizontal_render_item = RenderItem(
             self._outter_viewport_unit.get_viewport(),
-            AxesDisplay._generate_ticks_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min, self._x_max),
+            AxesDisplay._generate_ticks_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min_dunit, self._x_max_dunit),
             Bufferx.mat4_identity(),
             Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
         )
@@ -165,7 +172,7 @@ class AxesDisplay:
         ticks_vertical_uuid: str | None = self._ticks_vertical_render_item.visual_base.get_uuid() if self._ticks_vertical_render_item is not None else None
         self._ticks_vertical_render_item = RenderItem(
             self._outter_viewport_unit.get_viewport(),
-            AxesDisplay._generate_ticks_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min, self._y_max),
+            AxesDisplay._generate_ticks_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min_dunit, self._y_max_dunit),
             Bufferx.mat4_identity(),
             Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
         )
@@ -180,7 +187,7 @@ class AxesDisplay:
         )
         self._texts_horizontal_render_item = RenderItem(
             self._outter_viewport_unit.get_viewport(),
-            AxesDisplay._generate_texts_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min, self._x_max),
+            AxesDisplay._generate_texts_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min_dunit, self._x_max_dunit),
             Bufferx.mat4_identity(),
             Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
         )
@@ -193,7 +200,7 @@ class AxesDisplay:
         texts_vertical_uuid: str | None = self._texts_vertical_render_item.visual_base.get_uuid() if self._texts_vertical_render_item is not None else None
         self._texts_vertical_render_item = RenderItem(
             self._outter_viewport_unit.get_viewport(),
-            AxesDisplay._generate_texts_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min, self._y_max),
+            AxesDisplay._generate_texts_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min_dunit, self._y_max_dunit),
             Bufferx.mat4_identity(),
             Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
         )

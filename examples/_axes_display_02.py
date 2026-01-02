@@ -97,7 +97,7 @@ def main():
         render_items.append(RenderItem(viewport, points, model_matrix, camera))
         return render_items
 
-    axes_transform_numpy = axes_display.get_transform_matrix()
+    axes_transform_numpy = axes_display.get_transform_matrix_numpy()
     render_items_points = generate_visual_points(100, inner_viewport, axes_transform_numpy)
 
     # =============================================================================
@@ -111,17 +111,23 @@ def main():
     #
     # =============================================================================
     def on_new_limits():
-        # print(f"{text_cyan('New limits event received')}")
-        axes_transform_numpy = axes_display.get_transform_matrix()
+        """Event handle to update points model matrices on axes limits change."""
+        # Get the axes transform matrix
+        axes_transform_numpy = axes_display.get_transform_matrix_numpy()
 
+        # Update model matrices for all visuals
         for render_item in render_items_points:
             model_matrix_numpy = np.eye(4, dtype=np.float32)
             model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
             render_item.model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
 
+        # Collect all render items for the axes display
         render_items_axes = axes_display.get_render_items()
+
+        # Combine all render items
         render_items = render_items_points + render_items_axes
 
+        # Render all render items
         renderer_base.render(
             [render_item.viewport for render_item in render_items],
             [render_item.visual_base for render_item in render_items],
@@ -129,18 +135,11 @@ def main():
             [render_item.camera for render_item in render_items],
         )
 
+    # Subscribe to new limits event - thus updating axes visuals on zoom/pan
     axes_display.new_limits_event.subscribe(on_new_limits)
-    on_new_limits()
-    # =============================================================================
-    #
-    # =============================================================================
 
-    # renderer_base.render(
-    #     [render_item.viewport for render_item in render_items],
-    #     [render_item.visual_base for render_item in render_items],
-    #     [render_item.model_matrix for render_item in render_items],
-    #     [render_item.camera for render_item in render_items],
-    # )
+    # Initial render
+    on_new_limits()
 
     # =============================================================================
     #

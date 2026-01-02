@@ -1,4 +1,4 @@
-""" "Texts visual module."""
+"""Texts visual module."""
 
 from ..types.visual_base import VisualBase
 from ..types.transbuf import TransBuf

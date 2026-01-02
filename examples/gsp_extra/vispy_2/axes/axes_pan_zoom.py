@@ -3,7 +3,7 @@
 # local imports
 from gsp_extra.viewport_events.viewport_events_types import MouseEvent
 from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
-from gsp_extra.vispy_2.axes.axes_display import AxesDisplay
+from .axes_display import AxesDisplay
 
 
 class AxesPanZoom:
