@@ -1,6 +1,7 @@
+"""Example demonstrating viewport events."""
+
 # pip imports
 import numpy as np
-import colorama
 
 # local imports
 from common.example_helper import ExampleHelper
