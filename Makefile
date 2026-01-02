@@ -24,14 +24,14 @@ clean_output: ## Clean all generated output files png,json,pdf,svg
 
 ##############################################################################
 
-lint: lint_pyright lint_pydoclint ## Run all linters
+lint: lint_pyright lint_ruff ## Run all linters
 	
 
 lint_pyright: ## Run pyright type checker on src and examples
 	pyright ./src/gsp/ ./src/gsp_matplotlib/ ./src/gsp_datoviz/ ./src/gsp_pydantic/ ./src/gsp_nico/ ./examples/ 
 
-lint_pydoclint: ## Run pydocstyle to check for docstring style issues
-	pydoclint ./src/gsp ./src/gsp_matplotlib ./src/gsp_datoviz ./src/gsp_pydantic ./src/gsp_network ./examples/gsp_extra
+# lint_pydoclint: ## Run pydocstyle to check for docstring style issues
+# 	pydoclint ./src/gsp ./src/gsp_matplotlib ./src/gsp_datoviz ./src/gsp_pydantic ./src/gsp_network ./examples/gsp_extra
 
 lint_ruff: ## Run ruff linter 
 	ruff check ./src/gsp ./src/gsp_matplotlib ./src/gsp_datoviz ./src/gsp_pydantic/ ./src/gsp_network/ ./examples/gsp_extra

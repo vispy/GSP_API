@@ -41,11 +41,11 @@ dev = [
 [tool.black]
 line-length = 160   # to match the 79 character limit of PEP 8, but allow some extra space for longer lines
 
-# Configuration for Pydoclint - https://jsh9.github.io/pydoclint/
-[tool.pydoclint]
-style = 'numpy'
-check-style-mismatch = true
-allow-init-docstring = true
+# # Configuration for Pydoclint - https://jsh9.github.io/pydoclint/
+# [tool.pydoclint]
+# style = 'numpy'
+# check-style-mismatch = true
+# allow-init-docstring = true
 
 [tool.ruff]
 lint.select = ["D"]
