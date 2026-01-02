@@ -658,15 +658,18 @@ class AxesPanZoom:
 
         print(f"scale_factor: {scale_factor}")
 
+        mouse_x_dataspace: float = x_min_data_space + (mouse_event.x + 1.0) / 2.0 * (x_max_data_space - x_min_data_space)
+        mouse_y_dataspace: float = y_min_data_space + (mouse_event.y + 1.0) / 2.0 * (y_max_data_space - y_min_data_space)
+
         new_width: float = (x_max_data_space - x_min_data_space) * scale_factor
         new_height: float = (y_max_data_space - y_min_data_space) * scale_factor
-        relative_x: float = (x_max_data_space - mouse_event.x) / (x_max_data_space - x_min_data_space)
-        relative_y: float = (y_max_data_space - mouse_event.y) / (y_max_data_space - y_min_data_space)
+        relative_x: float = (x_max_data_space - mouse_x_dataspace) / (x_max_data_space - x_min_data_space)
+        relative_y: float = (y_max_data_space - mouse_y_dataspace) / (y_max_data_space - y_min_data_space)
 
-        new_x_min: float = mouse_event.x - new_width * (1 - relative_x)
-        new_x_max: float = mouse_event.x + new_width * (relative_x)
-        new_y_min: float = mouse_event.y - new_height * (1 - relative_y)
-        new_y_max: float = mouse_event.y + new_height * (relative_y)
+        new_x_min: float = mouse_x_dataspace - new_width * (1 - relative_x)
+        new_x_max: float = mouse_x_dataspace + new_width * (relative_x)
+        new_y_min: float = mouse_y_dataspace - new_height * (1 - relative_y)
+        new_y_max: float = mouse_y_dataspace + new_height * (relative_y)
 
         self._axes_display.set_limits_data_space(new_x_min, new_x_max, new_y_min, new_y_max)
 
@@ -687,11 +690,11 @@ def main():
 
     # Create a inner viewport
     inner_viewport = Viewport(int(canvas.get_width() / 4), int(canvas.get_height() / 4), int(canvas.get_width() / 2), int(canvas.get_height() / 2))
-    # inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.85), int(canvas.get_height() * 0.85))
+    # inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
     # inner_viewport = Viewport(int(canvas.get_width() / 3), int(canvas.get_height() / 4), int(canvas.get_width() / 3), int(canvas.get_height() / 2))
 
     axes_display = AxesDisplay(canvas, inner_viewport)
-    axes_display.set_limits_data_space(-0.2, +2.0, -2.0, +1.5)
+    axes_display.set_limits_data_space(-1.0, +1.0, -1.0, +1.0)
     render_items_axes = axes_display.get_render_items()
 
     renderer_name = ExampleHelper.get_renderer_name()
@@ -707,7 +710,7 @@ def main():
     def generate_visual_points(point_count: int, viewport: Viewport, axes_transform_numpy: np.ndarray) -> list[RenderItem]:
         # Generate a sinusoidal distribution of points
         x_values = np.linspace(-1.0, +1.0, point_count, dtype=np.float32)
-        y_values = np.sin(x_values * 2.0 * 2.0 * np.pi).astype(np.float32)
+        y_values = np.sin(x_values * np.pi).astype(np.float32)
         z_values = np.zeros(point_count, dtype=np.float32)
         positions_numpy = np.vstack((x_values, y_values, z_values)).T.astype(np.float32)
 
