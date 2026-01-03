@@ -12,7 +12,6 @@ from gsp.core import Canvas, Viewport, Event
 from gsp.core.camera import Camera
 from gsp.visuals import Segments, Texts
 from gsp.types import CapStyle
-from gsp_extra.bufferx import Bufferx
 from gsp.types import BufferType
 from gsp.types import Buffer
 from gsp.constants import Constants
@@ -20,6 +19,7 @@ from gsp.utils.unit_utils import UnitUtils
 from gsp.utils.viewport_unit_utils import ViewportUnitUtils
 from gsp_extra.mpl3d import glm
 from gsp_extra.misc.render_item import RenderItem
+from gsp_extra.bufferx import Bufferx
 
 
 class AxesDisplayNewLimitsEventCallback(Protocol):
