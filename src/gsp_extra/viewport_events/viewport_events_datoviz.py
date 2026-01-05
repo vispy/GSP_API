@@ -102,10 +102,12 @@ class ViewportEventsDatoviz(ViewportEventsBase):
                 return
 
             # Read dvz_mouse_event properties
-            dvz_event_name = dvz_mouse_event.mouse_event()
-            dvz_mouse_pos = dvz_mouse_event.pos()
-            dvz_button_name = dvz_mouse_event.button_name()
-            dvz_wheel = dvz_mouse_event.wheel()
+            dvz_event_name: str = dvz_mouse_event.mouse_event()
+            dvz_mouse_pos: tuple[float, float] = dvz_mouse_event.pos()
+            dvz_mouse_x_px: float = dvz_mouse_pos[0]
+            dvz_mouse_y_px: float = self._renderer.get_canvas().get_height() - dvz_mouse_pos[1]
+            dvz_button_name: str = dvz_mouse_event.button_name()
+            dvz_wheel: float | None = dvz_mouse_event.wheel()
 
             # Convert fields to our MouseEvent
             if dvz_event_name == "press":
@@ -120,8 +122,13 @@ class ViewportEventsDatoviz(ViewportEventsBase):
                 print(f'"Unknown dvz mouse event name: {dvz_event_name}"')
                 return  # Unknown event
 
-            event_x: float = dvz_mouse_pos[0]
-            event_y: float = dvz_mouse_pos[1]
+            event_x: float = (dvz_mouse_x_px - self._viewport.get_x()) / self._viewport.get_width() * 2.0 - 1.0
+            event_y: float = (dvz_mouse_y_px - self._viewport.get_y()) / self._viewport.get_height() * 2.0 - 1.0
+
+            # print(f"event_x: {event_x}, event_y: {event_y}")
+            # print(
+            #     f"dvz_mouse_x_px: {dvz_mouse_x_px}, dvz_mouse_y_px: {dvz_mouse_y_px}viewport x:{self._viewport.get_x()}, y:{self._viewport.get_y()}, w:{self._viewport.get_width()}, h:{self._viewport.get_height()}"
+            # )
 
             left_button: bool = dvz_button_name == "left"
             middle_button: bool = dvz_button_name == "middle"

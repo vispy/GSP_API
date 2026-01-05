@@ -199,13 +199,19 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
 
         mouse_x = mpl_mouse_event.x / UnitUtils.device_pixel_ratio()
         mouse_y = mpl_mouse_event.y / UnitUtils.device_pixel_ratio()
-        x_viewport = mouse_x - self._viewport.get_x()
-        y_viewport = mouse_y - self._viewport.get_y()
+        # x_viewport = mouse_x - self._viewport.get_x()
+        # y_viewport = mouse_y - self._viewport.get_y()
+
+        event_x: float = ((mouse_x - self._viewport.get_x()) / self._viewport.get_width() - 0.5) * 2.0
+        event_y: float = ((mouse_y - self._viewport.get_y()) / self._viewport.get_height() - 0.5) * 2.0
+
+        # print(f"Converted mouse_x: {mouse_x}, mouse_y: {mouse_y} to event_x: {event_x}, event_y: {event_y}")
+
         mouse_event = MouseEvent(
             viewport_uuid=self._viewport.get_uuid(),
             event_type=event_type,
-            x_ndc=(x_viewport / self._viewport.get_width() - 0.5) * 2.0,
-            y_ndc=(y_viewport / self._viewport.get_height() - 0.5) * 2.0,
+            x_ndc=event_x,
+            y_ndc=event_y,
             left_button=mpl_mouse_event.button == 1,
             middle_button=mpl_mouse_event.button == 2,
             right_button=mpl_mouse_event.button == 3,
