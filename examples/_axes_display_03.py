@@ -103,15 +103,8 @@ def main():
     #
     # =============================================================================
 
-    # render_items = render_items_points + axes_render_items
-    # render_items = render_items_axes
-
-    # =============================================================================
-    #
-    # =============================================================================
-    def render_it():
+    def render_axes():
         """Event handle to update points model matrices on axes limits change."""
-        print("Rendering...")
         # Get the axes transform matrix
         axes_transform_numpy = axes_display.get_transform_matrix_numpy()
 
@@ -135,6 +128,9 @@ def main():
             [render_item.camera for render_item in render_items],
         )
 
+    # =============================================================================
+    #
+    # =============================================================================
     needs_render: bool = False
     last_render_time: float = 0.0
     max_delta_time_between_renders: float = 1.0 / 60.0  # seconds
@@ -148,11 +144,7 @@ def main():
     axes_display.new_limits_event.subscribe(on_new_limits)
 
     # Initial render
-    on_new_limits()
-
-    # =============================================================================
-    #
-    # =============================================================================
+    render_axes()
 
     @animator.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:
@@ -160,7 +152,7 @@ def main():
         nonlocal needs_render, last_render_time
 
         if needs_render and (time.time() - last_render_time) >= max_delta_time_between_renders:
-            render_it()
+            render_axes()
             needs_render = False
             last_render_time = time.time()
 
