@@ -1,5 +1,5 @@
-"""
-Run all example scripts in this directory sequentially.
+"""Run all example scripts in this directory sequentially.
+
 It helps testing that all examples run without errors.
 """
 
@@ -19,26 +19,30 @@ __dirname__ = os.path.dirname(os.path.abspath(__file__))
 # Colorama alias
 # =============================================================================
 def text_cyan(text: str) -> str:
+    """Return the given text string wrapped in cyan color codes."""
     return colorama.Fore.CYAN + text + colorama.Style.RESET_ALL
 
 
 def text_green(text: str) -> str:
+    """Return the given text string wrapped in green color codes."""
     return colorama.Fore.GREEN + text + colorama.Style.RESET_ALL
 
 
 def text_red(text: str) -> str:
+    """Return the given text string wrapped in red color codes."""
     return colorama.Fore.RED + text + colorama.Style.RESET_ALL
 
 
 # =============================================================================
 # launch example script
 # =============================================================================
-def launch_example(cmdline_args: list[str], env_variables: dict[str, str]) -> bool:
-    """
-    Launches the example script with the given command line arguments.
+def launch_example(cmdline_args: list[str], env_variables: dict[str, str], verbose: bool) -> bool:
+    """Launches the example script with the given command line arguments.
 
     Arguments:
         cmdline_args: List of command line arguments to pass to the script.
+        env_variables: Environment variables to set for the script.
+        verbose: If True, print more detailed output.
 
     Returns:
         True if the script ran successfully, False otherwise.
@@ -58,9 +62,9 @@ def launch_example(cmdline_args: list[str], env_variables: dict[str, str]) -> bo
         # print("Output:", result.stdout)
         run_success = True if result.returncode == 0 else False
 
-    except subprocess.CalledProcessError as e:
-        # print("Script B failed!")
-        # print("Error Output:", e.stderr)
+    except subprocess.CalledProcessError as error:
+        if verbose:
+            print("Error Output:", error.stderr)
         run_success = False
 
     return run_success
@@ -72,6 +76,7 @@ def launch_example(cmdline_args: list[str], env_variables: dict[str, str]) -> bo
 
 
 def parse_argv_split():
+    """Parse sys.argv to split local args and example args."""
     if "--" not in sys.argv:
         local_args = sys.argv[1:]
         example_args = []
@@ -83,20 +88,22 @@ def parse_argv_split():
 
 
 def main() -> None:
+    """Main function to run all example scripts."""
     # Split local args and launcher.py args
     local_args, example_args = parse_argv_split()
+
+    print(f"local_args: {local_args}")
+    print(f"example_args: {example_args}")
 
     # parse command line arguments
     parser = argparse.ArgumentParser(
         description="Run all example scripts in this directory.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument("--debug", action="store_true", help="Enable debug mode with more verbose output.")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose mode with more verbose output.")
     args = parser.parse_args(local_args)
 
-    # Set debug mode
-    if args.debug:
-        print("Debug mode is enabled.")
+    verbose_mode = True if args.verbose else False
 
     # get script paths in the examples folder
     examples_folder = f"{__dirname__}/../examples"
@@ -139,7 +146,7 @@ def main() -> None:
             }
 
             # launch the example script
-            run_success = launch_example([sys.executable, script_path, *example_args], env_variables=env_variables)
+            run_success = launch_example([sys.executable, script_path, *example_args], env_variables=env_variables, verbose=verbose_mode)
 
             # display X in red if failed, or a check in green if successful
             if run_success:
