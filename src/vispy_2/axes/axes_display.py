@@ -58,7 +58,8 @@ class AxesDisplay:
         self.new_limits_event = Event[AxesDisplayNewLimitsEventCallback]()
         """Event triggered when the axes limits are changed.
         
-        Allow to render visuals and axes synchronously when axes limits change."""
+        Allow to render visuals and axes synchronously when axes limits change.
+        """
 
         # Initialize render items
         self._axes_segments_render_item: RenderItem | None = None

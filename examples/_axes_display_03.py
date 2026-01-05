@@ -1,4 +1,4 @@
-"""Example demonstrating viewport NDC metric conversions."""
+"""Example demonstrating the AxesDisplay with pan and zoom functionality."""
 
 # stdlib imports
 import time
@@ -38,9 +38,10 @@ def main():
     inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
     # inner_viewport = Viewport(int(canvas.get_width() / 3), int(canvas.get_height() / 4), int(canvas.get_width() / 3), int(canvas.get_height() / 2))
 
+    # Create an AxesDisplay for the inner viewport
     axes_display = AxesDisplay(canvas, inner_viewport)
+    # Set initial limits in data units
     axes_display.set_limits_dunit(-2.0, +2.0, -2.0, +2.0)
-    axes_render_items = axes_display.get_render_items()
 
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
@@ -131,10 +132,16 @@ def main():
     # =============================================================================
     #
     # =============================================================================
+
+    # Initial render
+    render_axes()
+
+    # define variables to control rendering frequency
     needs_render: bool = False
     last_render_time: float = 0.0
     max_delta_time_between_renders: float = 1.0 / 60.0  # seconds
 
+    # Define the event handler for new limits for the axes display
     def on_new_limits():
         """Event handle to update points model matrices on axes limits change."""
         nonlocal needs_render
@@ -142,9 +149,6 @@ def main():
 
     # Subscribe to new limits event - thus updating axes visuals on zoom/pan
     axes_display.new_limits_event.subscribe(on_new_limits)
-
-    # Initial render
-    render_axes()
 
     @animator.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:
