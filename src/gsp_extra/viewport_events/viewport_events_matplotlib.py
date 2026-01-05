@@ -1,4 +1,4 @@
-""" "MatplotlibRenderer event handler for viewport events."""
+"""MatplotlibRenderer event handler for viewport events."""
 
 # stdlib imports
 from typing import Any
