@@ -199,9 +199,6 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
 
         mouse_x = mpl_mouse_event.x / UnitUtils.device_pixel_ratio()
         mouse_y = mpl_mouse_event.y / UnitUtils.device_pixel_ratio()
-        # x_viewport = mouse_x - self._viewport.get_x()
-        # y_viewport = mouse_y - self._viewport.get_y()
-
         event_x: float = ((mouse_x - self._viewport.get_x()) / self._viewport.get_width() - 0.5) * 2.0
         event_y: float = ((mouse_y - self._viewport.get_y()) / self._viewport.get_height() - 0.5) * 2.0
 
