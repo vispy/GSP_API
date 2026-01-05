@@ -1,3 +1,9 @@
+- fix blinking in matplotlib axes display when resizing/panning
+- fix axe panzoom in datoviz : it is zooming too much
+  - bug may be in viewport events datoviz - like the button release is not well handled
+- make gsp_extra a real package
+- make vispy_2 a real package
+  - depends on gsp_extra
 - about porting pyramid
   - sub sample data to make it addable on github data (aka less 2gb limit)
 - rendering visual MUST call the `.sanity_check_attributes_buffer()`
