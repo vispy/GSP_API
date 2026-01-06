@@ -190,4 +190,4 @@ class AnimatorDatoviz(AnimatorBase):
         # changed_visuals is not used by datoviz, but could be used in the future
 
         # Render the scene to update the visuals
-        self._datoviz_renderer.render(self._viewports, self._visuals, self._model_matrices, self._cameras)
+        self._datoviz_renderer.render(self._viewports, self._visuals, self._model_matrices, self._cameras, return_image=False)
