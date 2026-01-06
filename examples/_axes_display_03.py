@@ -121,21 +121,6 @@ def main():
         # Combine all render items
         render_items = render_items_points + render_items_axes
 
-        # from gsp_datoviz.renderer.datoviz_renderer import DatovizRenderer
-        # from gsp_matplotlib.renderer.matplotlib_renderer import MatplotlibRenderer
-        # from gsp_network.renderer.network_renderer import NetworkRenderer
-        # import typing
-
-        # if isinstance(renderer_base, DatovizRenderer):
-        #     datovizRenderer = typing.cast(DatovizRenderer, renderer_base)
-        #     print(f"Rendering {len(datovizRenderer._dvz_visuals)} items with DatovizRenderer")
-        # elif isinstance(renderer_base, MatplotlibRenderer):
-        #     matplotlibRenderer = typing.cast(MatplotlibRenderer, renderer_base)
-        # elif isinstance(renderer_base, NetworkRenderer):
-        #     networkRenderer = typing.cast(NetworkRenderer, renderer_base)
-        # else:
-        #     raise NotImplementedError(f"Renderer '{type(renderer_base)}' not supported in this example.")
-
         # Render all render items
         renderer_base.render(
             [render_item.viewport for render_item in render_items],

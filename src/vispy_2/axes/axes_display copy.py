@@ -114,6 +114,13 @@ class AxesDisplay:
 
     def get_render_items(self) -> list[RenderItem]:
         """Get the render items for the axes display."""
+        # # sanity check
+        # assert self._axes_segments_render_item is not None, "Axes segments render item MUST be initialized"
+        # assert self._ticks_horizontal_render_item is not None, "Ticks horizontal render item MUST be initialized"
+        # assert self._ticks_vertical_render_item is not None, "Ticks vertical render item MUST be initialized"
+        # assert self._texts_horizontal_render_item is not None, "Texts horizontal render item MUST be initialized"
+        # assert self._texts_vertical_render_item is not None, "Texts vertical render item MUST be initialized"
+
         # Collect all render items into a list
         render_items: list[RenderItem] = []
         if self._axes_segments_render_item is not None:
@@ -135,11 +142,9 @@ class AxesDisplay:
 
     def _build_render_items(self) -> None:
         """Build the render items for the axes display."""
-        has_tick_horizontal = AxesDisplay._has_tick_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min_dunit, self._x_max_dunit)
-        has_tick_vertical = AxesDisplay._has_tick_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min_dunit, self._y_max_dunit)
-
+        # Create axes segments
         # =============================================================================
-        # Create new axes segments, preserving UUIDs to avoid recreating visuals
+        #
         # =============================================================================
         axes_segments_uuid: str | None = self._axes_segments_render_item.visual_base.get_uuid() if self._axes_segments_render_item is not None else None
         self._axes_segments_render_item = RenderItem(
@@ -152,98 +157,97 @@ class AxesDisplay:
             self._axes_segments_render_item.visual_base.set_uuid(axes_segments_uuid)
 
         # =============================================================================
-        # Create new horizontal ticks, preserving UUIDs to avoid recreating visuals
+        #
         # =============================================================================
-        if has_tick_horizontal is True:
-            ticks_horizontal_uuid: str | None = (
-                self._ticks_horizontal_render_item.visual_base.get_uuid() if self._ticks_horizontal_render_item is not None else None
-            )
-            self._ticks_horizontal_render_item = RenderItem(
-                self._outter_viewport_unit.get_viewport(),
-                AxesDisplay._generate_ticks_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min_dunit, self._x_max_dunit),
-                Bufferx.mat4_identity(),
-                Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
-            )
-            if ticks_horizontal_uuid is not None:
-                self._ticks_horizontal_render_item.visual_base.set_uuid(ticks_horizontal_uuid)
-        else:
-            self._ticks_horizontal_render_item = None
+        ticks_horizontal_uuid: str | None = (
+            self._ticks_horizontal_render_item.visual_base.get_uuid() if self._ticks_horizontal_render_item is not None else None
+        )
+        self._ticks_horizontal_render_item = RenderItem(
+            self._outter_viewport_unit.get_viewport(),
+            AxesDisplay._generate_ticks_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min_dunit, self._x_max_dunit),
+            Bufferx.mat4_identity(),
+            Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
+        )
+        if ticks_horizontal_uuid is not None:
+            self._ticks_horizontal_render_item.visual_base.set_uuid(ticks_horizontal_uuid)
 
         # =============================================================================
-        # Create new vertical ticks, preserving UUIDs to avoid recreating visuals
+        #
         # =============================================================================
-        if has_tick_vertical is True:
-            ticks_vertical_uuid: str | None = self._ticks_vertical_render_item.visual_base.get_uuid() if self._ticks_vertical_render_item is not None else None
-            self._ticks_vertical_render_item = RenderItem(
-                self._outter_viewport_unit.get_viewport(),
-                AxesDisplay._generate_ticks_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min_dunit, self._y_max_dunit),
-                Bufferx.mat4_identity(),
-                Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
-            )
-            if ticks_vertical_uuid is not None:
-                self._ticks_vertical_render_item.visual_base.set_uuid(ticks_vertical_uuid)
-        else:
-            self._ticks_vertical_render_item = None
+        ticks_vertical_uuid: str | None = self._ticks_vertical_render_item.visual_base.get_uuid() if self._ticks_vertical_render_item is not None else None
+        self._ticks_vertical_render_item = RenderItem(
+            self._outter_viewport_unit.get_viewport(),
+            AxesDisplay._generate_ticks_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min_dunit, self._y_max_dunit),
+            Bufferx.mat4_identity(),
+            Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
+        )
+        if ticks_vertical_uuid is not None:
+            self._ticks_vertical_render_item.visual_base.set_uuid(ticks_vertical_uuid)
 
         # =============================================================================
-        # Create new horizontal texts, preserving UUIDs to avoid recreating visuals
+        #
         # =============================================================================
-        if has_tick_horizontal is True:
-            texts_horizontal_uuid: str | None = (
-                self._texts_horizontal_render_item.visual_base.get_uuid() if self._texts_horizontal_render_item is not None else None
-            )
-            self._texts_horizontal_render_item = RenderItem(
-                self._outter_viewport_unit.get_viewport(),
-                AxesDisplay._generate_texts_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min_dunit, self._x_max_dunit),
-                Bufferx.mat4_identity(),
-                Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
-            )
-            if texts_horizontal_uuid is not None:
-                self._texts_horizontal_render_item.visual_base.set_uuid(texts_horizontal_uuid)
-        else:
-            self._texts_horizontal_render_item = None
+        texts_horizontal_uuid: str | None = (
+            self._texts_horizontal_render_item.visual_base.get_uuid() if self._texts_horizontal_render_item is not None else None
+        )
+        self._texts_horizontal_render_item = RenderItem(
+            self._outter_viewport_unit.get_viewport(),
+            AxesDisplay._generate_texts_horizontal(self._inner_viewport_unit, self._outter_viewport_unit, self._x_min_dunit, self._x_max_dunit),
+            Bufferx.mat4_identity(),
+            Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
+        )
+        if texts_horizontal_uuid is not None:
+            self._texts_horizontal_render_item.visual_base.set_uuid(texts_horizontal_uuid)
 
         # =============================================================================
-        # Create new vertical texts, preserving UUIDs to avoid recreating visuals
+        #
         # =============================================================================
-        if has_tick_vertical is True:
-            texts_vertical_uuid: str | None = self._texts_vertical_render_item.visual_base.get_uuid() if self._texts_vertical_render_item is not None else None
-            self._texts_vertical_render_item = RenderItem(
-                self._outter_viewport_unit.get_viewport(),
-                AxesDisplay._generate_texts_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min_dunit, self._y_max_dunit),
-                Bufferx.mat4_identity(),
-                Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
-            )
-            if texts_vertical_uuid is not None:
-                self._texts_vertical_render_item.visual_base.set_uuid(texts_vertical_uuid)
-        else:
-            self._texts_vertical_render_item = None
+        texts_vertical_uuid: str | None = self._texts_vertical_render_item.visual_base.get_uuid() if self._texts_vertical_render_item is not None else None
+        self._texts_vertical_render_item = RenderItem(
+            self._outter_viewport_unit.get_viewport(),
+            AxesDisplay._generate_texts_vertical(self._inner_viewport_unit, self._outter_viewport_unit, self._y_min_dunit, self._y_max_dunit),
+            Bufferx.mat4_identity(),
+            Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
+        )
+        if texts_vertical_uuid is not None:
+            self._texts_vertical_render_item.visual_base.set_uuid(texts_vertical_uuid)
 
     @staticmethod
-    def _has_tick_horizontal(
-        inner_viewport_unit: ViewportUnitUtils,
-        outter_viewport_unit: ViewportUnitUtils,
-        x_min_dunit: float,
-        x_max_dunit: float,
-    ) -> bool:
-        """Check if there is at least one tick to display for the horizontal axis."""
-        coords_numpy = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
+    def _generate_axes_segments(inner_viewport_unit: ViewportUnitUtils, outter_viewport_unit: ViewportUnitUtils) -> Segments:
+        """Generate axes segments in NDC units for the given viewport."""
+        inner_viewport = inner_viewport_unit.get_viewport()
+        canvas = inner_viewport_unit.get_canvas()
 
-        has_tick_horizontal = len(coords_numpy) > 0
-        return has_tick_horizontal
+        # Compute NDC coordinates of the inner viewport corners in outter viewport
+        delta_min_ndc = outter_viewport_unit.delta_pixel_to_ndc(inner_viewport.get_x(), inner_viewport.get_y())
+        delta_max_ndc = outter_viewport_unit.delta_pixel_to_ndc(
+            inner_viewport.get_x() + inner_viewport.get_width(),
+            inner_viewport.get_y() + inner_viewport.get_height(),
+        )
+        coord_min_ndc = (-1.0 + delta_min_ndc[0], -1.0 + delta_min_ndc[1])
+        coord_max_ndc = (-1.0 + delta_max_ndc[0], -1.0 + delta_max_ndc[1])
 
-    @staticmethod
-    def _has_tick_vertical(
-        inner_viewport_unit: ViewportUnitUtils,
-        outter_viewport_unit: ViewportUnitUtils,
-        y_min_dunit: float,
-        y_max_dunit: float,
-    ) -> bool:
-        """Check if there is at least one tick to display for the vertical axis."""
-        coords_numpy = AxesDisplay._compute_tick_coords_vertical(inner_viewport_unit, outter_viewport_unit, y_min_dunit, y_max_dunit)
+        # Create segments for the axes
+        segments_count = 2
+        positions_numpy = np.array(
+            [
+                [coord_min_ndc[0], coord_min_ndc[1], 0.0],
+                [coord_max_ndc[0], coord_min_ndc[1], 0.0],
+                [coord_min_ndc[0], coord_min_ndc[1], 0.0],
+                [coord_min_ndc[0], coord_max_ndc[1], 0.0],
+            ],
+            dtype=np.float32,
+        )
+        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
-        has_tick_vertical = len(coords_numpy) > 0
-        return has_tick_vertical
+        line_widths_numpy = np.array([UnitUtils.pixel_to_point(2, canvas.get_dpi())] * segments_count, dtype=np.float32)
+        line_widths_buffer = Bufferx.from_numpy(line_widths_numpy, BufferType.float32)
+
+        colors_buffer = Buffer(segments_count, BufferType.rgba8)
+        colors_buffer.set_data(Constants.Color.black * segments_count, 0, segments_count)
+
+        segments = Segments(positions_buffer, line_widths_buffer, CapStyle.ROUND, colors_buffer)
+        return segments
 
     @staticmethod
     def _compute_tick_coords_horizontal(
@@ -314,43 +318,6 @@ class AxesDisplay:
         return coords_numpy
 
     @staticmethod
-    def _generate_axes_segments(inner_viewport_unit: ViewportUnitUtils, outter_viewport_unit: ViewportUnitUtils) -> Segments:
-        """Generate axes segments in NDC units for the given viewport."""
-        inner_viewport = inner_viewport_unit.get_viewport()
-        canvas = inner_viewport_unit.get_canvas()
-
-        # Compute NDC coordinates of the inner viewport corners in outter viewport
-        delta_min_ndc = outter_viewport_unit.delta_pixel_to_ndc(inner_viewport.get_x(), inner_viewport.get_y())
-        delta_max_ndc = outter_viewport_unit.delta_pixel_to_ndc(
-            inner_viewport.get_x() + inner_viewport.get_width(),
-            inner_viewport.get_y() + inner_viewport.get_height(),
-        )
-        coord_min_ndc = (-1.0 + delta_min_ndc[0], -1.0 + delta_min_ndc[1])
-        coord_max_ndc = (-1.0 + delta_max_ndc[0], -1.0 + delta_max_ndc[1])
-
-        # Create segments for the axes
-        segments_count = 2
-        positions_numpy = np.array(
-            [
-                [coord_min_ndc[0], coord_min_ndc[1], 0.0],
-                [coord_max_ndc[0], coord_min_ndc[1], 0.0],
-                [coord_min_ndc[0], coord_min_ndc[1], 0.0],
-                [coord_min_ndc[0], coord_max_ndc[1], 0.0],
-            ],
-            dtype=np.float32,
-        )
-        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
-
-        line_widths_numpy = np.array([UnitUtils.pixel_to_point(2, canvas.get_dpi())] * segments_count, dtype=np.float32)
-        line_widths_buffer = Bufferx.from_numpy(line_widths_numpy, BufferType.float32)
-
-        colors_buffer = Buffer(segments_count, BufferType.rgba8)
-        colors_buffer.set_data(Constants.Color.black * segments_count, 0, segments_count)
-
-        segments = Segments(positions_buffer, line_widths_buffer, CapStyle.ROUND, colors_buffer)
-        return segments
-
-    @staticmethod
     def _generate_ticks_horizontal(
         inner_viewport_unit: ViewportUnitUtils,
         outter_viewport_unit: ViewportUnitUtils,
@@ -358,6 +325,32 @@ class AxesDisplay:
         x_max_dunit: float,
     ) -> Segments:
         canvas = outter_viewport_unit.get_canvas()
+
+        # inner_viewport = inner_viewport_unit.get_viewport()
+        # # Create positions for ticks from -num_ticks/2 to +num_ticks/2
+        # positions_array = []
+        # for tick_x_inner_dunit in range(math.ceil(x_min_dunit), math.ceil(x_max_dunit) + 1):
+        #     # skip ticks outside data space limits
+        #     if tick_x_inner_dunit > x_max_dunit:
+        #         continue
+
+        #     # compute tick_x_outter_ndc
+        #     tick_x_inner_ndc = (tick_x_inner_dunit - x_min_dunit) / (x_max_dunit - x_min_dunit) * 2.0 - 1.0
+        #     tick_x_outter_delta_pixel = inner_viewport.get_x() + ((tick_x_inner_ndc + 1.0) / 2.0) * inner_viewport.get_width()
+        #     tick_x_outter_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(tick_x_outter_delta_pixel, 0.0)
+        #     tick_x_outter_ndc = tick_x_outter_delta_ndc - 1.0
+
+        #     # compute tick_y_outter_ndc
+        #     tick_y_inner_ndc = -1.0  # at bottom of inner viewport
+        #     tick_y_outter_pixel = inner_viewport.get_y() + ((tick_y_inner_ndc + 1.0) / 2.0) * inner_viewport.get_height()
+        #     _, tick_y_outter_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, tick_y_outter_pixel)
+        #     tick_y_outter_ndc = tick_y_outter_delta_ndc - 1.0
+
+        #     # compute tick_height_ndc
+        #     _, tick_height_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.2)
+
+        #     positions_array.append([tick_x_outter_ndc, tick_y_outter_ndc + 0.0, 0.0])
+        #     positions_array.append([tick_x_outter_ndc, tick_y_outter_ndc - tick_height_ndc, 0.0])
 
         # get tick coordinates
         coords_numpy = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
@@ -396,6 +389,32 @@ class AxesDisplay:
         y_max_dunit: float,
     ) -> Segments:
         canvas = outter_viewport_unit.get_canvas()
+        # inner_viewport = inner_viewport_unit.get_viewport()
+
+        # # Create positions for ticks from -num_ticks/2 to +num_ticks/2
+        # positions_array = []
+        # for tick_y_inner_dunit in range(math.ceil(y_min_dunit), math.ceil(y_max_dunit) + 1):
+        #     # skip ticks outside data space limits
+        #     if tick_y_inner_dunit > y_max_dunit:
+        #         continue
+
+        #     # compute tick_y_outter_ndc
+        #     tick_y_inner_ndc = (tick_y_inner_dunit - y_min_dunit) / (y_max_dunit - y_min_dunit) * 2.0 - 1.0
+        #     tick_y_outter_delta_pixel = inner_viewport.get_y() + ((tick_y_inner_ndc + 1.0) / 2.0) * inner_viewport.get_height()
+        #     tick_y_outter_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(tick_y_outter_delta_pixel, 0.0)
+        #     tick_y_outter_ndc = tick_y_outter_delta_ndc - 1.0
+
+        #     # compute tick_y_outter_ndc
+        #     tick_x_inner_ndc = -1.0  # at bottom of inner viewport
+        #     tick_x_outter_pixel = inner_viewport.get_x() + ((tick_x_inner_ndc + 1.0) / 2.0) * inner_viewport.get_width()
+        #     _, tick_x_outter_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, tick_x_outter_pixel)
+        #     tick_x_outter_ndc = tick_x_outter_delta_ndc - 1.0
+
+        #     # compute tick_height_ndc
+        #     tick_width_ndc, _ = outter_viewport_unit.delta_cm_to_ndc(0.2, 0.0)
+
+        #     positions_array.append([tick_x_outter_ndc, tick_y_outter_ndc + 0.0, 0.0])
+        #     positions_array.append([tick_x_outter_ndc - tick_width_ndc, tick_y_outter_ndc, 0.0])
 
         # get tick coordinates
         coords_numpy = AxesDisplay._compute_tick_coords_vertical(inner_viewport_unit, outter_viewport_unit, y_min_dunit, y_max_dunit)
@@ -434,6 +453,31 @@ class AxesDisplay:
         x_max_dunit: float,
     ) -> Texts:
         canvas = outter_viewport_unit.get_canvas()
+        # inner_viewport = inner_viewport_unit.get_viewport()
+
+        # # Create positions for ticks from -num_ticks/2 to +num_ticks/2
+        # positions_array = []
+        # for tick_x_inner_dunit in range(math.ceil(x_min_dunit), math.ceil(x_max_dunit) + 1):
+        #     # skip ticks outside data space limits
+        #     if tick_x_inner_dunit > x_max_dunit:
+        #         continue
+
+        #     # compute tick_x_outter_ndc
+        #     tick_x_inner_ndc = (tick_x_inner_dunit - x_min_dunit) / (x_max_dunit - x_min_dunit) * 2.0 - 1.0
+        #     tick_x_outter_delta_pixel = inner_viewport.get_x() + ((tick_x_inner_ndc + 1.0) / 2.0) * inner_viewport.get_width()
+        #     tick_x_outter_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(tick_x_outter_delta_pixel, 0.0)
+        #     tick_x_outter_ndc = tick_x_outter_delta_ndc - 1.0
+
+        #     # compute tick_y_outter_ndc
+        #     tick_y_inner_ndc = -1.0  # at bottom of inner viewport
+        #     tick_y_outter_delta_pixel = inner_viewport.get_y() + ((tick_y_inner_ndc + 1.0) / 2.0) * inner_viewport.get_height()
+        #     _, tick_y_outter_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, tick_y_outter_delta_pixel)
+        #     tick_y_outter_ndc = tick_y_outter_delta_ndc - 1.0
+
+        #     # compute tick_height_ndc
+        #     _, tick_height_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.3)
+
+        #     positions_array.append([tick_x_outter_ndc, tick_y_outter_ndc - tick_height_ndc, 0.0])
 
         # get tick coordinates
         coords_numpy = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
@@ -486,6 +530,31 @@ class AxesDisplay:
         y_max_dunit: float,
     ) -> Texts:
         canvas = outter_viewport_unit.get_canvas()
+        # inner_viewport = inner_viewport_unit.get_viewport()
+
+        # # Create positions for ticks from -num_ticks/2 to +num_ticks/2
+        # positions_array = []
+        # for tick_y_inner_dunit in range(math.ceil(y_min_dunit), math.ceil(y_max_dunit) + 1):
+        #     # skip texts outside data space limits
+        #     if tick_y_inner_dunit > y_max_dunit:
+        #         continue
+
+        #     # compute tick_y_outter_ndc
+        #     tick_y_inner_ndc = (tick_y_inner_dunit - y_min_dunit) / (y_max_dunit - y_min_dunit) * 2.0 - 1.0
+        #     tick_y_outter_delta_pixel = inner_viewport.get_y() + ((tick_y_inner_ndc + 1.0) / 2.0) * inner_viewport.get_height()
+        #     tick_y_outter_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(tick_y_outter_delta_pixel, 0.0)
+        #     tick_y_outter_ndc = tick_y_outter_delta_ndc - 1.0
+
+        #     # compute tick_y_outter_ndc
+        #     tick_x_inner_ndc = -1.0  # at bottom of inner viewport
+        #     tick_x_outter_pixel = inner_viewport.get_x() + ((tick_x_inner_ndc + 1.0) / 2.0) * inner_viewport.get_width()
+        #     _, tick_x_outter_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, tick_x_outter_pixel)
+        #     tick_x_outter_ndc = tick_x_outter_delta_ndc - 1.0
+
+        #     # compute tick_height_ndc
+        #     tick_width_ndc, _ = outter_viewport_unit.delta_cm_to_ndc(0.3, 0.0)
+
+        #     positions_array.append([tick_x_outter_ndc - tick_width_ndc, tick_y_outter_ndc, 0.0])
 
         # get tick coordinates
         coords_numpy = AxesDisplay._compute_tick_coords_vertical(inner_viewport_unit, outter_viewport_unit, y_min_dunit, y_max_dunit)
