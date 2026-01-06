@@ -94,13 +94,13 @@ def main(save_video: bool):
     # init the animator with the renderer
     animator = ExampleHelper.create_animator(renderer_base)
 
-    # @animator.event_listener
-    # def animator_callback(delta_time: float) -> list[VisualBase]:
-    #     sizes_numpy = np.random.rand(point_count).astype(np.float32) * 40.0 + 10.0
-    #     sizes_buffer.set_data(bytearray(sizes_numpy.tobytes()), 0, sizes_buffer.get_count())
+    @animator.event_listener
+    def animator_callback(delta_time: float) -> list[VisualBase]:
+        sizes_numpy = np.random.rand(point_count).astype(np.float32) * 40.0 + 10.0
+        sizes_buffer.set_data(bytearray(sizes_numpy.tobytes()), 0, sizes_buffer.get_count())
 
-    #     changed_visuals: list[VisualBase] = [points]
-    #     return changed_visuals
+        changed_visuals: list[VisualBase] = [points]
+        return changed_visuals
 
     # start the animation loop
     animator.start([viewport], [points], [model_matrix], [camera])
