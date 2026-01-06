@@ -84,7 +84,7 @@ class AxesPanZoom:
 
         x_min_dunit, x_max_dunit, y_min_dunit, y_max_dunit = self._axes_display.get_limits_dunit()
 
-        print(f"scale_factor: {scale_factor}")
+        # print(f"scale_factor: {scale_factor}")
 
         mouse_x_dunit: float = x_min_dunit + (mouse_event.x_ndc + 1.0) / 2.0 * (x_max_dunit - x_min_dunit)
         mouse_y_dunit: float = y_min_dunit + (mouse_event.y_ndc + 1.0) / 2.0 * (y_max_dunit - y_min_dunit)
