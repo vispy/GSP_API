@@ -1,17 +1,15 @@
 - fix axe panzoom in datoviz : it is zooming too much
   - bug may be in viewport events datoviz - like the button release is not well handled
 - other bugs in datoviz viewport events
-  - out of memory sometime... not sure why/when. yes in axes panzoom example but not in viewport events example
+  - out of memory sometime... not sure why/when. occurs in axes panzoom example but not in viewport events example
   - make a renderer_base.get_stats() and check memory usage
 - Move viewport_event and animator in their own backend package
   - with the type definition in `gsp.core`
-- DONE fix blinking in matplotlib axes display when resizing/panning
-  - added a timeout to limit the number of render during interaction
-- DONE make gsp_extra a real package
-- DONE make vispy_2 a real package
-  - depends on gsp_extra
-- about porting pyramid
-  - sub sample data to make it addable on github data (aka less 2gb limit)
+- invoice changes
+  - started vispy 2.0 package - implementation of axes display and panzoom
+  - made gsp_extra as a real package
+  - animator loop for datoviz and matplotlib
+  - viewport events for datoviz and matplotlib
 - rendering visual MUST call the `.sanity_check_attributes_buffer()`
   - to be done in matplotlib and in datoviz
   - see matplotlib_renderer_texts.py for an example
@@ -91,6 +89,13 @@
     - possibility: set by class or by instance
 
 ---
+- DONE fix blinking in matplotlib axes display when resizing/panning
+  - added a timeout to limit the number of render during interaction
+- DONE make gsp_extra a real package
+- DONE make vispy_2 a real package
+  - depends on gsp_extra
+- about porting pyramid
+  - sub sample data to make it addable on github data (aka less 2gb limit)
 - DONE rewrite all the docstrings to follow numpydoc style
   - https://numpydoc.readthedocs.io/en/latest/format.html
   - document all functions/member/types public to the class
