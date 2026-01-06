@@ -1,8 +1,9 @@
 - fix axe panzoom in datoviz : it is zooming too much
   - bug may be in viewport events datoviz - like the button release is not well handled
-- other bugs in datoviz viewport events
+- other bugs in datoviz viewport events - may be in animator
   - out of memory sometime... not sure why/when. occurs in axes panzoom example but not in viewport events example
   - make a renderer_base.get_stats() and check memory usage
+  - `VZ_LOG_LEVEL=4 GSP_RENDERER=datoviz python ./examples/animator_example.py`
 - Move viewport_event and animator in their own backend package
   - with the type definition in `gsp.core`
 - invoice changes
