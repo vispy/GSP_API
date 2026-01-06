@@ -121,6 +121,21 @@ def main():
         # Combine all render items
         render_items = render_items_points + render_items_axes
 
+        # from gsp_datoviz.renderer.datoviz_renderer import DatovizRenderer
+        # from gsp_matplotlib.renderer.matplotlib_renderer import MatplotlibRenderer
+        # from gsp_network.renderer.network_renderer import NetworkRenderer
+        # import typing
+
+        # if isinstance(renderer_base, DatovizRenderer):
+        #     datovizRenderer = typing.cast(DatovizRenderer, renderer_base)
+        #     print(f"Rendering {len(datovizRenderer._dvz_visuals)} items with DatovizRenderer")
+        # elif isinstance(renderer_base, MatplotlibRenderer):
+        #     matplotlibRenderer = typing.cast(MatplotlibRenderer, renderer_base)
+        # elif isinstance(renderer_base, NetworkRenderer):
+        #     networkRenderer = typing.cast(NetworkRenderer, renderer_base)
+        # else:
+        #     raise NotImplementedError(f"Renderer '{type(renderer_base)}' not supported in this example.")
+
         # Render all render items
         renderer_base.render(
             [render_item.viewport for render_item in render_items],
@@ -130,7 +145,9 @@ def main():
         )
 
     # =============================================================================
-    #
+    # Render everything once before starting the animator
+    # - then rerender only on axes limits change
+    # - limit rerender frequency to avoid blinking during interaction
     # =============================================================================
 
     # Initial render
@@ -153,7 +170,7 @@ def main():
     @animator.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:
         # print(f"{text_cyan('Animator callback')}: delta_time={delta_time:.4f} sec")
-        nonlocal needs_render, last_render_time
+        nonlocal needs_render, last_render_time, max_delta_time_between_renders
 
         if needs_render and (time.time() - last_render_time) >= max_delta_time_between_renders:
             render_axes()
