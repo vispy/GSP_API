@@ -4,6 +4,10 @@
   - out of memory sometime... not sure why/when. occurs in axes panzoom example but not in viewport events example
   - make a renderer_base.get_stats() and check memory usage
   - `VZ_LOG_LEVEL=4 GSP_RENDERER=datoviz python ./examples/animator_example.py`
+- bug in axes_panzoom/display
+  - how to reproduce ? zoom in to the max
+  - currently trigger exception in bufferx.from_numpy()
+  - if no axes ticks are visible, draw nothing
 - Move viewport_event and animator in their own backend package
   - with the type definition in `gsp.core`
 - invoice changes
