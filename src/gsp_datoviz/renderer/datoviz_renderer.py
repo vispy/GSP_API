@@ -1,4 +1,9 @@
-"""Datoviz renderer implementation."""
+"""Datoviz renderer implementation.
+
+- `DVZ_LOG_LEVEL` environment variable can be set to control datoviz logging level.
+  - e.g. `DVZ_LOG_LEVEL=4` to mute all logs
+"""
+
 # stdlib imports
 import os
 from typing import Sequence
@@ -35,9 +40,10 @@ from gsp.types.renderer_base import RendererBase
 
 class DatovizRenderer(RendererBase):
     """Datoviz renderer implementation."""
+
     def __init__(self, canvas: Canvas, offscreen: bool = False) -> None:
         """Initialize the Datoviz renderer.
-        
+
         Args:
             canvas (Canvas): The GSP canvas to render on.
             offscreen (bool, optional): Whether to run the datoviz App in offscreen mode. Defaults to False.
@@ -111,7 +117,7 @@ class DatovizRenderer(RendererBase):
             cameras (Sequence[Camera]): Sequence of cameras for each viewport.
             return_image (bool, optional): Whether to return the rendered image as bytes. Defaults to True.
             image_format (str, optional): The image format to return ("png"). Defaults to "png".
-        
+
         Returns:
             bytes: The rendered image data if return_image is True, else empty bytes.
         """
