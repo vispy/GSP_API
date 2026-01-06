@@ -6,6 +6,8 @@
   - `VZ_LOG_LEVEL=4 GSP_RENDERER=datoviz python ./examples/animator_example.py`
 - bug in axes_panzoom/display
   - how to reproduce ? zoom in to the max
+  - in axes_display.py dont render ticks if no tick is visible
+    - make positions_array in a separate function and use this to test if the array is empty, if so dont create the visual
   - currently trigger exception in bufferx.from_numpy()
   - if no axes ticks are visible, draw nothing
 - Move viewport_event and animator in their own backend package
