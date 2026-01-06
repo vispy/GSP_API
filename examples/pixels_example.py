@@ -1,3 +1,5 @@
+"""Example showing how to use the Pixels visual to render a set of points."""
+
 # stdlib imports
 import os
 import pathlib
@@ -17,6 +19,7 @@ from common.example_helper import ExampleHelper
 
 
 def main():
+    """Main function for the pixels example."""
     # fix random seed for reproducibility
     np.random.seed(0)
 

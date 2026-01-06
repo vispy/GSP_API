@@ -1,3 +1,5 @@
+"""Example showing how to use the Animator to create an animation with random point sizes."""
+
 # stdlib imports
 import os
 import pathlib
@@ -21,6 +23,7 @@ __dirname__ = pathlib.Path(__file__).parent.resolve()
 
 
 def main(save_video: bool):
+    """Main function for the points animator example."""
     # fix random seed for reproducibility
     np.random.seed(0)
 
