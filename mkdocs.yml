@@ -49,3 +49,5 @@ nav:
       - GSP Pydantic: api/gsp_pydantic.md
       - GSP Matplotlib: api/gsp_matplotlib.md
       - GSP Datoviz: api/gsp_datoviz.md
+      - GSP Extra: api/gsp_extra.md
+      - Vispy 2: api/vispy_2.md
