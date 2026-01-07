@@ -1116,6 +1116,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#gsp.types.visual_base.VisualBase.set_uuid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_uuid
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3209,6 +3220,62 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gsp_extra/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Extra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vispy_2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vispy 2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -3964,6 +4031,17 @@
     <span class="md-ellipsis">
       
         get_uuid
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gsp.types.visual_base.VisualBase.set_uuid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_uuid
       
     </span>
   </a>
@@ -10126,8 +10204,7 @@ metadata.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/gsp/types/visual_base.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">14</span>
-<span class="normal">15</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
 <span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
@@ -10150,13 +10227,24 @@ metadata.</p>
 <span class="normal">35</span>
 <span class="normal">36</span>
 <span class="normal">37</span>
-<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VisualBase</span><span class="p">:</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VisualBase</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all visual objects in the GSP library.</span>
 
 <span class="sd">    This class provides fundamental functionality for visual objects including</span>
 <span class="sd">    automatic UUID generation and a userData dictionary for storing custom</span>
 <span class="sd">    metadata.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_uuid&quot;</span><span class="p">,</span> <span class="s2">&quot;userData&quot;</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -10175,6 +10263,14 @@ metadata.</p>
 <span class="sd">            str: The unique identifier.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_uuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the unique identifier of the visual object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuid: The new unique identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span> <span class="o">=</span> <span class="n">uuid</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -10209,14 +10305,14 @@ userData dictionary.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/types/visual_base.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span>
-<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize a new VisualBase instance.</span>
 
 <span class="sd">    Creates a new visual object with a unique identifier and an empty</span>
@@ -10269,19 +10365,85 @@ userData dictionary.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/types/visual_base.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
 <span class="normal">35</span>
 <span class="normal">36</span>
 <span class="normal">37</span>
-<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_uuid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_uuid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the unique identifier of the visual object.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: The unique identifier.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="gsp.types.visual_base.VisualBase.set_uuid" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_uuid</span><span class="p">(</span><span class="n">uuid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+
+<a href="#gsp.types.visual_base.VisualBase.set_uuid" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Set the unique identifier of the visual object.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>uuid</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The new unique identifier.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/gsp/types/visual_base.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_uuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the unique identifier of the visual object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        uuid: The new unique identifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span> <span class="o">=</span> <span class="n">uuid</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -17943,7 +18105,7 @@ colors, and groups for efficient rendering.</p>
 
     <div class="doc doc-contents first">
 
-        <p>"Texts visual module.</p>
+        <p>Texts visual module.</p>
 
 
 
@@ -18198,8 +18360,27 @@ colors, and groups for efficient rendering.</p>
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
-<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Texts</span><span class="p">(</span><span class="n">VisualBase</span><span class="p">):</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Texts</span><span class="p">(</span><span class="n">VisualBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Texts visual.&quot;&quot;&quot;</span>
+
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_positions&quot;</span><span class="p">,</span> <span class="s2">&quot;_strings&quot;</span><span class="p">,</span> <span class="s2">&quot;_colors&quot;</span><span class="p">,</span> <span class="s2">&quot;_font_sizes&quot;</span><span class="p">,</span> <span class="s2">&quot;_anchors&quot;</span><span class="p">,</span> <span class="s2">&quot;_angles&quot;</span><span class="p">,</span> <span class="s2">&quot;_font_name&quot;</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -18332,7 +18513,7 @@ colors, and groups for efficient rendering.</p>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">colors</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">font_sizes</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">anchors</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -18342,8 +18523,8 @@ colors, and groups for efficient rendering.</p>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set multiple attributes at once and then check their validity.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">positions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_positions</span> <span class="o">=</span> <span class="n">positions</span>
-        <span class="k">if</span> <span class="n">texts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span> <span class="o">=</span> <span class="n">texts</span>
+        <span class="k">if</span> <span class="n">strings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span> <span class="o">=</span> <span class="n">strings</span>
         <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_colors</span> <span class="o">=</span> <span class="n">colors</span>
         <span class="k">if</span> <span class="n">font_sizes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -18366,7 +18547,7 @@ colors, and groups for efficient rendering.</p>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sanity_check_attributes_buffer</span><span class="p">(</span>
-        <span class="n">positions</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">positions</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Same as .sanity_check_attributes() but accept only Buffers.</span>
 
@@ -18374,19 +18555,36 @@ colors, and groups for efficient rendering.</p>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># sanity check - each attribute must be a Buffer (not a transform chain)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">Buffer</span><span class="p">),</span> <span class="s2">&quot;Positions must be a Buffer&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;Texts must be a list of strings&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;Texts must be a list of strings&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">Buffer</span><span class="p">),</span> <span class="s2">&quot;Colors must be a Buffer&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">font_sizes</span><span class="p">,</span> <span class="n">Buffer</span><span class="p">),</span> <span class="s2">&quot;Font sizes must be a Buffer&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">Buffer</span><span class="p">),</span> <span class="s2">&quot;Anchors must be a Buffer&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">Buffer</span><span class="p">),</span> <span class="s2">&quot;Angles must be a Buffer&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">font_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s2">&quot;Font name must be a string&quot;</span>
 
-        <span class="n">Texts</span><span class="o">.</span><span class="n">sanity_check_attributes</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">,</span> <span class="n">anchors</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">font_name</span><span class="p">)</span>
+        <span class="c1"># check positions, colors, font_sizes, anchors, angles have the same length as strings</span>
+        <span class="k">assert</span> <span class="n">positions</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">strings</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Positions length must match number of strings. Got </span><span class="si">{</span><span class="n">positions</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> positions vs </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span><span class="si">}</span><span class="s2"> strings&quot;</span>
+        <span class="k">assert</span> <span class="n">colors</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Colors length must match number of strings. Got </span><span class="si">{</span><span class="n">colors</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> colors vs </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span><span class="si">}</span><span class="s2"> strings&quot;</span>
+        <span class="k">assert</span> <span class="n">font_sizes</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">strings</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Font sizes length must match number of strings. Got </span><span class="si">{</span><span class="n">font_sizes</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> font sizes vs </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span><span class="si">}</span><span class="s2"> strings&quot;</span>
+        <span class="k">assert</span> <span class="n">anchors</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Anchors length must match number of strings. Got </span><span class="si">{</span><span class="n">anchors</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> anchors vs </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span><span class="si">}</span><span class="s2"> strings&quot;</span>
+        <span class="k">assert</span> <span class="n">angles</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Angles length must match number of strings. Got </span><span class="si">{</span><span class="n">angles</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> angles vs </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span><span class="si">}</span><span class="s2"> strings&quot;</span>
+
+        <span class="c1"># check font_name is not empty and is a string</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">font_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Font name must be a non-empty string&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">font_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s2">&quot;Font name must be a string&quot;</span>
+
+        <span class="c1"># check all strings are indeed strings</span>
+        <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s2">&quot;All elements in strings must be of type str&quot;</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sanity_check_attributes</span><span class="p">(</span>
         <span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span>
-        <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">colors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span>
         <span class="n">font_sizes</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span>
         <span class="n">anchors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span>
@@ -18397,7 +18595,7 @@ colors, and groups for efficient rendering.</p>
 
 <span class="sd">        Args:</span>
 <span class="sd">            positions: Positions of the texts.</span>
-<span class="sd">            texts: List of text strings.</span>
+<span class="sd">            strings: List of text strings.</span>
 <span class="sd">            colors: Colors of the texts.</span>
 <span class="sd">            font_sizes: Font sizes of the texts.</span>
 <span class="sd">            anchors: Anchor positions of the texts.</span>
@@ -18564,8 +18762,7 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
-<span class="normal">13</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span>
 <span class="normal">16</span>
@@ -18594,7 +18791,8 @@ colors, and groups for efficient rendering.</p>
 <span class="normal">39</span>
 <span class="normal">40</span>
 <span class="normal">41</span>
-<span class="normal">42</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">42</span>
+<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span>
     <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -18647,9 +18845,9 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the attributes are valid and consistent.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sanity_check_attributes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_positions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font_sizes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_anchors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_angles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font_name</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -18674,9 +18872,9 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_anchors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransBuf</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_anchors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransBuf</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get anchor positions of the texts.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_anchors</span>
 </code></pre></div></td></tr></table></div>
@@ -18701,9 +18899,9 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransBuf</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransBuf</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get rotation angles of the texts.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_angles</span>
 </code></pre></div></td></tr></table></div>
@@ -18728,9 +18926,9 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_colors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransBuf</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_colors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransBuf</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get colors of the texts.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colors</span>
 </code></pre></div></td></tr></table></div>
@@ -18755,9 +18953,9 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_font_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_font_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get font name used for the texts.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font_name</span>
 </code></pre></div></td></tr></table></div>
@@ -18782,9 +18980,9 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_font_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransBuf</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_font_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransBuf</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get font sizes of the texts.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font_sizes</span>
 </code></pre></div></td></tr></table></div>
@@ -18809,9 +19007,9 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransBuf</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransBuf</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get positions of the texts.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positions</span>
 </code></pre></div></td></tr></table></div>
@@ -18836,9 +19034,9 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get text strings.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span>
 </code></pre></div></td></tr></table></div>
@@ -18851,7 +19049,7 @@ colors, and groups for efficient rendering.</p>
 
 
 <h4 id="gsp.visuals.texts.Texts.sanity_check_attributes" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">sanity_check_attributes</span><span class="p">(</span><span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <code class="highlight language-python"><span class="n">sanity_check_attributes</span><span class="p">(</span><span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span> <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
@@ -18894,7 +19092,7 @@ colors, and groups for efficient rendering.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>texts</code>
+                <code>strings</code>
             </td>
             <td>
                   <code><span title="list">list</span>[<span title="str">str</span>]</code>
@@ -18994,31 +19192,31 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
-<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">sanity_check_attributes</span><span class="p">(</span>
     <span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span>
-    <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">colors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span>
     <span class="n">font_sizes</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span>
     <span class="n">anchors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">,</span>
@@ -19029,7 +19227,7 @@ colors, and groups for efficient rendering.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        positions: Positions of the texts.</span>
-<span class="sd">        texts: List of text strings.</span>
+<span class="sd">        strings: List of text strings.</span>
 <span class="sd">        colors: Colors of the texts.</span>
 <span class="sd">        font_sizes: Font sizes of the texts.</span>
 <span class="sd">        anchors: Anchor positions of the texts.</span>
@@ -19047,7 +19245,7 @@ colors, and groups for efficient rendering.</p>
 
 
 <h4 id="gsp.visuals.texts.Texts.sanity_check_attributes_buffer" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">sanity_check_attributes_buffer</span><span class="p">(</span><span class="n">positions</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <code class="highlight language-python"><span class="n">sanity_check_attributes_buffer</span><span class="p">(</span><span class="n">positions</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
@@ -19066,8 +19264,7 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">174</span>
-<span class="normal">175</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">175</span>
 <span class="normal">176</span>
 <span class="normal">177</span>
 <span class="normal">178</span>
@@ -19083,9 +19280,27 @@ colors, and groups for efficient rendering.</p>
 <span class="normal">188</span>
 <span class="normal">189</span>
 <span class="normal">190</span>
-<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">sanity_check_attributes_buffer</span><span class="p">(</span>
-    <span class="n">positions</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">positions</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">Buffer</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Same as .sanity_check_attributes() but accept only Buffers.</span>
 
@@ -19093,14 +19308,31 @@ colors, and groups for efficient rendering.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># sanity check - each attribute must be a Buffer (not a transform chain)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">Buffer</span><span class="p">),</span> <span class="s2">&quot;Positions must be a Buffer&quot;</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;Texts must be a list of strings&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;Texts must be a list of strings&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">Buffer</span><span class="p">),</span> <span class="s2">&quot;Colors must be a Buffer&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">font_sizes</span><span class="p">,</span> <span class="n">Buffer</span><span class="p">),</span> <span class="s2">&quot;Font sizes must be a Buffer&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">Buffer</span><span class="p">),</span> <span class="s2">&quot;Anchors must be a Buffer&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">Buffer</span><span class="p">),</span> <span class="s2">&quot;Angles must be a Buffer&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">font_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s2">&quot;Font name must be a string&quot;</span>
 
-    <span class="n">Texts</span><span class="o">.</span><span class="n">sanity_check_attributes</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">,</span> <span class="n">anchors</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">font_name</span><span class="p">)</span>
+    <span class="c1"># check positions, colors, font_sizes, anchors, angles have the same length as strings</span>
+    <span class="k">assert</span> <span class="n">positions</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">strings</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Positions length must match number of strings. Got </span><span class="si">{</span><span class="n">positions</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> positions vs </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span><span class="si">}</span><span class="s2"> strings&quot;</span>
+    <span class="k">assert</span> <span class="n">colors</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Colors length must match number of strings. Got </span><span class="si">{</span><span class="n">colors</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> colors vs </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span><span class="si">}</span><span class="s2"> strings&quot;</span>
+    <span class="k">assert</span> <span class="n">font_sizes</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">strings</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Font sizes length must match number of strings. Got </span><span class="si">{</span><span class="n">font_sizes</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> font sizes vs </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span><span class="si">}</span><span class="s2"> strings&quot;</span>
+    <span class="k">assert</span> <span class="n">anchors</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Anchors length must match number of strings. Got </span><span class="si">{</span><span class="n">anchors</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> anchors vs </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span><span class="si">}</span><span class="s2"> strings&quot;</span>
+    <span class="k">assert</span> <span class="n">angles</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Angles length must match number of strings. Got </span><span class="si">{</span><span class="n">angles</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="si">}</span><span class="s2"> angles vs </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span><span class="si">}</span><span class="s2"> strings&quot;</span>
+
+    <span class="c1"># check font_name is not empty and is a string</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">font_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Font name must be a non-empty string&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">font_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s2">&quot;Font name must be a string&quot;</span>
+
+    <span class="c1"># check all strings are indeed strings</span>
+    <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s2">&quot;All elements in strings must be of type str&quot;</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -19154,14 +19386,14 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">104</span>
-<span class="normal">105</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
-<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_anchors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">111</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_anchors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set anchor positions of the texts.</span>
 
 <span class="sd">    Args:</span>
@@ -19222,14 +19454,14 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">117</span>
-<span class="normal">118</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span>
 <span class="normal">122</span>
 <span class="normal">123</span>
-<span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">124</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set rotation angles of the texts.</span>
 
 <span class="sd">    Args:</span>
@@ -19247,7 +19479,7 @@ colors, and groups for efficient rendering.</p>
 
 
 <h4 id="gsp.visuals.texts.Texts.set_attributes" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">set_attributes</span><span class="p">(</span><span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <code class="highlight language-python"><span class="n">set_attributes</span><span class="p">(</span><span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">anchors</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
 
 <a href="#gsp.visuals.texts.Texts.set_attributes" class="headerlink" title="Permanent link">&para;</a></h4>
 
@@ -19259,8 +19491,7 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
-<span class="normal">140</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
 <span class="normal">143</span>
@@ -19284,10 +19515,11 @@ colors, and groups for efficient rendering.</p>
 <span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span>
-<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_attributes</span><span class="p">(</span>
+<span class="normal">164</span>
+<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_attributes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">colors</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">font_sizes</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">anchors</span><span class="p">:</span> <span class="n">TransBuf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -19297,8 +19529,8 @@ colors, and groups for efficient rendering.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set multiple attributes at once and then check their validity.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">positions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_positions</span> <span class="o">=</span> <span class="n">positions</span>
-    <span class="k">if</span> <span class="n">texts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span> <span class="o">=</span> <span class="n">texts</span>
+    <span class="k">if</span> <span class="n">strings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span> <span class="o">=</span> <span class="n">strings</span>
     <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_colors</span> <span class="o">=</span> <span class="n">colors</span>
     <span class="k">if</span> <span class="n">font_sizes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -19363,14 +19595,14 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">78</span>
-<span class="normal">79</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">79</span>
 <span class="normal">80</span>
 <span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span>
 <span class="normal">84</span>
-<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_colors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">85</span>
+<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_colors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set colors of the texts.</span>
 
 <span class="sd">    Args:</span>
@@ -19431,14 +19663,14 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">130</span>
-<span class="normal">131</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
-<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_font_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">137</span>
+<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_font_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set font name for the texts.</span>
 
 <span class="sd">    Args:</span>
@@ -19499,14 +19731,14 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">91</span>
-<span class="normal">92</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
 <span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
 <span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_font_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">98</span>
+<span class="normal">99</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_font_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font_sizes</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set font sizes of the texts.</span>
 
 <span class="sd">    Args:</span>
@@ -19567,14 +19799,14 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">52</span>
-<span class="normal">53</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">53</span>
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
 <span class="normal">57</span>
 <span class="normal">58</span>
-<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">59</span>
+<span class="normal">60</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">:</span> <span class="n">TransBuf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set positions of the texts.</span>
 
 <span class="sd">    Args:</span>
@@ -19635,14 +19867,14 @@ colors, and groups for efficient rendering.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp/visuals/texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">65</span>
-<span class="normal">66</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
-<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">72</span>
+<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set text strings.</span>
 
 <span class="sd">    Args:</span>

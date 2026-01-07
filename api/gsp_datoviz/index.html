@@ -16,6 +16,8 @@
         <link rel="prev" href="../gsp_matplotlib/">
       
       
+        <link rel="next" href="../gsp_extra/">
+      
       
         
       
@@ -1121,6 +1123,62 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gsp_extra/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Extra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vispy_2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vispy 2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1893,6 +1951,10 @@
     <div class="doc doc-contents first">
 
         <p>Datoviz renderer implementation.</p>
+<ul>
+<li><code>DVZ_LOG_LEVEL</code> environment variable can be set to control datoviz logging level.</li>
+<li>e.g. <code>DVZ_LOG_LEVEL=4</code> to mute all logs</li>
+</ul>
 
 
 
@@ -1941,12 +2003,7 @@
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/gsp_datoviz/renderer/datoviz_renderer.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 36</span>
-<span class="normal"> 37</span>
-<span class="normal"> 38</span>
-<span class="normal"> 39</span>
-<span class="normal"> 40</span>
-<span class="normal"> 41</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 41</span>
 <span class="normal"> 42</span>
 <span class="normal"> 43</span>
 <span class="normal"> 44</span>
@@ -2123,8 +2180,15 @@
 <span class="normal">215</span>
 <span class="normal">216</span>
 <span class="normal">217</span>
-<span class="normal">218</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DatovizRenderer</span><span class="p">(</span><span class="n">RendererBase</span><span class="p">):</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DatovizRenderer</span><span class="p">(</span><span class="n">RendererBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Datoviz renderer implementation.&quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">canvas</span><span class="p">:</span> <span class="n">Canvas</span><span class="p">,</span> <span class="n">offscreen</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Datoviz renderer.</span>
 
@@ -2385,13 +2449,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp_datoviz/renderer/datoviz_renderer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
@@ -2405,7 +2463,13 @@
 <span class="normal">55</span>
 <span class="normal">56</span>
 <span class="normal">57</span>
-<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">canvas</span><span class="p">:</span> <span class="n">Canvas</span><span class="p">,</span> <span class="n">offscreen</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">canvas</span><span class="p">:</span> <span class="n">Canvas</span><span class="p">,</span> <span class="n">offscreen</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize the Datoviz renderer.</span>
 
 <span class="sd">    Args:</span>
@@ -2448,9 +2512,9 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp_datoviz/renderer/datoviz_renderer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the datoviz renderer and its app.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_dvz_app</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -2475,9 +2539,9 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp_datoviz/renderer/datoviz_renderer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_canvas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Canvas</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_canvas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Canvas</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the GSP canvas associated with the renderer.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span>
 </code></pre></div></td></tr></table></div>
@@ -2502,9 +2566,9 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp_datoviz/renderer/datoviz_renderer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_dvz_app</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dvz</span><span class="o">.</span><span class="n">App</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_dvz_app</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dvz</span><span class="o">.</span><span class="n">App</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the datoviz App associated with the renderer.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dvz_app</span>
 </code></pre></div></td></tr></table></div>
@@ -2529,9 +2593,9 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp_datoviz/renderer/datoviz_renderer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_dvz_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_DvzFigure</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_dvz_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_DvzFigure</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the datoviz Figure associated with the renderer.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dvz_figure</span>
 </code></pre></div></td></tr></table></div>
@@ -2690,13 +2754,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp_datoviz/renderer/datoviz_renderer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span>
 <span class="normal">105</span>
@@ -2755,7 +2813,13 @@
 <span class="normal">158</span>
 <span class="normal">159</span>
 <span class="normal">160</span>
-<span class="normal">161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">viewports</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Viewport</span><span class="p">],</span>
     <span class="n">visuals</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">VisualBase</span><span class="p">],</span>
@@ -2843,13 +2907,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp_datoviz/renderer/datoviz_renderer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">82</span>
 <span class="normal">83</span>
 <span class="normal">84</span>
 <span class="normal">85</span>
@@ -2858,7 +2916,13 @@
 <span class="normal">88</span>
 <span class="normal">89</span>
 <span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Show the datoviz window and start the app.&quot;&quot;&quot;</span>
     <span class="c1"># handle non-interactive mode for tests</span>
     <span class="n">in_test</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;GSP_TEST&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span>
@@ -6139,8 +6203,24 @@
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
-<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DatovizRendererTexts</span><span class="p">:</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DatovizRendererTexts</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Datoviz renderer for Texts visuals.&quot;&quot;&quot;</span>
+
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span>
         <span class="n">renderer</span><span class="p">:</span> <span class="n">DatovizRenderer</span><span class="p">,</span>
@@ -6196,6 +6276,20 @@
         <span class="n">font_sizes_numpy</span> <span class="o">=</span> <span class="n">Bufferx</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">font_sizes_buffer</span><span class="p">)</span>
         <span class="n">anchors_numpy</span> <span class="o">=</span> <span class="n">Bufferx</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">anchors_buffer</span><span class="p">)</span>
         <span class="n">angles_numpy</span> <span class="o">=</span> <span class="n">Bufferx</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">angles_buffer</span><span class="p">)</span>
+
+        <span class="c1"># =============================================================================</span>
+        <span class="c1"># Sanity checks attributes buffers</span>
+        <span class="c1"># =============================================================================</span>
+
+        <span class="n">Texts</span><span class="o">.</span><span class="n">sanity_check_attributes_buffer</span><span class="p">(</span>
+            <span class="n">vertices_buffer</span><span class="p">,</span>
+            <span class="n">texts</span><span class="o">.</span><span class="n">get_strings</span><span class="p">(),</span>
+            <span class="n">colors_buffer</span><span class="p">,</span>
+            <span class="n">font_sizes_buffer</span><span class="p">,</span>
+            <span class="n">anchors_buffer</span><span class="p">,</span>
+            <span class="n">angles_buffer</span><span class="p">,</span>
+            <span class="n">texts</span><span class="o">.</span><span class="n">get_font_name</span><span class="p">(),</span>
+        <span class="p">)</span>
 
         <span class="c1"># =============================================================================</span>
         <span class="c1"># Create the datoviz visual if needed</span>
@@ -6381,8 +6475,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp_datoviz/renderer/datoviz_renderer_texts.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 25</span>
-<span class="normal"> 26</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 26</span>
 <span class="normal"> 27</span>
 <span class="normal"> 28</span>
 <span class="normal"> 29</span>
@@ -6489,7 +6582,22 @@
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
-<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span>
     <span class="n">renderer</span><span class="p">:</span> <span class="n">DatovizRenderer</span><span class="p">,</span>
     <span class="n">viewport</span><span class="p">:</span> <span class="n">Viewport</span><span class="p">,</span>
@@ -6544,6 +6652,20 @@
     <span class="n">font_sizes_numpy</span> <span class="o">=</span> <span class="n">Bufferx</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">font_sizes_buffer</span><span class="p">)</span>
     <span class="n">anchors_numpy</span> <span class="o">=</span> <span class="n">Bufferx</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">anchors_buffer</span><span class="p">)</span>
     <span class="n">angles_numpy</span> <span class="o">=</span> <span class="n">Bufferx</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">angles_buffer</span><span class="p">)</span>
+
+    <span class="c1"># =============================================================================</span>
+    <span class="c1"># Sanity checks attributes buffers</span>
+    <span class="c1"># =============================================================================</span>
+
+    <span class="n">Texts</span><span class="o">.</span><span class="n">sanity_check_attributes_buffer</span><span class="p">(</span>
+        <span class="n">vertices_buffer</span><span class="p">,</span>
+        <span class="n">texts</span><span class="o">.</span><span class="n">get_strings</span><span class="p">(),</span>
+        <span class="n">colors_buffer</span><span class="p">,</span>
+        <span class="n">font_sizes_buffer</span><span class="p">,</span>
+        <span class="n">anchors_buffer</span><span class="p">,</span>
+        <span class="n">angles_buffer</span><span class="p">,</span>
+        <span class="n">texts</span><span class="o">.</span><span class="n">get_font_name</span><span class="p">(),</span>
+    <span class="p">)</span>
 
     <span class="c1"># =============================================================================</span>
     <span class="c1"># Create the datoviz visual if needed</span>
