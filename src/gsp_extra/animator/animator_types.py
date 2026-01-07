@@ -15,20 +15,15 @@ from gsp.types.visual_base import VisualBase
 AnimatorFunc = Callable[[float], Sequence[VisualBase]]
 """Type alias for animation callback functions.
 
-An animator function is called on each frame of the animation and returns
-the sequence of visual elements to render for that frame.
-
-Args:
-    delta_time: Time elapsed since the last frame in milliseconds.
-
-Returns:
-    A sequence of VisualBase objects to render in the current frame.
+An animator function is called on each frame of the animation with the elapsed time
+since the last frame in milliseconds, and returns a sequence of VisualBase objects
+to render in the current frame.
 """
 
 
 class VideoSavedCalledback(Protocol):
     """Callback protocol for video saved event."""
 
-    def __call__(self) -> None: 
+    def __call__(self) -> None:
         """Called when the video has been successfully saved."""
-        ...  
+        ...
