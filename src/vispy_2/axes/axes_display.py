@@ -401,7 +401,7 @@ class AxesDisplay:
         coords_numpy = AxesDisplay._compute_tick_coords_vertical(inner_viewport_unit, outter_viewport_unit, y_min_dunit, y_max_dunit)
 
         # compute tick_width_ndc
-        tick_width_ndc, _ = outter_viewport_unit.delta_cm_to_ndc(0.5, 0.0)
+        tick_width_ndc, _ = outter_viewport_unit.delta_cm_to_ndc(0.2, 0.0)
 
         # build positions array from coords
         positions_array = []
