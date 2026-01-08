@@ -5,7 +5,7 @@ import numpy as np
 
 # local imports
 from common.example_helper import ExampleHelper
-from gsp_extra.viewport_events.viewport_events_types import CanvasResizeEvent, KeyEvent, MouseEvent
+from gsp.types.viewport_events_types import CanvasResizeEvent, KeyEvent, MouseEvent
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Points

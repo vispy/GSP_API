@@ -22,8 +22,8 @@ from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.core.camera import Camera
 from gsp.core import Event
-from .animator_types import AnimatorFunc, VideoSavedCalledback
-from .animator_base import AnimatorBase
+from gsp.types.animator_types import AnimatorFunc, VideoSavedCalledback
+from gsp.types.animator_base import AnimatorBase
 
 __dirname__ = os.path.dirname(os.path.abspath(__file__))
 

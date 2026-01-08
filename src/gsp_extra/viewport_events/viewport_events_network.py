@@ -13,10 +13,10 @@ from gsp.core import Event
 from gsp.core import Canvas, Viewport
 from gsp.utils.unit_utils import UnitUtils
 from gsp_network.renderer import NetworkRenderer
-from .viewport_events_base import ViewportEventsBase
-from .viewport_events_types import EventType
-from .viewport_events_types import KeyEvent, MouseEvent, CanvasResizeEvent
-from .viewport_events_types import KeyboardEventCallback, MouseEventCallback, CanvasResizeEventCallback
+from gsp.types.viewport_events_base import ViewportEventsBase
+from gsp.types.viewport_events_types import EventType
+from gsp.types.viewport_events_types import KeyEvent, MouseEvent, CanvasResizeEvent
+from gsp.types.viewport_events_types import KeyboardEventCallback, MouseEventCallback, CanvasResizeEventCallback
 
 
 class ViewportEventsNetwork(ViewportEventsBase):

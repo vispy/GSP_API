@@ -22,8 +22,8 @@ from gsp.types import Buffer
 from gsp.constants import Constants
 from gsp.utils.unit_utils import UnitUtils
 from gsp_extra.mpl3d import glm
-from gsp_extra.viewport_events.viewport_events_types import CanvasResizeEvent, KeyEvent, MouseEvent
-from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
+from gsp.types.viewport_events_types import CanvasResizeEvent, KeyEvent, MouseEvent
+from gsp.types.viewport_events_base import ViewportEventsBase
 
 
 # =============================================================================

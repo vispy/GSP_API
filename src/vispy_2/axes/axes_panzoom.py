@@ -1,8 +1,8 @@
 """Class AxesPanZoom to handle panning and zooming in a viewport."""
 
 # local imports
-from gsp_extra.viewport_events.viewport_events_types import MouseEvent
-from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
+from gsp.types.viewport_events_types import MouseEvent
+from gsp.types.viewport_events_base import ViewportEventsBase
 from .axes_display import AxesDisplay
 
 

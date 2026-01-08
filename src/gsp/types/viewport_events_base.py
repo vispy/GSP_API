@@ -1,4 +1,5 @@
 """Base class for viewport event handlers."""
+
 # stdlib imports
 from abc import ABC, abstractmethod
 

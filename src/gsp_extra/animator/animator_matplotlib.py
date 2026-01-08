@@ -28,15 +28,15 @@ from gsp.core.camera import Camera
 from gsp.visuals.points import Points
 from gsp.visuals.texts import Texts
 from gsp.core import Event
-from .animator_types import AnimatorFunc, VideoSavedCalledback
-from .animator_base import AnimatorBase
+from gsp.types.animator_types import AnimatorFunc, VideoSavedCalledback
+from gsp.types.animator_base import AnimatorBase
 
 __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
 
 class AnimatorMatplotlib(AnimatorBase):
     """Animator for GSP scenes using a Matplotlib renderer.
-    
+
     Manages animation loops with callback functions that update visuals each frame.
     Supports real-time display and video export in various formats. Uses Matplotlib's
     FuncAnimation for efficient rendering updates.
@@ -51,14 +51,14 @@ class AnimatorMatplotlib(AnimatorBase):
         video_writer: str | None = None,
     ):
         """Initialize the Matplotlib animator.
-        
+
         Args:
             matplotlib_renderer: The Matplotlib renderer to use for rendering frames.
             fps: Target frames per second for the animation.
             video_duration: Total duration of the animation in seconds.
             video_path: Path where the video should be saved. If None, no video is saved.
             video_writer: Video writer to use ("ffmpeg" or "pillow"). If None, auto-detected from extension.
-        
+
         Raises:
             ValueError: If the video format is not supported.
         """
@@ -100,7 +100,7 @@ class AnimatorMatplotlib(AnimatorBase):
 
     def add_callback(self, func: AnimatorFunc) -> None:
         """Add a callback to the animation loop.
-        
+
         Args:
             func: The animator function to call on each frame.
         """
@@ -108,7 +108,7 @@ class AnimatorMatplotlib(AnimatorBase):
 
     def remove_callback(self, func: AnimatorFunc) -> None:
         """Remove a callback from the animation loop.
-        
+
         Args:
             func: The animator function to remove.
         """
@@ -116,10 +116,10 @@ class AnimatorMatplotlib(AnimatorBase):
 
     def event_listener(self, func: AnimatorFunc) -> AnimatorFunc:
         """Decorator to add a callback to the animation loop.
-        
+
         Args:
             func: The animator function to register as a callback.
-            
+
         Returns:
             The wrapped animator function.
 
@@ -148,10 +148,10 @@ class AnimatorMatplotlib(AnimatorBase):
     # =============================================================================
     def start(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], model_matrices: Sequence[TransBuf], cameras: Sequence[Camera]) -> None:
         """Start the animation loop.
-        
+
         Begins rendering frames using registered callbacks to update visuals.
         In test mode (GSP_TEST=True), saves a single preview image instead of animating.
-        
+
         Args:
             viewports: Sequence of viewport regions to render into.
             visuals: Sequence of visual elements to render and animate.
@@ -229,7 +229,7 @@ class AnimatorMatplotlib(AnimatorBase):
     # =============================================================================
     def stop(self):
         """Stop the animation loop.
-        
+
         Stops the Matplotlib animation timer and clears internal state.
         """
         self._canvas = None
@@ -247,13 +247,13 @@ class AnimatorMatplotlib(AnimatorBase):
 
     def _mpl_animate(self, frame_index: int) -> list[matplotlib.artist.Artist]:
         """Internal callback for Matplotlib animation.
-        
+
         Called by Matplotlib's FuncAnimation on each frame to update the display.
         Notifies all registered callbacks and re-renders changed visuals.
-        
+
         Args:
             frame_index: The current frame number in the animation sequence.
-            
+
         Returns:
             List of Matplotlib artists that were updated during this frame.
         """
@@ -293,18 +293,18 @@ class AnimatorMatplotlib(AnimatorBase):
 
     def _get_mpl_artists(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], visual_base: VisualBase) -> list[matplotlib.artist.Artist]:
         """Get the Matplotlib artists corresponding to a given visual.
-        
+
         This is needed for Matplotlib's FuncAnimation to update only the relevant artists
         that have changed, improving rendering performance.
-        
+
         Args:
             viewports: Sequence of all viewports in the scene.
             visuals: Sequence of all visuals in the scene.
             visual_base: The specific visual to get artists for.
-            
+
         Returns:
             List of Matplotlib Artist objects corresponding to the visual.
-            
+
         Raises:
             NotImplementedError: If the visual type is not supported.
         """

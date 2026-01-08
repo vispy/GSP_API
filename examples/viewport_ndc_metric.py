@@ -15,7 +15,7 @@ from gsp.types import BufferType
 from gsp.types import Buffer
 from gsp.constants import Constants
 from gsp.utils.unit_utils import UnitUtils
-from gsp_extra.viewport_events.viewport_events_types import CanvasResizeEvent
+from gsp.types.viewport_events_types import CanvasResizeEvent
 
 
 class QtHelper:

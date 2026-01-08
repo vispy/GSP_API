@@ -18,12 +18,12 @@ from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_datoviz.renderer import DatovizRenderer
 from gsp_network.renderer import NetworkRenderer
 
-from gsp_extra.animator.animator_base import AnimatorBase
+from gsp.types.animator_base import AnimatorBase
 from gsp_extra.animator.animator_datoviz import AnimatorDatoviz
 from gsp_extra.animator.animator_matplotlib import AnimatorMatplotlib
 from gsp_extra.animator.animator_network import AnimatorNetwork
 
-from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
+from gsp.types.viewport_events_base import ViewportEventsBase
 from gsp_extra.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
 from gsp_extra.viewport_events.viewport_events_datoviz import ViewportEventsDatoviz
 from gsp_extra.viewport_events.viewport_events_network import ViewportEventsNetwork

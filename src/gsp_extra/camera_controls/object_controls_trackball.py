@@ -2,8 +2,8 @@
 
 import numpy as np
 
-from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
-from gsp_extra.viewport_events.viewport_events_types import KeyEvent, MouseEvent, EventType
+from gsp.types.viewport_events_base import ViewportEventsBase
+from gsp.types.viewport_events_types import KeyEvent, MouseEvent, EventType
 from gsp.types.visual_base import VisualBase
 from gsp.types.buffer import Buffer
 from gsp.types.buffer_type import BufferType

@@ -4,8 +4,8 @@
 import numpy as np
 
 # local imports
-from gsp_extra.viewport_events.viewport_events_base import ViewportEventsBase
-from gsp_extra.viewport_events.viewport_events_types import KeyEvent, EventType
+from gsp.types.viewport_events_base import ViewportEventsBase
+from gsp.types.viewport_events_types import KeyEvent, EventType
 from gsp.types.visual_base import VisualBase
 from gsp.types.buffer import Buffer
 from gsp.types.buffer_type import BufferType
@@ -18,7 +18,7 @@ class ObjectControlAwsd:
 
     def __init__(self, model_matrix_buffer: Buffer, viewport_events: ViewportEventsBase):
         """Initialize the ObjectControlAwsd.
-        
+
         Args:
             model_matrix_buffer (Buffer): The buffer containing the model matrix to control.
             viewport_events (ViewportEventsBase): The viewport events to subscribe to for keyboard input.
