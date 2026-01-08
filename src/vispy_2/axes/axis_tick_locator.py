@@ -55,29 +55,29 @@ class AxisTickLocator:
         # Fallback (should rarely happen)
         return self.nice_fractions[-1] * base
 
-    def ticks(self, vmin: float, vmax: float) -> Tuple[List[float], float]:
+    def ticks(self, min_dunit: float, max_dunit: float) -> Tuple[List[float], float]:
         """Generate tick positions and the step size for an interval.
 
         Args:
-            vmin (float): Minimum data value.
-            vmax (float): Maximum data value.
+            min_dunit (float): Minimum data value.
+            max_dunit (float): Maximum data value.
 
         Returns:
             Tuple[List[float], float]: List of tick positions and the step size used.
         """
-        step = self.tick_step(vmin, vmax)
+        tick_step = self.tick_step(min_dunit, max_dunit)
 
-        start = math.ceil(vmin / step) * step
-        end = math.floor(vmax / step) * step
+        start = math.ceil(min_dunit / tick_step) * tick_step
+        end = math.floor(max_dunit / tick_step) * tick_step
 
         # Keep both bounds inclusive and guard against floating-point drift.
-        n = int(round((end - start) / step)) + 1
-        ticks = [start + i * step for i in range(max(0, n))]
+        tick_count = int(round((end - start) / tick_step)) + 1
+        tick_positions = [start + tick_index * tick_step for tick_index in range(max(0, tick_count))]
 
         # Final rounding pass
-        ticks = [self._round_tick(t, step) for t in ticks]
+        tick_positions = [self._round_tick(tick_position, tick_step) for tick_position in tick_positions]
 
-        return ticks, step
+        return tick_positions, tick_step
 
     def _fallback_step(self, value: float) -> float:
         if value == 0:
@@ -85,22 +85,27 @@ class AxisTickLocator:
         exponent = math.floor(math.log10(abs(value)))
         return 10**exponent
 
-    def _round_tick(self, value: float, step: float) -> float:
-        decimals = max(0, -math.floor(math.log10(step)))
-        return round(value, decimals + 2)
+    def _round_tick(self, tick_value: float, tick_step: float) -> float:
+        decimals = max(0, -math.floor(math.log10(tick_step)))
+        return round(tick_value, decimals + 2)
 
+
+# =============================================================================
+# Usage Example
+# =============================================================================
 
 if __name__ == "__main__":
-    from .axis_tick_formater import AxisTickFormatter
+    from vispy_2.axes.axis_tick_formater import AxisTickFormatter
 
-    locator = AxisTickLocator(target_ticks=7)
-    formatter = AxisTickFormatter()
+    tick_locator = AxisTickLocator(target_ticks=7)
+    tick_formatter = AxisTickFormatter()
 
-    vmin, vmax = -3.7, 42.2
+    min_dunit = -15
+    max_dunit = 42.2
 
-    ticks, step = locator.ticks(vmin, vmax)
+    tick_positions, tick_step = tick_locator.ticks(min_dunit, max_dunit)
 
-    labels = [formatter.format(t, step) for t in ticks]
+    tick_labels = [tick_formatter.format(tick_position, tick_step) for tick_position in tick_positions]
 
-    for t, lbl in zip(ticks, labels):
-        print(f"{t:8.3f} -> {lbl}")
+    for tick_position, tick_label in zip(tick_positions, tick_labels):
+        print(f"{tick_position:8.3f} -> {tick_label}")

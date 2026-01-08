@@ -29,27 +29,31 @@ class AxisTickFormatter:
             int: Number of decimal places to keep.
         """
         if step <= 0:
+            # Avoid log10 domain errors and keep integers for degenerate steps.
             return 0
         return max(0, -math.floor(math.log10(step)))
 
-    def format(self, value: float, step: float) -> str:
+    def format(self, tick_value: float, tick_step: float) -> str:
         """Format the tick label for a value using the step size.
 
         Args:
-            value (float): Tick value to format.
-            step (float): Tick spacing used to infer precision.
+            tick_value (float): Tick value to format.
+            tick_step (float): Tick spacing used to infer precision.
 
         Returns:
             str: Formatted tick label.
         """
-        if value == 0:
+        if tick_value == 0:
             return "0"
 
-        magnitude = abs(value)
+        # Determine if scientific notation is needed.
+        magnitude = abs(tick_value)
         if magnitude > 0:
             order = math.floor(math.log10(magnitude))
             if abs(order) >= self.scientific_threshold:
-                return f"{value:.0e}"
+                # Switch to scientific notation for very large/small values.
+                return f"{tick_value:.0e}"
 
-        decimals = self.precision(step)
-        return f"{value:.{decimals}f}"
+        # Standard decimal formatting based on step precision.
+        decimals = self.precision(tick_step)
+        return f"{tick_value:.{decimals}f}"

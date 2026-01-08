@@ -1,20 +1,12 @@
 - change axes_display to handle sub ticks
   - https://chatgpt.com/c/695e6038-7a54-8325-93f9-c471099097fb
+  - implemented in axis_tick_locator.py and axis_tick_formater.py
+  - change ._compute_tick_coords_horizontal and ._compute_tick_coords_vertical to use axis_tick_locator/formater
+    - make it return location and label with current algo
+    - then port it to axis_tick_*
 - implement a image visual 
   - base it on datoviz
   - supporting what is needed for pyramid
-- fix axe panzoom in datoviz : it is zooming too much
-  - bug may be in viewport events datoviz - like the button release is not well handled
-- bug in axes_panzoom/display
-  - how to reproduce ? zoom in to the max
-  - in axes_display.py dont render ticks if no tick is visible
-    - make positions_array in a separate function and use this to test if the array is empty, if so dont create the visual
-  - currently trigger exception in bufferx.from_numpy()
-  - if no axes ticks are visible, draw nothing
-- other bugs in datoviz viewport events - may be in animator
-  - out of memory sometime... not sure why/when. occurs in axes panzoom example but not in viewport events example
-  - make a renderer_base.get_stats() and check memory usage
-  - `DVZ_LOG_LEVEL=4 GSP_RENDERER=datoviz python ./examples/animator_example.py`
 - Move viewport_event and animator in their own backend package
   - with the type definition in `gsp.core`
 - invoice changes
@@ -101,6 +93,18 @@
     - possibility: set by class or by instance
 
 ---
+- DONE fix axe panzoom in datoviz : it is zooming too much
+  - bug may be in viewport events datoviz - like the button release is not well handled
+- DONE bug in axes_panzoom/display
+  - how to reproduce ? zoom in to the max
+  - in axes_display.py dont render ticks if no tick is visible
+    - make positions_array in a separate function and use this to test if the array is empty, if so dont create the visual
+  - currently trigger exception in bufferx.from_numpy()
+  - if no axes ticks are visible, draw nothing
+- DONE other bugs in datoviz viewport events - may be in animator
+  - out of memory sometime... not sure why/when. occurs in axes panzoom example but not in viewport events example
+  - make a renderer_base.get_stats() and check memory usage
+  - `DVZ_LOG_LEVEL=4 GSP_RENDERER=datoviz python ./examples/animator_example.py`
 - DONE fix blinking in matplotlib axes display when resizing/panning
   - added a timeout to limit the number of render during interaction
 - DONE make gsp_extra a real package
