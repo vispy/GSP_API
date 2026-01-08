@@ -1,3 +1,8 @@
+- change axes_display to handle sub ticks
+  - https://chatgpt.com/c/695e6038-7a54-8325-93f9-c471099097fb
+- implement a image visual 
+  - base it on datoviz
+  - supporting what is needed for pyramid
 - fix axe panzoom in datoviz : it is zooming too much
   - bug may be in viewport events datoviz - like the button release is not well handled
 - bug in axes_panzoom/display
