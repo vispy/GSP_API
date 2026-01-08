@@ -60,7 +60,7 @@ network_server: ## Run the network renderer server
 	python3 ./src/gsp_network/tools/network_server.py
 	
 network_server_user_transforms: ## Run the network renderer server with all the user transforms enabled
-	python3 ./examples/gsp_extra/transform_links/transform_network_server.py
+	python3 ./src/gsp_extra/transform_links/transform_network_server.py
 
 ###############################################################################
 

@@ -25,15 +25,7 @@ The axes module provides components for displaying and interacting with 2D axes 
 ### Axes Display
 
 ::: vispy_2.axes.axes_display
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
 
 ### Axes Pan Zoom
 
-::: vispy_2.axes.axes_pan_zoom
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
+::: vispy_2.axes.axes_panzoom

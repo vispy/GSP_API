@@ -20,6 +20,16 @@ The Graphic Server Protocol (GSP) API provides a unified interface for creating 
 
 ::: gsp.types.visual_base
 
+::: gsp.types.animator_base
+
+::: gsp.types.animator_types
+
+::: gsp.types.viewport_events_base
+
+::: gsp.types.viewport_events_types
+
+
+
 ## Visuals Module
 
 ::: gsp.visuals.points

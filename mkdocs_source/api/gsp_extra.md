@@ -31,57 +31,6 @@ Extended buffer utilities with numpy integration.
       show_root_heading: true
       show_source: true
 
-## Animator Module
-
-Animation utilities for different rendering backends.
-
-::: gsp_extra.animator
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-      members_order: source
-
-### Animator Base
-
-::: gsp_extra.animator.animator_base
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Animator Matplotlib
-
-::: gsp_extra.animator.animator_matplotlib
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Animator Datoviz
-
-::: gsp_extra.animator.animator_datoviz
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Animator Network
-
-::: gsp_extra.animator.animator_network
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Animator Types
-
-::: gsp_extra.animator.animator_types
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
 ## Camera Controls Module
 
 Camera control utilities for interactive 3D navigation.
@@ -164,50 +113,6 @@ Transform link utilities for loading and network operations.
 ### Transform Network Server
 
 ::: gsp_extra.transform_links.transform_network_server
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-## Viewport Events Module
-
-Viewport event handling for user interactions.
-
-### Viewport Events Base
-
-::: gsp_extra.viewport_events.viewport_events_base
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Viewport Events Matplotlib
-
-::: gsp_extra.viewport_events.viewport_events_matplotlib
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Viewport Events Datoviz
-
-::: gsp_extra.viewport_events.viewport_events_datoviz
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Viewport Events Network
-
-::: gsp_extra.viewport_events.viewport_events_network
-    handler: python
-    options:
-      show_root_heading: true
-      show_source: true
-
-### Viewport Events Types
-
-::: gsp_extra.viewport_events.viewport_events_types
     handler: python
     options:
       show_root_heading: true

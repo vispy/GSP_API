@@ -115,3 +115,21 @@ The utils module provides converter utilities for the Matplotlib backend.
     options:
       show_root_heading: true
       show_source: true
+
+### Viewport Events Matplotlib
+
+::: gsp_matplotlib.viewport_events.viewport_events_matplotlib
+    handler: python
+    options:
+      show_root_heading: true
+      show_source: true
+
+
+### Animator Matplotlib
+
+::: gsp_matplotlib.animator.animator_matplotlib
+    handler: python
+    options:
+      show_root_heading: true
+      show_source: true
+

@@ -96,3 +96,20 @@ The utils module provides converter utilities for the Datoviz backend.
     options:
       show_root_heading: true
       show_source: true
+
+### Viewport Events Datoviz
+
+::: gsp_datoviz.viewport_events.viewport_events_datoviz
+    handler: python
+    options:
+      show_root_heading: true
+      show_source: true
+
+
+### Animator Datoviz
+
+::: gsp_datoviz.animator.animator_datoviz
+    handler: python
+    options:
+      show_root_heading: true
+      show_source: true
