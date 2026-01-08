@@ -1,7 +1,7 @@
 """Module for formatting axis tick labels."""
 
+# stdlib imports
 import math
-from typing import List, Tuple
 
 
 class AxisTickFormatter:

@@ -1,5 +1,6 @@
 """Module for locating axis ticks."""
 
+# stdlib imports
 import math
 from typing import List, Tuple
 
