@@ -1,4 +1,4 @@
-""" "NetworkRenderer event handler for viewport events."""
+"""NetworkRenderer event handler for viewport events."""
 
 # stdlib imports
 from typing import Any
