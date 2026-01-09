@@ -2,7 +2,7 @@
 
 # stdlib imports
 import math
-from typing import Protocol, Tuple
+from typing import Protocol
 
 # pip imports
 import numpy as np
@@ -227,9 +227,9 @@ class AxesDisplay:
         x_max_dunit: float,
     ) -> bool:
         """Check if there is at least one tick to display for the horizontal axis."""
-        coords_array, _ = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
+        coords_numpy = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
 
-        has_tick_horizontal = len(coords_array) > 0
+        has_tick_horizontal = len(coords_numpy) > 0
         return has_tick_horizontal
 
     @staticmethod
@@ -240,9 +240,9 @@ class AxesDisplay:
         y_max_dunit: float,
     ) -> bool:
         """Check if there is at least one tick to display for the vertical axis."""
-        coords_array, _ = AxesDisplay._compute_tick_coords_vertical(inner_viewport_unit, outter_viewport_unit, y_min_dunit, y_max_dunit)
+        coords_numpy = AxesDisplay._compute_tick_coords_vertical(inner_viewport_unit, outter_viewport_unit, y_min_dunit, y_max_dunit)
 
-        has_tick_vertical = len(coords_array) > 0
+        has_tick_vertical = len(coords_numpy) > 0
         return has_tick_vertical
 
     @staticmethod
@@ -251,19 +251,12 @@ class AxesDisplay:
         outter_viewport_unit: ViewportUnitUtils,
         x_min_dunit: float,
         x_max_dunit: float,
-    ) -> tuple[list[Tuple[float, float, float]], list[str]]:
+    ) -> np.ndarray:
         """Compute the tick coordinates for the horizontal axis."""
         inner_viewport = inner_viewport_unit.get_viewport()
 
-        # compute tick_y_outter_ndc
-        tick_y_inner_ndc = -1.0  # at bottom of inner viewport
-        tick_y_outter_pixel = inner_viewport.get_y() + ((tick_y_inner_ndc + 1.0) / 2.0) * inner_viewport.get_height()
-        _, tick_y_outter_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, tick_y_outter_pixel)
-        tick_y_outter_ndc = tick_y_outter_delta_ndc - 1.0
-
         # Create positions for ticks from -num_ticks/2 to +num_ticks/2
-        tick_positions = []
-        tick_labels = []
+        coords_array = []
         for tick_x_inner_dunit in range(math.ceil(x_min_dunit), math.ceil(x_max_dunit) + 1):
             # skip ticks outside data space limits
             if tick_x_inner_dunit > x_max_dunit:
@@ -275,15 +268,16 @@ class AxesDisplay:
             tick_x_outter_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(tick_x_outter_delta_pixel, 0.0)
             tick_x_outter_ndc = tick_x_outter_delta_ndc - 1.0
 
-            tick_positions.append([tick_x_outter_ndc, tick_y_outter_ndc, 0.0])
+            # compute tick_y_outter_ndc
+            tick_y_inner_ndc = -1.0  # at bottom of inner viewport
+            tick_y_outter_pixel = inner_viewport.get_y() + ((tick_y_inner_ndc + 1.0) / 2.0) * inner_viewport.get_height()
+            _, tick_y_outter_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, tick_y_outter_pixel)
+            tick_y_outter_ndc = tick_y_outter_delta_ndc - 1.0
 
-            # Append tick label
-            tick_labels.append(f"{tick_x_inner_dunit}")
+            coords_array.append([tick_x_outter_ndc, tick_y_outter_ndc, 0.0])
 
-        # =============================================================================
-        # Return coord_array and tick_labels
-        # =============================================================================
-        return tick_positions, tick_labels
+        coords_numpy = np.array(coords_array, dtype=np.float32)
+        return coords_numpy
 
     @staticmethod
     def _compute_tick_coords_vertical(
@@ -291,19 +285,12 @@ class AxesDisplay:
         outter_viewport_unit: ViewportUnitUtils,
         y_min_dunit: float,
         y_max_dunit: float,
-    ) -> tuple[list[Tuple[float, float, float]], list[str]]:
+    ) -> np.ndarray:
         """Compute the tick coordinates for the vertical axis."""
         inner_viewport = inner_viewport_unit.get_viewport()
 
-        # compute tick_x_outter_ndc
-        tick_x_inner_ndc = -1.0  # at left of inner viewport
-        tick_x_outter_pixel = inner_viewport.get_x() + ((tick_x_inner_ndc + 1.0) / 2.0) * inner_viewport.get_width()
-        tick_x_outter_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(tick_x_outter_pixel, 0.0)
-        tick_x_outter_ndc = tick_x_outter_delta_ndc - 1.0
-
         # Create positions for ticks from -num_ticks/2 to +num_ticks/2
-        tick_positions = []
-        tick_labels = []
+        coords_array = []
         for tick_y_inner_dunit in range(math.ceil(y_min_dunit), math.ceil(y_max_dunit) + 1):
             # skip ticks outside data space limits
             if tick_y_inner_dunit > y_max_dunit:
@@ -315,12 +302,16 @@ class AxesDisplay:
             _, tick_y_outter_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, tick_y_outter_delta_pixel)
             tick_y_outter_ndc = tick_y_outter_delta_ndc - 1.0
 
-            tick_positions.append([tick_x_outter_ndc, tick_y_outter_ndc, 0.0])
+            # compute tick_x_outter_ndc
+            tick_x_inner_ndc = -1.0  # at left of inner viewport
+            tick_x_outter_pixel = inner_viewport.get_x() + ((tick_x_inner_ndc + 1.0) / 2.0) * inner_viewport.get_width()
+            tick_x_outter_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(tick_x_outter_pixel, 0.0)
+            tick_x_outter_ndc = tick_x_outter_delta_ndc - 1.0
 
-            # Append tick label
-            tick_labels.append(f"{tick_y_inner_dunit}")
+            coords_array.append([tick_x_outter_ndc, tick_y_outter_ndc, 0.0])
 
-        return tick_positions, tick_labels
+        coords_numpy = np.array(coords_array, dtype=np.float32)
+        return coords_numpy
 
     @staticmethod
     def _generate_visual_axes_segments(inner_viewport_unit: ViewportUnitUtils, outter_viewport_unit: ViewportUnitUtils) -> Segments:
@@ -369,14 +360,14 @@ class AxesDisplay:
         canvas = outter_viewport_unit.get_canvas()
 
         # get tick coordinates
-        coords_array, _ = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
+        coords_numpy = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
 
         # compute tick_height_ndc
         _, tick_height_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.2)
 
         # build positions array from coords
         positions_array = []
-        for tick_x_outter_ndc, tick_y_outter_ndc, tick_z_outter_ndc in coords_array:
+        for tick_x_outter_ndc, tick_y_outter_ndc, tick_z_outter_ndc in coords_numpy:
             positions_array.append([tick_x_outter_ndc, tick_y_outter_ndc + 0.0, 0.0])
             positions_array.append([tick_x_outter_ndc, tick_y_outter_ndc - tick_height_ndc, 0.0])
 
@@ -407,14 +398,14 @@ class AxesDisplay:
         canvas = outter_viewport_unit.get_canvas()
 
         # get tick coordinates
-        coords_array, tick_labels = AxesDisplay._compute_tick_coords_vertical(inner_viewport_unit, outter_viewport_unit, y_min_dunit, y_max_dunit)
+        coords_numpy = AxesDisplay._compute_tick_coords_vertical(inner_viewport_unit, outter_viewport_unit, y_min_dunit, y_max_dunit)
 
         # compute tick_width_ndc
         tick_width_ndc, _ = outter_viewport_unit.delta_cm_to_ndc(0.2, 0.0)
 
         # build positions array from coords
         positions_array = []
-        for tick_x_outter_ndc, tick_y_outter_ndc, tick_z_outter_ndc in coords_array:
+        for tick_x_outter_ndc, tick_y_outter_ndc, tick_z_outter_ndc in coords_numpy:
             positions_array.append([tick_x_outter_ndc + 0.0, tick_y_outter_ndc, 0.0])
             positions_array.append([tick_x_outter_ndc - tick_width_ndc, tick_y_outter_ndc, 0.0])
 
@@ -445,38 +436,45 @@ class AxesDisplay:
         canvas = outter_viewport_unit.get_canvas()
 
         # get tick coordinates
-        coords_array, tick_labels = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
+        coords_numpy = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
 
         # compute tick_height_ndc
         _, tick_height_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.3)
 
         # build positions array from coords
         positions_array = []
-        for tick_x_outter_ndc, tick_y_outter_ndc, tick_z_outter_ndc in coords_array:
+        for tick_x_outter_ndc, tick_y_outter_ndc, tick_z_outter_ndc in coords_numpy:
             positions_array.append([tick_x_outter_ndc, tick_y_outter_ndc - tick_height_ndc, 0.0])
 
         positions_numpy = np.array(positions_array, dtype=np.float32)
         positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
-        labels_count = len(tick_labels)
+        strings = []
+        for tick_x_inner_dunit in range(math.ceil(x_min_dunit), math.ceil(x_max_dunit) + 1):
+            # skip texts outside data space limits
+            if tick_x_inner_dunit > x_max_dunit:
+                continue
 
-        colors_buffer = Buffer(labels_count, BufferType.rgba8)
-        colors_buffer.set_data(Constants.Color.black * labels_count, 0, labels_count)
+            strings.append(f"{tick_x_inner_dunit}")
+        string_count = len(strings)
 
-        font_size_numpy = np.array([UnitUtils.pixel_to_point(12, canvas.get_dpi())] * labels_count, dtype=np.float32)
+        colors_buffer = Buffer(string_count, BufferType.rgba8)
+        colors_buffer.set_data(Constants.Color.black * string_count, 0, string_count)
+
+        font_size_numpy = np.array([UnitUtils.pixel_to_point(12, canvas.get_dpi())] * string_count, dtype=np.float32)
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
         # Create a anchor_numpy for each string with a bottom-left anchor
-        anchors_numpy = np.array([[0, 1] for _ in range(labels_count)], dtype=np.float32)
+        anchors_numpy = np.array([[0, 1] for _ in range(string_count)], dtype=np.float32)
         anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
 
-        angles_numpy = np.array([[0] for _ in range(labels_count)], dtype=np.float32)
+        angles_numpy = np.array([[0] for _ in range(string_count)], dtype=np.float32)
         angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
 
         font_name = "Arial"
 
         # Create the Texts visual
-        texts = Texts(positions_buffer, tick_labels, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+        texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
 
         return texts
 
@@ -490,37 +488,43 @@ class AxesDisplay:
         canvas = outter_viewport_unit.get_canvas()
 
         # get tick coordinates
-        coords_array, tick_labels = AxesDisplay._compute_tick_coords_vertical(inner_viewport_unit, outter_viewport_unit, y_min_dunit, y_max_dunit)
+        coords_numpy = AxesDisplay._compute_tick_coords_vertical(inner_viewport_unit, outter_viewport_unit, y_min_dunit, y_max_dunit)
 
         # compute tick_width_ndc
         tick_width_ndc, _ = outter_viewport_unit.delta_cm_to_ndc(0.3, 0.0)
 
         # build positions array from coords
         positions_array = []
-        for tick_x_outter_ndc, tick_y_outter_ndc, tick_z_outter_ndc in coords_array:
+        for tick_x_outter_ndc, tick_y_outter_ndc, tick_z_outter_ndc in coords_numpy:
             positions_array.append([tick_x_outter_ndc - tick_width_ndc, tick_y_outter_ndc, 0.0])
 
         positions_numpy = np.array(positions_array, dtype=np.float32)
         positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
-        label_count = len(tick_labels)
+        strings = []
+        for tick_y_inner_dunit in range(math.ceil(y_min_dunit), math.ceil(y_max_dunit) + 1):
+            # skip texts outside data space limits
+            if tick_y_inner_dunit > y_max_dunit:
+                continue
+            strings.append(f"{tick_y_inner_dunit}")
+        string_count = len(strings)
 
-        colors_buffer = Buffer(label_count, BufferType.rgba8)
-        colors_buffer.set_data(Constants.Color.black * label_count, 0, label_count)
+        colors_buffer = Buffer(string_count, BufferType.rgba8)
+        colors_buffer.set_data(Constants.Color.black * string_count, 0, string_count)
 
-        font_size_numpy = np.array([UnitUtils.pixel_to_point(12, canvas.get_dpi())] * label_count, dtype=np.float32)
+        font_size_numpy = np.array([UnitUtils.pixel_to_point(12, canvas.get_dpi())] * string_count, dtype=np.float32)
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
         # Create a anchor_numpy for each string with a bottom-left anchor
-        anchors_numpy = np.array([[1, 0] for _ in range(label_count)], dtype=np.float32)
+        anchors_numpy = np.array([[1, 0] for _ in range(string_count)], dtype=np.float32)
         anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
 
-        angles_numpy = np.array([[0] for _ in range(label_count)], dtype=np.float32)
+        angles_numpy = np.array([[0] for _ in range(string_count)], dtype=np.float32)
         angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
 
         font_name = "Arial"
 
         # Create the Texts visual
-        texts = Texts(positions_buffer, tick_labels, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+        texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
 
         return texts
