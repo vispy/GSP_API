@@ -252,7 +252,7 @@ class AxesDisplay:
         x_min_dunit: float,
         x_max_dunit: float,
     ) -> tuple[list[Tuple[float, float, float]], list[str]]:
-        """Compute the tick coordinates for the horizontal axis."""
+        """Compute the tick coordinates in outer viewport NDC for the horizontal axis."""
         inner_viewport = inner_viewport_unit.get_viewport()
 
         # compute tick_y_outter_ndc
@@ -292,7 +292,7 @@ class AxesDisplay:
         y_min_dunit: float,
         y_max_dunit: float,
     ) -> tuple[list[Tuple[float, float, float]], list[str]]:
-        """Compute the tick coordinates for the vertical axis."""
+        """Compute the tick coordinates in outer viewport NDC for the vertical axis."""
         inner_viewport = inner_viewport_unit.get_viewport()
 
         # compute tick_x_outter_ndc

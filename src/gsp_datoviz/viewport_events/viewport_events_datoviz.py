@@ -111,13 +111,21 @@ class ViewportEventsDatoviz(ViewportEventsBase):
 
             # Convert fields to our MouseEvent
             if dvz_event_name == "press":
+                print(f"event {dvz_event_name}")
                 event_type = EventType.BUTTON_PRESS
             elif dvz_event_name == "release":
+                print(f"event {dvz_event_name}")
                 event_type = EventType.BUTTON_RELEASE
             elif dvz_event_name == "move":
                 event_type = EventType.MOUSE_MOVE
             elif dvz_event_name == "wheel":
                 event_type = EventType.MOUSE_SCROLL
+            # elif dvz_event_name == "drag_start":
+            #     event_type = EventType.BUTTON_PRESS
+            # elif dvz_event_name == "drag_stop":
+            #     event_type = EventType.BUTTON_RELEASE
+            # elif dvz_event_name == "click":
+            #     event_type = EventType.BUTTON_PRESS
             else:
                 print(f'"Unknown dvz mouse event name: {dvz_event_name}"')
                 return  # Unknown event

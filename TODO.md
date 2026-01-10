@@ -4,6 +4,10 @@
   - change ._compute_tick_coords_horizontal and ._compute_tick_coords_vertical to use axis_tick_locator/formater
     - make it return location and label with current algo
     - then port it to axis_tick_*
+  - change dataunit in inner viewport 
+    - to xy inner viewport 
+    - then to x/y canvas
+    - to ndc in outer viewport
 - change axes_panzoom_example to have multiple viewports
 - implement a image visual 
   - base it on datoviz
