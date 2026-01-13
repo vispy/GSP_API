@@ -27,20 +27,20 @@ class AxisTickLocator:
         self.target_ticks: int = target_ticks
         self.nice_fractions: Tuple[float, ...] = nice_fractions
 
-    def tick_step(self, vmin: float, vmax: float) -> float:
+    def tick_step(self, min_dunit: float, max_dunit: float) -> float:
         """Return a suitable tick step for the interval.
 
         Args:
-            vmin (float): Minimum data value.
-            vmax (float): Maximum data value.
+            min_dunit (float): Minimum data value in data unit.
+            max_dunit (float): Maximum data value in data unit.
 
         Returns:
             float: Step size chosen to give well-spaced ticks.
         """
-        if vmin == vmax:
-            return self._fallback_step(vmin)
+        if min_dunit == max_dunit:
+            return self._fallback_step(min_dunit)
 
-        data_range = abs(vmax - vmin)
+        data_range = abs(max_dunit - min_dunit)
         raw_step = data_range / max(1, self.target_ticks)
 
         # Decompose the raw step to snap it to a "nice" fraction of a power of ten.
@@ -103,9 +103,9 @@ if __name__ == "__main__":
     min_dunit = 500
     max_dunit = 510
 
-    tick_positions, tick_step = tick_locator.compute_location_dunit(min_dunit, max_dunit)
+    tick_positions_dunit, tick_step = tick_locator.compute_location_dunit(min_dunit, max_dunit)
 
-    tick_labels = [tick_formatter.format(tick_position, tick_step) for tick_position in tick_positions]
+    tick_labels = [tick_formatter.format(tick_position_dunit, tick_step) for tick_position_dunit in tick_positions_dunit]
 
-    for tick_position, tick_label in zip(tick_positions, tick_labels):
-        print(f"{tick_position:8.3f} -> {tick_label}")
+    for tick_position_dunit, tick_label in zip(tick_positions_dunit, tick_labels):
+        print(f"{tick_position_dunit:8.3f} -> {tick_label}")
