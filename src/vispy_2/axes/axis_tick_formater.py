@@ -11,7 +11,7 @@ class AxisTickFormatter:
         scientific_threshold (int): Minimum absolute exponent to switch to scientific notation.
     """
 
-    def __init__(self, scientific_threshold: int = 6) -> None:
+    def __init__(self, scientific_threshold: int = 3) -> None:
         """Initialize the formatter with a scientific notation threshold.
 
         Args:

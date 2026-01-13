@@ -263,15 +263,14 @@ class AxesDisplay:
         _, tick_y_outter_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, tick_y_outter_pixel)
         tick_y_outter_ndc = tick_y_outter_delta_ndc - 1.0
 
-        # Compute nice tick positions and labels using AxisTickLocator and AxisTickFormatter
-        tick_locator = AxisTickLocator(target_ticks=7)
-        tick_positions_dunit, tick_step = tick_locator.compute_location_dunit(x_min_dunit, x_max_dunit)
-        tick_formatter = AxisTickFormatter()
-        tick_labels = [tick_formatter.format(tick_position, tick_step) for tick_position in tick_positions_dunit]
-
         # Create positions for ticks from -num_ticks/2 to +num_ticks/2
         tick_positions = []
-        for tick_x_inner_dunit in tick_positions_dunit:
+        tick_labels = []
+        for tick_x_inner_dunit in range(math.ceil(x_min_dunit), math.ceil(x_max_dunit) + 1):
+            # skip ticks outside data space limits
+            if tick_x_inner_dunit > x_max_dunit:
+                continue
+
             # compute tick_x_outter_ndc
             tick_x_inner_ndc = (tick_x_inner_dunit - x_min_dunit) / (x_max_dunit - x_min_dunit) * 2.0 - 1.0
             tick_x_outter_delta_pixel = inner_viewport.get_x() + ((tick_x_inner_ndc + 1.0) / 2.0) * inner_viewport.get_width()
@@ -279,6 +278,9 @@ class AxesDisplay:
             tick_x_outter_ndc = tick_x_outter_delta_ndc - 1.0
 
             tick_positions.append([tick_x_outter_ndc, tick_y_outter_ndc, 0.0])
+
+            # Append tick label
+            tick_labels.append(f"{tick_x_inner_dunit}")
 
         # =============================================================================
         # Return coord_array and tick_labels
@@ -301,16 +303,14 @@ class AxesDisplay:
         tick_x_outter_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(tick_x_outter_pixel, 0.0)
         tick_x_outter_ndc = tick_x_outter_delta_ndc - 1.0
 
-        # Compute nice tick positions and labels using AxisTickLocator and AxisTickFormatter
-        tick_locator = AxisTickLocator(target_ticks=7)
-        tick_positions_dunit, tick_step = tick_locator.compute_location_dunit(y_min_dunit, y_max_dunit)
-        tick_formatter = AxisTickFormatter()
-        tick_labels = [tick_formatter.format(tick_position, tick_step) for tick_position in tick_positions_dunit]
-
         # Create positions for ticks from -num_ticks/2 to +num_ticks/2
         tick_positions = []
-        # for tick_y_inner_dunit in range(math.ceil(y_min_dunit), math.ceil(y_max_dunit) + 1):
-        for tick_y_inner_dunit in tick_positions_dunit:
+        tick_labels = []
+        for tick_y_inner_dunit in range(math.ceil(y_min_dunit), math.ceil(y_max_dunit) + 1):
+            # skip ticks outside data space limits
+            if tick_y_inner_dunit > y_max_dunit:
+                continue
+
             # compute tick_y_outter_ndc
             tick_y_inner_ndc = (tick_y_inner_dunit - y_min_dunit) / (y_max_dunit - y_min_dunit) * 2.0 - 1.0
             tick_y_outter_delta_pixel = inner_viewport.get_y() + ((tick_y_inner_ndc + 1.0) / 2.0) * inner_viewport.get_height()
@@ -318,6 +318,9 @@ class AxesDisplay:
             tick_y_outter_ndc = tick_y_outter_delta_ndc - 1.0
 
             tick_positions.append([tick_x_outter_ndc, tick_y_outter_ndc, 0.0])
+
+            # Append tick label
+            tick_labels.append(f"{tick_y_inner_dunit}")
 
         return tick_positions, tick_labels
 

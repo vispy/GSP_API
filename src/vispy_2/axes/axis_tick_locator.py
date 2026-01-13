@@ -55,12 +55,12 @@ class AxisTickLocator:
         # Fallback (should rarely happen)
         return self.nice_fractions[-1] * base
 
-    def ticks(self, min_dunit: float, max_dunit: float) -> Tuple[List[float], float]:
-        """Generate tick positions and the step size for an interval.
+    def compute_location_dunit(self, min_dunit: float, max_dunit: float) -> Tuple[List[float], float]:
+        """Generate tick positions in data units and the step size for an interval.
 
         Args:
-            min_dunit (float): Minimum data value.
-            max_dunit (float): Maximum data value.
+            min_dunit (float): Minimum data value in data unit.
+            max_dunit (float): Maximum data value in data unit.
 
         Returns:
             Tuple[List[float], float]: List of tick positions and the step size used.
@@ -100,10 +100,10 @@ if __name__ == "__main__":
     tick_locator = AxisTickLocator(target_ticks=7)
     tick_formatter = AxisTickFormatter()
 
-    min_dunit = -15
-    max_dunit = 42.2
+    min_dunit = 500
+    max_dunit = 510
 
-    tick_positions, tick_step = tick_locator.ticks(min_dunit, max_dunit)
+    tick_positions, tick_step = tick_locator.compute_location_dunit(min_dunit, max_dunit)
 
     tick_labels = [tick_formatter.format(tick_position, tick_step) for tick_position in tick_positions]
 
