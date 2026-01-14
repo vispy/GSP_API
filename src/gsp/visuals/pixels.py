@@ -10,15 +10,16 @@ from ..utils.group_utils import GroupUtils
 
 class Pixels(VisualBase):
     """Pixels visual for rendering individual colored pixels.
-    
+
     This visual represents a collection of pixels with configurable positions,
     colors, and groups for efficient rendering.
     """
+
     __slots__ = ["__positions", "__colors", "__groups"]
 
     def __init__(self, positions: TransBuf, colors: TransBuf, groups: Groups):
         """Initialize Pixels visual.
-        
+
         Args:
             positions: Positions of the pixels.
             colors: Colors of the pixels.
@@ -46,7 +47,7 @@ class Pixels(VisualBase):
 
     def set_positions(self, positions: TransBuf) -> None:
         """Set positions of the pixels.
-        
+
         Args:
             positions: New positions for the pixels.
         """
@@ -59,7 +60,7 @@ class Pixels(VisualBase):
 
     def set_colors(self, colors: TransBuf) -> None:
         """Set colors of the pixels.
-        
+
         Args:
             colors: New colors for the pixels.
         """
@@ -72,7 +73,7 @@ class Pixels(VisualBase):
 
     def set_groups(self, groups: Groups) -> None:
         """Set groups for organizing pixels.
-        
+
         Args:
             groups: New groups for the pixels.
         """
@@ -98,7 +99,7 @@ class Pixels(VisualBase):
         self.sanity_check_attributes(self.__positions, self.__colors, self.__groups)
 
     @staticmethod
-    def sanity_check_attribute_buffers(positions: Buffer, colors: Buffer, groups: Groups):
+    def sanity_check_attributes_buffer(positions: Buffer, colors: Buffer, groups: Groups):
         """Same as .sanity_check_attributes() but accept only Buffers.
 
         - It is meant to be used after converting TransBuf to Buffer.
@@ -112,7 +113,7 @@ class Pixels(VisualBase):
     @staticmethod
     def sanity_check_attributes(positions: TransBuf, colors: TransBuf, groups: Groups):
         """Check that the attributes are valid and consistent.
-        
+
         Args:
             positions: Positions of the pixels.
             colors: Colors of the pixels.
