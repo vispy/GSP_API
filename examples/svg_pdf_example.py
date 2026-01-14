@@ -1,3 +1,5 @@
+"""Example of using Paths to create multiple polylines and render them as SVG and PDF."""
+
 # stdlib imports
 import os
 import pathlib
@@ -17,6 +19,7 @@ from gsp.utils.cmap_utils import CmapUtils
 
 
 def main():
+    """Main function to run the example."""
     # fix random seed for reproducibility
     np.random.seed(0)
 
