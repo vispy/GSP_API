@@ -1,24 +1,6 @@
-- change axes_display to handle sub ticks
-  - https://chatgpt.com/c/695e6038-7a54-8325-93f9-c471099097fb
-  - implemented in axis_tick_locator.py and axis_tick_formater.py
-  - change ._compute_tick_coords_horizontal and ._compute_tick_coords_vertical to use axis_tick_locator/formater
-    - make it return location and label with current algo
-    - then port it to axis_tick_*
-  - change dataunit in inner viewport 
-    - to xy inner viewport 
-    - then to x/y canvas
-    - to ndc in outer viewport
-- change axes_panzoom_example to have multiple viewports
 - implement a image visual 
   - base it on datoviz
   - supporting what is needed for pyramid
-- Move viewport_event and animator in their own backend package
-  - with the type definition in `gsp.core`
-- invoice changes
-  - started vispy 2.0 package - implementation of axes display and panzoom
-  - made gsp_extra as a real package
-  - animator loop for datoviz and matplotlib
-  - viewport events for datoviz and matplotlib
 - rendering visual MUST call the `.sanity_check_attributes_buffer()`
   - to be done in matplotlib and in datoviz
   - see matplotlib_renderer_texts.py for an example
@@ -98,6 +80,24 @@
     - possibility: set by class or by instance
 
 ---
+- DONE Move viewport_event and animator in their own backend package
+  - with the type definition in `gsp.core`
+- DONE invoice changes - dec 2025
+  - started vispy 2.0 package - implementation of axes display and panzoom
+  - made gsp_extra as a real package
+  - animator loop for datoviz and matplotlib
+  - viewport events for datoviz and matplotlib
+- DONE change axes_display to handle sub ticks
+  - https://chatgpt.com/c/695e6038-7a54-8325-93f9-c471099097fb
+  - implemented in axis_tick_locator.py and axis_tick_formater.py
+  - change ._compute_tick_coords_horizontal and ._compute_tick_coords_vertical to use axis_tick_locator/formater
+    - make it return location and label with current algo
+    - then port it to axis_tick_*
+  - change dataunit in inner viewport 
+    - to xy inner viewport 
+    - then to x/y canvas
+    - to ndc in outer viewport
+- DONE change axes_panzoom_example to have multiple viewports
 - DONE fix axe panzoom in datoviz : it is zooming too much
   - bug may be in viewport events datoviz - like the button release is not well handled
 - DONE bug in axes_panzoom/display
