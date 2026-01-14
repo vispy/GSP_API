@@ -21,6 +21,7 @@ from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.types.visual_base import VisualBase
 from gsp.types.transbuf import TransBuf
+from gsp.visuals.image import Image
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
 from gsp.visuals.markers import Markers
@@ -34,7 +35,7 @@ matplotlib.rcParams["toolbar"] = "none"
 
 class MatplotlibRenderer(RendererBase):
     """Matplotlib-based renderer for GSP visuals.
-    
+
     This renderer implements the GSP rendering interface using Matplotlib as the backend.
     It creates and manages a Matplotlib figure with multiple axes for different viewports,
     and renders various visual types (pixels, points, paths, markers, segments, texts) into them.
@@ -42,7 +43,7 @@ class MatplotlibRenderer(RendererBase):
 
     def __init__(self, canvas: Canvas):
         """Initialize the Matplotlib renderer.
-        
+
         Args:
             canvas: The canvas defining the rendering surface dimensions and DPI.
         """
@@ -63,7 +64,7 @@ class MatplotlibRenderer(RendererBase):
 
     def get_canvas(self) -> Canvas:
         """Get the canvas associated with this renderer.
-        
+
         Returns:
             The canvas instance.
         """
@@ -71,7 +72,7 @@ class MatplotlibRenderer(RendererBase):
 
     def close(self) -> None:
         """Close the renderer and release resources.
-        
+
         Stops the Matplotlib event loop and closes the figure.
         """
         # warnings.warn(f"Closing NetworkRenderer does not release any resources.", UserWarning)
@@ -83,7 +84,7 @@ class MatplotlibRenderer(RendererBase):
 
     def show(self) -> None:
         """Display the rendered figure in an interactive window.
-        
+
         This method shows the Matplotlib figure. It does nothing when running
         in test mode (GSP_TEST environment variable set to "True").
         """
@@ -104,7 +105,7 @@ class MatplotlibRenderer(RendererBase):
         image_format: str = "png",
     ) -> bytes:
         """Render the scene to an image.
-        
+
         Args:
             viewports: Sequence of viewport regions to render into.
             visuals: Sequence of visual elements to render.
@@ -112,10 +113,10 @@ class MatplotlibRenderer(RendererBase):
             cameras: Sequence of cameras defining view and projection for each visual.
             return_image: Whether to return the rendered image as bytes.
             image_format: Format for the output image (e.g., "png", "jpg").
-            
+
         Returns:
             The rendered image as bytes in the specified format, or empty bytes if return_image is False.
-            
+
         Raises:
             AssertionError: If the sequences don't all have the same length.
         """
@@ -175,7 +176,11 @@ class MatplotlibRenderer(RendererBase):
 
     def _render_visual(self, viewport: Viewport, visual: VisualBase, model_matrix: TransBuf, camera: Camera):
         """Render a single visual in a given viewport using the specified camera."""
-        if isinstance(visual, Pixels):
+        if isinstance(visual, Image):
+            from gsp_matplotlib.renderer.matplotlib_renderer_image import RendererImage
+
+            RendererImage.render(self, viewport, visual, model_matrix, camera)
+        elif isinstance(visual, Pixels):
             from gsp_matplotlib.renderer.matplotlib_renderer_pixels import RendererPixels
 
             RendererPixels.render(self, viewport, visual, model_matrix, camera)
@@ -209,10 +214,10 @@ class MatplotlibRenderer(RendererBase):
 
     def get_mpl_axes_for_viewport(self, viewport: Viewport) -> matplotlib.axes.Axes:
         """Get the Matplotlib axes associated with a viewport.
-        
+
         Args:
             viewport: The viewport to get axes for.
-            
+
         Returns:
             The Matplotlib Axes object for the given viewport.
         """
@@ -220,7 +225,7 @@ class MatplotlibRenderer(RendererBase):
 
     def get_mpl_figure(self) -> matplotlib.figure.Figure:
         """Get the underlying Matplotlib figure.
-        
+
         Returns:
             The Matplotlib Figure object used by this renderer.
         """
