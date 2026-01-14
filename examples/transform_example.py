@@ -1,3 +1,5 @@
+"""Example of using TransformChain to load an image into a Buffer."""
+
 # stdlib imports
 import os
 
@@ -11,6 +13,7 @@ __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
 
 def main():
+    """Main function for the transform example."""
     transformChain = TransformChain(-1, None)
 
     image_url = f"file://{__dirname__}/images/image.png"

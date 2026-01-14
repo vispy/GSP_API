@@ -14,7 +14,7 @@ __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
 
 def main():
-
+    """Main function for the transform serialization example."""
     # =============================================================================
     # Create a transform chain
     # =============================================================================

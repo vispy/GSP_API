@@ -1,3 +1,5 @@
+"""Example of using TransformChain to load point positions from an external file and render them as Points."""
+
 # stdlib imports
 import pathlib
 
@@ -18,6 +20,7 @@ from gsp_extra.transform_links.transform_load import TransformLoad
 
 
 def main():
+    """Main function for the transform visual example."""
     # fix random seed for reproducibility
     np.random.seed(0)
 

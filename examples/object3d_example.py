@@ -1,4 +1,5 @@
 """Example showing how to use Object3D to create a 3D scene with rotating points."""
+
 # stdlib imports
 import time
 
@@ -13,7 +14,6 @@ from gsp.visuals import Pixels
 from gsp.types import Buffer, BufferType
 from gsp.types.visual_base import VisualBase
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp_extra.object3d import Object3D
 import gsp_extra.mpl3d.glm as glm
