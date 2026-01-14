@@ -1,8 +1,12 @@
+"""Example demonstrating the usage of Buffer class."""
+
 # local imports
 from gsp.types import Buffer, BufferType
 
 
 def main():
+    """Main function to demonstrate Buffer usage."""
+    # Create a buffer of 10 unsigned integers
     buffer = Buffer(10, BufferType.uint32)
     print("Buffer created:", buffer)
 
