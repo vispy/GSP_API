@@ -36,7 +36,7 @@ class RendererSegments:
             segments: The Segments visual to render.
             model_matrix: The model transformation matrix as a TransBuf.
             camera: The Camera providing view and projection matrices.
-        
+
         Returns:
             list[matplotlib.artist.Artist]: List of Matplotlib artists created/updated.
         """
@@ -74,6 +74,17 @@ class RendererSegments:
         colors_numpy = Bufferx.to_numpy(colors_buffer) / 255.0  # normalize to [0, 1] range
         line_widths_numpy = Bufferx.to_numpy(line_widths_buffer)
         line_widths_numpy = line_widths_numpy.reshape(-1)
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Segments.sanity_check_attributes_buffer(
+            vertices_buffer,
+            line_widths_buffer,
+            segments.get_cap_style(),
+            colors_buffer,
+        )
 
         # =============================================================================
         # Create the artists if needed

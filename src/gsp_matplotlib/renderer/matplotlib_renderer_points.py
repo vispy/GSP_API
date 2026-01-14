@@ -35,7 +35,7 @@ class RendererPoints:
             points: The Points visual to render.
             model_matrix: The model transformation matrix as a TransBuf.
             camera: The Camera providing view and projection matrices.
-        
+
         Returns:
             list[matplotlib.artist.Artist]: List of Matplotlib artists created/updated.
         """
@@ -75,6 +75,18 @@ class RendererPoints:
         face_colors_numpy = Bufferx.to_numpy(face_colors_buffer) / 255.0  # normalize to [0, 1] range
         edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer) / 255.0  # normalize to [0, 1] range
         edge_widths_numpy = Bufferx.to_numpy(edge_widths_buffer).flatten()
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Points.sanity_check_attributes_buffer(
+            vertices_buffer,
+            sizes_buffer,
+            face_colors_buffer,
+            edge_colors_buffer,
+            edge_widths_buffer,
+        )
 
         # =============================================================================
         # Create the artists if needed

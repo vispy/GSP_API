@@ -1,8 +1,7 @@
-""""Renderer for Pixels using Matplotlib."""
+"""Renderer for Pixels using Matplotlib."""
 
 # pip imports
 import typing
-import matplotlib.axes
 import matplotlib.collections
 import matplotlib.artist
 
@@ -22,6 +21,7 @@ from ..extra.bufferx import Bufferx
 
 class RendererPixels:
     """Renderer for Pixels using Matplotlib."""
+
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
@@ -37,7 +37,7 @@ class RendererPixels:
             viewport: The Viewport in which to render.
             pixels: The Pixels visual to render.
             model_matrix: The model transformation matrix as a TransBuf.
-            camera: The Camera providing view and projection matrices.      
+            camera: The Camera providing view and projection matrices.
 
         Returns:
             list[matplotlib.artist.Artist]: List of Matplotlib artists created/updated.
@@ -68,13 +68,16 @@ class RendererPixels:
         # =============================================================================
 
         # Convert all attributes to buffer
-        color_buffer = TransBufUtils.to_buffer(pixels.get_colors())
+        colors_buffer = TransBufUtils.to_buffer(pixels.get_colors())
 
         # Convert buffers to numpy arrays
-        colors_numpy = Bufferx.to_numpy(color_buffer) / 255.0  # normalize to [0, 1] range
+        colors_numpy = Bufferx.to_numpy(colors_buffer) / 255.0  # normalize to [0, 1] range
 
-        # Sanity check - check visual attributes
-        Pixels.sanity_check_attribute_buffers(vertices_buffer, color_buffer, pixels.get_groups())
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Pixels.sanity_check_attributes_buffer(vertices_buffer, colors_buffer, pixels.get_groups())
 
         # =============================================================================
         #   Compute indices_per_group for groups depending on the type of groups
@@ -137,7 +140,7 @@ class RendererPixels:
     @staticmethod
     def create_artists(renderer: MatplotlibRenderer, viewport: Viewport, visual: VisualBase, group_count: int) -> None:
         """Create the artists associated with the given visual and group count.
-        
+
         Args:
             renderer: The Matplotlib renderer.
             viewport: The viewport for which to create the artists.

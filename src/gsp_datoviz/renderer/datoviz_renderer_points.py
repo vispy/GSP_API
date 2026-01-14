@@ -1,4 +1,5 @@
 """Datoviz renderer for Points visuals."""
+
 # stdlib imports
 from typing import Sequence
 import typing
@@ -23,6 +24,7 @@ from gsp.utils.unit_utils import UnitUtils
 
 class DatovizRendererPoints:
     """Datoviz renderer for Points visuals."""
+
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -70,15 +72,31 @@ class DatovizRendererPoints:
         # get attributes from TransBuf to buffer
         sizes_buffer = TransBufUtils.to_buffer(points.get_sizes())
         face_colors_buffer = TransBufUtils.to_buffer(points.get_face_colors())
+        edge_colors_buffer = TransBufUtils.to_buffer(points.get_edge_colors())
+        edge_widths_buffer = TransBufUtils.to_buffer(points.get_edge_widths())
 
         # convert buffers to numpy arrays
         face_colors_numpy = Bufferx.to_numpy(face_colors_buffer)
+        edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer) / 255.0  # normalize to [0, 1] range
+        edge_widths_numpy = Bufferx.to_numpy(edge_widths_buffer).flatten()
 
         # Convert sizes from point^2 to pixel diameter
         sizes_pt2_numpy = Bufferx.to_numpy(sizes_buffer)
         radius_pt_numpy = np.sqrt(sizes_pt2_numpy / np.pi)
         radius_px_numpy = UnitUtils.point_to_pixel_numpy(radius_pt_numpy, renderer.get_canvas().get_dpi())
         diameter_px_numpy = radius_px_numpy * 2.0 * UnitUtils.device_pixel_ratio()
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Points.sanity_check_attributes_buffer(
+            vertices_buffer,
+            sizes_buffer,
+            face_colors_buffer,
+            edge_colors_buffer,
+            edge_widths_buffer,
+        )
 
         # =============================================================================
         # Create the datoviz visual if needed

@@ -1,4 +1,5 @@
 """Matplotlib renderer for Paths objects."""
+
 # pip imports
 import typing
 import matplotlib.axes
@@ -30,7 +31,7 @@ class RendererPaths:
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
         """Render the given Paths object onto the specified viewport using Matplotlib.
-        
+
         Args:
             renderer (MatplotlibRenderer): The renderer instance.
             viewport (Viewport): The viewport to render onto.
@@ -98,6 +99,19 @@ class RendererPaths:
 
             mpl_colors = np.vstack([mpl_colors, colors_numpy[path_start : path_start + path_size_int - 1]])
             mpl_line_widths = np.hstack([mpl_line_widths, line_widths_numpy[path_start : path_start + path_size_int - 1]])
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Paths.sanity_check_attributes_buffer(
+            vertices_buffer,
+            path_sizes_buffer,
+            colors_buffer,
+            line_widths_buffer,
+            paths.get_cap_style(),
+            paths.get_join_style(),
+        )
 
         # =============================================================================
         # Create the artists if needed

@@ -1,4 +1,5 @@
 """Datoviz renderer for Paths visuals."""
+
 # stdlib imports
 import typing
 
@@ -21,6 +22,7 @@ from ..utils.converter_utils import ConverterUtils
 
 class DatovizRendererPaths:
     """Datoviz renderer for Paths visuals."""
+
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -79,6 +81,19 @@ class DatovizRendererPaths:
 
         path_sizes_numpy = path_sizes_numpy.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
         line_widths_px_numpy = line_widths_px_numpy.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Paths.sanity_check_attributes_buffer(
+            vertices_buffer,
+            path_sizes_buffer,
+            colors_buffer,
+            line_widths_buffer,
+            paths.get_cap_style(),
+            paths.get_join_style(),
+        )
 
         # =============================================================================
         # Create the datoviz visual if needed

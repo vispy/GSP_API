@@ -23,6 +23,7 @@ from gsp.utils.math_utils import MathUtils
 
 class DatovizRendererPixels:
     """Datoviz renderer for Pixels visuals."""
+
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -72,6 +73,12 @@ class DatovizRendererPixels:
 
         # convert buffers to numpy arrays
         colors_numpy = Bufferx.to_numpy(colors_buffer)
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Pixels.sanity_check_attributes_buffer(vertices_buffer, colors_buffer, pixels.get_groups())
 
         # =============================================================================
         #   Compute indices_per_group for groups depending on the type of groups

@@ -25,6 +25,7 @@ from ..utils.converter_utils import ConverterUtils
 
 class DatovizRendererSegments:
     """Datoviz renderer for Segments visuals."""
+
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -80,6 +81,17 @@ class DatovizRendererSegments:
         # Convert sizes from point to pixel diameter
         line_widths_px_numpy = UnitUtils.point_to_pixel_numpy(line_widths_pt_numpy, renderer.get_canvas().get_dpi())
         line_widths_px_numpy = line_widths_px_numpy.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Segments.sanity_check_attributes_buffer(
+            vertices_buffer,
+            line_widths_buffer,
+            segments.get_cap_style(),
+            colors_buffer,
+        )
 
         # =============================================================================
         # Create the datoviz visual if needed

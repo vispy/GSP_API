@@ -1,4 +1,4 @@
-""""Datoviz renderer for Markers visuals."""
+"""Datoviz renderer for Markers visuals."""
 
 # stdlib imports
 import typing
@@ -23,6 +23,7 @@ from gsp_datoviz.utils.converter_utils import ConverterUtils
 
 class DatovizRendererMarkers:
     """Datoviz renderer for Markers visuals."""
+
     @staticmethod
     def render(
         renderer: DatovizRenderer,
@@ -87,6 +88,19 @@ class DatovizRendererMarkers:
         edge_widths_px_numpy = UnitUtils.point_to_pixel_numpy(edge_widths_pt_numpy, renderer.get_canvas().get_dpi())
         edge_widths_px_numpy = edge_widths_px_numpy * UnitUtils.device_pixel_ratio()
         edge_widths_px_numpy = edge_widths_px_numpy.reshape(-1)
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Markers.sanity_check_attributes_buffer(
+            markers.get_marker_shape(),
+            vertices_buffer,
+            sizes_buffer,
+            face_colors_buffer,
+            edge_colors_buffer,
+            edge_widths_buffer,
+        )
 
         # =============================================================================
         # Create the datoviz visual if needed

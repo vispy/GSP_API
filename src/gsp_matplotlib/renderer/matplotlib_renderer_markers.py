@@ -19,6 +19,7 @@ from ..utils.converter_utils import ConverterUtils
 
 class RendererMarkers:
     """Renderer for Markers objects using Matplotlib."""
+
     @staticmethod
     def render(
         renderer: MatplotlibRenderer,
@@ -28,12 +29,12 @@ class RendererMarkers:
         camera: Camera,
     ) -> list[matplotlib.artist.Artist]:
         """Render the given Markers object onto the specified viewport using Matplotlib.
-        
+
         Args:
             renderer (MatplotlibRenderer): The renderer instance.
             viewport (Viewport): The viewport to render onto.
             markers (Markers): The Markers object containing marker data.
-            model_matrix (TransBuf): The model transformation matrix.           
+            model_matrix (TransBuf): The model transformation matrix.
             camera (Camera): The camera providing view and projection matrices.
 
         Returns:
@@ -75,6 +76,19 @@ class RendererMarkers:
         face_colors_numpy = Bufferx.to_numpy(face_colors_buffer) / 255.0  # normalize to [0, 1] range
         edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer) / 255.0  # normalize to [0, 1] range
         edge_widths_numpy = Bufferx.to_numpy(edge_widths_buffer).flatten()
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Markers.sanity_check_attributes_buffer(
+            markers.get_marker_shape(),
+            vertices_buffer,
+            sizes_buffer,
+            face_colors_buffer,
+            edge_colors_buffer,
+            edge_widths_buffer,
+        )
 
         # =============================================================================
         # Create the artists if needed
