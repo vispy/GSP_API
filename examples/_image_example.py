@@ -23,7 +23,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(256, 256, 72.0)
+    canvas = Canvas(512, 512, 72.0)
 
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
@@ -40,7 +40,7 @@ def main():
     # =============================================================================
 
     # Define image position (4 vertices for a quad)
-    positions_numpy = np.array([[0.0, 0.0, 0.0]], dtype=np.float32)
+    positions_numpy = np.array([[0.0, 0.5, 0.0]], dtype=np.float32)
     positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
     # Define image extent (left, right, bottom, top)
