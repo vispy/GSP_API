@@ -1,22 +1,20 @@
 """Example showing how to use the Pixels visual to render a set of points."""
 
 # stdlib imports
-import os
 import pathlib
 
 # pip imports
 import numpy as np
-import matplotlib.pyplot
 
 # local imports
 from gsp.core import Canvas, Viewport
-from gsp.core.texture import Texture
 from gsp.visuals import Image
-from gsp.types import Buffer, BufferType
+from gsp.types import BufferType
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
 from common.example_helper import ExampleHelper
+from gsp_extra.misc.texture_utils import TextureUtils
 
 
 def main():
@@ -25,7 +23,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(100, 100, 72.0)
+    canvas = Canvas(256, 256, 72.0)
 
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
@@ -35,20 +33,7 @@ def main():
     # =============================================================================
 
     image_path = pathlib.Path(__file__).parent / "images" / "image.png"
-    texture_numpy = matplotlib.pyplot.imread(image_path)
-    # get image dimensions
-    image_height, image_width, image_channels = texture_numpy.shape
-    print(f"Loaded image with dimensions: {image_width}x{image_height}, channels: {image_channels}")
-    # ensure texture_numpy is uint8
-    texture_numpy = (texture_numpy * 255).astype(np.uint8) if texture_numpy.dtype == np.float32 else texture_numpy
-    # add alpha channel if needed
-    if image_channels == 3:
-        alpha_channel = np.full((image_height, image_width, 1), 255, dtype=np.uint8)
-        texture_numpy = np.concatenate((texture_numpy, alpha_channel), axis=2)
-    # linearize the texture data, thus we can do a buffer out of it
-    texture_numpy = texture_numpy.reshape((image_width * image_height, 4))
-    texture_buffer = Bufferx.from_numpy(texture_numpy, BufferType.rgba8)
-    texture = Texture(texture_buffer, image_width, image_height)
+    texture = TextureUtils.load_image(str(image_path))
 
     # =============================================================================
     # Create a image visual
