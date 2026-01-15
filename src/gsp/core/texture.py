@@ -5,6 +5,7 @@ from typing import Any
 
 # local imports
 from ..types.transbuf import TransBuf
+from ..types.buffer import Buffer
 from ..utils.uuid_utils import UuidUtils
 
 
@@ -66,3 +67,24 @@ class Texture:
         """Set the height of the texture in pixels."""
         assert height > 0, "Texture height must be positive"
         self._height = height
+
+    # =============================================================================
+    # Sanity check functions
+    # =============================================================================
+
+    def check_attributes(self) -> None:
+        """Check that the attributes are valid and consistent."""
+        self.sanity_check_attributes(self._data, self._width, self._height)
+
+    @staticmethod
+    def sanity_check_attributes_buffer(data: Buffer, width: int, height: int) -> None:
+        """Sanity check when attributes are already concrete buffers."""
+        Texture.sanity_check_attributes(data, width, height)
+
+    @staticmethod
+    def sanity_check_attributes(data: TransBuf, width: int, height: int) -> None:
+        """Sanity check the attributes of the Image visual."""
+        if not isinstance(data, TransBuf):
+            raise TypeError(f"Data must be a TransBuf instance, got {type(data)}")
+
+        # Additional checks can be added here as needed
