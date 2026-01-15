@@ -15,6 +15,7 @@ import numpy as np
 import datoviz as dvz
 from datoviz._panel import Panel as _DvzPanel  # TODO _panel to fix in datoviz ?
 from datoviz._figure import Figure as _DvzFigure
+from datoviz._texture import Texture as _DvzTexture
 from datoviz.visuals import Visual as _DvzVisual
 
 # dataviz glossary
@@ -29,6 +30,7 @@ from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.types.visual_base import VisualBase
 from gsp.types.transbuf import TransBuf
+from gsp.visuals.image import Image
 from gsp.visuals.markers import Markers
 from gsp.visuals.paths import Paths
 from gsp.visuals.pixels import Pixels
@@ -59,6 +61,8 @@ class DatovizRenderer(RendererBase):
         """datoviz panel per gsp viewport UUID"""
         self._dvz_visuals: dict[str, _DvzVisual] = {}
         """datoviz visual per gsp visual group UUID"""
+        self._dvz_textures: dict[str, _DvzTexture] = {}
+        """datoviz texture per gsp texture UUID"""
 
         self._group_count: dict[str, int] = {}
         """group count per visual UUID"""
@@ -171,7 +175,11 @@ class DatovizRenderer(RendererBase):
     # =============================================================================
 
     def _render_visual(self, viewport: Viewport, visual: VisualBase, model_matrix: TransBuf, camera: Camera) -> None:
-        if isinstance(visual, Pixels):
+        if isinstance(visual, Image):
+            from .datoviz_renderer_image import DatovizRendererImage
+
+            DatovizRendererImage.render(self, viewport, visual, model_matrix, camera)
+        elif isinstance(visual, Pixels):
             from .datoviz_renderer_pixels import DatovizRendererPixels
 
             DatovizRendererPixels.render(self, viewport, visual, model_matrix, camera)
