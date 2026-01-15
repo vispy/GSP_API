@@ -60,8 +60,6 @@ class RendererImage:
         # Convert 3D vertices to 2D - shape (N, 2)
         vertices_2d = vertices_3d_transformed[:, :2]
 
-        # raise NotImplementedError("Rendering Image visuals is not yet implemented.")
-
         # =============================================================================
         # Convert all attributes to numpy arrays
         # =============================================================================
