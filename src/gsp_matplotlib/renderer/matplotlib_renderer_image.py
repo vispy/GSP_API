@@ -2,7 +2,7 @@
 
 # pip imports
 import typing
-import matplotlib.collections
+import matplotlib.image
 import matplotlib.artist
 
 # local imports
@@ -60,34 +60,30 @@ class RendererImage:
         # Convert 3D vertices to 2D - shape (N, 2)
         vertices_2d = vertices_3d_transformed[:, :2]
 
-        raise NotImplementedError("Rendering Image visuals is not yet implemented.")
+        # raise NotImplementedError("Rendering Image visuals is not yet implemented.")
 
         # =============================================================================
         # Convert all attributes to numpy arrays
         # =============================================================================
 
+        gsp_texture = image.get_texture()
+
         # Convert all attributes to buffer
-        sizes_buffer = TransBufUtils.to_buffer(image.get_sizes())
-        face_colors_buffer = TransBufUtils.to_buffer(image.get_face_colors())
-        edge_colors_buffer = TransBufUtils.to_buffer(image.get_edge_colors())
-        edge_widths_buffer = TransBufUtils.to_buffer(image.get_edge_widths())
+        texture_buffer = TransBufUtils.to_buffer(gsp_texture.get_data())
 
         # Convert buffers to numpy arrays
-        sizes_numpy = Bufferx.to_numpy(sizes_buffer).flatten()
-        face_colors_numpy = Bufferx.to_numpy(face_colors_buffer) / 255.0  # normalize to [0, 1] range
-        edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer) / 255.0  # normalize to [0, 1] range
-        edge_widths_numpy = Bufferx.to_numpy(edge_widths_buffer).flatten()
+        texture_width = gsp_texture.get_width()
+        texture_height = gsp_texture.get_height()
+        texture_numpy = Bufferx.to_numpy(texture_buffer).reshape((texture_height, texture_width, -1))
 
         # =============================================================================
         # Sanity checks attributes buffers
         # =============================================================================
 
         Image.sanity_check_attributes_buffer(
+            image.get_texture(),
             vertices_buffer,
-            sizes_buffer,
-            face_colors_buffer,
-            edge_colors_buffer,
-            edge_widths_buffer,
+            image.get_image_extent(),
         )
 
         # =============================================================================
@@ -97,30 +93,40 @@ class RendererImage:
         artist_uuid = f"{viewport.get_uuid()}_{image.get_uuid()}"
         if artist_uuid not in renderer._artists:
             axes = renderer.get_mpl_axes_for_viewport(viewport)
-            mpl_path_collection = axes.scatter([], [])
-            mpl_path_collection.set_visible(False)
+            mpl_axes_image = matplotlib.image.AxesImage(axes)
+            mpl_axes_image.set_visible(False)
             # hide until properly positioned and sized
-            renderer._artists[artist_uuid] = mpl_path_collection
-            axes.add_artist(mpl_path_collection)
+            renderer._artists[artist_uuid] = mpl_axes_image
+            axes.add_artist(mpl_axes_image)
 
         # =============================================================================
         # Get existing artists
         # =============================================================================
 
-        mpl_path_collection = typing.cast(matplotlib.collections.PathCollection, renderer._artists[artist_uuid])
-        mpl_path_collection.set_visible(True)
+        mpl_axes_image = typing.cast(matplotlib.image.AxesImage, renderer._artists[artist_uuid])
+        mpl_axes_image.set_visible(True)
 
         # =============================================================================
         # Update artists
         # =============================================================================
 
-        mpl_path_collection.set_offsets(offsets=vertices_2d)
-        mpl_path_collection.set_sizes(typing.cast(list, sizes_numpy))
-        mpl_path_collection.set_facecolor(typing.cast(list, face_colors_numpy))
-        mpl_path_collection.set_edgecolor(typing.cast(list, edge_colors_numpy))
-        mpl_path_collection.set_linewidth(typing.cast(list, edge_widths_numpy))
+        gsp_texture = image.get_texture()
+        # mpl_axes_image.set_
+
+        # create random image
+        mpl_axes_image.set_data(texture_numpy)
+
+        # set extent
+        image_extent = image.get_image_extent()
+        mpl_extent = (
+            vertices_2d[0, 0] + image_extent[0],  # TODO get w from transformed vertices and divide extent by w
+            vertices_2d[0, 0] + image_extent[1],
+            vertices_2d[0, 1] + image_extent[2],
+            vertices_2d[0, 1] + image_extent[3],
+        )
+        mpl_axes_image.set_extent(mpl_extent)
 
         # Return the list of artists created/updated
         changed_artists: list[matplotlib.artist.Artist] = []
-        changed_artists.append(mpl_path_collection)
+        changed_artists.append(mpl_axes_image)
         return changed_artists
