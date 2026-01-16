@@ -94,7 +94,7 @@ def main():
         return render_item
 
     axes_transform_numpy = axes_display.get_transform_matrix_numpy()
-    image_extent = (-0.5, 0.5, -0.5, 0.5)
+    image_extent = (-1, 1, -1, 1)
     render_item_image = generate_visual_image(inner_viewport, axes_transform_numpy, image_extent)
 
     # =============================================================================
