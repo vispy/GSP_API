@@ -124,7 +124,11 @@ class DatovizRendererImage:
         # set attributes
         dvz_image.set_position(vertices_3d)
 
-        dvz_size = np.array([[gsp_texture.get_width() / viewport.get_width(), gsp_texture.get_height() / viewport.get_height()]], dtype=np.float32)
+        # dvz_size = np.array([[gsp_texture.get_width() / viewport.get_width(), gsp_texture.get_height() / viewport.get_height()]], dtype=np.float32)
+        # dvz_image.set_size(dvz_size)
+
+        image_extent = image.get_image_extent()
+        dvz_size = np.array([[image_extent[1] - image_extent[0], image_extent[3] - image_extent[2]]], dtype=np.float32)
         dvz_image.set_size(dvz_size)
 
         dvz_texcoords = np.array([[0, 0, 1, 1]], dtype=np.float32)
