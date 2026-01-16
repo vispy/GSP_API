@@ -154,7 +154,7 @@ def main():
 
     @animator.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:
-        # print(f"{text_cyan('Animator callback')}: delta_time={delta_time:.4f} sec")
+        """Animator callback to handle rendering frequency."""
         nonlocal needs_render, last_render_time, max_delta_time_between_renders
 
         if needs_render and (time.time() - last_render_time) >= max_delta_time_between_renders:
