@@ -17,7 +17,7 @@ class Image(VisualBase):
         Args:
             texture: Texture containing the image data to display.
             position: Position of the image in the scene.
-            image_extent: Extent of the image as (left, right, bottom, top).
+            image_extent: Extent of the image as (left, right, bottom, top) in data unit.
         """
         super().__init__()
 
