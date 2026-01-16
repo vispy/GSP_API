@@ -1,7 +1,10 @@
+- in axes_panzoom.py, limit the translation/zoom one can do
+  - Q. how to express max/min zoom
+  - Q. how to express max/min translation
 - implement a image visual 
   - base it on datoviz
   - supporting what is needed for pyramid
-- rendering visual MUST call the `.sanity_check_attributes_buffer()`
+- DONE rendering visual MUST call the `.sanity_check_attributes_buffer()`
   - to be done in matplotlib and in datoviz
   - see matplotlib_renderer_texts.py for an example
 - for the visual which requires multiple artists, think about what happen when the number of artists is reduced
