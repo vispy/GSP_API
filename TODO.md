@@ -1,20 +1,6 @@
-- in axes_panzoom.py, limit the translation/zoom one can do
-  - Q. how to express max/min zoom
-    - zoom_x_max_range
-    - zoom_x_min_range
-    - zoom_y_max_range
-    - zoom_y_min_range
-  - Q. how to express max/min translation
-    - center_x_max_dunit
-    - center_x_min_dunit
-    - center_y_max_dunit
-    - center_y_min_dunit
 - implement a image visual 
   - base it on datoviz
   - supporting what is needed for pyramid
-- DONE rendering visual MUST call the `.sanity_check_attributes_buffer()`
-  - to be done in matplotlib and in datoviz
-  - see matplotlib_renderer_texts.py for an example
 - for the visual which requires multiple artists, think about what happen when the number of artists is reduced
   - one need to destroy/hide the older extra artists
   - see matplotlib_renderer_texts.py for an example
@@ -91,6 +77,20 @@
     - possibility: set by class or by instance
 
 ---
+- DONE in axes_panzoom.py, limit the translation/zoom one can do
+  - Q. how to express max/min zoom
+    - zoom_x_max_range
+    - zoom_x_min_range
+    - zoom_y_max_range
+    - zoom_y_min_range
+  - Q. how to express max/min translation
+    - center_x_max_dunit
+    - center_x_min_dunit
+    - center_y_max_dunit
+    - center_y_min_dunit
+- DONE rendering visual MUST call the `.sanity_check_attributes_buffer()`
+  - to be done in matplotlib and in datoviz
+  - see matplotlib_renderer_texts.py for an example
 - DONE Move viewport_event and animator in their own backend package
   - with the type definition in `gsp.core`
 - DONE invoice changes - dec 2025

@@ -14,7 +14,7 @@ class AxesPanZoom:
         self._viewport_events = viewport_events
         """Viewport events to listen to."""
         self._base_scale = base_scale
-        """Base scale for zooming."""
+        """Base scale for zooming. Greater than 1.0. E.g., 1.1 means 10% zoom in/out per scroll step."""
         self._axes_display = axes_display
         """Axes display to update."""
 
@@ -160,7 +160,7 @@ class AxesPanZoom:
         # =============================================================================
         # Update the axes limits in data unit
         # =============================================================================
-        self._set_limits_dunit(new_x_min_dunit, new_x_max_dunit, new_y_min_dunit, new_y_max_dunit)
+        self._set_axes_limits_dunit(new_x_min_dunit, new_x_max_dunit, new_y_min_dunit, new_y_max_dunit)
 
     def _on_mouse_scroll(self, mouse_event: MouseEvent):
         scale_factor: float = 1 / self._base_scale if mouse_event.scroll_steps >= 0 else self._base_scale
@@ -190,13 +190,13 @@ class AxesPanZoom:
         # Update the axes limits in data unit
         # =============================================================================
 
-        self._set_limits_dunit(new_x_min_dunit, new_x_max_dunit, new_y_min_dunit, new_y_max_dunit)
+        self._set_axes_limits_dunit(new_x_min_dunit, new_x_max_dunit, new_y_min_dunit, new_y_max_dunit)
 
     # =============================================================================
     #
     # =============================================================================
-    def _set_limits_dunit(self, x_min_dunit: float, x_max_dunit: float, y_min_dunit: float, y_max_dunit: float) -> None:
-        """Set the axes limits in data units.
+    def _set_axes_limits_dunit(self, x_min_dunit: float, x_max_dunit: float, y_min_dunit: float, y_max_dunit: float) -> None:
+        """Set the axes limits in data units. Applies pan and zoom limits if set.
 
         Args:
             x_min_dunit (float): Minimum x limit in data units.
