@@ -1,6 +1,14 @@
 - in axes_panzoom.py, limit the translation/zoom one can do
   - Q. how to express max/min zoom
+    - zoom_x_max_range
+    - zoom_x_min_range
+    - zoom_y_max_range
+    - zoom_y_min_range
   - Q. how to express max/min translation
+    - center_x_max_dunit
+    - center_x_min_dunit
+    - center_y_max_dunit
+    - center_y_min_dunit
 - implement a image visual 
   - base it on datoviz
   - supporting what is needed for pyramid
