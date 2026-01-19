@@ -32,7 +32,7 @@ def main():
     # Add random points
     # - various ways to create Buffers
     # =============================================================================
-    point_count = 100
+    point_count = 3
 
     # Random positions - Create buffer from numpy array
     positions_numpy = np.random.rand(point_count, 3).astype(np.float32) * 2.0 - 1

@@ -129,10 +129,10 @@ class DatovizRendererPoints:
         dvz_points.set_position(vertices_3d)
 
         # set group_sizes
-        group_sizes = np.tile(diameter_px_numpy, vertices_3d.__len__()).reshape((-1, 1))
+        group_sizes = diameter_px_numpy.reshape((-1, 1))
         group_sizes = group_sizes.reshape(-1)  # datoviz expects (N,) shape for (N, 1) input
         dvz_points.set_size(group_sizes)
 
         # set group_colors
-        group_colors = np.tile(face_colors_numpy, vertices_3d.__len__()).reshape((-1, 4))
+        group_colors = face_colors_numpy.reshape((-1, 4))
         dvz_points.set_color(group_colors)

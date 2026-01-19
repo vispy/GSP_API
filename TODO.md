@@ -1,4 +1,10 @@
-- implement a image visual 
+- interlation constant in Texture
+- look at a DSL domain specific language for trasnform
+  - syntax sugar to build a transform chain
+- datoviz to support on_raw_mouse
+  - to get press_release/press_release
+- fix the trailing point in datoviz
+- implement a image visual
   - base it on datoviz
   - supporting what is needed for pyramid
 - for the visual which requires multiple artists, think about what happen when the number of artists is reduced
