@@ -1,5 +1,6 @@
 """Visual for displaying a 2D texture."""
 
+from gsp.types.image_interpolation import ImageInterpolation
 from ..core.texture import Texture
 from ..types.buffer import Buffer
 from ..types.transbuf import TransBuf
@@ -9,9 +10,9 @@ from ..types.visual_base import VisualBase
 class Image(VisualBase):
     """Visual for displaying a 2D texture."""
 
-    __slots__ = ["_texture", "_position", "_image_extent"]
+    __slots__ = ["_texture", "_position", "_image_extent", "_image_interpolation"]
 
-    def __init__(self, texture: Texture, position: TransBuf, image_extent: tuple[float, float, float, float]) -> None:
+    def __init__(self, texture: Texture, position: TransBuf, image_extent: tuple[float, float, float, float], image_interpolation: ImageInterpolation) -> None:
         """Create an image visual from a texture.
 
         Args:
@@ -24,6 +25,7 @@ class Image(VisualBase):
         self._texture: Texture = texture
         self._position: TransBuf = position
         self._image_extent: tuple[float, float, float, float] = image_extent
+        self._image_interpolation: ImageInterpolation = image_interpolation
 
         self.check_attributes()
 
@@ -62,8 +64,21 @@ class Image(VisualBase):
         self._image_extent = image_extent
         self.check_attributes()
 
+    def get_interpolation(self) -> ImageInterpolation:
+        """Get the interpolation method of the image visual."""
+        return self._image_interpolation
+
+    def set_interpolation(self, image_interpolation: ImageInterpolation) -> None:
+        """Set the interpolation method of the image visual."""
+        self._image_interpolation = image_interpolation
+        self.check_attributes()
+
     def set_attributes(
-        self, texture: Texture | None = None, position: TransBuf | None = None, image_extent: tuple[float, float, float, float] | None = None
+        self,
+        texture: Texture | None = None,
+        position: TransBuf | None = None,
+        image_extent: tuple[float, float, float, float] | None = None,
+        image_interpolation: ImageInterpolation | None = None,
     ) -> None:
         """Set multiple attributes at once and validate them."""
         if texture is not None:
@@ -72,6 +87,8 @@ class Image(VisualBase):
             self._position = position
         if image_extent is not None:
             self._image_extent = image_extent
+        if image_interpolation is not None:
+            self._image_interpolation = image_interpolation
         self.check_attributes()
 
     # =============================================================================
@@ -80,15 +97,19 @@ class Image(VisualBase):
 
     def check_attributes(self) -> None:
         """Check that the attributes are valid and consistent."""
-        self.sanity_check_attributes(self._texture, self._position, self._image_extent)
+        self.sanity_check_attributes(self._texture, self._position, self._image_extent, self._image_interpolation)
 
     @staticmethod
-    def sanity_check_attributes_buffer(texture: Texture, position: Buffer, image_extent: tuple[float, float, float, float]) -> None:
+    def sanity_check_attributes_buffer(
+        texture: Texture, position: Buffer, image_extent: tuple[float, float, float, float], image_interpolation: ImageInterpolation
+    ) -> None:
         """Sanity check when attributes are already concrete buffers."""
-        Image.sanity_check_attributes(texture, position, image_extent)
+        Image.sanity_check_attributes(texture, position, image_extent, image_interpolation)
 
     @staticmethod
-    def sanity_check_attributes(texture: Texture, position: TransBuf, image_extent: tuple[float, float, float, float]) -> None:
+    def sanity_check_attributes(
+        texture: Texture, position: TransBuf, image_extent: tuple[float, float, float, float], image_interpolation: ImageInterpolation
+    ) -> None:
         """Sanity check the attributes of the Image visual."""
         if not isinstance(texture, Texture):
             raise TypeError(f"Texture must be a Texture instance, got {type(texture)}")

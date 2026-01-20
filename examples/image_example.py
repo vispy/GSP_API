@@ -8,6 +8,7 @@ import numpy as np
 
 # local imports
 from gsp.core import Canvas, Viewport
+from gsp.types.image_interpolation import ImageInterpolation
 from gsp.visuals import Image
 from gsp.types import BufferType
 from gsp.core import Camera
@@ -47,7 +48,7 @@ def main():
     image_extent = (-0.5, 0.5, -0.5, 0.5)
 
     # Create the Image visual and add it to the viewport
-    image = Image(texture, positions_buffer, image_extent)
+    image = Image(texture, positions_buffer, image_extent, ImageInterpolation.NEAREST)
 
     # =============================================================================
     # Render the canvas

@@ -12,6 +12,7 @@ import numpy as np
 from common.example_helper import ExampleHelper
 from gsp.core import Canvas, Viewport, viewport
 from gsp.core.camera import Camera
+from gsp.types.image_interpolation import ImageInterpolation
 from gsp.visuals import Image
 from gsp_extra.bufferx import Bufferx
 from gsp.types import BufferType, VisualBase
@@ -78,7 +79,7 @@ def main():
         image_extent = (-0.5, 0.5, -0.5, 0.5)
 
         # Create the Image visual and add it to the viewport
-        image = Image(texture, positions_buffer, image_extent)
+        image = Image(texture, positions_buffer, image_extent, ImageInterpolation.LINEAR)
 
         # Create model matrix to transform points into axes data space
         model_matrix_numpy = np.eye(4, dtype=np.float32)

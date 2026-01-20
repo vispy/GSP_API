@@ -12,6 +12,7 @@ from gsp.utils.math_utils import MathUtils
 from gsp.visuals.image import Image
 from gsp.utils.transbuf_utils import TransBufUtils
 from gsp.types.transbuf import TransBuf
+from gsp.types.image_interpolation import ImageInterpolation
 from .matplotlib_renderer import MatplotlibRenderer
 from ..extra.bufferx import Bufferx
 
@@ -82,6 +83,7 @@ class RendererImage:
             image.get_texture(),
             vertices_buffer,
             image.get_image_extent(),
+            image.get_interpolation(),
         )
 
         # =============================================================================
@@ -109,7 +111,6 @@ class RendererImage:
         # =============================================================================
 
         gsp_texture = image.get_texture()
-        # mpl_axes_image.set_
 
         # create random image
         mpl_axes_image.set_data(texture_numpy)
@@ -123,6 +124,14 @@ class RendererImage:
             vertices_2d[0, 1] + image_extent[3],
         )
         mpl_axes_image.set_extent(mpl_extent)
+
+        # set interpolation
+        if image.get_interpolation() == ImageInterpolation.NEAREST:
+            mpl_axes_image.set_interpolation("nearest")
+        elif image.get_interpolation() == ImageInterpolation.LINEAR:
+            mpl_axes_image.set_interpolation("bilinear")
+        else:
+            mpl_axes_image.set_interpolation("nearest")
 
         # Return the list of artists created/updated
         changed_artists: list[matplotlib.artist.Artist] = []

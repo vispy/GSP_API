@@ -1,9 +1,11 @@
-- interlation constant in Texture
 - look at a DSL domain specific language for trasnform
   - syntax sugar to build a transform chain
 - datoviz to support on_raw_mouse
   - to get press_release/press_release
-- fix the trailing point in datoviz
+- DONE add image interpolation in Image visual
+  - NEAREST
+  - LINEAR
+- DONE fix the trailing point in datoviz
 - implement a image visual
   - base it on datoviz
   - supporting what is needed for pyramid

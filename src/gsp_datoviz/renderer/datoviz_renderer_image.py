@@ -16,6 +16,7 @@ from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp_matplotlib.extra.bufferx import Bufferx
 from gsp.types.transbuf import TransBuf
+from gsp.types.image_interpolation import ImageInterpolation
 from gsp.visuals.points import Points
 from gsp.visuals.image import Image
 from gsp.utils.transbuf_utils import TransBufUtils
@@ -89,6 +90,7 @@ class DatovizRendererImage:
             image.get_texture(),
             vertices_buffer,
             image.get_image_extent(),
+            image.get_interpolation(),
         )
 
         # =============================================================================
@@ -98,7 +100,14 @@ class DatovizRendererImage:
         # get or create datoviz texture
         texture_uuid = f"{gsp_texture.get_uuid()}"
         if texture_uuid not in renderer._dvz_textures:
-            dvz_texture = renderer._dvz_app.texture_2D(image=texture_numpy)
+            # set interpolation
+            if image.get_interpolation() == ImageInterpolation.NEAREST:
+                dvz_image_interpolation = "nearest"
+            elif image.get_interpolation() == ImageInterpolation.LINEAR:
+                dvz_image_interpolation = "linear"
+            else:
+                dvz_image_interpolation = "nearest"
+            dvz_texture = renderer._dvz_app.texture_2D(image=texture_numpy, interpolation=dvz_image_interpolation)
             renderer._dvz_textures[texture_uuid] = dvz_texture
         dvz_texture = typing.cast(_DvzTexture, renderer._dvz_textures[texture_uuid])
 
