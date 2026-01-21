@@ -1,3 +1,5 @@
+"""Minimal example showing mouse events handling."""
+
 import datoviz as dvz
 
 app = dvz.App()
@@ -6,9 +8,14 @@ figure = app.figure()
 
 @app.connect(figure)
 def on_mouse(ev: dvz.MouseEvent):
+    """Handle mouse events."""
     action = ev.mouse_event()
     x, y = ev.pos()
     print(f"{action} ({x:.0f}, {y:.0f}) ", end="")
+
+    if action in ("press", "release"):
+        button = ev.button_name()
+        print(f"{button} button", end="")
 
     if action in ("click", "double_click"):
         button = ev.button_name()
