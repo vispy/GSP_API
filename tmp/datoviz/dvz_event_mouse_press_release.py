@@ -14,6 +14,8 @@ def on_mouse(event: dvz.MouseEvent):
     event_name = event.mouse_event()
     if event_name in ("press", "release"):
         print(f"{event_name}")
+    elif event_name == "move":
+        print(f"{event_name}")
 
 
 app.run()

@@ -37,7 +37,7 @@ class AxesPanZoom:
         # Subscribe to viewport events
         self._viewport_events.button_press_event.subscribe(self._on_button_press)
         self._viewport_events.button_release_event.subscribe(self._on_button_release)
-        self._viewport_events.mouse_move_event.subscribe(self._on_button_move)
+        self._viewport_events.mouse_move_event.subscribe(self._on_mouse_move)
         self._viewport_events.mouse_scroll_event.subscribe(self._on_mouse_scroll)
 
         # Zoom range limit in data units
@@ -65,7 +65,7 @@ class AxesPanZoom:
         # Unsubscribe from viewport events
         self._viewport_events.button_press_event.unsubscribe(self._on_button_press)
         self._viewport_events.button_release_event.unsubscribe(self._on_button_release)
-        self._viewport_events.mouse_move_event.unsubscribe(self._on_button_move)
+        self._viewport_events.mouse_move_event.unsubscribe(self._on_mouse_move)
         self._viewport_events.mouse_scroll_event.unsubscribe(self._on_mouse_scroll)
 
     # =============================================================================
@@ -140,7 +140,7 @@ class AxesPanZoom:
         self._y_min_dunit = None
         self._y_max_dunit = None
 
-    def _on_button_move(self, mouse_event: MouseEvent):
+    def _on_mouse_move(self, mouse_event: MouseEvent):
         # sanity check
         if self._button_press_x_ndc is None or self._button_press_y_ndc is None:
             return

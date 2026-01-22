@@ -116,7 +116,7 @@ class ViewportEventsDatoviz(ViewportEventsBase):
             elif dvz_event_name == "release":
                 print(f"event {dvz_event_name}")
                 event_type = EventType.BUTTON_RELEASE
-            elif dvz_event_name == "move":
+            elif dvz_event_name == "move" or dvz_event_name == "drag":
                 event_type = EventType.MOUSE_MOVE
             elif dvz_event_name == "wheel":
                 event_type = EventType.MOUSE_SCROLL
@@ -127,7 +127,7 @@ class ViewportEventsDatoviz(ViewportEventsBase):
             # elif dvz_event_name == "click":
             #     event_type = EventType.BUTTON_PRESS
             else:
-                print(f'"Unknown dvz mouse event name: {dvz_event_name}"')
+                # print(f'"Unknown dvz mouse event name: {dvz_event_name}"')
                 return  # Unknown event
 
             event_x: float = (dvz_mouse_x_px - self._viewport.get_x()) / self._viewport.get_width() * 2.0 - 1.0
@@ -155,6 +155,10 @@ class ViewportEventsDatoviz(ViewportEventsBase):
                 right_button=right_button,
                 scroll_steps=event_scroll_steps,
             )
+
+            # print(
+            #     f"mouse_event: type={mouse_event.event_type}, x_ndc={mouse_event.x_ndc}, y_ndc={mouse_event.y_ndc}, left={mouse_event.left_button}, middle={mouse_event.middle_button}, right={mouse_event.right_button}, scroll_steps={mouse_event.scroll_steps}"
+            # )
 
             # dispatch mouse_event to the proper handler
             if mouse_event.event_type == EventType.BUTTON_PRESS:

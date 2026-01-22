@@ -51,9 +51,9 @@ def main():
     axes_pan_zoom = AxesPanZoom(viewport_events, base_scale=1.1, axes_display=axes_display)
 
     # Set zoom range limits in data units
-    axes_pan_zoom.set_zoom_range_limits_dunit(2.0, 10.0, 2.0, 10.0)
+    # axes_pan_zoom.set_zoom_range_limits_dunit(2.0, 10.0, 2.0, 10.0)
     # Set pan limits in data units
-    axes_pan_zoom.set_pan_limits_dunit(-15.0, +15.0, -15.0, +15.0)
+    # axes_pan_zoom.set_pan_limits_dunit(-15.0, +15.0, -15.0, +15.0)
 
     # =============================================================================
     #
