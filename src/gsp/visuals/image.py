@@ -19,6 +19,7 @@ class Image(VisualBase):
             texture: Texture containing the image data to display.
             position: Position of the image in the scene.
             image_extent: Extent of the image as (left, right, bottom, top) in data unit.
+            image_interpolation: Interpolation method to use when sampling the image.
         """
         super().__init__()
 
