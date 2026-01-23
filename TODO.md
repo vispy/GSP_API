@@ -1,14 +1,5 @@
 - look at a DSL domain specific language for trasnform
   - syntax sugar to build a transform chain
-- datoviz to support on_raw_mouse
-  - to get press_release/press_release
-- DONE add image interpolation in Image visual
-  - NEAREST
-  - LINEAR
-- DONE fix the trailing point in datoviz
-- implement a image visual
-  - base it on datoviz
-  - supporting what is needed for pyramid
 - for the visual which requires multiple artists, think about what happen when the number of artists is reduced
   - one need to destroy/hide the older extra artists
   - see matplotlib_renderer_texts.py for an example
@@ -85,6 +76,15 @@
     - possibility: set by class or by instance
 
 ---
+- DONE datoviz to support on_raw_mouse
+  - to get press_release/press_release
+- DONE add image interpolation in Image visual
+  - NEAREST
+  - LINEAR
+- DONE fix the trailing point in datoviz
+- DONE implement a image visual
+  - base it on datoviz
+  - supporting what is needed for pyramid
 - DONE in axes_panzoom.py, limit the translation/zoom one can do
   - Q. how to express max/min zoom
     - zoom_x_max_range
