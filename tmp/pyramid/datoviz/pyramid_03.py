@@ -1,6 +1,9 @@
-# Pyramid data visualization for neural signals
-# This implements a multi-resolution image pyramid for efficient viewing of large electrophysiology datasets
-# The pyramid allows smooth zooming by loading appropriate resolution levels on demand
+"""Pyramid data visualization for neural signals.
+
+This example implements a multi-resolution image pyramid for efficient viewing of large
+electrophysiology datasets. The pyramid allows smooth zooming by loading appropriate resolution levels
+on demand.
+"""
 
 from pathlib import Path
 from typing import Optional, Tuple, Dict
@@ -21,7 +24,7 @@ n_channels: int = 384  # Number of recording channels (typical for Neuropixels p
 file_sample_rate: int = 2500  # Sampling rate in Hz
 file_data_dtype: type = np.float16  # Data type for memory-efficient storage
 max_resolution: int = 11
-min_resolution: int = 3
+min_resolution: int = 7
 
 texture_size: int = 2048  # Maximum texture size in pixels (GPU texture limit)
 """Maximum resolution level in the pyramid (2^11 = 2048x downsampling)"""
@@ -44,7 +47,7 @@ def file_path_build(resolution_level: int) -> Path:
     return Path(CUR_DIR / f"../pyramid/res_{resolution_level:02d}.bin")
 
 
-def load_file(resolution_level: int) -> Optional[np.memmap]:
+def texture_load_file(resolution_level: int) -> Optional[np.memmap]:
     """Load a memory-mapped array from disk for a given resolution level.
 
     Memory mapping allows efficient access to large files without loading them entirely into RAM.
@@ -67,39 +70,39 @@ def load_file(resolution_level: int) -> Optional[np.memmap]:
     return array_numpy
 
 
-def safe_slice(data: npt.NDArray, i0: int, i1: int, fill_value: float = 0.0) -> npt.NDArray:
-    """Extract a slice from data with bounds checking and padding.
+def texture_slice_safe(texture_data: npt.NDArray, index_start: int, index_end: int, fill_value: float = 0.0) -> npt.NDArray:
+    """Extract a slice from texture_data with bounds checking and padding.
 
     Unlike standard array slicing, this handles indices that are out of bounds
     by filling those regions with a specified value. This is useful when requesting
     data near the edges of the available dataset.
 
     Args:
-        data: Input array to slice from
-        i0: Start index (can be negative)
-        i1: End index (can exceed array length)
+        texture_data: Input array to slice from
+        index_start: Start index (can be negative)
+        index_end: End index (can exceed array length)
         fill_value: Value to use for out-of-bounds regions
 
     Returns:
-        Array of length (i1-i0) with data from valid regions and fill_value elsewhere
+        Array of length (index_end-index_start) with data from valid regions and fill_value elsewhere
     """
-    n = i1 - i0  # Requested length
-    shape = (n,) + data.shape[1:]  # Output shape preserves other dimensions
-    result = np.full(shape, fill_value, dtype=data.dtype)  # Initialize with fill value
+    n = index_end - index_start  # Requested length
+    shape = (n,) + texture_data.shape[1:]  # Output shape preserves other dimensions
+    result = np.full(shape, fill_value, dtype=texture_data.dtype)  # Initialize with fill value
 
-    # Calculate valid slice bounds within the data array
-    s0 = max(i0, 0)  # Start index clamped to valid range
-    s1 = min(i1, data.shape[0])  # End index clamped to valid range
+    # Calculate valid slice bounds within the texture_data array
+    s0 = max(index_start, 0)  # Start index clamped to valid range
+    s1 = min(index_end, texture_data.shape[0])  # End index clamped to valid range
 
     # Calculate where to place the valid data in the result
-    d0 = s0 - i0  # Offset in destination array
+    d0 = s0 - index_start  # Offset in destination array
     d1 = d0 + (s1 - s0)  # End offset in destination array
 
-    result[d0:d1] = data[s0:s1]  # Copy valid data
+    result[d0:d1] = texture_data[s0:s1]  # Copy valid data
     return result
 
 
-def load_data(resolution_level: int, sample_index_start: int, sample_index_end: int) -> Optional[npt.NDArray[np.uint8]]:
+def texture_load_data(resolution_level: int, sample_index_start: int, sample_index_end: int) -> Optional[npt.NDArray[np.uint8]]:
     """Load and normalize a time slice of data at a specific resolution level.
 
     This function:
@@ -118,12 +121,12 @@ def load_data(resolution_level: int, sample_index_start: int, sample_index_end: 
     assert sample_index_start < sample_index_end
     # Load file if not already cached
     if resolution_level not in files_loaded:
-        files_loaded[resolution_level] = load_file(resolution_level)
+        files_loaded[resolution_level] = texture_load_file(resolution_level)
     data = files_loaded[resolution_level]
     if data is None or data.size == 0:
         return
     # Extract the requested time range with bounds checking
-    out = safe_slice(data, sample_index_start, sample_index_end)
+    out = texture_slice_safe(data, sample_index_start, sample_index_end)
     if out.size == 0:
         return
     # Normalize to 0-255 range for texture upload
@@ -267,7 +270,7 @@ def update_image_visual(visual: _DvzVisual, texture: _DvzTexture, resolution_lev
     """
     if resolution_level < min_resolution or resolution_level > max_resolution:
         return None
-    image = load_data(resolution_level, sample_index_min, sample_index_max)
+    image = texture_load_data(resolution_level, sample_index_min, sample_index_max)
     if image is None:
         print("Error loading data")
         return
