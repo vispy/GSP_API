@@ -205,30 +205,6 @@ class AxesPanZoom:
             y_max_dunit (float): Maximum y limit in data units.
         """
         # =============================================================================
-        # Enforce pan limit
-        # =============================================================================
-        if self._pan_x_min_dunit is not None:
-            if x_min_dunit < self._pan_x_min_dunit:
-                shift_dunit: float = self._pan_x_min_dunit - x_min_dunit
-                x_min_dunit += shift_dunit
-                x_max_dunit += shift_dunit
-        if self._pan_x_max_dunit is not None:
-            if x_max_dunit > self._pan_x_max_dunit:
-                shift_dunit: float = x_max_dunit - self._pan_x_max_dunit
-                x_min_dunit -= shift_dunit
-                x_max_dunit -= shift_dunit
-        if self._pan_y_min_dunit is not None:
-            if y_min_dunit < self._pan_y_min_dunit:
-                shift_dunit: float = self._pan_y_min_dunit - y_min_dunit
-                y_min_dunit += shift_dunit
-                y_max_dunit += shift_dunit
-        if self._pan_y_max_dunit is not None:
-            if y_max_dunit > self._pan_y_max_dunit:
-                shift_dunit: float = y_max_dunit - self._pan_y_max_dunit
-                y_min_dunit -= shift_dunit
-                y_max_dunit -= shift_dunit
-
-        # =============================================================================
         # Enforce min/max zoom range for x/y
         # =============================================================================
 
@@ -265,5 +241,32 @@ class AxesPanZoom:
                 y_min_dunit = center_y_dunit - self._zoom_y_max_range_dunit / 2.0
                 y_max_dunit = center_y_dunit + self._zoom_y_max_range_dunit / 2.0
 
+        # =============================================================================
+        # Enforce pan limit
+        # =============================================================================
+        if self._pan_x_min_dunit is not None:
+            if x_min_dunit < self._pan_x_min_dunit:
+                shift_dunit: float = self._pan_x_min_dunit - x_min_dunit
+                x_min_dunit += shift_dunit
+                x_max_dunit += shift_dunit
+        if self._pan_x_max_dunit is not None:
+            if x_max_dunit > self._pan_x_max_dunit:
+                shift_dunit: float = x_max_dunit - self._pan_x_max_dunit
+                x_min_dunit -= shift_dunit
+                x_max_dunit -= shift_dunit
+        if self._pan_y_min_dunit is not None:
+            if y_min_dunit < self._pan_y_min_dunit:
+                shift_dunit: float = self._pan_y_min_dunit - y_min_dunit
+                y_min_dunit += shift_dunit
+                y_max_dunit += shift_dunit
+        if self._pan_y_max_dunit is not None:
+            if y_max_dunit > self._pan_y_max_dunit:
+                shift_dunit: float = y_max_dunit - self._pan_y_max_dunit
+                y_min_dunit -= shift_dunit
+                y_max_dunit -= shift_dunit
+
+        # =============================================================================
         # Finally set the new limits
+        # =============================================================================
+
         self._axes_display.set_limits_dunit(x_min_dunit, x_max_dunit, y_min_dunit, y_max_dunit)

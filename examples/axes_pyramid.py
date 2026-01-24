@@ -22,6 +22,45 @@ from vispy_2.axes.axes_display import AxesDisplay
 from vispy_2.axes.axes_panzoom import AxesPanZoom
 
 
+def generate_visual_image(
+    viewport: Viewport, axes_transform_numpy: np.ndarray, image_extent: typing.Tuple[float, float, float, float], n_channels: int
+) -> RenderItem:
+    """Generate a image visual render item."""
+    # =============================================================================
+    # Read image and create texture
+    # =============================================================================
+
+    image_path = pathlib.Path(__file__).parent / "images" / "image.png"
+    texture = TextureUtils.load_image(str(image_path))
+
+    # =============================================================================
+    # Create a image visual
+    # =============================================================================
+
+    # Define image position (4 vertices for a quad)
+    positions_numpy = np.array([[0.0, n_channels / 2, 0.0]], dtype=np.float32)
+    positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+    # Define image extent (left, right, bottom, top)
+    image_extent = (-0.5, 0.5, -n_channels / 2, n_channels / 2)
+
+    # Create the Image visual and add it to the viewport
+    image = Image(texture, positions_buffer, image_extent, ImageInterpolation.LINEAR)
+
+    # Create model matrix to transform points into axes data space
+    model_matrix_numpy = np.eye(4, dtype=np.float32)
+    model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
+    model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
+
+    # model_matrix = Bufferx.mat4_identity()
+
+    camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+    render_item = RenderItem(viewport, image, model_matrix, camera)
+
+    return render_item
+
+
 def main():
     """Main function to run the example."""
     # Configuration constants
@@ -64,44 +103,9 @@ def main():
     #
     # =============================================================================
 
-    def generate_visual_image(viewport: Viewport, axes_transform_numpy: np.ndarray, image_extent: typing.Tuple[float, float, float, float]) -> RenderItem:
-        # =============================================================================
-        # Read image and create texture
-        # =============================================================================
-
-        image_path = pathlib.Path(__file__).parent / "images" / "image.png"
-        texture = TextureUtils.load_image(str(image_path))
-
-        # =============================================================================
-        # Create a image visual
-        # =============================================================================
-
-        # Define image position (4 vertices for a quad)
-        positions_numpy = np.array([[0.0, n_channels / 2, 0.0]], dtype=np.float32)
-        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
-
-        # Define image extent (left, right, bottom, top)
-        image_extent = (-0.5, 0.5, -n_channels / 2, n_channels / 2)
-
-        # Create the Image visual and add it to the viewport
-        image = Image(texture, positions_buffer, image_extent, ImageInterpolation.LINEAR)
-
-        # Create model matrix to transform points into axes data space
-        model_matrix_numpy = np.eye(4, dtype=np.float32)
-        model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
-        model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
-
-        # model_matrix = Bufferx.mat4_identity()
-
-        camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
-
-        render_item = RenderItem(viewport, image, model_matrix, camera)
-
-        return render_item
-
     axes_transform_numpy = axes_display.get_transform_matrix_numpy()
     image_extent = (-1, 1, -n_channels / 2, n_channels / 2)
-    render_item_image = generate_visual_image(inner_viewport, axes_transform_numpy, image_extent)
+    render_item_image = generate_visual_image(inner_viewport, axes_transform_numpy, image_extent, n_channels)
 
     # =============================================================================
     #
