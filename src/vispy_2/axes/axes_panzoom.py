@@ -1,6 +1,7 @@
 """Class AxesPanZoom to handle panning and zooming in a viewport."""
 
 # local imports
+import math
 from gsp.types.viewport_events_types import MouseEvent
 from gsp.types.viewport_events_base import ViewportEventsBase
 from .axes_display import AxesDisplay
@@ -245,28 +246,45 @@ class AxesPanZoom:
         # Enforce pan limit
         # =============================================================================
         if self._pan_x_min_dunit is not None:
-            if x_min_dunit < self._pan_x_min_dunit:
+            if x_min_dunit <= self._pan_x_min_dunit:
                 shift_dunit: float = self._pan_x_min_dunit - x_min_dunit
                 x_min_dunit += shift_dunit
                 x_max_dunit += shift_dunit
         if self._pan_x_max_dunit is not None:
-            if x_max_dunit > self._pan_x_max_dunit:
+            if x_max_dunit >= self._pan_x_max_dunit:
                 shift_dunit: float = x_max_dunit - self._pan_x_max_dunit
                 x_min_dunit -= shift_dunit
                 x_max_dunit -= shift_dunit
         if self._pan_y_min_dunit is not None:
-            if y_min_dunit < self._pan_y_min_dunit:
+            if y_min_dunit <= self._pan_y_min_dunit:
                 shift_dunit: float = self._pan_y_min_dunit - y_min_dunit
                 y_min_dunit += shift_dunit
                 y_max_dunit += shift_dunit
         if self._pan_y_max_dunit is not None:
-            if y_max_dunit > self._pan_y_max_dunit:
+            if y_max_dunit >= self._pan_y_max_dunit:
                 shift_dunit: float = y_max_dunit - self._pan_y_max_dunit
                 y_min_dunit -= shift_dunit
                 y_max_dunit -= shift_dunit
 
+        # handle edge case where pan limits are smaller goes beyond min/max limits by epsilon
+        epsilon: float = 1e-8
+        if self._pan_x_min_dunit is not None:
+            if abs(x_min_dunit - self._pan_x_min_dunit) < epsilon:
+                x_min_dunit = self._pan_x_min_dunit
+        if self._pan_x_max_dunit is not None:
+            if abs(x_max_dunit - self._pan_x_max_dunit) < epsilon:
+                x_max_dunit = self._pan_x_max_dunit
+        if self._pan_y_min_dunit is not None:
+            if abs(y_min_dunit - self._pan_y_min_dunit) < epsilon:
+                y_min_dunit = self._pan_y_min_dunit
+        if self._pan_y_max_dunit is not None:
+            if abs(y_max_dunit - self._pan_y_max_dunit) < epsilon:
+                y_max_dunit = self._pan_y_max_dunit
+
         # =============================================================================
         # Finally set the new limits
         # =============================================================================
+
+        print(f"Set axes limits: x=({x_min_dunit}, {x_max_dunit}), y=({y_min_dunit}, {y_max_dunit})")
 
         self._axes_display.set_limits_dunit(x_min_dunit, x_max_dunit, y_min_dunit, y_max_dunit)
