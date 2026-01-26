@@ -267,6 +267,7 @@ class AxesPanZoom:
                 y_max_dunit -= shift_dunit
 
         # handle edge case where pan limits are smaller goes beyond min/max limits by epsilon
+        # - sometimes floating point errors can cause this issue e.g. self._pan_x_min_dunit = -2.0 but x_min_dunit = -2.00000001
         epsilon: float = 1e-8
         if self._pan_x_min_dunit is not None:
             if abs(x_min_dunit - self._pan_x_min_dunit) < epsilon:
@@ -285,6 +286,6 @@ class AxesPanZoom:
         # Finally set the new limits
         # =============================================================================
 
-        print(f"Set axes limits: x=({x_min_dunit}, {x_max_dunit}), y=({y_min_dunit}, {y_max_dunit})")
+        # print(f"Set axes limits: x=({x_min_dunit}, {x_max_dunit}), y=({y_min_dunit}, {y_max_dunit})")
 
         self._axes_display.set_limits_dunit(x_min_dunit, x_max_dunit, y_min_dunit, y_max_dunit)

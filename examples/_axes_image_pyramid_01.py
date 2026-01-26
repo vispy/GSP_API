@@ -12,6 +12,7 @@ import numpy as np
 from common.example_helper import ExampleHelper
 from gsp.core import Canvas, Viewport
 from gsp.core.camera import Camera
+from gsp.core.texture import Texture
 from gsp.types.image_interpolation import ImageInterpolation
 from gsp.visuals import Image
 from gsp_extra.bufferx import Bufferx
@@ -22,6 +23,39 @@ from vispy_2.axes.axes_display import AxesDisplay
 from vispy_2.axes.axes_panzoom import AxesPanZoom
 
 
+def texture_load(resolution_level: int) -> Texture:
+    """Load texture for given resolution level."""
+    # Load image as texture
+    image_path = pathlib.Path(__file__).parent / "images" / "image.png"
+    texture = TextureUtils.load_image(str(image_path))
+
+    # Load pyramid data from memmap file
+    # TODO dont hardcode those values
+    image_width = 2**resolution_level
+    image_height = 384
+
+    file_path = pathlib.Path(__file__).parent / "data" / "pyramid" / f"res_{resolution_level:02}.bin"
+    array_numpy = np.memmap(file_path, shape=(image_width, image_height), dtype=np.float16, mode="r")
+    # scale data to [0, 255] uint8
+    array_min: float = float(np.min(array_numpy))
+    array_max: float = float(np.max(array_numpy))
+    array_scaled_numpy = ((array_numpy - array_min) / (array_max - array_min) * 255.0).astype(np.uint8)
+    # create texture from scaled data
+    texture_numpy = np.zeros((image_height, image_width, 4), dtype=np.uint8)
+    texture_numpy[:, :, 0] = array_scaled_numpy.T  # R
+    texture_numpy[:, :, 1] = array_scaled_numpy.T  # G
+    texture_numpy[:, :, 2] = array_scaled_numpy.T  # B
+    texture_numpy[:, :, 3] = 255  # A
+    # linearize the texture data, thus we can do a buffer out of it
+    texture_numpy = texture_numpy.reshape((image_width * image_height, 4))
+    # create buffer and texture
+    texture_buffer = Bufferx.from_numpy(texture_numpy, BufferType.rgba8)
+    texture = Texture(texture_buffer, image_width, image_height)
+
+    print(f"Loading image from: {file_path}")
+    return texture
+
+
 def generate_visual_image(
     viewport: Viewport, axes_transform_numpy: np.ndarray, image_extent: typing.Tuple[float, float, float, float], n_channels: int
 ) -> RenderItem:
@@ -30,8 +64,7 @@ def generate_visual_image(
     # Read image and create texture
     # =============================================================================
 
-    image_path = pathlib.Path(__file__).parent / "images" / "image.png"
-    texture = TextureUtils.load_image(str(image_path))
+    texture = texture_load(11)
 
     # =============================================================================
     # Create a image visual
