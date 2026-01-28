@@ -159,8 +159,8 @@ def find_sample_indices(resolution_level: int, time_min: float, time_max: float)
     # sanity check
     assert resolution_level >= min_resolution, f"Resolution level must be >= {min_resolution}"
     assert resolution_level <= max_resolution, f"Resolution level must be <= {max_resolution}"
-
     assert time_min < time_max, "time_min must be less than time_max"
+
     # Convert time to sample index, accounting for downsampling at this resolution
     sample_index_min = int(round(time_min * file_sample_rate / 2.0**resolution_level))
     sample_index_max = int(round(time_max * file_sample_rate / 2.0**resolution_level))

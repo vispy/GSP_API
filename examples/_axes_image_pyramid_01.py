@@ -21,20 +21,24 @@ from gsp_extra.misc.render_item import RenderItem
 from gsp_extra.misc.texture_utils import TextureUtils
 from vispy_2.axes.axes_display import AxesDisplay
 from vispy_2.axes.axes_panzoom import AxesPanZoom
+from common.asset_downloader import AssetDownloader
 
 
 def texture_load(resolution_level: int) -> Texture:
     """Load texture for given resolution level."""
     # Load image as texture
-    image_path = pathlib.Path(__file__).parent / "images" / "image.png"
-    texture = TextureUtils.load_image(str(image_path))
+    # image_path = pathlib.Path(__file__).parent / "images" / "image.png"
+    # texture = TextureUtils.load_image(str(image_path))
 
     # Load pyramid data from memmap file
     # TODO dont hardcode those values
     image_width = 2**resolution_level
     image_height = 384
 
-    file_path = pathlib.Path(__file__).parent / "data" / "pyramid" / f"res_{resolution_level:02}.bin"
+    # file_path = pathlib.Path(__file__).parent / "data" / "pyramid" / f"res_{resolution_level:02}.bin"
+    print(f"Downloading pyramid data for resolution level: {resolution_level}")
+    file_path = AssetDownloader.download_data(f"textures/pyramid/res_{resolution_level:02}.bin")
+    print(f"Loading memmap from: {file_path}")
     array_numpy = np.memmap(file_path, shape=(image_width, image_height), dtype=np.float16, mode="r")
     # scale data to [0, 255] uint8
     array_min: float = float(np.min(array_numpy))
@@ -64,7 +68,7 @@ def generate_visual_image(
     # Read image and create texture
     # =============================================================================
 
-    texture = texture_load(11)
+    texture = texture_load(10)
 
     # =============================================================================
     # Create a image visual

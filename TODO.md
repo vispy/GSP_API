@@ -1,3 +1,13 @@
+- DONE pyramid to load from datoviz/data
+- think of pyramid next steps - adapt the image visual based on axes
+  - image position/extent/texture will change based on the axes limits
+  - how to know if the image visual fit in the axes limits
+    - if position+extent is not visible then it fits
+    - if it is visible, but there is no more in this direction, then it fits
+  - convert a data unit to file sample index in sample file
+  - how many pixels in x of the images are visible in the axes
+  - for a given axes limits, what is the needed image position/extent/texture
+  - Q. can you subdivide the problem
 - look at a DSL domain specific language for trasnform
   - syntax sugar to build a transform chain
 - for the visual which requires multiple artists, think about what happen when the number of artists is reduced
