@@ -62,6 +62,13 @@ network_server: ## Run the network renderer server
 network_server_user_transforms: ## Run the network renderer server with all the user transforms enabled
 	python3 ./src/gsp_extra/transform_links/transform_network_server.py
 
+	
+network_server_user_transforms_dev: ## Run the network renderer server with all the user transforms enabled in development mode
+	watchmedo auto-restart -d ./src -d ./tools -p="*.py" -R  -- python3 ./src/gsp_extra/transform_links/transform_network_server.py
+
+network_server_clean_debug: ## Clean the network server debug folder
+	rm -f ./src/gsp_network/tools/network_server_debug/*
+
 ###############################################################################
 
 mkdocs_serve: ## Serve the MkDocs documentation locally
