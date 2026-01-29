@@ -139,7 +139,18 @@ if __name__ == "__main__":
         description="Run the network server for rendering. see ./examples/network_client.py for usage.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
+    # Add debug -d --debug options
+    argParser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        help="Enable debug mode to save received payloads and rendered images.",
+    )
     args = argParser.parse_args()
+
+    if args.debug:
+        debug_save_payload = True
+        print(text_cyan("Debug mode enabled: received payloads and rendered images will be saved."))
 
     server = ServerSample()
     server.run()

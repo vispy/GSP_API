@@ -2,7 +2,7 @@
   - show only a blank, no axes content, no axes content
   - noticed 2 render calls in network server: one big then one small
   - maybe fix === renderer base.clear() to be implemented - check that
-- TODO in network server, make it save all the json+image in a folder
+- DONE in network server, make it save all the json+image in a folder
   - good for debug
 - TODO make renderer.clear()  ? or renderer.clear_viewport(viewport)
   - .clear_viewport(viewport) seems better
