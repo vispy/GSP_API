@@ -1,6 +1,20 @@
+- BUG support panzoom in GSP_RENDERER=network
+  - show only a blank, no axes content, no axes content
+  - noticed 2 render calls in network server: one big then one small
+  - maybe fix === renderer base.clear() to be implemented - check that
+- TODO in network server, make it save all the json+image in a folder
+  - good for debug
+- TODO make renderer.clear()  ? or renderer.clear_viewport(viewport)
+  - .clear_viewport(viewport) seems better
+  - https://chatgpt.com/c/697b6010-b9b0-8328-b0e9-8bfed9c1d9e0
+  - make a example for it
+    - multiple viewports
+    - make them blink alternatively
+- DONE support image in network renderer
 - think of pyramid next steps - adapt the image visual based on axes
   - file displayed between 2 data unit file_x_min_dunit/file_x_max_dunit
   - file is splitted in sample. which are becoming pixels in the texture
+  - image_x_min_dunit/image_x_max_dunit computed from image position/extent
   - image position/extent/texture will change based on the axes limits
   - how to know if the image visual fit in the axes limits
     - if position+extent is not visible then it fits
@@ -9,7 +23,7 @@
   - how many pixels in x of the images are visible in the axes
   - for a given axes limits, what is the needed image position/extent/texture
   - Q. can you subdivide the problem
-- look at a DSL domain specific language for trasnform
+- look at a DSL domain specific language for transform
   - syntax sugar to build a transform chain
 - for the visual which requires multiple artists, think about what happen when the number of artists is reduced
   - one need to destroy/hide the older extra artists

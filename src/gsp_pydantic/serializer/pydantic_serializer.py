@@ -8,10 +8,12 @@ import typing
 import base64
 
 # local imports
+from gsp.core.texture import Texture
 from gsp.types.serializer_base import SerializerBase
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.types.visual_base import VisualBase
+from gsp.visuals.image import Image
 from gsp.visuals.markers import Markers
 from gsp.visuals.paths import Paths
 from gsp.visuals.pixels import Pixels
@@ -24,9 +26,11 @@ from gsp.types.buffer import Buffer
 from gsp.transforms.transform_chain import TransformChain
 from ..types.pydantic_types import (
     PydanticCanvas,
+    PydanticImage,
     PydanticMarkers,
     PydanticPaths,
     PydanticTexts,
+    PydanticTexture,
     PydanticViewport,
     PydanticModelMatrix,
     PydanticCamera,
@@ -45,7 +49,7 @@ class PydanticSerializer(SerializerBase):
 
     def __init__(self, canvas: Canvas):
         """Initialize the PydanticSerializer with a canvas.
-        
+
         Args:
             canvas (Canvas): The canvas to be used in the serialization.
         """
@@ -65,7 +69,7 @@ class PydanticSerializer(SerializerBase):
             visuals (Sequence[VisualBase]): The list of visual elements to serialize.
             model_matrices (Sequence[TransBuf]): The list of model transformation matrices to serialize.
             cameras (Sequence[Camera]): The list of cameras to serialize.
-        
+
         Returns:
             PydanticDict: The serialized data as a PydanticDict.
         """
@@ -128,7 +132,20 @@ class PydanticSerializer(SerializerBase):
     def _visuals_to_pydantic(visuals: Sequence[VisualBase]) -> list[PydanticVisual]:
         pydantic_visuals: list[PydanticVisual] = []
         for visual in visuals:
-            if isinstance(visual, Markers):
+            if isinstance(visual, Image):
+                image = typing.cast(Image, visual)
+                pydantic_visual = PydanticVisual(
+                    type="image",
+                    visual=PydanticImage(
+                        uuid=image.get_uuid(),
+                        texture=PydanticSerializer._texture_to_pydantic(image.get_texture()),
+                        position=PydanticSerializer._transbuf_to_pydantic(image.get_position()),
+                        image_extent=image.get_image_extent(),
+                        interpolation=image.get_interpolation().name,
+                    ),
+                )
+                pydantic_visuals.append(pydantic_visual)
+            elif isinstance(visual, Markers):
                 markers = typing.cast(Markers, visual)
                 pydantic_visual = PydanticVisual(
                     type="markers",
@@ -243,3 +260,16 @@ class PydanticSerializer(SerializerBase):
             return pydantic_transbuf
         else:
             raise ValueError("Unknown TransBuf type")
+
+    @staticmethod
+    def _texture_to_pydantic(texture: Texture) -> PydanticTexture:
+        pydantic_texture = PydanticTexture(
+            uuid=texture.get_uuid(),
+            data=PydanticSerializer._transbuf_to_pydantic(texture.get_data()),
+            width=texture.get_width(),
+            height=texture.get_height(),
+        )
+        return pydantic_texture
+
+
+# =============================================================================

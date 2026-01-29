@@ -12,7 +12,10 @@ import pydantic_core
 # local imports
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
+from gsp.core.texture import Texture
+from gsp.types.image_interpolation import ImageInterpolation
 from gsp.types.visual_base import VisualBase
+from gsp.visuals.image import Image
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
 from gsp.visuals.segments import Segments
@@ -28,14 +31,24 @@ from gsp.types.buffer import Buffer
 from gsp.types.buffer_type import BufferType
 from gsp.transforms.transform_chain import TransformChain
 from gsp.core.camera import Camera
-from ..types.pydantic_types import PydanticCanvas, PydanticViewport, PydanticModelMatrix, PydanticCamera, PydanticScene
+from ..types.pydantic_types import PydanticCanvas, PydanticTexture, PydanticViewport, PydanticModelMatrix, PydanticCamera, PydanticScene
 from ..types.pydantic_types import PydanticTransBuf, PydanticBuffer, PydanticTransformChain
-from ..types.pydantic_types import PydanticVisual, PydanticMarkers, PydanticPaths, PydanticPixels, PydanticPoints, PydanticSegments, PydanticTexts
+from ..types.pydantic_types import (
+    PydanticVisual,
+    PydanticImage,
+    PydanticMarkers,
+    PydanticPaths,
+    PydanticPixels,
+    PydanticPoints,
+    PydanticSegments,
+    PydanticTexts,
+)
 from ..types.pydantic_dict import PydanticDict
 
 
 class PydanticParser:
     """Parser that converts Pydantic models into GSP data structures."""
+
     def __init__(self):
         """Initialize the PydanticParser."""
         pass
@@ -119,7 +132,16 @@ class PydanticParser:
 
     @staticmethod
     def _pydantic_to_visual(pydantic_visual: PydanticVisual) -> VisualBase:
-        if pydantic_visual.type == "markers":
+        if pydantic_visual.type == "image":
+            pydantic_image = typing.cast(PydanticImage, pydantic_visual.visual)
+            texture = PydanticParser._pydantic_to_texture(pydantic_image.texture)
+            position = PydanticParser._pydantic_to_transbuf(pydantic_image.position)
+            image_extent = pydantic_image.image_extent
+            interpolation = ImageInterpolation[pydantic_image.interpolation]
+            image = Image(texture, position, image_extent, interpolation)
+            image._uuid = pydantic_image.uuid
+            return image
+        elif pydantic_visual.type == "markers":
             pydantic_markers = typing.cast(PydanticMarkers, pydantic_visual.visual)
             marker_shape = MarkerShape[pydantic_markers.marker_shape]
             positions = PydanticParser._pydantic_to_transbuf(pydantic_markers.positions)
@@ -183,6 +205,9 @@ class PydanticParser:
         else:
             raise ValueError(f"Unknown PydanticVisual type: {pydantic_visual.type}")
 
+    # =============================================================================
+    #
+    # =============================================================================
     @staticmethod
     def _pydantic_to_transbuf(pydantic_transbuf: PydanticTransBuf) -> TransBuf:
         if pydantic_transbuf.type == "buffer":
@@ -200,3 +225,12 @@ class PydanticParser:
             return buffer
         else:
             raise ValueError(f"Unknown PydanticTransBuf type: {pydantic_transbuf.type}")
+
+    @staticmethod
+    def _pydantic_to_texture(pydantic_texture: PydanticTexture) -> Texture:
+        width = pydantic_texture.width
+        height = pydantic_texture.height
+        texture_data = PydanticParser._pydantic_to_transbuf(pydantic_texture.data)
+        texture = Texture(texture_data, width, height)
+        texture._uuid = pydantic_texture.uuid
+        return texture
