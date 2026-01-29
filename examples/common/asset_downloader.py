@@ -9,7 +9,6 @@ SPDX-License-Identifier: MIT
 # Data downloader
 
 # Imports
-
 from pathlib import Path
 
 # Constants

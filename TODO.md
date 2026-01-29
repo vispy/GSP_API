@@ -1,5 +1,6 @@
-- DONE pyramid to load from datoviz/data
 - think of pyramid next steps - adapt the image visual based on axes
+  - file displayed between 2 data unit file_x_min_dunit/file_x_max_dunit
+  - file is splitted in sample. which are becoming pixels in the texture
   - image position/extent/texture will change based on the axes limits
   - how to know if the image visual fit in the axes limits
     - if position+extent is not visible then it fits
@@ -86,6 +87,7 @@
     - possibility: set by class or by instance
 
 ---
+- DONE pyramid to load from datoviz/data
 - DONE datoviz to support on_raw_mouse
   - to get press_release/press_release
 - DONE add image interpolation in Image visual

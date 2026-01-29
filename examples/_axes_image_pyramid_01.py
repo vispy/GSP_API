@@ -17,6 +17,7 @@ from gsp.types.image_interpolation import ImageInterpolation
 from gsp.visuals import Image
 from gsp_extra.bufferx import Bufferx
 from gsp.types import BufferType, VisualBase
+from gsp.utils.transbuf_utils import TransBufUtils
 from gsp_extra.misc.render_item import RenderItem
 from gsp_extra.misc.texture_utils import TextureUtils
 from vispy_2.axes.axes_display import AxesDisplay
@@ -40,6 +41,7 @@ def texture_load(resolution_level: int) -> Texture:
     file_path = AssetDownloader.download_data(f"textures/pyramid/res_{resolution_level:02}.bin")
     print(f"Loading memmap from: {file_path}")
     array_numpy = np.memmap(file_path, shape=(image_width, image_height), dtype=np.float16, mode="r")
+
     # scale data to [0, 255] uint8
     array_min: float = float(np.min(array_numpy))
     array_max: float = float(np.max(array_numpy))
@@ -96,6 +98,33 @@ def generate_visual_image(
     render_item = RenderItem(viewport, image, model_matrix, camera)
 
     return render_item
+
+
+def image_compute_limits_dunit(axes_display: AxesDisplay, image: Image) -> typing.Tuple[float, float, float, float]:
+    """Compute image limits in data units.
+
+    Args:
+        axes_display: AxesDisplay containing the image.
+        image: Image visual to compute limits for.
+
+    Returns:
+        Tuple of (x_min_dunit, x_max_dunit, y_min_dunit, y_max_dunit).
+
+    """
+    # Get image position
+    position_buffer = TransBufUtils.to_buffer(image.get_position())
+    position_numpy = Bufferx.to_numpy(position_buffer)
+
+    # Get image extent
+    image_extent = image.get_image_extent()
+    image_x_min_dunit = position_numpy[0, 0] + image_extent[0]
+    image_x_max_dunit = position_numpy[0, 0] + image_extent[1]
+    image_y_min_dunit = position_numpy[0, 1] + image_extent[2]
+    image_y_max_dunit = position_numpy[0, 1] + image_extent[3]
+
+    # return limits
+    # print(f"Image limits in data units: x=({image_x_min_dunit}, {image_x_max_dunit}), y=({image_y_min_dunit}, {image_y_max_dunit})")
+    return (image_x_min_dunit, image_x_max_dunit, image_y_min_dunit, image_y_max_dunit)
 
 
 def main():
@@ -173,6 +202,9 @@ def main():
             # upadte image visual extent
             image_visual = typing.cast(Image, render_item_image.visual_base)
             image_visual.set_image_extent(image_extent_current)
+
+        # TMP: debug
+        image_limits_dunit = image_compute_limits_dunit(axes_display, typing.cast(Image, render_item_image.visual_base))
 
         # Collect all render items for the axes display
         render_items_axes = axes_display.get_render_items()
