@@ -14,7 +14,7 @@
 - think of pyramid next steps - adapt the image visual based on axes
   - file displayed between 2 data unit file_x_min_dunit/file_x_max_dunit
   - file is splitted in sample. which are becoming pixels in the texture
-  - image_x_min_dunit/image_x_max_dunit computed from image position/extent
+  - image_x_min_dunit/image_x_max_dunit computed from image position/extent - ```image_compute_limits_dunit()```
   - image position/extent/texture will change based on the axes limits
   - how to know if the image visual fit in the axes limits
     - if position+extent is not visible then it fits
