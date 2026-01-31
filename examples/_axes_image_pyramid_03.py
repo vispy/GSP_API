@@ -28,8 +28,12 @@ from common.asset_downloader import AssetDownloader
 # =============================================================================
 #
 # =============================================================================
+
+
 @dataclass(frozen=True)
 class PyramidConfig:
+    """Configuration for the pyramid image visual. Fixed over time."""
+
     channel_count: int = 384
     """Number of recording channels (typical for Neuropixels probes). 1 sample is one time point across all channels."""
     data_dtype: type = np.float16
@@ -51,7 +55,22 @@ class PyramidConfig:
     """File size in bytes."""
     file_sample_count: int = file_size_bytes // sample_size_bytes
     """Number of samples in the file."""
-    image_extent = (file_x_min_dunit, file_x_max_dunit, -channel_count / 2, channel_count / 2)
+
+    texture_margin_percent: float = 0.25
+    """Margin percentage to add to texture extent to add margin. and not update too often."""
+
+
+@dataclass()
+class PyramidParams:
+    """Parameters for the pyramid image visual. May change over time."""
+
+    image_extent_target = (
+        PyramidConfig.file_x_min_dunit,
+        PyramidConfig.file_x_max_dunit,
+        -PyramidConfig.channel_count / 2,
+        PyramidConfig.channel_count / 2,
+    )
+    """Target image extent in data units (left, right, bottom, top). It is recomputed on pan/zoom"""
 
 
 # =============================================================================
@@ -96,9 +115,7 @@ class PyramidTextureHelper:
 # =============================================================================
 class PyramidImageHelper:
     @staticmethod
-    def image_generate(
-        viewport: Viewport, axes_transform_numpy: np.ndarray, image_extent: typing.Tuple[float, float, float, float], n_channels: int
-    ) -> RenderItem:
+    def image_generate(viewport: Viewport, axes_transform_numpy: np.ndarray) -> RenderItem:
         """Generate a image visual render item."""
         # =============================================================================
         # Read image and create texture
@@ -111,14 +128,11 @@ class PyramidImageHelper:
         # =============================================================================
 
         # Define image position (4 vertices for a quad)
-        positions_numpy = np.array([[0.0, n_channels / 2, 0.0]], dtype=np.float32)
-        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
-
-        # Define image extent (left, right, bottom, top)
-        image_extent = (-0.5, 0.5, -n_channels / 2, n_channels / 2)
+        position_numpy = np.array([[0.0, PyramidConfig.channel_count / 2, 0.0]], dtype=np.float32)
+        position_buffer = Bufferx.from_numpy(position_numpy, BufferType.vec3)
 
         # Create the Image visual and add it to the viewport
-        image = Image(texture, positions_buffer, image_extent, ImageInterpolation.LINEAR)
+        image = Image(texture, position_buffer, PyramidParams.image_extent_target, ImageInterpolation.NEAREST)
 
         # Create model matrix to transform points into axes data space
         model_matrix_numpy = np.eye(4, dtype=np.float32)
@@ -161,6 +175,65 @@ class PyramidImageHelper:
         return (image_x_min_dunit, image_x_max_dunit, image_y_min_dunit, image_y_max_dunit)
 
     @staticmethod
+    def image_update(axes_display: AxesDisplay, image: Image) -> None:
+        """Update the image visual based on axes limits.
+
+        It may change the position/extent/texture of the image visual.
+
+        Args:
+            axes_display: AxesDisplay containing the image.
+            image: Image visual to update.
+        """
+        # get axes limits
+        axes_x_min_dunit, axes_x_max_dunit, _, _ = axes_display.get_limits_dunit()
+        axes_x_range_dunit = axes_x_max_dunit - axes_x_min_dunit
+
+        # compute new image x limits with margin
+        image_x_min_dunit = axes_x_min_dunit - axes_x_range_dunit * PyramidConfig.texture_margin_percent
+        image_x_max_dunit = axes_x_max_dunit + axes_x_range_dunit * PyramidConfig.texture_margin_percent
+
+        # clamp image limits to file limits
+        if image_x_min_dunit < PyramidConfig.file_x_min_dunit:
+            image_x_min_dunit = PyramidConfig.file_x_min_dunit
+        if image_x_max_dunit > PyramidConfig.file_x_max_dunit:
+            image_x_max_dunit = PyramidConfig.file_x_max_dunit
+
+        # =============================================================================
+        # Compute new image position/extent/texture
+        # =============================================================================
+
+        # compute new image position
+        image_position_x_dunit = (image_x_min_dunit + image_x_max_dunit) / 2.0
+
+        # Compute new image extent target
+        PyramidParams.image_extent_target = (
+            image_x_min_dunit - image_position_x_dunit,
+            image_x_max_dunit - image_position_x_dunit,
+            -PyramidConfig.channel_count / 2,
+            +PyramidConfig.channel_count / 2,
+        )
+
+        # compute new resolution level based on axes range
+        # TODO
+        texture_resolution_level = PyramidConfig.max_resolution
+        texture = PyramidTextureHelper.texture_load(texture_resolution_level)
+
+        # =============================================================================
+        # Actually update position, extent, texture
+        # =============================================================================
+
+        # Update image visual position
+        position_numpy = np.array([[image_position_x_dunit + 2, +PyramidConfig.channel_count / 2, 0.0]], dtype=np.float32)
+        position_buffer = Bufferx.from_numpy(position_numpy, BufferType.vec3)
+        image.set_position(position_buffer)
+
+        # Update image visual extent
+        image.set_image_extent(PyramidParams.image_extent_target)
+
+        # Update image visual texture
+        image.set_texture(texture)
+
+    @staticmethod
     def image_should_be_updated(axes_display: AxesDisplay, image: Image) -> bool:
         """Determine if the image visual should be updated based on axes limits.
 
@@ -183,18 +256,6 @@ class PyramidImageHelper:
         # TODO update based on resolution level
 
         return False
-
-    @staticmethod
-    def image_update(axes_display: AxesDisplay, image: Image) -> None:
-        """Update the image visual based on axes limits.
-
-        It may change the position/extent/texture of the image visual.
-
-        Args:
-            axes_display: AxesDisplay containing the image.
-            image: Image visual to update.
-        """
-        raise NotImplementedError("Image update not implemented yet.")
 
     @staticmethod
     def image_update_if_needed(axes_display: AxesDisplay, image: Image) -> None:
@@ -223,13 +284,12 @@ def main():
     # fix random seed for reproducibility
     np.random.seed(0)
 
+    # =============================================================================
+    # Create canvas+renderer+animator
+    # =============================================================================
+
     # Create a canvas
     canvas = Canvas(width=400, height=400, dpi=127)
-
-    # =============================================================================
-    # Create renderer+animator
-    # =============================================================================
-
     # Create renderer
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
@@ -242,10 +302,9 @@ def main():
 
     # Create a inner viewport for the axes display
     inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
-
     # Create an AxesDisplay for the inner viewport
     axes_display = AxesDisplay(canvas, inner_viewport)
-    # Set initial limits in data units
+    # Set initial limits in data units - will be update by the pan/zoom handler
     axes_display.set_limits_dunit(PyramidConfig.file_x_min_dunit - 0.5, PyramidConfig.file_x_max_dunit + 0.5, 0.0, PyramidConfig.channel_count)
 
     # =============================================================================
@@ -254,6 +313,8 @@ def main():
 
     viewport_events = ExampleHelper.create_viewport_events(renderer_base, axes_display.get_inner_viewport())
     axes_pan_zoom = AxesPanZoom(viewport_events, base_scale=1.1, axes_display=axes_display)
+
+    # Set pan/zoom limits in data units - only y limits are limited
     axes_pan_zoom.set_pan_limits_dunit(None, None, 0.0, PyramidConfig.channel_count)
     axes_pan_zoom.set_zoom_range_limits_dunit(
         x_min_range_dunit=None,
@@ -267,7 +328,7 @@ def main():
     # =============================================================================
 
     axes_transform_numpy = axes_display.get_transform_matrix_numpy()
-    render_item_image = PyramidImageHelper.image_generate(inner_viewport, axes_transform_numpy, PyramidConfig.image_extent, PyramidConfig.channel_count)
+    render_item_image = PyramidImageHelper.image_generate(inner_viewport, axes_transform_numpy)
 
     # =============================================================================
     # Rendering function
@@ -275,6 +336,17 @@ def main():
 
     def render_axes():
         """Event handle to update points model matrices on axes limits change."""
+        image_visual = typing.cast(Image, render_item_image.visual_base)
+
+        # =============================================================================
+        # Update image visual
+        # =============================================================================
+
+        PyramidImageHelper.image_update_if_needed(axes_display, image_visual)
+
+        # =============================================================================
+        # Update model_matrix_numpy to adapt the pan/zoom of axes_display
+        # =============================================================================
         # Get the axes transform matrix
         axes_transform_numpy = axes_display.get_transform_matrix_numpy()
 
@@ -293,10 +365,10 @@ def main():
             scale_vector = np.array([2.0 / (x_max_dunit - x_min_dunit), 2.0 / (y_max_dunit - y_min_dunit), 1.0])
             # apply scale vector to image extent
             image_extent_current = (
-                PyramidConfig.image_extent[0] * scale_vector[0],
-                PyramidConfig.image_extent[1] * scale_vector[0],
-                PyramidConfig.image_extent[2] * scale_vector[1],
-                PyramidConfig.image_extent[3] * scale_vector[1],
+                PyramidParams.image_extent_target[0] * scale_vector[0],
+                PyramidParams.image_extent_target[1] * scale_vector[0],
+                PyramidParams.image_extent_target[2] * scale_vector[1],
+                PyramidParams.image_extent_target[3] * scale_vector[1],
             )
             # update image visual extent
             image_visual = typing.cast(Image, render_item_image.visual_base)

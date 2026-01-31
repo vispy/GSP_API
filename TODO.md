@@ -1,3 +1,4 @@
+- pyramid: build the image only once
 - think of pyramid next steps - adapt the image visual based on axes
   - file displayed between 2 data unit file_x_min_dunit/file_x_max_dunit
   - file is splitted in sample. which are becoming pixels in the texture
