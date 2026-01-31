@@ -1,3 +1,15 @@
+- think of pyramid next steps - adapt the image visual based on axes
+  - file displayed between 2 data unit file_x_min_dunit/file_x_max_dunit
+  - file is splitted in sample. which are becoming pixels in the texture
+  - image_x_min_dunit/image_x_max_dunit computed from image position/extent - ```image_compute_limits_dunit()```
+  - image position/extent/texture will change based on the axes limits
+  - how to know if the image visual fit in the axes limits
+    - if position+extent is not visible then it fits
+    - if it is visible, but there is no more in this direction, then it fits
+  - convert a data unit to file sample index in sample file
+  - how many pixels in x of the images are visible in the axes
+  - for a given axes limits, what is the needed image position/extent/texture
+  - Q. can you subdivide the problem
 - BUG support panzoom in GSP_RENDERER=network
   - show only a blank, no axes content, no axes content
   - noticed 2 render calls in network server: one big then one small
@@ -11,18 +23,6 @@
     - multiple viewports
     - make them blink alternatively
 - DONE support image in network renderer
-- think of pyramid next steps - adapt the image visual based on axes
-  - file displayed between 2 data unit file_x_min_dunit/file_x_max_dunit
-  - file is splitted in sample. which are becoming pixels in the texture
-  - image_x_min_dunit/image_x_max_dunit computed from image position/extent - ```image_compute_limits_dunit()```
-  - image position/extent/texture will change based on the axes limits
-  - how to know if the image visual fit in the axes limits
-    - if position+extent is not visible then it fits
-    - if it is visible, but there is no more in this direction, then it fits
-  - convert a data unit to file sample index in sample file
-  - how many pixels in x of the images are visible in the axes
-  - for a given axes limits, what is the needed image position/extent/texture
-  - Q. can you subdivide the problem
 - look at a DSL domain specific language for transform
   - syntax sugar to build a transform chain
 - for the visual which requires multiple artists, think about what happen when the number of artists is reduced
