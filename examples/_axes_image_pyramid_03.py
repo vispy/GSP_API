@@ -51,6 +51,7 @@ class PyramidConfig:
     """File size in bytes."""
     file_sample_count: int = file_size_bytes // sample_size_bytes
     """Number of samples in the file."""
+    image_extent = (file_x_min_dunit, file_x_max_dunit, -channel_count / 2, channel_count / 2)
 
 
 # =============================================================================
@@ -226,22 +227,30 @@ def main():
     canvas = Canvas(width=400, height=400, dpi=127)
 
     # =============================================================================
-    #
+    # Create renderer+animator
     # =============================================================================
 
-    # Create a inner viewport
-    # inner_viewport = Viewport(int(canvas.get_width() / 4), int(canvas.get_height() / 4), int(canvas.get_width() / 2), int(canvas.get_height() / 2))
+    # Create renderer
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+    # Create animator
+    animator = ExampleHelper.create_animator(renderer_base)
+
+    # =============================================================================
+    # Create AxesDisplay
+    # =============================================================================
+
+    # Create a inner viewport for the axes display
     inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
-    # inner_viewport = Viewport(int(canvas.get_width() / 3), int(canvas.get_height() / 8), int(canvas.get_width() / 3), int(canvas.get_height() / 2))
 
     # Create an AxesDisplay for the inner viewport
     axes_display = AxesDisplay(canvas, inner_viewport)
     # Set initial limits in data units
-    axes_display.set_limits_dunit(-2.0, +2.0, 0.0, PyramidConfig.channel_count)
+    axes_display.set_limits_dunit(PyramidConfig.file_x_min_dunit - 0.5, PyramidConfig.file_x_max_dunit + 0.5, 0.0, PyramidConfig.channel_count)
 
-    renderer_name = ExampleHelper.get_renderer_name()
-    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-    animator = ExampleHelper.create_animator(renderer_base)
+    # =============================================================================
+    # Create pan/zoom handler for the axes display
+    # =============================================================================
 
     viewport_events = ExampleHelper.create_viewport_events(renderer_base, axes_display.get_inner_viewport())
     axes_pan_zoom = AxesPanZoom(viewport_events, base_scale=1.1, axes_display=axes_display)
@@ -254,15 +263,14 @@ def main():
     )
 
     # =============================================================================
-    #
+    # Create Pyramid Image visual
     # =============================================================================
 
     axes_transform_numpy = axes_display.get_transform_matrix_numpy()
-    image_extent = (PyramidConfig.file_x_min_dunit, PyramidConfig.file_x_max_dunit, -PyramidConfig.channel_count / 2, PyramidConfig.channel_count / 2)
-    render_item_image = PyramidImageHelper.image_generate(inner_viewport, axes_transform_numpy, image_extent, PyramidConfig.channel_count)
+    render_item_image = PyramidImageHelper.image_generate(inner_viewport, axes_transform_numpy, PyramidConfig.image_extent, PyramidConfig.channel_count)
 
     # =============================================================================
-    #
+    # Rendering function
     # =============================================================================
 
     def render_axes():
@@ -275,21 +283,28 @@ def main():
         model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
         render_item_image.model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
 
+        # =============================================================================
         # Update image extent to keep it constant in data units when the axes limits change due to pan/zoom
+        # =============================================================================
+
         if True:
             # Compute scale vector from axes limits
             x_min_dunit, x_max_dunit, y_min_dunit, y_max_dunit = axes_display.get_limits_dunit()
             scale_vector = np.array([2.0 / (x_max_dunit - x_min_dunit), 2.0 / (y_max_dunit - y_min_dunit), 1.0])
             # apply scale vector to image extent
             image_extent_current = (
-                image_extent[0] * scale_vector[0],
-                image_extent[1] * scale_vector[0],
-                image_extent[2] * scale_vector[1],
-                image_extent[3] * scale_vector[1],
+                PyramidConfig.image_extent[0] * scale_vector[0],
+                PyramidConfig.image_extent[1] * scale_vector[0],
+                PyramidConfig.image_extent[2] * scale_vector[1],
+                PyramidConfig.image_extent[3] * scale_vector[1],
             )
             # update image visual extent
             image_visual = typing.cast(Image, render_item_image.visual_base)
             image_visual.set_image_extent(image_extent_current)
+
+        # =============================================================================
+        # Render items
+        # =============================================================================
 
         # Collect all render items for the axes display
         render_items_axes = axes_display.get_render_items()
@@ -348,7 +363,7 @@ def main():
         return changed_visuals
 
     # =============================================================================
-    #
+    # Start the animation loop
     # =============================================================================
 
     # start the animation loop
