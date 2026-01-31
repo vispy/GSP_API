@@ -2,7 +2,6 @@
 
 # stdlib imports
 from dataclasses import dataclass
-import pathlib
 import time
 import typing
 
@@ -31,11 +30,11 @@ from common.asset_downloader import AssetDownloader
 # =============================================================================
 @dataclass(frozen=True)
 class PyramidConfig:
-    n_channels: int = 384
+    channel_count: int = 384
     """Number of recording channels (typical for Neuropixels probes). 1 sample is one time point across all channels."""
     data_dtype: type = np.float16
     """Data type for memory-efficient storage."""
-    sample_size_bytes: int = n_channels * np.dtype(data_dtype).itemsize
+    sample_size_bytes: int = channel_count * np.dtype(data_dtype).itemsize
     """Size of one sample in bytes."""
 
     max_resolution: int = 11
@@ -63,7 +62,7 @@ class PyramidTextureHelper:
         """Load texture for given resolution level."""
         # Load pyramid data from memmap file
         image_width = 2**resolution_level
-        image_height = PyramidConfig.n_channels
+        image_height = PyramidConfig.channel_count
 
         # file_path = pathlib.Path(__file__).parent / "data" / "pyramid" / f"res_{resolution_level:02}.bin"
         print(f"Downloading pyramid data for resolution level: {resolution_level}")
@@ -135,7 +134,7 @@ class PyramidImageHelper:
         return render_item
 
     @staticmethod
-    def image_compute_limits_dunit(axes_display: AxesDisplay, image: Image) -> typing.Tuple[float, float, float, float]:
+    def image_compute_limits_dunit(image: Image) -> typing.Tuple[float, float, float, float]:
         """Compute image limits in data units.
 
         Args:
@@ -171,8 +170,8 @@ class PyramidImageHelper:
         Returns:
             True if the image should be updated, False otherwise.
         """
-        image_x_min_dunit, image_x_max_dunit, _, _ = PyramidImageHelper.image_compute_limits_dunit(axes_display, image)
         axes_x_min_dunit, axes_x_max_dunit, _, _ = axes_display.get_limits_dunit()
+        image_x_min_dunit, image_x_max_dunit, _, _ = PyramidImageHelper.image_compute_limits_dunit(image)
 
         # if the axes limits are outside the image limits and the image limits are not at the file limits, update the image
         if axes_x_min_dunit < image_x_min_dunit and image_x_min_dunit != PyramidConfig.file_x_min_dunit:
@@ -238,7 +237,7 @@ def main():
     # Create an AxesDisplay for the inner viewport
     axes_display = AxesDisplay(canvas, inner_viewport)
     # Set initial limits in data units
-    axes_display.set_limits_dunit(-2.0, +2.0, 0.0, PyramidConfig.n_channels)
+    axes_display.set_limits_dunit(-2.0, +2.0, 0.0, PyramidConfig.channel_count)
 
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
@@ -246,12 +245,12 @@ def main():
 
     viewport_events = ExampleHelper.create_viewport_events(renderer_base, axes_display.get_inner_viewport())
     axes_pan_zoom = AxesPanZoom(viewport_events, base_scale=1.1, axes_display=axes_display)
-    axes_pan_zoom.set_pan_limits_dunit(None, None, 0.0, PyramidConfig.n_channels)
+    axes_pan_zoom.set_pan_limits_dunit(None, None, 0.0, PyramidConfig.channel_count)
     axes_pan_zoom.set_zoom_range_limits_dunit(
         x_min_range_dunit=None,
         x_max_range_dunit=None,
-        y_min_range_dunit=PyramidConfig.n_channels,
-        y_max_range_dunit=PyramidConfig.n_channels,
+        y_min_range_dunit=PyramidConfig.channel_count,
+        y_max_range_dunit=PyramidConfig.channel_count,
     )
 
     # =============================================================================
@@ -259,8 +258,8 @@ def main():
     # =============================================================================
 
     axes_transform_numpy = axes_display.get_transform_matrix_numpy()
-    image_extent = (PyramidConfig.file_x_min_dunit, PyramidConfig.file_x_max_dunit, -PyramidConfig.n_channels / 2, PyramidConfig.n_channels / 2)
-    render_item_image = PyramidImageHelper.image_generate(inner_viewport, axes_transform_numpy, image_extent, PyramidConfig.n_channels)
+    image_extent = (PyramidConfig.file_x_min_dunit, PyramidConfig.file_x_max_dunit, -PyramidConfig.channel_count / 2, PyramidConfig.channel_count / 2)
+    render_item_image = PyramidImageHelper.image_generate(inner_viewport, axes_transform_numpy, image_extent, PyramidConfig.channel_count)
 
     # =============================================================================
     #
@@ -276,7 +275,7 @@ def main():
         model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
         render_item_image.model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
 
-        # Update image extent to keep it constant in data units
+        # Update image extent to keep it constant in data units when the axes limits change due to pan/zoom
         if True:
             # Compute scale vector from axes limits
             x_min_dunit, x_max_dunit, y_min_dunit, y_max_dunit = axes_display.get_limits_dunit()
@@ -288,12 +287,9 @@ def main():
                 image_extent[2] * scale_vector[1],
                 image_extent[3] * scale_vector[1],
             )
-            # upadte image visual extent
+            # update image visual extent
             image_visual = typing.cast(Image, render_item_image.visual_base)
             image_visual.set_image_extent(image_extent_current)
-
-        # TMP: debug
-        image_limits_dunit = PyramidImageHelper.image_compute_limits_dunit(axes_display, typing.cast(Image, render_item_image.visual_base))
 
         # Collect all render items for the axes display
         render_items_axes = axes_display.get_render_items()
@@ -320,12 +316,18 @@ def main():
 
     # define variables to control rendering frequency
     needs_render: bool = False
+    """Flag indicating if a render is needed."""
     last_render_time: float = 0.0
+    """Time of the last render."""
     max_delta_time_between_renders: float = 1.0 / 60.0  # seconds
+    """Maximum time between renders to limit rendering frequency."""
 
     # Define the event handler for new limits for the axes display
     def on_new_limits():
-        """Event handle to update points model matrices on axes limits change."""
+        """Event handler for new limits for the axes display.
+
+        Actually the rendering actually happens in the animator callback, thus we can limit the rendering frequency there
+        """
         nonlocal needs_render
         needs_render = True
 
@@ -334,9 +336,9 @@ def main():
 
     @animator.event_listener
     def animator_callback(delta_time: float) -> list[VisualBase]:
-        # print(f"{text_cyan('Animator callback')}: delta_time={delta_time:.4f} sec")
         nonlocal needs_render, last_render_time, max_delta_time_between_renders
 
+        # render only if needed and enough time has passed since last render
         if needs_render and (time.time() - last_render_time) >= max_delta_time_between_renders:
             render_axes()
             needs_render = False
