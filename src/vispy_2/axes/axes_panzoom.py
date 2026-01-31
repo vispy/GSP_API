@@ -11,7 +11,13 @@ class AxesPanZoom:
     """Class to handle panning and zooming in a viewport."""
 
     def __init__(self, viewport_events: ViewportEventsBase, base_scale: float, axes_display: AxesDisplay) -> None:
-        """Initialize the PanAndZoom example."""
+        """Initialize the PanAndZoom example.
+
+        Args:
+            viewport_events (ViewportEventsBase): Viewport events to listen to.
+            base_scale (float): Base scale for zooming. Greater than 1.0. E.g., 1.1 means 10% zoom in/out per scroll step.
+            axes_display (AxesDisplay): Axes display to update.
+        """
         self._viewport_events = viewport_events
         """Viewport events to listen to."""
         self._base_scale = base_scale
