@@ -1,4 +1,20 @@
+- pyramid:
+  - first let determine the x_min/max_dunit of the image
+  - then compute the needed resolution level
+    - based on the maximum possible resolution in sample/dunit
+    - progressive decrease of resolution when zooming out
+    - determine the optimal resolution level
+    - based on the axes x_min/max_dunit and how many pixels it represents
+    - recompute the image if resolution is not optimal
+  - image translation is independtant of the resolution level
+    - so first code the image translation
+    - then code the resolution level change
+    - this it the divide and conquer approach
+- if translation fails, recompute the whole
+  - if translation succeed, but not optimal resolution, recompute the whole
+  - if translation succeed, and optimal resolution succeed, do nothing
 - pyramid: build the image only once
+  - do the computation in a single place
 - think of pyramid next steps - adapt the image visual based on axes
   - file displayed between 2 data unit file_x_min_dunit/file_x_max_dunit
   - file is splitted in sample. which are becoming pixels in the texture
