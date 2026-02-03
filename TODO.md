@@ -1,4 +1,8 @@
 - pyramid:
+  - DONE Initialize it at an impossible place
+    - super small extent, -0.1 + 0.1 
+    - position at -100
+    - Thus you ensure it is recomputed
   - first let determine the x_min/max_dunit of the image
   - then compute the needed resolution level
     - based on the maximum possible resolution in sample/dunit

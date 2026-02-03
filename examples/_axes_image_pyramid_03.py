@@ -1,5 +1,17 @@
 """Example demonstrating the AxesDisplay with pan and zoom functionality."""
 
+# import matplotlib
+
+# # print(f"Using matplotlib backend: {matplotlib.get_backend()}")
+# matplotlib.use("QtAgg")
+# print(f"Using matplotlib backend: {matplotlib.get_backend()}")
+
+# set DVZ_LOG_LEVEL=4 env variable to see datoviz debug logs
+import os
+
+os.environ["DVZ_LOG_LEVEL"] = "4"
+
+
 # stdlib imports
 from dataclasses import dataclass
 import time
@@ -45,7 +57,7 @@ class PyramidConfig:
     min_resolution: int = 7
     """Minimum resolution level (2^min_resolution samples)."""
 
-    file_x_min_dunit: float = +0.5
+    file_x_min_dunit: float = +0.0
     """Minimum x data unit of the file."""
     file_x_max_dunit: float = +2.0
     """Maximum x data unit of the file."""
@@ -56,6 +68,7 @@ class PyramidConfig:
     """Number of samples in the file."""
 
     texture_margin_percent: float = 0.25
+    # texture_margin_percent: float = 0.0 # TMP:
     """Margin percentage to add to texture extent to add margin. and not update too often."""
 
 
@@ -84,9 +97,9 @@ class PyramidTextureHelper:
         image_height = PyramidConfig.channel_count
 
         # file_path = pathlib.Path(__file__).parent / "data" / "pyramid" / f"res_{resolution_level:02}.bin"
-        print(f"Downloading pyramid data for resolution level: {resolution_level}")
+        # print(f"Downloading pyramid data for resolution level: {resolution_level}")
         file_path = AssetDownloader.download_data(f"textures/pyramid/res_{resolution_level:02}.bin")
-        print(f"Loading memmap from: {file_path}")
+        # print(f"Loading memmap from: {file_path}")
         array_numpy = np.memmap(file_path, shape=(image_width, image_height), dtype=np.float16, mode="r")
 
         # scale data to [0, 255] uint8
@@ -105,7 +118,7 @@ class PyramidTextureHelper:
         texture_buffer = Bufferx.from_numpy(texture_numpy, BufferType.rgba8)
         texture = Texture(texture_buffer, image_width, image_height)
 
-        print(f"Loading image from: {file_path}")
+        # print(f"Loading image from: {file_path}")
         return texture
 
 
@@ -114,7 +127,7 @@ class PyramidTextureHelper:
 # =============================================================================
 class PyramidImageHelper:
     @staticmethod
-    def image_generate(viewport: Viewport, axes_transform_numpy: np.ndarray) -> RenderItem:
+    def render_item_build(viewport: Viewport, axes_transform_numpy: np.ndarray) -> RenderItem:
         """Generate a image visual render item."""
         # =============================================================================
         # Read image and create texture
@@ -127,11 +140,15 @@ class PyramidImageHelper:
         # =============================================================================
 
         # Define image position (4 vertices for a quad)
-        position_numpy = np.array([[0.0, PyramidConfig.channel_count / 2, 0.0]], dtype=np.float32)
+        position_x_dunit = -100.0  # Known to be invalid at creation, will be updated later
+        position_numpy = np.array([[position_x_dunit, PyramidConfig.channel_count / 2, 0.0]], dtype=np.float32)
         position_buffer = Bufferx.from_numpy(position_numpy, BufferType.vec3)
 
+        # image extent in data units - known to be invalid at creation, will be updated later
+        image_extent_dunit = (-0.1, +0.1, -0.1, +0.1)
+
         # Create the Image visual and add it to the viewport
-        image = Image(texture, position_buffer, PyramidParams.image_extent_target_dunit, ImageInterpolation.NEAREST)
+        image = Image(texture, position_buffer, image_extent_dunit, ImageInterpolation.NEAREST)
 
         # Create model matrix to transform points into axes data space
         model_matrix_numpy = np.eye(4, dtype=np.float32)
@@ -163,14 +180,14 @@ class PyramidImageHelper:
         position_numpy = Bufferx.to_numpy(position_buffer)
 
         # Get image extent
-        image_extent = image.get_image_extent()
+        image_extent = PyramidParams.image_extent_target_dunit
         image_x_min_dunit = float(position_numpy[0, 0]) + image_extent[0]
         image_x_max_dunit = float(position_numpy[0, 0]) + image_extent[1]
         image_y_min_dunit = float(position_numpy[0, 1]) + image_extent[2]
         image_y_max_dunit = float(position_numpy[0, 1]) + image_extent[3]
 
         # return limits
-        # print(f"Image limits in data units: x=({image_x_min_dunit}, {image_x_max_dunit}), y=({image_y_min_dunit}, {image_y_max_dunit})")
+        print(f"Image limits in data units: image_x_min_dunit={image_x_min_dunit:.3f}, image_x_max_dunit={image_x_max_dunit:.3f}")
         return (image_x_min_dunit, image_x_max_dunit, image_y_min_dunit, image_y_max_dunit)
 
     @staticmethod
@@ -192,14 +209,19 @@ class PyramidImageHelper:
             image_x_min_dunit = axes_x_min_dunit - axes_x_range_dunit * PyramidConfig.texture_margin_percent
         else:
             image_x_min_dunit = PyramidConfig.file_x_min_dunit
+
         # compute new image image_x_max_dunit
         if axes_x_max_dunit + axes_x_range_dunit * PyramidConfig.texture_margin_percent < PyramidConfig.file_x_max_dunit:
             image_x_max_dunit = axes_x_max_dunit + axes_x_range_dunit * PyramidConfig.texture_margin_percent
         else:
             image_x_max_dunit = PyramidConfig.file_x_max_dunit
 
+        # print(f"Updating image to x=({image_x_min_dunit}, {image_x_max_dunit})")
+
         # compute new image position - center of the image extent
         image_position_x_dunit = (image_x_min_dunit + image_x_max_dunit) / 2.0
+        position_numpy = np.array([[image_position_x_dunit, +PyramidConfig.channel_count / 2, 0.0]], dtype=np.float32)
+        position_buffer = Bufferx.from_numpy(position_numpy, BufferType.vec3)
 
         # =============================================================================
         # Compute new image position/extent/texture
@@ -216,38 +238,40 @@ class PyramidImageHelper:
         # compute new resolution level based on axes range
         # TODO
         texture_resolution_level = PyramidConfig.max_resolution
-        texture = PyramidTextureHelper.texture_load(texture_resolution_level)
 
         # =============================================================================
         # Actually update position, extent, texture
         # =============================================================================
 
         # Update image visual position
-        position_numpy = np.array([[image_position_x_dunit, +PyramidConfig.channel_count / 2, 0.0]], dtype=np.float32)
-        position_buffer = Bufferx.from_numpy(position_numpy, BufferType.vec3)
         image.set_position(position_buffer)
-
-        return
 
         # Update image visual extent
         image.set_image_extent(PyramidParams.image_extent_target_dunit)
 
         # Update image visual texture
+        texture = PyramidTextureHelper.texture_load(texture_resolution_level)
         image.set_texture(texture)
 
     @staticmethod
-    def image_should_be_updated(axes_display: AxesDisplay, image: Image) -> bool:
+    def image_should_be_updated(axes_display: AxesDisplay, image_visual: Image) -> bool:
         """Determine if the image visual should be updated based on axes limits.
 
         Args:
             axes_display: AxesDisplay containing the image.
-            image: Image visual to check.
+            image_visual: Image visual to check.
 
         Returns:
             True if the image should be updated, False otherwise.
         """
+        should_update: bool = False
+        # Get axes limits
         axes_x_min_dunit, axes_x_max_dunit, _, _ = axes_display.get_limits_dunit()
-        image_x_min_dunit, image_x_max_dunit, _, _ = PyramidImageHelper.image_compute_limits_dunit(image)
+        image_x_min_dunit, image_x_max_dunit, _, _ = PyramidImageHelper.image_compute_limits_dunit(image_visual)
+
+        # print(
+        #     f"image_x_min_dunit: {image_x_min_dunit:.2f}, image_x_max_dunit: {image_x_max_dunit:.2f}, axes_x_min_dunit: {axes_x_min_dunit:.2f}, axes_x_max_dunit: {axes_x_max_dunit:.2f}"
+        # )
 
         # =============================================================================
         # Handle if we must update due to panning
@@ -255,11 +279,18 @@ class PyramidImageHelper:
 
         # if image_x_min_dunit is greater than axes_x_min_dunit and image_x_min_dunit is not at the file limit, update the image
         if image_x_min_dunit > axes_x_min_dunit and image_x_min_dunit != PyramidConfig.file_x_min_dunit:
-            return True
+            should_update = True
+            print(f"update due to panning left {image_x_min_dunit} {axes_x_min_dunit} {PyramidConfig.file_x_min_dunit}")
+
+        # print(f"image_x_min_dunit: {image_x_min_dunit:.4f}, axes_x_min_dunit: {axes_x_min_dunit:.4f}")
+        # return False
 
         # if image_x_max_dunit is less than axes_x_max_dunit and image_x_max_dunit is not at the file limit, update the image
         if image_x_max_dunit < axes_x_max_dunit and image_x_max_dunit != PyramidConfig.file_x_max_dunit:
-            return True
+            should_update = True
+            print(
+                f"update due to panning right - image_x_max_dunit: {image_x_max_dunit:.3f}, axes_x_max_dunit: {axes_x_max_dunit:.3f}, file_x_max_dunit: {PyramidConfig.file_x_max_dunit:.3f}"
+            )
 
         # =============================================================================
         # Handle if we must update due to zooming
@@ -271,7 +302,7 @@ class PyramidImageHelper:
         # No updated needed
         # =============================================================================
 
-        return False
+        return should_update
 
 
 # =============================================================================
@@ -303,7 +334,9 @@ def main():
     # Create an AxesDisplay for the inner viewport
     axes_display = AxesDisplay(canvas, inner_viewport)
     # Set initial limits in data units - will be update by the pan/zoom handler
-    axes_display.set_limits_dunit(0, 1, 0.0, PyramidConfig.channel_count)
+    # axes_display.set_limits_dunit(0, 1, 0.0, PyramidConfig.channel_count)
+    axes_display.set_limits_dunit(-0.2, 0.2, 0.0, PyramidConfig.channel_count)
+    # axes_display.set_limits_dunit(1.5, 2.5, 0.0, PyramidConfig.channel_count)  # TMP:
 
     # =============================================================================
     # Create pan/zoom handler for the axes display
@@ -326,7 +359,7 @@ def main():
     # =============================================================================
 
     axes_transform_numpy = axes_display.get_transform_matrix_numpy()
-    render_item_image = PyramidImageHelper.image_generate(inner_viewport, axes_transform_numpy)
+    render_item_image = PyramidImageHelper.render_item_build(inner_viewport, axes_transform_numpy)
 
     # =============================================================================
     # Rendering function
@@ -339,10 +372,16 @@ def main():
         # =============================================================================
         # Update image visual if needed
         # =============================================================================
-
-        should_update = PyramidImageHelper.image_should_be_updated(axes_display, image_visual)
+        should_update: bool = False
+        if force_update is False:
+            should_update = PyramidImageHelper.image_should_be_updated(axes_display, image_visual)
+        print(f"should_update: {should_update}, force_update: {force_update}")
         if should_update or force_update:
             PyramidImageHelper.image_update(axes_display, image_visual)
+
+        # TMP:
+        # if force_update:
+        #     PyramidImageHelper.image_update(axes_display, image_visual)
 
         # =============================================================================
         # Update model_matrix_numpy to adapt the pan/zoom of axes_display
@@ -366,10 +405,10 @@ def main():
 
         # apply scale vector to image extent
         image_extent_current_dunit = (
-            PyramidParams.image_extent_target_dunit[0] * extent_scale_vector[0],
-            PyramidParams.image_extent_target_dunit[1] * extent_scale_vector[0],
-            PyramidParams.image_extent_target_dunit[2] * extent_scale_vector[1],
-            PyramidParams.image_extent_target_dunit[3] * extent_scale_vector[1],
+            PyramidParams.image_extent_target_dunit[0] * float(extent_scale_vector[0]),
+            PyramidParams.image_extent_target_dunit[1] * float(extent_scale_vector[0]),
+            PyramidParams.image_extent_target_dunit[2] * float(extent_scale_vector[1]),
+            PyramidParams.image_extent_target_dunit[3] * float(extent_scale_vector[1]),
         )
 
         # update image visual extent
