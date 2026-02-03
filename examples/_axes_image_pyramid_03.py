@@ -45,26 +45,28 @@ from common.asset_downloader import AssetDownloader
 class PyramidConfig:
     """Configuration for the pyramid image visual. Fixed over time."""
 
-    channel_count: int = 384
-    """Number of recording channels (typical for Neuropixels probes). 1 sample is one time point across all channels."""
     data_dtype: type = np.float16
-    """Data type for memory-efficient storage."""
-    sample_size_bytes: int = channel_count * np.dtype(data_dtype).itemsize
-    """Size of one sample in bytes."""
+    """Data point type for memory-efficient storage."""
 
-    max_resolution: int = 11
-    """Maximum resolution level (2^max_resolution samples)."""
-    min_resolution: int = 7
-    """Minimum resolution level (2^min_resolution samples)."""
+    channel_count: int = 384
+    """Number of recording channels (typical for Neuropixels probes). 1 sample is one time data point across all channels."""
+
+    sample_size_bytes: int = channel_count * np.dtype(data_dtype).itemsize
+    """Size of one sample in bytes. One sample is one time point across all channels."""
+
+    max_zoomout: int = 11
+    """Maximum zoomout level (2^11 = 2048x downsampling)."""
+    min_zoomout: int = 7
+    """Minimum zoomout level (2^7 = 128x downsampling)."""
 
     file_x_min_dunit: float = +0.0
     """Minimum x data unit of the file."""
     file_x_max_dunit: float = +2.0
     """Maximum x data unit of the file."""
 
-    file_size_bytes: int = 10_797_276_672
+    file_size_max_bytes: int = 10_797_276_672
     """File size in bytes."""
-    file_sample_count: int = file_size_bytes // sample_size_bytes
+    file_sample_max_count: int = file_size_max_bytes // sample_size_bytes
     """Number of samples in the file."""
 
     texture_margin_percent: float = 0.25
@@ -90,16 +92,16 @@ class PyramidParams:
 # =============================================================================
 class PyramidTextureHelper:
     @staticmethod
-    def texture_load(resolution_level: int) -> Texture:
-        """Load texture for given resolution level."""
+    def texture_load(zoomout_level: int) -> Texture:
+        """Load texture for given zoomout level."""
         # Load pyramid data from memmap file
-        image_width = 2**resolution_level
+        image_width = 2**zoomout_level
         image_height = PyramidConfig.channel_count
 
-        # file_path = pathlib.Path(__file__).parent / "data" / "pyramid" / f"res_{resolution_level:02}.bin"
-        # print(f"Downloading pyramid data for resolution level: {resolution_level}")
-        file_path = AssetDownloader.download_data(f"textures/pyramid/res_{resolution_level:02}.bin")
-        # print(f"Loading memmap from: {file_path}")
+        # file_path = pathlib.Path(__file__).parent / "data" / "pyramid" / f"res_{zoomout_level:02}.bin"
+        # print(f"Downloading pyramid data for zoomout level: {zoomout_level}")
+        file_path = AssetDownloader.download_data(f"textures/pyramid/res_{zoomout_level:02}.bin")
+        print(f"Loading memmap from: {file_path}")
         array_numpy = np.memmap(file_path, shape=(image_width, image_height), dtype=np.float16, mode="r")
 
         # scale data to [0, 255] uint8
@@ -121,6 +123,41 @@ class PyramidTextureHelper:
         # print(f"Loading image from: {file_path}")
         return texture
 
+    @staticmethod
+    def get_desired_zoomout_level(axes_display: AxesDisplay) -> int:
+        """Compute the desired zoomout level based on axes limits.
+
+        Args:
+            axes_display: AxesDisplay containing the image.
+
+        Returns:
+            desired_zoomout_level: Desired zoomout level.
+        """
+        # Get axes limits
+        axes_x_min_dunit, axes_x_max_dunit, _, _ = axes_display.get_limits_dunit()
+
+        # compute axes range in pixels
+        axes_inner_viewport = axes_display.get_inner_viewport()
+        axes_sample_per_dunit = axes_inner_viewport.get_width() / (axes_x_max_dunit - axes_x_min_dunit)
+
+        # Compute the number of samples per data unit at the lowest zoom level
+        file_sample_per_dunit = PyramidConfig.file_sample_max_count / (PyramidConfig.file_x_max_dunit - PyramidConfig.file_x_min_dunit)
+
+        print(f"axes_sample_per_dunit: {axes_sample_per_dunit:.3f}, file_sample_per_dunit: {file_sample_per_dunit:.3f}")
+
+        for zoomout_level in range(PyramidConfig.min_zoomout, PyramidConfig.max_zoomout + 1):
+            level_sample_per_dunit = (2**zoomout_level) / (PyramidConfig.file_x_max_dunit - PyramidConfig.file_x_min_dunit)
+            # print(f"  zoomout_level: {zoomout_level}, level_sample_per_dunit: {level_sample_per_dunit:.3f}")
+            if level_sample_per_dunit >= axes_sample_per_dunit:
+                desired_zoomout_level = zoomout_level
+                break
+
+        desired_zoomout_level = PyramidConfig.max_zoomout  # TMP:
+
+        print(f"desired_zoomout_level: {desired_zoomout_level}")
+
+        return desired_zoomout_level
+
 
 # =============================================================================
 # Helper for Pyramid Image
@@ -133,7 +170,7 @@ class PyramidImageHelper:
         # Read image and create texture
         # =============================================================================
 
-        texture = PyramidTextureHelper.texture_load(10)
+        texture = PyramidTextureHelper.texture_load(PyramidConfig.max_zoomout)
 
         # =============================================================================
         # Create a image visual
@@ -235,9 +272,9 @@ class PyramidImageHelper:
             +PyramidConfig.channel_count / 2,
         )
 
-        # compute new resolution level based on axes range
+        # compute new zoomout level based on axes range
         # TODO
-        texture_resolution_level = PyramidConfig.max_resolution
+        texture_zoomout_level = PyramidConfig.max_zoomout
 
         # =============================================================================
         # Actually update position, extent, texture
@@ -250,7 +287,7 @@ class PyramidImageHelper:
         image.set_image_extent(PyramidParams.image_extent_target_dunit)
 
         # Update image visual texture
-        texture = PyramidTextureHelper.texture_load(texture_resolution_level)
+        texture = PyramidTextureHelper.texture_load(texture_zoomout_level)
         image.set_texture(texture)
 
     @staticmethod
@@ -280,7 +317,9 @@ class PyramidImageHelper:
         # if image_x_min_dunit is greater than axes_x_min_dunit and image_x_min_dunit is not at the file limit, update the image
         if image_x_min_dunit > axes_x_min_dunit and image_x_min_dunit != PyramidConfig.file_x_min_dunit:
             should_update = True
-            print(f"update due to panning left {image_x_min_dunit} {axes_x_min_dunit} {PyramidConfig.file_x_min_dunit}")
+            print(
+                f"update due to panning left - image_x_min_dunit: {image_x_min_dunit:.3f}, axes_x_min_dunit: {axes_x_min_dunit:.3f}, file_x_min_dunit: {PyramidConfig.file_x_min_dunit:.3f}"
+            )
 
         # print(f"image_x_min_dunit: {image_x_min_dunit:.4f}, axes_x_min_dunit: {axes_x_min_dunit:.4f}")
         # return False
@@ -296,7 +335,9 @@ class PyramidImageHelper:
         # Handle if we must update due to zooming
         # =============================================================================
 
-        # TODO update based on resolution level
+        # TODO update based on zoomout level
+        desired_zoomout_level = PyramidTextureHelper.get_desired_zoomout_level(axes_display)
+        print(f"desired_zoomout_level: {desired_zoomout_level}")
 
         # =============================================================================
         # No updated needed
@@ -378,10 +419,6 @@ def main():
         print(f"should_update: {should_update}, force_update: {force_update}")
         if should_update or force_update:
             PyramidImageHelper.image_update(axes_display, image_visual)
-
-        # TMP:
-        # if force_update:
-        #     PyramidImageHelper.image_update(axes_display, image_visual)
 
         # =============================================================================
         # Update model_matrix_numpy to adapt the pan/zoom of axes_display
