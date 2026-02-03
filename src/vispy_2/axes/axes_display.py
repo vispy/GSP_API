@@ -48,11 +48,11 @@ class AxesDisplay:
         """Unit converter for inner viewport."""
         self._outter_viewport_unit = ViewportUnitUtils(self._canvas, self._outter_viewport)
         """Unit converter for outter viewport."""
-        self._x_min_dunit = -1.0
+        self._x_min_dunit = 0.0
         """x minimum in data units."""
         self._x_max_dunit = +1.0
         """x maximum in data units."""
-        self._y_min_dunit = -1.0
+        self._y_min_dunit = 0.0
         """y minimum in data units."""
         self._y_max_dunit = +1.0
         """y maximum in data units."""
