@@ -15,3 +15,12 @@ source .venv/bin/activate
 pip install -e . 
 ```
 
+---
+
+## FAQ
+### Q. How to remove datoviz log ?
+A. You can set the log level of datoviz with ```DVZ_LOG_LEVEL``` environment variable. See the [doc](https://datoviz.org/discussions/CONTRIBUTING/#console-logging)
+
+```
+DVZ_LOG_LEVEL=4 GSP_RENDERER=datoviz python your_script.py
+```
