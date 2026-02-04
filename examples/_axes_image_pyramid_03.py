@@ -382,7 +382,7 @@ def main():
     # =============================================================================
 
     # Create a canvas
-    canvas = Canvas(width=400, height=400, dpi=127)
+    canvas = Canvas(width=600, height=600, dpi=127)
     # Create renderer
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)

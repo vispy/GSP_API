@@ -1,9 +1,4 @@
 - pyramid:
-  - DONE Initialize it at an impossible place
-    - super small extent, -0.1 + 0.1 
-    - position at -100
-    - Thus you ensure it is recomputed
-  - DONE first let determine the x_min/max_dunit of the image
   - then compute the needed resolution level
     - based on the maximum possible zoom-out level in sample/dunit
     - progressive decrease of resolution when zooming out
@@ -122,6 +117,11 @@
     - possibility: set by class or by instance
 
 ---
+- DONE Initialize it at an impossible place
+  - super small extent, -0.1 + 0.1 
+  - position at -100
+  - Thus you ensure it is recomputed
+- DONE first let determine the x_min/max_dunit of the image
 - DONE pyramid to load from datoviz/data
 - DONE datoviz to support on_raw_mouse
   - to get press_release/press_release

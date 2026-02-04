@@ -102,7 +102,7 @@ class PyramidTextureHelper:
     def file_level_load(zoomout_level: int) -> np.memmap:
         """Load pyramid file from memmap file for given zoomout level.
 
-        So from PyramidConfig.file_x_min_dunit to PyramidConfig.file_x_max_dunit
+        memmap() the whole file, so from PyramidConfig.file_x_min_dunit to PyramidConfig.file_x_max_dunit
 
         Args:
             zoomout_level (int): Zoomout level to load.
@@ -139,6 +139,12 @@ class PyramidTextureHelper:
         Returns:
             texture (Texture): Loaded texture.
         """
+        # compute axes pixels per data unit - pixels per data unit ~= desired samples per data unit
+        axes_pixel_per_dunit = PyramidTextureHelper.get_axes_pixel_per_dunit(axes_display)
+
+        # compute image x range in pixels ~= desired samples in texture
+        image_x_range_pixel = (image_x_max_dunit - image_x_min_dunit) * axes_pixel_per_dunit
+
         # load the file level data
         file_level_numpy = PyramidTextureHelper.file_level_load(zoomout_level)
 
@@ -169,6 +175,28 @@ class PyramidTextureHelper:
         return texture
 
     @staticmethod
+    def get_axes_pixel_per_dunit(axes_display: AxesDisplay) -> float:
+        """Compute the number of pixels per data unit for the axes display.
+
+        This is an approximation of the desired samples count per data unit in the texture.
+
+        Args:
+            axes_display (AxesDisplay): AxesDisplay containing the image.
+
+        Returns:
+            axes_pixel_per_dunit (float): Number of pixels per data unit.
+        """
+        # Get axes limits
+        axes_x_min_dunit, axes_x_max_dunit, _, _ = axes_display.get_limits_dunit()
+
+        # compute axes pixels per data unit - pixels per data unit ~= desired samples per data unit
+        axes_inner_viewport = axes_display.get_inner_viewport()
+        viewport_width_pixels = axes_inner_viewport.get_width()
+        axes_pixel_per_dunit = viewport_width_pixels / (axes_x_max_dunit - axes_x_min_dunit)
+
+        return axes_pixel_per_dunit
+
+    @staticmethod
     def get_desired_zoomout_level(axes_display: AxesDisplay) -> int:
         """Compute the desired zoomout level based on axes limits.
 
@@ -178,20 +206,18 @@ class PyramidTextureHelper:
         Returns:
             desired_zoomout_level (int): Desired zoomout level.
         """
-        # Get axes limits
-        axes_x_min_dunit, axes_x_max_dunit, _, _ = axes_display.get_limits_dunit()
-
         # compute axes pixels per data unit - pixels per data unit ~= desired samples per data unit
-        axes_inner_viewport = axes_display.get_inner_viewport()
-        axes_pixel_per_dunit = axes_inner_viewport.get_width() / (axes_x_max_dunit - axes_x_min_dunit)
+        axes_pixel_per_dunit = PyramidTextureHelper.get_axes_pixel_per_dunit(axes_display)
 
         # Compute the number of samples per data unit at the lowest zoom level
         file_sample_per_dunit = PyramidConfig.file_full_sample_count / (PyramidConfig.file_x_max_dunit - PyramidConfig.file_x_min_dunit)
 
         print(f"axes_sample_per_dunit: {axes_pixel_per_dunit:.3f}, file_sample_per_dunit: {file_sample_per_dunit:.3f}")
 
+        desired_zoomout_level = PyramidConfig.max_zoomout
         for zoomout_level in range(PyramidConfig.min_zoomout, PyramidConfig.max_zoomout + 1):
             level_sample_per_dunit = file_sample_per_dunit / (2**zoomout_level)
+            print(f"  zoomout_level: {zoomout_level}, level_sample_per_dunit: {level_sample_per_dunit:.3f}")
             # print(f"  zoomout_level: {zoomout_level}, level_sample_per_dunit: {level_sample_per_dunit:.3f}")
             if level_sample_per_dunit >= axes_pixel_per_dunit:
                 desired_zoomout_level = zoomout_level
@@ -271,6 +297,10 @@ class PyramidImageHelper:
         # Create the Image visual and add it to the viewport
         image = Image(texture, position_buffer, image_extent_dunit, ImageInterpolation.NEAREST)
 
+        # =============================================================================
+        # Compute the visual rendering matrixes
+        # =============================================================================
+
         # Create model matrix to transform points into axes data space
         model_matrix_numpy = np.eye(4, dtype=np.float32)
         model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
@@ -278,6 +308,10 @@ class PyramidImageHelper:
 
         # Create a camera (identity for 2D rendering)
         camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+        # =============================================================================
+        # Create the RenderItem
+        # =============================================================================
 
         # Create the RenderItem
         render_item = RenderItem(viewport, image, model_matrix, camera)
@@ -407,7 +441,7 @@ class PyramidImageHelper:
 
 # =============================================================================
 #
-# =============================================================================
+# ========================================================== ===================
 def main():
     """Main function to run the example."""
     # fix random seed for reproducibility
@@ -418,7 +452,7 @@ def main():
     # =============================================================================
 
     # Create a canvas
-    canvas = Canvas(width=400, height=400, dpi=127)
+    canvas = Canvas(width=600, height=600, dpi=127)
     # Create renderer
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
@@ -430,13 +464,17 @@ def main():
     # =============================================================================
 
     # Create a inner viewport for the axes display
-    inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
+    viewport_position_x = int(canvas.get_width() * 0.1)
+    viewport_position_y = int(canvas.get_height() * 0.1)
+    viewport_width = int(canvas.get_width() * 0.8)
+    viewport_height = int(canvas.get_height() * 0.8)
+    inner_viewport = Viewport(viewport_position_x, viewport_position_y, viewport_width, viewport_height)
+
     # Create an AxesDisplay for the inner viewport
     axes_display = AxesDisplay(canvas, inner_viewport)
+
     # Set initial limits in data units - will be update by the pan/zoom handler
-    # axes_display.set_limits_dunit(0, 1, 0.0, PyramidConfig.channel_count)
     axes_display.set_limits_dunit(-0.2, 0.2, 0.0, PyramidConfig.channel_count)
-    # axes_display.set_limits_dunit(1.5, 2.5, 0.0, PyramidConfig.channel_count)  # TMP:
 
     # =============================================================================
     # Create pan/zoom handler for the axes display
@@ -470,12 +508,15 @@ def main():
         image_visual = typing.cast(Image, render_item_image.visual_base)
 
         # =============================================================================
-        # Update image visual if needed
+        # Update image visual if needed by axes limits change
         # =============================================================================
+
         should_update: bool = False
         if force_update is False:
             should_update = PyramidImageHelper.image_should_be_updated(axes_display, image_visual)
+
         print(f"should_update: {should_update}, force_update: {force_update}")
+
         if should_update or force_update:
             PyramidImageHelper.image_update(axes_display, image_visual)
 
