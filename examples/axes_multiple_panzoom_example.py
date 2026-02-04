@@ -53,7 +53,7 @@ def main():
     # Set zoom range limits in data units
     axes_pan_zoom_1.set_zoom_range_limits_dunit(2.0, 10.0, 2.0, 10.0)
     # Set pan limits in data units
-    axes_pan_zoom_1.set_pan_limits_dunit(-15.0, +15.0, -15.0, +15.0)
+    axes_pan_zoom_1.set_pan_limits_dunit(-5.0, +5.0, -5.0, +5.0)
 
     # =============================================================================
     #
