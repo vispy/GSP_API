@@ -3,9 +3,9 @@
     - super small extent, -0.1 + 0.1 
     - position at -100
     - Thus you ensure it is recomputed
-  - first let determine the x_min/max_dunit of the image
+  - DONE first let determine the x_min/max_dunit of the image
   - then compute the needed resolution level
-    - based on the maximum possible resolution in sample/dunit
+    - based on the maximum possible zoom-out level in sample/dunit
     - progressive decrease of resolution when zooming out
     - determine the optimal resolution level
     - based on the axes x_min/max_dunit and how many pixels it represents
