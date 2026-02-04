@@ -45,13 +45,17 @@ from common.asset_downloader import AssetDownloader
 class PyramidConfig:
     """Configuration for the pyramid image visual. Fixed over time."""
 
-    data_dtype: type = np.float16
+    value_dtype: type = np.float16
     """Data point type for memory-efficient storage."""
+    value_min: float = -5e-4
+    """Minimum value for data normalization."""
+    value_max: float = +5e-4
+    """Maximum value for data normalization."""
 
     channel_count: int = 384
     """Number of recording channels (typical for Neuropixels probes). 1 sample is one time data point across all channels."""
 
-    sample_size_bytes: int = channel_count * np.dtype(data_dtype).itemsize
+    sample_size_bytes: int = channel_count * np.dtype(value_dtype).itemsize
     """Size of one sample in bytes. One sample is one time point across all channels."""
 
     max_zoomout: int = 11
@@ -64,13 +68,12 @@ class PyramidConfig:
     file_x_max_dunit: float = +2.0
     """Maximum x data unit of the file."""
 
-    file_size_max_bytes: int = 10_797_276_672
+    file_full_size_bytes: int = 10_797_276_672
     """File size in bytes."""
-    file_sample_max_count: int = file_size_max_bytes // sample_size_bytes
+    file_full_sample_count: int = file_full_size_bytes // sample_size_bytes
     """Number of samples in the file."""
 
     texture_margin_percent: float = 0.25
-    # texture_margin_percent: float = 0.0 # TMP:
     """Margin percentage to add to texture extent to add margin. and not update too often."""
 
 
@@ -91,6 +94,23 @@ class PyramidParams:
 # Helper for pyramid texture
 # =============================================================================
 class PyramidTextureHelper:
+
+    @staticmethod
+    def file_level_load(zoomout_level: int) -> np.memmap:
+        """Load pyramid file from memmap file for given zoomout level."""
+        # compute file size and sample count for the zoomout level
+        file_level_size_bytes = PyramidConfig.file_full_size_bytes // (2**zoomout_level)
+        file_level_sample_count = file_level_size_bytes // PyramidConfig.sample_size_bytes
+
+        # load and memmap the file
+        file_path = AssetDownloader.download_data(f"textures/pyramid/res_{zoomout_level:02}.bin")
+        file_level_numpy = np.memmap(file_path, shape=(file_level_sample_count, PyramidConfig.channel_count), dtype=np.float16, mode="r")
+
+        print(f"Loading memmap from: {file_path}")
+
+        # return
+        return file_level_numpy
+
     @staticmethod
     def texture_load(zoomout_level: int) -> Texture:
         """Load texture for given zoomout level."""
@@ -102,12 +122,15 @@ class PyramidTextureHelper:
         # print(f"Downloading pyramid data for zoomout level: {zoomout_level}")
         file_path = AssetDownloader.download_data(f"textures/pyramid/res_{zoomout_level:02}.bin")
         print(f"Loading memmap from: {file_path}")
-        array_numpy = np.memmap(file_path, shape=(image_width, image_height), dtype=np.float16, mode="r")
+        file_level_numpy = np.memmap(file_path, shape=(image_width, image_height), dtype=np.float16, mode="r")
+
+        # file_level_numpy = PyramidTextureHelper.file_level_load(zoomout_level)
 
         # scale data to [0, 255] uint8
-        array_min: float = float(np.min(array_numpy))
-        array_max: float = float(np.max(array_numpy))
-        array_scaled_numpy = ((array_numpy - array_min) / (array_max - array_min) * 255.0).astype(np.uint8)
+        array_clipped_numpy = np.clip(file_level_numpy, PyramidConfig.value_min, PyramidConfig.value_max)
+        array_normalized_numpy = (array_clipped_numpy - PyramidConfig.value_min) / (PyramidConfig.value_max - PyramidConfig.value_min)  # Normalize to [0, 1]
+        array_scaled_numpy = (array_normalized_numpy * 255.0).astype(np.uint8)  # Scale to [0, 255] and convert to uint8
+
         # create texture from scaled data
         texture_numpy = np.zeros((image_height, image_width, 4), dtype=np.uint8)
         texture_numpy[:, :, 0] = array_scaled_numpy.T  # R
@@ -136,19 +159,19 @@ class PyramidTextureHelper:
         # Get axes limits
         axes_x_min_dunit, axes_x_max_dunit, _, _ = axes_display.get_limits_dunit()
 
-        # compute axes range in pixels
+        # compute axes pixels per data unit - pixels per data unit ~= desired samples per data unit
         axes_inner_viewport = axes_display.get_inner_viewport()
-        axes_sample_per_dunit = axes_inner_viewport.get_width() / (axes_x_max_dunit - axes_x_min_dunit)
+        axes_pixel_per_dunit = axes_inner_viewport.get_width() / (axes_x_max_dunit - axes_x_min_dunit)
 
         # Compute the number of samples per data unit at the lowest zoom level
-        file_sample_per_dunit = PyramidConfig.file_sample_max_count / (PyramidConfig.file_x_max_dunit - PyramidConfig.file_x_min_dunit)
+        file_sample_per_dunit = PyramidConfig.file_full_sample_count / (PyramidConfig.file_x_max_dunit - PyramidConfig.file_x_min_dunit)
 
-        print(f"axes_sample_per_dunit: {axes_sample_per_dunit:.3f}, file_sample_per_dunit: {file_sample_per_dunit:.3f}")
+        print(f"axes_sample_per_dunit: {axes_pixel_per_dunit:.3f}, file_sample_per_dunit: {file_sample_per_dunit:.3f}")
 
         for zoomout_level in range(PyramidConfig.min_zoomout, PyramidConfig.max_zoomout + 1):
-            level_sample_per_dunit = (2**zoomout_level) / (PyramidConfig.file_x_max_dunit - PyramidConfig.file_x_min_dunit)
+            level_sample_per_dunit = file_sample_per_dunit / (2**zoomout_level)
             # print(f"  zoomout_level: {zoomout_level}, level_sample_per_dunit: {level_sample_per_dunit:.3f}")
-            if level_sample_per_dunit >= axes_sample_per_dunit:
+            if level_sample_per_dunit >= axes_pixel_per_dunit:
                 desired_zoomout_level = zoomout_level
                 break
 
