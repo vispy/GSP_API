@@ -5677,12 +5677,12 @@
         <span class="n">dvz_points</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="n">vertices_3d</span><span class="p">)</span>
 
         <span class="c1"># set group_sizes</span>
-        <span class="n">group_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">diameter_px_numpy</span><span class="p">,</span> <span class="n">vertices_3d</span><span class="o">.</span><span class="fm">__len__</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">group_sizes</span> <span class="o">=</span> <span class="n">diameter_px_numpy</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="n">group_sizes</span> <span class="o">=</span> <span class="n">group_sizes</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># datoviz expects (N,) shape for (N, 1) input</span>
         <span class="n">dvz_points</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="n">group_sizes</span><span class="p">)</span>
 
         <span class="c1"># set group_colors</span>
-        <span class="n">group_colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">face_colors_numpy</span><span class="p">,</span> <span class="n">vertices_3d</span><span class="o">.</span><span class="fm">__len__</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">group_colors</span> <span class="o">=</span> <span class="n">face_colors_numpy</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
         <span class="n">dvz_points</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">group_colors</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -6029,12 +6029,12 @@
     <span class="n">dvz_points</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="n">vertices_3d</span><span class="p">)</span>
 
     <span class="c1"># set group_sizes</span>
-    <span class="n">group_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">diameter_px_numpy</span><span class="p">,</span> <span class="n">vertices_3d</span><span class="o">.</span><span class="fm">__len__</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">group_sizes</span> <span class="o">=</span> <span class="n">diameter_px_numpy</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">group_sizes</span> <span class="o">=</span> <span class="n">group_sizes</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># datoviz expects (N,) shape for (N, 1) input</span>
     <span class="n">dvz_points</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="n">group_sizes</span><span class="p">)</span>
 
     <span class="c1"># set group_colors</span>
-    <span class="n">group_colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">face_colors_numpy</span><span class="p">,</span> <span class="n">vertices_3d</span><span class="o">.</span><span class="fm">__len__</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">group_colors</span> <span class="o">=</span> <span class="n">face_colors_numpy</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
     <span class="n">dvz_points</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">group_colors</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -8251,11 +8251,7 @@
 <span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ViewportEventsDatoviz</span><span class="p">(</span><span class="n">ViewportEventsBase</span><span class="p">):</span>
+<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ViewportEventsDatoviz</span><span class="p">(</span><span class="n">ViewportEventsBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;DatovizRenderer event handler for viewport.&quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_renderer&quot;</span><span class="p">,</span> <span class="s2">&quot;_viewport&quot;</span><span class="p">,</span> <span class="s2">&quot;_has_key_focus&quot;</span><span class="p">,</span> <span class="s2">&quot;_is_closed&quot;</span><span class="p">)</span>
@@ -8351,23 +8347,15 @@
 
             <span class="c1"># Convert fields to our MouseEvent</span>
             <span class="k">if</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;press&quot;</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;event </span><span class="si">{</span><span class="n">dvz_event_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">BUTTON_PRESS</span>
             <span class="k">elif</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;release&quot;</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;event </span><span class="si">{</span><span class="n">dvz_event_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">BUTTON_RELEASE</span>
-            <span class="k">elif</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;move&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;move&quot;</span> <span class="ow">or</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;drag&quot;</span><span class="p">:</span>
                 <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">MOUSE_MOVE</span>
             <span class="k">elif</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;wheel&quot;</span><span class="p">:</span>
                 <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">MOUSE_SCROLL</span>
-            <span class="c1"># elif dvz_event_name == &quot;drag_start&quot;:</span>
-            <span class="c1">#     event_type = EventType.BUTTON_PRESS</span>
-            <span class="c1"># elif dvz_event_name == &quot;drag_stop&quot;:</span>
-            <span class="c1">#     event_type = EventType.BUTTON_RELEASE</span>
-            <span class="c1"># elif dvz_event_name == &quot;click&quot;:</span>
-            <span class="c1">#     event_type = EventType.BUTTON_PRESS</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;Unknown dvz mouse event name: </span><span class="si">{</span><span class="n">dvz_event_name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+                <span class="c1"># print(f&#39;&quot;Unknown dvz mouse event name: {dvz_event_name}&quot;&#39;)</span>
                 <span class="k">return</span>  <span class="c1"># Unknown event</span>
 
             <span class="n">event_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="n">dvz_mouse_x_px</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewport</span><span class="o">.</span><span class="n">get_x</span><span class="p">())</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewport</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="mf">1.0</span>
@@ -8395,6 +8383,10 @@
                 <span class="n">right_button</span><span class="o">=</span><span class="n">right_button</span><span class="p">,</span>
                 <span class="n">scroll_steps</span><span class="o">=</span><span class="n">event_scroll_steps</span><span class="p">,</span>
             <span class="p">)</span>
+
+            <span class="c1"># print(</span>
+            <span class="c1">#     f&quot;mouse_event: type={mouse_event.event_type}, x_ndc={mouse_event.x_ndc}, y_ndc={mouse_event.y_ndc}, left={mouse_event.left_button}, middle={mouse_event.middle_button}, right={mouse_event.right_button}, scroll_steps={mouse_event.scroll_steps}&quot;</span>
+            <span class="c1"># )</span>
 
             <span class="c1"># dispatch mouse_event to the proper handler</span>
             <span class="k">if</span> <span class="n">mouse_event</span><span class="o">.</span><span class="n">event_type</span> <span class="o">==</span> <span class="n">EventType</span><span class="o">.</span><span class="n">BUTTON_PRESS</span><span class="p">:</span>
@@ -8649,11 +8641,7 @@
 <span class="normal">178</span>
 <span class="normal">179</span>
 <span class="normal">180</span>
-<span class="normal">181</span>
-<span class="normal">182</span>
-<span class="normal">183</span>
-<span class="normal">184</span>
-<span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">renderer</span><span class="p">:</span> <span class="n">DatovizRenderer</span><span class="p">,</span> <span class="n">viewport</span><span class="p">:</span> <span class="n">Viewport</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">181</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">renderer</span><span class="p">:</span> <span class="n">DatovizRenderer</span><span class="p">,</span> <span class="n">viewport</span><span class="p">:</span> <span class="n">Viewport</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize the Datoviz viewport event handler.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_renderer</span> <span class="o">=</span> <span class="n">renderer</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;MatplotlibRenderer associated with this event handler&quot;&quot;&quot;</span>
@@ -8744,23 +8732,15 @@
 
         <span class="c1"># Convert fields to our MouseEvent</span>
         <span class="k">if</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;press&quot;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;event </span><span class="si">{</span><span class="n">dvz_event_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">BUTTON_PRESS</span>
         <span class="k">elif</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;release&quot;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;event </span><span class="si">{</span><span class="n">dvz_event_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">BUTTON_RELEASE</span>
-        <span class="k">elif</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;move&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;move&quot;</span> <span class="ow">or</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;drag&quot;</span><span class="p">:</span>
             <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">MOUSE_MOVE</span>
         <span class="k">elif</span> <span class="n">dvz_event_name</span> <span class="o">==</span> <span class="s2">&quot;wheel&quot;</span><span class="p">:</span>
             <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">MOUSE_SCROLL</span>
-        <span class="c1"># elif dvz_event_name == &quot;drag_start&quot;:</span>
-        <span class="c1">#     event_type = EventType.BUTTON_PRESS</span>
-        <span class="c1"># elif dvz_event_name == &quot;drag_stop&quot;:</span>
-        <span class="c1">#     event_type = EventType.BUTTON_RELEASE</span>
-        <span class="c1"># elif dvz_event_name == &quot;click&quot;:</span>
-        <span class="c1">#     event_type = EventType.BUTTON_PRESS</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;Unknown dvz mouse event name: </span><span class="si">{</span><span class="n">dvz_event_name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+            <span class="c1"># print(f&#39;&quot;Unknown dvz mouse event name: {dvz_event_name}&quot;&#39;)</span>
             <span class="k">return</span>  <span class="c1"># Unknown event</span>
 
         <span class="n">event_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="n">dvz_mouse_x_px</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewport</span><span class="o">.</span><span class="n">get_x</span><span class="p">())</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewport</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="mf">1.0</span>
@@ -8788,6 +8768,10 @@
             <span class="n">right_button</span><span class="o">=</span><span class="n">right_button</span><span class="p">,</span>
             <span class="n">scroll_steps</span><span class="o">=</span><span class="n">event_scroll_steps</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="c1"># print(</span>
+        <span class="c1">#     f&quot;mouse_event: type={mouse_event.event_type}, x_ndc={mouse_event.x_ndc}, y_ndc={mouse_event.y_ndc}, left={mouse_event.left_button}, middle={mouse_event.middle_button}, right={mouse_event.right_button}, scroll_steps={mouse_event.scroll_steps}&quot;</span>
+        <span class="c1"># )</span>
 
         <span class="c1"># dispatch mouse_event to the proper handler</span>
         <span class="k">if</span> <span class="n">mouse_event</span><span class="o">.</span><span class="n">event_type</span> <span class="o">==</span> <span class="n">EventType</span><span class="o">.</span><span class="n">BUTTON_PRESS</span><span class="p">:</span>
@@ -8838,10 +8822,10 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/gsp_datoviz/viewport_events/viewport_events_datoviz.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the event handler and release resources.&quot;&quot;&quot;</span>
     <span class="c1"># no more dispatch events (datoviz doesnt allow to disconnect events)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_is_closed</span> <span class="o">=</span> <span class="kc">True</span>
