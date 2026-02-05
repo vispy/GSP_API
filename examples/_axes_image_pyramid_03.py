@@ -170,7 +170,7 @@ class PyramidTextureHelper:
 
         for zoomout_level in range(PyramidConfig.min_zoomout, PyramidConfig.max_zoomout + 1):
             level_sample_per_dunit = file_sample_per_dunit / (2**zoomout_level)
-            # print(f"  zoomout_level: {zoomout_level}, level_sample_per_dunit: {level_sample_per_dunit:.3f}")
+            print(f"  zoomout_level: {zoomout_level}, level_sample_per_dunit: {level_sample_per_dunit:.3f}")
             if level_sample_per_dunit >= axes_pixel_per_dunit:
                 desired_zoomout_level = zoomout_level
                 break

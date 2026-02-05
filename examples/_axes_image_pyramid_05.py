@@ -9,9 +9,9 @@
 
 # import matplotlib
 
-# # print(f"Using matplotlib backend: {matplotlib.get_backend()}")
+# # logger.debug(f"Using matplotlib backend: {matplotlib.get_backend()}")
 # matplotlib.use("QtAgg")
-# print(f"Using matplotlib backend: {matplotlib.get_backend()}")
+# logger.debug(f"Using matplotlib backend: {matplotlib.get_backend()}")
 
 # set DVZ_LOG_LEVEL=4 env variable to see datoviz debug logs
 import os
@@ -41,7 +41,7 @@ from gsp_extra.misc.render_item import RenderItem
 from vispy_2.axes.axes_display import AxesDisplay
 from vispy_2.axes.axes_panzoom import AxesPanZoom
 from common.asset_downloader import AssetDownloader
-
+from gsp.utils.log_utils import logger
 
 # =============================================================================
 #
@@ -136,7 +136,7 @@ class PyramidTextureHelper:
         file_path = AssetDownloader.download_data(f"textures/pyramid/res_{zoomout_level:02}.bin")
         file_level_numpy = np.memmap(file_path, shape=(file_level_sample_count, PyramidConfig.channel_count), dtype=np.float16, mode="r")
 
-        # print(f"Loading memmap from: {file_path}")
+        # logger.debug(f"Loading memmap from: {file_path}")
 
         # return
         return file_level_numpy
@@ -170,7 +170,7 @@ class PyramidTextureHelper:
         file_sample_index_min = int((image_x_min_dunit - PyramidConfig.file_x_min_dunit) * file_sample_per_dunit)
         file_sample_index_max = int((image_x_max_dunit - PyramidConfig.file_x_min_dunit) * file_sample_per_dunit)
 
-        print(
+        logger.debug(
             f"texture_load - zoomout_level: {zoomout_level}, image_x_min_dunit: {image_x_min_dunit:.3f}, image_x_max_dunit: {image_x_max_dunit:.3f}, file_sample_index_min: {file_sample_index_min}, file_sample_index_max: {file_sample_index_max}"
         )
 
@@ -199,7 +199,7 @@ class PyramidTextureHelper:
         texture_buffer = Bufferx.from_numpy(texture_numpy, BufferType.rgba8)
         texture = Texture(texture_buffer, image_width, image_height)
 
-        # print(f"Loading image from: {file_path}")
+        # logger.debug(f"Loading image from: {file_path}")
         return texture
 
     @staticmethod
@@ -243,7 +243,7 @@ class PyramidTextureHelper:
             level_sample_per_dunit = file_sample_per_dunit / (2**zoomout_level)
             texture_width_pixels = level_sample_per_dunit * image_x_range_dunit
 
-            # print(
+            # logger.debug(
             #     "zoomout_level_for_max_texture_width:",
             #     f"zoomout_level={zoomout_level}",
             #     f"level_sample_per_dunit={level_sample_per_dunit:.3f}",
@@ -254,7 +254,7 @@ class PyramidTextureHelper:
                 desired_zoomout_level = zoomout_level
                 break
 
-        # print(f"selected zoomout_level_for_max_texture_width: {desired_zoomout_level}")
+        # logger.debug(f"selected zoomout_level_for_max_texture_width: {desired_zoomout_level}")
 
         return desired_zoomout_level
 
@@ -286,7 +286,7 @@ class PyramidImageHelper:
         image_y_max_dunit = float(position_numpy[0, 1]) + image_extent[3]
 
         # return limits
-        print(f"Image limits in data units: image_x_min_dunit={image_x_min_dunit:.3f}, image_x_max_dunit={image_x_max_dunit:.3f}")
+        logger.debug(f"Image limits in data units: image_x_min_dunit={image_x_min_dunit:.3f}, image_x_max_dunit={image_x_max_dunit:.3f}")
         return (image_x_min_dunit, image_x_max_dunit, image_y_min_dunit, image_y_max_dunit)
 
     @staticmethod
@@ -369,7 +369,7 @@ class PyramidImageHelper:
             image_x_max_dunit=image_x_max_dunit,
         )
 
-        # print(
+        # logger.debug(
         #     f"image_x_min_dunit: {image_x_min_dunit:.2f}, image_x_max_dunit: {image_x_max_dunit:.2f}, axes_x_min_dunit: {axes_x_min_dunit:.2f}, axes_x_max_dunit: {axes_x_max_dunit:.2f}"
         # )
 
@@ -380,17 +380,17 @@ class PyramidImageHelper:
         # if image_x_min_dunit is greater than axes_x_min_dunit and image_x_min_dunit is not at the file limit, update the image
         if image_x_min_dunit > axes_x_min_dunit and image_x_min_dunit != PyramidConfig.file_x_min_dunit:
             should_update = True
-            print(
+            logger.debug(
                 f"update due to panning left - image_x_min_dunit: {image_x_min_dunit:.3f}, axes_x_min_dunit: {axes_x_min_dunit:.3f}, file_x_min_dunit: {PyramidConfig.file_x_min_dunit:.3f}"
             )
 
-        # print(f"image_x_min_dunit: {image_x_min_dunit:.4f}, axes_x_min_dunit: {axes_x_min_dunit:.4f}")
+        # logger.debug(f"image_x_min_dunit: {image_x_min_dunit:.4f}, axes_x_min_dunit: {axes_x_min_dunit:.4f}")
         # return False
 
         # if image_x_max_dunit is less than axes_x_max_dunit and image_x_max_dunit is not at the file limit, update the image
         if image_x_max_dunit < axes_x_max_dunit and image_x_max_dunit != PyramidConfig.file_x_max_dunit:
             should_update = True
-            print(
+            logger.debug(
                 f"update due to panning right - image_x_max_dunit: {image_x_max_dunit:.3f}, axes_x_max_dunit: {axes_x_max_dunit:.3f}, file_x_max_dunit: {PyramidConfig.file_x_max_dunit:.3f}"
             )
 
@@ -404,10 +404,12 @@ class PyramidImageHelper:
             image_x_min_dunit=image_x_min_dunit,
             image_x_max_dunit=image_x_max_dunit,
         )
-        print(f"image_should_be_updated: desired_zoomout_level: {desired_zoomout_level}")
+        logger.debug(f"image_should_be_updated: desired_zoomout_level: {desired_zoomout_level}")
         if desired_zoomout_level != PyramidParams.current_zoomout_level:
             should_update = True
-            print(f"update due to zooming - desired_zoomout_level: {desired_zoomout_level}, current_zoomout_level: {PyramidParams.current_zoomout_level}")
+            logger.debug(
+                f"update due to zooming - desired_zoomout_level: {desired_zoomout_level}, current_zoomout_level: {PyramidParams.current_zoomout_level}"
+            )
 
         # =============================================================================
         # No updated needed
@@ -441,7 +443,7 @@ class PyramidImageHelper:
         else:
             image_x_max_dunit = PyramidConfig.file_x_max_dunit
 
-        # print(f"Updating image to x=({image_x_min_dunit}, {image_x_max_dunit})")
+        # logger.debug(f"Updating image to x=({image_x_min_dunit}, {image_x_max_dunit})")
 
         # compute new image position - center of the image extent
         image_position_x_dunit = (image_x_min_dunit + image_x_max_dunit) / 2.0
@@ -523,7 +525,8 @@ def main():
     axes_display = AxesDisplay(canvas, inner_viewport)
 
     # Set initial limits in data units - will be update by the pan/zoom handler
-    axes_display.set_limits_dunit(-0.2, 0.2, 0.0, PyramidConfig.channel_count)
+    # axes_display.set_limits_dunit(-0.2, 0.2, 0.0, PyramidConfig.channel_count)
+    axes_display.set_limits_dunit(0, 0.5, 0.0, PyramidConfig.channel_count)
 
     # =============================================================================
     # Create pan/zoom handler for the axes display
@@ -566,7 +569,7 @@ def main():
         if force_update is False:
             should_update = PyramidImageHelper.image_should_be_updated(axes_display, image_visual)
 
-        print(f"should_update: {should_update}, force_update: {force_update}")
+        # logger.debug(f"render_axes: should_update: {should_update}, force_update: {force_update}")
 
         if should_update or force_update:
             PyramidImageHelper.image_update(axes_display, image_visual)
@@ -630,38 +633,39 @@ def main():
     # Initial render
     render_axes(force_update=True)
 
-    # define variables to control rendering frequency
-    needs_render: bool = False
-    """Flag indicating if a render is needed."""
-    last_render_time: float = 0.0
-    """Time of the last render."""
-    max_delta_time_between_renders: float = 1.0 / 60.0  # seconds
-    """Maximum time between renders to limit rendering frequency."""
+    if panzoom_enabled:
+        # define variables to control rendering frequency
+        needs_render: bool = False
+        """Flag indicating if a render is needed."""
+        last_render_time: float = 0.0
+        """Time of the last render."""
+        max_delta_time_between_renders: float = 1.0 / 60.0  # seconds
+        """Maximum time between renders to limit rendering frequency."""
 
-    # Define the event handler for new limits for the axes display
-    def on_new_limits():
-        """Event handler for new limits for the axes display.
+        # Define the event handler for new limits for the axes display
+        def on_new_limits():
+            """Event handler for new limits for the axes display.
 
-        Actually the rendering actually happens in the animator callback, thus we can limit the rendering frequency there
-        """
-        nonlocal needs_render
-        needs_render = True
+            Actually the rendering actually happens in the animator callback, thus we can limit the rendering frequency there
+            """
+            nonlocal needs_render
+            needs_render = True
 
-    # Subscribe to new limits event - thus updating axes visuals on zoom/pan
-    axes_display.new_limits_event.subscribe(on_new_limits)
+        # Subscribe to new limits event - thus updating axes visuals on zoom/pan
+        axes_display.new_limits_event.subscribe(on_new_limits)
 
-    @animator.event_listener
-    def animator_callback(delta_time: float) -> list[VisualBase]:
-        nonlocal needs_render, last_render_time, max_delta_time_between_renders
+        @animator.event_listener
+        def animator_callback(delta_time: float) -> list[VisualBase]:
+            nonlocal needs_render, last_render_time, max_delta_time_between_renders
 
-        # render only if needed and enough time has passed since last render
-        if needs_render and (time.time() - last_render_time) >= max_delta_time_between_renders:
-            render_axes()
-            needs_render = False
-            last_render_time = time.time()
+            # render only if needed and enough time has passed since last render
+            if needs_render and (time.time() - last_render_time) >= max_delta_time_between_renders:
+                render_axes()
+                needs_render = False
+                last_render_time = time.time()
 
-        changed_visuals: list[VisualBase] = []
-        return changed_visuals
+            changed_visuals: list[VisualBase] = []
+            return changed_visuals
 
     # =============================================================================
     # Start the animation loop
