@@ -23,6 +23,7 @@ os.environ["DVZ_LOG_LEVEL"] = "4"
 from dataclasses import dataclass
 import time
 import typing
+import pathlib
 
 # pip imports
 import numpy as np
@@ -70,7 +71,7 @@ class PyramidConfig:
     max_zoomout: int = 11
     """Maximum zoomout level (2^11 = 2048x downsampling)."""
 
-    min_zoomout: int = 7
+    min_zoomout: int = 0
     """Minimum zoomout level (2^7 = 128x downsampling)."""
 
     file_x_min_dunit: float = +0.0
@@ -125,21 +126,64 @@ class PyramidTextureHelper:
         Returns:
             file_level_numpy (np.memmap): Loaded memmap numpy array of shape (sample_count, channel_count).
         """
+        # get file path for the zoomout level
+        use_local_copy = True
+        if use_local_copy:
+            # Get file path for the zoomout level - when loading the file, from local copy
+            file_path = pathlib.Path(__file__).parent / ".." / "tmp" / "pyramid" / "pyramid" / f"res_{zoomout_level:02}.bin"
+        else:
+            # Get file path for the zoomout level - when downloading the file, directly from https://github.com/datoviz/data
+            file_path = AssetDownloader.download_data(f"textures/pyramid/res_{zoomout_level:02}.bin")
+
         # compute file size and sample count for the zoomout level
         file_level_size_bytes = PyramidConfig.file_zoom0_size_bytes // (2**zoomout_level)
         file_level_sample_count = file_level_size_bytes // PyramidConfig.sample_size_bytes
 
-        # TMP: CRAP: TO REMOVE:
-        # file_level_sample_count = 2**zoomout_level
-
         # load and memmap the file
-        file_path = AssetDownloader.download_data(f"textures/pyramid/res_{zoomout_level:02}.bin")
         file_level_numpy = np.memmap(file_path, shape=(file_level_sample_count, PyramidConfig.channel_count), dtype=np.float16, mode="r")
 
+        # sanity check
+        assert (
+            file_level_numpy.nbytes == file_path.stat().st_size
+        ), f"File size mismatch for zoomout_level {zoomout_level}: expected {file_level_numpy.nbytes} bytes, got {file_path.stat().st_size} bytes"
+
+        # Log to debug
         # logger.debug(f"Loading memmap from: {file_path}")
 
         # return
         return file_level_numpy
+
+    @staticmethod
+    def file_sliced_numpy(zoomout_level: int, image_x_min_dunit: float, image_x_max_dunit: float) -> np.ndarray:
+        """Load and slice the pyramid file for given zoomout level and image x extent in data units.
+
+        Args:
+            zoomout_level (int): Zoomout level to load.
+            image_x_min_dunit (float): Minimum x data unit of the image extent.
+            image_x_max_dunit (float): Maximum x data unit of the image extent.
+
+        Returns:
+            file_sliced_numpy (np.ndarray): Loaded and sliced numpy array of shape (sliced_sample_count, channel_count).
+        """
+        # load the file level data
+        file_level_numpy = PyramidTextureHelper.file_level_memmap(zoomout_level)
+
+        file_sample_per_dunit = file_level_numpy.shape[0] / (PyramidConfig.file_x_max_dunit - PyramidConfig.file_x_min_dunit)
+
+        file_sample_index_min = int((image_x_min_dunit - PyramidConfig.file_x_min_dunit) * file_sample_per_dunit)
+        file_sample_index_max = int((image_x_max_dunit - PyramidConfig.file_x_min_dunit) * file_sample_per_dunit)
+
+        logger.debug(
+            f"file_sliced_numpy - zoomout_level: {zoomout_level}, image_x_min_dunit: {image_x_min_dunit:.3f}, image_x_max_dunit: {image_x_max_dunit:.3f}, file_sample_index_min: {file_sample_index_min}, file_sample_index_max: {file_sample_index_max}"
+        )
+
+        file_sliced_numpy = file_level_numpy[file_sample_index_min:file_sample_index_max, :]
+
+        logger.debug(
+            f"file_sliced_numpy shape: {file_sliced_numpy.shape}, expected: ({file_sample_index_max - file_sample_index_min}, {PyramidConfig.channel_count})"
+        )
+
+        return file_sliced_numpy
 
     @staticmethod
     def texture_load(zoomout_level: int, image_x_min_dunit: float, image_x_max_dunit: float) -> Texture:
@@ -175,6 +219,10 @@ class PyramidTextureHelper:
         )
 
         file_sliced_numpy = file_level_numpy[file_sample_index_min:file_sample_index_max, :]
+
+        logger.debug(
+            f"file_sliced_numpy shape: {file_sliced_numpy.shape}, expected: ({file_sample_index_max - file_sample_index_min}, {PyramidConfig.channel_count})"
+        )
 
         # scale file_level_numpy to [0, 255] uint8
         array_clipped_numpy = np.clip(file_sliced_numpy, PyramidConfig.value_min, PyramidConfig.value_max)
@@ -528,23 +576,15 @@ def main():
     # axes_display.set_limits_dunit(-0.2, 0.2, 0.0, PyramidConfig.channel_count)
     axes_display.set_limits_dunit(0, 0.5, 0.0, PyramidConfig.channel_count)
 
-    # =============================================================================
-    # Create pan/zoom handler for the axes display
-    # =============================================================================
+    # for zoomout_level in range(PyramidConfig.min_zoomout, PyramidConfig.max_zoomout + 1):
+    #     file_sliced_numpy = PyramidTextureHelper.file_sliced_numpy(
+    #         zoomout_level=zoomout_level,
+    #         image_x_min_dunit=PyramidConfig.file_x_min_dunit,
+    #         image_x_max_dunit=PyramidConfig.file_x_max_dunit,
+    #     )
+    #     logger.debug(f"zoomout_level: {zoomout_level}, file_sliced_numpy shape: {file_sliced_numpy.shape}")
 
-    panzoom_enabled = True
-    if panzoom_enabled:
-        viewport_events = ExampleHelper.create_viewport_events(renderer_base, axes_display.get_inner_viewport())
-        axes_pan_zoom = AxesPanZoom(viewport_events, base_scale=1.1, axes_display=axes_display)
-
-        # Set pan/zoom limits in data units - only y limits are limited
-        axes_pan_zoom.set_pan_limits_dunit(None, None, 0.0, PyramidConfig.channel_count)
-        axes_pan_zoom.set_zoom_range_limits_dunit(
-            x_min_range_dunit=None,
-            x_max_range_dunit=None,
-            y_min_range_dunit=PyramidConfig.channel_count,
-            y_max_range_dunit=PyramidConfig.channel_count,
-        )
+    # breakpoint()
 
     # =============================================================================
     # Create Pyramid Image visual
@@ -624,14 +664,32 @@ def main():
             [render_item.camera for render_item in render_items_all],
         )
 
+    # Initial render
+    render_axes(force_update=True)
+
+    # =============================================================================
+    # Create pan/zoom handler for the axes display
+    # =============================================================================
+
+    panzoom_enabled = True
+    if panzoom_enabled:
+        viewport_events = ExampleHelper.create_viewport_events(renderer_base, axes_display.get_inner_viewport())
+        axes_pan_zoom = AxesPanZoom(viewport_events, base_scale=1.1, axes_display=axes_display)
+
+        # Set pan/zoom limits in data units - only y limits are limited
+        axes_pan_zoom.set_pan_limits_dunit(None, None, 0.0, PyramidConfig.channel_count)
+        axes_pan_zoom.set_zoom_range_limits_dunit(
+            x_min_range_dunit=None,
+            x_max_range_dunit=None,
+            y_min_range_dunit=PyramidConfig.channel_count,
+            y_max_range_dunit=PyramidConfig.channel_count,
+        )
+
     # =============================================================================
     # Render everything once before starting the animator
     # - then rerender only on axes limits change
     # - limit rerender frequency to avoid blinking during interaction
     # =============================================================================
-
-    # Initial render
-    render_axes(force_update=True)
 
     if panzoom_enabled:
         # define variables to control rendering frequency
