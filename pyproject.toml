@@ -6,7 +6,7 @@ authors = [
     {name = "Jerome Etienne",email = "jerome.etienne@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<4.0"
 dependencies = [
     "numpy (>=2.3.4,<3.0.0)",
     "matplotlib (>=3.10.7,<4.0.0)",
@@ -21,6 +21,7 @@ dependencies = [
     "flask (>=3.1.2,<4.0.0)",
     "requests-file (>=3.0.1,<4.0.0)",
     "ruff (>=0.14.9,<0.15.0)",
+    "loguru (>=0.7.3,<0.8.0)",
 ]
 
 [build-system]
