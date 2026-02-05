@@ -235,27 +235,24 @@ class PyramidTextureHelper:
         return texture
 
     @staticmethod
-    def get_desired_zoomout_level(image_x_min_dunit: float, image_x_max_dunit: float) -> int:
-        """Compute the zoomout level needed to fit the image extent in the maximum texture width.
+    def get_desired_zoomout_level(axes_display: AxesDisplay) -> int:
+        """Compute the zoomout level needed using the axes display range.
 
         Args:
-            image_x_min_dunit (float): Minimum x data unit of the image extent.
-            image_x_max_dunit (float): Maximum x data unit of the image extent.
+            axes_display (AxesDisplay): AxesDisplay containing the image.
 
         Returns:
             zoomout_level (int): Zoomout level needed to fit the image extent in the maximum texture width.
         """
-        image_x_range_dunit = image_x_max_dunit - image_x_min_dunit
+        axes_x_min_dunit, axes_x_max_dunit, _, _ = axes_display.get_limits_dunit()
+        axes_x_range_dunit = axes_x_max_dunit - axes_x_min_dunit
+
         file_sample_per_dunit = PyramidConfig.file_zoom0_sample_count / (PyramidConfig.file_x_max_dunit - PyramidConfig.file_x_min_dunit)
 
         desired_zoomout_level = PyramidConfig.max_zoomout
         for zoomout_level in range(PyramidConfig.min_zoomout, PyramidConfig.max_zoomout + 1):
             level_sample_per_dunit = file_sample_per_dunit / (2**zoomout_level)
-            texture_width_pixels = level_sample_per_dunit * image_x_range_dunit
-
-            # logger.debug(
-            #     f"zoomout_level={zoomout_level}", f"level_sample_per_dunit={level_sample_per_dunit:.3f}", f"texture_width_pixels={texture_width_pixels:.1f}"
-            # )
+            texture_width_pixels = level_sample_per_dunit * axes_x_range_dunit
 
             if texture_width_pixels <= PyramidConfig.texture_max_width_pixels:
                 desired_zoomout_level = zoomout_level
@@ -371,11 +368,6 @@ class PyramidImageHelper:
         axes_x_min_dunit, axes_x_max_dunit, _, _ = axes_display.get_limits_dunit()
         image_x_min_dunit, image_x_max_dunit, _, _ = PyramidImageHelper.image_compute_limits_dunit(image_visual)
 
-        PyramidTextureHelper.get_desired_zoomout_level(
-            image_x_min_dunit=image_x_min_dunit,
-            image_x_max_dunit=image_x_max_dunit,
-        )
-
         # logger.debug(
         #     f"image_x_min_dunit: {image_x_min_dunit:.2f}, image_x_max_dunit: {image_x_max_dunit:.2f}, axes_x_min_dunit: {axes_x_min_dunit:.2f}, axes_x_max_dunit: {axes_x_max_dunit:.2f}"
         # )
@@ -384,8 +376,10 @@ class PyramidImageHelper:
         # Handle if we must update due to panning
         # =============================================================================
 
+        epsilon = 1e-6  # 0.000001
+
         # if image_x_min_dunit is greater than axes_x_min_dunit and image_x_min_dunit is not at the file limit, update the image
-        if image_x_min_dunit > axes_x_min_dunit and image_x_min_dunit != PyramidConfig.file_x_min_dunit:
+        if image_x_min_dunit > axes_x_min_dunit and abs(image_x_min_dunit - PyramidConfig.file_x_min_dunit) > epsilon:
             should_update = True
             logger.debug(
                 f"update due to panning left - image_x_min_dunit: {image_x_min_dunit:.3f}, axes_x_min_dunit: {axes_x_min_dunit:.3f}, file_x_min_dunit: {PyramidConfig.file_x_min_dunit:.3f}"
@@ -395,7 +389,7 @@ class PyramidImageHelper:
         # return False
 
         # if image_x_max_dunit is less than axes_x_max_dunit and image_x_max_dunit is not at the file limit, update the image
-        if image_x_max_dunit < axes_x_max_dunit and image_x_max_dunit != PyramidConfig.file_x_max_dunit:
+        if image_x_max_dunit < axes_x_max_dunit and abs(image_x_max_dunit - PyramidConfig.file_x_max_dunit) > epsilon:
             should_update = True
             logger.debug(
                 f"update due to panning right - image_x_max_dunit: {image_x_max_dunit:.3f}, axes_x_max_dunit: {axes_x_max_dunit:.3f}, file_x_max_dunit: {PyramidConfig.file_x_max_dunit:.3f}"
@@ -408,10 +402,10 @@ class PyramidImageHelper:
         # TODO update based on zoomout level
         # desired_zoomout_level = PyramidTextureHelper.get_desired_zoomout_level_BAD(axes_display, image_x_min_dunit, image_x_max_dunit)
         desired_zoomout_level = PyramidTextureHelper.get_desired_zoomout_level(
-            image_x_min_dunit=image_x_min_dunit,
-            image_x_max_dunit=image_x_max_dunit,
+            axes_display
+            # image_x_min_dunit=image_x_min_dunit,
+            # image_x_max_dunit=image_x_max_dunit,
         )
-        logger.debug(f"image_should_be_updated: desired_zoomout_level: {desired_zoomout_level}")
         if desired_zoomout_level != PyramidParams.current_zoomout_level:
             should_update = True
             logger.debug(
@@ -421,6 +415,8 @@ class PyramidImageHelper:
         # =============================================================================
         # No updated needed
         # =============================================================================
+
+        # return True
 
         return should_update
 
@@ -470,11 +466,7 @@ class PyramidImageHelper:
         )
 
         # compute new zoomout level based on axes range
-        # TODO
-        texture_zoomout_level = PyramidTextureHelper.get_desired_zoomout_level(
-            image_x_min_dunit=image_x_min_dunit,
-            image_x_max_dunit=image_x_max_dunit,
-        )
+        texture_zoomout_level = PyramidTextureHelper.get_desired_zoomout_level(axes_display)
         # texture_zoomout_level = PyramidConfig.max_zoomout
         texture = PyramidTextureHelper.texture_load(texture_zoomout_level, image_x_min_dunit, image_x_max_dunit)
 
@@ -499,8 +491,10 @@ class PyramidImageHelper:
 # Helper for Pyramid AxesPanZoom
 # =============================================================================
 class PyramidPanZoomHelper:
+    """Helper to create and initialize the pan/zoom handler for the pyramid image visual."""
+
     @staticmethod
-    def create(renderer_base: RendererBase, axes_display: AxesDisplay) -> AxesPanZoom:
+    def create(axes_display: AxesDisplay, renderer_base: RendererBase) -> AxesPanZoom:
         # Create viewport events for the axes display inner viewport
         viewport_events = ExampleHelper.create_viewport_events(renderer_base, axes_display.get_inner_viewport())
 
@@ -538,6 +532,10 @@ class PyramidPanZoomHelper:
         max_delta_time_between_renders: float = 1.0 / 60.0  # seconds
         """Maximum time between renders to limit rendering frequency."""
 
+        # =============================================================================
+        # subscribe to axes_display new_limits_event to trigger rendering on axes limits change
+        # =============================================================================
+
         # Define the event handler for new limits for the axes display
         def on_new_limits():
             """Event handler for new limits for the axes display.
@@ -550,6 +548,9 @@ class PyramidPanZoomHelper:
         # Subscribe to new limits event - thus updating axes visuals on zoom/pan
         axes_display.new_limits_event.subscribe(on_new_limits)
 
+        # =============================================================================
+        # animator callback, in charge of calling onRender() when needed
+        # =============================================================================
         @animator.event_listener
         def animator_callback(delta_time: float) -> list[VisualBase]:
             nonlocal needs_render, last_render_time, max_delta_time_between_renders
@@ -589,8 +590,8 @@ def main():
     # =============================================================================
 
     # Create a inner viewport for the axes display
-    viewport_margin_x = int(canvas.get_width() * 0.1)
-    viewport_margin_y = int(canvas.get_height() * 0.1)
+    viewport_margin_x = int(canvas.get_width() * 0.15)
+    viewport_margin_y = int(canvas.get_height() * 0.15)
     inner_viewport = Viewport(
         x=viewport_margin_x,
         y=viewport_margin_y,
@@ -697,16 +698,14 @@ def main():
     # =============================================================================
 
     panzoom_enabled = True
-    if panzoom_enabled:
-        axes_pan_zoom = PyramidPanZoomHelper.create(renderer_base, axes_display)
-
-    # =============================================================================
-    # Render everything once before starting the animator
-    # - then rerender only on axes limits change
-    # - limit rerender frequency to avoid blinking during interaction
-    # =============================================================================
 
     if panzoom_enabled:
+        # Create pan/zoom handler for the axes display
+        axes_pan_zoom = PyramidPanZoomHelper.create(axes_display, renderer_base)
+
+        # Render everything once before starting the animator
+        # - then rerender only on axes limits change
+        # - limit rerender frequency to avoid blinking during interaction
         PyramidPanZoomHelper.init(axes_display, animator, onRender=lambda: render_axes(force_update=False))
 
     # =============================================================================
