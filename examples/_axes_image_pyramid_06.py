@@ -63,6 +63,7 @@ class PyramidConfig:
     value_max: float = +5e-4
     """Maximum value for data normalization."""
 
+    # channel_count: int = 30
     channel_count: int = 384
     """Number of recording channels (typical for Neuropixels probes). 1 sample is one time data point across all channels."""
 
@@ -82,6 +83,7 @@ class PyramidConfig:
     """Maximum x data unit of the file."""
 
     file_zoom0_size_bytes: int = 10_797_276_672
+    # file_zoom0_size_bytes: int = 8_435_340
     """File size in bytes."""
 
     file_zoom0_sample_count: int = file_zoom0_size_bytes // sample_size_bytes
@@ -114,6 +116,20 @@ class PyramidParams:
 # Helper for pyramid texture
 # =============================================================================
 class PyramidTextureHelper:
+
+    @staticmethod
+    def file_level_path(zoomout_level: int) -> str:
+        """Get file path for the zoomout level."""
+        # Get file path for the zoomout level - when downloading the file, directly from https://github.com/datoviz/data
+        # get file path for the zoomout level
+        use_local_copy = True
+        if use_local_copy:
+            # Get file path for the zoomout level - when loading the file, from local copy
+            file_path = pathlib.Path(__file__).parent / ".." / "tmp" / "pyramid" / "pyramid" / f"res_{zoomout_level:02}.bin"
+        else:
+            # Get file path for the zoomout level - when downloading the file, directly from https://github.com/datoviz/data
+            file_path = AssetDownloader.download_data(f"textures/pyramid/res_{zoomout_level:02}.bin")
+        return str(file_path)
 
     @staticmethod
     def file_level_memmap(zoomout_level: int) -> np.memmap:
