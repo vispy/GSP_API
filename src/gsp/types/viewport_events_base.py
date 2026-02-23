@@ -6,6 +6,8 @@ from abc import ABC, abstractmethod
 # local imports
 from gsp.core import Event
 from .viewport_events_types import KeyboardEventCallback, MouseEventCallback, CanvasResizeEventCallback
+from .renderer_base import RendererBase
+from gsp.core.viewport import Viewport
 
 
 class ViewportEventsBase(ABC):
@@ -37,3 +39,13 @@ class ViewportEventsBase(ABC):
     """Event triggered on mouse scroll"""
     canvas_resize_event: Event[CanvasResizeEventCallback]
     """Event triggered on canvas resize"""
+
+    @abstractmethod
+    def __init__(self, renderer_base: "RendererBase", inner_viewport: "Viewport"):
+        """Initialize the renderer with the given canvas.
+
+        Args:
+            renderer_base: The renderer base instance to use for rendering the animation.
+            inner_viewport: The inner viewport instance to use for handling events.
+        """
+        pass

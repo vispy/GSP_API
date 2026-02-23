@@ -11,6 +11,7 @@ from gsp.core.camera import Camera
 from gsp.types.visual_base import VisualBase
 from gsp.types.transbuf import TransBuf
 from .animator_types import AnimatorFunc, VideoSavedCalledback
+from .renderer_base import RendererBase
 
 
 class AnimatorBase(ABC):
@@ -25,6 +26,15 @@ class AnimatorBase(ABC):
 
     on_video_saved: Event[VideoSavedCalledback]
     """Event triggered when the video is saved."""
+
+    @abstractmethod
+    def __init__(self, renderer_base: "RendererBase"):
+        """Initialize the renderer with the given canvas.
+
+        Args:
+            renderer_base: The renderer base instance to use for rendering the animation.
+        """
+        pass
 
     @abstractmethod
     def add_callback(self, func: AnimatorFunc) -> None:
