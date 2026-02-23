@@ -139,7 +139,13 @@ class AnimatorNetwork(AnimatorBase):
     # =============================================================================
     # .start()
     # =============================================================================
-    def start(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], model_matrices: Sequence[TransBuf], cameras: Sequence[Camera]) -> None:
+    def start(
+        self,
+        viewports: Sequence[Viewport] = [],
+        visuals: Sequence[VisualBase] = [],
+        model_matrices: Sequence[TransBuf] = [],
+        cameras: Sequence[Camera] = [],
+    ) -> None:
         """Start the animation loop.
 
         Begins rendering frames using registered callbacks to update visuals.

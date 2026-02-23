@@ -73,7 +73,13 @@ class AnimatorBase(ABC):
         pass
 
     @abstractmethod
-    def start(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], model_matrices: Sequence[TransBuf], cameras: Sequence[Camera]) -> None:
+    def start(
+        self,
+        viewports: Sequence[Viewport] = [],
+        visuals: Sequence[VisualBase] = [],
+        model_matrices: Sequence[TransBuf] = [],
+        cameras: Sequence[Camera] = [],
+    ) -> None:
         """Start the animation loop.
 
         Begins animating the scene using the provided viewports, visuals, model matrices,

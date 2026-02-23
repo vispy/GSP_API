@@ -16,6 +16,10 @@ from gsp.visuals.markers import Markers
 from gsp.types.visual_base import VisualBase
 from gsp_extra.bufferx import Bufferx
 
+# =============================================================================
+# Private scatter() function for pixels
+# =============================================================================
+
 
 def _scatter_pixels(
     positions: TransBuf,
@@ -48,6 +52,11 @@ def _scatter_pixels(
     # Now actually create the Pixels visual
     visual = Pixels(positions, colors, groups)
     return visual
+
+
+# =============================================================================
+# Private scatter() function for points
+# =============================================================================
 
 
 def _scatter_points(
@@ -110,6 +119,11 @@ def _scatter_points(
     # Now actually create the Points visual
     visual = Points(positions, sizes, face_colors, edge_colors, edge_widths)
     return visual
+
+
+# =============================================================================
+# Private scatter() function for markers
+# =============================================================================
 
 
 def _scatter_markers(
@@ -175,8 +189,13 @@ def _scatter_markers(
     return visual_markers
 
 
+# =============================================================================
+# Public scatter() function
+# =============================================================================
+
+
 def scatter(
-    positions: TransBuf,
+    positions: TransBuf | np.ndarray,
     *,
     mode: Optional[Union[Literal["pixels"], Literal["points"], Literal["markers"]]] = None,
     sizes: TransBuf | np.ndarray | None = None,
@@ -216,6 +235,10 @@ def scatter(
             mode = "markers"
         else:
             mode = "points"
+
+    # If positions is a numpy array, convert it to a Buffer
+    if isinstance(positions, np.ndarray):
+        positions = Bufferx.from_numpy(positions, BufferType.vec3)
 
     # =============================================================================
     # Create the appropriate visual based on mode

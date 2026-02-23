@@ -12,6 +12,7 @@ from gsp_extra.bufferx import Bufferx
 from gsp.types import BufferType, VisualBase, TransBuf
 from gsp.types.renderer_base import RendererBase
 from gsp.utils.renderer_registery import RendererRegistry
+from gsp.types.animator_base import AnimatorBase
 from gsp_extra.misc.render_item import RenderItem
 from vispy_2.axes.axes_display import AxesDisplay
 from vispy_2.axes.axes_panzoom import AxesPanZoom
@@ -27,7 +28,16 @@ class AxesManaged:
     - a list of render items (visuals with model matrices and cameras) that will be display in the axes
     """
 
-    def __init__(self, renderer_base: RendererBase, viewport_x: int, viewport_y: int, viewport_width: int, viewport_height: int) -> None:
+    def __init__(
+        self,
+        renderer_base: RendererBase,
+        viewport_x: int,
+        viewport_y: int,
+        viewport_width: int,
+        viewport_height: int,
+        *,
+        animator_base: AnimatorBase | None = None,
+    ) -> None:
         """Initialize the AxesManaged instance.
 
         Args:
@@ -36,6 +46,7 @@ class AxesManaged:
             viewport_y: The y position (in pixels) for the **inner** viewport.
             viewport_width: The width (in pixels) for the **inner** viewport.
             viewport_height: The height (in pixels) for the **inner** viewport.
+            animator_base: Optional animator base to use for the animation loop. If None, a default animator will be created based on the renderer base.
         """
         self._renderer_base = renderer_base
 
@@ -46,7 +57,10 @@ class AxesManaged:
         self._viewport_events = RendererRegistry.create_viewport_events(renderer_base, self._inner_viewport)
 
         # Create an animator based on the renderer base
-        self._animator = RendererRegistry.create_animator(renderer_base)
+        if animator_base is not None:
+            self._animator_base = animator_base
+        else:
+            self._animator_base = RendererRegistry.create_animator(renderer_base)
 
         # Create an AxesDisplay for the inner viewport
         self._axes_display = AxesDisplay(renderer_base.get_canvas(), self._inner_viewport)
@@ -65,7 +79,7 @@ class AxesManaged:
         # =============================================================================
 
         # define variables to control rendering frequency
-        needs_render: bool = False
+        needs_render: bool = True
         last_render_time: float = 0.0
         max_delta_time_between_renders: float = 1.0 / 60.0  # seconds
 
@@ -78,7 +92,7 @@ class AxesManaged:
         # Subscribe to new limits event - thus updating axes visuals on zoom/pan
         self._axes_display.new_limits_event.subscribe(on_new_limits)
 
-        @self._animator.event_listener
+        @self._animator_base.event_listener
         def animator_callback(delta_time: float) -> list[VisualBase]:
             """Animator callback to handle rendering frequency."""
             nonlocal needs_render, last_render_time, max_delta_time_between_renders
@@ -102,6 +116,10 @@ class AxesManaged:
     def get_viewport(self) -> Viewport:
         """Get the inner viewport associated with this axes."""
         return self._inner_viewport
+
+    def get_animator(self) -> AnimatorBase:
+        """Get the animator base associated with this axes."""
+        return self._animator_base
 
     def get_axes_display(self) -> AxesDisplay:
         """Get the axes display associated with this axes."""
@@ -186,11 +204,10 @@ class AxesManaged:
             [render_item.camera for render_item in render_items_combined],
         )
 
-    def start(self):
-        """Start the animation loop."""
-        self.render()
-        self._animator.start([], [], [], [])
+    def start(self) -> None:
+        """Start the animator."""
+        self._animator_base.start()
 
-    def stop(self):
-        """Stop the animation loop."""
-        self._animator.stop()
+    def stop(self) -> None:
+        """Stop the animator."""
+        self._animator_base.stop()

@@ -94,7 +94,13 @@ class AnimatorDatoviz(AnimatorBase):
     # =============================================================================
     # .start()
     # =============================================================================
-    def start(self, viewports: Sequence[Viewport], visuals: Sequence[VisualBase], model_matrices: Sequence[TransBuf], cameras: Sequence[Camera]) -> None:
+    def start(
+        self,
+        viewports: Sequence[Viewport] = [],
+        visuals: Sequence[VisualBase] = [],
+        model_matrices: Sequence[TransBuf] = [],
+        cameras: Sequence[Camera] = [],
+    ) -> None:
         """Animate the given canvas and camera using the provided callbacks to update visuals."""
         self._canvas = self._datoviz_renderer.get_canvas()
         self._viewports = viewports

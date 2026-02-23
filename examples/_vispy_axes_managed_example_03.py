@@ -96,7 +96,7 @@ def main():
     # =============================================================================
 
     # start the animation loop
-    axes_managed.start()
+    axes_managed.get_animator().start([], [], [], [])
 
 
 if __name__ == "__main__":
