@@ -46,7 +46,7 @@ def main():
         positions_numpy = np.vstack((x_values, y_values, z_values)).T.astype(np.float32)
 
         # Create the Points visual and add it to the viewport
-        points = Vispy2.scatter(positions_numpy, marker_shape=MarkerShape.club)
+        points = Vispy2.scatter(positions_numpy)
         return points
 
     points = generate_visual_points(100)
