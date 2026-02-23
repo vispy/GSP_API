@@ -23,7 +23,7 @@ from gsp_extra.misc.render_item import RenderItem
 from common.example_helper import ExampleHelper
 
 # from vispy_2 import scatter
-import vispy_2 as Vispy2
+import vispy2 as Vispy2
 
 
 def main():

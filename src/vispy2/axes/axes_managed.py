@@ -14,8 +14,8 @@ from gsp.types.renderer_base import RendererBase
 from gsp.utils.renderer_registery import RendererRegistry
 from gsp.types.animator_base import AnimatorBase
 from gsp_extra.misc.render_item import RenderItem
-from vispy_2.axes.axes_display import AxesDisplay
-from vispy_2.axes.axes_panzoom import AxesPanZoom
+from vispy2.axes.axes_display import AxesDisplay
+from vispy2.axes.axes_panzoom import AxesPanZoom
 
 
 class AxesManaged:

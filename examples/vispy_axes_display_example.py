@@ -17,8 +17,8 @@ from gsp.types import Buffer
 from gsp.constants import Constants
 from gsp.utils.unit_utils import UnitUtils
 from gsp_extra.misc.render_item import RenderItem
-from vispy_2.axes.axes_display import AxesDisplay
-from vispy_2.axes.axes_panzoom import AxesPanZoom
+from vispy2.axes.axes_display import AxesDisplay
+from vispy2.axes.axes_panzoom import AxesPanZoom
 
 
 def main():

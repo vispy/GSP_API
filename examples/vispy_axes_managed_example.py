@@ -10,7 +10,7 @@ from gsp.types import Buffer, BufferType, VisualBase
 from gsp.constants import Constants
 from gsp.utils.unit_utils import UnitUtils
 from gsp_extra.bufferx import Bufferx
-from vispy_2.axes.axes_managed import AxesManaged
+from vispy2.axes.axes_managed import AxesManaged
 from common.example_helper import ExampleHelper
 
 

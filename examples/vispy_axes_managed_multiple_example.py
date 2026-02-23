@@ -7,7 +7,7 @@ import numpy as np
 from common.example_helper import ExampleHelper
 from gsp.core import Canvas
 from gsp.types import VisualBase, MarkerShape
-import vispy_2 as Vispy2
+import vispy2 as Vispy2
 
 
 def main():

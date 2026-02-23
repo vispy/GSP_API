@@ -41,8 +41,8 @@ from gsp.utils.transbuf_utils import TransBufUtils
 from gsp.utils.log_utils import logger
 from gsp_extra.bufferx import Bufferx
 from gsp_extra.misc.render_item import RenderItem
-from vispy_2.axes.axes_display import AxesDisplay
-from vispy_2.axes.axes_panzoom import AxesPanZoom
+from vispy2.axes.axes_display import AxesDisplay
+from vispy2.axes.axes_panzoom import AxesPanZoom
 from common.example_helper import ExampleHelper
 from common.asset_downloader import AssetDownloader
 

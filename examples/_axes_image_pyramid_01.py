@@ -20,8 +20,8 @@ from gsp.types import BufferType, VisualBase
 from gsp.utils.transbuf_utils import TransBufUtils
 from gsp_extra.misc.render_item import RenderItem
 from gsp_extra.misc.texture_utils import TextureUtils
-from vispy_2.axes.axes_display import AxesDisplay
-from vispy_2.axes.axes_panzoom import AxesPanZoom
+from vispy2.axes.axes_display import AxesDisplay
+from vispy2.axes.axes_panzoom import AxesPanZoom
 from common.asset_downloader import AssetDownloader
 
 

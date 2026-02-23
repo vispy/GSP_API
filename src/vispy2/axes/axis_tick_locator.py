@@ -95,7 +95,7 @@ class AxisTickLocator:
 # =============================================================================
 
 if __name__ == "__main__":
-    from vispy_2.axes.axis_tick_formater import AxisTickFormatter
+    from vispy2.axes.axis_tick_formater import AxisTickFormatter
 
     tick_locator = AxisTickLocator(target_ticks=7)
     tick_formatter = AxisTickFormatter()

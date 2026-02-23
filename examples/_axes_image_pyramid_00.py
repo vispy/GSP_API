@@ -22,8 +22,8 @@ from gsp.utils.unit_utils import UnitUtils
 from gsp_extra.misc.render_item import RenderItem
 from gsp_extra.misc.texture_utils import TextureUtils
 from gsp_extra.mpl3d import glm
-from vispy_2.axes.axes_display import AxesDisplay
-from vispy_2.axes.axes_panzoom import AxesPanZoom
+from vispy2.axes.axes_display import AxesDisplay
+from vispy2.axes.axes_panzoom import AxesPanZoom
 
 
 def main():
