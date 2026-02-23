@@ -1,4 +1,4 @@
-""" "Pydantic models for GSP data types."""
+"""Pydantic models for GSP data types."""
 
 # stdlib imports
 from typing import Literal, Union, Any

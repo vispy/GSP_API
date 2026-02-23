@@ -34,6 +34,7 @@ class ExampleHelper:
 
     default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "matplotlib"
     # default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "datoviz"
+    # default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "network"
 
     @staticmethod
     def get_renderer_name() -> Literal["matplotlib", "datoviz", "network"]:
