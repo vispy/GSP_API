@@ -1,8 +1,11 @@
 - scatter - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
   - union of point, pixel, markers
-  - examples which display 3 viewports one for each
+  - DONE examples which display 3 viewports one for each
   - TODO if scatter doesnt include property - best guess on default value
-
+- axes_managed is doing multiple render calls
+  - so it fails with network renderer which erase the whole canvas at each render call
+  - POSSIBLE fix: the network server render with transparent background, so it doesnt erase the whole canvas, but only the content of the visual
+  - POSSIBLE FIX: regroup the multiple render calls in one call... more like a workaround than a real fix, but it can be done in a short term
 - BUG support panzoom in GSP_RENDERER=network
   - show only a blank, no axes content, no axes content
   - noticed 2 render calls in network server: one big then one small
