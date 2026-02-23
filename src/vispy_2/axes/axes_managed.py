@@ -7,35 +7,36 @@ import time
 import numpy as np
 
 # local imports
-from gsp.core import Viewport
+from gsp.core import Viewport, Camera
 from gsp_extra.bufferx import Bufferx
-from gsp.types import BufferType, VisualBase
+from gsp.types import BufferType, VisualBase, TransBuf
 from gsp.types.renderer_base import RendererBase
+from gsp.utils.renderer_registery import RendererRegistry
 from gsp_extra.misc.render_item import RenderItem
 from vispy_2.axes.axes_display import AxesDisplay
 from vispy_2.axes.axes_panzoom import AxesPanZoom
 
-# =============================================================================
-# Register this renderer into gsp renderer_registery
-# =============================================================================
-
-from gsp_matplotlib.animator.animator_matplotlib import AnimatorMatplotlib
-from gsp_matplotlib.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp.utils.renderer_registery import RendererRegistry
-
-RendererRegistry.register_renderer(
-    renderer_name="matplotlib",
-    renderer_base_type=MatplotlibRenderer,
-    viewport_event_base_type=ViewportEventsMatplotlib,
-    animator_base_type=AnimatorMatplotlib,
-)
-
 
 class AxesManaged:
-    """Handle one axe in a canvas."""
+    """Class to manage an axes display with pan and zoom functionality.
 
-    def __init__(self, renderer_base: RendererBase, viewport_x: int, viewport_y: int, viewport_width: int, viewport_height: int):
+    Includes:
+    - an axes display to show the axes
+    - a pan zoom to handle pan and zoom
+    - an animator for your event loop
+    - a list of render items (visuals with model matrices and cameras) that will be display in the axes
+    """
+
+    def __init__(self, renderer_base: RendererBase, viewport_x: int, viewport_y: int, viewport_width: int, viewport_height: int) -> None:
+        """Initialize the AxesManaged instance.
+
+        Args:
+            renderer_base: The renderer base to use for rendering the axes and the render items.
+            viewport_x: The x position (in pixels) for the **inner** viewport.
+            viewport_y: The y position (in pixels) for the **inner** viewport.
+            viewport_width: The width (in pixels) for the **inner** viewport.
+            viewport_height: The height (in pixels) for the **inner** viewport.
+        """
         self._renderer_base = renderer_base
 
         # Create a inner viewport for the axes display
@@ -49,6 +50,7 @@ class AxesManaged:
 
         # Create an AxesDisplay for the inner viewport
         self._axes_display = AxesDisplay(renderer_base.get_canvas(), self._inner_viewport)
+
         # Create an AxesPanZoom to handle pan and zoom for the axes display
         self._axes_pan_zoom = AxesPanZoom(self._viewport_events, base_scale=1.1, axes_display=self._axes_display)
 
@@ -94,18 +96,23 @@ class AxesManaged:
     # =============================================================================
 
     def get_renderer(self) -> RendererBase:
+        """Get the renderer base associated with this axes."""
         return self._renderer_base
 
     def get_viewport(self) -> Viewport:
+        """Get the inner viewport associated with this axes."""
         return self._inner_viewport
 
     def get_axes_display(self) -> AxesDisplay:
+        """Get the axes display associated with this axes."""
         return self._axes_display
 
     def get_axes_pan_zoom(self) -> AxesPanZoom:
+        """Get the axes pan zoom associated with this axes."""
         return self._axes_pan_zoom
 
     def get_render_items(self) -> list[RenderItem]:
+        """Get the render items associated with this axes."""
         return self._render_items
 
     # =============================================================================
@@ -114,13 +121,38 @@ class AxesManaged:
 
     # FIXME this is not very clean
 
-    def add_render_items(self, render_item: RenderItem) -> None:
+    def add_render_items(self, render_item: RenderItem) -> RenderItem:
         """Add a render item."""
+        # sanity check -
         self._render_items.append(render_item)
+        return render_item
 
     def remove_render_item(self, render_item: RenderItem) -> None:
         """Remove a render item."""
         self._render_items = [ri for ri in self._render_items if ri != render_item]
+
+    def add_visual(self, visualBase: VisualBase, model_matrix: TransBuf | None = None, camera: Camera | None = None) -> RenderItem:
+        """Add a visual to the axes display with an optional model matrix and camera."""
+        if model_matrix is None:
+            model_matrix = Bufferx.mat4_identity()
+        if camera is None:
+            camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+        render_item = RenderItem(self._inner_viewport, visualBase, model_matrix, camera)
+        self.add_render_items(render_item)
+        return render_item
+
+    def remove_visual(self, visualBase: VisualBase) -> None:
+        """Remove a visual from the axes display."""
+        # Find the first render_item for this visual
+        render_item = None
+        for ri in self._render_items:
+            if ri.visual_base == visualBase:
+                render_item = ri
+                break
+
+        if render_item is not None:
+            self.remove_render_item(render_item)
 
     # =============================================================================
     #
@@ -155,8 +187,10 @@ class AxesManaged:
         )
 
     def start(self):
+        """Start the animation loop."""
         self.render()
         self._animator.start([], [], [], [])
 
     def stop(self):
+        """Stop the animation loop."""
         self._animator.stop()
