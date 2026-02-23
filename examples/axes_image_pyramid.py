@@ -108,6 +108,7 @@ class PyramidParams:
 # Helper for pyramid texture
 # =============================================================================
 class PyramidTextureHelper:
+    """Helper to load the pyramid texture for the image visual based on the axes display limits and zoomout level."""
 
     @staticmethod
     def file_level_path(zoomout_level: int) -> pathlib.Path:
@@ -268,6 +269,8 @@ class PyramidTextureHelper:
 # Helper for Pyramid Image
 # =============================================================================
 class PyramidImageHelper:
+    """Helper to create and update the image visual for the pyramid image based on the axes display limits and zoomout level."""
+
     @staticmethod
     def image_compute_limits_dunit(image: Image) -> typing.Tuple[float, float, float, float]:
         """Compute image limits in data units.
@@ -577,7 +580,7 @@ def main():
     # =============================================================================
 
     # Create a canvas
-    canvas = Canvas(width=800, height=800, dpi=127)
+    canvas = Canvas(width=400, height=400, dpi=127)
     # Create renderer
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
