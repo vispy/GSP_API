@@ -1,31 +1,7 @@
-- pyramid:
-  - then compute the needed resolution level
-    - based on the maximum possible zoom-out level in sample/dunit
-    - progressive decrease of resolution when zooming out
-    - determine the optimal resolution level
-    - based on the axes x_min/max_dunit and how many pixels it represents
-    - recompute the image if resolution is not optimal
-  - image translation is independtant of the resolution level
-    - so first code the image translation
-    - then code the resolution level change
-    - this it the divide and conquer approach
-- if translation fails, recompute the whole
-  - if translation succeed, but not optimal resolution, recompute the whole
-  - if translation succeed, and optimal resolution succeed, do nothing
-- pyramid: build the image only once
-  - do the computation in a single place
-- think of pyramid next steps - adapt the image visual based on axes
-  - file displayed between 2 data unit file_x_min_dunit/file_x_max_dunit
-  - file is splitted in sample. which are becoming pixels in the texture
-  - image_x_min_dunit/image_x_max_dunit computed from image position/extent - ```image_compute_limits_dunit()```
-  - image position/extent/texture will change based on the axes limits
-  - how to know if the image visual fit in the axes limits
-    - if position+extent is not visible then it fits
-    - if it is visible, but there is no more in this direction, then it fits
-  - convert a data unit to file sample index in sample file
-  - how many pixels in x of the images are visible in the axes
-  - for a given axes limits, what is the needed image position/extent/texture
-  - Q. can you subdivide the problem
+- scatter - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
+  - union of point, pixel, markers
+  - examples which display 3 viewports one for each
+
 - BUG support panzoom in GSP_RENDERER=network
   - show only a blank, no axes content, no axes content
   - noticed 2 render calls in network server: one big then one small
@@ -117,6 +93,34 @@
     - possibility: set by class or by instance
 
 ---
+- DONE pyramid:
+  - then compute the needed resolution level
+    - based on the maximum possible zoom-out level in sample/dunit
+    - progressive decrease of resolution when zooming out
+    - determine the optimal resolution level
+    - based on the axes x_min/max_dunit and how many pixels it represents
+    - recompute the image if resolution is not optimal
+  - image translation is independtant of the resolution level
+    - so first code the image translation
+    - then code the resolution level change
+    - this it the divide and conquer approach
+- if translation fails, recompute the whole
+  - if translation succeed, but not optimal resolution, recompute the whole
+  - if translation succeed, and optimal resolution succeed, do nothing
+- pyramid: build the image only once
+  - do the computation in a single place
+- think of pyramid next steps - adapt the image visual based on axes
+  - file displayed between 2 data unit file_x_min_dunit/file_x_max_dunit
+  - file is splitted in sample. which are becoming pixels in the texture
+  - image_x_min_dunit/image_x_max_dunit computed from image position/extent - ```image_compute_limits_dunit()```
+  - image position/extent/texture will change based on the axes limits
+  - how to know if the image visual fit in the axes limits
+    - if position+extent is not visible then it fits
+    - if it is visible, but there is no more in this direction, then it fits
+  - convert a data unit to file sample index in sample file
+  - how many pixels in x of the images are visible in the axes
+  - for a given axes limits, what is the needed image position/extent/texture
+  - Q. can you subdivide the problem
 - DONE Initialize it at an impossible place
   - super small extent, -0.1 + 0.1 
   - position at -100
