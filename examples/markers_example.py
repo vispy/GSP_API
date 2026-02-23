@@ -1,3 +1,5 @@
+"""Markers example using GSP API with Matplotlib and Datoviz renderers."""
+
 # stdlib imports
 import pathlib
 
@@ -18,6 +20,7 @@ from gsp.constants import Constants
 
 
 def main():
+    """Main function for the markers example."""
     # fix random seed for reproducibility
     np.random.seed(0)
 
@@ -28,7 +31,7 @@ def main():
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
 
     # =============================================================================
-    #
+    # Markers example
     # =============================================================================
 
     marker_count = 100
@@ -43,8 +46,6 @@ def main():
 
     face_colors_cursor = np.linspace(0, 1, marker_count).astype(np.float32)
     face_colors_buffer = CmapUtils.get_color_map("plasma", face_colors_cursor)
-    # face_colors_buffer = Buffer(marker_count, BufferType.rgba8)
-    # face_colors_buffer.set_data(Constants.Colors.transparent * marker_count, 0, marker_count)
 
     edge_colors_buffer = Buffer(marker_count, BufferType.rgba8)
     edge_colors_buffer.set_data(Constants.Color.black * marker_count, 0, marker_count)
@@ -52,7 +53,7 @@ def main():
     edge_widths_numpy = np.full(marker_count, 1.0).astype(np.float32)
     edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
-    # Create the Pixels visual and add it to the viewport
+    # Create the Markers visual and add it to the viewport
     markers = Markers(MarkerShape.club, positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
     model_matrix = Bufferx.mat4_identity()
 
