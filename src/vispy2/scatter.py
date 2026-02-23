@@ -23,8 +23,15 @@ from gsp_extra.bufferx import Bufferx
 
 def _scatter_pixels(
     positions: TransBuf,
+    *,
+    mode: Optional[Union[Literal["pixels"], Literal["points"], Literal["markers"]]] = None,
+    sizes: TransBuf | np.ndarray | None = None,
     colors: TransBuf | np.ndarray | None = None,
-    groups: Groups | None = None,
+    face_colors: TransBuf | np.ndarray | None = None,
+    edge_colors: TransBuf | np.ndarray | None = None,
+    edge_widths: TransBuf | np.ndarray | None = None,
+    groups: Optional[Groups] = None,
+    marker_shape: Optional[MarkerShape] = None,
 ) -> VisualBase:
     """Helper function to create a Pixels visual."""
     # If positions is a Buffer, we can infer the count and create default buffers for any missing attributes
@@ -244,7 +251,7 @@ def scatter(
     # Create the appropriate visual based on mode
     # =============================================================================
     if mode == "pixels":
-        visual_pixels = _scatter_pixels(positions, colors, groups)
+        visual_pixels = _scatter_pixels(positions, mode=mode, colors=colors, groups=groups)
         return visual_pixels
     elif mode == "points":
         visual_points = _scatter_points(positions, mode=mode, sizes=sizes, face_colors=face_colors, edge_colors=edge_colors, edge_widths=edge_widths)
