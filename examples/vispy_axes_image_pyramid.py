@@ -528,7 +528,7 @@ class PyramidPanZoomHelper:
             onRender (Callable): Function to call to render the scene when needed.
         """
         # define variables to control rendering frequency
-        needs_render: bool = False
+        needs_render: bool = True
         """Flag indicating if a render is needed."""
         last_render_time: float = 0.0
         """Time of the last render."""
@@ -716,7 +716,7 @@ def main():
     # =============================================================================
 
     # start the animation loop
-    animator.start([], [], [], [])
+    animator.start()
 
 
 if __name__ == "__main__":

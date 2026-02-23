@@ -97,7 +97,7 @@ def main():
     # Start the animator
     # =============================================================================
 
-    animator.start([], [], [], [])
+    animator.start()
 
 
 if __name__ == "__main__":

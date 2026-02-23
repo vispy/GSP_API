@@ -138,11 +138,8 @@ def main():
     # - limit rerender frequency to avoid blinking during interaction
     # =============================================================================
 
-    # Initial render
-    render_axes()
-
     # define variables to control rendering frequency
-    needs_render: bool = False
+    needs_render: bool = True
     last_render_time: float = 0.0
     max_delta_time_between_renders: float = 1.0 / 60.0  # seconds
 
@@ -173,7 +170,7 @@ def main():
     # =============================================================================
 
     # start the animation loop
-    animator.start([], [], [], [])
+    animator.start()
 
 
 if __name__ == "__main__":
