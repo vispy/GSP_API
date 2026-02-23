@@ -497,6 +497,7 @@ class PyramidPanZoomHelper:
 
     @staticmethod
     def create(axes_display: AxesDisplay, renderer_base: RendererBase) -> AxesPanZoom:
+        """Create the pan/zoom handler for the axes display."""
         # Create viewport events for the axes display inner viewport
         viewport_events = ExampleHelper.create_viewport_events(renderer_base, axes_display.get_inner_viewport())
 
