@@ -21,7 +21,9 @@ from gsp.constants import Constants
 
 from gsp_extra.misc.render_item import RenderItem
 from common.example_helper import ExampleHelper
-from vispy_2 import scatter
+
+# from vispy_2 import scatter
+import vispy_2 as Vispy2
 
 
 def main():
@@ -60,7 +62,7 @@ def main():
         colors_buffer.set_data(bytearray([255, 0, 0, 255]) * group_count, 0, group_count)
 
         # Create the Pixels visual and add it to the viewport
-        visualPixel = scatter(positions_buffer, colors=colors_buffer, groups=group_size)
+        visualPixel = Vispy2.scatter(positions_buffer, colors=colors_buffer, groups=group_size)
         return visualPixel
 
     def createVisualPointsByScatter() -> VisualBase:
@@ -84,7 +86,7 @@ def main():
         edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
         # Create the Points visual and add it to the viewport
-        visualPoints = scatter(
+        visualPoints = Vispy2.scatter(
             positions_buffer,
             sizes=sizes_buffer,
             face_colors=face_colors_buffer,
@@ -114,7 +116,7 @@ def main():
         edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
         # Create the Markers visual and add it to the viewport
-        visualMarkers = scatter(
+        visualMarkers = Vispy2.scatter(
             positions_buffer,
             sizes=sizes_buffer,
             face_colors=face_colors_buffer,
