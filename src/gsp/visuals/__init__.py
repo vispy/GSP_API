@@ -1,4 +1,4 @@
-""" "Visual elements for graphical representation in GSP."""
+"""Visual elements for graphical representation in GSP."""
 
 from .image import Image
 from .pixels import Pixels
