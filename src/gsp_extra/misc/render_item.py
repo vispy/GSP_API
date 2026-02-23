@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from gsp.core.viewport import Viewport
 from gsp.core.camera import Camera
 from gsp.types.visual_base import VisualBase
-from gsp.types.buffer import Buffer
+from gsp.types.transbuf import TransBuf
 
 
 @dataclass
@@ -18,7 +18,7 @@ class RenderItem:
     """Viewport where the visual will be rendered."""
     visual_base: VisualBase
     """Visual to be rendered."""
-    model_matrix: Buffer
+    model_matrix: TransBuf
     """Model matrix for transforming the visual."""
     camera: Camera
     """Camera used for rendering the visual."""
