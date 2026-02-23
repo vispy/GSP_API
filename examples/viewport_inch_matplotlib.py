@@ -1,3 +1,5 @@
+"""Example demonstrating how to set up a viewport with inch-based coordinates using Matplotlib as the renderer."""
+
 # pip imports
 import numpy as np
 import matplotlib.patches
@@ -9,11 +11,11 @@ from gsp_matplotlib.renderer import MatplotlibRenderer
 
 
 class QtHelper:
-    """Get screen properties via Qt"""
+    """Get screen properties via Qt."""
 
     @staticmethod
     def get_screen_ppi() -> float:
-
+        """Get the screen PPI using Qt."""
         qt_app = QApplication([])
         screen = qt_app.primaryScreen()
         assert screen is not None, "screen MUST NOT be None"
@@ -23,6 +25,7 @@ class QtHelper:
 
     @staticmethod
     def get_device_pixel_ratio() -> float:
+        """Get the device pixel ratio using Qt."""
         qt_app = QApplication([])
         screen = qt_app.primaryScreen()
         assert screen is not None, "screen MUST NOT be None"
@@ -32,6 +35,7 @@ class QtHelper:
 
 
 def main():
+    """Example demonstrating viewport events."""
     # fix random seed for reproducibility
     np.random.seed(0)
 
