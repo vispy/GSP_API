@@ -1,4 +1,5 @@
-- scatter - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
+- .plot() https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
+- DONE scatter - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
   - union of point, pixel, markers
   - DONE examples which display 3 viewports one for each
   - TODO if scatter doesnt include property - best guess on default value
