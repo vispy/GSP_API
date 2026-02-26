@@ -11,21 +11,11 @@ import pathlib
 import numpy as np
 
 # local imports
-from gsp.core import Canvas, Viewport
-from gsp.types import Buffer, BufferType, VisualBase, MarkerShape
-from gsp.core import Camera
+from gsp.core import Canvas
+from gsp.types import BufferType, VisualBase
 from gsp_extra.bufferx import Bufferx
-from gsp.utils.group_utils import GroupUtils
-from gsp.utils.cmap_utils import CmapUtils
-from gsp.constants import Constants
-
-from gsp_extra.misc.render_item import RenderItem
 from common.example_helper import ExampleHelper
-
-# from vispy_2 import scatter
-from gsp_nico import viewport
 import vispy2 as Vispy2
-from vispy2.axes import axes_managed
 
 
 def main():
