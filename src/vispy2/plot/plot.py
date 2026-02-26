@@ -136,6 +136,9 @@ def plot(
         line_width (float | None): The width of the line. If None, it will be determined by the fmt string or default to 2.0.
         line_cap_style (CapStyle | None): The cap style for the line. If None, it will be determined by the fmt string or default to CapStyle.ROUND.
         line_join_style (JoinStyle | None): The join style for the line. If None, it will be determined by the fmt string or default to JoinStyle.ROUND.
+
+    Returns:
+        visuals (list[VisualBase]): A list of VisualBase objects representing the plot.
     """
     returned_visuals: list[VisualBase] = []
 

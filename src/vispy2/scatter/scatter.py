@@ -233,6 +233,20 @@ def scatter(
 
     The function does not perform deep sanity checks; it delegates to the
     underlying visual constructors which will validate attributes.
+
+    Args:
+        positions(TransBuf | np.ndarray): Buffer or numpy array containing the positions of the points/pixels/markers. If numpy array is provided, it will be converted to a Buffer.
+        mode(str | None): One of 'points', 'pixels', 'markers'. If not provided, the function will infer the mode based on the presence of other arguments.
+        sizes(TransBuf | np.ndarray | None): Buffer or numpy array containing the sizes of the points/markers. Required for points and markers mode. If numpy array is provided, it will be converted to a Buffer.
+        colors(TransBuf | np.ndarray | None): Buffer or numpy array containing the colors of the pixels. Required for pixels mode. If numpy array is provided, it will be converted to a Buffer.
+        face_colors(TransBuf | np.ndarray | None): Buffer or numpy array containing the face colors of the points/markers. Required for points and markers mode. If numpy array is provided, it will be converted to a Buffer.
+        edge_colors(TransBuf | np.ndarray | None): Buffer or numpy array containing the edge colors of the points/markers. Required for points and markers mode. If numpy array is provided, it will be converted to a Buffer.
+        edge_widths(TransBuf | np.ndarray | None): Buffer or numpy array containing the edge widths of the points/markers. Required for points and markers mode. If numpy array is provided, it will be converted to a Buffer.
+        groups(Groups | None): Groups object defining group membership for pixels. Required for pixels mode.
+        marker_shape(MarkerShape | None): MarkerShape enum value defining the shape of the markers. Required for markers mode.
+
+    Returns:
+        visual(VisualBase): An instance of Points, Pixels or Markers visual based on the provided arguments
     """
     # Infer mode if not provided
     if mode is None:
