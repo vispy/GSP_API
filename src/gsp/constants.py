@@ -1,5 +1,7 @@
 """Common constants for GSP including color definitions."""
 
+from .types.color import Color
+
 
 class Constants:
     """Common constants in GSP. e.g. colors."""
@@ -12,18 +14,18 @@ class Constants:
         Each channel value ranges from 0 to 255.
         """
 
-        white = bytearray([255, 255, 255, 255])
-        black = bytearray([0, 0, 0, 255])
-        red = bytearray([255, 0, 0, 255])
-        green = bytearray([0, 255, 0, 255])
-        blue = bytearray([0, 0, 255, 255])
+        white: Color = bytearray([255, 255, 255, 255])
+        black: Color = bytearray([0, 0, 0, 255])
+        red: Color = bytearray([255, 0, 0, 255])
+        green: Color = bytearray([0, 255, 0, 255])
+        blue: Color = bytearray([0, 0, 255, 255])
 
-        yellow = bytearray([255, 255, 0, 255])
-        magenta = bytearray([255, 0, 255, 255])
-        cyan = bytearray([0, 255, 255, 255])
+        yellow: Color = bytearray([255, 255, 0, 255])
+        magenta: Color = bytearray([255, 0, 255, 255])
+        cyan: Color = bytearray([0, 255, 255, 255])
 
-        light_gray = bytearray([211, 211, 211, 255])
-        gray = bytearray([128, 128, 128, 255])
-        dark_gray = bytearray([64, 64, 64, 255])
+        light_gray: Color = bytearray([211, 211, 211, 255])
+        gray: Color = bytearray([128, 128, 128, 255])
+        dark_gray: Color = bytearray([64, 64, 64, 255])
 
-        transparent = bytearray([0, 0, 0, 0])
+        transparent: Color = bytearray([0, 0, 0, 0])
