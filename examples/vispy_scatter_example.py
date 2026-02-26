@@ -34,6 +34,7 @@ def main():
     # Create a canvas
     canvas = Canvas(400, 400, 72.0)
 
+    # viewport size
     half_width = int(canvas.get_width() / 2)
     half_height = int(canvas.get_height() / 2)
 
