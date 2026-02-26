@@ -11,6 +11,7 @@ import re
 # local imports
 from gsp.constants import Constants
 from gsp.types.marker_shape import MarkerShape
+from gsp.types.color import Color
 
 
 @dataclass
@@ -79,7 +80,7 @@ class FmtUtils:
     # =============================================================================
 
     @staticmethod
-    def str_to_gsp_color(fmt_color: str) -> bytearray:
+    def str_to_gsp_color(fmt_color: str) -> Color:
         """Convert a matplotlib color format to a GSP color format.
 
         Args:

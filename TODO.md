@@ -1,28 +1,18 @@
-
 - .plot() https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
+  - TODO how to do hashed lines
   - line
   - point + marker
-- DONE scatter - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
-  - union of point, pixel, markers
-  - DONE examples which display 3 viewports one for each
-  - TODO if scatter doesnt include property - best guess on default value
+- vispy and imgshow()
 - axes_managed is doing multiple render calls
   - so it fails with network renderer which erase the whole canvas at each render call
   - POSSIBLE fix: the network server render with transparent background, so it doesnt erase the whole canvas, but only the content of the visual
   - POSSIBLE FIX: regroup the multiple render calls in one call... more like a workaround than a real fix, but it can be done in a short term
-- BUG support panzoom in GSP_RENDERER=network
-  - show only a blank, no axes content, no axes content
-  - noticed 2 render calls in network server: one big then one small
-  - maybe fix === renderer base.clear() to be implemented - check that
-- DONE in network server, make it save all the json+image in a folder
-  - good for debug
 - TODO make renderer.clear()  ? or renderer.clear_viewport(viewport)
   - .clear_viewport(viewport) seems better
   - https://chatgpt.com/c/697b6010-b9b0-8328-b0e9-8bfed9c1d9e0
   - make a example for it
     - multiple viewports
     - make them blink alternatively
-- DONE support image in network renderer
 - look at a DSL domain specific language for transform
   - syntax sugar to build a transform chain
 - for the visual which requires multiple artists, think about what happen when the number of artists is reduced
@@ -48,7 +38,6 @@
 - support texts in datoviz
   - identify what is wrong/missing
   - write datoviz tests
-- get other visual API for the hollyday
 - transform chain + viewport unit conversion in .userData
   - MathOpUnit link
     - op_code: add/sub/mul/div
@@ -101,6 +90,17 @@
     - possibility: set by class or by instance
 
 ---
+- DONE BUG support panzoom in GSP_RENDERER=network
+  - show only a blank, no axes content, no axes content
+  - noticed 2 render calls in network server: one big then one small
+  - maybe fix === renderer base.clear() to be implemented - check that
+- DONE support image in network renderer
+- DONE in network server, make it save all the json+image in a folder
+  - good for debug
+- DONE scatter - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
+  - union of point, pixel, markers
+  - DONE examples which display 3 viewports one for each
+  - TODO if scatter doesnt include property - best guess on default value
 - DONE pyramid:
   - then compute the needed resolution level
     - based on the maximum possible zoom-out level in sample/dunit
