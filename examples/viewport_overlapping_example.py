@@ -9,9 +9,8 @@ import numpy as np
 # local imports
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
-from gsp.visuals import Pixels
 from gsp.visuals import Points
-from gsp.types import Buffer, BufferType
+from gsp.types import Buffer, BufferType, Color
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
@@ -39,7 +38,7 @@ def main():
     # - various ways to create Buffers
     # =============================================================================
 
-    def generate_points(gsp_color: bytearray) -> Points:
+    def generate_points(gsp_color: Color) -> Points:
         point_count = 50
         group_size = point_count
         group_count = GroupUtils.get_group_count(point_count, groups=group_size)

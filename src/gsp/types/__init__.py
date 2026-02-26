@@ -3,6 +3,7 @@
 from .buffer_type import BufferType
 from .buffer import Buffer
 from .cap_style import CapStyle
+from .color import Color
 from .group import Groups
 from .image_interpolation import ImageInterpolation
 from .join_style import JoinStyle

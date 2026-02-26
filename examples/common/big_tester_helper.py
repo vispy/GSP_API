@@ -9,7 +9,7 @@ import numpy as np
 # local imports
 from gsp.core import Canvas, Viewport, Camera
 from gsp.visuals import Segments, Points, Pixels
-from gsp.types import Buffer, BufferType, TransBuf, CapStyle
+from gsp.types import Buffer, BufferType, TransBuf, CapStyle, Color
 from gsp.types.renderer_base import RendererBase
 from gsp.types.visual_base import VisualBase
 from gsp_matplotlib.renderer import MatplotlibRenderer
@@ -117,7 +117,9 @@ class BigTesterVisuals:
 
     @staticmethod
     def create_spiral_pixels() -> tuple[VisualBase, TransBuf, Camera]:
-        def generate_pixels(gsp_color: bytearray) -> Pixels:
+        """Create a spiral of pixels."""
+
+        def generate_pixels(gsp_color: Color) -> Pixels:
             point_count = 1_000
             group_size = point_count
             group_count = GroupUtils.get_group_count(point_count, groups=group_size)
