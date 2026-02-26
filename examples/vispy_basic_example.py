@@ -5,8 +5,8 @@ import numpy as np
 
 # local imports
 import gsp
-import vispy2
 import gsp_matplotlib
+import vispy2
 
 # Create a canvas
 canvas = gsp.core.Canvas(width=400, height=400, dpi=127)

@@ -53,8 +53,10 @@ def main():
     edge_widths_numpy = np.full(marker_count, 1.0).astype(np.float32)
     edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
+    marker_shape: MarkerShape = MarkerShape.square
+
     # Create the Markers visual and add it to the viewport
-    markers = Markers(MarkerShape.club, positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
+    markers = Markers(marker_shape, positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================

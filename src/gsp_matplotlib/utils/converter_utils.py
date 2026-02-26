@@ -13,10 +13,10 @@ class ConverterUtils:
     @staticmethod
     def cap_style_gsp_to_mpl(gsp_cap_style: CapStyle) -> Literal["butt", "round", "projecting"]:
         """Convert CapStyle enum to Matplotlib string.
-        
+
         Args:
             gsp_cap_style (CapStyle): The GSP cap style.
-            
+
         Returns:
             str: The corresponding Matplotlib cap style.
         """
@@ -32,10 +32,10 @@ class ConverterUtils:
     @staticmethod
     def join_style_gsp_to_mpl(gsp_join_style: JoinStyle) -> Literal["miter", "round", "bevel"]:
         """Convert JoinStyle enum to Matplotlib string.
-        
+
         Args:
             gsp_join_style (JoinStyle): The GSP join style.
-            
+
         Returns:
             str: The corresponding Matplotlib join style.
         """
@@ -51,10 +51,12 @@ class ConverterUtils:
     @staticmethod
     def marker_shape_gsp_to_mpl(gsp_marker_shape: MarkerShape) -> str:
         """Convert GSP marker shape to Matplotlib marker shape.
-        
+
+        - https://matplotlib.org/stable/api/markers_api.html
+
         Args:
             gsp_marker_shape (MarkerShape): The GSP marker shape.
-            
+
         Returns:
             str: The corresponding Matplotlib marker shape.
         """

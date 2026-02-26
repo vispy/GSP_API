@@ -10,10 +10,10 @@ class ConverterUtils:
     @staticmethod
     def cap_style_gsp_to_dvz(cap_style: CapStyle) -> str:
         """Convert CapStyle enum to Datoviz string.
-        
+
         Args:
             cap_style: The GSP CapStyle enum value.
-        
+
         Returns:
             The corresponding Datoviz cap style string.
         """
@@ -29,10 +29,10 @@ class ConverterUtils:
     @staticmethod
     def join_style_gsp_to_dvz(join_style: JoinStyle) -> str:
         """Convert JoinStyle enum to Datoviz string.
-        
+
         Args:
             join_style: The GSP JoinStyle enum value.
-            
+
         Returns:
             The corresponding Datoviz join style string.
         """
@@ -48,10 +48,12 @@ class ConverterUtils:
     @staticmethod
     def marker_shape_gsp_to_dvz(gsp_marker_shape: MarkerShape) -> str:
         """Convert GSP marker shape to Datoviz marker shape.
-        
+
+        - https://datoviz.org/visuals/marker/#code
+
         Args:
             gsp_marker_shape: The GSP MarkerShape enum value.
-        
+
         Returns:
             The corresponding Datoviz marker shape string.
         """

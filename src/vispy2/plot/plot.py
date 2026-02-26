@@ -46,7 +46,7 @@ def _generate_markers(
     if marker_face_color is None:
         marker_face_color = Constants.Color.red
     if marker_size is None:
-        marker_size = 50.0
+        marker_size = 100.0
 
     marker_shape = FmtUtils.str_to_gsp_marker(parsed_fmt.marker) if parsed_fmt.marker is not None else MarkerShape.disc
 
@@ -193,7 +193,6 @@ def plot(
     # =============================================================================
 
     parsed_fmt = FmtUtils.parse_fmt(fmt) if fmt is not None else ParsedFormat(color=None, marker=None, linestyle=None)
-    print(f"Parsed fmt: {parsed_fmt}")
 
     # =============================================================================
     # Generate visuals for markers
