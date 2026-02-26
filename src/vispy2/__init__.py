@@ -3,7 +3,7 @@
 from . import axes
 
 # import scatter functions
-from .scatter import scatter
+from .scatter.scatter import scatter
 
 # import plot functions
-from .plot import plot
+from .plot.plot import plot

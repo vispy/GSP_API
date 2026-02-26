@@ -1,0 +1,162 @@
+"""Unified scatter API to create Points, Pixels or Markers visuals.
+
+- https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
+"""
+
+# pip imports
+import numpy as np
+
+# local imports
+from .fmt_utils import FmtUtils, ParsedFormat
+from gsp.constants import Constants
+from gsp.types import TransBuf, Buffer, BufferType
+from gsp.constants import Constants
+from gsp.visuals.points import Points
+from gsp.visuals.markers import Markers, MarkerShape
+from gsp.visuals.paths import Paths
+from gsp.types.cap_style import CapStyle
+from gsp.types.join_style import JoinStyle
+from gsp.types.visual_base import VisualBase
+from gsp_extra.bufferx import Bufferx
+from gsp_extra.misc.render_item import RenderItem
+
+
+# =============================================================================
+#
+# =============================================================================
+
+
+def _generate_markers(positions: TransBuf, parsed_fmt: ParsedFormat) -> list[VisualBase]:
+    assert isinstance(positions, Buffer), "positions should be a Buffer at this point"
+    position_count = positions.get_count()
+
+    assert parsed_fmt.marker is not None, "parsed_fmt.marker should not be None at this point"
+    marker_shape = FmtUtils.str_to_gsp_marker(parsed_fmt.marker)
+
+    sizes_numpy = np.array([50] * position_count, dtype=np.float32)
+    sizes = Bufferx.from_numpy(sizes_numpy, BufferType.float32)
+
+    face_colors_gsp = FmtUtils.str_to_gsp_color(parsed_fmt.color) if parsed_fmt.color is not None else Constants.Color.red
+    face_colors = Buffer(position_count, BufferType.rgba8)
+    face_colors.set_data(face_colors_gsp * position_count, 0, position_count)
+
+    # No edge (edge width = 0)
+    edge_colors = Buffer(position_count, BufferType.rgba8)
+    edge_colors.set_data(Constants.Color.blue * position_count, 0, position_count)
+    edge_widths_numpy = np.array([0.0] * position_count, dtype=np.float32)
+    edge_widths = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
+
+    visual = Markers(marker_shape, positions, sizes, face_colors, edge_colors, edge_widths)
+    return [visual]
+
+
+def _generate_paths(positions: TransBuf, parsed_fmt: ParsedFormat) -> list[VisualBase]:
+    assert isinstance(positions, Buffer), "positions should be a Buffer at this point"
+    position_count = positions.get_count()
+
+    path_sizes_numpy = np.array([position_count], dtype=np.uint32)
+    path_sizes = Bufferx.from_numpy(path_sizes_numpy, BufferType.uint32)
+
+    colors_gsp = FmtUtils.str_to_gsp_color(parsed_fmt.color) if parsed_fmt.color is not None else Constants.Color.red
+    colors = Buffer(position_count, BufferType.rgba8)
+    colors.set_data(colors_gsp * position_count, 0, position_count)
+
+    line_widths_numpy = np.array([2.0] * position_count, dtype=np.float32).reshape(-1, 1)
+    line_widths = Bufferx.from_numpy(line_widths_numpy, BufferType.float32)
+
+    # Create the Pixels visual and add it to the viewport
+    paths = Paths(positions, path_sizes, colors, line_widths, CapStyle.ROUND, JoinStyle.ROUND)
+    return [paths]
+
+
+# =============================================================================
+#
+# =============================================================================
+
+
+def plot(
+    x: TransBuf | np.ndarray,
+    y: TransBuf | np.ndarray | None = None,
+    *,
+    fmt: str | None = None,
+) -> list[VisualBase]:
+    """Create a line visual connecting the given x and y coordinates.
+
+    Args:
+        x (TransBuf | np.ndarray): The x coordinates of the points.
+        y (TransBuf | np.ndarray | None): The y coordinates of the points. If None, y will be set to x.
+        fmt (str | None): The format string for the plot (e.g., 'o' for markers, '-' for lines). '[marker][line][color]'
+    """
+    returned_visuals: list[VisualBase] = []
+
+    # =============================================================================
+    # Convert any numpy to Buffer if needed
+    # =============================================================================
+
+    # If positions is a numpy array, convert it to a Buffer
+    if isinstance(x, np.ndarray):
+        x = Bufferx.from_numpy(x, BufferType.float32)
+    if isinstance(y, np.ndarray):
+        y = Bufferx.from_numpy(y, BufferType.float32)
+
+    # =============================================================================
+    # Sanity check
+    # =============================================================================
+
+    # sanity check - x and y should have the same count
+    if isinstance(x, Buffer) and isinstance(y, Buffer):
+        if x.get_count() != y.get_count():
+            raise ValueError("x and y should have the same count")
+
+    # =============================================================================
+    # Handle case where y is None
+    # =============================================================================
+
+    assert isinstance(x, Buffer), "x  should be Buffers at this point"
+    position_count = x.get_count()
+
+    if y is None:
+        y = x
+        x = Bufferx.from_numpy(np.arange(position_count, dtype=np.float32), BufferType.float32)
+
+    assert isinstance(x, Buffer), "x should be Buffers at this point"
+    assert isinstance(y, Buffer), "y should be Buffers at this point"
+
+    # =============================================================================
+    # Build Positions from x, y
+    # =============================================================================
+
+    positions_numpy = np.zeros((position_count, 3), dtype=np.float32)
+    x_numpy = Bufferx.to_numpy(x)
+    y_numpy = Bufferx.to_numpy(y)
+    for i in range(position_count):
+        positions_numpy[i, 0] = x_numpy[i, 0]
+        positions_numpy[i, 1] = y_numpy[i, 0]
+        positions_numpy[i, 2] = 0.0
+    positions = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+    # =============================================================================
+    # Parse fmt (or build default ParsedFormat if fmt is None)
+    # =============================================================================
+
+    parsed_fmt = FmtUtils.parse_fmt(fmt) if fmt is not None else ParsedFormat(color=None, marker=None, linestyle=None)
+    print(f"Parsed fmt: {parsed_fmt}")
+
+    # =============================================================================
+    # Generate visuals based on the parsed format
+    # =============================================================================
+
+    # Add a Markers visual if marker is specified in fmt
+    if parsed_fmt.marker is not None:
+        visualMarkers = _generate_markers(positions, parsed_fmt)
+        returned_visuals.extend(visualMarkers)
+
+    # all pixels red - Create buffer and fill it with a constant
+    visualPaths = _generate_paths(positions, parsed_fmt)
+    returned_visuals.extend(visualPaths)
+
+    # =============================================================================
+    # Return the plot() visuals
+    # =============================================================================
+
+    return returned_visuals

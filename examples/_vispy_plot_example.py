@@ -64,6 +64,7 @@ def main():
         visuals = Vispy2.plot(
             x_buffer,
             y_buffer,
+            fmt="bo",
         )
         return visuals
 
