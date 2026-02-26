@@ -1,3 +1,5 @@
+"""Example of rendering paths with varying colors and widths."""
+
 # stdlib imports
 import os
 import pathlib
@@ -16,6 +18,7 @@ from common.example_helper import ExampleHelper
 
 
 def main():
+    """Example of rendering paths with varying colors and widths."""
     # fix random seed for reproducibility
     np.random.seed(0)
 

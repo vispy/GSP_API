@@ -1,4 +1,7 @@
+
 - .plot() https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
+  - line
+  - point + marker
 - DONE scatter - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
   - union of point, pixel, markers
   - DONE examples which display 3 viewports one for each
