@@ -61,12 +61,33 @@ class ConverterUtils:
             str: The corresponding Matplotlib marker shape.
         """
         if gsp_marker_shape == MarkerShape.disc:
-            mpl_marker_shape = "o"
+            return "o"
+            # return "X"
+        elif gsp_marker_shape == MarkerShape.asterisk:
+            return "*"
         elif gsp_marker_shape == MarkerShape.square:
-            mpl_marker_shape = "s"
+            return "s"
+        elif gsp_marker_shape == MarkerShape.triangle_down:
+            return "v"
+        elif gsp_marker_shape == MarkerShape.triangle_up:
+            return "^"
+        elif gsp_marker_shape == MarkerShape.triangle_left:
+            return "<"
+        elif gsp_marker_shape == MarkerShape.triangle_right:
+            return ">"
+        elif gsp_marker_shape == MarkerShape.cross:
+            return "X"
         elif gsp_marker_shape == MarkerShape.club:
-            mpl_marker_shape = r"$\clubsuit$"
+            return r"$\clubsuit$"
+        elif gsp_marker_shape == MarkerShape.diamond:
+            return "D"
+        elif gsp_marker_shape == MarkerShape.heart:
+            return r"$\heartsuit$"
+        elif gsp_marker_shape == MarkerShape.spade:
+            return r"$\spadesuit$"
+        elif gsp_marker_shape == MarkerShape.vbar:
+            return "|"
+        elif gsp_marker_shape == MarkerShape.hbar:
+            return "_"
         else:
             raise ValueError(f"Unsupported marker shape: {gsp_marker_shape}")
-
-        return mpl_marker_shape

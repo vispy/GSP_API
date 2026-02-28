@@ -1,5 +1,9 @@
 """Utility functions for converting GSP types to Datoviz types."""
 
+# stdlib imports
+import math
+
+# local imports
 from gsp.types import CapStyle, JoinStyle
 from gsp.types import MarkerShape
 
@@ -46,7 +50,7 @@ class ConverterUtils:
             raise ValueError(f"Unsupported JoinStyle: {join_style}")
 
     @staticmethod
-    def marker_shape_gsp_to_dvz(gsp_marker_shape: MarkerShape) -> str:
+    def marker_shape_gsp_to_dvz(gsp_marker_shape: MarkerShape) -> tuple[str, float]:
         """Convert GSP marker shape to Datoviz marker shape.
 
         - https://datoviz.org/visuals/marker/#code
@@ -55,15 +59,36 @@ class ConverterUtils:
             gsp_marker_shape: The GSP MarkerShape enum value.
 
         Returns:
-            The corresponding Datoviz marker shape string.
+            The corresponding Datoviz marker shape string and angle (between 0, 2 * np.pi).
         """
         if gsp_marker_shape == MarkerShape.disc:
-            mpl_marker_shape = "disc"
+            return "disc", 0.0
+            # return "cross", 0.0
+        elif gsp_marker_shape == MarkerShape.asterisk:
+            return "asterisk", 0.0
+        elif gsp_marker_shape == MarkerShape.triangle_down:
+            return "triangle", math.pi
+        elif gsp_marker_shape == MarkerShape.triangle_up:
+            return "triangle", 0
+        elif gsp_marker_shape == MarkerShape.triangle_left:
+            return "triangle", math.pi / 2
+        elif gsp_marker_shape == MarkerShape.triangle_right:
+            return "triangle", -math.pi / 2
         elif gsp_marker_shape == MarkerShape.square:
-            mpl_marker_shape = "square"
+            return "square", 0
+        elif gsp_marker_shape == MarkerShape.cross:
+            return "cross", 0.0
         elif gsp_marker_shape == MarkerShape.club:
-            mpl_marker_shape = "club"
+            return "club", 0.0
+        elif gsp_marker_shape == MarkerShape.diamond:
+            return "diamond", 0.0
+        elif gsp_marker_shape == MarkerShape.heart:
+            return "heart", 0.0
+        elif gsp_marker_shape == MarkerShape.spade:
+            return "spade", 0.0
+        elif gsp_marker_shape == MarkerShape.vbar:
+            return "vbar", 0.0
+        elif gsp_marker_shape == MarkerShape.hbar:
+            return "hbar", 0.0
         else:
             raise ValueError(f"Unsupported marker shape: {gsp_marker_shape}")
-
-        return mpl_marker_shape

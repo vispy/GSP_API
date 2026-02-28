@@ -139,9 +139,14 @@ class DatovizRendererMarkers:
         if not np.all(edge_colors_numpy == edge_colors_numpy[0]):
             warnings.warn("DatovizRendererMarkers: edge colors per marker are not fully supported by datoviz. " "Using the first edge color for all markers.")
 
-        # Set mode, shape and aspect
+        # Set mode
         dvz_markers.set_mode("code")
-        dvz_markers.set_shape(ConverterUtils.marker_shape_gsp_to_dvz(markers.get_marker_shape()))
+
+        # Set shape and angle - depending on the marker shape, we might need to set a specific angle (e.g. for triangles)
+        dvz_marker_shape, dvz_marker_angle = ConverterUtils.marker_shape_gsp_to_dvz(markers.get_marker_shape())
+        angle_numpy = np.full(vertices_buffer.get_count(), dvz_marker_angle, dtype=np.float32)
+        dvz_markers.set_angle(angle_numpy)
+        dvz_markers.set_shape(dvz_marker_shape)
 
         # Determine the `aspect` depending on face and edge colors/widths
         is_face_color_transparent = bool(np.all(face_colors_numpy[:, 3] == 0))
