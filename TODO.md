@@ -1,9 +1,19 @@
+- vispy and imgshow()
+  - https://www.mathworks.com/help/matlab/ref/imshow.html
+  - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
+- DONE improbe Marker
+  - more marker shapes
+  - datoviz with angle (do a standalone test)
 - .plot() https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
   - TODO how to do hashed lines
   - line
   - point + marker
-- vispy and imgshow()
-- axes_managed is doing multiple render calls
+- TODO support transparent background for network renderer
+  - only on matplotlib backend for now, but mark it as a TODO for datoviz backend
+  - enter github issue for datoviz backend
+  - TODO should that be done for both canvas/viewport ? which API for background color in GSP
+    - simply add a background_color:Color in the canvas/viewport object
+- BUG multiple axes_managed on network - axes_managed is doing multiple render calls
   - so it fails with network renderer which erase the whole canvas at each render call
   - POSSIBLE fix: the network server render with transparent background, so it doesnt erase the whole canvas, but only the content of the visual
   - POSSIBLE FIX: regroup the multiple render calls in one call... more like a workaround than a real fix, but it can be done in a short term
