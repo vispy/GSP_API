@@ -120,8 +120,26 @@ class FmtUtils:
         """
         if fmt_marker == "o":
             return MarkerShape.disc
+        elif fmt_marker == "*":
+            return MarkerShape.asterisk
         elif fmt_marker == "s":
             return MarkerShape.square
+        elif fmt_marker == "v":
+            return MarkerShape.triangle_down
+        elif fmt_marker == "^":
+            return MarkerShape.triangle_up
+        elif fmt_marker == "<":
+            return MarkerShape.triangle_left
+        elif fmt_marker == ">":
+            return MarkerShape.triangle_right
+        elif fmt_marker == "X":
+            return MarkerShape.cross
+        elif fmt_marker == "D":
+            return MarkerShape.diamond
+        elif fmt_marker == "|":
+            return MarkerShape.vbar
+        elif fmt_marker == "_":
+            return MarkerShape.hbar
 
         raise ValueError(f"Unsupported plot() fmt marker format: {fmt_marker}")
 

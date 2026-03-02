@@ -60,14 +60,14 @@ def main():
         )
         return visuals
 
-    # visuals_1 = createVisualPoints("bo")
-    visuals_1 = []
-    # visuals_2 = createVisualPoints("rs")
-    visuals_2 = []
-    visuals_3 = createVisualPoints("gx")
+    visuals_1 = createVisualPoints("bo")
+    # visuals_1 = []
+    visuals_2 = createVisualPoints("rs")
+    # visuals_2 = []
+    visuals_3 = createVisualPoints("gX")
     # visuals_3 = []
-    # visuals_4 = createVisualPoints("ys")
-    visuals_4 = []
+    visuals_4 = createVisualPoints("cD")
+    # visuals_4 = []
 
     render_items: list[RenderItem] = []
     for visuals, viewport in zip([visuals_1, visuals_2, visuals_3, visuals_4], [viewport_1, viewport_2, viewport_3, viewport_4]):
