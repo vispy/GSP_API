@@ -1,0 +1,23 @@
+{
+  "skill_name": "build-release-gsp",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're ready to release version 1.1.0 of GSP_API. Please prepare the release including generating visualization examples and creating release notes documenting the new features.",
+      "expected_output": "Generated visualization examples for both Matplotlib and DatoViz backends, comprehensive release notes with new features, improvements, and bug fixes documented.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Prepare a release package. I need release notes that document improvements to the visualization backends and examples that show they work correctly.",
+      "expected_output": "Release notes documenting backend improvements, visualization examples generated and verified, pre-release checklist provided.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "What should we include in the release notes for our upcoming release? Also generate visualization examples to verify everything works before shipping.",
+      "expected_output": "Well-structured release notes template with sections for features, improvements, and fixes. Visualization examples generated and verified for both backends.",
+      "files": []
+    }
+  ]
+}

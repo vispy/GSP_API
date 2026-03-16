@@ -1,0 +1,23 @@
+{
+  "skill_name": "docs-examples-gsp",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create an example script showing how to create a simple line plot with the GSP_API library. Make sure it works with both the Matplotlib and DatoViz backends.",
+      "expected_output": "Clean, well-documented Python example script demonstrating a line plot with both backends. Script should be in examples/ directory and include proper docstrings and comments.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Write an example script that demonstrates how to use advanced visualization features of GSP. It should show data visualization with proper labels and styling.",
+      "expected_output": "Comprehensive example script with advanced features, clear documentation, tested with both backends, ready for use in documentation.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Add an example showing how to work with GSP_API and switch between different visualization backends (Matplotlib and DatoViz). The example should be self-contained and educational.",
+      "expected_output": "Well-structured example demonstrating backend switching with environment variables, clear comments explaining the approach, verified working with both backends.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "skill_name": "dev-setup-gsp",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just cloned the GSP_API repo. Can you set up the development environment with all dependencies and configure the pre-commit hooks?",
+      "expected_output": "Installs core dependencies, sets up both visualization backends (Matplotlib and DatoViz), configures pre-commit hooks, verifies setup with import tests.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Set up the project for development. Make sure both visualization backends are available and ready to test.",
+      "expected_output": "Complete environment setup including dependency installation, backend configuration, structure verification, and import tests for both backends.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I need to get the development environment working. Install everything needed and verify both Matplotlib and DatoViz backends work.",
+      "expected_output": "Full setup pipeline with dependency installation, backend setup, pre-commit configuration, and verification checklist showing all components working.",
+      "files": []
+    }
+  ]
+}

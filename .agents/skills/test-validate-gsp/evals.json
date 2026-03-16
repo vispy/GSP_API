@@ -1,0 +1,23 @@
+{
+  "skill_name": "test-validate-gsp",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just made some changes to the visualization backend. Can you run the tests and make sure everything still works? Also check for any type errors.",
+      "expected_output": "Runs pytest with coverage, mypy type checking, and tests both Matplotlib and DatoViz backends. Provides clear summary of pass/fail status.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Check the code quality of the project before we commit. I want to see test results, type checking, and backend validation.",
+      "expected_output": "Comprehensive validation including pytest results, mypy checking, and backend testing with clear pass/fail summary.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Run the full test suite and verify both visualization backends (Matplotlib and DatoViz) are working correctly.",
+      "expected_output": "Complete test run with coverage report, backend verification for both Matplotlib and DatoViz, summary of results.",
+      "files": []
+    }
+  ]
+}
