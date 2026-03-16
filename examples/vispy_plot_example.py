@@ -85,10 +85,10 @@ def main():
 
     # Create sine wave plots with different matplotlib-style format strings
     # Demonstrate various plot styles: markers only, lines only, and combined
-    visuals_1 = create_sine_wave_visual("bo")    # Top-left: Blue circle markers only
-    visuals_2 = create_sine_wave_visual("r-")    # Top-right: Red line only (no markers)
-    visuals_3 = create_sine_wave_visual("go-")   # Bottom-left: Green markers with line
-    visuals_4 = create_sine_wave_visual("m^")    # Bottom-right: Magenta triangle markers only
+    visuals_1 = create_sine_wave_visual("bo")  # Top-left: Blue circle markers only
+    visuals_2 = create_sine_wave_visual("r-")  # Top-right: Red line only (no markers)
+    visuals_3 = create_sine_wave_visual("go-")  # Bottom-left: Green markers with line
+    visuals_4 = create_sine_wave_visual("m^")  # Bottom-right: Magenta triangle markers only
 
     render_items: list[RenderItem] = []
     for visuals, viewport in zip([visuals_1, visuals_2, visuals_3, visuals_4], [viewport_1, viewport_2, viewport_3, viewport_4]):

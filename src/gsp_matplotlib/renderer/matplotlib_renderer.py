@@ -64,6 +64,7 @@ class MatplotlibRenderer(RendererBase):
         self._figure.canvas.manager.set_window_title("Matplotlib")
         figure_background_color = ConverterUtils.color_gsp_to_mpl(canvas.get_background_color())
         self._figure.patch.set_facecolor(figure_background_color)
+        print(f"Created Matplotlib figure background color {figure_background_color}")
 
     def get_canvas(self) -> Canvas:
         """Get the canvas associated with this renderer.
@@ -153,11 +154,11 @@ class MatplotlibRenderer(RendererBase):
                 # store axes for this viewport
                 self._axes[viewport.get_uuid()] = axes
 
-            axes = self._axes[viewport.get_uuid()]
-            # set the background color of the axes to the viewport background color
-            axes_background_color = ConverterUtils.color_gsp_to_mpl(viewport.get_background_color())
-            print(f"Setting axes background color to {axes_background_color} for viewport {viewport.get_uuid()}")
-            axes.patch.set_facecolor(axes_background_color)
+                axes = self._axes[viewport.get_uuid()]
+                # set the background color of the axes to the viewport background color
+                axes_background_color = ConverterUtils.color_gsp_to_mpl(viewport.get_background_color())
+                print(f"Setting axes background color to {axes_background_color} for viewport {viewport.get_uuid()}")
+                axes.patch.set_facecolor(axes_background_color)
 
         # =============================================================================
         # Render each visual

@@ -33,8 +33,20 @@ def main():
     #
     # =============================================================================
 
-    viewport_1 = Viewport(int(canvas.get_width() * 0.10), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.35), int(canvas.get_height() * 0.8), Constants.Color.transparent)
-    viewport_2 = Viewport(int(canvas.get_width() * 0.60), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.35), int(canvas.get_height() * 0.8), Constants.Color.transparent)
+    viewport_1 = Viewport(
+        int(canvas.get_width() * 0.10),
+        int(canvas.get_height() * 0.1),
+        int(canvas.get_width() * 0.35),
+        int(canvas.get_height() * 0.8),
+        Constants.Color.transparent,
+    )
+    viewport_2 = Viewport(
+        int(canvas.get_width() * 0.60),
+        int(canvas.get_height() * 0.1),
+        int(canvas.get_width() * 0.35),
+        int(canvas.get_height() * 0.8),
+        Constants.Color.transparent,
+    )
 
     axes_display_1 = AxesDisplay(canvas, viewport_1)
     axes_display_2 = AxesDisplay(canvas, viewport_2)

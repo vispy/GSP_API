@@ -1,28 +1,18 @@
-- TODO in axes_managed.py, support title, xlabel, ylabel
-  - with a specific visual for each of them
-  - with a specific position for each of them
-  - GSP_RENDERER=matplotlib python ./examples/vispy_axes_display_example.py
-  - GSP_RENDERER=datoviz python ./examples/vispy_axes_display_example.py
-- fixed text rendering anchor
+- fixed text rendering anchor + rotation in datoviz - required for vispy_axes
   - fixed in matplotlib
   - BUG in datoviz i cant change the anchor, i dunno why
-- DONE the set_xlabel/set_ylabel/set_title are not properly handled - the text rendering is wrong in the text alignement
-  - debug the text alignement in the text visual of datoviz and matplotlib
+- TODO handle GSP canvas/viewport with background color
+  - EARLY support (works in matplotlib figure, not axes. not at all in datoviz)
+    - python `./examples/vispy_axes_display_example.py`
+    - working in standalone tho `python ./tmp/matplotlib/background_color.py`
 - TODO support transparent background for network renderer
   - only on matplotlib backend for now, but mark it as a TODO for datoviz backend
   - enter github issue for datoviz backend
   - TODO should that be done for both canvas/viewport ? which API for background color in GSP
     - simply add a background_color:Color in the canvas/viewport object
-- TODO handle GSP canvas with background color
-  - handle viewport with background color
 - vispy and imgshow()
   - https://www.mathworks.com/help/matlab/ref/imshow.html
   - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
-- .plot() https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
-  - TODO how to do hashed lines WONTDO
-  - line
-  - point + marker
-- TODO in vispy2.plot, support line color (copy on the marker colors)
 - BUG multiple axes_managed on network - axes_managed is doing multiple render calls
   - so it fails with network renderer which erase the whole canvas at each render call
   - POSSIBLE fix: the network server render with transparent background, so it doesnt erase the whole canvas, but only the content of the visual
@@ -110,6 +100,18 @@
     - possibility: set by class or by instance
 
 ---
+- DONE in axes_managed.py, support title, xlabel, ylabel
+  - with a specific visual for each of them
+  - with a specific position for each of them
+  - GSP_RENDERER=matplotlib python ./examples/vispy_axes_display_example.py
+  - GSP_RENDERER=datoviz python ./examples/vispy_axes_display_example.py
+- DONE in datoviz, the set_xlabel/set_ylabel/set_title are not properly handled - the text rendering is wrong in the text alignement
+  - debug the text alignement in the text visual of datoviz and matplotlib
+- DONE .plot() https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
+  - TODO how to do hashed lines WONTDO
+  - line
+  - point + marker
+- DONE in vispy2.plot, support line color (copy on the marker colors)
 - DONE in vispy2.plot, support line color (copy on the marker colors)
 - DONE improbe Marker
   - more marker shapes
