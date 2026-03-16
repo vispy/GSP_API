@@ -13,4 +13,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AxesManaged.set_title()`, `set_xlabel()`, `set_ylabel()` — thin delegating methods for the same functionality on the higher-level managed axes API.
 - Updated `examples/vispy_axes_display_example.py` to demonstrate all three labels.
 
-[Unreleased]: https://github.com/your-org/GSP_API/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/vispy/GSP_API/compare/ca84f76...HEAD
