@@ -1,0 +1,25 @@
+{
+  "skill_name": "matplotlib-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm implementing a new feature in matplotlib_backend.py that lets users create multiple subplots. The current code creates a Figure but I'm not sure about the best way to manage the lifecycle and ensure proper cleanup. Also, what's the idiomatic way to handle the Axes objects? Should I store them or pass them around?",
+      "expected_output": "Expert guidance on Matplotlib figure/axes lifecycle, cleanup patterns, state management, and type hints for the implementation"
+    },
+    {
+      "id": 2,
+      "prompt": "I want GSP's plot API to have similar parameter naming and optional argument patterns as Matplotlib. How does Matplotlib typically handle things like colors, line styles, markers? What's the philosophy behind their naming conventions that we could adopt?",
+      "expected_output": "Explanation of Matplotlib's API design patterns, parameter naming philosophy, and how GSP can adopt similar patterns"
+    },
+    {
+      "id": 3,
+      "prompt": "I'm getting mypy type errors with my Matplotlib code. Here's what I'm trying: `fig: Figure = plt.figure()` and then later `axes = fig.add_subplot()`. mypy is complaining about the return type of add_subplot. How do I properly type these Matplotlib objects?",
+      "expected_output": "Expert guidance on typing Matplotlib's Figure and Axes classes with strict mypy compliance"
+    },
+    {
+      "id": 4,
+      "prompt": "What are the common gotchas I should watch out for when implementing Matplotlib features? I keep seeing references to figure reference leaks and event handler cleanup in Matplotlib discussions, but I'm not sure what that means.",
+      "expected_output": "Explanation of common Matplotlib gotchas, best practices for avoiding them, and clean patterns for figure/artist management"
+    }
+  ]
+}
