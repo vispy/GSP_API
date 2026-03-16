@@ -1,9 +1,14 @@
-"""Plot example with different marker and line styles.
+"""Plot example demonstrating different marker and line style combinations.
 
 Creates a 2x2 grid of sine wave plots using matplotlib-style format strings
-to demonstrate color and marker customization options.
+to showcase the flexibility of the plot() function:
+- Top-left: Markers only (blue circles)
+- Top-right: Line only (red solid line)
+- Bottom-left: Markers with line (green)
+- Bottom-right: Different marker style (magenta triangles)
 
-Format strings: [marker_style][color] (e.g., 'bo' = blue circles, 'rs' = red squares)
+Format strings: [marker_style][line_style][color]
+Examples: 'bo' (blue circles), 'r-' (red line), 'go-' (green circles+line), 'm^' (magenta triangles)
 """
 
 # stdlib imports
@@ -78,11 +83,11 @@ def main():
         return visuals
 
     # Create sine wave plots with different matplotlib-style format strings
-    # Format: [marker_style][color]
-    visuals_1 = create_sine_wave_visual("bo")  # 'b'=blue, 'o'=circle markers
-    visuals_2 = create_sine_wave_visual("rs")  # 'r'=red, 's'=square markers
-    visuals_3 = create_sine_wave_visual("gX")  # 'g'=green, 'X'=cross markers
-    visuals_4 = create_sine_wave_visual("cD")  # 'c'=cyan, 'D'=diamond markers
+    # Demonstrate various plot styles: markers only, lines only, and combined
+    visuals_1 = create_sine_wave_visual("bo")    # Top-left: Blue circle markers only
+    visuals_2 = create_sine_wave_visual("r-")    # Top-right: Red line only (no markers)
+    visuals_3 = create_sine_wave_visual("go-")   # Bottom-left: Green markers with line
+    visuals_4 = create_sine_wave_visual("m^")    # Bottom-right: Magenta triangle markers only
 
     render_items: list[RenderItem] = []
     for visuals, viewport in zip([visuals_1, visuals_2, visuals_3, visuals_4], [viewport_1, viewport_2, viewport_3, viewport_4]):

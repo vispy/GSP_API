@@ -1,10 +1,30 @@
 """Helper class to parse matplotlib-style format strings for plotting.
 
-- https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
+This module provides utilities to parse matplotlib-style format strings and convert them to
+GSP-compatible visual properties.
+
+Supported format: [marker][linestyle][color]
+- Examples: 'o' (circle), 'r-' (red line), 'go-' (green circles with line), 'm^' (magenta triangles)
+
+Supported colors:
+  Single-letter: 'b' (blue), 'g' (green), 'r' (red), 'c' (cyan), 'm' (magenta),
+  'y' (yellow), 'k' (black), 'w' (white)
+  Color cycle: 'C0' (blue), 'C1' (green), 'C2' (red), etc. (matplotlib default cycle)
+
+Supported markers:
+  'o' (circle), 's' (square), '^' (triangle up), 'v' (triangle down),
+  '<' (triangle left), '>' (triangle right), '*' (asterisk), 'X' (cross),
+  'D' (diamond), '|' (vertical bar), '_' (horizontal bar)
+
+Supported line styles:
+  '-' (solid line only). Other matplotlib line styles (--  dash, -. dash-dot, : dotted)
+  are not currently supported by the datoviz backend and will raise an error.
+
+References:
+  - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
 """
 
 # stdlib imports
-from typing import Optional, Union, Literal
 from dataclasses import dataclass
 import re
 
@@ -18,9 +38,26 @@ from gsp.types.color import Color
 class ParsedFormat:
     """Represents the parsed components of a matplotlib-style format string."""
 
-    color: Optional[str] = None
-    marker: Optional[str] = None
-    linestyle: Optional[str] = None
+    color: str | None = None
+    marker: str | None = None
+    linestyle: str | None = None
+
+
+# Matplotlib default color cycle (CSS colors mapped to GSP colors)
+# Reference: https://matplotlib.org/stable/gallery/style_sheets/default_style_changes.html
+_COLOR_CYCLE = [
+    "b",  # C0: blue
+    "g",  # C1: green (actually #1f77b4, #ff7f0e, #2ca02c in matplotlib but we map to GSP colors)
+    "r",  # C2: red
+    "c",  # C3: cyan
+    "m",  # C4: magenta
+    "y",  # C5: yellow
+    "k",  # C6: black
+    "w",  # C7: white
+    "b",  # C8: blue (cycle repeats)
+    "g",  # C9: green
+    "r",  # C10: red
+]
 
 
 class FmtUtils:
@@ -87,8 +124,12 @@ class FmtUtils:
             fmt_color (str): The color component from a matplotlib-style format string (e.g., 'r', 'C0', etc.).
 
         Returns:
-            Optional[str]: The corresponding GSP color format, or None if the input is not recognized.
+            Color: The corresponding GSP color format.
+
+        Raises:
+            ValueError: If the color format is not recognized.
         """
+        # Handle single-letter colors
         if fmt_color == "b":
             return Constants.Color.blue
         elif fmt_color == "g":
@@ -105,6 +146,16 @@ class FmtUtils:
             return Constants.Color.black
         elif fmt_color == "w":
             return Constants.Color.white
+
+        # Handle color cycle (C0, C1, C2, etc.)
+        if fmt_color.startswith("C"):
+            try:
+                cycle_index = int(fmt_color[1:])
+                # Cycle through the color list
+                color_letter = _COLOR_CYCLE[cycle_index % len(_COLOR_CYCLE)]
+                return FmtUtils.str_to_gsp_color(color_letter)
+            except (ValueError, IndexError):
+                pass
 
         raise ValueError(f"Unsupported plot() fmt color format: {fmt_color}")
 
@@ -152,11 +203,16 @@ class FmtUtils:
         """Parse a matplotlib-style format string.
 
         Args:
-            fmt (str): The format string to parse (e.g., 'o', '--', 'C0', 'ro-', etc.). The format string can contain a marker, a line style, and a color, in any order. For example:
-                - 'ro-' means red color
+            fmt (str): The format string to parse (e.g., 'o', '-', 'C0', 'ro-', etc.).
+                The format string can contain a marker, a line style, and a color, in any order.
+                Examples: 'ro-' (red circles with line), 'b^' (blue triangles)
 
         Returns:
-            ParsedFormat(color=..., marker=..., linestyle=...)
+            ParsedFormat: Parsed format components (color, marker, linestyle).
+
+        Raises:
+            ValueError: If format contains duplicate specs, unrecognized characters, or
+                unsupported line styles (only '-' solid line is supported).
         """
         color = None
         marker = None
@@ -172,6 +228,13 @@ class FmtUtils:
                 if fmt.startswith(ls, i):
                     if linestyle is not None:
                         raise ValueError(f"Duplicate linestyle in fmt: {fmt}")
+                    # Validate that only solid line style is supported
+                    if ls != "-":
+                        raise ValueError(
+                            f"Unsupported line style '{ls}' in fmt '{fmt}'. "
+                            f"Only solid line style '-' is supported. "
+                            f"(Note: dashed '--', dash-dot '-.', and dotted ':' line styles are not supported by the datoviz backend)"
+                        )
                     linestyle = ls
                     i += len(ls)
                     matched = True

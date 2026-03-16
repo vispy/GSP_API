@@ -1,6 +1,20 @@
-"""Unified scatter API to create Points, Pixels or Markers visuals.
+"""Unified plotting API for creating line and marker visualizations.
 
-- https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
+Provides a matplotlib-style plot() function that generates line and/or marker visuals
+from x, y coordinate data. Supports matplotlib-style format strings for flexible styling.
+
+Example:
+    from vispy2 import plot
+    import numpy as np
+
+    x = np.linspace(0, 2*np.pi, 100)
+    y = np.sin(x)
+
+    # Plot with blue circles and red line
+    visuals = plot(x, y, fmt='bo-', marker_size=50)
+
+References:
+  - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
 """
 
 # pip imports
@@ -56,10 +70,10 @@ def _generate_markers(
     face_colors = Buffer(position_count, BufferType.rgba8)
     face_colors.set_data(face_colors_gsp * position_count, 0, position_count)
 
-    # No edge (edge width = 0)
+    # Edge styling
     edge_colors = Buffer(position_count, BufferType.rgba8)
-    edge_colors.set_data(Constants.Color.blue * position_count, 0, position_count)
-    edge_widths_numpy = np.array([0.0] * position_count, dtype=np.float32)
+    edge_colors.set_data(marker_edge_color * position_count, 0, position_count)
+    edge_widths_numpy = np.array([marker_edge_width] * position_count, dtype=np.float32)
     edge_widths = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
 
     visual = Markers(marker_shape, positions, sizes, face_colors, edge_colors, edge_widths)
@@ -84,10 +98,6 @@ def _generate_paths(
         line_cap_style = CapStyle.ROUND
     if line_join_style is None:
         line_join_style = JoinStyle.ROUND
-
-    # Sanity check - only support solid line style for now, as datoviz doesnt support dashed paths
-    if parsed_fmt.linestyle is not None and parsed_fmt.linestyle != "-":
-        raise NotImplementedError(f"Only solid line style '-' is supported for now (datoviz doesnt supposed dashed paths), but got '{parsed_fmt.linestyle}'")
 
     path_sizes_numpy = np.array([position_count], dtype=np.uint32)
     path_sizes = Bufferx.from_numpy(path_sizes_numpy, BufferType.uint32)
@@ -122,22 +132,47 @@ def plot(
     line_cap_style: CapStyle | None = None,
     line_join_style: JoinStyle | None = None,
 ) -> list[VisualBase]:
-    """Create a line visual connecting the given x and y coordinates.
+    """Create line and/or marker visualizations from x, y coordinates.
+
+    Supports matplotlib-style format strings to control output style. By default, generates
+    a line connecting the points. If a marker is specified, adds markers to each point.
 
     Args:
-        x (TransBuf | np.ndarray): The x coordinates of the points.
-        y (TransBuf | np.ndarray | None): The y coordinates of the points. If None, y will be set to x.
-        fmt (str | None): The format string for the plot (e.g., 'o' for markers, '-' for lines). '[marker][line][color]'
-        marker_edge_color (bytearray | None): The edge color for markers, as an RGBA bytearray. If None, it will be determined by the fmt string or default to blue.
-        marker_edge_width (float | None): The edge width for markers. If None, it will be determined by the fmt string or default to 1.0.
-        marker_face_color (bytearray | None): The face color for markers, as an RGBA bytearray. If None, it will be determined by the fmt string or default to red.
-        marker_size (float | None): The size for markers. If None, it will be determined by the fmt string or default to 10.0.
-        line_width (float | None): The width of the line. If None, it will be determined by the fmt string or default to 2.0.
-        line_cap_style (CapStyle | None): The cap style for the line. If None, it will be determined by the fmt string or default to CapStyle.ROUND.
-        line_join_style (JoinStyle | None): The join style for the line. If None, it will be determined by the fmt string or default to JoinStyle.ROUND.
+        x (TransBuf | np.ndarray): The x coordinates of the points. Can be a Buffer or numpy array.
+        y (TransBuf | np.ndarray | None): The y coordinates of the points. If None, x values
+            are treated as y, and x becomes [0, 1, 2, ..., n-1].
+        fmt (str | None): Matplotlib-style format string controlling visualization style.
+            Format: [marker][line style][color]
+            Examples:
+                - 'o': circle markers only
+                - '-': line only (default if no fmt specified)
+                - 'ro-': red color, circle markers with line
+                - 'b^': blue triangles only
+                - 'C0-': first color cycle color with line
+            Supported markers: o, s, ^, v, <, >, *, X, D, |, _
+            Supported colors: b, g, r, c, m, y, k, w, C0-C10 (color cycle)
+            Supported line styles: - (solid line only)
+        marker_edge_color (Color | None): Edge color for markers. Defaults to blue.
+        marker_edge_width (float | None): Edge width for markers. Defaults to 0.0 (no edge).
+        marker_face_color (Color | None): Face color for markers. Defaults to red.
+        marker_size (float | None): Size of markers. Defaults to 100.0.
+        line_width (float | None): Width of connecting line. Defaults to 2.0.
+        line_cap_style (CapStyle | None): End style for line segments. Defaults to ROUND.
+        line_join_style (JoinStyle | None): Join style for line segments. Defaults to ROUND.
 
     Returns:
-        visuals (list[VisualBase]): A list of VisualBase objects representing the plot.
+        list[VisualBase]: Visual objects (Markers and/or Paths) ready to render.
+            Typically contains one Markers and/or one Paths visual.
+
+    Raises:
+        ValueError: If format string contains invalid characters or unsupported line styles.
+
+    Examples:
+        >>> import numpy as np
+        >>> from vispy2 import plot
+        >>> x = np.linspace(0, 2*np.pi, 50)
+        >>> y = np.sin(x)
+        >>> visuals = plot(x, y, fmt='ro-')  # Red circles with line
     """
     returned_visuals: list[VisualBase] = []
 
