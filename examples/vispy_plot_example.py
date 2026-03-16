@@ -1,7 +1,9 @@
-"""Scatter example demonstrating the use of the scatter function to create different types of visuals.
+"""Plot example with different marker and line styles.
 
-- Left: Pixels visual with random positions and red color.
-- Right: Markers visual with random positions, varying sizes and colors.
+Creates a 2x2 grid of sine wave plots using matplotlib-style format strings
+to demonstrate color and marker customization options.
+
+Format strings: [marker_style][color] (e.g., 'bo' = blue circles, 'rs' = red squares)
 """
 
 # stdlib imports
@@ -20,12 +22,20 @@ import vispy2 as Vispy2
 
 
 def main():
-    """Main function for the scatter example."""
-    # fix random seed for reproducibility
+    """Main function."""
+    # Configuration
+    CANVAS_WIDTH = 400
+    CANVAS_HEIGHT = 400
+    CANVAS_DPI = 72.0
+    POINT_COUNT = 40
+    X_AMPLITUDE = 0.9  # Range: [-0.9, 0.9]
+    Y_AMPLITUDE = 0.9
+
+    # Fix random seed for reproducibility
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(400, 400, 72.0)
+    canvas = Canvas(CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_DPI)
 
     # viewport size
     half_width = int(canvas.get_width() / 2)
@@ -38,36 +48,41 @@ def main():
     viewport_4 = Viewport(half_width, half_height, half_width, half_height)
 
     # =============================================================================
-    # Add random points
-    # - various ways to create Buffers
+    # Create sine wave plots with different styles
     # =============================================================================
 
-    def createVisualPoints(fmt: str) -> list[VisualBase]:
-        point_count = 40
+    def create_sine_wave_visual(fmt: str) -> list[VisualBase]:
+        """Create a sine wave visualization with matplotlib-style format string.
 
-        # Create Buffers
-        x_numpy = np.linspace(-1 * 0.9, 1 * 0.9, point_count, dtype=np.float32).reshape(point_count, 1)
+        Args:
+            fmt: Format string (e.g., 'bo' for blue circles, 'r-' for red line)
+                 Format: [marker_style][color]
+                 - Marker: 'o' (circle), 's' (square), '^' (triangle), 'X' (cross), 'D' (diamond)
+                 - Color: 'r' (red), 'g' (green), 'b' (blue), 'c' (cyan), etc.
+                 - Line style: '-' (solid line). Omit for markers only.
+
+        Returns:
+            List of visual objects to render
+        """
+        # Generate x coordinates: evenly spaced points from -0.9 to 0.9
+        x_numpy = np.linspace(-X_AMPLITUDE, X_AMPLITUDE, POINT_COUNT, dtype=np.float32).reshape(POINT_COUNT, 1)
         x_buffer = Bufferx.from_numpy(x_numpy, BufferType.float32)
 
-        y_numpy = np.sin(x_numpy * 2 * np.pi).astype(np.float32) * 0.9
+        # Generate y coordinates: one complete sine wave cycle (2π radians)
+        # sin(x * 2π) creates one full oscillation across the x range
+        y_numpy = (np.sin(x_numpy * 2 * np.pi) * Y_AMPLITUDE).astype(np.float32)
         y_buffer = Bufferx.from_numpy(y_numpy, BufferType.float32)
 
-        # Create the Points visual and add it to the viewport
-        visuals = Vispy2.plot(
-            x_buffer,
-            y_buffer,
-            fmt=fmt,
-        )
+        # Create visualization using the plot() function with matplotlib-style formatting
+        visuals = Vispy2.plot(x_buffer, y_buffer, fmt=fmt)
         return visuals
 
-    visuals_1 = createVisualPoints("bo")
-    # visuals_1 = []
-    visuals_2 = createVisualPoints("rs")
-    # visuals_2 = []
-    visuals_3 = createVisualPoints("gX")
-    # visuals_3 = []
-    visuals_4 = createVisualPoints("cD")
-    # visuals_4 = []
+    # Create sine wave plots with different matplotlib-style format strings
+    # Format: [marker_style][color]
+    visuals_1 = create_sine_wave_visual("bo")  # 'b'=blue, 'o'=circle markers
+    visuals_2 = create_sine_wave_visual("rs")  # 'r'=red, 's'=square markers
+    visuals_3 = create_sine_wave_visual("gX")  # 'g'=green, 'X'=cross markers
+    visuals_4 = create_sine_wave_visual("cD")  # 'c'=cyan, 'D'=diamond markers
 
     render_items: list[RenderItem] = []
     for visuals, viewport in zip([visuals_1, visuals_2, visuals_3, visuals_4], [viewport_1, viewport_2, viewport_3, viewport_4]):
