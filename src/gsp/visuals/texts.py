@@ -1,5 +1,7 @@
 """Texts visual module."""
 
+from gsp.types.text_align import TextAlign
+
 from ..types.visual_base import VisualBase
 from ..types.transbuf import TransBuf
 from ..types.buffer import Buffer
@@ -8,7 +10,7 @@ from ..types.buffer import Buffer
 class Texts(VisualBase):
     """Texts visual."""
 
-    __slots__ = ["_positions", "_strings", "_colors", "_font_sizes", "_anchors", "_angles", "_font_name"]
+    __slots__ = ["_positions", "_strings", "_colors", "_font_sizes", "_textAligns", "_angles", "_font_name"]
 
     def __init__(
         self,
@@ -16,7 +18,7 @@ class Texts(VisualBase):
         strings: list[str],
         colors: TransBuf,
         font_sizes: TransBuf,
-        anchors: TransBuf,
+        textAligns: list[TextAlign],
         angles: TransBuf,
         font_name: str,
     ) -> None:
@@ -27,8 +29,8 @@ class Texts(VisualBase):
             strings (list[str]): List of text strings.
             colors (TransBuf): Colors of the texts.
             font_sizes (TransBuf): Font sizes of the texts.
-            anchors (TransBuf): Anchor positions of the texts.
-            angles (TransBuf): Rotation angles of the texts.
+            textAligns (list[TextAlign]): Anchor positions of the texts.
+            angles (TransBuf): Rotation angles of the texts (in degrees).
             font_name (str): Font name for the texts.
         """
         super().__init__()
@@ -37,7 +39,7 @@ class Texts(VisualBase):
         self._strings: list[str] = strings
         self._colors: TransBuf = colors
         self._font_sizes: TransBuf = font_sizes
-        self._anchors: TransBuf = anchors
+        self._textAligns: list[TextAlign] = textAligns
         self._angles: TransBuf = angles
         self._font_name: str = font_name
         self.check_attributes()
@@ -98,28 +100,28 @@ class Texts(VisualBase):
         self._font_sizes = font_sizes
         self.check_attributes()
 
-    def get_anchors(self) -> TransBuf:
-        """Get anchor positions of the texts."""
-        return self._anchors
+    def get_textAligns(self) -> list[TextAlign]:
+        """Get text alignment of the texts."""
+        return self._textAligns
 
-    def set_anchors(self, anchors: TransBuf) -> None:
-        """Set anchor positions of the texts.
+    def set_textAligns(self, textAligns: list[TextAlign]) -> None:
+        """Set text alignment of the texts.
 
         Args:
-            anchors: New anchor positions for the texts.
+            textAligns: New text alignment for the texts.
         """
-        self._anchors = anchors
+        self._textAligns = textAligns
         self.check_attributes()
 
     def get_angles(self) -> TransBuf:
-        """Get rotation angles of the texts."""
+        """Get rotation angles (in degrees) of the texts."""
         return self._angles
 
     def set_angles(self, angles: TransBuf) -> None:
-        """Set rotation angles of the texts.
+        """Set rotation angles of the texts (in degrees).
 
         Args:
-            angles: New rotation angles for the texts.
+            angles: New rotation angles for the texts (in degrees).
         """
         self._angles = angles
         self.check_attributes()
@@ -143,7 +145,7 @@ class Texts(VisualBase):
         strings: list[str] | None = None,
         colors: TransBuf | None = None,
         font_sizes: TransBuf | None = None,
-        anchors: TransBuf | None = None,
+        textAligns: list[TextAlign] | None = None,
         angles: TransBuf | None = None,
         font_name: str | None = None,
     ) -> None:
@@ -156,8 +158,8 @@ class Texts(VisualBase):
             self._colors = colors
         if font_sizes is not None:
             self._font_sizes = font_sizes
-        if anchors is not None:
-            self._anchors = anchors
+        if textAligns is not None:
+            self._textAligns = textAligns
         if angles is not None:
             self._angles = angles
         if font_name is not None:
@@ -170,11 +172,11 @@ class Texts(VisualBase):
 
     def check_attributes(self) -> None:
         """Check that the attributes are valid and consistent."""
-        self.sanity_check_attributes(self._positions, self._strings, self._colors, self._font_sizes, self._anchors, self._angles, self._font_name)
+        self.sanity_check_attributes(self._positions, self._strings, self._colors, self._font_sizes, self._textAligns, self._angles, self._font_name)
 
     @staticmethod
     def sanity_check_attributes_buffer(
-        positions: Buffer, strings: list[str], colors: Buffer, font_sizes: Buffer, anchors: Buffer, angles: Buffer, font_name: str
+        positions: Buffer, strings: list[str], colors: Buffer, font_sizes: Buffer, textAligns: list[TextAlign], angles: Buffer, font_name: str
     ) -> None:
         """Same as .sanity_check_attributes() but accept only Buffers.
 
@@ -185,11 +187,11 @@ class Texts(VisualBase):
         assert isinstance(strings, list), "Texts must be a list of strings"
         assert isinstance(colors, Buffer), "Colors must be a Buffer"
         assert isinstance(font_sizes, Buffer), "Font sizes must be a Buffer"
-        assert isinstance(anchors, Buffer), "Anchors must be a Buffer"
+        assert isinstance(textAligns, list), "TextAligns must be a list of TextAlign"
         assert isinstance(angles, Buffer), "Angles must be a Buffer"
         assert isinstance(font_name, str), "Font name must be a string"
 
-        # check positions, colors, font_sizes, anchors, angles have the same length as strings
+        # check positions, colors, font_sizes, textAligns, angles have the same length as strings
         assert positions.get_count() == len(
             strings
         ), f"Positions length must match number of strings. Got {positions.get_count()} positions vs {len(strings)} strings"
@@ -197,7 +199,7 @@ class Texts(VisualBase):
         assert font_sizes.get_count() == len(
             strings
         ), f"Font sizes length must match number of strings. Got {font_sizes.get_count()} font sizes vs {len(strings)} strings"
-        assert anchors.get_count() == len(strings), f"Anchors length must match number of strings. Got {anchors.get_count()} anchors vs {len(strings)} strings"
+        assert len(textAligns) == len(strings), f"TextAligns length must match number of strings. Got {len(textAligns)} textAligns vs {len(strings)} strings"
         assert angles.get_count() == len(strings), f"Angles length must match number of strings. Got {angles.get_count()} angles vs {len(strings)} strings"
 
         # check font_name is not empty and is a string
@@ -214,7 +216,7 @@ class Texts(VisualBase):
         strings: list[str],
         colors: TransBuf,
         font_sizes: TransBuf,
-        anchors: TransBuf,
+        textAligns: list[TextAlign],
         angles: TransBuf,
         font_name: str,
     ) -> None:
@@ -225,7 +227,7 @@ class Texts(VisualBase):
             strings: List of text strings.
             colors: Colors of the texts.
             font_sizes: Font sizes of the texts.
-            anchors: Anchor positions of the texts.
+            textAligns: Text alignment of the texts.
             angles: Rotation angles of the texts.
             font_name: Font name for the texts.
         """

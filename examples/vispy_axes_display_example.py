@@ -34,9 +34,9 @@ def main():
     # =============================================================================
 
     # Create a inner viewport
-    viewport_margin_h = int(canvas.get_width() * 0.4)
+    viewport_margin_h = int(canvas.get_width() * 0.3)
     viewport_margin_v = int(canvas.get_height() * 0.3)
-    viewport_x = int(viewport_margin_h + 0.3)
+    viewport_x = viewport_margin_h
     viewport_y = viewport_margin_v
     viewport_width = canvas.get_width() - 2 * viewport_margin_h
     viewport_height = canvas.get_height() - 2 * viewport_margin_v

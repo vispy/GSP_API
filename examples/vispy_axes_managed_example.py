@@ -33,6 +33,11 @@ def main():
     # Create an AxesManaged instance for the canvas
     axes_managed = AxesManaged(renderer_base, 40, 40, 320, 320)
 
+    # add title/xlabel/ylabel
+    axes_managed.set_title("Sinusoidal Distribution")
+    axes_managed.set_xlabel("x")
+    axes_managed.set_ylabel("sin(x*py*3)")
+
     # =============================================================================
     #
     # =============================================================================

@@ -8,6 +8,7 @@ from .group import Groups
 from .image_interpolation import ImageInterpolation
 from .join_style import JoinStyle
 from .marker_shape import MarkerShape
+from .text_align import TextAlign
 from .transbuf import TransBuf
 from .visual_base import VisualBase
 

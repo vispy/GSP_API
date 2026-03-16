@@ -15,7 +15,7 @@ from gsp.types.visual_base import VisualBase
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
 from gsp.visuals import Texts
-from gsp.types import Buffer, BufferType
+from gsp.types import Buffer, BufferType, TextAlign
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp.visuals import Segments
@@ -80,14 +80,34 @@ def main():
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
         if vertical_alignment == "top":
-            anchors_numpy = np.array([[+1.0, -1.0], [+1.0, -1.0], [0.0, -1.0], [0.0, -1.0], [-1.0, -1.0], [-1.0, -1.0]], dtype=np.float32)
+            textAligns = [
+                TextAlign.TOP_LEFT,
+                TextAlign.TOP_CENTER,
+                TextAlign.TOP_RIGHT,
+                TextAlign.TOP_LEFT,
+                TextAlign.TOP_CENTER,
+                TextAlign.TOP_RIGHT,
+            ]
         elif vertical_alignment == "center":
-            anchors_numpy = np.array([[+1.0, +0.0], [+1.0, +0.0], [0.0, +0.0], [0.0, +0.0], [-1.0, +0.0], [-1.0, +0.0]], dtype=np.float32)
+            textAligns = [
+                TextAlign.CENTER_LEFT,
+                TextAlign.CENTER_CENTER,
+                TextAlign.CENTER_RIGHT,
+                TextAlign.CENTER_LEFT,
+                TextAlign.CENTER_CENTER,
+                TextAlign.CENTER_RIGHT,
+            ]
         elif vertical_alignment == "bottom":
-            anchors_numpy = np.array([[+1.0, +1.0], [+1.0, +1.0], [0.0, +1.0], [0.0, +1.0], [-1.0, +1.0], [-1.0, +1.0]], dtype=np.float32)
+            textAligns = [
+                TextAlign.BOTTOM_LEFT,
+                TextAlign.BOTTOM_CENTER,
+                TextAlign.BOTTOM_RIGHT,
+                TextAlign.BOTTOM_LEFT,
+                TextAlign.BOTTOM_CENTER,
+                TextAlign.BOTTOM_RIGHT,
+            ]
         else:
             raise ValueError(f"invalid vertical_alignment: {vertical_alignment}")
-        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
 
         angle_1 = -np.pi / 6
         angle_2 = +np.pi / 6
@@ -105,7 +125,7 @@ def main():
         font_name = "Arial"
 
         # Create the Texts visual
-        texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+        texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, textAligns, angles_buffer, font_name)
 
         return texts
 

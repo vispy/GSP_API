@@ -68,13 +68,12 @@ class RendererTexts:
         # Convert all attributes to buffer
         colors_buffer = TransBufUtils.to_buffer(texts.get_colors())
         font_sizes_buffer = TransBufUtils.to_buffer(texts.get_font_sizes())
-        anchors_buffer = TransBufUtils.to_buffer(texts.get_anchors())
+        textAligns = texts.get_textAligns()
         angles_buffer = TransBufUtils.to_buffer(texts.get_angles())
 
         # Convert buffers to numpy arrays
         font_sizes_numpy = Bufferx.to_numpy(font_sizes_buffer).flatten()
         colors_numpy = Bufferx.to_numpy(colors_buffer) / 255.0  # normalize to [0, 1] range
-        anchors_numpy = Bufferx.to_numpy(anchors_buffer)
         angles_numpy = Bufferx.to_numpy(angles_buffer).flatten()
 
         # =============================================================================
@@ -86,7 +85,7 @@ class RendererTexts:
             texts.get_strings(),
             colors_buffer,
             font_sizes_buffer,
-            anchors_buffer,
+            textAligns,
             angles_buffer,
             texts.get_font_name(),
         )
@@ -132,12 +131,20 @@ class RendererTexts:
             mpl_text.set_x(vertices_2d[text_index, 0])
             mpl_text.set_y(vertices_2d[text_index, 1])
             mpl_text.set_text(texts.get_strings()[text_index])
-            mpl_text.set_rotation(angles_numpy[text_index] / np.pi * 180.0)  # convert rad to deg
+            mpl_text.set_rotation(angles_numpy[text_index])
             # print(f"angles_numpy[{text_index}]: {angles_numpy[text_index]}")
 
-            ha_label = "center" if anchors_numpy[text_index, 0] == 0.0 else "right" if anchors_numpy[text_index, 0] == 1.0 else "left"
+            # ha_label = "center" if anchors_numpy[text_index, 0] == 0.0 else "right" if anchors_numpy[text_index, 0] == 1.0 else "left"
+            # mpl_text.set_horizontalalignment(ha_label)
+            # va_label = "center" if anchors_numpy[text_index, 1] == 0.0 else "top" if anchors_numpy[text_index, 1] == 1.0 else "bottom"
+            # mpl_text.set_verticalalignment(va_label)
+
+            textAlign = textAligns[text_index]
+            vertical_index = textAlign.value // 10
+            horizontal_index = textAlign.value % 10
+            ha_label = "center" if horizontal_index == 1 else "right" if horizontal_index == 2 else "left"
+            va_label = "center" if vertical_index == 1 else "top" if vertical_index == 2 else "bottom"
             mpl_text.set_horizontalalignment(ha_label)
-            va_label = "center" if anchors_numpy[text_index, 1] == 0.0 else "top" if anchors_numpy[text_index, 1] == 1.0 else "bottom"
             mpl_text.set_verticalalignment(va_label)
 
             mpl_text.set_fontfamily(texts.get_font_name())

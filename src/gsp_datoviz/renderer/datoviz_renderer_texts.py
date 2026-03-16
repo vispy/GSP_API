@@ -13,7 +13,7 @@ from gsp.core.camera import Camera
 from gsp.core.viewport import Viewport
 from gsp.utils.math_utils import MathUtils
 from gsp_matplotlib.extra.bufferx import Bufferx
-from gsp.types.transbuf import TransBuf
+from gsp.types import TransBuf, TextAlign
 from gsp.visuals.texts import Texts
 from gsp.utils.transbuf_utils import TransBufUtils
 from .datoviz_renderer import DatovizRenderer
@@ -70,13 +70,12 @@ class DatovizRendererTexts:
         # get attributes from TransBuf to buffer
         colors_buffer = TransBufUtils.to_buffer(texts.get_colors())
         font_sizes_buffer = TransBufUtils.to_buffer(texts.get_font_sizes())
-        anchors_buffer = TransBufUtils.to_buffer(texts.get_anchors())
+        textAligns = texts.get_textAligns()
         angles_buffer = TransBufUtils.to_buffer(texts.get_angles())
 
         # convert buffers to numpy arrays
         colors_numpy = Bufferx.to_numpy(colors_buffer)
         font_sizes_numpy = Bufferx.to_numpy(font_sizes_buffer)
-        anchors_numpy = Bufferx.to_numpy(anchors_buffer)
         angles_numpy = Bufferx.to_numpy(angles_buffer)
 
         # =============================================================================
@@ -88,7 +87,7 @@ class DatovizRendererTexts:
             texts.get_strings(),
             colors_buffer,
             font_sizes_buffer,
-            anchors_buffer,
+            textAligns,
             angles_buffer,
             texts.get_font_name(),
         )
@@ -140,9 +139,40 @@ class DatovizRendererTexts:
         for text_index in range(text_count):
             for glyph_index in range(len(text_strings[text_index])):
                 global_glyph_index = sum(len(s) for s in text_strings[:text_index]) + glyph_index
-                glyphs_angles[global_glyph_index] = angles_numpy[text_index, 0] / 180 * np.pi  # convert to radians
+                glyphs_angles[global_glyph_index] = angles_numpy[text_index, 0] / 180.0 * np.pi  # convert deg to rad
+
+        glyphs_anchors = np.zeros((glyph_count, 2), dtype=np.float32)
+        for text_index in range(text_count):
+            for glyph_index in range(len(text_strings[text_index])):
+                global_glyph_index = sum(len(s) for s in text_strings[:text_index]) + glyph_index
+                if textAligns[text_index] == TextAlign.TOP_LEFT:
+                    glyphs_anchors[global_glyph_index, :] = np.array([-1.0, 1.0], dtype=np.float32)
+                elif textAligns[text_index] == TextAlign.TOP_CENTER:
+                    glyphs_anchors[global_glyph_index, :] = np.array([0.0, 1.0], dtype=np.float32)
+                elif textAligns[text_index] == TextAlign.TOP_RIGHT:
+                    glyphs_anchors[global_glyph_index, :] = np.array([1.0, 1.0], dtype=np.float32)
+                elif textAligns[text_index] == TextAlign.CENTER_LEFT:
+                    glyphs_anchors[global_glyph_index, :] = np.array([-1.0, 0.0], dtype=np.float32)
+                elif textAligns[text_index] == TextAlign.CENTER_CENTER:
+                    glyphs_anchors[global_glyph_index, :] = np.array([0.0, 0.0], dtype=np.float32)
+                elif textAligns[text_index] == TextAlign.CENTER_RIGHT:
+                    glyphs_anchors[global_glyph_index, :] = np.array([1.0, 0.0], dtype=np.float32)
+                elif textAligns[text_index] == TextAlign.BOTTOM_LEFT:
+                    glyphs_anchors[global_glyph_index, :] = np.array([-1.0, -1.0], dtype=np.float32)
+                elif textAligns[text_index] == TextAlign.BOTTOM_CENTER:
+                    glyphs_anchors[global_glyph_index, :] = np.array([0.0, -1.0], dtype=np.float32)
+                elif textAligns[text_index] == TextAlign.BOTTOM_RIGHT:
+                    glyphs_anchors[global_glyph_index, :] = np.array([1.0, -1.0], dtype=np.float32)
+                else:
+                    raise ValueError(f"Unsupported TextAlign value: {textAligns[text_index]}")
 
         dvz_glyphs.set_strings(text_strings, string_pos=vertices_3d)
         dvz_glyphs.set_color(glyph_colors)
         dvz_glyphs.set_angle(glyphs_angles)
+        # print(f"============================ Debug Texts Attributes ===========================")
+        # print(f"angles_numpy: {angles_numpy}")
+        # print(f"textAligns: {textAligns}")
+        # print(f"glyphs_angles: {glyphs_angles}")
+        # print(f"glyphs_anchors: {glyphs_anchors}")
         dvz_glyphs.set_scale(glyph_scales)
+        dvz_glyphs.set_anchor(glyphs_anchors)

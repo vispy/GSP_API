@@ -10,6 +10,7 @@ import numpy as np
 # local imports
 from gsp.core import Canvas, Viewport, Event
 from gsp.core.camera import Camera
+from gsp.types.text_align import TextAlign
 from gsp.visuals import Segments, Texts
 from gsp.types import CapStyle
 from gsp.types import BufferType
@@ -542,25 +543,24 @@ class AxesDisplay:
         positions_numpy = np.array(positions_array, dtype=np.float32)
         positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
 
-        labels_count = len(tick_labels)
+        label_count = len(tick_labels)
 
-        colors_buffer = Buffer(labels_count, BufferType.rgba8)
-        colors_buffer.set_data(Constants.Color.black * labels_count, 0, labels_count)
+        colors_buffer = Buffer(label_count, BufferType.rgba8)
+        colors_buffer.set_data(Constants.Color.black * label_count, 0, label_count)
 
-        font_size_numpy = np.array([UnitUtils.pixel_to_point(12, canvas.get_dpi())] * labels_count, dtype=np.float32)
+        font_size_numpy = np.array([UnitUtils.pixel_to_point(12, canvas.get_dpi())] * label_count, dtype=np.float32)
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
         # Create a anchor_numpy for each string with a bottom-left anchor
-        anchors_numpy = np.array([[0, 1] for _ in range(labels_count)], dtype=np.float32)
-        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+        textAligns = [TextAlign.CENTER_CENTER] * label_count
 
-        angles_numpy = np.array([[0] for _ in range(labels_count)], dtype=np.float32)
+        angles_numpy = np.array([[0] for _ in range(label_count)], dtype=np.float32)
         angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
 
         font_name = "Arial"
 
         # Create the Texts visual
-        texts = Texts(positions_buffer, tick_labels, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+        texts = Texts(positions_buffer, tick_labels, colors_buffer, font_size_buffer, textAligns, angles_buffer, font_name)
 
         return texts
 
@@ -596,8 +596,7 @@ class AxesDisplay:
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
         # Create a anchor_numpy for each string with a bottom-left anchor
-        anchors_numpy = np.array([[1, 0] for _ in range(label_count)], dtype=np.float32)
-        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+        textAligns = [TextAlign.CENTER_CENTER] * label_count
 
         angles_numpy = np.array([[0] for _ in range(label_count)], dtype=np.float32)
         angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
@@ -605,7 +604,7 @@ class AxesDisplay:
         font_name = "Arial"
 
         # Create the Texts visual
-        texts = Texts(positions_buffer, tick_labels, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+        texts = Texts(positions_buffer, tick_labels, colors_buffer, font_size_buffer, textAligns, angles_buffer, font_name)
 
         return texts
 
@@ -645,13 +644,12 @@ class AxesDisplay:
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
         # centered horizontally, top of text at position (text hangs down into the gap)
-        anchors_numpy = np.array([[0.5, 0.0]], dtype=np.float32)
-        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+        textAligns = [TextAlign.TOP_CENTER]
 
         angles_numpy = np.array([[0.0]], dtype=np.float32)
         angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
 
-        return Texts(positions_buffer, [text], colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, "Arial")
+        return Texts(positions_buffer, [text], colors_buffer, font_size_buffer, textAligns, angles_buffer, "Arial")
 
     @staticmethod
     def _generate_visual_xlabel(
@@ -676,7 +674,7 @@ class AxesDisplay:
         bottom_y_pixel = inner_viewport.get_y()
         _, bottom_y_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, bottom_y_pixel)
         bottom_y_ndc = bottom_y_delta_ndc - 1.0
-        _, offset_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.8)
+        _, offset_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.6)
         xlabel_y_ndc = bottom_y_ndc - offset_ndc
 
         positions_numpy = np.array([[center_x_ndc, xlabel_y_ndc, 0.0]], dtype=np.float32)
@@ -689,13 +687,12 @@ class AxesDisplay:
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
         # centered horizontally, same anchor convention as horizontal tick labels
-        anchors_numpy = np.array([[0.5, 1.0]], dtype=np.float32)
-        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+        textAligns = [TextAlign.CENTER_CENTER]
 
         angles_numpy = np.array([[0.0]], dtype=np.float32)
         angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
 
-        return Texts(positions_buffer, [text], colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, "Arial")
+        return Texts(positions_buffer, [text], colors_buffer, font_size_buffer, textAligns, angles_buffer, "Arial")
 
     @staticmethod
     def _generate_visual_ylabel(
@@ -715,7 +712,7 @@ class AxesDisplay:
         left_x_pixel = inner_viewport.get_x()
         left_x_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(left_x_pixel, 0.0)
         left_x_ndc = left_x_delta_ndc - 1.0
-        offset_ndc, _ = outter_viewport_unit.delta_cm_to_ndc(1.2, 0.0)
+        offset_ndc, _ = outter_viewport_unit.delta_cm_to_ndc(0.6, 0.0)
         ylabel_x_ndc = left_x_ndc - offset_ndc
 
         # y: vertical center of the inner viewport in outer NDC
@@ -733,11 +730,10 @@ class AxesDisplay:
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
         # vertically centered at position, same anchor convention as vertical tick labels
-        anchors_numpy = np.array([[0.0, 0.5]], dtype=np.float32)
-        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+        textAligns = [TextAlign.CENTER_CENTER]
 
         # 90° counter-clockwise so the label reads bottom-to-top along the y-axis
         angles_numpy = np.array([[90.0]], dtype=np.float32)
         angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
 
-        return Texts(positions_buffer, [text], colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, "Arial")
+        return Texts(positions_buffer, [text], colors_buffer, font_size_buffer, textAligns, angles_buffer, "Arial")
