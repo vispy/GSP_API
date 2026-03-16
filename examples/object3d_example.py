@@ -16,16 +16,17 @@ from gsp.types.visual_base import VisualBase
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp_extra.object3d import Object3D
+from gsp.constants import Constants
 import gsp_extra.mpl3d.glm as glm
 from gsp.utils.group_utils import GroupUtils
 
 
 def main():
     # Create a canvas
-    canvas = Canvas(100, 100, 72.0)
+    canvas = Canvas(100, 100, 72.0, Constants.Color.white)
 
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
 
     # =============================================================================
     # Add random points

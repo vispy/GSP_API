@@ -22,6 +22,8 @@ from gsp.utils.unit_utils import UnitUtils
 from gsp_extra.misc.render_item import RenderItem
 from vispy2.axes.axes_display import AxesDisplay
 from vispy2.axes.axes_panzoom import AxesPanZoom
+from gsp.constants import Constants
+
 
 # =============================================================================
 # Register this renderer into gsp renderer_registery
@@ -54,7 +56,7 @@ class AxesManaged:
         self._renderer_base = renderer_base
 
         # Create a inner viewport for the axes display
-        self._inner_viewport = Viewport(viewport_x, viewport_y, viewport_width, viewport_height)
+        self._inner_viewport = Viewport(viewport_x, viewport_y, viewport_width, viewport_height, Constants.Color.white)
 
         # Create viewport events based on the renderer base and inner viewport
         self._viewport_events = RendererRegistry.create_viewport_events(renderer_base, self._inner_viewport)
@@ -181,7 +183,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(width=400, height=400, dpi=127)
+    canvas = Canvas(width=400, height=400, dpi=127, background_color=Constants.Color.white)
 
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)

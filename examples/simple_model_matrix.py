@@ -21,10 +21,10 @@ from common.example_helper import ExampleHelper
 def main():
     """Main function to run the example."""
     # Create a canvas
-    canvas = Canvas(100, 100, 72.0)
+    canvas = Canvas(100, 100, 72.0, Constants.Color.white)
 
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
 
     # =============================================================================
     # Add random points

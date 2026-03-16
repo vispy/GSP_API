@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication
 from common.example_helper import ExampleHelper
 from gsp.core import Canvas, Viewport
 from gsp.core.camera import Camera
+from gsp.types.text_align import TextAlign
 from gsp.visuals import Segments, Points, Texts
 from gsp.types import CapStyle
 from gsp_extra.bufferx import Bufferx
@@ -118,7 +119,7 @@ def main():
         canvas_height_in = UnitUtils.cm_to_in(canvas_height_cm)
         canvas_width_px = round(canvas_width_in * screen_ppi)
         canvas_height_px = round(canvas_height_in * screen_ppi)
-        canvas = Canvas(width=canvas_width_px, height=canvas_height_px, dpi=screen_ppi)
+        canvas = Canvas(width=canvas_width_px, height=canvas_height_px, dpi=screen_ppi, background_color=Constants.Color.white)
         return canvas
 
     # Create a canvas
@@ -127,7 +128,7 @@ def main():
     canvas = create_canvas(canvas_width_cm, canvas_height_cm)
 
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
 
     viewport_unit = ViewportUnitConverter(canvas, viewport)
     print("Canvas width (px):", viewport_unit._get_canvas_width_px())
@@ -256,9 +257,7 @@ def main():
         font_size_numpy = np.array([UnitUtils.pixel_to_point(12, canvas.get_dpi())] * string_count, dtype=np.float32)
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
-        # Create a anchor_numpy for each string with a bottom-left anchor
-        anchors_numpy = np.array([[0, 1] for _ in range(string_count)], dtype=np.float32)
-        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+        textAligns = [TextAlign.TOP_CENTER for _ in range(string_count)]
 
         angles_numpy = np.array([[0] for _ in range(string_count)], dtype=np.float32)
         angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
@@ -266,7 +265,7 @@ def main():
         font_name = "Arial"
 
         # Create the Texts visual
-        texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+        texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, textAligns, angles_buffer, font_name)
 
         return texts
 
@@ -300,9 +299,7 @@ def main():
         font_size_numpy = np.array([UnitUtils.pixel_to_point(12, canvas.get_dpi())] * string_count, dtype=np.float32)
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
-        # Create a anchor_numpy for each string with a bottom-left anchor
-        anchors_numpy = np.array([[1, 0] for _ in range(string_count)], dtype=np.float32)
-        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+        textAligns = [TextAlign.TOP_CENTER for _ in range(string_count)]
 
         angles_numpy = np.array([[0] for _ in range(string_count)], dtype=np.float32)
         angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
@@ -310,7 +307,7 @@ def main():
         font_name = "Arial"
 
         # Create the Texts visual
-        texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+        texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, textAligns, angles_buffer, font_name)
 
         return texts
 

@@ -224,7 +224,7 @@ class PydanticSerializer(SerializerBase):
                         texts=texts.get_strings(),
                         colors=PydanticSerializer._transbuf_to_pydantic(texts.get_colors()),
                         font_sizes=PydanticSerializer._transbuf_to_pydantic(texts.get_font_sizes()),
-                        anchors=PydanticSerializer._transbuf_to_pydantic(texts.get_anchors()),
+                        textAligns=typing.cast(list[int], texts.get_textAligns()),
                         angles=PydanticSerializer._transbuf_to_pydantic(texts.get_angles()),
                         font_name=texts.get_font_name(),
                     ),

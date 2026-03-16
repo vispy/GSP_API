@@ -7,9 +7,10 @@ import numpy as np
 import gsp
 import gsp_matplotlib
 import vispy2
+from gsp.constants import Constants
 
 # Create a canvas
-canvas = gsp.core.Canvas(width=400, height=400, dpi=127)
+canvas = gsp.core.Canvas(width=400, height=400, dpi=127, background_color=Constants.Color.white)
 
 # Create a renderer
 renderer_base = gsp_matplotlib.renderer.MatplotlibRenderer(canvas)

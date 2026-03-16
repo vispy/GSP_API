@@ -28,7 +28,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(width=400, height=400, dpi=127)
+    canvas = Canvas(width=400, height=400, dpi=127, background_color=Constants.Color.white)
 
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)

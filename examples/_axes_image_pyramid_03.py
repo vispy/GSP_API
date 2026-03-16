@@ -27,6 +27,7 @@ from gsp.core.camera import Camera
 from gsp.core.texture import Texture
 from gsp.types.image_interpolation import ImageInterpolation
 from gsp.visuals import Image
+from gsp.constants import Constants
 from gsp_extra.bufferx import Bufferx
 from gsp.types import BufferType, VisualBase
 from gsp.utils.transbuf_utils import TransBufUtils
@@ -382,7 +383,7 @@ def main():
     # =============================================================================
 
     # Create a canvas
-    canvas = Canvas(width=600, height=600, dpi=127)
+    canvas = Canvas(width=600, height=600, dpi=127, background_color=Constants.Color.white)
     # Create renderer
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
@@ -394,7 +395,13 @@ def main():
     # =============================================================================
 
     # Create a inner viewport for the axes display
-    inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
+    inner_viewport = Viewport(
+        int(canvas.get_width() * 0.1),
+        int(canvas.get_height() * 0.1),
+        int(canvas.get_width() * 0.8),
+        int(canvas.get_height() * 0.8),
+        Constants.Color.transparent,
+    )
     # Create an AxesDisplay for the inner viewport
     axes_display = AxesDisplay(canvas, inner_viewport)
     # Set initial limits in data units - will be update by the pan/zoom handler

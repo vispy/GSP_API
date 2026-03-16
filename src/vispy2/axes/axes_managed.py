@@ -8,6 +8,7 @@ import numpy as np
 
 # local imports
 from gsp.core import Viewport, Camera
+from gsp.constants import Constants
 from gsp_extra.bufferx import Bufferx
 from gsp.types import BufferType, VisualBase, TransBuf
 from gsp.types.renderer_base import RendererBase
@@ -51,7 +52,7 @@ class AxesManaged:
         self._renderer_base = renderer_base
 
         # Create a inner viewport for the axes display
-        self._inner_viewport = Viewport(viewport_x, viewport_y, viewport_width, viewport_height)
+        self._inner_viewport = Viewport(viewport_x, viewport_y, viewport_width, viewport_height, Constants.Color.transparent)
 
         # Create viewport events based on the renderer base and inner viewport
         self._viewport_events = RendererRegistry.create_viewport_events(renderer_base, self._inner_viewport)

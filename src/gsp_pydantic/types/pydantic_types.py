@@ -214,7 +214,7 @@ class PydanticTexts(BaseModel):
     texts: list[str]
     colors: PydanticTransBuf
     font_sizes: PydanticTransBuf
-    anchors: PydanticTransBuf
+    textAligns: list[int]
     angles: PydanticTransBuf
     font_name: str
 

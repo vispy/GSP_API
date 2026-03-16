@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication
 # local imports
 from gsp.core import Canvas, Viewport
 from gsp_matplotlib.renderer import MatplotlibRenderer
+from gsp.constants import Constants
 
 
 class QtHelper:
@@ -52,10 +53,10 @@ def main():
     canvas_height_px = int(canvas_height_in * MY_SCREEN_PPI)
 
     # Create a canvas
-    canvas = Canvas(width=canvas_width_px, height=canvas_height_px, dpi=MY_SCREEN_PPI)
+    canvas = Canvas(width=canvas_width_px, height=canvas_height_px, dpi=MY_SCREEN_PPI, background_color=Constants.Color.white)
 
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
 
     # =============================================================================
     # Render

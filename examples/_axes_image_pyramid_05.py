@@ -43,6 +43,8 @@ from vispy2.axes.axes_display import AxesDisplay
 from vispy2.axes.axes_panzoom import AxesPanZoom
 from common.asset_downloader import AssetDownloader
 from gsp.utils.log_utils import logger
+from gsp.constants import Constants
+
 
 # =============================================================================
 #
@@ -549,7 +551,7 @@ def main():
     # =============================================================================
 
     # Create a canvas
-    canvas = Canvas(width=600, height=600, dpi=127)
+    canvas = Canvas(width=600, height=600, dpi=127, background_color=Constants.Color.white)
     # Create renderer
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
@@ -567,7 +569,7 @@ def main():
     viewport_position_y = viewport_margin_y
     viewport_width = int(canvas.get_width() - 2.0 * viewport_margin_x)
     viewport_height = int(canvas.get_height() - 2.0 * viewport_margin_y)
-    inner_viewport = Viewport(viewport_position_x, viewport_position_y, viewport_width, viewport_height)
+    inner_viewport = Viewport(viewport_position_x, viewport_position_y, viewport_width, viewport_height, Constants.Color.transparent)
 
     # Create an AxesDisplay for the inner viewport
     axes_display = AxesDisplay(canvas, inner_viewport)

@@ -23,10 +23,10 @@ from gsp.utils.group_utils import GroupUtils
 
 def main():
     # Create a canvas
-    canvas = Canvas(100, 100, 96.0)
+    canvas = Canvas(100, 100, 96.0, Constants.Color.white)
 
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
 
     # =============================================================================
     # Add random points

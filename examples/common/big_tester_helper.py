@@ -41,7 +41,7 @@ class BigTesterCanvas:
         scaled_width = int(size * scale)
         scaled_height = int(width * scale)
         scaled_dpi = dpi * scale
-        canvas = Canvas(scaled_width, scaled_height, scaled_dpi)
+        canvas = Canvas(scaled_width, scaled_height, scaled_dpi, Constants.Color.white)
         return canvas
 
 
@@ -51,7 +51,7 @@ class BigTesterViewport:
         viewports: list[Viewport] = []
         viewport_width = canvas.get_width() // count
         for viewport_hori_index in range(count):
-            viewport = Viewport(viewport_hori_index * viewport_width, 0, viewport_width, viewport_width)
+            viewport = Viewport(viewport_hori_index * viewport_width, 0, viewport_width, viewport_width, Constants.Color.transparent)
             viewports.append(viewport)
         return viewports
 

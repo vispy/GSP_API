@@ -3,7 +3,10 @@
   - with a specific position for each of them
   - GSP_RENDERER=matplotlib python ./examples/vispy_axes_display_example.py
   - GSP_RENDERER=datoviz python ./examples/vispy_axes_display_example.py
-- BUG the set_xlabel/set_ylabel/set_title are not properly handled - the text rendering is wrong in the text alignement
+- fixed text rendering anchor
+  - fixed in matplotlib
+  - BUG in datoviz i cant change the anchor, i dunno why
+- DONE the set_xlabel/set_ylabel/set_title are not properly handled - the text rendering is wrong in the text alignement
   - debug the text alignement in the text visual of datoviz and matplotlib
 - TODO support transparent background for network renderer
   - only on matplotlib backend for now, but mark it as a TODO for datoviz backend

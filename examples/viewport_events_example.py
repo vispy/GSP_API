@@ -22,14 +22,14 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(256, 512, 72.0)
+    canvas = Canvas(256, 512, 72.0, Constants.Color.white)
 
     canvas_half_width = int(canvas.get_width() / 2.0)
     canvas_half_height = int(canvas.get_height() / 2.0)
 
     # Create a viewport and add it to the canvas
-    viewport_1 = Viewport(0, 0, canvas.get_width(), canvas_half_height)
-    viewport_2 = Viewport(0, canvas_half_height, canvas.get_width(), canvas_half_height)
+    viewport_1 = Viewport(0, 0, canvas.get_width(), canvas_half_height, Constants.Color.transparent)
+    viewport_2 = Viewport(0, canvas_half_height, canvas.get_width(), canvas_half_height, Constants.Color.transparent)
 
     # =============================================================================
     # Add random points

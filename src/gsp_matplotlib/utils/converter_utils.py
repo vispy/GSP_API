@@ -5,10 +5,27 @@ from typing import Literal
 
 # local imports
 from gsp.types import CapStyle, JoinStyle, MarkerShape
+from gsp.types.color import Color
 
 
 class ConverterUtils:
     """Utility class for converting GSP types to Matplotlib types."""
+
+    @staticmethod
+    def color_gsp_to_mpl(gsp_color: Color) -> tuple[float, float, float, float]:
+        """Convert GSP Color to Matplotlib RGBA tuple.
+
+        Args:
+            gsp_color (Color): The GSP color to convert.
+
+        Returns:
+            tuple: A tuple of (r, g, b, a) with values in the range [0, 1].
+        """
+        r = gsp_color[0] / 255.0
+        g = gsp_color[1] / 255.0
+        b = gsp_color[2] / 255.0
+        a = gsp_color[3] / 255.0
+        return (r, g, b, a)
 
     @staticmethod
     def cap_style_gsp_to_mpl(gsp_cap_style: CapStyle) -> Literal["butt", "round", "projecting"]:

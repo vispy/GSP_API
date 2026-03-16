@@ -18,6 +18,7 @@ from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
 from gsp_pydantic.types.pydantic_dict import PydanticDict
 from gsp.transforms.transform_chain import TransformChain
 from gsp.transforms.links.transform_link_immediate import TransformLinkImmediate
+from gsp.constants import Constants
 from common.example_helper import ExampleHelper
 
 
@@ -26,10 +27,10 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(100, 100, 96.0)
+    canvas = Canvas(100, 100, 96.0, Constants.Color.white)
 
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
 
     # =============================================================================
     # Add random points

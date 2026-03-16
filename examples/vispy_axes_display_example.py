@@ -27,20 +27,20 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(width=400, height=400, dpi=127)
+    canvas = Canvas(width=400, height=400, dpi=127, background_color=Constants.Color.white)
 
     # =============================================================================
     #
     # =============================================================================
 
     # Create a inner viewport
-    viewport_margin_h = int(canvas.get_width() * 0.3)
-    viewport_margin_v = int(canvas.get_height() * 0.3)
+    viewport_margin_h = int(canvas.get_width() * 0.1)
+    viewport_margin_v = int(canvas.get_height() * 0.1)
     viewport_x = viewport_margin_h
     viewport_y = viewport_margin_v
     viewport_width = canvas.get_width() - 2 * viewport_margin_h
     viewport_height = canvas.get_height() - 2 * viewport_margin_v
-    inner_viewport = Viewport(viewport_x, viewport_y, viewport_width, viewport_height)
+    inner_viewport = Viewport(viewport_x, viewport_y, viewport_width, viewport_height, Constants.Color.blue)
 
     # Create an AxesDisplay for the inner viewport
     axes_display = AxesDisplay(canvas, inner_viewport)

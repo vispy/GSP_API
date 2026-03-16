@@ -12,6 +12,7 @@ import numpy as np
 # local imports
 from common.example_helper import ExampleHelper
 from gsp.core import Canvas, Viewport
+from gsp.constants import Constants
 from gsp.core.camera import Camera
 from gsp.core.texture import Texture
 from gsp.types.image_interpolation import ImageInterpolation
@@ -224,7 +225,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(width=400, height=400, dpi=127)
+    canvas = Canvas(width=400, height=400, dpi=127, background_color=Constants.Color.white)
 
     # =============================================================================
     #
@@ -232,7 +233,13 @@ def main():
 
     # Create a inner viewport
     # inner_viewport = Viewport(int(canvas.get_width() / 4), int(canvas.get_height() / 4), int(canvas.get_width() / 2), int(canvas.get_height() / 2))
-    inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
+    inner_viewport = Viewport(
+        int(canvas.get_width() * 0.1),
+        int(canvas.get_height() * 0.1),
+        int(canvas.get_width() * 0.8),
+        int(canvas.get_height() * 0.8),
+        Constants.Color.transparent,
+    )
     # inner_viewport = Viewport(int(canvas.get_width() / 3), int(canvas.get_height() / 8), int(canvas.get_width() / 3), int(canvas.get_height() / 2))
 
     # Create an AxesDisplay for the inner viewport

@@ -4,15 +4,16 @@
 from typing import Any
 
 # local imports
+from ..types.color import Color
 from ..utils.uuid_utils import UuidUtils
 
 
 class Viewport:
     """Viewport class representing a rectangular area on the canvas."""
 
-    __slots__ = ["_uuid", "_x", "_y", "_width", "_height", "userData"]
+    __slots__ = ["_uuid", "_x", "_y", "_width", "_height", "_background_color", "userData"]
 
-    def __init__(self, x: int, y: int, width: int, height: int):
+    def __init__(self, x: int, y: int, width: int, height: int, background_color: Color):
         """Create a viewport.
 
         Args:
@@ -20,17 +21,19 @@ class Viewport:
             y (int): The y offset (in pixels from bottom) of the viewport.
             width (int): The width (in pixels) of the viewport.
             height (int): The height (in pixels) of the viewport.
+            background_color (Color): Background color of the viewport.
         """
         self._uuid: str = UuidUtils.generate_uuid()
         self._x: int = x
         self._y: int = y
         self._width: int = width
         self._height: int = height
+        self._background_color: Color = background_color
         self.userData: dict[str, Any] = {}
 
     def __repr__(self) -> str:
         """Return string representation of the Viewport instance."""
-        return f"Viewport(x={self._x}, y={self._y}, width={self._width}, height={self._height})"
+        return f"Viewport(x={self._x}, y={self._y}, width={self._width}, height={self._height}, background_color={self._background_color})"
 
     def get_uuid(self) -> str:
         """Get the unique identifier of the viewport.
@@ -103,3 +106,19 @@ class Viewport:
             height (int): The new height.
         """
         self._height = height
+
+    def get_background_color(self) -> Color:
+        """Get the background color of the viewport.
+
+        Returns:
+            Color: The background color.
+        """
+        return self._background_color
+
+    def set_background_color(self, background_color: Color) -> None:
+        """Set the background color of the viewport.
+
+        Args:
+            background_color (Color): The new background color.
+        """
+        self._background_color = background_color

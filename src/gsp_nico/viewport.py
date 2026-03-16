@@ -1,6 +1,7 @@
 import numpy as np
 
 from gsp.core import Viewport as GspViewport
+from gsp.constants import Constants
 from gsp.types import Buffer as GspBuffer
 from gsp.types.buffer_type import BufferType as GspBufferType
 from gsp_matplotlib.extra.bufferx import Bufferx
@@ -11,7 +12,7 @@ from gsp_nico.canvas import Canvas
 class Viewport:
     def __init__(self, canvas: Canvas, x: int, y: int, width: int, height: int):
         self.canvas = canvas
-        self.gsp_viewport = GspViewport(x, y, width, height)
+        self.gsp_viewport = GspViewport(x, y, width, height, Constants.Color.transparent)
 
         canvas.add(self)
         self.visuals: list[Pixels] = []

@@ -28,6 +28,7 @@ from gsp.visuals.markers import Markers
 from gsp.visuals.paths import Paths
 from gsp.visuals.segments import Segments
 from gsp.types.renderer_base import RendererBase
+from gsp_matplotlib.utils.converter_utils import ConverterUtils
 
 # trick to disable the toolbar in matplotlib
 matplotlib.rcParams["toolbar"] = "none"
@@ -61,6 +62,8 @@ class MatplotlibRenderer(RendererBase):
         self._figure: matplotlib.figure.Figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=canvas.get_dpi())
         assert self._figure.canvas.manager is not None, "matplotlib figure canvas manager is None"
         self._figure.canvas.manager.set_window_title("Matplotlib")
+        figure_background_color = ConverterUtils.color_gsp_to_mpl(canvas.get_background_color())
+        self._figure.patch.set_facecolor(figure_background_color)
 
     def get_canvas(self) -> Canvas:
         """Get the canvas associated with this renderer.
@@ -132,23 +135,29 @@ class MatplotlibRenderer(RendererBase):
         # Create all the axes if needed
         # =============================================================================
         for viewport in viewports:
-            if viewport.get_uuid() in self._axes:
-                continue
-            axes_rect = (
-                viewport.get_x() / self.canvas.get_width(),
-                viewport.get_y() / self.canvas.get_height(),
-                viewport.get_width() / self.canvas.get_width(),
-                viewport.get_height() / self.canvas.get_height(),
-            )
-            axes: matplotlib.axes.Axes = matplotlib.pyplot.axes(axes_rect)
-            # this should be -1 to 1 - from normalized device coordinates - https://en.wikipedia.org/wiki/Graphics_pipeline
-            # - https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_model_view_projection
-            axes.set_xlim(-1, 1)
-            axes.set_ylim(-1, 1)
-            # hide the borders
-            axes.axis("off")
-            # store axes for this viewport
-            self._axes[viewport.get_uuid()] = axes
+            # Create a Matplotlib axes for this viewport if it doesn't exist yet
+            if (viewport.get_uuid() in self._axes) == False:
+                axes_rect = (
+                    viewport.get_x() / self.canvas.get_width(),
+                    viewport.get_y() / self.canvas.get_height(),
+                    viewport.get_width() / self.canvas.get_width(),
+                    viewport.get_height() / self.canvas.get_height(),
+                )
+                axes: matplotlib.axes.Axes = matplotlib.pyplot.axes(axes_rect)
+                # this should be -1 to 1 - from normalized device coordinates - https://en.wikipedia.org/wiki/Graphics_pipeline
+                # - https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_model_view_projection
+                axes.set_xlim(-1, 1)
+                axes.set_ylim(-1, 1)
+                # hide the borders
+                axes.axis("off")
+                # store axes for this viewport
+                self._axes[viewport.get_uuid()] = axes
+
+            axes = self._axes[viewport.get_uuid()]
+            # set the background color of the axes to the viewport background color
+            axes_background_color = ConverterUtils.color_gsp_to_mpl(viewport.get_background_color())
+            print(f"Setting axes background color to {axes_background_color} for viewport {viewport.get_uuid()}")
+            axes.patch.set_facecolor(axes_background_color)
 
         # =============================================================================
         # Render each visual

@@ -7,6 +7,7 @@ import numpy as np
 from common.example_helper import ExampleHelper
 from gsp.core import Canvas
 from gsp.types import VisualBase, MarkerShape
+from gsp.constants import Constants
 import vispy2 as Vispy2
 
 
@@ -16,7 +17,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(width=400, height=400, dpi=127)
+    canvas = Canvas(width=400, height=400, dpi=127, background_color=Constants.Color.white)
 
     # Create a renderer
     renderer_name = ExampleHelper.get_renderer_name()

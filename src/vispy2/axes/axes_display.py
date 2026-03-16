@@ -9,6 +9,7 @@ import numpy as np
 
 # local imports
 from gsp.core import Canvas, Viewport, Event
+from gsp.constants import Constants
 from gsp.core.camera import Camera
 from gsp.types.text_align import TextAlign
 from gsp.visuals import Segments, Texts
@@ -42,7 +43,7 @@ class AxesDisplay:
         """Canvas to render on."""
         self._inner_viewport = inner_viewport
         """Innert viewport to render visual in."""
-        self._outter_viewport = Viewport(0, 0, self._canvas.get_width(), self._canvas.get_height())
+        self._outter_viewport = Viewport(0, 0, self._canvas.get_width(), self._canvas.get_height(), Constants.Color.transparent)
         """Outter viewport to render axes in (arround inner viewport)."""
 
         self._inner_viewport_unit = ViewportUnitUtils(self._canvas, self._inner_viewport)

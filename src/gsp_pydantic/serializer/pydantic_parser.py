@@ -12,8 +12,10 @@ import pydantic_core
 # local imports
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
+from gsp.constants import Constants
 from gsp.core.texture import Texture
 from gsp.types.image_interpolation import ImageInterpolation
+from gsp.types.text_align import TextAlign
 from gsp.types.visual_base import VisualBase
 from gsp.visuals.image import Image
 from gsp.visuals.pixels import Pixels
@@ -81,7 +83,7 @@ class PydanticParser:
         # Parse Pydantic Canvas
         # =============================================================================
         pydantic_canvas = pydantic_scene.canvas
-        canvas = Canvas(pydantic_canvas.width, pydantic_canvas.height, pydantic_canvas.dpi)
+        canvas = Canvas(pydantic_canvas.width, pydantic_canvas.height, pydantic_canvas.dpi, Constants.Color.white)
         canvas._uuid = pydantic_canvas.uuid
 
         # =============================================================================
@@ -94,6 +96,7 @@ class PydanticParser:
                 pydantic_viewport.y,
                 pydantic_viewport.width,
                 pydantic_viewport.height,
+                Constants.Color.transparent,
             )
             viewport._uuid = pydantic_viewport.uuid
             viewports.append(viewport)
@@ -196,10 +199,10 @@ class PydanticParser:
             texts_list = pydantic_texts.texts
             colors = PydanticParser._pydantic_to_transbuf(pydantic_texts.colors)
             font_sizes = PydanticParser._pydantic_to_transbuf(pydantic_texts.font_sizes)
-            anchors = PydanticParser._pydantic_to_transbuf(pydantic_texts.anchors)
+            textAligns = [TextAlign(align_value) for align_value in pydantic_texts.textAligns]
             angles = PydanticParser._pydantic_to_transbuf(pydantic_texts.angles)
             font_name = pydantic_texts.font_name
-            texts = Texts(positions, texts_list, colors, font_sizes, anchors, angles, font_name)
+            texts = Texts(positions, texts_list, colors, font_sizes, textAligns, angles, font_name)
             texts._uuid = pydantic_texts.uuid
             return texts
         else:

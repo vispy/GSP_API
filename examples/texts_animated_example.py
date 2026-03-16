@@ -3,6 +3,7 @@ import numpy as np
 
 # local imports
 from common.example_helper import ExampleHelper
+from gsp.types.text_align import TextAlign
 from gsp.types.visual_base import VisualBase
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
@@ -17,10 +18,10 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(width=256, height=256, dpi=127.5)
+    canvas = Canvas(width=256, height=256, dpi=127.5, background_color=Constants.Color.white)
 
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
 
     # =============================================================================
     # Add random points
@@ -42,8 +43,7 @@ def main():
     font_size_numpy = np.array([12, 12], dtype=np.float32)
     font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
-    anchors_numpy = np.array([[0.0, 0.0], [0.0, 1.0]], dtype=np.float32)
-    anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+    textAligns = [TextAlign.BOTTOM_LEFT, TextAlign.TOP_RIGHT]
 
     angles_numpy = np.array([+np.pi / 4, -np.pi / 4], dtype=np.float32)
     angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
@@ -51,7 +51,7 @@ def main():
     font_name = "Arial"
 
     # Create the Texts visual
-    texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
+    texts = Texts(positions_buffer, strings, colors_buffer, font_size_buffer, textAligns, angles_buffer, font_name)
 
     # =============================================================================
     # Render the canvas

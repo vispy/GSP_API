@@ -21,6 +21,7 @@ import numpy as np
 from gsp.core import Canvas, Camera, Viewport
 from gsp.types import BufferType, VisualBase
 from gsp_extra.bufferx import Bufferx
+from gsp.constants import Constants
 from common.example_helper import ExampleHelper
 from gsp_extra.misc.render_item import RenderItem
 import vispy2 as Vispy2
@@ -40,17 +41,17 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_DPI)
+    canvas = Canvas(CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_DPI, Constants.Color.white)
 
     # viewport size
     half_width = int(canvas.get_width() / 2)
     half_height = int(canvas.get_height() / 2)
 
     # Create viewports
-    viewport_1 = Viewport(0, 0, half_width, half_height)
-    viewport_2 = Viewport(half_width, 0, half_width, half_height)
-    viewport_3 = Viewport(0, half_height, half_width, half_height)
-    viewport_4 = Viewport(half_width, half_height, half_width, half_height)
+    viewport_1 = Viewport(0, 0, half_width, half_height, Constants.Color.transparent)
+    viewport_2 = Viewport(half_width, 0, half_width, half_height, Constants.Color.transparent)
+    viewport_3 = Viewport(0, half_height, half_width, half_height, Constants.Color.transparent)
+    viewport_4 = Viewport(half_width, half_height, half_width, half_height, Constants.Color.transparent)
 
     # =============================================================================
     # Create sine wave plots with different styles

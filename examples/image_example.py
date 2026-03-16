@@ -14,6 +14,7 @@ from gsp.types import BufferType
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.group_utils import GroupUtils
+from gsp.constants import Constants
 from common.example_helper import ExampleHelper
 from gsp_extra.misc.texture_utils import TextureUtils
 
@@ -24,10 +25,10 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(512, 512, 72.0)
+    canvas = Canvas(512, 512, 72.0, Constants.Color.white)
 
     # Create a viewport and add it to the canvas
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height())
+    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
 
     # =============================================================================
     # Read image and create texture
