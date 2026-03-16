@@ -12,6 +12,7 @@ from gsp.types import Buffer
 from gsp.visuals.image import Image
 from gsp_extra.bufferx import Bufferx
 from gsp.types import TransBuf, Buffer, BufferType, Color
+from gsp.utils.log_utils import logger
 
 
 class ImshowImage:
@@ -115,8 +116,12 @@ def imshow(
         data = Bufferx.from_numpy(data, BufferType.float32)
 
     if isinstance(data, TransformChain):
-        # TODO use logger from gsp.utils.logger_utils instead of print
-        print("Running TransformChain to obtain data buffer for imshow... BAD BAD BAD")
+        # NOTE Due to special case of imshow, we need to run the TransformChain immediately to obtain the data buffer. This is not ideal and should be refactored in the future.
+        # All the modification of the image data should be done in the transformChain if you want the chain to be run() on the renderer(), especirally if
+        # you render on the networkRenderer
+        logger.info(
+            "Due to special case of imshow, we need to run the TransformChain immediately to obtain the data buffer. This is not ideal and should be refactored in the future."
+        )
         data_buffer: Buffer = data.run()
     else:
         data_buffer: Buffer = data
