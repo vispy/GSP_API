@@ -1,3 +1,6 @@
+- vispy and imgshow()
+  - https://www.mathworks.com/help/matlab/ref/imshow.html
+  - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
 - fixed text rendering anchor + rotation in datoviz - required for vispy_axes
   - fixed in matplotlib
   - BUG in datoviz i cant change the anchor, i dunno why
@@ -10,9 +13,6 @@
   - enter github issue for datoviz backend
   - TODO should that be done for both canvas/viewport ? which API for background color in GSP
     - simply add a background_color:Color in the canvas/viewport object
-- vispy and imgshow()
-  - https://www.mathworks.com/help/matlab/ref/imshow.html
-  - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
 - BUG multiple axes_managed on network - axes_managed is doing multiple render calls
   - so it fails with network renderer which erase the whole canvas at each render call
   - POSSIBLE fix: the network server render with transparent background, so it doesnt erase the whole canvas, but only the content of the visual

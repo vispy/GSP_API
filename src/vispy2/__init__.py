@@ -7,3 +7,6 @@ from .scatter.scatter import scatter
 
 # import plot functions
 from .plot.plot import plot
+
+# import imshow functions
+from .imshow.imshow import imshow
