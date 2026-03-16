@@ -1,7 +1,41 @@
-"""Unified scatter API to create Points, Pixels or Markers visuals."""
+"""Scatter visualization API supporting three rendering modes: Pixels, Points, and Markers.
+
+This module provides a unified scatter() function to create scatter plots with different
+rendering backends optimized for different point cloud sizes:
+
+- **Pixels:** Fast rendering for large point clouds (2000+ points). Minimal features.
+- **Points:** Balanced quality and customization (100-1000 points). Full styling control.
+- **Markers:** Styled shapes with customizable sizes and colors (10-500 points).
+
+Mode Selection:
+    The function automatically infers the rendering mode based on provided arguments:
+    - If `groups` is provided → Pixels mode
+    - Else if `marker_shape` is provided → Markers mode
+    - Else → Points mode (default)
+
+    You can also explicitly specify mode with the `mode` parameter.
+
+Examples:
+    >>> import numpy as np
+    >>> from vispy2 import scatter
+    >>> positions = np.random.rand(100, 3)
+    >>>
+    >>> # Points mode (default, full customization)
+    >>> visual = scatter(positions)
+    >>>
+    >>> # Markers mode (with custom shapes)
+    >>> from gsp.types import MarkerShape
+    >>> visual = scatter(positions, marker_shape=MarkerShape.circle)
+    >>>
+    >>> # Pixels mode (fast for many points)
+    >>> visual = scatter(positions, groups=100)
+
+References:
+  - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
+"""
 
 # stdlib imports
-from typing import Optional, Union, Literal
+from typing import Literal
 
 # pip imports
 import numpy as np
@@ -24,14 +58,14 @@ from gsp_extra.bufferx import Bufferx
 def _scatter_pixels(
     positions: TransBuf,
     *,
-    mode: Optional[Union[Literal["pixels"], Literal["points"], Literal["markers"]]] = None,
+    mode: Literal["pixels", "points", "markers"] | None = None,
     sizes: TransBuf | np.ndarray | None = None,
     colors: TransBuf | np.ndarray | None = None,
     face_colors: TransBuf | np.ndarray | None = None,
     edge_colors: TransBuf | np.ndarray | None = None,
     edge_widths: TransBuf | np.ndarray | None = None,
-    groups: Optional[Groups] = None,
-    marker_shape: Optional[MarkerShape] = None,
+    groups: Groups | None = None,
+    marker_shape: MarkerShape | None = None,
 ) -> VisualBase:
     """Helper function to create a Pixels visual."""
     # If positions is a Buffer, we can infer the count and create default buffers for any missing attributes
@@ -69,14 +103,14 @@ def _scatter_pixels(
 def _scatter_points(
     positions: TransBuf,
     *,
-    mode: Optional[Union[Literal["pixels"], Literal["points"], Literal["markers"]]] = None,
+    mode: Literal["pixels", "points", "markers"] | None = None,
     sizes: TransBuf | np.ndarray | None = None,
     colors: TransBuf | np.ndarray | None = None,
     face_colors: TransBuf | np.ndarray | None = None,
     edge_colors: TransBuf | np.ndarray | None = None,
     edge_widths: TransBuf | np.ndarray | None = None,
-    groups: Optional[Groups] = None,
-    marker_shape: Optional[MarkerShape] = None,
+    groups: Groups | None = None,
+    marker_shape: MarkerShape | None = None,
 ) -> VisualBase:
     """Helper function to create a Points visual with default attributes if positions is a Buffer."""
     # If positions is a Buffer, we can infer the count and create default buffers for any missing attributes
@@ -136,14 +170,14 @@ def _scatter_points(
 def _scatter_markers(
     positions: TransBuf,
     *,
-    mode: Optional[Union[Literal["pixels"], Literal["points"], Literal["markers"]]] = None,
+    mode: Literal["pixels", "points", "markers"] | None = None,
     sizes: TransBuf | np.ndarray | None = None,
     colors: TransBuf | np.ndarray | None = None,
     face_colors: TransBuf | np.ndarray | None = None,
     edge_colors: TransBuf | np.ndarray | None = None,
     edge_widths: TransBuf | np.ndarray | None = None,
-    groups: Optional[Groups] = None,
-    marker_shape: Optional[MarkerShape] = None,
+    groups: Groups | None = None,
+    marker_shape: MarkerShape | None = None,
 ) -> VisualBase:
     # If positions is a Buffer, we can infer the count and create default buffers for any missing attributes
     if isinstance(positions, Buffer):
@@ -204,49 +238,83 @@ def _scatter_markers(
 def scatter(
     positions: TransBuf | np.ndarray,
     *,
-    mode: Optional[Union[Literal["pixels"], Literal["points"], Literal["markers"]]] = None,
+    mode: Literal["pixels", "points", "markers"] | None = None,
     sizes: TransBuf | np.ndarray | None = None,
     colors: TransBuf | np.ndarray | None = None,
     face_colors: TransBuf | np.ndarray | None = None,
     edge_colors: TransBuf | np.ndarray | None = None,
     edge_widths: TransBuf | np.ndarray | None = None,
-    groups: Optional[Groups] = None,
-    marker_shape: Optional[MarkerShape] = None,
+    groups: Groups | None = None,
+    marker_shape: MarkerShape | None = None,
 ) -> VisualBase:
-    """Create a Points, Pixels or Markers visual based on arguments.
+    """Create a scatter plot with Points, Pixels, or Markers visual.
 
-    Selection rules:
-    - If `mode` is provided it must be one of: 'points', 'pixels', 'markers'.
-    - If `mode` is not provided the function will infer:
-      - if `groups` is given -> `Pixels`
-      - elif `marker_shape` is given -> `Markers`
-      - else -> `Points`
+    Provides a unified interface for creating different types of scatter visualizations,
+    optimized for different point cloud sizes. The rendering mode is automatically inferred
+    from provided arguments, but can be explicitly specified.
 
-    The arguments required for each mode are:
-    - Pixels: `positions`, `colors`, `groups`
-    - Points: `positions`, `sizes`, `face_colors`, `edge_colors`, `edge_widths`
-    - Markers: `marker_shape`, `positions`, `sizes`, `face_colors`, `edge_colors`, `edge_widths`
+    Mode Selection & Performance:
+        - **Pixels** (2000+ points): Fast, minimal features, group-based rendering
+        - **Points** (100-1000 points): Balanced quality, full customization
+        - **Markers** (10-500 points): Styled shapes, customizable sizes/colors
 
-    If they are not provided, the function will attempt to create default buffers for any missing attributes based on the count of `positions` if it is a
-    Buffer. For example, if `positions` is a Buffer and `sizes` is not provided for points mode, it will create a default `sizes` buffer with
-    all values set to 40.
+    Auto Mode Inference:
+        If `mode` is not provided, infers based on arguments:
+            1. If `groups` present → Pixels mode
+            2. Else if `marker_shape` present → Markers mode
+            3. Else → Points mode (default)
 
-    The function does not perform deep sanity checks; it delegates to the
-    underlying visual constructors which will validate attributes.
+    Default Value Generation:
+        If `positions` is a Buffer, auto-generates defaults for missing attributes:
+            - sizes: Default to 40.0 (points/markers)
+            - face_colors: Default to red (points/markers)
+            - edge_colors: Default to blue (points/markers)
+            - edge_widths: Default to 1.0 (points/markers)
+            - colors: No default (pixels mode requires explicit colors)
 
     Args:
-        positions(TransBuf | np.ndarray): Buffer or numpy array containing the positions of the points/pixels/markers. If numpy array is provided, it will be converted to a Buffer.
-        mode(str | None): One of 'points', 'pixels', 'markers'. If not provided, the function will infer the mode based on the presence of other arguments.
-        sizes(TransBuf | np.ndarray | None): Buffer or numpy array containing the sizes of the points/markers. Required for points and markers mode. If numpy array is provided, it will be converted to a Buffer.
-        colors(TransBuf | np.ndarray | None): Buffer or numpy array containing the colors of the pixels. Required for pixels mode. If numpy array is provided, it will be converted to a Buffer.
-        face_colors(TransBuf | np.ndarray | None): Buffer or numpy array containing the face colors of the points/markers. Required for points and markers mode. If numpy array is provided, it will be converted to a Buffer.
-        edge_colors(TransBuf | np.ndarray | None): Buffer or numpy array containing the edge colors of the points/markers. Required for points and markers mode. If numpy array is provided, it will be converted to a Buffer.
-        edge_widths(TransBuf | np.ndarray | None): Buffer or numpy array containing the edge widths of the points/markers. Required for points and markers mode. If numpy array is provided, it will be converted to a Buffer.
-        groups(Groups | None): Groups object defining group membership for pixels. Required for pixels mode.
-        marker_shape(MarkerShape | None): MarkerShape enum value defining the shape of the markers. Required for markers mode.
+        positions (TransBuf | np.ndarray): Positions of points. Shape: (N, 3) for vec3 or
+            (N,) for conversion. If numpy array, auto-converted to Buffer(vec3).
+        mode (Literal["pixels", "points", "markers"] | None): Rendering mode.
+            If None, auto-inferred from other arguments.
+        sizes (TransBuf | np.ndarray | None): Point/marker sizes. Default: 40.0 (points/markers).
+            Required for points/markers unless Buffer positions provided (uses default).
+        colors (TransBuf | np.ndarray | None): Pixel colors (RGBA8). Required for pixels mode.
+            Ignored in points/markers mode (use face_colors instead).
+        face_colors (TransBuf | np.ndarray | None): Face colors of points/markers (RGBA8).
+            Default: red (255, 0, 0, 255). Required for points/markers unless Buffer positions.
+        edge_colors (TransBuf | np.ndarray | None): Edge colors of points/markers (RGBA8).
+            Default: blue (0, 0, 255, 255). Required for points/markers unless Buffer positions.
+        edge_widths (TransBuf | np.ndarray | None): Edge widths for points/markers (float32).
+            Default: 1.0. Required for points/markers unless Buffer positions.
+        groups (Groups | None): Group membership for pixels (optimization). Required for pixels mode.
+            Determines how pixels are batched for rendering.
+        marker_shape (MarkerShape | None): Shape of markers. Required for markers mode.
+            Examples: MarkerShape.circle, MarkerShape.square, MarkerShape.diamond, etc.
 
     Returns:
-        visual(VisualBase): An instance of Points, Pixels or Markers visual based on the provided arguments
+        VisualBase: A Points, Pixels, or Markers visual object ready for rendering.
+
+    Raises:
+        ValueError: If required parameters for the selected mode are missing.
+
+    Examples:
+        >>> import numpy as np
+        >>> from vispy2 import scatter
+        >>> from gsp.types import MarkerShape
+        >>> from gsp.constants import Constants
+        >>>
+        >>> positions = np.random.rand(100, 3)
+        >>>
+        >>> # Pixels mode (fastest, for large datasets)
+        >>> colors = np.full((100, 4), [255, 0, 0, 255], dtype=np.uint8)
+        >>> visual = scatter(positions, colors=colors, groups=100)
+        >>>
+        >>> # Points mode (default, most flexible)
+        >>> visual = scatter(positions)  # Uses all defaults
+        >>>
+        >>> # Markers mode (with custom shapes)
+        >>> visual = scatter(positions, marker_shape=MarkerShape.square)
     """
     # Infer mode if not provided
     if mode is None:
