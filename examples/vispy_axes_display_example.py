@@ -34,12 +34,22 @@ def main():
     # =============================================================================
 
     # Create a inner viewport
-    inner_viewport = Viewport(int(canvas.get_width() * 0.1), int(canvas.get_height() * 0.1), int(canvas.get_width() * 0.8), int(canvas.get_height() * 0.8))
+    viewport_margin_h = int(canvas.get_width() * 0.4)
+    viewport_margin_v = int(canvas.get_height() * 0.3)
+    viewport_x = viewport_margin_h + 0.3
+    viewport_y = viewport_margin_v
+    viewport_width = canvas.get_width() - 2 * viewport_margin_h
+    viewport_height = canvas.get_height() - 2 * viewport_margin_v
+    inner_viewport = Viewport(viewport_x, viewport_y, viewport_width, viewport_height)
 
     # Create an AxesDisplay for the inner viewport
     axes_display = AxesDisplay(canvas, inner_viewport)
     # Set initial limits in data units
     axes_display.set_limits_dunit(-2.0, +2.0, -2.0, +2.0)
+    # Labels
+    axes_display.set_title("Sinusoidal Distribution")
+    axes_display.set_xlabel("x")
+    axes_display.set_ylabel("sin(x*py*3)")
 
     # =============================================================================
     #

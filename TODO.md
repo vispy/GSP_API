@@ -1,6 +1,9 @@
 - TODO in axes_managed.py, support title, xlabel, ylabel
   - with a specific visual for each of them
   - with a specific position for each of them
+  - GSP_RENDERER=matplotlib python ./examples/vispy_axes_display_example.py
+  - GSP_RENDERER=datoviz python ./examples/vispy_axes_display_example.py
+- BUG the set_xlabel/set_ylabel/set_title are not properly handled - the text rendering is wrong in the text alignement
 - TODO support transparent background for network renderer
   - only on matplotlib backend for now, but mark it as a TODO for datoviz backend
   - enter github issue for datoviz backend

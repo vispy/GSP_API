@@ -129,6 +129,18 @@ class AxesManaged:
         """Get the axes pan zoom associated with this axes."""
         return self._axes_pan_zoom
 
+    def set_title(self, text: str | None) -> None:
+        """Set the plot title. Pass None to remove it."""
+        self._axes_display.set_title(text)
+
+    def set_xlabel(self, text: str | None) -> None:
+        """Set the x-axis label. Pass None to remove it."""
+        self._axes_display.set_xlabel(text)
+
+    def set_ylabel(self, text: str | None) -> None:
+        """Set the y-axis label. Pass None to remove it."""
+        self._axes_display.set_ylabel(text)
+
     def get_render_items(self) -> list[RenderItem]:
         """Get the render items associated with this axes."""
         return self._render_items

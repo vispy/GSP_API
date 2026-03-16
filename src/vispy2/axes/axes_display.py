@@ -70,6 +70,19 @@ class AxesDisplay:
         self._texts_horizontal_render_item: RenderItem | None = None
         self._texts_vertical_render_item: RenderItem | None = None
 
+        # Label text state
+        self._title: str | None = None
+        """Plot title text, or None if not set."""
+        self._xlabel: str | None = None
+        """X-axis label text, or None if not set."""
+        self._ylabel: str | None = None
+        """Y-axis label text, or None if not set."""
+
+        # Label render items
+        self._title_render_item: RenderItem | None = None
+        self._xlabel_render_item: RenderItem | None = None
+        self._ylabel_render_item: RenderItem | None = None
+
         # Build render items
         self._build_render_items()
 
@@ -94,6 +107,24 @@ class AxesDisplay:
     def get_limits_dunit(self) -> tuple[float, float, float, float]:
         """Get the axes limits in data units."""
         return (self._x_min_dunit, self._x_max_dunit, self._y_min_dunit, self._y_max_dunit)
+
+    def set_title(self, text: str | None) -> None:
+        """Set the plot title. Pass None to remove it."""
+        self._title = text
+        self._build_render_items()
+        self.new_limits_event.dispatch()
+
+    def set_xlabel(self, text: str | None) -> None:
+        """Set the x-axis label. Pass None to remove it."""
+        self._xlabel = text
+        self._build_render_items()
+        self.new_limits_event.dispatch()
+
+    def set_ylabel(self, text: str | None) -> None:
+        """Set the y-axis label. Pass None to remove it."""
+        self._ylabel = text
+        self._build_render_items()
+        self.new_limits_event.dispatch()
 
     def get_transform_matrix_numpy(self) -> np.ndarray:
         """Get the transform matrix from data units to NDC units for the inner viewport."""
@@ -128,6 +159,12 @@ class AxesDisplay:
             render_items.append(self._texts_horizontal_render_item)
         if self._texts_vertical_render_item is not None:
             render_items.append(self._texts_vertical_render_item)
+        if self._title_render_item is not None:
+            render_items.append(self._title_render_item)
+        if self._xlabel_render_item is not None:
+            render_items.append(self._xlabel_render_item)
+        if self._ylabel_render_item is not None:
+            render_items.append(self._ylabel_render_item)
         # Retrun the render items
         return render_items
 
@@ -220,6 +257,54 @@ class AxesDisplay:
                 self._texts_vertical_render_item.visual_base.set_uuid(texts_vertical_uuid)
         else:
             self._texts_vertical_render_item = None
+
+        # =============================================================================
+        # Title
+        # =============================================================================
+        if self._title is not None:
+            title_uuid: str | None = self._title_render_item.visual_base.get_uuid() if self._title_render_item is not None else None
+            self._title_render_item = RenderItem(
+                self._outter_viewport_unit.get_viewport(),
+                AxesDisplay._generate_visual_title(self._inner_viewport_unit, self._outter_viewport_unit, self._title),
+                Bufferx.mat4_identity(),
+                Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
+            )
+            if title_uuid is not None:
+                self._title_render_item.visual_base.set_uuid(title_uuid)
+        else:
+            self._title_render_item = None
+
+        # =============================================================================
+        # X-axis label
+        # =============================================================================
+        if self._xlabel is not None:
+            xlabel_uuid: str | None = self._xlabel_render_item.visual_base.get_uuid() if self._xlabel_render_item is not None else None
+            self._xlabel_render_item = RenderItem(
+                self._outter_viewport_unit.get_viewport(),
+                AxesDisplay._generate_visual_xlabel(self._inner_viewport_unit, self._outter_viewport_unit, self._xlabel),
+                Bufferx.mat4_identity(),
+                Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
+            )
+            if xlabel_uuid is not None:
+                self._xlabel_render_item.visual_base.set_uuid(xlabel_uuid)
+        else:
+            self._xlabel_render_item = None
+
+        # =============================================================================
+        # Y-axis label
+        # =============================================================================
+        if self._ylabel is not None:
+            ylabel_uuid: str | None = self._ylabel_render_item.visual_base.get_uuid() if self._ylabel_render_item is not None else None
+            self._ylabel_render_item = RenderItem(
+                self._outter_viewport_unit.get_viewport(),
+                AxesDisplay._generate_visual_ylabel(self._inner_viewport_unit, self._outter_viewport_unit, self._ylabel),
+                Bufferx.mat4_identity(),
+                Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity()),
+            )
+            if ylabel_uuid is not None:
+                self._ylabel_render_item.visual_base.set_uuid(ylabel_uuid)
+        else:
+            self._ylabel_render_item = None
 
     @staticmethod
     def _has_tick_horizontal(
@@ -523,3 +608,136 @@ class AxesDisplay:
         texts = Texts(positions_buffer, tick_labels, colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, font_name)
 
         return texts
+
+    @staticmethod
+    def _generate_visual_title(
+        inner_viewport_unit: ViewportUnitUtils,
+        outter_viewport_unit: ViewportUnitUtils,
+        text: str,
+    ) -> Texts:
+        """Generate a title Texts visual centered above the inner viewport.
+
+        Visual style: 14 pt, black, centered horizontally, no rotation.
+        Position: 0.15 cm above the top edge of the inner viewport.
+        """
+        canvas = outter_viewport_unit.get_canvas()
+        inner_viewport = inner_viewport_unit.get_viewport()
+
+        # x: horizontal center of the inner viewport in outer NDC
+        center_x_pixel = inner_viewport.get_x() + 0.5 * inner_viewport.get_width()
+        center_x_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(center_x_pixel, 0.0)
+        center_x_ndc = center_x_delta_ndc - 1.0
+
+        # y: top of inner viewport + 0.15 cm upward offset
+        top_y_pixel = inner_viewport.get_y() + inner_viewport.get_height()
+        _, top_y_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, top_y_pixel)
+        top_y_ndc = top_y_delta_ndc - 1.0
+        _, offset_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.15)
+        title_y_ndc = top_y_ndc + offset_ndc
+
+        positions_numpy = np.array([[center_x_ndc, title_y_ndc, 0.0]], dtype=np.float32)
+        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+        colors_buffer = Buffer(1, BufferType.rgba8)
+        colors_buffer.set_data(Constants.Color.black * 1, 0, 1)
+
+        font_size_numpy = np.array([UnitUtils.pixel_to_point(14, canvas.get_dpi())], dtype=np.float32)
+        font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
+
+        # centered horizontally, top of text at position (text hangs down into the gap)
+        anchors_numpy = np.array([[0.5, 0.0]], dtype=np.float32)
+        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+
+        angles_numpy = np.array([[0.0]], dtype=np.float32)
+        angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
+
+        return Texts(positions_buffer, [text], colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, "Arial")
+
+    @staticmethod
+    def _generate_visual_xlabel(
+        inner_viewport_unit: ViewportUnitUtils,
+        outter_viewport_unit: ViewportUnitUtils,
+        text: str,
+    ) -> Texts:
+        """Generate an x-axis label Texts visual centered below the inner viewport.
+
+        Visual style: 13 pt, black, centered horizontally, no rotation.
+        Position: 0.8 cm below the bottom edge of the inner viewport (below the tick labels).
+        """
+        canvas = outter_viewport_unit.get_canvas()
+        inner_viewport = inner_viewport_unit.get_viewport()
+
+        # x: horizontal center of the inner viewport in outer NDC
+        center_x_pixel = inner_viewport.get_x() + 0.5 * inner_viewport.get_width()
+        center_x_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(center_x_pixel, 0.0)
+        center_x_ndc = center_x_delta_ndc - 1.0
+
+        # y: bottom of inner viewport - 0.8 cm downward offset (clears tick labels)
+        bottom_y_pixel = inner_viewport.get_y()
+        _, bottom_y_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, bottom_y_pixel)
+        bottom_y_ndc = bottom_y_delta_ndc - 1.0
+        _, offset_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.8)
+        xlabel_y_ndc = bottom_y_ndc - offset_ndc
+
+        positions_numpy = np.array([[center_x_ndc, xlabel_y_ndc, 0.0]], dtype=np.float32)
+        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+        colors_buffer = Buffer(1, BufferType.rgba8)
+        colors_buffer.set_data(Constants.Color.black * 1, 0, 1)
+
+        font_size_numpy = np.array([UnitUtils.pixel_to_point(13, canvas.get_dpi())], dtype=np.float32)
+        font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
+
+        # centered horizontally, same anchor convention as horizontal tick labels
+        anchors_numpy = np.array([[0.5, 1.0]], dtype=np.float32)
+        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+
+        angles_numpy = np.array([[0.0]], dtype=np.float32)
+        angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
+
+        return Texts(positions_buffer, [text], colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, "Arial")
+
+    @staticmethod
+    def _generate_visual_ylabel(
+        inner_viewport_unit: ViewportUnitUtils,
+        outter_viewport_unit: ViewportUnitUtils,
+        text: str,
+    ) -> Texts:
+        """Generate a y-axis label Texts visual centered to the left of the inner viewport.
+
+        Visual style: 13 pt, black, rotated 90° counter-clockwise.
+        Position: 1.2 cm to the left of the inner viewport's left edge (clears tick labels).
+        """
+        canvas = outter_viewport_unit.get_canvas()
+        inner_viewport = inner_viewport_unit.get_viewport()
+
+        # x: left of inner viewport - 1.2 cm leftward offset (clears tick labels)
+        left_x_pixel = inner_viewport.get_x()
+        left_x_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(left_x_pixel, 0.0)
+        left_x_ndc = left_x_delta_ndc - 1.0
+        offset_ndc, _ = outter_viewport_unit.delta_cm_to_ndc(1.2, 0.0)
+        ylabel_x_ndc = left_x_ndc - offset_ndc
+
+        # y: vertical center of the inner viewport in outer NDC
+        center_y_pixel = inner_viewport.get_y() + 0.5 * inner_viewport.get_height()
+        _, center_y_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, center_y_pixel)
+        center_y_ndc = center_y_delta_ndc - 1.0
+
+        positions_numpy = np.array([[ylabel_x_ndc, center_y_ndc, 0.0]], dtype=np.float32)
+        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+
+        colors_buffer = Buffer(1, BufferType.rgba8)
+        colors_buffer.set_data(Constants.Color.black * 1, 0, 1)
+
+        font_size_numpy = np.array([UnitUtils.pixel_to_point(13, canvas.get_dpi())], dtype=np.float32)
+        font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
+
+        # vertically centered at position, same anchor convention as vertical tick labels
+        anchors_numpy = np.array([[0.0, 0.5]], dtype=np.float32)
+        anchors_buffer = Bufferx.from_numpy(anchors_numpy, BufferType.vec2)
+
+        # 90° counter-clockwise so the label reads bottom-to-top along the y-axis
+        angles_numpy = np.array([[90.0]], dtype=np.float32)
+        angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
+
+        return Texts(positions_buffer, [text], colors_buffer, font_size_buffer, anchors_buffer, angles_buffer, "Arial")
