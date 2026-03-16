@@ -13,4 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AxesManaged.set_title()`, `set_xlabel()`, `set_ylabel()` — thin delegating methods for the same functionality on the higher-level managed axes API.
 - Updated `examples/vispy_axes_display_example.py` to demonstrate all three labels.
 
-[Unreleased]: https://github.com/vispy/GSP_API/compare/ca84f76...HEAD
+## [0.1.0] - 2026-03-16
+
+### Added
+
+- Initial release with core plotting and visualization infrastructure
+- AxesDisplay and AxesManaged for interactive axes with pan/zoom
+- Support for scatter, line, and point visuals
+- Matplotlib and DatoViz backend support
+- Comprehensive documentation and examples
+
+[Unreleased]: https://github.com/vispy/GSP_API/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/vispy/GSP_API/releases/tag/v0.1.0
