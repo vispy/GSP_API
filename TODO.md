@@ -1,3 +1,6 @@
+- TODO in axes_managed.py, support title, xlabel, ylabel
+  - with a specific visual for each of them
+  - with a specific position for each of them
 - TODO support transparent background for network renderer
   - only on matplotlib backend for now, but mark it as a TODO for datoviz backend
   - enter github issue for datoviz backend
@@ -8,9 +11,6 @@
 - vispy and imgshow()
   - https://www.mathworks.com/help/matlab/ref/imshow.html
   - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
-- DONE improbe Marker
-  - more marker shapes
-  - datoviz with angle (do a standalone test)
 - .plot() https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
   - TODO how to do hashed lines WONTDO
   - line
@@ -103,6 +103,10 @@
     - possibility: set by class or by instance
 
 ---
+- DONE in vispy2.plot, support line color (copy on the marker colors)
+- DONE improbe Marker
+  - more marker shapes
+  - datoviz with angle (do a standalone test)
 - DONE BUG support panzoom in GSP_RENDERER=network
   - show only a blank, no axes content, no axes content
   - noticed 2 render calls in network server: one big then one small

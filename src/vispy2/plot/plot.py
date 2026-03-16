@@ -143,12 +143,6 @@ def plot(
             are treated as y, and x becomes [0, 1, 2, ..., n-1].
         fmt (str | None): Matplotlib-style format string controlling visualization style.
             Format: [marker][line style][color]
-            Examples:
-                - 'o': circle markers only
-                - '-': line only (default if no fmt specified)
-                - 'ro-': red color, circle markers with line
-                - 'b^': blue triangles only
-                - 'C0-': first color cycle color with line
             Supported markers: o, s, ^, v, <, >, *, X, D, |, _
             Supported colors: b, g, r, c, m, y, k, w, C0-C10 (color cycle)
             Supported line styles: - (solid line only)
@@ -168,11 +162,11 @@ def plot(
         ValueError: If format string contains invalid characters or unsupported line styles.
 
     Examples:
-        >>> import numpy as np
-        >>> from vispy2 import plot
-        >>> x = np.linspace(0, 2*np.pi, 50)
-        >>> y = np.sin(x)
-        >>> visuals = plot(x, y, fmt='ro-')  # Red circles with line
+    >>> import numpy as np
+    >>> from vispy2 import plot
+    >>> x = np.linspace(0, 2*np.pi, 50)
+    >>> y = np.sin(x)
+    >>> visuals = plot(x, y, fmt='ro-')  # Red circles with line
     """
     returned_visuals: list[VisualBase] = []
 
@@ -253,9 +247,7 @@ def plot(
     # 2. Neither markers nor lines are specified (default to line behavior)
     #
     # Do NOT generate paths if only markers are specified (e.g., fmt='o')
-    should_generate_lines = parsed_fmt.linestyle is not None or (
-        parsed_fmt.marker is None and parsed_fmt.linestyle is None
-    )
+    should_generate_lines = parsed_fmt.linestyle is not None or (parsed_fmt.marker is None and parsed_fmt.linestyle is None)
 
     if should_generate_lines:
         visualPaths = _generate_paths(
