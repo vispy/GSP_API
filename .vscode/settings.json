@@ -7,5 +7,11 @@
     // format on save
     "editor.formatOnSave": true,
     // use "google" style for generating docstring with autoDocstring extension
-    "autoDocstring.docstringFormat": "google"
+    "autoDocstring.docstringFormat": "google",
+    // Use project-specific virtual environment Python interpreter
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    // Automatically activate the virtual environment in the integrated terminal
+    "python.terminal.activateEnvironment": true,
+    "python-envs.defaultEnvManager": "ms-python.python:poetry",
+    "python-envs.defaultPackageManager": "ms-python.python:poetry"
 }

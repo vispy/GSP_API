@@ -10,7 +10,6 @@ import numpy as np
 from .fmt_utils import FmtUtils, ParsedFormat
 from gsp.constants import Constants
 from gsp.types import TransBuf, Buffer, BufferType, Color
-from gsp.constants import Constants
 from gsp.visuals.points import Points
 from gsp.visuals.markers import Markers, MarkerShape
 from gsp.visuals.paths import Paths
@@ -214,15 +213,24 @@ def plot(
     # Generate visuals for lines
     # =============================================================================
 
-    # all pixels red - Create buffer and fill it with a constant
-    visualPaths = _generate_paths(
-        positions,
-        parsed_fmt,
-        line_width=line_width,
-        line_cap_style=line_cap_style,
-        line_join_style=line_join_style,
+    # Generate paths (lines) if:
+    # 1. A linestyle is explicitly specified (e.g., '-' for solid line), OR
+    # 2. Neither markers nor lines are specified (default to line behavior)
+    #
+    # Do NOT generate paths if only markers are specified (e.g., fmt='o')
+    should_generate_lines = parsed_fmt.linestyle is not None or (
+        parsed_fmt.marker is None and parsed_fmt.linestyle is None
     )
-    returned_visuals.extend(visualPaths)
+
+    if should_generate_lines:
+        visualPaths = _generate_paths(
+            positions,
+            parsed_fmt,
+            line_width=line_width,
+            line_cap_style=line_cap_style,
+            line_join_style=line_join_style,
+        )
+        returned_visuals.extend(visualPaths)
 
     # =============================================================================
     # Return the plot() visuals
