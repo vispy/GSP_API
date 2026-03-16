@@ -1,0 +1,259 @@
+================================================================================
+  TEXT ALIGN ENUMERATION - VISUAL REFERENCE
+================================================================================
+
+9-ALIGNMENT GRID
+================================================================================
+
+    LEFT          CENTER          RIGHT
+   (0)            (1)             (2)
+    │             │               │
+    │             │               │
+┌───┴───────┬─────┴─────┬─────────┴───┐
+│ TextAlign │ TextAlign │  TextAlign  │  TOP (V=0)
+│ TOP_LEFT  │TOP_CENTER │  TOP_RIGHT  │
+│  Value: 0 │ Value: 1  │  Value: 2   │
+├───────────┼───────────┼─────────────┤
+│ TextAlign │ TextAlign │  TextAlign  │  CENTER (V=1)
+│CENTER_LEFT│CENTER_CTR │CENTER_RIGHT │
+│ Value: 10 │ Value: 11 │  Value: 12  │
+├───────────┼───────────┼─────────────┤
+│ TextAlign │ TextAlign │  TextAlign  │  BOTTOM (V=2)
+│BOTTOM_LEFT│BOTTOM_CTR │BOTTOM_RIGHT │
+│ Value: 20 │ Value: 21 │  Value: 22  │
+└───────────┴───────────┴─────────────┘
+
+
+ENCODING SCHEME
+================================================================================
+
+Formula:  VALUE = VERTICAL * 10 + HORIZONTAL
+
+Examples:
+  VALUE = 0   → VERTICAL = 0, HORIZONTAL = 0   → TOP_LEFT
+  VALUE = 11  → VERTICAL = 1, HORIZONTAL = 1   → CENTER_CENTER
+  VALUE = 22  → VERTICAL = 2, HORIZONTAL = 2   → BOTTOM_RIGHT
+
+Decoding:
+  VERTICAL = VALUE // 10
+  HORIZONTAL = VALUE % 10
+
+
+NORMALIZED ANCHOR SYSTEM
+================================================================================
+
+This shows how TextAlign maps to the normalized [-1, 1] anchor coordinates
+used internally by text rendering:
+
+  Anchor X:  -1.0 (LEFT)    0.0 (CENTER)   1.0 (RIGHT)
+  Anchor Y:  -1.0 (TOP)     0.0 (CENTER)   1.0 (BOTTOM)
+
+
+    -1.0         0.0          1.0   ← Anchor X
+     │           │            │
+     │           │            │
+┌────┴────────┬──┴──────┬─────┴──────┐
+│(-1, -1)     │ (0, -1) │  (1, -1)   │  ↑
+│  TOP_LEFT   │TOP_CTR  │TOP_RIGHT   │  │
+│   VALUE:0   │VALUE:1  │ VALUE:2    │ -1.0  Anchor Y (TOP)
+├─────────────┼─────────┼────────────┤
+│(-1,  0)     │ (0, 0)  │  (1,  0)   │  │
+│CENTER_LEFT  │CENTER   │CENTER_RIGHT│  │
+│  VALUE:10   │VALUE:11 │ VALUE:12   │ 0.0  Anchor Y (CENTER)
+├─────────────┼─────────┼────────────┤
+│(-1,  1)     │ (0, 1)  │  (1,  1)   │  │
+│BOTTOM_LEFT  │BOTTOM   │BOTTOM_RIGHT│  │
+│  VALUE:20   │VALUE:21 │ VALUE:22   │ 1.0  Anchor Y (BOTTOM)
+└─────────────┴─────────┴────────────┘  ↓
+
+
+TEXT POSITIONING EXAMPLE
+================================================================================
+
+Imagine a point at (x, y) where you want text to appear:
+
+    (x, y)
+
+  ┌──────────┐
+  │  Text    │  ← Text bounding box
+  └──────────┘
+
+The ANCHOR determines which corner/edge of the text box is placed at (x, y):
+
+TOP_LEFT Anchor:          CENTER_CENTER Anchor:     BOTTOM_RIGHT Anchor:
+┌─ (x, y)                        (x, y)                          (x, y) ─┐
+│  ┌────────┐              ┌────────┐              ┌────────┐            │
+│  │  Text  │              │  Text  │              │  Text  │            │
+└─ └────────┘              └────────┘              └────────┘ ─┘
+   (anchor at TL)          (anchor at center)      (anchor at BR)
+
+
+MATPLOTLIB COMPATIBILITY
+================================================================================
+
+TextAlign values map directly to matplotlib's (ha, va) parameters:
+
+Horizontal Alignment (ha):
+  *_LEFT   → "left"
+  *_CENTER → "center"
+  *_RIGHT  → "right"
+
+Vertical Alignment (va):
+  TOP_*    → "top"
+  CENTER_* → "center"
+  BOTTOM_* → "bottom"
+
+Usage with matplotlib:
+  align = TextAlign.CENTER_LEFT
+  ha, va = align.to_matplotlib_alignment()
+  # ha = "left", va = "center"
+
+  mpl_text.set_horizontalalignment(ha)
+  mpl_text.set_verticalalignment(va)
+
+
+CONVERSION EXAMPLES
+================================================================================
+
+Create from Components:
+  ┌─────────────────────────────────────────────────────────────┐
+  │ align = TextAlign.from_components(VerticalAlign.CENTER,     │
+  │                                    HorizontalAlign.RIGHT)   │
+  │ → TextAlign.CENTER_RIGHT (value 12)                          │
+  └─────────────────────────────────────────────────────────────┘
+
+Create from Anchor Coordinates:
+  ┌─────────────────────────────────────────────────────────────┐
+  │ align = TextAlign.from_anchor_coordinates(-1.0, 1.0)        │
+  │ → TextAlign.BOTTOM_LEFT (value 20)                           │
+  └─────────────────────────────────────────────────────────────┘
+
+Convert to Anchor Coordinates:
+  ┌─────────────────────────────────────────────────────────────┐
+  │ align = TextAlign.TOP_RIGHT                                  │
+  │ x, y = align.to_anchor_coordinates()                         │
+  │ → (1.0, -1.0)                                                │
+  └─────────────────────────────────────────────────────────────┘
+
+Convert to Matplotlib:
+  ┌─────────────────────────────────────────────────────────────┐
+  │ align = TextAlign.BOTTOM_CENTER                              │
+  │ ha, va = align.to_matplotlib_alignment()                     │
+  │ → ("center", "bottom")                                       │
+  └─────────────────────────────────────────────────────────────┘
+
+
+VALUE LOOKUP TABLE
+================================================================================
+
+┌────────────────────┬───────┬──────────┬────────────┐
+│ Enum Name          │ Value │ Vertical │ Horizontal │
+├────────────────────┼───────┼──────────┼────────────┤
+│ TOP_LEFT           │   0   │ TOP (0)  │ LEFT (0)   │
+│ TOP_CENTER         │   1   │ TOP (0)  │ CENTER (1) │
+│ TOP_RIGHT          │   2   │ TOP (0)  │ RIGHT (2)  │
+├────────────────────┼───────┼──────────┼────────────┤
+│ CENTER_LEFT        │  10   │ CENTER(1)│ LEFT (0)   │
+│ CENTER_CENTER      │  11   │ CENTER(1)│ CENTER (1) │
+│ CENTER_RIGHT       │  12   │ CENTER(1)│ RIGHT (2)  │
+├────────────────────┼───────┼──────────┼────────────┤
+│ BOTTOM_LEFT        │  20   │ BOTTOM(2)│ LEFT (0)   │
+│ BOTTOM_CENTER      │  21   │ BOTTOM(2)│ CENTER (1) │
+│ BOTTOM_RIGHT       │  22   │ BOTTOM(2)│ RIGHT (2)  │
+└────────────────────┴───────┴──────────┴────────────┘
+
+
+COMMON USAGE PATTERNS
+================================================================================
+
+Pattern 1: Loop through all alignments
+  ┌─────────────────────────────────────────────────────────────┐
+  │ for v in range(3):                                           │
+  │     for h in range(3):                                       │
+  │         align = TextAlign.from_components(v, h)             │
+  │         # Process alignment...                               │
+  └─────────────────────────────────────────────────────────────┘
+
+Pattern 2: Check specific alignment
+  ┌─────────────────────────────────────────────────────────────┐
+  │ align = TextAlign.CENTER_RIGHT                               │
+  │ if align.vertical() == VerticalAlign.CENTER:                │
+  │     print("Text is vertically centered")                     │
+  └─────────────────────────────────────────────────────────────┘
+
+Pattern 3: Convert between systems
+  ┌─────────────────────────────────────────────────────────────┐
+  │ anchor_x, anchor_y = get_normalized_anchors()               │
+  │ align = TextAlign.from_anchor_coordinates(anchor_x, anchor_y)│
+  │ ha, va = align.to_matplotlib_alignment()                    │
+  │ mpl_text.set_horizontalalignment(ha)                        │
+  │ mpl_text.set_verticalalignment(va)                          │
+  └─────────────────────────────────────────────────────────────┘
+
+
+MENTAL MODEL
+================================================================================
+
+Think of it as a 3×3 grid:
+
+     COL 0        COL 1        COL 2
+    (LEFT)      (CENTER)      (RIGHT)
+      ↓            ↓             ↓
+   ┌─────┐      ┌─────┐      ┌─────┐
+0  │ TOP │      │ TOP │      │ TOP │  ← ROW 0 (TOP)
+   │ L   │      │ C   │      │ R   │
+   └─────┘      └─────┘      └─────┘
+   VALUE:0      VALUE:1      VALUE:2
+
+   ┌─────┐      ┌─────┐      ┌─────┐
+1  │ CTR │      │ CTR │      │ CTR │  ← ROW 1 (CENTER)
+   │ L   │      │ C   │      │ R   │
+   └─────┘      └─────┘      └─────┘
+   VALUE:10     VALUE:11     VALUE:12
+
+   ┌─────┐      ┌─────┐      ┌─────┐
+2  │ BOT │      │ BOT │      │ BOT │  ← ROW 2 (BOTTOM)
+   │ L   │      │ C   │      │ R   │
+   └─────┘      └─────┘      └─────┘
+   VALUE:20     VALUE:21     VALUE:22
+
+VALUE = ROW * 10 + COL
+
+
+ALIGNMENT VISUAL INDICATORS
+================================================================================
+
+When rendered, these alignment indicators show where the anchor point is:
+
+TOP_LEFT              TOP_CENTER             TOP_RIGHT
+●─────────            ──●──────              ─────────●
+│Text    │            │Text   │              │    Text│
+└────────┘            └───────┘              └────────┘
+
+CENTER_LEFT           CENTER_CENTER          CENTER_RIGHT
+●─────────            ──●──────              ─────────●
+│Text    │            │Text   │              │    Text│
+└────────┘            └───────┘              └────────┘
+
+BOTTOM_LEFT           BOTTOM_CENTER          BOTTOM_RIGHT
+●─────────            ──●──────              ─────────●
+│Text    │            │Text   │              │    Text│
+└────────┘            └───────┘              └────────┘
+
+● = Anchor point (where text position is placed)
+
+
+DEBUGGING TIP
+================================================================================
+
+If you need to quickly understand what a TextAlign value means:
+
+  value = 21
+
+  Decode:
+    vertical = 21 // 10 = 2  → BOTTOM
+    horizontal = 21 % 10 = 1  → CENTER
+
+  Result: TextAlign.BOTTOM_CENTER ✓
+
+================================================================================
