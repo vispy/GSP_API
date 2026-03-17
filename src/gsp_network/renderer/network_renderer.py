@@ -30,6 +30,7 @@ from gsp_pydantic.types.pydantic_dict import PydanticDict
 #
 class NetworkPayload(TypedDict):
     """Type definition for the network payload sent to the server."""
+
     renderer_name: Literal["matplotlib", "datoviz"]
     data: PydanticDict
 
@@ -146,10 +147,21 @@ class NetworkRenderer(RendererBase):
         # Render the image in the matplotlib figure
         # =============================================================================
         assert self._axes_image is not None, "PANIC self._axes_image is None"
-        # update the image data
-        image_data_io = io.BytesIO(image_png_data)
-        image_data_np = matplotlib.image.imread(image_data_io, format="png")
-        self._axes_image.set_data(image_data_np)
+
+        # decode the new RGBA image (float32 [0, 1])
+        image_data_np = matplotlib.image.imread(io.BytesIO(image_png_data), format="png")
+
+        overload_enabled = True
+        if overload_enabled is False:
+            # direct RGBA display (works but is slightly darker than the original image, likely due to how matplotlib handles alpha)
+            self._axes_image.set_data(image_data_np)
+        else:
+            # source-over blend onto the existing displayed image
+            image_src_rgb = image_data_np[..., :3]
+            image_src_alpha = image_data_np[..., 3:4]
+            image_dst_rgb = self._axes_image.get_array().astype(np.float32) / 255.0  # type: ignore
+            image_blended = image_src_rgb * image_src_alpha + image_dst_rgb * (1.0 - image_src_alpha)
+            self._axes_image.set_data((image_blended * 255.0).astype(np.uint8))
 
         # return png data as bytes
         return image_png_data
@@ -165,7 +177,7 @@ class NetworkRenderer(RendererBase):
 
     def get_mpl_figure(self) -> matplotlib.figure.Figure:
         """Get the underlying Matplotlib figure.
-        
+
         Returns:
             matplotlib.figure.Figure: The Matplotlib figure used by the renderer.
         """
