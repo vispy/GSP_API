@@ -167,7 +167,7 @@ class MatplotlibRenderer(RendererBase):
                 axes = self._axes[viewport.get_uuid()]
                 # set the background color of the axes to the viewport background color
                 axes_background_color = ConverterUtils.color_gsp_to_mpl(viewport.get_background_color())
-                print(f"Setting axes background color to {axes_background_color} for viewport {viewport.get_uuid()}")
+                # print(f"Setting axes background color to {axes_background_color} for viewport {viewport.get_uuid()}")
                 axes.set_facecolor(axes_background_color)
 
         # =============================================================================
