@@ -12,7 +12,6 @@ import pydantic_core
 # local imports
 from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
-from gsp.constants import Constants
 from gsp.core.texture import Texture
 from gsp.types.image_interpolation import ImageInterpolation
 from gsp.types.text_align import TextAlign
@@ -83,7 +82,12 @@ class PydanticParser:
         # Parse Pydantic Canvas
         # =============================================================================
         pydantic_canvas = pydantic_scene.canvas
-        canvas = Canvas(pydantic_canvas.width, pydantic_canvas.height, pydantic_canvas.dpi, Constants.Color.white)
+        canvas = Canvas(
+            pydantic_canvas.width,
+            pydantic_canvas.height,
+            pydantic_canvas.dpi,
+            bytearray(pydantic_canvas.background_color),
+        )
         canvas._uuid = pydantic_canvas.uuid
 
         # =============================================================================
@@ -96,7 +100,7 @@ class PydanticParser:
                 pydantic_viewport.y,
                 pydantic_viewport.width,
                 pydantic_viewport.height,
-                Constants.Color.transparent,
+                bytearray(pydantic_viewport.background_color),
             )
             viewport._uuid = pydantic_viewport.uuid
             viewports.append(viewport)

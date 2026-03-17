@@ -37,7 +37,7 @@ from ..types.pydantic_types import (
     PydanticScene,
 )
 from ..types.pydantic_types import PydanticVisual, PydanticPixels, PydanticPoints, PydanticSegments
-from ..types.pydantic_types import PydanticTransBuf, PydanticBuffer, PydanticTransformChain
+from ..types.pydantic_types import PydanticTransBuf, PydanticBuffer, PydanticTransformChain, PydanticColor
 from ..types.pydantic_dict import PydanticDict
 
 
@@ -82,6 +82,7 @@ class PydanticSerializer(SerializerBase):
             width=self._canvas.get_width(),
             height=self._canvas.get_height(),
             dpi=self._canvas.get_dpi(),
+            background_color=typing.cast(PydanticColor, tuple(self._canvas.get_background_color())),
         )
 
         pydanticViewports = [
@@ -91,6 +92,7 @@ class PydanticSerializer(SerializerBase):
                 y=viewport.get_y(),
                 width=viewport.get_width(),
                 height=viewport.get_height(),
+                background_color=typing.cast(PydanticColor, tuple(viewport.get_background_color())),
             )
             for viewport in viewports
         ]

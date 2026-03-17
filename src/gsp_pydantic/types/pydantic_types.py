@@ -51,6 +51,8 @@ class PydanticTransBuf(BaseModel):
 PydanticGroups = Union[int, list[int], list[list[int]]]
 """Type alias for groups which can be an int, a list of ints, or a list of list of ints."""
 
+PydanticColor = tuple[int, int, int, int]
+"""Type alias for color represented as a list of 4 RGBA float values."""
 
 # =============================================================================
 #
@@ -67,6 +69,7 @@ class PydanticCanvas(BaseModel):
     width: int
     height: int
     dpi: float
+    background_color: PydanticColor
 
 
 class PydanticViewport(BaseModel):
@@ -80,6 +83,7 @@ class PydanticViewport(BaseModel):
     y: int
     width: int
     height: int
+    background_color: PydanticColor
 
 
 class PydanticModelMatrix(BaseModel):

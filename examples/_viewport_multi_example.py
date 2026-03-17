@@ -24,7 +24,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(100, 100, 96.0, Constants.Color.transparent)
+    canvas = Canvas(100, 100, 96.0, Constants.Color.blue)
 
     # Create viewports
     viewport = Viewport(
@@ -32,7 +32,7 @@ def main():
         int(0.2 * canvas.get_height()),
         int(0.6 * canvas.get_width()),
         int(0.6 * canvas.get_height()),
-        Constants.Color.red,
+        Constants.Color.transparent,
     )
 
     # =============================================================================
@@ -41,7 +41,7 @@ def main():
     # =============================================================================
 
     def generate_pixels(gsp_color: Color) -> Pixels:
-        point_count = 1_000
+        point_count = 10_000
         group_size = point_count
         group_count = GroupUtils.get_group_count(point_count, groups=group_size)
 
@@ -62,7 +62,7 @@ def main():
         pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
         return pixels
 
-    pixels = generate_pixels(gsp_color=Constants.Color.red)
+    pixels = generate_pixels(gsp_color=Constants.Color.black)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================
