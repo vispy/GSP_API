@@ -534,7 +534,7 @@ class AxesDisplay:
         coords_array, tick_labels = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
 
         # compute tick_height_ndc
-        _, tick_height_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.3)
+        _, tick_height_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.5)
 
         # build positions array from coords
         positions_array = []
@@ -597,7 +597,7 @@ class AxesDisplay:
         font_size_buffer = Bufferx.from_numpy(font_size_numpy, BufferType.float32)
 
         # Create a anchor_numpy for each string with a bottom-left anchor
-        textAligns = [TextAlign.CENTER_CENTER] * label_count
+        textAligns = [TextAlign.CENTER_RIGHT] * label_count
 
         angles_numpy = np.array([[0] for _ in range(label_count)], dtype=np.float32)
         angles_buffer = Bufferx.from_numpy(angles_numpy, BufferType.float32)
