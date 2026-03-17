@@ -24,16 +24,16 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(100, 100, 96.0, Constants.Color.white)
-
-    half_width = int(canvas.get_width() / 2)
-    half_height = int(canvas.get_height() / 2)
+    canvas = Canvas(100, 100, 96.0, Constants.Color.transparent)
 
     # Create viewports
-    viewport_1 = Viewport(0, 0, half_width, half_height, Constants.Color.transparent)
-    viewport_2 = Viewport(half_width, 0, half_width, half_height, Constants.Color.transparent)
-    viewport_3 = Viewport(0, half_height, half_width, half_height, Constants.Color.transparent)
-    viewport_4 = Viewport(half_width, half_height, half_width, half_height, Constants.Color.transparent)
+    viewport = Viewport(
+        int(0.2 * canvas.get_width()),
+        int(0.2 * canvas.get_height()),
+        int(0.6 * canvas.get_width()),
+        int(0.6 * canvas.get_height()),
+        Constants.Color.red,
+    )
 
     # =============================================================================
     # Add random points
@@ -62,8 +62,7 @@ def main():
         pixels = Pixels(positions_buffer, colors_buffer, groups=group_size)
         return pixels
 
-    pixels_1 = generate_pixels(gsp_color=Constants.Color.red)
-    pixels_2 = generate_pixels(gsp_color=Constants.Color.green)
+    pixels = generate_pixels(gsp_color=Constants.Color.red)
     model_matrix = Bufferx.mat4_identity()
 
     # =============================================================================
@@ -80,12 +79,7 @@ def main():
     # Create renderer and render
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-    rendered_image = renderer_base.render(
-        [viewport_1, viewport_2, viewport_3, viewport_4],
-        [pixels_1, pixels_2, pixels_2, pixels_1],
-        [model_matrix, model_matrix, model_matrix, model_matrix],
-        [camera, camera, camera, camera],
-    )
+    rendered_image = renderer_base.render([viewport], [pixels], [model_matrix], [camera])
 
     # Save to file
     ExampleHelper.save_output_image(rendered_image, f"{pathlib.Path(__file__).stem}_{renderer_name}.png")

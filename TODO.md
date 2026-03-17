@@ -3,7 +3,7 @@
   - https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
 - fixed text rendering anchor + rotation in datoviz - required for vispy_axes
   - fixed in matplotlib
-  - BUG in datoviz i cant change the anchor, i dunno why
+  - BUG in datoviz i cant change the anchor or rotation, i dunno why
 - TODO handle GSP canvas/viewport with background color
   - EARLY support (works in matplotlib figure, not axes. not at all in datoviz)
     - python `./examples/vispy_axes_display_example.py`

@@ -534,7 +534,7 @@ class AxesDisplay:
         coords_array, tick_labels = AxesDisplay._compute_tick_coords_horizontal(inner_viewport_unit, outter_viewport_unit, x_min_dunit, x_max_dunit)
 
         # compute tick_height_ndc
-        _, tick_height_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.5)
+        _, tick_height_ndc = outter_viewport_unit.delta_cm_to_ndc(0.0, 0.4)
 
         # build positions array from coords
         positions_array = []
