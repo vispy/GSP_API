@@ -31,8 +31,8 @@ def main():
 
     # Create viewports
     viewport_1 = Viewport(0, 0, half_width, half_height, Constants.Color.transparent)
-    viewport_2 = Viewport(half_width, 0, half_width, half_height, Constants.Color.transparent)
-    viewport_3 = Viewport(0, half_height, half_width, half_height, Constants.Color.transparent)
+    viewport_2 = Viewport(half_width, 0, half_width, half_height, Constants.Color.red)
+    viewport_3 = Viewport(0, half_height, half_width, half_height, Constants.Color.blue)
     viewport_4 = Viewport(half_width, half_height, half_width, half_height, Constants.Color.transparent)
 
     # =============================================================================
