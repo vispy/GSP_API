@@ -18,6 +18,9 @@ from gsp.constants import Constants
 
 from gsp_extra.misc.render_item import RenderItem
 from common.example_helper import ExampleHelper
+from gsp.core.texture import Texture
+from gsp_extra.misc.texture_utils import TextureUtils
+
 
 # from vispy_2 import scatter
 import vispy2 as Vispy2
@@ -31,43 +34,31 @@ def main():
     # Create a canvas
     canvas = Canvas(400, 400, 72.0, Constants.Color.white)
 
-    # Create viewports
-    viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
+    # Create a renderer
+    renderer_name = ExampleHelper.get_renderer_name()
+    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
+
+    # Create an AxesManaged instance for the canvas
+    axes_managed = Vispy2.axes.AxesManaged(renderer_base, 40, 40, 320, 320)
 
     # =============================================================================
-    # Add random points
-    # - various ways to create Buffers
+    # Read image and create texture
     # =============================================================================
 
-    imageData = np.random.rand(400, 400).astype(np.float32)
-    imshowImage = Vispy2.imshow(imageData, cmap="viridis")
+    image_path = pathlib.Path(__file__).parent / "images" / "image.png"
+    texture = TextureUtils.load_image(str(image_path))
+
+    imshowImage = Vispy2.imshow(texture, cmap="viridis", origin="upper")
     visualImage = imshowImage.to_visual_image()
 
-    # declare array of render items
-    render_items: list[RenderItem] = []
-    render_items.append(RenderItem(viewport, visualImage, Bufferx.mat4_identity(), Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())))
+    axes_managed.add_visual(visualImage)
 
     # =============================================================================
     # Render
     # =============================================================================
 
-    # Create renderer and render
-    renderer_name = ExampleHelper.get_renderer_name()
-    renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-
-    # Render all render items
-    rendered_image = renderer_base.render(
-        [render_item.viewport for render_item in render_items],
-        [render_item.visual_base for render_item in render_items],
-        [render_item.model_matrix for render_item in render_items],
-        [render_item.camera for render_item in render_items],
-    )
-
-    # Save to file
-    ExampleHelper.save_output_image(rendered_image, f"{pathlib.Path(__file__).stem}_{renderer_name}.png")
-
-    # Show the renderer
-    renderer_base.show()
+    # start the animation loop
+    axes_managed.start()
 
 
 if __name__ == "__main__":
