@@ -150,7 +150,17 @@ class MatplotlibRenderer(RendererBase):
                 axes.set_xlim(-1, 1)
                 axes.set_ylim(-1, 1)
                 # hide the borders
-                axes.axis("off")
+                # - DO NOT use axes.axis("off") directly as it remove the background too
+                # - it is needed for viewport.get_background_color()
+                axes.set_xticks([])  # Hide x-axis ticks
+                axes.set_yticks([])  # Hide y-axis ticks
+                axes.set_xticklabels([])  # Hide x-axis labels
+                axes.set_yticklabels([])  # Hide y-axis labels
+                axes.xaxis.label.set_visible(False)  # Hide x-axis label
+                axes.yaxis.label.set_visible(False)  # Hide y-axis label
+                # Hide all spines at once
+                for spine in axes.spines.values():
+                    spine.set_visible(False)
                 # store axes for this viewport
                 self._axes[viewport.get_uuid()] = axes
 
