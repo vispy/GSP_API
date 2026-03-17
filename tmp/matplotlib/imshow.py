@@ -1,4 +1,4 @@
-"""This example demonstrates how to load and display an image using Matplotlib's `imshow` function. It reads an image from a file, converts it to a NumPy array, and then displays it without axes for a cleaner look."""
+"""This example demonstrates how to load and display an image using Matplotlib's `imshow` function with pan and zoom capabilities."""
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -9,6 +9,9 @@ image_path = pathlib.Path(__file__).parent / "../.." / "examples" / "images" / "
 image_numpy = mpimg.imread(image_path)
 
 # Display it
-plt.imshow(image_numpy)
-plt.axis("off")  # hide axes for cleaner display
+fig, ax = plt.subplots()
+ax.imshow(image_numpy)
+ax.axis("off")
+
+# The toolbar includes pan and zoom buttons by default
 plt.show()
