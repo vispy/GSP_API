@@ -6,10 +6,12 @@ import numpy as np
 
 # local imports
 from gsp.types import BufferType
+from gsp.utils.cmap_utils import CmapUtils
 from gsp.visuals.image import Image
 from gsp.core.texture import Texture
 from gsp.types.image_interpolation import ImageInterpolation
 from gsp_extra.bufferx import Bufferx
+from gsp.utils.transbuf_utils import TransBufUtils
 
 
 class ImshowImage:
@@ -62,6 +64,14 @@ class ImshowImage:
         # Extract dimensions from texture
         width = self._texture.get_width()
         height = self._texture.get_height()
+
+        # honor colormap for single-channel images (assume grayscale stored in RGBA format)
+        if self._cmap is not None:
+            texture_buffer = TransBufUtils.to_buffer(self._texture.get_data())
+            texture_numpy = Bufferx.to_numpy(texture_buffer)
+            texture_gray = texture_numpy[:, 0]  # Assuming single-channel grayscale in RGBA format
+            color_buffer = CmapUtils.get_color_map(self._cmap, texture_gray, vmin=self._vmin, vmax=self._vmax)
+            self._texture.set_data(color_buffer)
 
         # Determine image extent (spatial coordinates)
         if self._extent is None:
