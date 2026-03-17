@@ -40,6 +40,7 @@ def main():
 
     # Create an AxesManaged instance for the canvas
     axes_managed = Vispy2.axes.AxesManaged(renderer_base, 40, 40, 320, 320)
+    axes_managed.set_title("Vispy2 imshow Example")
 
     # =============================================================================
     # Read image and create texture
