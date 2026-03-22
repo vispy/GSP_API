@@ -1,10 +1,24 @@
 """Common constants for GSP including color definitions."""
 
+# stdlib imports
+from enum import Enum
+
+# pip imports
 from .types.color import Color
 
 
 class Constants:
     """Common constants in GSP. e.g. colors."""
+
+    class FaceCulling(Enum):
+        """Face culling options for rendering meshes.
+
+        Determines which faces of a mesh are rendered based on their orientation relative to the camera.
+        """
+
+        FrontSide = 0
+        BackSide = 1
+        BothSides = 2
 
     class Color:
         """Common colors as RGBA bytearrays.

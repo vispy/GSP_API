@@ -1,3 +1,7 @@
+- start including mesh
+  - added /src/gsp/geometry/
+  - added /src/gsp_extra/misc/mesh_utils.py
+  - bringing back mesh, examples+models data + geometry + material + visual <- lint working
 - TODO ask about datoviz text rendering
   - write standalone code that anchor and rotation are irrelevant in datoviz text rendering
 - fixed text rendering anchor + rotation in datoviz - required for vispy_axes
