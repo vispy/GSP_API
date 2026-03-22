@@ -28,6 +28,14 @@ def main():
     #
     # =============================================================================
 
+    # @animator_base.event_listener
+    # def animator_callback(delta_time: float) -> list[VisualBase]:
+    #     """Animator callback to handle rendering frequency."""
+    #     renderer_base.clear()  # Clear the canvas before rendering the next frame
+
+    #     changed_visuals: list[VisualBase] = []
+    #     return changed_visuals
+
     # Create an AxesManaged instance for the canvas
     axes_managed1 = Vispy2.axes.AxesManaged(renderer_base, 40, 40, 160, 160, animator_base=animator_base)
     axes_managed2 = Vispy2.axes.AxesManaged(renderer_base, 240, 40, 160, 160, animator_base=animator_base)

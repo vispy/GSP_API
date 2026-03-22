@@ -99,6 +99,10 @@ class MatplotlibRenderer(RendererBase):
 
         matplotlib.pyplot.show()
 
+    def clear(self) -> None:
+        """Clear the rendered canvas by clearing all axes and artists."""
+        self._figure.clf()  # Clear the entire figure
+
     def render(
         self,
         viewports: Sequence[Viewport],

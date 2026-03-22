@@ -175,6 +175,10 @@ class NetworkRenderer(RendererBase):
 
         matplotlib.pyplot.show()
 
+    def clear(self) -> None:
+        """Clear the rendered canvas by resetting the displayed image to black."""
+        self._figure.clf()  # clear the figure
+
     def get_mpl_figure(self) -> matplotlib.figure.Figure:
         """Get the underlying Matplotlib figure.
 

@@ -100,6 +100,13 @@ class DatovizRenderer(RendererBase):
         # run the datoviz app to show the window
         self._dvz_app.run()
 
+    def clear(self) -> None:
+        """Clear the datoviz figure by removing all panels and visuals."""
+        raise NotImplementedError(
+            "DatovizRenderer.clear() is not implemented yet. Please implement it to clear the datoviz figure before rendering the next frame."
+        )
+        return
+
     # =============================================================================
     # .render() function
     # =============================================================================

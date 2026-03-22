@@ -67,3 +67,8 @@ class RendererBase(ABC):
     def show(self) -> None:
         """Show the rendered canvas (blocking call)."""
         pass
+
+    @abstractmethod
+    def clear(self) -> None:
+        """Clear the rendered canvas."""
+        pass
