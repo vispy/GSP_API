@@ -14,6 +14,9 @@ from .matplotlib_renderer import MatplotlibRenderer
 from gsp.core.camera import Camera
 from gsp.core.viewport import Viewport
 from gsp.types.transbuf import TransBuf
+from gsp.utils.math_utils import MathUtils
+from ..extra.bufferx import Bufferx
+from gsp.utils.transbuf_utils import TransBufUtils
 
 # from ..cameras.camera import Camera
 # from ..math.transform_utils import TransformUtils
@@ -46,6 +49,27 @@ class RendererMesh:
 
         assert mesh.geometry.indices is not None, "The mesh geometry must have face indices to be rendered"
         assert mesh.geometry.uvs is not None, "The mesh geometry must have texture coordinates to be rendered"
+
+        # =============================================================================
+        # Transform vertices with MVP matrix
+        # =============================================================================
+
+        vertices_buffer = TransBufUtils.to_buffer(mesh.geometry.get_positions())
+        model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
+        view_matrix_buffer = TransBufUtils.to_buffer(camera.get_view_matrix())
+        projection_matrix_buffer = TransBufUtils.to_buffer(camera.get_projection_matrix())
+
+        # convert all necessary buffers to numpy arrays
+        vertices_numpy = Bufferx.to_numpy(vertices_buffer)
+        model_matrix_numpy = Bufferx.to_numpy(model_matrix_buffer).squeeze()
+        view_matrix_numpy = Bufferx.to_numpy(view_matrix_buffer).squeeze()
+        projection_matrix_numpy = Bufferx.to_numpy(projection_matrix_buffer).squeeze()
+
+        # Apply Model-View-Projection transformation to the vertices
+        vertices_3d_transformed = MathUtils.apply_mvp_to_vertices(vertices_numpy, model_matrix_numpy, view_matrix_numpy, projection_matrix_numpy)
+
+        # Convert 3D vertices to 2D - shape (N, 2)
+        vertices_2d = vertices_3d_transformed[:, :2]
 
         # =============================================================================
         # Extract geometry and material

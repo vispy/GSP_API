@@ -12,6 +12,7 @@ from gsp.materials import MeshBasicMaterial
 from gsp.visuals.mesh import Mesh
 from .matplotlib_renderer import MatplotlibRenderer
 from gsp.core.camera import Camera
+from gsp.core.viewport import Viewport
 from .renderer_utils import RendererUtils
 
 
@@ -102,6 +103,7 @@ class RendererMeshBasicMaterial:
         # do z-ordering based on distance to camera
         # =============================================================================
 
+        # TODO removed this line during merging
         # # compute and set zorder on our single artist
         # RendererUtils.update_single_artist_zorder(camera, mesh, mpl_poly_collection)
 

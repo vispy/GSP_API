@@ -209,6 +209,10 @@ class MatplotlibRenderer(RendererBase):
             from gsp_matplotlib.renderer.matplotlib_renderer_mesh import RendererMesh
 
             RendererMesh.render(self, viewport, visual, model_matrix, camera)
+        elif isinstance(visual, Markers):
+            from gsp_matplotlib.renderer.matplotlib_renderer_markers import RendererMarkers
+
+            RendererMarkers.render(self, viewport, visual, model_matrix, camera)
         elif isinstance(visual, Pixels):
             from gsp_matplotlib.renderer.matplotlib_renderer_pixels import RendererPixels
 
@@ -221,10 +225,6 @@ class MatplotlibRenderer(RendererBase):
             from gsp_matplotlib.renderer.matplotlib_renderer_paths import RendererPaths
 
             RendererPaths.render(self, viewport, visual, model_matrix, camera)
-        elif isinstance(visual, Markers):
-            from gsp_matplotlib.renderer.matplotlib_renderer_markers import RendererMarkers
-
-            RendererMarkers.render(self, viewport, visual, model_matrix, camera)
         elif isinstance(visual, Segments):
             from gsp_matplotlib.renderer.matplotlib_renderer_segments import RendererSegments
 
