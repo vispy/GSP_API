@@ -166,7 +166,7 @@ class DatovizRendererTexts:
                 else:
                     raise ValueError(f"Unsupported TextAlign value: {textAligns[text_index]}")
 
-        dvz_glyphs.set_strings(text_strings, string_pos=vertices_3d)
+        dvz_glyphs.set_strings(text_strings, string_pos=vertices_3d, scales=glyph_scales, anchor=glyphs_anchors[0])
         dvz_glyphs.set_color(glyph_colors)
         dvz_glyphs.set_angle(glyphs_angles)
         # print(f"============================ Debug Texts Attributes ===========================")

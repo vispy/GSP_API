@@ -113,8 +113,8 @@ class RendererMeshBasicMaterial:
 
         # update the PathCollection with the new patches
         mpl_poly_collection.set_verts(typing.cast(list, faces_vertices_2d))
-        mpl_poly_collection.set_facecolor(typing.cast(list, material.colors))
-        mpl_poly_collection.set_edgecolor(typing.cast(list, material.edge_colors))
+        mpl_poly_collection.set_facecolor(typing.cast(list, material.colors / 255.0))
+        mpl_poly_collection.set_edgecolor(typing.cast(list, material.edge_colors / 255.0))
         mpl_poly_collection.set_linewidth(typing.cast(list, material.edge_widths))
 
         return [mpl_poly_collection]

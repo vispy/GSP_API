@@ -11,9 +11,7 @@ import pathlib
 import numpy as np
 
 # local imports
-from gsp.core import Canvas, Viewport
-from gsp.core import Camera
-from gsp_extra.bufferx import Bufferx
+from gsp.core import Canvas
 from gsp.constants import Constants
 
 from gsp_extra.misc.render_item import RenderItem

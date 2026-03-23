@@ -9,7 +9,7 @@ import numpy as np
 
 # local imports
 from gsp.core import Canvas, Viewport
-from gsp.visuals import Mesh
+from gsp.visuals.mesh import Mesh
 from gsp.types import Buffer, BufferType
 from gsp.geometry import MeshGeometry
 from gsp.materials import MeshBasicMaterial
@@ -27,7 +27,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(100, 100, 72.0, Constants.Color.white)
+    canvas = Canvas(400, 400, 72.0, Constants.Color.white)
 
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
@@ -41,8 +41,11 @@ def main():
     obj_path = pathlib.Path(__file__).parent / "models" / "suzanne.obj"
     mesh_geometry = MeshUtils.parse_obj_file_manual(str(obj_path))
 
+    mesh_material = MeshBasicMaterial()
+    mesh_material.colors = np.array([255, 0, 255, 255], dtype=np.float32)  # red, green, blue
+
     # Create a mesh
-    mesh = Mesh(mesh_geometry, MeshBasicMaterial())
+    mesh = Mesh(mesh_geometry, mesh_material)
 
     # =============================================================================
     # Render the canvas

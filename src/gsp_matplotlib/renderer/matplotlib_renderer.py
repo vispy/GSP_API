@@ -21,13 +21,6 @@ from gsp.core.canvas import Canvas
 from gsp.core.viewport import Viewport
 from gsp.types.visual_base import VisualBase
 from gsp.types.transbuf import TransBuf
-from gsp.visuals.image import Image
-from gsp.visuals.pixels import Pixels
-from gsp.visuals.points import Points
-from gsp.visuals.markers import Markers
-from gsp.visuals.mesh import Mesh
-from gsp.visuals.paths import Paths
-from gsp.visuals.segments import Segments
 from gsp.types.renderer_base import RendererBase
 from gsp_matplotlib.utils.converter_utils import ConverterUtils
 
@@ -201,6 +194,14 @@ class MatplotlibRenderer(RendererBase):
 
     def _render_visual(self, viewport: Viewport, visual: VisualBase, model_matrix: TransBuf, camera: Camera):
         """Render a single visual in a given viewport using the specified camera."""
+        from gsp.visuals.image import Image
+        from gsp.visuals.pixels import Pixels
+        from gsp.visuals.points import Points
+        from gsp.visuals.markers import Markers
+        from gsp.visuals.mesh import Mesh
+        from gsp.visuals.paths import Paths
+        from gsp.visuals.segments import Segments
+
         if isinstance(visual, Image):
             from gsp_matplotlib.renderer.matplotlib_renderer_image import RendererImage
 

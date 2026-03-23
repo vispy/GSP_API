@@ -3,6 +3,9 @@ import numpy as np
 
 # local imports
 from .geometry import Geometry
+from ..types import Buffer
+from ..types import BufferType
+from gsp_extra.bufferx import Bufferx
 
 
 class MeshGeometry(Geometry):
@@ -55,3 +58,8 @@ class MeshGeometry(Geometry):
             uvs=self.uvs.copy() if self.uvs is not None else None,
             normals=self.normals.copy() if self.normals is not None else None,
         )
+
+    def get_vertices(self) -> Buffer:
+        """Get the vertex positions as a Buffer."""
+        vertice_buffer = Bufferx.from_numpy(self.vertices, BufferType.vec3)
+        return vertice_buffer

@@ -20,7 +20,7 @@ from gsp.utils.transbuf_utils import TransBufUtils
 
 # from ..cameras.camera import Camera
 # from ..math.transform_utils import TransformUtils
-from gsp.geometry.geometry_utils import GeometryUtils
+# from gsp.geometry.geometry_utils import GeometryUtils
 
 # https://chatgpt.com/c/68ee0eab-776c-8331-b44a-f131ba3f166b
 # local -> world -> view -> clip (NDC) -> screen (2D)
@@ -54,7 +54,7 @@ class RendererMesh:
         # Transform vertices with MVP matrix
         # =============================================================================
 
-        vertices_buffer = TransBufUtils.to_buffer(mesh.geometry.get_positions())
+        vertices_buffer = TransBufUtils.to_buffer(mesh.geometry.get_vertices())
         model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
         view_matrix_buffer = TransBufUtils.to_buffer(camera.get_view_matrix())
         projection_matrix_buffer = TransBufUtils.to_buffer(camera.get_projection_matrix())
@@ -71,6 +71,8 @@ class RendererMesh:
         # Convert 3D vertices to 2D - shape (N, 2)
         vertices_2d = vertices_3d_transformed[:, :2]
 
+        # vertices_world = vertices_3d_transformed
+
         # =============================================================================
         # Extract geometry and material
         # =============================================================================
@@ -84,19 +86,21 @@ class RendererMesh:
         # =============================================================================
 
         # Get the full transform matrix for the mesh
-        world_matrix = mesh.get_world_matrix()
-        vertices_world = GeometryUtils.apply_transform(geometry.vertices, world_matrix)
+        # world_matrix = mesh.get_world_matrix()
+        # vertices_world = GeometryUtils.apply_transform(geometry.vertices, world_matrix)
 
         # build the faces vertices and uvs arrays
-        faces_vertices_world = vertices_world[geometry.indices]
+        # faces_vertices_world = vertices_world[geometry.indices]
 
         # =============================================================================
         # Compute the NDC faces_vertices
         # =============================================================================
 
         # Get the full transform matrix for the mesh
-        mvp_matrix = TransformUtils.compute_mvp_matrix(camera, mesh)
-        vertices_ndc, vertices_clip = GeometryUtils.apply_mvp_matrix(geometry.vertices, mvp_matrix)
+        # mvp_matrix = TransformUtils.compute_mvp_matrix(camera, mesh)
+        # vertices_ndc, vertices_clip = GeometryUtils.apply_mvp_matrix(geometry.vertices, mvp_matrix)
+
+        vertices_ndc = vertices_3d_transformed
 
         # build the faces vertices and uvs arrays
         faces_vertices_ndc = vertices_ndc[geometry.indices]
@@ -117,6 +121,7 @@ class RendererMesh:
 
             changed_artists = RendererMeshBasicMaterial.render(
                 renderer=renderer,
+                viewport=viewport,
                 mesh=mesh,
                 camera=camera,
                 faces_vertices_ndc=faces_vertices_ndc,
