@@ -42,31 +42,6 @@ class MathUtils:
         return mvp_matrix
 
     @staticmethod
-    def compute_world_coordinate(vertices_local: np.ndarray, model_matrix: np.ndarray) -> np.ndarray:
-        """Computes the world coordinates of the vertices given the model matrix.
-
-        Args:
-            vertices_local (np.ndarray): Input vertices of shape (N, 3) - local space coordinates of the mesh.
-            model_matrix (np.ndarray): Model matrix of shape (4, 4).
-
-        Returns:
-            np.ndarray: World coordinates of the vertices of shape (N, 3).
-        """
-        # sanity checks
-        assert vertices_local.ndim == 2 and vertices_local.shape[1] == 3, f"Expected vertices shape (N, 3), got {vertices_local.shape}"
-        assert model_matrix.shape == (4, 4), f"Expected model_matrix shape (4, 4), got {model_matrix.shape}"
-
-        # convert vertices to homogeneous coordinates (x, y, z) -> (x, y, z, w=1.0)
-        ws_column = np.ones((vertices_local.shape[0], 1), dtype=np.float32)
-        vertices_homogeneous = np.hstack((vertices_local, ws_column))  # shape (N, 4) for N vertices
-
-        # Apply the model transformation to get world coordinates
-        vertices_world_homo = (model_matrix @ vertices_homogeneous.T).T  # shape (N, 4)
-        vertices_world = vertices_world_homo[:, :3]  # shape (N, 3)
-
-        return vertices_world
-
-    @staticmethod
     def apply_mvp_to_vertices_transform(vertices: np.ndarray, model_matrix: np.ndarray, view_matrix: np.ndarray, projection_matrix: np.ndarray) -> np.ndarray:
         """Applies Model-View-Projection transformation to the vertices.
 
@@ -81,6 +56,12 @@ class MathUtils:
         """
         # sanity checks
         assert vertices.ndim == 2 and vertices.shape[1] == 3, f"Expected vertices shape (N, 3), got {vertices.shape}"
+        # assert model_matrix.shape == (4, 4), f"Expected model_matrix shape (4, 4), got {model_matrix.shape}"
+        # assert view_matrix.shape == (4, 4), f"Expected view_matrix shape (4, 4), got {view_matrix.shape}"
+        # assert projection_matrix.shape == (4, 4), f"Expected projection_matrix shape (4, 4), got {projection_matrix.shape}"
+
+        # Compute the Model-View-Projection (MVP) matrix
+        # mvp_matrix = projection_matrix @ view_matrix @ model_matrix
 
         # Compute the Model-View-Projection (MVP) matrix using the static method
         mvp_matrix = MathUtils.compute_mvp_matrix(model_matrix, view_matrix, projection_matrix)

@@ -71,8 +71,6 @@ class RendererMesh:
         # Convert 3D vertices to 2D - shape (N, 2)
         vertices_2d = vertices_3d_transformed[:, :2]
 
-        # vertices_world = vertices_3d_transformed
-
         # =============================================================================
         # Extract geometry and material
         # =============================================================================
@@ -86,11 +84,10 @@ class RendererMesh:
         # =============================================================================
 
         # Get the full transform matrix for the mesh
-        # world_matrix = mesh.get_world_matrix()
-        # vertices_world = GeometryUtils.apply_transform(geometry.vertices, world_matrix)
+        vertices_world = MathUtils.compute_world_coordinate(vertices_numpy, model_matrix_numpy)
 
         # build the faces vertices and uvs arrays
-        # faces_vertices_world = vertices_world[geometry.indices]
+        faces_vertices_world = vertices_world[geometry.indices]
 
         # =============================================================================
         # Compute the NDC faces_vertices
@@ -127,27 +124,29 @@ class RendererMesh:
                 faces_vertices_ndc=faces_vertices_ndc,
                 faces_vertices_2d=faces_vertices_2d,
             )
-        # elif isinstance(mesh.material, MeshNormalMaterial):
-        #     from .renderer_mesh_normal_material import RendererMeshNormalMaterial
+        elif isinstance(mesh.material, MeshNormalMaterial):
+            from .matplotlib_renderer_mesh_normal_material import RendererMeshNormalMaterial
 
-        #     changed_artists = RendererMeshNormalMaterial.render(
-        #         renderer=renderer,
-        #         mesh=mesh,
-        #         camera=camera,
-        #         faces_vertices_world=faces_vertices_world,
-        #         faces_vertices_ndc=faces_vertices_ndc,
-        #         faces_vertices_2d=faces_vertices_2d,
-        #     )
-        # elif isinstance(mesh.material, MeshDepthMaterial):
-        #     from .renderer_mesh_depth_material import RendererMeshDepthMaterial
+            changed_artists = RendererMeshNormalMaterial.render(
+                renderer=renderer,
+                viewport=viewport,
+                mesh=mesh,
+                camera=camera,
+                faces_vertices_world=faces_vertices_world,
+                faces_vertices_ndc=faces_vertices_ndc,
+                faces_vertices_2d=faces_vertices_2d,
+            )
+        elif isinstance(mesh.material, MeshDepthMaterial):
+            from .matplotlib_renderer_mesh_depth_material import RendererMeshDepthMaterial
 
-        #     changed_artists = RendererMeshDepthMaterial.render(
-        #         renderer=renderer,
-        #         mesh=mesh,
-        #         camera=camera,
-        #         faces_vertices_ndc=faces_vertices_ndc,
-        #         faces_vertices_2d=faces_vertices_2d,
-        #     )
+            changed_artists = RendererMeshDepthMaterial.render(
+                renderer=renderer,
+                viewport=viewport,
+                mesh=mesh,
+                camera=camera,
+                faces_vertices_ndc=faces_vertices_ndc,
+                faces_vertices_2d=faces_vertices_2d,
+            )
         # elif isinstance(mesh.material, MeshPhongMaterial):
         #     from .renderer_mesh_phong_material import RendererMeshPhongMaterial
 

@@ -83,9 +83,9 @@ class RendererUtils:
         # this is the threshold below which a face is considered degenerated and trigger exception when inverting matrix
         faces_cross_threshold = 1e-6
         if face_culling == Constants.FaceCulling.FrontSide:
-            faces_visible = faces_cross_z <= -faces_cross_threshold
+            faces_visible = faces_cross_z >= -faces_cross_threshold
         elif face_culling == Constants.FaceCulling.BackSide:
-            faces_visible = faces_cross_z >= faces_cross_threshold
+            faces_visible = faces_cross_z <= faces_cross_threshold
         elif face_culling == Constants.FaceCulling.BothSides:
             # If the face is degenerated (line or point), it is not visible
             faces_visible = np.abs(faces_cross_z) > faces_cross_threshold
