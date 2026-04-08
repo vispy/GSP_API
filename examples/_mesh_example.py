@@ -43,15 +43,15 @@ def main():
     # =============================================================================
 
     # Load a obj geometry
-    obj_path = pathlib.Path(__file__).parent / "models" / "triangle.obj"
+    # obj_path = pathlib.Path(__file__).parent / "models" / "triangle.obj"
     # obj_path = pathlib.Path(__file__).parent / "models" / "cube.obj"
-    # obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
+    obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
     mesh_geometry = MeshUtils.parse_obj_file_manual(str(obj_path))
 
-    mesh_material = MeshBasicMaterial()
+    # mesh_material = MeshBasicMaterial()
     # mesh_material = MeshDepthMaterial()
-    # mesh_material = MeshNormalMaterial()
-    mesh_material.colors = np.array([255, 0, 255, 255], dtype=np.float32)  # red, green, blue
+    mesh_material = MeshNormalMaterial()
+    # mesh_material.colors = np.array([255, 0, 255, 255], dtype=np.float32)  # red, green, blue
     # mesh_material.face_sorting = True
     mesh_material.face_culling = Constants.FaceCulling.FrontSide
 
