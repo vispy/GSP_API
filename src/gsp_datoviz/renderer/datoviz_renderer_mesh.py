@@ -1,0 +1,164 @@
+"""Datoviz renderer for Mesh visuals."""
+
+# stdlib imports
+import typing
+import warnings
+
+# pip imports
+import numpy as np
+from datoviz.visuals import Mesh as _DvzMesh
+
+# local imports
+from gsp.core.camera import Camera
+from gsp.core.viewport import Viewport
+from gsp_matplotlib.extra.bufferx import Bufferx
+from gsp.types.transbuf import TransBuf
+from gsp.visuals.mesh import Mesh
+from gsp.utils.transbuf_utils import TransBufUtils
+from .datoviz_renderer import DatovizRenderer
+from gsp.utils.unit_utils import UnitUtils
+from gsp.utils.math_utils import MathUtils
+from gsp_datoviz.utils.converter_utils import ConverterUtils
+
+
+class DatovizRendererMesh:
+    """Datoviz renderer for Mesh visuals."""
+
+    @staticmethod
+    def render(
+        renderer: DatovizRenderer,
+        viewport: Viewport,
+        mesh: Mesh,
+        model_matrix: TransBuf,
+        camera: Camera,
+    ) -> None:
+        """Render Mesh visuals using Datoviz.
+
+        Args:
+            renderer (DatovizRenderer): The Datoviz renderer instance.
+            viewport (Viewport): The viewport to render in.
+            mesh (Mesh): The Mesh visual to render.
+            model_matrix (TransBuf): The model matrix for the visual.
+            camera (Camera): The camera used for rendering.
+        """
+        dvz_panel = renderer._getOrCreateDvzPanel(viewport)
+
+        # =============================================================================
+        # Transform vertices with MVP matrix
+        # =============================================================================
+
+        vertices_transbuf = mesh.get_geometry().get_positions()
+
+        vertices_buffer = TransBufUtils.to_buffer(vertices_transbuf)
+        model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
+        view_matrix_buffer = TransBufUtils.to_buffer(camera.get_view_matrix())
+        projection_matrix_buffer = TransBufUtils.to_buffer(camera.get_projection_matrix())
+
+        # convert all necessary buffers to numpy arrays
+        vertices_numpy = Bufferx.to_numpy(vertices_buffer)
+        model_matrix_numpy = Bufferx.to_numpy(model_matrix_buffer).squeeze()
+        view_matrix_numpy = Bufferx.to_numpy(view_matrix_buffer).squeeze()
+        projection_matrix_numpy = Bufferx.to_numpy(projection_matrix_buffer).squeeze()
+
+        # Apply Model-View-Projection transformation to the vertices
+        vertices_3d_transformed = MathUtils.apply_mvp_to_vertices(vertices_numpy, model_matrix_numpy, view_matrix_numpy, projection_matrix_numpy)
+
+        # Convert 3D vertices to 3d - shape (N, 3)
+        vertices_3d = np.ascontiguousarray(vertices_3d_transformed, dtype=np.float32)
+
+        # =============================================================================
+        # Convert all attributes to numpy arrays
+        # =============================================================================
+
+        sizes_buffer = TransBufUtils.to_buffer(mesh.get_sizes())
+        face_colors_buffer = TransBufUtils.to_buffer(mesh.get_face_colors())
+        edge_colors_buffer = TransBufUtils.to_buffer(mesh.get_edge_colors())
+        edge_widths_buffer = TransBufUtils.to_buffer(mesh.get_edge_widths())
+
+        # Convert buffers to numpy arrays)
+        sizes_pt2_numpy = Bufferx.to_numpy(sizes_buffer)
+        face_colors_numpy = Bufferx.to_numpy(face_colors_buffer)
+        edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer)
+        edge_widths_pt_numpy = Bufferx.to_numpy(edge_widths_buffer)
+
+        # Convert sizes from point^2 to pixel
+        radius_pt_numpy = np.sqrt(sizes_pt2_numpy / np.pi)
+        radius_px_numpy = UnitUtils.point_to_pixel_numpy(radius_pt_numpy, renderer.get_canvas().get_dpi())
+        diameter_px_numpy = radius_px_numpy * 2.0 * UnitUtils.device_pixel_ratio()
+        diameter_px_numpy = diameter_px_numpy.reshape(-1)
+
+        edge_widths_px_numpy = UnitUtils.point_to_pixel_numpy(edge_widths_pt_numpy, renderer.get_canvas().get_dpi())
+        edge_widths_px_numpy = edge_widths_px_numpy * UnitUtils.device_pixel_ratio()
+        edge_widths_px_numpy = edge_widths_px_numpy.reshape(-1)
+
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Mesh.sanity_check_attributes_buffer(
+            mesh.get_marker_shape(),
+            vertices_buffer,
+            sizes_buffer,
+            face_colors_buffer,
+            edge_colors_buffer,
+            edge_widths_buffer,
+        )
+
+        # =============================================================================
+        # Create the datoviz visual if needed
+        # =============================================================================
+
+        artist_uuid = f"{viewport.get_uuid()}_{mesh.get_uuid()}"
+
+        # Create datoviz_visual if they do not exist
+        if artist_uuid not in renderer._dvz_visuals:
+            dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
+            dvz_mesh = renderer._dvz_app.marker(position=dummy_position_numpy)
+            renderer._dvz_visuals[artist_uuid] = dvz_mesh
+            # Add the new visual to the panel
+            dvz_panel.add(dvz_mesh)
+
+        # =============================================================================
+        # Update all attributes
+        # =============================================================================
+
+        # get the datoviz visual
+        dvz_mesh = typing.cast(_DvzMesh, renderer._dvz_visuals[artist_uuid])
+
+        # set attributes
+        dvz_mesh.set_position(vertices_3d)
+
+        # Set the proper parameters
+        dvz_mesh.set_size(diameter_px_numpy)
+        dvz_mesh.set_color(face_colors_numpy)
+        dvz_mesh.set_linewidth(edge_widths_px_numpy[0])
+        dvz_mesh.set_edgecolor(edge_colors_numpy[0].tolist())  # datoviz only supports a single edge color
+
+        # sanity check - if edge_widths_px_numpy are not all the same, warn the user
+        if not np.all(edge_widths_px_numpy == edge_widths_px_numpy[0]):
+            warnings.warn("DatovizRendererMesh: edge widths per marker are not fully supported by datoviz. " "Using the first edge width for all mesh.")
+        # sanity check - if edge_colors_numpy are not all the same, warn the user
+        if not np.all(edge_colors_numpy == edge_colors_numpy[0]):
+            warnings.warn("DatovizRendererMesh: edge colors per marker are not fully supported by datoviz. " "Using the first edge color for all mesh.")
+
+        # Set mode
+        dvz_mesh.set_mode("code")
+
+        # Set shape and angle - depending on the marker shape, we might need to set a specific angle (e.g. for triangles)
+        dvz_marker_shape, dvz_marker_angle = ConverterUtils.marker_shape_gsp_to_dvz(mesh.get_marker_shape())
+        angle_numpy = np.full(vertices_buffer.get_count(), dvz_marker_angle, dtype=np.float32)
+        dvz_mesh.set_angle(angle_numpy)
+        dvz_mesh.set_shape(dvz_marker_shape)
+
+        # Determine the `aspect` depending on face and edge colors/widths
+        is_face_color_transparent = bool(np.all(face_colors_numpy[:, 3] == 0))
+        is_edge_color_transparent = bool(np.all(edge_colors_numpy[:, 3] == 0))
+        is_edge_width_zero = bool(np.all(edge_widths_px_numpy == 0))
+        has_edge = not is_edge_color_transparent and not is_edge_width_zero
+        if not is_face_color_transparent:
+            if has_edge:
+                dvz_mesh.set_aspect("outline")
+            else:
+                dvz_mesh.set_aspect("filled")
+        else:
+            dvz_mesh.set_aspect("stroke")

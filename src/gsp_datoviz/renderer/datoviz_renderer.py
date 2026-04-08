@@ -32,6 +32,7 @@ from gsp.types.visual_base import VisualBase
 from gsp.types.transbuf import TransBuf
 from gsp.visuals.image import Image
 from gsp.visuals.markers import Markers
+from gsp.visuals.mesh import Mesh
 from gsp.visuals.paths import Paths
 from gsp.visuals.pixels import Pixels
 from gsp.visuals.points import Points
@@ -202,6 +203,10 @@ class DatovizRenderer(RendererBase):
             from .datoviz_renderer_markers import DatovizRendererMarkers
 
             DatovizRendererMarkers.render(self, viewport, visual, model_matrix, camera)
+        elif isinstance(visual, Mesh):
+            from .datoviz_renderer_mesh import DatovizRendererMesh
+
+            DatovizRendererMesh.render(self, viewport, visual, model_matrix, camera)
         elif isinstance(visual, Segments):
             from .datoviz_renderer_segments import DatovizRendererSegments
 

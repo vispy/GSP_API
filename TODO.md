@@ -1,4 +1,6 @@
 - in `src/gsp/geometry/geometry.py`, fix the .sanity_check() inheritance issue
+- fix all the TODO
+- add it in the network renderer
 
 ---
 - TODO ask about datoviz text rendering

@@ -8,36 +8,36 @@ from ..types.transbuf import TransBuf
 class Geometry:
     """A class representing a 3D geometry with vertices."""
 
-    __slots__ = ["_vertices"]
+    __slots__ = ["_positions"]
 
-    def __init__(self, vertices: TransBuf) -> None:
+    def __init__(self, positions: TransBuf) -> None:
         """A class representing a 3D geometry with vertices.
 
         Arguments:
-            vertices (TransBuf): array of vertex coordinates, shape (N, 3)
+            positions (TransBuf): array of vertex coordinates, shape (N, 3)
         """
         # assign attributes
-        self._vertices: TransBuf = vertices
+        self._positions: TransBuf = positions
 
     # =============================================================================
     # get/set attributes
     # =============================================================================
 
-    def get_vertices(self) -> TransBuf:
+    def get_positions(self) -> TransBuf:
         """Get the vertex coordinates.
 
         Returns:
             TransBuf: array of vertex coordinates, shape (N, 3)
         """
-        return self._vertices
+        return self._positions
 
-    def set_vertices(self, vertices: TransBuf) -> None:
+    def set_positions(self, positions: TransBuf) -> None:
         """Set the vertex coordinates.
 
         Args:
-            vertices (TransBuf): array of vertex coordinates, shape (N, 3)
+            positions (TransBuf): array of vertex coordinates, shape (N, 3)
         """
-        self._vertices = vertices
+        self._positions = positions
         # self.check_attributes()
 
     # TODO fix it
@@ -48,7 +48,7 @@ class Geometry:
 
     # def check_attributes(self) -> None:
     #     """Check that the attributes are valid and consistent."""
-    #     self.sanity_check_attributes(self._vertices)
+    #     self.sanity_check_attributes(self._positions)
 
     # @staticmethod
     # def sanity_check_attributes_buffer(

@@ -97,7 +97,7 @@ class MeshUtils:
         uvs = uvs_coords[faces_uv_indices].reshape(-1, 2) if faces_uv_indices is not None and uvs_coords is not None else None
         normals = normals_coords[faces_normal_indices].reshape(-1, 3) if faces_normal_indices is not None and normals_coords is not None else None
         # Recompute the faces indices
-        indices = np.arange(len(vertices), dtype=np.uint32).reshape(-1, 3)
+        indices = np.arange(len(vertices), dtype=np.uint32).reshape(-1, 1)
 
         # =============================================================================
         # Check all is ok, and return the values
