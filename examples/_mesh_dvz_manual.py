@@ -1,6 +1,7 @@
 import pathlib
 
 import numpy as np
+import typing
 
 import datoviz as dvz
 from datoviz.visuals import Mesh as _DvzMesh
@@ -153,7 +154,7 @@ def createMeshFromObj(
     position_y = 0.0
     position_z = 0.0
     angle_x = 0.0
-    angle_y = 0.0
+    angle_y = 45.0
     angle_z = 0.0
     scale_x = 1.0
     scale_y = 1.0
@@ -164,6 +165,7 @@ def createMeshFromObj(
     matrix_scale = glm.scale(np.array([scale_x, scale_y, scale_z]))
     matrix_mvp = matrix_translation @ matrix_scale @ matrix_rotation
     model_matrix = matrix_mvp
+    transform = typing.cast(typing.Tuple[float, ...], model_matrix)
 
     shapeCollection = dvz.ShapeCollection()
     shapeCollection.add_custom(
@@ -174,7 +176,7 @@ def createMeshFromObj(
         indices=indices,
         offset=mesh_position,
         scale=scale,
-        # transform=model_matrix,   # TODO: Apply the model matrix transform to the mesh vertices (currently not applied
+        transform=transform,  # TODO: Apply the model matrix transform to the mesh vertices (currently not applied
     )
 
     visual_mesh = dvz_app.mesh(
@@ -182,6 +184,8 @@ def createMeshFromObj(
         lighting=True,
         contour=True,
     )
+
+    visual_mesh.set_light_pos((0, 0, 1, 0))
     return visual_mesh
 
 
