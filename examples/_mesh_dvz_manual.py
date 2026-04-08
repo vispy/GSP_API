@@ -156,8 +156,8 @@ def createMeshFromObj(
     uvs_buffer = TransBufUtils.to_buffer(mesh_geometry.get_uvs())
     normals_buffer = TransBufUtils.to_buffer(mesh_geometry.get_normals())
 
-    vertices_numpy = Bufferx.to_numpy(vertices_buffer)
-    indices_numpy = Bufferx.to_numpy(indices_buffer)
+    vertices_numpy = Bufferx.to_numpy(vertices_buffer).reshape(-1, 3)
+    indices_numpy = Bufferx.to_numpy(indices_buffer).flatten()
     uvs_numpy = Bufferx.to_numpy(uvs_buffer)
     normals_numpy = Bufferx.to_numpy(normals_buffer)
 
@@ -184,8 +184,8 @@ def createMeshFromObj(
     shapeCollection = dvz.ShapeCollection()
     shapeCollection.add_custom(
         positions=vertices_numpy,
-        normals=normals_numpy,
-        colors=vertex_colors,
+        # normals=normals_numpy,
+        # colors=vertex_colors,
         # texcoords=texcoords,
         indices=indices_numpy,
         offset=mesh_position,

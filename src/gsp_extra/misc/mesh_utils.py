@@ -97,7 +97,7 @@ class MeshUtils:
         uvs = uvs_coords[faces_uv_indices].reshape(-1, 2) if faces_uv_indices is not None and uvs_coords is not None else None
         normals = normals_coords[faces_normal_indices].reshape(-1, 3) if faces_normal_indices is not None and normals_coords is not None else None
         # Recompute the faces indices
-        indices = np.arange(len(vertices)).reshape(-1, 3)
+        indices = np.arange(len(vertices), dtype=np.uint32).reshape(-1, 3)
 
         # =============================================================================
         # Check all is ok, and return the values
@@ -123,7 +123,7 @@ class MeshUtils:
         # Create the mesh_geometry
         # =============================================================================
         vertices_buffer = Bufferx.from_numpy(vertices, BufferType.vec3)
-        indices_buffer = Bufferx.from_numpy(indices, BufferType.int32)
+        indices_buffer = Bufferx.from_numpy(indices, BufferType.uint32)
         uvs_buffer = Bufferx.from_numpy(uvs, BufferType.vec2)
         normals_buffer = Bufferx.from_numpy(normals, BufferType.vec3)
         mesh_geometry = MeshGeometry(vertices_buffer, indices_buffer, uvs_buffer, normals_buffer)
