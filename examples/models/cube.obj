@@ -1,0 +1,129 @@
+# Cube model with triangles, unique UVs, unique normals per vertex, and vertices
+
+# Vertices
+v -1.0 -1.0 -1.0
+v  1.0 -1.0 -1.0
+v  1.0  1.0 -1.0
+v -1.0  1.0 -1.0
+v -1.0 -1.0  1.0
+v  1.0 -1.0  1.0
+v  1.0  1.0  1.0
+v -1.0  1.0  1.0
+
+# UV coordinates (4 unique vt per face, 6 faces * 2 triangles * 3 vertices = 36 UVs)
+vt 0.0 0.0
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+
+vt 0.0 0.0
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+
+vt 0.0 0.0
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+
+vt 0.0 0.0
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+
+vt 0.0 0.0
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+
+vt 0.0 0.0
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+
+# Normals (unique vn per face vertex, total 36)
+# Front face
+vn  0.0  0.0 -1.0
+vn  0.0  0.0 -1.0
+vn  0.0  0.0 -1.0
+vn  0.0  0.0 -1.0
+vn  0.0  0.0 -1.0
+vn  0.0  0.0 -1.0
+
+# Back face
+vn  0.0  0.0  1.0
+vn  0.0  0.0  1.0
+vn  0.0  0.0  1.0
+vn  0.0  0.0  1.0
+vn  0.0  0.0  1.0
+vn  0.0  0.0  1.0
+
+# Bottom face
+vn  0.0 -1.0  0.0
+vn  0.0 -1.0  0.0
+vn  0.0 -1.0  0.0
+vn  0.0 -1.0  0.0
+vn  0.0 -1.0  0.0
+vn  0.0 -1.0  0.0
+
+# Top face
+vn  0.0  1.0  0.0
+vn  0.0  1.0  0.0
+vn  0.0  1.0  0.0
+vn  0.0  1.0  0.0
+vn  0.0  1.0  0.0
+vn  0.0  1.0  0.0
+
+# Left face
+vn -1.0  0.0  0.0
+vn -1.0  0.0  0.0
+vn -1.0  0.0  0.0
+vn -1.0  0.0  0.0
+vn -1.0  0.0  0.0
+vn -1.0  0.0  0.0
+
+# Right face
+vn  1.0  0.0  0.0
+vn  1.0  0.0  0.0
+vn  1.0  0.0  0.0
+vn  1.0  0.0  0.0
+vn  1.0  0.0  0.0
+vn  1.0  0.0  0.0
+
+# Faces (triangles) with vertex/uv/normal
+
+# Front face
+f 1/1/1 2/2/2 3/3/3
+f 1/4/4 3/5/5 4/6/6
+
+# Back face
+f 5/7/7 8/8/8 7/9/9
+f 5/10/10 7/11/11 6/12/12
+
+# Bottom face
+f 1/13/13 5/14/14 6/15/15
+f 1/16/16 6/17/17 2/18/18
+
+# Top face
+f 4/19/19 3/20/20 7/21/21
+f 4/22/22 7/23/23 8/24/24
+
+# Left face
+f 1/25/25 4/26/26 8/27/27
+f 1/28/28 8/29/29 5/30/30
+
+# Right face
+f 2/31/31 6/32/32 7/33/33
+f 2/34/34 7/35/35 3/36/36

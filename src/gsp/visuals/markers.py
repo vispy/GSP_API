@@ -3,7 +3,6 @@
 from ..types.visual_base import VisualBase
 from ..types.transbuf import TransBuf
 from ..types.buffer import Buffer
-from ..types.group import Groups
 from ..types.marker_shape import MarkerShape
 
 
@@ -21,6 +20,7 @@ class Markers(VisualBase):
         _edge_colors (TransBuf): The edge colors of the markers.
         _edge_widths (TransBuf): The edge widths of the markers.
     """
+
     __slots__ = ["_marker_shape", "_positions", "_sizes", "_face_colors", "_edge_colors", "_edge_widths"]
 
     def __init__(self, marker_shape: MarkerShape, positions: TransBuf, sizes: TransBuf, face_colors: TransBuf, edge_colors: TransBuf, edge_widths: TransBuf):
@@ -186,7 +186,7 @@ class Markers(VisualBase):
     @staticmethod
     def sanity_check_attributes_buffer(
         marker_shape: MarkerShape, positions: Buffer, sizes: Buffer, face_colors: Buffer, edge_colors: Buffer, edge_widths: Buffer
-    ):
+    ) -> None:
         """Same as .sanity_check_attributes() but accept only Buffers.
 
         This method is meant to be used after converting TransBuf to Buffer.
