@@ -10,7 +10,7 @@ import numpy as np
 
 # local imports
 from gsp.core import Canvas, Viewport
-from gsp.materials.mesh_material import MeshMaterial
+from gsp.materials.mesh_basic_material import MeshBasicMaterial
 from gsp.types.visual_base import VisualBase
 from gsp.visuals.mesh import Mesh
 from gsp.types import Buffer, BufferType
@@ -30,7 +30,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(400, 400, 72.0, Constants.Color.red)
+    canvas = Canvas(400, 400, 72.0, Constants.Color.white)
 
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
@@ -42,13 +42,18 @@ def main():
 
     # Load a obj geometry
     # obj_path = pathlib.Path(__file__).parent / "models" / "triangle.obj"
-    # obj_path = pathlib.Path(__file__).parent / "models" / "cube.obj"
-    obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
+    obj_path = pathlib.Path(__file__).parent / "models" / "suzanne.obj"
+    # obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
     mesh_geometry = MeshUtils.parse_obj_file_manual(str(obj_path))
 
     # TODO fix the colors
-    colors_buffer = Bufferx.from_numpy(np.array([[255, 0, 255, 255]], dtype=np.uint8), BufferType.rgba8)
-    mesh_material = MeshMaterial(colors_buffer)
+    colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.yellow], dtype=np.uint8), BufferType.rgba8)
+    edge_colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.white], dtype=np.uint8), BufferType.rgba8)
+    edge_widths_buffer = Bufferx.from_numpy(np.array([1.0], dtype=np.float32), BufferType.float32)
+    # TODO issue when i change those value
+    face_sorting = False
+    face_culling = Constants.FaceCulling.BothSides
+    mesh_material = MeshBasicMaterial(colors_buffer, edge_colors_buffer, edge_widths_buffer, face_sorting, face_culling)
 
     # Create a mesh
     mesh = Mesh(mesh_geometry, mesh_material)
@@ -83,50 +88,52 @@ def main():
     # =============================================================================
 
     # Create renderer and render
-    renderer_name = ExampleHelper.get_renderer_name()
+    # renderer_name = ExampleHelper.get_renderer_name()
+    # renderer_name = "datoviz"
+    renderer_name = "matplotlib"
+
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-    renderer_base.render([viewport], [mesh], [model_matrix], [camera])
-    renderer_base.show()
+    # renderer_base.render([viewport], [mesh], [model_matrix], [camera])
+    # renderer_base.show()
 
-    # animator = ExampleHelper.create_animator(renderer_base)
+    animator = ExampleHelper.create_animator(renderer_base)
+    present = 0
 
-    # present = 0
+    @animator.event_listener
+    def animator_callback(delta_time: float) -> list[VisualBase]:
+        nonlocal model_matrix, present
 
-    # @animator.event_listener
-    # def animator_callback(delta_time: float) -> list[VisualBase]:
-    #     nonlocal model_matrix, present
+        present += delta_time
 
-    #     present += delta_time
+        angle_x = 0
+        angle_y = 0
+        angle_z = 0
 
-    #     angle_x = 0
-    #     angle_y = 0
-    #     angle_z = 0
+        # angle_x = (present * 40) % 360
+        angle_y = (present * 40) % 360
+        # angle_z = (present * 40) % 360
 
-    #     # angle_x = (present * 40) % 360
-    #     angle_y = (present * 40) % 360
-    #     # angle_z = (present * 40) % 360
+        position_x = 0.0
+        position_y = 0.0
+        position_z = -2.0
 
-    #     position_x = 0.0
-    #     position_y = 0.0
-    #     position_z = -2.0
+        scale_x = 0.5
+        scale_y = 0.5
+        scale_z = 0.5
 
-    #     scale_x = 0.5
-    #     scale_y = 0.5
-    #     scale_z = 0.5
+        matrix_rotation = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
+        matrix_translation = glm.translate(np.array([position_x, position_y, position_z]))
+        matrix_scale = glm.scale(np.array([scale_x, scale_y, scale_z]))
 
-    #     matrix_rotation = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
-    #     matrix_translation = glm.translate(np.array([position_x, position_y, position_z]))
-    #     matrix_scale = glm.scale(np.array([scale_x, scale_y, scale_z]))
+        matrix_mvp = matrix_translation @ matrix_scale @ matrix_rotation
 
-    #     matrix_mvp = matrix_translation @ matrix_scale @ matrix_rotation
+        model_matrix = Bufferx.from_numpy(np.array([matrix_mvp]), BufferType.mat4)
 
-    #     model_matrix = Bufferx.from_numpy(np.array([matrix_mvp]), BufferType.mat4)
+        renderer_base.render([viewport], [mesh], [model_matrix], [camera])
+        changed_visuals: list[VisualBase] = []
+        return changed_visuals
 
-    #     renderer_base.render([viewport], [mesh], [model_matrix], [camera])
-    #     changed_visuals: list[VisualBase] = []
-    #     return changed_visuals
-
-    # animator.start()
+    animator.start()
 
 
 if __name__ == "__main__":

@@ -92,7 +92,7 @@ class MathUtils:
         - https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_model_view_projection
 
         Args:
-            model_matrix (np.ndarray): The model/world transformation matrix of shape (4, 4).
+            model_matrix (np.ndarray): The model transformation matrix of shape (4, 4).
             view_matrix (np.ndarray): The view transformation matrix of shape (4, 4).
             projection_matrix (np.ndarray): The projection transformation matrix of shape (4, 4).
 
@@ -110,52 +110,64 @@ class MathUtils:
         return mvp_matrix
 
     @staticmethod
-    def apply_transform_matrix(vertices: np.ndarray, transform_matrix: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        """Applies a transform matrix to vertices, returning transformed xyz and NDC coordinates.
-
-        ## When transform_matrix = Projection @ View @ Model:
-        - Input vertices are in object/model space
-        - After MVP transform: vertices are in clip space (homogeneous coordinates)
-        - After perspective divide: vertices are in NDC (Normalized Device Coordinates)
-        - NDC range is typically [-1, 1] for each axis (ready for rasterization)
-        - This is the standard graphics pipeline path
-        - The returned xyz coordinates are the clip space positions (before perspective divide).
-        - The returned NDC coordinates are the normalized device coordinates (after perspective divide).
-
-        ## When transform_matrix = Model: (Model matrix is world matrix)
-        - Input vertices are in object/model space
-        - After Model transform: vertices are in world space
-        - This is useful for computing world space positions for lighting, etc.
-        - The returned xyz coordinates are the world space positions.
-          (The NDC result is not meaningful in this case.)
+    def apply_mvp_to_vertices_clip_homogeneous_new(vertices: np.ndarray, mvp_matrix: np.ndarray) -> np.ndarray:
+        """Applies Model-View-Projection transformation to the vertices.
 
         Args:
             vertices (np.ndarray): Input vertices of shape (N, 3).
-            transform_matrix (np.ndarray): A 4x4 transform matrix (e.g., MVP or Model).
+            mvp_matrix (np.ndarray): Model-View-Projection matrix of shape (4, 4).
+
+        Returns:
+            np.ndarray: MVP transformed vertices of shape (N, 4).
+        """
+        # sanity checks
+        assert vertices.ndim == 2 and vertices.shape[1] == 3, f"Expected vertices shape (N, 3), got {vertices.shape}"
+        assert mvp_matrix.shape == (4, 4), f"Expected mvp_matrix shape (4, 4), got {mvp_matrix.shape}"
+
+        # make vertices homogeneous - (x, y, z) -> (x, y, z, w=1.0)
+        ws_column = np.ones((vertices.shape[0], 1), dtype=np.float32)
+        vertices_homogeneous = np.hstack((vertices, ws_column))  # shape (N, 4) for N vertices
+
+        # Apply mvp_matrix to the homogeneous vertices
+        vertices_clip_homogeneous = (mvp_matrix @ vertices_homogeneous.T).T  # shape (N, 4) for N vertices
+
+        # now we return vertices_clip_homogeneous - shape (N, 4)
+        # - still homogeneous coordinates, perspective division to be done later
+        return vertices_clip_homogeneous
+
+    @staticmethod
+    def apply_mvp_to_vertices_new(
+        vertices: np.ndarray,
+        model_matrix: np.ndarray,
+        view_matrix: np.ndarray,
+        projection_matrix: np.ndarray,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Applies Model-View-Projection transformation to the vertices.
+
+        Args:
+            vertices (np.ndarray): Input vertices of shape (N, 3).
+            model_matrix (np.ndarray): Model matrix of shape (4, 4).
+            view_matrix (np.ndarray): View matrix of shape (4, 4).
+            projection_matrix (np.ndarray): Projection matrix of shape (4, 4).
 
         Returns:
             tuple[np.ndarray, np.ndarray]: A tuple containing:
-                - Transformed xyz coordinates of shape (N, 3) (clip space for MVP, world space for Model).
-                - Perspective-divided coordinates of shape (N, 3) (NDC for MVP, not meaningful for Model).
+            - vertices_clip_3d: Transformed vertices in clip space (before perspective division) of shape (N, 3).
+            - vertices_ndc: Transformed vertices in Normalized Device Coordinates (NDC) of shape (N, 3).
         """
-        # sanity checks
-        assert vertices.shape[1] == 3 and vertices.ndim == 2, f"vertices should be of shape [N, 3]. Got {vertices.shape}"
-        assert transform_matrix.shape == (4, 4), f"transform should be of shape [4, 4]. Got {transform_matrix.shape}"
+        # Apply the MVP transformation to the vertices - resulting shape (N, 4) for N vertices in homogeneous coordinates
+        vertices_clip_homo = MathUtils.apply_mvp_to_vertices_transform_new(vertices, model_matrix, view_matrix, projection_matrix)
 
-        # make vertices homogeneous
-        vertices_homogeneous = np.hstack([vertices, np.ones((vertices.shape[0], 1), dtype=vertices.dtype)])  # [N, 4]
+        # get w for perspective divide
+        vertices_w = vertices_clip_homo[:, 3:4]  # [N, 1]
 
-        # apply transform (column-vector convention: M @ v)
-        vertices_transformed = (transform_matrix @ vertices_homogeneous.T).T  # [N, 4]
+        # extract xyz from clip-space coordinates
+        vertices_clip_3d = vertices_clip_homo[:, :3]  # [N, 3]
 
-        # extract xyz and w components
-        vertices_xyz = vertices_transformed[:, :3]  # [N, 3]
-        vertices_w = vertices_transformed[:, 3:4]  # [N, 1]
+        # avoid division by zero
+        vertices_w[vertices_w == 0] = 1e-6
 
-        # avoid division by zero for perspective divide
-        vertices_w = np.where(vertices_w == 0, 1e-6, vertices_w)
+        # Perform perspective divide to get normalized device coordinates (NDC)
+        vertices_ndc = vertices_clip_3d / vertices_w  # [N, 3]
 
-        # perspective divide to get NDC
-        vertices_ndc = vertices_xyz / vertices_w  # [N, 3]
-
-        return vertices_xyz, vertices_ndc
+        return vertices_clip_3d, vertices_ndc

@@ -42,16 +42,14 @@ class DatovizRendererMesh:
             camera (Camera): The camera used for rendering.
         """
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
+        mesh_geometry = mesh.get_geometry()
+        mesh_material = mesh.get_material()
 
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================
 
-        mesh_geometry = mesh.get_geometry()
-        mesh_material = mesh.get_material()
-
         vertices_transbuf = mesh_geometry.get_positions()
-
         vertices_buffer = TransBufUtils.to_buffer(vertices_transbuf)
         model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
         view_matrix_buffer = TransBufUtils.to_buffer(camera.get_view_matrix())
