@@ -117,7 +117,7 @@ class DatovizRenderer(RendererBase):
         visuals: Sequence[VisualBase],
         model_matrices: Sequence[TransBuf],
         cameras: Sequence[Camera],
-        return_image: bool = True,  # NOTE: make False by default. datoviz screenshot can cause segmentation fault in some cases
+        return_image: bool = False,  # NOTE: make False by default. datoviz screenshot can cause segmentation fault in some cases
         image_format: str = "png",
     ) -> bytes:
         """Render the given viewports and visuals using datoviz.

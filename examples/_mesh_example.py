@@ -30,7 +30,7 @@ def main():
     np.random.seed(0)
 
     # Create a canvas
-    canvas = Canvas(400, 400, 72.0, Constants.Color.white)
+    canvas = Canvas(400, 400, 72.0, Constants.Color.red)
 
     # Create a viewport and add it to the canvas
     viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
@@ -60,9 +60,19 @@ def main():
     # Model matrix
     model_matrix = Bufferx.mat4_identity()
 
-    model_matrix_numpy = glm.xrotate() @ glm.yrotate(0.0) @ glm.zrotate(0)
-    # axes_transform_numpy = glm.translate(np.array([0.0, 0.0, 0.0])) @ glm.scale(np.array([0.5, 2, 0.5]))
-    # model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
+    position_x = 0.0
+    position_y = 0.0
+    position_z = -2.0
+    angle_x = 0.0
+    angle_y = 0.0
+    angle_z = 0.0
+    scale_x = 1.0
+    scale_y = 1.0
+    scale_z = 1.0
+
+    model_matrix_numpy = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
+    axes_transform_numpy = glm.translate(np.array([position_x, position_y, position_z])) @ glm.scale(np.array([scale_x, scale_y, scale_z]))
+    model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
     model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
 
     # Create a camera
@@ -75,45 +85,48 @@ def main():
     # Create renderer and render
     renderer_name = ExampleHelper.get_renderer_name()
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-    animator = ExampleHelper.create_animator(renderer_base)
+    renderer_base.render([viewport], [mesh], [model_matrix], [camera])
+    renderer_base.show()
 
-    present = 0
+    # animator = ExampleHelper.create_animator(renderer_base)
 
-    @animator.event_listener
-    def animator_callback(delta_time: float) -> list[VisualBase]:
-        nonlocal model_matrix, present
+    # present = 0
 
-        present += delta_time
+    # @animator.event_listener
+    # def animator_callback(delta_time: float) -> list[VisualBase]:
+    #     nonlocal model_matrix, present
 
-        angle_x = 0
-        angle_y = 0
-        angle_z = 0
+    #     present += delta_time
 
-        # angle_x = (present * 40) % 360
-        angle_y = (present * 40) % 360
-        # angle_z = (present * 40) % 360
+    #     angle_x = 0
+    #     angle_y = 0
+    #     angle_z = 0
 
-        position_x = 0.0
-        position_y = 0.0
-        position_z = 0.0
+    #     # angle_x = (present * 40) % 360
+    #     angle_y = (present * 40) % 360
+    #     # angle_z = (present * 40) % 360
 
-        scale_x = 0.5
-        scale_y = 0.5
-        scale_z = 0.5
+    #     position_x = 0.0
+    #     position_y = 0.0
+    #     position_z = -2.0
 
-        matrix_rotation = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
-        matrix_translation = glm.translate(np.array([position_x, position_y, position_z]))
-        matrix_scale = glm.scale(np.array([scale_x, scale_y, scale_z]))
+    #     scale_x = 0.5
+    #     scale_y = 0.5
+    #     scale_z = 0.5
 
-        matrix_mvp = matrix_translation @ matrix_scale @ matrix_rotation
+    #     matrix_rotation = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
+    #     matrix_translation = glm.translate(np.array([position_x, position_y, position_z]))
+    #     matrix_scale = glm.scale(np.array([scale_x, scale_y, scale_z]))
 
-        model_matrix = Bufferx.from_numpy(np.array([matrix_mvp]), BufferType.mat4)
+    #     matrix_mvp = matrix_translation @ matrix_scale @ matrix_rotation
 
-        renderer_base.render([viewport], [mesh], [model_matrix], [camera])
-        changed_visuals: list[VisualBase] = []
-        return changed_visuals
+    #     model_matrix = Bufferx.from_numpy(np.array([matrix_mvp]), BufferType.mat4)
 
-    animator.start()
+    #     renderer_base.render([viewport], [mesh], [model_matrix], [camera])
+    #     changed_visuals: list[VisualBase] = []
+    #     return changed_visuals
+
+    # animator.start()
 
 
 if __name__ == "__main__":

@@ -126,7 +126,7 @@ class MeshUtils:
         indices_buffer = Bufferx.from_numpy(indices, BufferType.uint32)
         uvs_buffer = Bufferx.from_numpy(uvs, BufferType.vec2)
         normals_buffer = Bufferx.from_numpy(normals, BufferType.vec3)
-        mesh_geometry = MeshGeometry(vertices_buffer, indices_buffer, uvs_buffer, normals_buffer)
+        mesh_geometry = MeshGeometry(vertices_buffer, indices_buffer, normals_buffer, uvs_buffer)
 
         # return the values
         return mesh_geometry

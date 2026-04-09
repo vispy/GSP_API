@@ -162,47 +162,43 @@ def createMeshFromObj(
     normals_numpy = Bufferx.to_numpy(normals_buffer)
 
     vertex_count = vertices_numpy.shape[0]
-    colors_numpy = np.array([[255, 0, 255, 255]] * vertex_count, dtype=np.uint8)  # magenta color for all vertices
+    vertex_colors = np.array([[255, 0, 255, 255]] * vertex_count, dtype=np.uint8)  # magenta color for all vertices
 
-    # position_x = 0.0
-    # position_y = 0.0
-    # position_z = 0.0
-    # angle_x = 0.0
-    # angle_y = 45.0
-    # angle_z = 0.0
-    # scale_x = 1.0
-    # scale_y = 1.0
-    # scale_z = 1.0
+    position_x = 0.0
+    position_y = 0.0
+    position_z = 0.0
+    angle_x = 0.0
+    angle_y = 45.0
+    angle_z = 0.0
+    scale_x = 1.0
+    scale_y = 1.0
+    scale_z = 1.0
 
-    # matrix_rotation = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
-    # matrix_translation = glm.translate(np.array([position_x, position_y, position_z]))
-    # matrix_scale = glm.scale(np.array([scale_x, scale_y, scale_z]))
-    # matrix_mvp = matrix_translation @ matrix_scale @ matrix_rotation
-    # model_matrix = matrix_mvp
-    # transform = typing.cast(typing.Tuple[float, ...], model_matrix)
+    matrix_rotation = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
+    matrix_translation = glm.translate(np.array([position_x, position_y, position_z]))
+    matrix_scale = glm.scale(np.array([scale_x, scale_y, scale_z]))
+    matrix_mvp = matrix_translation @ matrix_scale @ matrix_rotation
+    model_matrix = matrix_mvp
+    transform = typing.cast(typing.Tuple[float, ...], model_matrix)
 
-    # shapeCollection = dvz.ShapeCollection()
-    # shapeCollection.add_custom(
-    #     positions=vertices_numpy,
-    #     normals=normals_numpy,
-    #     colors=vertex_colors,
-    #     # texcoords=texcoords,
-    #     indices=indices_numpy,
-    #     offset=mesh_position,
-    #     scale=scale,
-    #     transform=transform,  # TODO: Apply the model matrix transform to the mesh vertices (currently not applied
-    # )
+    shapeCollection = dvz.ShapeCollection()
+    shapeCollection.add_custom(
+        positions=vertices_numpy,
+        normals=normals_numpy,
+        colors=vertex_colors,
+        # texcoords=texcoords,
+        indices=indices_numpy,
+        offset=mesh_position,
+        scale=scale,
+        transform=transform,  # TODO: Apply the model matrix transform to the mesh vertices (currently not applied
+    )
 
     visual_mesh = dvz_app.mesh(
-        position=vertices_numpy,
-        normal=normals_numpy,
-        color=colors_numpy,
-        # texcoords=texcoords,
-        index=indices_numpy,
+        shapeCollection,
         lighting=True,
         contour=True,
     )
-    # breakpoint()
+    breakpoint()
 
     visual_mesh.set_light_pos((0, 0, 1, 0))
     return visual_mesh

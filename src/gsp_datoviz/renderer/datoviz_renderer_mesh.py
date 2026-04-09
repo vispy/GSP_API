@@ -47,7 +47,10 @@ class DatovizRendererMesh:
         # Transform vertices with MVP matrix
         # =============================================================================
 
-        vertices_transbuf = mesh.get_geometry().get_positions()
+        mesh_geometry = mesh.get_geometry()
+        mesh_material = mesh.get_material()
+
+        vertices_transbuf = mesh_geometry.get_positions()
 
         vertices_buffer = TransBufUtils.to_buffer(vertices_transbuf)
         model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
@@ -70,38 +73,24 @@ class DatovizRendererMesh:
         # Convert all attributes to numpy arrays
         # =============================================================================
 
-        sizes_buffer = TransBufUtils.to_buffer(mesh.get_sizes())
-        face_colors_buffer = TransBufUtils.to_buffer(mesh.get_face_colors())
-        edge_colors_buffer = TransBufUtils.to_buffer(mesh.get_edge_colors())
-        edge_widths_buffer = TransBufUtils.to_buffer(mesh.get_edge_widths())
+        indices_buffer = TransBufUtils.to_buffer(mesh_geometry.get_indices())
+        uvs_buffer = TransBufUtils.to_buffer(mesh_geometry.get_uvs())
+        normals_buffer = TransBufUtils.to_buffer(mesh_geometry.get_normals())
+        colors_buffer = TransBufUtils.to_buffer(mesh_material.get_colors())
 
-        # Convert buffers to numpy arrays)
-        sizes_pt2_numpy = Bufferx.to_numpy(sizes_buffer)
-        face_colors_numpy = Bufferx.to_numpy(face_colors_buffer)
-        edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer)
-        edge_widths_pt_numpy = Bufferx.to_numpy(edge_widths_buffer)
-
-        # Convert sizes from point^2 to pixel
-        radius_pt_numpy = np.sqrt(sizes_pt2_numpy / np.pi)
-        radius_px_numpy = UnitUtils.point_to_pixel_numpy(radius_pt_numpy, renderer.get_canvas().get_dpi())
-        diameter_px_numpy = radius_px_numpy * 2.0 * UnitUtils.device_pixel_ratio()
-        diameter_px_numpy = diameter_px_numpy.reshape(-1)
-
-        edge_widths_px_numpy = UnitUtils.point_to_pixel_numpy(edge_widths_pt_numpy, renderer.get_canvas().get_dpi())
-        edge_widths_px_numpy = edge_widths_px_numpy * UnitUtils.device_pixel_ratio()
-        edge_widths_px_numpy = edge_widths_px_numpy.reshape(-1)
+        # Convert buffers to numpy arrays
+        indices_numpy = Bufferx.to_numpy(indices_buffer).flatten()
+        uvs_numpy = Bufferx.to_numpy(uvs_buffer)
+        normals_numpy = Bufferx.to_numpy(normals_buffer)
+        colors_numpy = Bufferx.to_numpy(colors_buffer)
 
         # =============================================================================
         # Sanity checks attributes buffers
         # =============================================================================
 
         Mesh.sanity_check_attributes_buffer(
-            mesh.get_marker_shape(),
-            vertices_buffer,
-            sizes_buffer,
-            face_colors_buffer,
-            edge_colors_buffer,
-            edge_widths_buffer,
+            mesh.get_geometry(),
+            mesh.get_material(),
         )
 
         # =============================================================================
@@ -113,7 +102,18 @@ class DatovizRendererMesh:
         # Create datoviz_visual if they do not exist
         if artist_uuid not in renderer._dvz_visuals:
             dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
-            dvz_mesh = renderer._dvz_app.marker(position=dummy_position_numpy)
+            # dvz_mesh = renderer._dvz_app.mesh(
+            #     position=dummy_position_numpy
+            # )
+            dvz_mesh = renderer._dvz_app.mesh(
+                position=vertices_3d,
+                normal=normals_numpy,
+                color=colors_numpy,
+                # texcoords=texcoords,
+                index=indices_numpy,
+                # lighting=True,
+                contour=True,
+            )
             renderer._dvz_visuals[artist_uuid] = dvz_mesh
             # Add the new visual to the panel
             dvz_panel.add(dvz_mesh)
@@ -122,43 +122,12 @@ class DatovizRendererMesh:
         # Update all attributes
         # =============================================================================
 
-        # get the datoviz visual
-        dvz_mesh = typing.cast(_DvzMesh, renderer._dvz_visuals[artist_uuid])
+        # # get the datoviz visual
+        # dvz_mesh = typing.cast(_DvzMesh, renderer._dvz_visuals[artist_uuid])
 
-        # set attributes
-        dvz_mesh.set_position(vertices_3d)
-
-        # Set the proper parameters
-        dvz_mesh.set_size(diameter_px_numpy)
-        dvz_mesh.set_color(face_colors_numpy)
-        dvz_mesh.set_linewidth(edge_widths_px_numpy[0])
-        dvz_mesh.set_edgecolor(edge_colors_numpy[0].tolist())  # datoviz only supports a single edge color
-
-        # sanity check - if edge_widths_px_numpy are not all the same, warn the user
-        if not np.all(edge_widths_px_numpy == edge_widths_px_numpy[0]):
-            warnings.warn("DatovizRendererMesh: edge widths per marker are not fully supported by datoviz. " "Using the first edge width for all mesh.")
-        # sanity check - if edge_colors_numpy are not all the same, warn the user
-        if not np.all(edge_colors_numpy == edge_colors_numpy[0]):
-            warnings.warn("DatovizRendererMesh: edge colors per marker are not fully supported by datoviz. " "Using the first edge color for all mesh.")
-
-        # Set mode
-        dvz_mesh.set_mode("code")
-
-        # Set shape and angle - depending on the marker shape, we might need to set a specific angle (e.g. for triangles)
-        dvz_marker_shape, dvz_marker_angle = ConverterUtils.marker_shape_gsp_to_dvz(mesh.get_marker_shape())
-        angle_numpy = np.full(vertices_buffer.get_count(), dvz_marker_angle, dtype=np.float32)
-        dvz_mesh.set_angle(angle_numpy)
-        dvz_mesh.set_shape(dvz_marker_shape)
-
-        # Determine the `aspect` depending on face and edge colors/widths
-        is_face_color_transparent = bool(np.all(face_colors_numpy[:, 3] == 0))
-        is_edge_color_transparent = bool(np.all(edge_colors_numpy[:, 3] == 0))
-        is_edge_width_zero = bool(np.all(edge_widths_px_numpy == 0))
-        has_edge = not is_edge_color_transparent and not is_edge_width_zero
-        if not is_face_color_transparent:
-            if has_edge:
-                dvz_mesh.set_aspect("outline")
-            else:
-                dvz_mesh.set_aspect("filled")
-        else:
-            dvz_mesh.set_aspect("stroke")
+        # # set attributes
+        # dvz_mesh.set_position(vertices_3d)
+        # dvz_mesh.set_normal(normals_numpy)
+        # dvz_mesh.set_index(indices_numpy)
+        # # dvz_mesh.set_texcoord(uvs_numpy)
+        # dvz_mesh.set_color(colors_numpy)
