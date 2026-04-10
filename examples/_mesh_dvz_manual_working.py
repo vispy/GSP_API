@@ -28,7 +28,7 @@ panel = figure.panel(
         (255, 255, 255, 255),
     )
 )
-# arcball = panel.arcball(initial=(0, 0, 0))
+arcball = panel.arcball(initial=(0, 0, 0))
 
 
 # =============================================================================
@@ -36,8 +36,106 @@ panel = figure.panel(
 # =============================================================================
 
 
+def create_shape_collection() -> _DvzMesh:
+    """Create a shape collection with various polyhedra.
+
+    Returns:
+        _DvzMesh: A shape collection containing tetrahedron, hexahedron,
+            octahedron, dodecahedron, and icosahedron with spring colormap.
+    """
+    N = 5
+    colors = dvz.cmap("spring", np.linspace(0, 1, N))
+    scale = 0.35
+
+    shapeCollection = dvz.ShapeCollection()
+    shapeCollection.add_tetrahedron(offset=(-1, 0, 0.5), scale=scale, color=colors[0])
+    shapeCollection.add_hexahedron(offset=(0, 0, 0.5), scale=scale, color=colors[1])
+    shapeCollection.add_octahedron(offset=(1, 0, 0.5), scale=scale, color=colors[2])
+    shapeCollection.add_dodecahedron(offset=(-0.5, 0, -0.5), scale=scale, color=colors[3])
+    shapeCollection.add_icosahedron(offset=(+0.5, 0, -0.5), scale=scale, color=colors[4])
+
+    visual_multi = dvz_app.mesh(
+        shapeCollection,
+        lighting=True,
+        contour=True,
+    )
+    return visual_multi
+
+
+visual_multi = create_shape_collection()
+panel.add(visual_multi)
+
+# =============================================================================
+# Manual triangle
+# =============================================================================
+
+
+def create_triangle_mesh_manual() -> _DvzMesh:
+    """Create a simple triangle mesh with positions, indices, normals, and colors.
+
+    Returns:
+        _DvzMesh: A visual mesh for a single triangle.
+    """
+    positions = np.array(
+        [
+            [-0.5 + 1, 0.5, 0.0],
+            [+0.5 + 1, 0.5, 0.0],
+            [-0.5 + 1, -0.5, 0.0],
+        ],
+        dtype=np.float32,
+    )
+
+    indices = np.array([0, 2, 1], dtype=np.uint32)
+
+    normals = np.array(
+        [
+            [0.0, 0.0, +1.0],
+            [0.0, 0.0, +1.0],
+            [0.0, 0.0, +1.0],
+        ],
+        dtype=np.float32,
+    )
+
+    colors = np.array(
+        [
+            [255, 0, 0, 255],
+            [255, 0, 0, 255],
+            [255, 0, 0, 255],
+        ],
+        dtype=np.uint8,
+    )
+
+    sc = dvz.ShapeCollection()
+    sc.add_custom(
+        positions=positions,
+        normals=normals,
+        colors=colors,
+        # texcoords=texcoords,
+        indices=indices,
+        # offset=mesh_position,
+        # scale=scale,
+        # transform=model_matrix,   # TODO: Apply the model matrix transform to the mesh vertices (currently not applied
+    )
+
+    visual_mesh_manual = dvz_app.mesh(
+        sc,
+        lighting=True,
+        contour=True,
+    )
+
+    return visual_mesh_manual
+
+
+visual_mesh_manual = create_triangle_mesh_manual()
+panel.add(visual_mesh_manual)
+
+# =============================================================================
+#
+# =============================================================================
+
+
 def createMeshFromObj(
-    obj_filename: str = "suzanne.obj",
+    obj_filename: str = "head.obj",
     mesh_position: tuple[float, float, float] = (0, 0, 0),
     scale: float = 1.0,
 ) -> _DvzMesh:
@@ -53,35 +151,18 @@ def createMeshFromObj(
     mesh_geometry = MeshUtils.parse_obj_file_manual(str(obj_path))
 
     # positions = Bufferx.to_numpy(mesh_geometry.get_vertices().
-    positions_buffer = TransBufUtils.to_buffer(mesh_geometry.get_positions())
+    vertices_buffer = TransBufUtils.to_buffer(mesh_geometry.get_positions())
     indices_buffer = TransBufUtils.to_buffer(mesh_geometry.get_indices())
     uvs_buffer = TransBufUtils.to_buffer(mesh_geometry.get_uvs())
     normals_buffer = TransBufUtils.to_buffer(mesh_geometry.get_normals())
 
-    positions_numpy = Bufferx.to_numpy(positions_buffer).reshape(-1, 3)
+    vertices_numpy = Bufferx.to_numpy(vertices_buffer).reshape(-1, 3)
     indices_numpy = Bufferx.to_numpy(indices_buffer).flatten()
     uvs_numpy = Bufferx.to_numpy(uvs_buffer)
     normals_numpy = Bufferx.to_numpy(normals_buffer)
 
-    position_count = positions_numpy.shape[0]
-    colors_numpy = np.array([[255, 0, 255, 255]] * position_count, dtype=np.uint8)  # magenta color for all vertices
-
-    # position_x = 0.0
-    # position_y = 0.0
-    # position_z = -1.0
-    # angle_x = 0.0
-    # angle_y = 0.0
-    # angle_z = 0.0
-    # scale_x = 0.5
-    # scale_y = 0.5
-    # scale_z = 0.5
-
-    # model_matrix_numpy = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
-    # axes_transform_numpy = glm.translate(np.array([position_x, position_y, position_z])) @ glm.scale(np.array([scale_x, scale_y, scale_z]))
-    # model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
-    # model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
-
-    # positions_numpy = positions_numpy @ model_matrix_numpy[:3, :3].T + model_matrix_numpy[:3, 3]
+    vertex_count = vertices_numpy.shape[0]
+    colors_numpy = np.array([[255, 0, 255, 255]] * vertex_count, dtype=np.uint8)  # magenta color for all vertices
 
     # position_x = 0.0
     # position_y = 0.0
@@ -113,17 +194,17 @@ def createMeshFromObj(
     # )
 
     visual_mesh = dvz_app.mesh(
-        position=positions_numpy,
+        position=vertices_numpy,
         normal=normals_numpy,
         color=colors_numpy,
         # texcoords=texcoords,
         index=indices_numpy,
         lighting=True,
-        # contour=True,
+        contour=True,
     )
     # breakpoint()
 
-    visual_mesh.set_light_pos((0, 0, 1, 0))
+    # visual_mesh.set_light_pos((0, 0, 1, 0))
     return visual_mesh
 
 

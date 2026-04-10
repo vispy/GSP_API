@@ -19,6 +19,8 @@ from .datoviz_renderer import DatovizRenderer
 from gsp.utils.unit_utils import UnitUtils
 from gsp.utils.math_utils import MathUtils
 from gsp_datoviz.utils.converter_utils import ConverterUtils
+from gsp.materials.mesh_material import MeshMaterial
+from gsp.materials.mesh_basic_material import MeshBasicMaterial
 
 
 class DatovizRendererMesh:
@@ -43,14 +45,13 @@ class DatovizRendererMesh:
         """
         dvz_panel = renderer._getOrCreateDvzPanel(viewport)
         mesh_geometry = mesh.get_geometry()
-        mesh_material = mesh.get_material()
+        mesh_material: MeshBasicMaterial = typing.cast(MeshBasicMaterial, mesh.get_material())  # TODO support other MeshMaterial types
 
         # =============================================================================
         # Transform vertices with MVP matrix
         # =============================================================================
 
-        vertices_transbuf = mesh_geometry.get_positions()
-        vertices_buffer = TransBufUtils.to_buffer(vertices_transbuf)
+        vertices_buffer = TransBufUtils.to_buffer(mesh_geometry.get_positions())
         model_matrix_buffer = TransBufUtils.to_buffer(model_matrix)
         view_matrix_buffer = TransBufUtils.to_buffer(camera.get_view_matrix())
         projection_matrix_buffer = TransBufUtils.to_buffer(camera.get_projection_matrix())
@@ -100,17 +101,15 @@ class DatovizRendererMesh:
         # Create datoviz_visual if they do not exist
         if artist_uuid not in renderer._dvz_visuals:
             dummy_position_numpy = np.array([[0, 0, 0]], dtype=np.float32).reshape((-1, 3))
-            # dvz_mesh = renderer._dvz_app.mesh(
-            #     position=dummy_position_numpy
-            # )
+            # dvz_mesh = renderer._dvz_app.mesh(position=dummy_position_numpy)
             dvz_mesh = renderer._dvz_app.mesh(
                 position=vertices_3d,
-                normal=normals_numpy,
-                color=colors_numpy,
+                # normal=normals_numpy,
+                # color=colors_numpy,
                 # texcoords=texcoords,
                 index=indices_numpy,
-                # lighting=True,
-                contour=True,
+                lighting=True,
+                # contour=True,
             )
             renderer._dvz_visuals[artist_uuid] = dvz_mesh
             # Add the new visual to the panel
@@ -120,12 +119,12 @@ class DatovizRendererMesh:
         # Update all attributes
         # =============================================================================
 
-        # # get the datoviz visual
-        # dvz_mesh = typing.cast(_DvzMesh, renderer._dvz_visuals[artist_uuid])
+        # get the datoviz visual
+        dvz_mesh = typing.cast(_DvzMesh, renderer._dvz_visuals[artist_uuid])
 
-        # # set attributes
-        # dvz_mesh.set_position(vertices_3d)
-        # dvz_mesh.set_normal(normals_numpy)
-        # dvz_mesh.set_index(indices_numpy)
-        # # dvz_mesh.set_texcoord(uvs_numpy)
-        # dvz_mesh.set_color(colors_numpy)
+        # set attributes
+        dvz_mesh.set_position(vertices_3d)
+        dvz_mesh.set_normal(normals_numpy)
+        dvz_mesh.set_index(indices_numpy)
+        # dvz_mesh.set_texcoord(uvs_numpy)
+        dvz_mesh.set_color(colors_numpy)

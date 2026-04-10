@@ -22,6 +22,7 @@ from gsp.utils.group_utils import GroupUtils
 from gsp.constants import Constants
 from common.example_helper import ExampleHelper
 from gsp_extra.mpl3d import glm
+from gsp.utils.transbuf_utils import TransBufUtils
 
 
 def main():
@@ -41,19 +42,50 @@ def main():
     # =============================================================================
 
     # Load a obj geometry
-    # obj_path = pathlib.Path(__file__).parent / "models" / "triangle.obj"
-    obj_path = pathlib.Path(__file__).parent / "models" / "suzanne.obj"
-    # obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
+    # obj_path = pathlib.Path(__file__).parent / "models" / "cube.obj"
+    # obj_path = pathlib.Path(__file__).parent / "models" / "suzanne.obj"
+    obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
     mesh_geometry = MeshUtils.parse_obj_file_manual(str(obj_path))
 
     # TODO fix the colors
-    colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.yellow], dtype=np.uint8), BufferType.rgba8)
+    positions_buffer = TransBufUtils.to_buffer(mesh_geometry.get_positions())
+    positions_numpy = Bufferx.to_numpy(positions_buffer).reshape(-1, 3)
+    position_count = positions_numpy.shape[0]
+
+    # TODO rename colors_numpy as face_colors_numpy
+    colors_numpy = np.array([[255, 0, 255, 255]] * position_count, dtype=np.uint8)  # magenta color for all vertices
+    colors_buffer = Bufferx.from_numpy(colors_numpy, BufferType.rgba8)
     edge_colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.white], dtype=np.uint8), BufferType.rgba8)
     edge_widths_buffer = Bufferx.from_numpy(np.array([1.0], dtype=np.float32), BufferType.float32)
     # TODO issue when i change those value
-    face_sorting = False
+    face_sorting = True
     face_culling = Constants.FaceCulling.BothSides
     mesh_material = MeshBasicMaterial(colors_buffer, edge_colors_buffer, edge_widths_buffer, face_sorting, face_culling)
+
+    if False:
+        position_x = 0.0
+        position_y = 0.0
+        position_z = -0.5
+        angle_x = 0.0
+        angle_y = 45.0
+        angle_z = 0.0
+        scale_x = 1.0
+        scale_y = 1.0
+        scale_z = 1.0
+
+        model_matrix_numpy = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
+        axes_transform_numpy = glm.translate(np.array([position_x, position_y, position_z])) @ glm.scale(np.array([scale_x, scale_y, scale_z]))
+        model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
+        model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
+
+        positions_numpy = Bufferx.to_numpy(TransBufUtils.to_buffer(mesh_geometry.get_positions()))
+        positions_numpy = positions_numpy @ model_matrix_numpy[:3, :3].T + model_matrix_numpy[:3, 3]
+
+        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+        mesh_geometry.set_positions(positions_buffer)
+
+    positions_numpy = Bufferx.to_numpy(TransBufUtils.to_buffer(mesh_geometry.get_positions()))
+    print("positions_numpy", positions_numpy.tolist())
 
     # Create a mesh
     mesh = Mesh(mesh_geometry, mesh_material)
@@ -67,7 +99,7 @@ def main():
 
     position_x = 0.0
     position_y = 0.0
-    position_z = -2.0
+    position_z = 0.0
     angle_x = 0.0
     angle_y = 0.0
     angle_z = 0.0
@@ -88,9 +120,9 @@ def main():
     # =============================================================================
 
     # Create renderer and render
-    # renderer_name = ExampleHelper.get_renderer_name()
+    renderer_name = ExampleHelper.get_renderer_name()
     # renderer_name = "datoviz"
-    renderer_name = "matplotlib"
+    # print(f"Using renderer: {renderer_name}")
 
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
     # renderer_base.render([viewport], [mesh], [model_matrix], [camera])
