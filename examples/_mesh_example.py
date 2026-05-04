@@ -84,8 +84,8 @@ def main():
         positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
         mesh_geometry.set_positions(positions_buffer)
 
-    positions_numpy = Bufferx.to_numpy(TransBufUtils.to_buffer(mesh_geometry.get_positions()))
-    print("positions_numpy", positions_numpy.tolist())
+    # positions_numpy = Bufferx.to_numpy(TransBufUtils.to_buffer(mesh_geometry.get_positions()))
+    # print("positions_numpy", positions_numpy.tolist())
 
     # Create a mesh
     mesh = Mesh(mesh_geometry, mesh_material)
@@ -121,51 +121,60 @@ def main():
 
     # Create renderer and render
     renderer_name = ExampleHelper.get_renderer_name()
-    # renderer_name = "datoviz"
-    # print(f"Using renderer: {renderer_name}")
-
     renderer_base = ExampleHelper.create_renderer(renderer_name, canvas)
-    # renderer_base.render([viewport], [mesh], [model_matrix], [camera])
-    # renderer_base.show()
 
-    animator = ExampleHelper.create_animator(renderer_base)
-    present = 0
-
-    @animator.event_listener
-    def animator_callback(delta_time: float) -> list[VisualBase]:
-        nonlocal model_matrix, present
-
-        present += delta_time
-
-        angle_x = 0
-        angle_y = 0
-        angle_z = 0
-
-        # angle_x = (present * 40) % 360
-        angle_y = (present * 40) % 360
-        # angle_z = (present * 40) % 360
-
-        position_x = 0.0
-        position_y = 0.0
-        position_z = -2.0
-
-        scale_x = 0.5
-        scale_y = 0.5
-        scale_z = 0.5
-
-        matrix_rotation = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
-        matrix_translation = glm.translate(np.array([position_x, position_y, position_z]))
-        matrix_scale = glm.scale(np.array([scale_x, scale_y, scale_z]))
-
-        matrix_mvp = matrix_translation @ matrix_scale @ matrix_rotation
-
-        model_matrix = Bufferx.from_numpy(np.array([matrix_mvp]), BufferType.mat4)
-
+    # =============================================================================
+    # Render loop
+    # =============================================================================
+    def render_static():
         renderer_base.render([viewport], [mesh], [model_matrix], [camera])
-        changed_visuals: list[VisualBase] = []
-        return changed_visuals
+        renderer_base.show()
 
-    animator.start()
+    def render_animated():
+        animator = ExampleHelper.create_animator(renderer_base)
+        present = 0
+
+        @animator.event_listener
+        def animator_callback(delta_time: float) -> list[VisualBase]:
+            nonlocal model_matrix, present
+
+            present += delta_time
+
+            angle_x = 0
+            angle_y = 0
+            angle_z = 0
+
+            # angle_x = (present * 40) % 360
+            angle_y = (present * 40) % 360
+            # angle_z = (present * 40) % 360
+
+            position_x = 0.0
+            position_y = 0.0
+            position_z = -2.0
+
+            scale_x = 0.5
+            scale_y = 0.5
+            scale_z = 0.5
+
+            matrix_rotation = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
+            matrix_translation = glm.translate(np.array([position_x, position_y, position_z]))
+            matrix_scale = glm.scale(np.array([scale_x, scale_y, scale_z]))
+
+            matrix_mvp = matrix_translation @ matrix_scale @ matrix_rotation
+
+            model_matrix = Bufferx.from_numpy(np.array([matrix_mvp]), BufferType.mat4)
+
+            renderer_base.render([viewport], [mesh], [model_matrix], [camera])
+            changed_visuals: list[VisualBase] = []
+            return changed_visuals
+
+        animator.start()
+
+    animation_enabled = True
+    if animation_enabled is False:
+        render_static()
+    else:
+        render_animated()
 
 
 if __name__ == "__main__":
