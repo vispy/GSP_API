@@ -170,7 +170,7 @@ def main():
 
         animator.start()
 
-    animation_enabled = True
+    animation_enabled = False
     if animation_enabled is False:
         render_static()
     else:
