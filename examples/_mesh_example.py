@@ -55,8 +55,8 @@ def main():
     # TODO rename colors_numpy as face_colors_numpy
     colors_numpy = np.array([[255, 0, 255, 255]] * position_count, dtype=np.uint8)  # magenta color for all vertices
     colors_buffer = Bufferx.from_numpy(colors_numpy, BufferType.rgba8)
-    edge_colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.white], dtype=np.uint8), BufferType.rgba8)
-    edge_widths_buffer = Bufferx.from_numpy(np.array([1.0], dtype=np.float32), BufferType.float32)
+    edge_colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.black], dtype=np.uint8), BufferType.rgba8)
+    edge_widths_buffer = Bufferx.from_numpy(np.array([0.5], dtype=np.float32), BufferType.float32)
     # TODO issue when i change those value
     face_sorting = True
     face_culling = Constants.FaceCulling.BothSides
@@ -152,9 +152,9 @@ def main():
             position_y = 0.0
             position_z = -2.0
 
-            scale_x = 0.5
-            scale_y = 0.5
-            scale_z = 0.5
+            scale_x = 1.0
+            scale_y = 1.0
+            scale_z = 1.0
 
             matrix_rotation = glm.xrotate(angle_x) @ glm.yrotate(angle_y) @ glm.zrotate(angle_z)
             matrix_translation = glm.translate(np.array([position_x, position_y, position_z]))
@@ -170,7 +170,7 @@ def main():
 
         animator.start()
 
-    animation_enabled = True
+    animation_enabled = False
     if animation_enabled is False:
         render_static()
     else:

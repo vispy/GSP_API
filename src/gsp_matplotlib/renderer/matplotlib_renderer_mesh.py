@@ -9,8 +9,6 @@ import numpy as np
 # local imports
 from gsp.core.camera import Camera
 from gsp.core.viewport import Viewport
-from gsp.constants import Constants
-from gsp.materials.mesh_material import MeshMaterial
 from gsp.materials.mesh_basic_material import MeshBasicMaterial
 from gsp.utils.math_utils import MathUtils
 from gsp.visuals.mesh import Mesh
@@ -45,7 +43,8 @@ class RendererMesh:
             list[matplotlib.artist.Artist]: A list of Matplotlib artist objects created or updated
         """
         mesh_geometry = mesh.get_geometry()
-        mesh_material: MeshBasicMaterial = typing.cast(MeshBasicMaterial, mesh.get_material())  # TODO support other MeshMaterial types
+        mesh_material = mesh.get_material()
+        assert isinstance(mesh_material, MeshBasicMaterial), f"Expected material to be a MeshBasicMaterial, got {type(mesh_material)}"  # TODO support other MeshMaterial types
 
         # =============================================================================
         # Transform vertices with MVP matrix
@@ -63,25 +62,37 @@ class RendererMesh:
         projection_matrix_numpy = Bufferx.to_numpy(projection_matrix_buffer).squeeze()
 
         # =============================================================================
-        #
+        # Geometry/material attributes
         # =============================================================================
 
         geometry_indices_buffer = TransBufUtils.to_buffer(mesh_geometry.get_indices())
-        geometry_uvs_buffer = TransBufUtils.to_buffer(mesh_geometry.get_uvs())
-        geometry_normals_buffer = TransBufUtils.to_buffer(mesh_geometry.get_normals())
         material_colors_buffer = TransBufUtils.to_buffer(mesh_material.get_colors())
         material_edge_colors_buffer = TransBufUtils.to_buffer(mesh_material.get_edge_colors())
         material_edge_widths_buffer = TransBufUtils.to_buffer(mesh_material.get_edge_widths())
 
         # Convert buffers to numpy arrays
-        geometry_indices_numpy = Bufferx.to_numpy(geometry_indices_buffer).reshape(-1, 3)  # shape(face_count, vertices_per_face) - shape(face_count, 3)
-        geometry_uvs_numpy = Bufferx.to_numpy(geometry_uvs_buffer)
-        geometry_normals_numpy = Bufferx.to_numpy(geometry_normals_buffer)
+        geometry_indices_numpy = Bufferx.to_numpy(geometry_indices_buffer).flatten().reshape(-1, 3)  # shape(face_count, 3)
         material_colors_numpy = Bufferx.to_numpy(material_colors_buffer) / 255.0  # convert from 0-255 to 0-1 range for matplotlib
+        material_edge_colors_numpy = Bufferx.to_numpy(material_edge_colors_buffer) / 255.0
+        material_edge_widths_numpy = Bufferx.to_numpy(material_edge_widths_buffer).flatten()
 
-        # TODO take them from the material
-        material_edge_color = np.array([Constants.Color.black] * len(geometry_indices_numpy)) / 255.0  # convert from 0-255 to 0-1 range for matplotlib
-        material_edge_widths = np.array([0.5] * len(geometry_indices_numpy))
+        # matplotlib's PolyCollection takes one color/width per face. Material attributes may be
+        # per-vertex (length == vertex_count) or per-mesh (length == 1) — broadcast/index to per-face.
+        face_count = len(geometry_indices_numpy)
+        vertex_count = len(vertices_numpy)
+
+        def _to_per_face(array: np.ndarray) -> np.ndarray:
+            if array.shape[0] == face_count:
+                return array
+            if array.shape[0] == vertex_count:
+                return array[geometry_indices_numpy[:, 0]]
+            if array.shape[0] == 1:
+                return np.broadcast_to(array, (face_count,) + array.shape[1:]).copy()
+            raise ValueError(f"unexpected attribute length {array.shape[0]}; expected 1, face_count={face_count}, or vertex_count={vertex_count}")
+
+        material_colors_numpy = _to_per_face(material_colors_numpy)
+        material_edge_colors_numpy = _to_per_face(material_edge_colors_numpy)
+        material_edge_widths_numpy = _to_per_face(material_edge_widths_numpy)
 
         # =============================================================================
         # Sanity checks attributes buffers
@@ -93,31 +104,13 @@ class RendererMesh:
         )
 
         # =============================================================================
-        # Compute the world space faces_vertices
-        # =============================================================================
-
-        # Get the full transform matrix for the mesh
-        vertices_world, _ = MathUtils.apply_transform_matrix(vertices_numpy, model_matrix_numpy)
-
-        # build the faces vertices and uvs arrays
-        faces_vertices_world = vertices_world[geometry_indices_numpy]
-
-        # =============================================================================
-        # Compute the faces_uvs
-        # =============================================================================
-
-        faces_uvs_numpy = geometry_uvs_numpy[geometry_indices_numpy]
-
-        # =============================================================================
         # Compute the NDC faces_vertices
         # =============================================================================
 
-        # Get the full transform matrix for the mesh
         mvp_matrix = MathUtils.compute_mvp_matrix(model_matrix_numpy, view_matrix_numpy, projection_matrix_numpy)
-        vertices_clip, vertices_ndc = MathUtils.apply_transform_matrix(vertices_numpy, mvp_matrix)
+        _, vertices_ndc = MathUtils.apply_transform_matrix(vertices_numpy, mvp_matrix)
 
-        # build the faces vertices and uvs arrays
-        faces_vertices_ndc = vertices_ndc[geometry_indices_numpy].reshape(-1, 3, 3)  # shape(face_count, vertices_per_face, xyz) - shape(face_count, 3, 3)
+        faces_vertices_ndc = vertices_ndc[geometry_indices_numpy].reshape(-1, 3, 3)  # shape(face_count, 3, xyz)
 
         # =============================================================================
         # Switch vertices to 2d
@@ -127,31 +120,13 @@ class RendererMesh:
         faces_vertices_2d = faces_vertices_ndc[..., :2]  # shape(face_count, vertices_per_face, xy) - shape(face_count, 3, 2)
 
         # =============================================================================
-        # Render the mesh using the appropriate material
-        # =============================================================================
-
-        # =============================================================================
         # Sanity checks
         # =============================================================================
 
-        # faces_vertices_ndc: (n_faces, 3, 3) array of the 3D vertices of each face in NDC space
-        # faces_vertices_2d: (n_faces, 3, 2) array of the 2D vertices of each face in screen space
-        # faces_uvs: (n_faces, 3, 2) array of the UV coordinates of each face
-
-        assert isinstance(mesh_material, MeshMaterial), f"Expected material to be a MeshMaterial, got {type(mesh_material)}"
-        assert faces_vertices_ndc.shape == (
-            len(geometry_indices_numpy),
-            3,
-            3,
-        ), f"Expected faces_vertices_ndc to have shape {(len(geometry_indices_numpy), 3, 3)}, got {faces_vertices_ndc.shape}"
-        assert faces_vertices_2d.shape == (
-            len(geometry_indices_numpy),
-            3,
-            2,
-        ), f"Expected faces_vertices_2d to have shape {(len(geometry_indices_numpy), 3, 2)}, got {faces_vertices_2d.shape}"
-        assert len(faces_vertices_2d) == len(
-            geometry_indices_numpy
-        ), f"Expected faces_vertices_2d to have {len(geometry_indices_numpy)} faces, got {len(faces_vertices_2d)}"
+        # faces_vertices_ndc: (face_count, 3, 3) — 3D vertices of each face in NDC space
+        # faces_vertices_2d:  (face_count, 3, 2) — 2D vertices of each face in screen space
+        assert faces_vertices_ndc.shape == (face_count, 3, 3), f"Expected faces_vertices_ndc shape {(face_count, 3, 3)}, got {faces_vertices_ndc.shape}"
+        assert faces_vertices_2d.shape == (face_count, 3, 2), f"Expected faces_vertices_2d shape {(face_count, 3, 2)}, got {faces_vertices_2d.shape}"
 
         # =============================================================================
         #
@@ -165,38 +140,32 @@ class RendererMesh:
         # =============================================================================
 
         # Sort polygons by depth (painter's algorithm)
-        # - faces are sorted based on their depth (z) in camera space within a single artist
+        # - faces are sorted based on their depth (z) in NDC space within a single artist
         # - this artist.set_zorder() is set based on the distance from the camera to the Object3D position
         # - so possible conflict between faces of different objects
-        # - CAUTION: here reorder ALL arrays you use below to keep them in sync
         if material_face_sorting:
             # compute the depth of each face as the mean z value of its vertices
             faces_depth = faces_vertices_ndc[:, :, 2].mean(axis=1)
-            # get the sorting indices (from farthest to nearest)
-            depth_sorted_indices = np.argsort(faces_depth)
-            # apply the sorting to faces_vertices and faces_hidden
-            # CAUTION: here reorder ALL arrays you use below to keep them in sync
+            # NDC z runs from -1 (near) to +1 (far); painter's algorithm draws farthest first
+            # so nearer faces are painted on top — sort descending by z.
+            depth_sorted_indices = np.argsort(-faces_depth)
+            # ALL per-face arrays MUST be reordered with the same indices to keep them in sync
             faces_vertices_2d = faces_vertices_2d[depth_sorted_indices]
-
-            # FIXME make it happens
-            # # ALL attributes used below MUST be reordered with the same depth_sorted_indices to keep them in sync
-            # material_colors_numpy = material_colors_numpy[depth_sorted_indices]
-            # material_edge_color = material_edge_color[depth_sorted_indices]
+            material_colors_numpy = material_colors_numpy[depth_sorted_indices]
+            material_edge_colors_numpy = material_edge_colors_numpy[depth_sorted_indices]
+            material_edge_widths_numpy = material_edge_widths_numpy[depth_sorted_indices]
 
         # =============================================================================
         # honor material.face_culling
         # =============================================================================
 
         faces_visible = RendererUtils.compute_faces_visible(faces_vertices_2d, material_face_culling)
-        # print(f"faces_visible: {faces_visible.sum()}/{len(faces_visible)}")
 
-        # remove hidden faces
+        # ALL per-face arrays MUST be filtered with the same mask to keep them in sync
         faces_vertices_2d = faces_vertices_2d[faces_visible]
-
-        # FIXME make it happens
-        # # ALL attributes used below MUST filtered with the same faces_visible mask to keep them in sync
-        # material_colors_numpy = material_colors_numpy[faces_visible]
-        # material_edge_color = material_edge_color[faces_visible]
+        material_colors_numpy = material_colors_numpy[faces_visible]
+        material_edge_colors_numpy = material_edge_colors_numpy[faces_visible]
+        material_edge_widths_numpy = material_edge_widths_numpy[faces_visible]
 
         # =============================================================================
         # Create artists if needed
@@ -226,11 +195,10 @@ class RendererMesh:
         # Update all the artists
         # =============================================================================
 
-        # update the PathCollection with the new patches
+        # update the PolyCollection with the new patches
         mpl_poly_collection.set_verts(typing.cast(list, faces_vertices_2d))
         mpl_poly_collection.set_facecolor(typing.cast(list, material_colors_numpy))
-
-        mpl_poly_collection.set_edgecolor(typing.cast(list, material_edge_color))
-        mpl_poly_collection.set_linewidth(typing.cast(list, material_edge_widths))
+        mpl_poly_collection.set_edgecolor(typing.cast(list, material_edge_colors_numpy))
+        mpl_poly_collection.set_linewidth(typing.cast(list, material_edge_widths_numpy))
 
         return [mpl_poly_collection]
