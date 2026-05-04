@@ -108,8 +108,10 @@ class DatovizRendererMesh:
                 # color=colors_numpy,
                 # texcoords=texcoords,
                 index=indices_numpy,
-                lighting=True,
-                # contour=True,
+                lighting=False,
+                contour=True,
+                edgecolor=(0, 0, 0, 255),
+                linewidth=1.0,
             )
             renderer._dvz_visuals[artist_uuid] = dvz_mesh
             # Add the new visual to the panel

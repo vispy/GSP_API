@@ -1,6 +1,6 @@
 # GSP_API — Philosophy & Design Documents
 
-This folder collects the prose documentation behind GSP_API: one academic-style white paper and four "philosophy" essays that explain why the codebase is shaped the way it is. Each document exists in three forms — a Markdown source (`*.md`), a rendered PDF (`*.pdf`), and the prompt used to generate it (`*_prompt.md`) where applicable. The PDFs below are the reading-friendly version; open the `.md` next to each one to see the source or follow inline links into the code.
+This folder collects the prose documentation behind GSP_API: one academic-style white paper and four "philosophy" essays that explain why the codebase is shaped the way it is. Each document exists in two forms — a Markdown source (`*.md`) and a rendered PDF (`*.pdf`). The PDFs below are the reading-friendly version; open the `.md` next to each one to see the source or follow inline links into the code.
 
 ## Documents
 

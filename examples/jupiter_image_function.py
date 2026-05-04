@@ -22,6 +22,16 @@ from common.example_helper import ExampleHelper
 
 
 def generate_jupiter_image(period: float, canvas_width: int, canvas_height: int) -> bytes:
+    """Generate an image of Jupiter with a given period.
+
+    Args:
+        period: The period of the sine waves representing Jupiter's bands.
+        canvas_width: The width of the canvas.
+        canvas_height: The height of the canvas.
+
+    Returns:
+        The generated PNG image as bytes.
+    """
     # Create a canvas
     canvas = Canvas(canvas_width, canvas_height, 72.0, Constants.Color.white)
 
