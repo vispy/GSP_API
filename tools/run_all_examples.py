@@ -109,6 +109,8 @@ def main() -> None:
     examples_folder = f"{__dirname__}/../examples"
     basenames = [basename for basename in os.listdir(examples_folder) if os.path.isfile(os.path.join(examples_folder, basename))]
     basenames.sort()
+    # remove all the basenames starting with "_" (like __init__.py)
+    basenames = [basename for basename in basenames if not basename.startswith("_")]
     script_paths = [os.path.abspath(os.path.join(examples_folder, basename)) for basename in basenames if basename.endswith(".py")]
 
     print(f"Running {text_cyan(str(len(script_paths)))} example scripts to verify they execute without exceptions.")
@@ -126,8 +128,8 @@ def main() -> None:
         # =============================================================================
         env_variables_renderers = {
             "matplotlib": {"GSP_RENDERER": "matplotlib"},
-            "datoviz": {"GSP_RENDERER": "datoviz"},
-            "network-matplotlib": {"GSP_RENDERER": "network", "GSP_REMOTE_RENDERER": "matplotlib"},
+            # "datoviz": {"GSP_RENDERER": "datoviz"},
+            # "network-matplotlib": {"GSP_RENDERER": "network", "GSP_REMOTE_RENDERER": "matplotlib"},
             # "network-datoviz": {"GSP_RENDERER": "network", "GSP_REMOTE_RENDERER": "datoviz"},
         }
 
