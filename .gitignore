@@ -1,3 +1,8 @@
+# .DS_Store is a macOS system file that stores custom attributes of a folder such as the 
+# position of icons or the choice of a background image. It is not needed in a Python project 
+# and can be safely ignored.
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
