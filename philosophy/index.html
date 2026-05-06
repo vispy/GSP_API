@@ -13,21 +13,25 @@
       
       
       
+        <link rel="prev" href="../about/">
+      
+      
+        <link rel="next" href="whitepaper/">
       
       
         
       
       
-      <link rel="icon" href="/assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
     
     
       
-        <title>Graphic Server Protocol</title>
+        <title>Overview - Graphic Server Protocol</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
       
       
 
@@ -46,9 +50,9 @@
       
     
     
-      <link rel="stylesheet" href="/assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -65,6 +69,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#gsp_api-philosophy-design-documents" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -77,7 +86,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/." title="Graphic Server Protocol" class="md-header__button md-logo" aria-label="Graphic Server Protocol" data-md-component="logo">
+    <a href=".." title="Graphic Server Protocol" class="md-header__button md-logo" aria-label="Graphic Server Protocol" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -97,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Overview
             
           </span>
         </div>
@@ -187,7 +196,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="Graphic Server Protocol" class="md-nav__button md-logo" aria-label="Graphic Server Protocol" data-md-component="logo">
+    <a href=".." title="Graphic Server Protocol" class="md-nav__button md-logo" aria-label="Graphic Server Protocol" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -217,7 +226,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -244,7 +253,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/about/" class="md-nav__link">
+      <a href="../about/" class="md-nav__link">
         
   
   
@@ -268,18 +277,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -300,7 +311,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -315,10 +326,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/philosophy/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -334,6 +372,98 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whitepaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        whitepaper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#philosophy_packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        philosophy_packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#philosophy_gsp_core" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        philosophy_gsp_core
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#philosophy_renderers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        philosophy_renderers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#philosophy_examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        philosophy_examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -346,7 +476,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/philosophy/whitepaper/" class="md-nav__link">
+      <a href="whitepaper/" class="md-nav__link">
         
   
   
@@ -374,7 +504,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/philosophy/philosophy_gsp_core/" class="md-nav__link">
+      <a href="philosophy_gsp_core/" class="md-nav__link">
         
   
   
@@ -402,7 +532,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/philosophy/philosophy_packages/" class="md-nav__link">
+      <a href="philosophy_packages/" class="md-nav__link">
         
   
   
@@ -430,7 +560,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/philosophy/philosophy_renderers/" class="md-nav__link">
+      <a href="philosophy_renderers/" class="md-nav__link">
         
   
   
@@ -458,7 +588,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/philosophy/philosophy_examples/" class="md-nav__link">
+      <a href="philosophy_examples/" class="md-nav__link">
         
   
   
@@ -540,7 +670,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api/gsp/" class="md-nav__link">
+      <a href="../api/gsp/" class="md-nav__link">
         
   
   
@@ -568,7 +698,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api/gsp_network/" class="md-nav__link">
+      <a href="../api/gsp_network/" class="md-nav__link">
         
   
   
@@ -596,7 +726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api/gsp_pydantic/" class="md-nav__link">
+      <a href="../api/gsp_pydantic/" class="md-nav__link">
         
   
   
@@ -624,7 +754,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api/gsp_matplotlib/" class="md-nav__link">
+      <a href="../api/gsp_matplotlib/" class="md-nav__link">
         
   
   
@@ -652,7 +782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api/gsp_datoviz/" class="md-nav__link">
+      <a href="../api/gsp_datoviz/" class="md-nav__link">
         
   
   
@@ -680,7 +810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api/gsp_extra/" class="md-nav__link">
+      <a href="../api/gsp_extra/" class="md-nav__link">
         
   
   
@@ -708,7 +838,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api/vispy_2/" class="md-nav__link">
+      <a href="../api/vispy_2/" class="md-nav__link">
         
   
   
@@ -753,6 +883,88 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whitepaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        whitepaper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#philosophy_packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        philosophy_packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#philosophy_gsp_core" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        philosophy_gsp_core
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#philosophy_renderers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        philosophy_renderers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#philosophy_examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        philosophy_examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -765,8 +977,39 @@
               
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+  
+  
+
+
+<h1 id="gsp_api-philosophy-design-documents">GSP_API — Philosophy &amp; Design Documents<a class="headerlink" href="#gsp_api-philosophy-design-documents" title="Permanent link">&para;</a></h1>
+<p>This folder collects the prose documentation behind GSP_API: one academic-style white paper and four "philosophy" essays that explain why the codebase is shaped the way it is. Each document exists in two forms — a Markdown source (<code>*.md</code>) and a rendered PDF (<code>*.pdf</code>). The PDFs below are the reading-friendly version; open the <code>.md</code> next to each one to see the source or follow inline links into the code.</p>
+<h2 id="documents">Documents<a class="headerlink" href="#documents" title="Permanent link">&para;</a></h2>
+<h3 id="whitepaper"><a href="whitepaper/">whitepaper</a><a class="headerlink" href="#whitepaper" title="Permanent link">&para;</a></h3>
+<p>A self-contained white paper presenting GSP_API as a backend-agnostic scene-description API for 2D/3D scientific visualization in Python. It motivates the split between scene description and rendering, frames GSP_API against Matplotlib, Datoviz, VisPy, Plotly, and Bokeh, and describes the architecture, trade-offs, security posture, and current research-prototype status (v0.1.0). Read this first if you want the high-level pitch and how the project positions itself in the ecosystem.</p>
+<h3 id="philosophy_packages"><a href="philosophy_packages/">philosophy_packages</a><a class="headerlink" href="#philosophy_packages" title="Permanent link">&para;</a></h3>
+<p>A tour of the seven Python packages under <a href="../../src/">src/</a> and the three-tier layered architecture (contract → backend → convenience) that governs how they depend on each other. It enforces the "dependencies point downward" rule with grep recipes you can run to verify any claim, and walks each package's role: <code>gsp</code>, <code>gsp_matplotlib</code>, <code>gsp_datoviz</code>, <code>gsp_network</code>, <code>gsp_extra</code>, <code>gsp_pydantic</code>, <code>vispy2</code>. Read this second to get the map of the repo before drilling into any one package.</p>
+<h3 id="philosophy_gsp_core"><a href="philosophy_gsp_core/">philosophy_gsp_core</a><a class="headerlink" href="#philosophy_gsp_core" title="Permanent link">&para;</a></h3>
+<p>A deep dive on <a href="../../src/gsp/"><code>src/gsp/</code></a>, the contract layer that every backend implements and every convenience layer builds on. It covers the five design principles (contract not implementation, data not commands, lazy data via <code>TransBuf</code>, self-registration over manifests, numpy + stdlib only) and explains how <code>Canvas</code>, <code>Viewport</code>, <code>Camera</code>, <code>Buffer</code>, and <code>Visual</code> are defined without committing to how rendering happens. Read this when you are about to modify or extend the abstract protocol.</p>
+<h3 id="philosophy_renderers"><a href="philosophy_renderers/">philosophy_renderers</a><a class="headerlink" href="#philosophy_renderers" title="Permanent link">&para;</a></h3>
+<p>A reading guide to the three renderer packages — <code>gsp_matplotlib</code>, <code>gsp_datoviz</code>, <code>gsp_network</code> — and the conventions that make them a coherent ecosystem rather than three independent implementations. It names the shared patterns (the six-method <code>RendererBase</code> contract, the <code>(renderer, events, animator)</code> triad, per-visual file fan-out, isinstance dispatch) and walks what is unique to each backend. Read this when you are about to write a fourth backend or debug an existing one.</p>
+<h3 id="philosophy_examples"><a href="philosophy_examples/">philosophy_examples</a><a class="headerlink" href="#philosophy_examples" title="Permanent link">&para;</a></h3>
+<p>A pattern catalog for the 50+ scripts under <a href="../../examples/">examples/</a>, showing that every example follows the same skeleton: backend selection, data construction, viewport/camera/model-matrix setup, then a single terminal <code>renderer.render(...)</code> call. It explains the five design principles encoded in that skeleton (backend independence, data first / render last, parallel-list rendering API, typed GPU buffers, explicit camera and model-matrix management). Read this when learning the library by example or writing a new example to demonstrate a feature.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -819,10 +1062,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "/", "features": [], "search": "/assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="/assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
       
     
   </body>

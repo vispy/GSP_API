@@ -1,0 +1,2217 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="⚡ GSP: A high-performance graphics server protocol for efficient rendering and visualization.">
+      
+      
+        <meta name="author" content="GSP Team">
+      
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../philosophy_gsp_core/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Whitepaper - Graphic Server Protocol</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gsp_api-a-backend-agnostic-scene-description-api-for-scientific-visualization-in-python" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Graphic Server Protocol" class="md-header__button md-logo" aria-label="Graphic Server Protocol" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Graphic Server Protocol
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Whitepaper
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/vispy/GSP_API" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GSP_API
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Graphic Server Protocol" class="md-nav__button md-logo" aria-label="Graphic Server Protocol" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Graphic Server Protocol
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/vispy/GSP_API" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GSP_API
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Philosophy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Philosophy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Whitepaper
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Whitepaper
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-problem-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Problem Statement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-proposed-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Proposed Solution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-system-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. System Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. System Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-data-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Data flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-common-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Common contract
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-key-design-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Key design decisions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Key Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Key Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-backend-agnostic-scene-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Backend-agnostic scene API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-eight-visual-primitives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Eight visual primitives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-pluggable-renderers-via-static-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Pluggable renderers via static registry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-pydantic-typed-scene-with-base64-buffers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Pydantic-typed scene with base64 buffers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-shared-animator-and-viewport-event-subsystems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Shared animator and viewport-event subsystems
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-flask-based-network-renderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6 Flask-based network renderer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#57-documentation-and-example-gallery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.7 Documentation and example gallery
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-technical-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Technical Deep Dive
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Technical Deep Dive">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-renderer-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Renderer registry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-scene-data-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Scene data model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-datoviz-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Datoviz mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-network-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Network protocol
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#65-performance-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 Performance considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#66-scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6 Scalability
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-security-and-privacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Security and Privacy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Security and Privacy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-threat-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Threat model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-concrete-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Concrete risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-mitigations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Mitigations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-privacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Privacy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-comparison-with-existing-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Comparison with Existing Solutions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-use-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Use Cases
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-limitations-and-future-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Limitations and Future Work
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Limitations and Future Work">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-known-issues-from-todomd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Known issues from TODO.md
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-in-flight-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 In-flight work
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#103-planned" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 Planned
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#104-adoption-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4 Adoption constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-a-tech-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appendix A: Tech Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-b-stated-assumptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appendix B: Stated Assumptions
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../philosophy_gsp_core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../philosophy_packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../philosophy_renderers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renderers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../philosophy_examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gsp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gsp_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Network
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gsp_pydantic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Pydantic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gsp_matplotlib/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Matplotlib
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gsp_datoviz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Datoviz
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gsp_extra/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Extra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/vispy_2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vispy 2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-problem-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Problem Statement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-proposed-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Proposed Solution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-system-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. System Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. System Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-data-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Data flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-common-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Common contract
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-key-design-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Key design decisions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Key Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Key Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-backend-agnostic-scene-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Backend-agnostic scene API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-eight-visual-primitives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Eight visual primitives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-pluggable-renderers-via-static-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Pluggable renderers via static registry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-pydantic-typed-scene-with-base64-buffers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Pydantic-typed scene with base64 buffers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-shared-animator-and-viewport-event-subsystems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Shared animator and viewport-event subsystems
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-flask-based-network-renderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6 Flask-based network renderer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#57-documentation-and-example-gallery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.7 Documentation and example gallery
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-technical-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Technical Deep Dive
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Technical Deep Dive">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-renderer-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Renderer registry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-scene-data-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Scene data model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-datoviz-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Datoviz mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-network-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Network protocol
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#65-performance-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 Performance considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#66-scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6 Scalability
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-security-and-privacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Security and Privacy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Security and Privacy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-threat-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Threat model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-concrete-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Concrete risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-mitigations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Mitigations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-privacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Privacy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-comparison-with-existing-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Comparison with Existing Solutions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-use-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Use Cases
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-limitations-and-future-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Limitations and Future Work
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Limitations and Future Work">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-known-issues-from-todomd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Known issues from TODO.md
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-in-flight-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 In-flight work
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#103-planned" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 Planned
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#104-adoption-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4 Adoption constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-a-tech-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appendix A: Tech Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-b-stated-assumptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appendix B: Stated Assumptions
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="gsp_api-a-backend-agnostic-scene-description-api-for-scientific-visualization-in-python">GSP_API: A Backend-Agnostic Scene-Description API for Scientific Visualization in Python<a class="headerlink" href="#gsp_api-a-backend-agnostic-scene-description-api-for-scientific-visualization-in-python" title="Permanent link">&para;</a></h1>
+<h2 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link">&para;</a></h2>
+<p>GSP_API is a Python implementation of a Graphic Server Protocol-style scene-description API for 2D and 3D scientific visualization. It separates the visualization API from the rendering implementation, exposing a single declarative scene model — canvas, viewports, visuals, transforms, materials, geometry, cameras — that can be dispatched to one of three interchangeable renderers: a CPU-bound Matplotlib backend, a GPU-bound Datoviz/Vulkan backend, and a Flask-based network backend that serializes scenes to a remote rendering server. Backend selection is performed at runtime through a static registry rather than through code changes, so the same example script runs against every backend. Scene objects are mirrored in a Pydantic v2 layer that supports JSON serialization and base64-encoded buffers for transport. The system targets two distinct audiences: engineers building plotting tools who need a portability layer between CPU and GPU stacks, and researchers studying rendering-library API design across heterogeneous backends. GSP_API is currently a research prototype at version 0.1.0; it has known bugs, an active TODO list, and no published release. This white paper describes its architecture, its trade-offs, its security posture, and its position relative to existing visualization libraries.</p>
+<h2 id="1-introduction">1. Introduction<a class="headerlink" href="#1-introduction" title="Permanent link">&para;</a></h2>
+<p>Scientific visualization in Python has been dominated for over a decade by Matplotlib, whose ubiquity, maturity, and publication-quality output have made it the reference toolkit for static plotting. As datasets have grown — millions of points in single-cell genomics, large simulation grids in climate and physics, multi-resolution image pyramids in microscopy — Matplotlib's CPU-bound rasterization pipeline has become a routine bottleneck. GPU-accelerated alternatives have emerged in response, including Datoviz, VisPy, and various WebGL-based libraries. Each of these resolves the performance problem inside its own walled garden: it ships an API and a renderer as a single, indivisible product. Switching from one library to another typically means rewriting visualization code from the ground up.</p>
+<p>A second axis of fragmentation has appeared with the growth of remote and headless workloads. HPC clusters, cloud notebooks, and CI pipelines need rendering that does not depend on a local display server. Browser-targeted libraries (Plotly, Bokeh, deck.gl) address part of this need but at the cost of an entirely different scene model and runtime. The result is a landscape in which the same scientific figure may need to be expressed three times — once in Matplotlib for publication, once in a GPU library for interactive exploration, once in a web library for sharing — with no shared substrate underneath.</p>
+<p>GSP_API is a response to that fragmentation. It applies a long-standing idea from graphics systems research, the separation of scene description from rendering, to the specific shape of the scientific Python ecosystem. The repository under discussion is the API layer plus three reference renderers; it is not a competitor to Matplotlib or Datoviz, but a coordination layer above them.</p>
+<h2 id="2-problem-statement">2. Problem Statement<a class="headerlink" href="#2-problem-statement" title="Permanent link">&para;</a></h2>
+<p>The problem GSP_API addresses can be stated precisely:</p>
+<blockquote>
+<p>A Python visualization program written today is structurally bound to a single rendering implementation. To change rendering backends — for performance, deployment, or comparative research — the program must be rewritten.</p>
+</blockquote>
+<p>This binding has three concrete sources.</p>
+<p><strong>API/renderer coupling.</strong> Matplotlib, Datoviz, VisPy, Plotly, and Bokeh each define their own scene model: Matplotlib's <code>Figure</code>/<code>Axes</code>/<code>Artist</code> hierarchy, Datoviz's app/figure/panel/visual model, Plotly's JSON figure schema. These are not interchangeable, and no library publishes a separable scene-description layer.</p>
+<p><strong>Performance/portability trade-off.</strong> Matplotlib runs everywhere but its Agg rasterizer scales poorly past roughly 100k primitives. Datoviz delivers GPU performance through Vulkan but requires a working Vulkan driver and is not currently a portable abstraction across operating systems and headless environments. VisPy sits between the two but couples its scene graph to its OpenGL canvas.</p>
+<p><strong>Local/remote split.</strong> Remote rendering — sending a scene to a server and receiving back an image or stream — is generally implemented as a separate stack with its own API surface (notebook tunnels, web frameworks, custom protocols). It is rarely treated as one renderer choice among others.</p>
+<p>Existing solutions partially address these axes but do not span all three:</p>
+<ul>
+<li>Matplotlib provides reach but no GPU path.</li>
+<li>Datoviz provides GPU performance but no remote path and limited OS portability.</li>
+<li>VisPy provides multi-canvas rendering but inside a single GL-coupled API.</li>
+<li>Plotly and Bokeh provide remote/web rendering but only for their own scene models.</li>
+<li>Generic IPC tools (Jupyter widgets, RPC servers) move bytes but do not standardize the scene.</li>
+</ul>
+<p>GSP_API treats the scene as the invariant and the renderer as the variable.</p>
+<h2 id="3-proposed-solution">3. Proposed Solution<a class="headerlink" href="#3-proposed-solution" title="Permanent link">&para;</a></h2>
+<p>GSP_API contributes one thing: a backend-agnostic Python API for describing 2D and 3D scientific scenes, paired with a registry-based dispatch mechanism that lets any number of renderers implement that API.</p>
+<p>The core scene model has six concept families:</p>
+<ul>
+<li><strong>Core objects.</strong> <code>Canvas</code> (dimensions, DPI, background color), <code>Viewport</code> (rectangular region inside a canvas with its own background), <code>Camera</code> (view and projection matrices), <code>Texture</code>, <code>Event</code>.</li>
+<li><strong>Visual primitives.</strong> Eight subclasses of <code>VisualBase</code>: <code>Points</code>, <code>Markers</code>, <code>Segments</code>, <code>Paths</code>, <code>Texts</code>, <code>Pixels</code>, <code>Image</code>, <code>Mesh</code>.</li>
+<li><strong>Geometry.</strong> <code>Geometry</code> and <code>MeshGeometry</code> carrying typed vertex and index buffers.</li>
+<li><strong>Transforms.</strong> Composable <code>TransformChain</code> pipelines with serializable links.</li>
+<li><strong>Materials.</strong> Extensible material descriptors attached to visuals.</li>
+<li><strong>Types.</strong> Typed buffers (<code>Buffer</code>, <code>BufferType</code>), the <code>TransBuf</code> union (<code>Buffer | TransformChain</code>), and abstract bases (<code>VisualBase</code>, <code>RendererBase</code>, <code>AnimatorBase</code>, <code>ViewportEventsBase</code>).</li>
+</ul>
+<p>Three renderer packages implement the same renderer contract:</p>
+<ul>
+<li><code>gsp_matplotlib</code> — CPU rendering via Matplotlib.</li>
+<li><code>gsp_datoviz</code> — GPU rendering via Datoviz on Vulkan.</li>
+<li><code>gsp_network</code> — Flask-based remote rendering (the client serializes the scene; the server runs <code>gsp_matplotlib</code> or <code>gsp_datoviz</code> and returns a PNG).</li>
+</ul>
+<p>Selection is performed at runtime by a string name: <code>RendererRegistry.create_renderer("matplotlib"|"datoviz"|"network", canvas)</code>. Switching renderers is a one-line change.</p>
+<h2 id="4-system-architecture">4. System Architecture<a class="headerlink" href="#4-system-architecture" title="Permanent link">&para;</a></h2>
+<h3 id="41-components">4.1 Components<a class="headerlink" href="#41-components" title="Permanent link">&para;</a></h3>
+<p>The repository is organized as a multi-package layout under <code>src/</code>:</p>
+<pre><code>src/
+├── gsp/                  Core scene API (no renderer dependencies)
+│   ├── core/             Canvas, Viewport, Camera, Texture, Event
+│   ├── types/            VisualBase, RendererBase, AnimatorBase,
+│   │                     ViewportEventsBase, Buffer, TransBuf
+│   ├── visuals/          Eight visual primitive classes
+│   ├── geometry/         Geometry, MeshGeometry
+│   ├── transforms/       TransformChain
+│   ├── materials/        Material base classes
+│   └── utils/            renderer_registery.py, UUID utilities
+├── gsp_matplotlib/       Matplotlib backend
+├── gsp_datoviz/          Datoviz backend
+├── gsp_network/          Flask client/server renderer
+├── gsp_pydantic/         Pydantic mirror types and serializer
+├── gsp_extra/            Auxiliary helpers
+├── gsp_nico/             Collaborator sandbox
+└── vispy2/               Higher-level VisPy-style API on top of gsp
+</code></pre>
+<p>The core package <code>gsp</code> has no dependency on any renderer; renderers depend on <code>gsp</code>. The Pydantic layer is segregated into <code>gsp_pydantic</code> so that <code>gsp</code> itself does not require Pydantic at import time.</p>
+<h3 id="42-data-flow">4.2 Data flow<a class="headerlink" href="#42-data-flow" title="Permanent link">&para;</a></h3>
+<p>For a local renderer (Matplotlib or Datoviz):</p>
+<pre><code>User code
+  │
+  ├── builds Canvas, Viewports, Visuals, Cameras, model matrices
+  │
+  ▼
+RendererRegistry.create_renderer(name, canvas)
+  │
+  ▼
+RendererBase.render(viewports, visuals, model_matrices, cameras) → bytes
+  │
+  ├── Matplotlib: draws into per-viewport Axes and Artists
+  └── Datoviz:    submits to dvz.App / dvz.Figure / dvz.Panel / dvz.Visual
+</code></pre>
+<p>For the network renderer:</p>
+<pre><code>Client (NetworkRenderer)
+  │
+  ├── PydanticSerializer.serialize(scene) → PydanticDict
+  │       (buffers base64-encoded, visuals as discriminated union)
+  │
+  ├── HTTP POST /render
+  │       body = NetworkPayload {
+  │           renderer_name: &quot;matplotlib&quot; | &quot;datoviz&quot;,
+  │           data:          PydanticDict
+  │       }
+  │
+  ▼
+Server (tools/network_server.py, Flask)
+  │
+  ├── PydanticParser.parse(payload.data) → live GSP objects
+  ├── chosen renderer.render(...) → PNG bytes
+  │       (Datoviz used in offscreen=True mode)
+  │
+  ▼
+Client receives PNG, blits into local Matplotlib figure
+   with source-over alpha compositing
+</code></pre>
+<h3 id="43-common-contract">4.3 Common contract<a class="headerlink" href="#43-common-contract" title="Permanent link">&para;</a></h3>
+<p>All renderers implement <code>RendererBase</code> (<code>src/gsp/types/renderer_base.py</code>):</p>
+<pre><code class="language-python">class RendererBase(ABC):
+    @abstractmethod
+    def __init__(self, canvas: Canvas): ...
+    @abstractmethod
+    def render(
+        self,
+        viewports: Sequence[Viewport],
+        visuals: Sequence[VisualBase],
+        model_matrices: Sequence[TransBuf],
+        cameras: Sequence[Camera],
+    ) -&gt; bytes: ...
+    @abstractmethod
+    def show(self) -&gt; None: ...
+    @abstractmethod
+    def close(self) -&gt; None: ...
+    @abstractmethod
+    def get_canvas(self) -&gt; Canvas: ...
+    @abstractmethod
+    def clear(self) -&gt; None: ...
+</code></pre>
+<p>Two parallel abstract bases govern interactivity and time:</p>
+<ul>
+<li><code>AnimatorBase</code> — frame-callback registration and a <code>start()</code> method that sweeps over viewports, visuals, model matrices, and cameras.</li>
+<li><code>ViewportEventsBase</code> — keyboard, mouse, and resize events as typed <code>Event[Callback]</code> channels.</li>
+</ul>
+<p>Each backend registers all three component types together:</p>
+<pre><code class="language-python">RendererRegistry.register_renderer(
+    renderer_name=&quot;matplotlib&quot;,
+    renderer_base_type=MatplotlibRenderer,
+    viewport_event_base_type=ViewportEventsMatplotlib,
+    animator_base_type=AnimatorMatplotlib,
+)
+</code></pre>
+<h3 id="44-key-design-decisions">4.4 Key design decisions<a class="headerlink" href="#44-key-design-decisions" title="Permanent link">&para;</a></h3>
+<p><strong>Registry over environment variable.</strong> Backend selection is a string passed to <code>RendererRegistry.create_renderer</code>. There is no <code>GSP_RENDERER</code> import-time switch; the choice is explicit at the call site, which makes mixed-backend programs (e.g., one figure on Matplotlib, another on Datoviz) trivial.</p>
+<p><strong>Dual core/Pydantic layer.</strong> Core scene objects are plain Python classes; Pydantic v2 mirror types live in <code>gsp_pydantic</code>. This keeps the core dependency footprint small and lets the network path serialize without the core having to know about it.</p>
+<p><strong>UUID-based identity.</strong> Every <code>VisualBase</code>, <code>Canvas</code>, and <code>Viewport</code> carries a UUID. Renderers key their internal state on these UUIDs (e.g., <code>_axes: dict[str, matplotlib.axes.Axes]</code> in <code>gsp_matplotlib</code>, <code>_dvz_panels: dict[str, _DvzPanel]</code> in <code>gsp_datoviz</code>). This is the substrate on which incremental updates can later be implemented.</p>
+<p><strong><code>TransBuf</code> union.</strong> Visuals accept either a raw <code>Buffer</code> or a <code>TransformChain</code> for any data slot. This allows lazy data pipelines to be expressed declaratively in the scene instead of materialized eagerly in NumPy.</p>
+<p><strong>Event pub/sub.</strong> Input handling is decoupled from rendering through a generic <code>Event[Callback]</code> mechanism with <code>subscribe</code>, <code>unsubscribe</code>, and <code>dispatch</code> operations and an <code>@event_listener</code> decorator.</p>
+<h2 id="5-key-features">5. Key Features<a class="headerlink" href="#5-key-features" title="Permanent link">&para;</a></h2>
+<h3 id="51-backend-agnostic-scene-api">5.1 Backend-agnostic scene API<a class="headerlink" href="#51-backend-agnostic-scene-api" title="Permanent link">&para;</a></h3>
+<p>A user writes against <code>Canvas</code>, <code>Viewport</code>, <code>Camera</code>, <code>Visual</code> subclasses, <code>TransformChain</code>, and <code>Material</code>. No backend symbol appears in user code. The trade-off is feature ceiling: features that exist only on one backend (e.g., Datoviz GPU specials) require either an escape hatch or a feature-parity workaround. The current API stays close to the lowest common denominator.</p>
+<h3 id="52-eight-visual-primitives">5.2 Eight visual primitives<a class="headerlink" href="#52-eight-visual-primitives" title="Permanent link">&para;</a></h3>
+<p><code>Points</code>, <code>Markers</code>, <code>Segments</code>, <code>Paths</code>, <code>Texts</code>, <code>Pixels</code>, <code>Image</code>, <code>Mesh</code>. All inherit <code>VisualBase</code> and carry <code>userData: dict[str, Any]</code> for application-level metadata. Trade-off: backends do not have full feature parity (text anchor and rotation are currently broken in the Datoviz backend; see Section 10).</p>
+<h3 id="53-pluggable-renderers-via-static-registry">5.3 Pluggable renderers via static registry<a class="headerlink" href="#53-pluggable-renderers-via-static-registry" title="Permanent link">&para;</a></h3>
+<p>Backends register at import time. Adding a fourth renderer is a matter of subclassing <code>RendererBase</code>, <code>AnimatorBase</code>, and <code>ViewportEventsBase</code> and calling <code>RendererRegistry.register_renderer</code>. Trade-off: registration depends on import order; there is no plugin-discovery mechanism (entry points), so users must import the backend package once before constructing.</p>
+<h3 id="54-pydantic-typed-scene-with-base64-buffers">5.4 Pydantic-typed scene with base64 buffers<a class="headerlink" href="#54-pydantic-typed-scene-with-base64-buffers" title="Permanent link">&para;</a></h3>
+<p><code>gsp_pydantic</code> provides <code>PydanticCanvas</code>, <code>PydanticViewport</code>, <code>PydanticBuffer</code> (with base64 binary payload), <code>PydanticCamera</code>, and a discriminated <code>PydanticVisual</code> union over the eight primitives. <code>PydanticSerializer.serialize</code> and <code>PydanticParser.parse</code> round-trip scenes between live objects and JSON dicts. Trade-off: base64 inflates payloads by ~33%, and there is no diff protocol; every render call sends the full scene.</p>
+<h3 id="55-shared-animator-and-viewport-event-subsystems">5.5 Shared animator and viewport-event subsystems<a class="headerlink" href="#55-shared-animator-and-viewport-event-subsystems" title="Permanent link">&para;</a></h3>
+<p>Both <code>Animator</code> and <code>ViewportEvents</code> are abstract in core and implemented per backend. The shared abstract surface lets animation and interactivity code remain renderer-agnostic. Trade-off: the shared event model is necessarily a lowest-common-denominator (e.g., touch events, GPU-specific gestures, or framebuffer-level callbacks are not exposed).</p>
+<h3 id="56-flask-based-network-renderer">5.6 Flask-based network renderer<a class="headerlink" href="#56-flask-based-network-renderer" title="Permanent link">&para;</a></h3>
+<p><code>gsp_network.NetworkRenderer</code> (client) and <code>tools/network_server.py</code> (Flask server) implement remote rendering with a single <code>POST /render</code> endpoint. The client serializes the scene through <code>PydanticSerializer</code>, the server reconstructs and renders into PNG, and the client composes the PNG into a local Matplotlib figure. Trade-off: per-render HTTP round-trip latency and full-scene re-serialization on every frame; suitable for offline or low-frame-rate workflows, not interactive 60 Hz rendering.</p>
+<h3 id="57-documentation-and-example-gallery">5.7 Documentation and example gallery<a class="headerlink" href="#57-documentation-and-example-gallery" title="Permanent link">&para;</a></h3>
+<p>The repository ships a Material-themed mkdocs site (<code>mkdocs.yml</code>, <code>mkdocs_source/</code>) with seven API reference pages (<code>gsp</code>, <code>gsp_network</code>, <code>gsp_pydantic</code>, <code>gsp_matplotlib</code>, <code>gsp_datoviz</code>, <code>gsp_extra</code>, <code>vispy_2</code>) and an <code>examples/</code> directory with on the order of 58 production-ready examples plus roughly 17 work-in-progress examples (underscore-prefixed). Trade-off: the docs build is local-only; no public docs URL is configured.</p>
+<h2 id="6-technical-deep-dive">6. Technical Deep Dive<a class="headerlink" href="#6-technical-deep-dive" title="Permanent link">&para;</a></h2>
+<h3 id="61-renderer-registry">6.1 Renderer registry<a class="headerlink" href="#61-renderer-registry" title="Permanent link">&para;</a></h3>
+<pre><code>RendererRegistry
+  _registry: dict[str, RendererRegistryItem]
+                    ↑
+                    └── RendererRegistryItem {
+                            renderer_base_type,
+                            viewport_event_base_type,
+                            animator_base_type
+                        }
+
+  register_renderer(name, renderer, viewport_events, animator) → None
+  create_renderer(name, canvas)                                 → RendererBase
+  create_animator(name, ...)                                    → AnimatorBase
+  create_viewport_events(name, ...)                             → ViewportEventsBase
+</code></pre>
+<p>Backends populate the registry at import time via their <code>renderer_registration.py</code> modules. Resolution is by string name.</p>
+<h3 id="62-scene-data-model">6.2 Scene data model<a class="headerlink" href="#62-scene-data-model" title="Permanent link">&para;</a></h3>
+<p>The <code>TransBuf</code> union (<code>Buffer | TransformChain</code>) is the workhorse of GSP_API's data pipeline:</p>
+<ul>
+<li><code>Buffer</code> is a typed bytearray. The element type is described by a <code>BufferType</code> enum that defines item size and dtype; the count is fixed at construction but contents are mutable.</li>
+<li><code>TransformChain</code> is a sequence of <code>TransformLinkBase</code> objects. <code>TransformChain.run()</code> returns a <code>Buffer</code>. Chains are fully serializable (transform composition crosses the network alongside the scene).</li>
+</ul>
+<p>A <code>Camera</code> holds two <code>TransBuf</code> matrices (view and projection); a <code>Mesh</code> visual carries vertex and index buffers as <code>Buffer</code>; positions and colors of <code>Points</code> and <code>Markers</code> are <code>TransBuf</code>, allowing computed inputs.</p>
+<h3 id="63-datoviz-mapping">6.3 Datoviz mapping<a class="headerlink" href="#63-datoviz-mapping" title="Permanent link">&para;</a></h3>
+<p>The Datoviz backend translates GSP concepts into Datoviz objects:</p>
+<table>
+<thead>
+<tr>
+<th>GSP concept</th>
+<th>Datoviz concept</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Canvas</code></td>
+<td><code>dvz.App</code> + <code>dvz.Figure</code></td>
+</tr>
+<tr>
+<td><code>Viewport</code></td>
+<td><code>dvz.Panel</code></td>
+</tr>
+<tr>
+<td><code>VisualBase</code></td>
+<td><code>dvz.Visual</code></td>
+</tr>
+<tr>
+<td>Texture</td>
+<td><code>dvz.Texture</code></td>
+</tr>
+</tbody>
+</table>
+<p>It maintains three UUID-keyed dictionaries (<code>_dvz_panels</code>, <code>_dvz_visuals</code>, <code>_dvz_textures</code>) to reconcile incoming GSP scenes with existing Datoviz state. The backend supports <code>offscreen=True</code>, which is what the network server uses to render Datoviz scenes without a display.</p>
+<h3 id="64-network-protocol">6.4 Network protocol<a class="headerlink" href="#64-network-protocol" title="Permanent link">&para;</a></h3>
+<p>Endpoint: <code>POST /render</code>. Request body:</p>
+<pre><code class="language-python">class NetworkPayload(TypedDict):
+    renderer_name: Literal[&quot;matplotlib&quot;, &quot;datoviz&quot;]
+    data: PydanticDict
+</code></pre>
+<p>The server selects the backend by <code>renderer_name</code>, reconstructs the scene with <code>PydanticParser.parse</code>, instantiates the chosen <code>RendererBase</code> (Datoviz with <code>offscreen=True</code>), renders to PNG, and returns the bytes. The client (<code>NetworkRenderer</code>) draws the PNG into a local Matplotlib figure with source-over alpha compositing, which allows multiple <code>render</code> calls to layer onto a single client canvas — though the current implementation re-renders the whole scene server-side on every call.</p>
+<h3 id="65-performance-considerations">6.5 Performance considerations<a class="headerlink" href="#65-performance-considerations" title="Permanent link">&para;</a></h3>
+<p>The three backends define three performance regimes:</p>
+<ul>
+<li><strong>Matplotlib (CPU).</strong> Bound by the Agg rasterizer. Suitable for tens of thousands of primitives at interactive rates; degrades smoothly past that. Bottleneck: per-primitive Python and rasterization overhead.</li>
+<li><strong>Datoviz (GPU).</strong> Bound by Vulkan driver and PCIe upload. Suitable for millions of primitives at 60 Hz on commodity GPUs. Bottleneck: buffer upload and shader compilation; cold-start latency is non-trivial.</li>
+<li><strong>Network.</strong> Bound by serialization and HTTP RTT. Each <code>render</code> call serializes the full scene, transports it, and decodes a PNG; there is no incremental update or streaming protocol. Suitable for offline rendering, snapshot generation, or notebooks talking to a remote GPU.</li>
+</ul>
+<p>No benchmarks are published in the repository; the regime characterization above is qualitative.</p>
+<h3 id="66-scalability">6.6 Scalability<a class="headerlink" href="#66-scalability" title="Permanent link">&para;</a></h3>
+<p>The architectural ceiling on scalability is the absence of an incremental update protocol. Today, every <code>render</code> call is a full re-render. Two facets of the existing design point toward incremental updates:</p>
+<ul>
+<li>UUID-keyed visual identity, already used by both local backends to maintain per-visual GPU/Matplotlib state.</li>
+<li>The <code>clear()</code> method on <code>RendererBase</code> and the open TODO entry calling for <code>clear_viewport(viewport)</code> on the network renderer.</li>
+</ul>
+<p>A diff-based render call (send only changed buffers, keyed by UUID) is implementable on top of the current Pydantic layer but is not yet implemented.</p>
+<h2 id="7-security-and-privacy">7. Security and Privacy<a class="headerlink" href="#7-security-and-privacy" title="Permanent link">&para;</a></h2>
+<h3 id="71-threat-model">7.1 Threat model<a class="headerlink" href="#71-threat-model" title="Permanent link">&para;</a></h3>
+<p>The local backends (Matplotlib, Datoviz) execute entirely in-process and do not introduce a new threat surface beyond their underlying libraries.</p>
+<p>The network backend introduces a server that:</p>
+<ol>
+<li>Accepts arbitrary HTTP POST traffic on <code>/render</code>.</li>
+<li>Deserializes a Pydantic-typed JSON payload (including base64-encoded buffers).</li>
+<li>Constructs and renders the scene using either Matplotlib or an offscreen Datoviz instance.</li>
+<li>Returns the resulting PNG.</li>
+</ol>
+<p>Plausible adversaries:</p>
+<ul>
+<li><strong>Network attackers</strong> with access to the server's port, attempting to crash, hang, or exfiltrate data through the rendering server.</li>
+<li><strong>Co-tenants</strong> on a shared host who can reach the server's bind address.</li>
+<li><strong>Malicious clients</strong> that intentionally send oversized or malformed payloads.</li>
+</ul>
+<h3 id="72-concrete-risks">7.2 Concrete risks<a class="headerlink" href="#72-concrete-risks" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>No authentication.</strong> The reference Flask server has no auth, no rate limiting, and no TLS termination. Anyone able to reach the port can render and consume server resources.</li>
+<li><strong>Resource exhaustion.</strong> Buffers are sized by the client. Submitting a payload with a billion points will consume server memory, CPU, and (for Datoviz) GPU memory.</li>
+<li><strong>Deserialization surface.</strong> Pydantic v2 mitigates classic type confusion, but the discriminated <code>PydanticVisual</code> union and base64 buffer handling are non-trivial parsers; their robustness depends on Pydantic and the GSP parser code.</li>
+<li><strong>Information disclosure in transit.</strong> Scene data is sent unencrypted in JSON. For sensitive measurements, the body and the rendered PNG both carry information that should be protected in transit.</li>
+<li><strong>Server-side rendering side channels.</strong> The server runs a real renderer; bugs in Matplotlib or Datoviz become server-side bugs.</li>
+</ul>
+<h3 id="73-mitigations">7.3 Mitigations<a class="headerlink" href="#73-mitigations" title="Permanent link">&para;</a></h3>
+<p>The repository does not currently implement these; they are recommendations for any deployment beyond a single-user developer machine:</p>
+<ul>
+<li>Bind to <code>127.0.0.1</code> by default and require explicit configuration to expose externally.</li>
+<li>Terminate TLS at a reverse proxy.</li>
+<li>Add an authentication token (HMAC or bearer) on every request.</li>
+<li>Cap request size and total buffer count; reject scenes that exceed a configured budget.</li>
+<li>Run the renderer in a sandboxed worker process (separate user, resource limits) and enforce a per-render timeout.</li>
+<li>Log payload metadata (size, renderer choice, source IP) for auditing.</li>
+</ul>
+<h3 id="74-privacy">7.4 Privacy<a class="headerlink" href="#74-privacy" title="Permanent link">&para;</a></h3>
+<p>Scene data — measured values, image data, model matrices — is conveyed verbatim to the rendering server. Operators handling sensitive data (medical imaging, proprietary measurements) must treat the server as a data-processing endpoint and apply the appropriate access controls.</p>
+<h2 id="8-comparison-with-existing-solutions">8. Comparison with Existing Solutions<a class="headerlink" href="#8-comparison-with-existing-solutions" title="Permanent link">&para;</a></h2>
+<p>The defining axis is whether the API and the renderer are separable.</p>
+<table>
+<thead>
+<tr>
+<th>System</th>
+<th>Scene API</th>
+<th>Renderer(s)</th>
+<th>Separable</th>
+<th>Remote path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Matplotlib</td>
+<td>Figure/Axes</td>
+<td>Agg (CPU), TkAgg, etc.</td>
+<td>No</td>
+<td>None native</td>
+</tr>
+<tr>
+<td>Datoviz</td>
+<td>App/Figure/Panel</td>
+<td>Vulkan (GPU)</td>
+<td>No</td>
+<td>None</td>
+</tr>
+<tr>
+<td>VisPy</td>
+<td>SceneGraph</td>
+<td>OpenGL</td>
+<td>No</td>
+<td>Limited</td>
+</tr>
+<tr>
+<td>Plotly / Bokeh</td>
+<td>JSON figures</td>
+<td>Browser (WebGL/2D)</td>
+<td>No</td>
+<td>Browser-coupled</td>
+</tr>
+<tr>
+<td>Three.js + Py</td>
+<td>Three.js scene</td>
+<td>WebGL</td>
+<td>No</td>
+<td>Web-coupled</td>
+</tr>
+<tr>
+<td><strong>GSP_API</strong></td>
+<td>GSP scene model</td>
+<td>Matplotlib, Datoviz, Network</td>
+<td><strong>Yes</strong></td>
+<td>Built-in (Flask)</td>
+</tr>
+</tbody>
+</table>
+<p>The qualitative differences:</p>
+<ul>
+<li>Matplotlib has the largest installed base and the richest 2D feature set; it has no GPU path and no native remote path.</li>
+<li>Datoviz delivers the highest performance on a single workstation but is single-renderer and currently OS-restricted.</li>
+<li>VisPy offers a multi-canvas scene graph but the canvas implementation is OpenGL-bound; the scene graph is not a renderer-agnostic API in the GSP sense.</li>
+<li>Plotly and Bokeh excel at browser-delivered plots but their scene model and runtime are tied to the browser.</li>
+<li>GSP_API does not compete with any of these on rendering quality or on completeness of features. It competes on a different axis: whether the same scene description can target three distinct rendering regimes.</li>
+</ul>
+<p>The uniqueness claim is structural, not aesthetic.</p>
+<h2 id="9-use-cases">9. Use Cases<a class="headerlink" href="#9-use-cases" title="Permanent link">&para;</a></h2>
+<p><strong>Backend portability for plotting libraries.</strong> A plotting library author writes against GSP_API once. End users select Matplotlib for compatibility and publication, Datoviz for interactive exploration of large datasets, or the network renderer for headless cluster jobs — without the author maintaining three implementations.</p>
+<p><strong>Headless figure generation.</strong> CI pipelines and HPC batch jobs render scenes through <code>gsp_network</code> or offscreen <code>gsp_datoviz</code> to PNGs for inclusion in reports, papers, or dashboards, without provisioning a display.</p>
+<p><strong>Remote GPU rendering.</strong> A researcher on a laptop without a GPU sends scene descriptions to a Datoviz server on a workstation or cluster node and receives rendered images locally, with no client-side GPU dependency.</p>
+<p><strong>Comparative renderer studies.</strong> Researchers studying rendering API design (an explicit project goal in TODO.md: "design principles for rendering library API with multiple backends") use GSP_API as a fixed scene specification against which CPU, GPU, and network rendering implementations can be measured side by side.</p>
+<p><strong>Teaching scenes once, demonstrating thrice.</strong> Educational material can demonstrate the same scientific scene under three rendering regimes from a single script, illustrating the practical effect of the renderer choice on speed, fidelity, and deployment.</p>
+<p><strong>Session capture for reproducibility.</strong> The planned session record/replay subsystem (Section 10) is intended to capture timestamped GSP commands and replay them on a remote machine for reproducible visualization workflows.</p>
+<h2 id="10-limitations-and-future-work">10. Limitations and Future Work<a class="headerlink" href="#10-limitations-and-future-work" title="Permanent link">&para;</a></h2>
+<p>GSP_API is at version 0.1.0; the <code>description</code> field of <code>pyproject.toml</code> is empty; there is no published Git remote referenced in the working tree, and no public documentation URL is declared. The maturity level is research prototype, not production library.</p>
+<h3 id="101-known-issues-from-todomd">10.1 Known issues from TODO.md<a class="headerlink" href="#101-known-issues-from-todomd" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Datoviz text rendering.</strong> Text anchor and rotation cannot currently be set in the Datoviz backend; the cause is not yet identified.</li>
+<li><strong>Network renderer clearing.</strong> The network renderer erases the whole canvas on every call, which breaks multi-call rendering patterns (e.g., axes-managed examples). A <code>clear()</code> or <code>clear_viewport(viewport)</code> API is the proposed fix and is open.</li>
+<li><strong>Geometry sanity check.</strong> The <code>sanity_check()</code> method on <code>Geometry</code> has an unresolved inheritance issue affecting <code>MeshGeometry</code>.</li>
+</ul>
+<h3 id="102-in-flight-work">10.2 In-flight work<a class="headerlink" href="#102-in-flight-work" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Active feature branch <code>mesh_include_2</code> extends mesh handling.</li>
+<li>Collaborator sandboxes (<code>examples_nico/</code>, <code>src/gsp_nico/</code>) carry experimental code that has not been promoted into the public API.</li>
+<li>About 17 work-in-progress examples (underscore-prefixed) exercise unstable surfaces, including pyramid-loading examples, multi-renderer testers, and mesh variants.</li>
+</ul>
+<h3 id="103-planned">10.3 Planned<a class="headerlink" href="#103-planned" title="Permanent link">&para;</a></h3>
+<ul>
+<li>A transform DSL with unit-aware coordinates (NDC, px, cm, inch, pt) and viewport-relative coordinate transforms.</li>
+<li>A session record/replay subsystem capable of capturing timestamped GSP commands and replaying them, intended for reproducibility and remote workflows.</li>
+<li>A multi-viewport, multi-renderer test harness ("big tester") covering matrix combinations of renderers, viewports, and serialization variants.</li>
+<li>Resolution-adaptive image-pyramid loading for large image data.</li>
+<li>Transparent-background support in the network renderer (currently only the Matplotlib local backend supports transparent backgrounds end-to-end).</li>
+<li>Datoviz feature-parity work for text rendering.</li>
+<li>An incremental rendering protocol on top of the network renderer (no design exists yet; current architecture admits one).</li>
+</ul>
+<h3 id="104-adoption-constraints">10.4 Adoption constraints<a class="headerlink" href="#104-adoption-constraints" title="Permanent link">&para;</a></h3>
+<p>The Python version constraint (<code>&gt;=3.13,&lt;4.0</code>) is aggressive and currently limits installation in most working environments. Until Python 3.13 is more widely available, the practical user base is small.</p>
+<h2 id="11-conclusion">11. Conclusion<a class="headerlink" href="#11-conclusion" title="Permanent link">&para;</a></h2>
+<p>The strategic significance of GSP_API is structural rather than competitive. It does not aim to be faster than Datoviz, broader than Matplotlib, or prettier than Plotly. It aims to be the first piece of API code that does not need to be rewritten when the renderer changes. The cost of that abstraction is an honest one — feature ceilings are set by the lowest common denominator of the three backends, performance is bounded by the chosen renderer, and the network path lacks an incremental protocol — but the cost is paid once, in the API design, instead of repeatedly, in every program that wants to retarget.</p>
+<p>For engineers building plotting tools on top of the scientific Python stack, GSP_API offers a portability layer that converts a backend choice from a code rewrite into a string. For researchers studying rendering-library API design, it offers a substrate against which CPU, GPU, and network implementations can be compared inside a fixed specification. The current 0.1.0 prototype is incomplete in both feature parity and operational maturity, but the separation it draws between scene description and renderer is the contribution worth evaluating.</p>
+<h2 id="appendix-a-tech-stack">Appendix A: Tech Stack<a class="headerlink" href="#appendix-a-tech-stack" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Language and runtime.</strong> Python <code>&gt;=3.13,&lt;4.0</code>.</li>
+<li><strong>Core dependencies.</strong> numpy <code>&gt;=2.3.4</code>, matplotlib <code>&gt;=3.10.7</code>, pydantic <code>&gt;=2.12.4</code>, datoviz <code>&gt;=0.3.2,&lt;0.4</code>, flask, imageio, loguru, colorama, requests-file, http-constants, mpl3d (<code>git+https://github.com/rougier/matplotlib-3d</code>).</li>
+<li><strong>Build and tooling.</strong> Poetry (<code>poetry-core&gt;=2.0</code>), pytest <code>&gt;=8.4</code>, mypy <code>&gt;=1.18</code>, ruff <code>&gt;=0.14.9</code>, black (line length 160), pydoclint, mkdocs-material with mkdocstrings, pre-commit.</li>
+</ul>
+<h2 id="appendix-b-stated-assumptions">Appendix B: Stated Assumptions<a class="headerlink" href="#appendix-b-stated-assumptions" title="Permanent link">&para;</a></h2>
+<ul>
+<li>This document is grounded in the state of the repository as observed in the working tree. Where the project's own marketing summary disagreed with the source — most notably the claim that backend selection is performed via a <code>GSP_RENDERER</code> environment variable, which is not the case — this paper follows the source.</li>
+<li>No performance benchmarks are published in the repository, so the performance discussion is qualitative.</li>
+<li>The repository has no <code>remote.origin.url</code> configured locally and no public documentation URL declared; references to those URLs are deliberately omitted rather than guessed.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/vispy/GSP_API" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

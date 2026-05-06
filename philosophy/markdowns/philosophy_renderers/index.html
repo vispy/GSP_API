@@ -1,0 +1,1454 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="⚡ GSP: A high-performance graphics server protocol for efficient rendering and visualization.">
+      
+      
+        <meta name="author" content="GSP Team">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Philosophy of GSP_API Renderers - Graphic Server Protocol</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#philosophy-of-gsp_api-renderers" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Graphic Server Protocol" class="md-header__button md-logo" aria-label="Graphic Server Protocol" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Graphic Server Protocol
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Philosophy of GSP_API Renderers
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/vispy/GSP_API" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GSP_API
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Graphic Server Protocol" class="md-nav__button md-logo" aria-label="Graphic Server Protocol" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Graphic Server Protocol
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/vispy/GSP_API" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GSP_API
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Philosophy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Philosophy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whitepaper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Whitepaper
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../philosophy_gsp_core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../philosophy_packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../philosophy_renderers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renderers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../philosophy_examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/gsp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/gsp_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Network
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/gsp_pydantic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Pydantic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/gsp_matplotlib/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Matplotlib
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/gsp_datoviz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Datoviz
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/gsp_extra/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSP Extra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/vispy_2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vispy 2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-preamble" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Preamble
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-five-design-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The Five Design Principles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The Five Design Principles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-one-interface-three-backends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 One interface, three backends
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-the-three-fold-triad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 The three-fold triad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-self-registration-on-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Self-registration on import
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-static-class-dispatch-not-a-plugin-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Static-class dispatch, not a plugin registry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-bytes-out-not-pixels-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Bytes out, not pixels out
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-canonical-package-skeleton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The Canonical Package Skeleton
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-rendererbase-contract-method-by-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The RendererBase Contract — Method by Method
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. The RendererBase Contract — Method by Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__canvas-canvas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(canvas: Canvas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renderviewports-visuals-model_matrices-cameras-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render(viewports, visuals, model_matrices, cameras) -&gt; bytes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show() -&gt; None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#close-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        close() -&gt; None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clear-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear() -&gt; None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_canvas-canvas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_canvas() -&gt; Canvas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-per-visual-renderer-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The Per-Visual Renderer Pattern
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. The Per-Visual Renderer Pattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-the-dispatch-table-is-isinstance-not-a-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 The dispatch table is isinstance, not a dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-the-per-visual-class-is-static-and-stateless" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 The per-visual class is static and stateless
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-lazy-create-mutate-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Lazy create, mutate-update
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-the-registry-and-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. The Registry and Discovery
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-backend-specific-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Backend-Specific Notes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Backend-Specific Notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-gsp_matplotlib" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 gsp_matplotlib
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-gsp_datoviz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 gsp_datoviz
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-gsp_network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 gsp_network
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-writing-a-new-renderer-a-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Writing a New Renderer: A Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-verification-how-to-read-this-document-against-the-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Verification: how to read this document against the code
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="philosophy-of-gsp_api-renderers">Philosophy of GSP_API Renderers<a class="headerlink" href="#philosophy-of-gsp_api-renderers" title="Permanent link">&para;</a></h1>
+<h2 id="1-preamble">1. Preamble<a class="headerlink" href="#1-preamble" title="Permanent link">&para;</a></h2>
+<p>GSP_API ships three renderer packages — <a href="../../src/gsp_matplotlib"><code>gsp_matplotlib</code></a>, <a href="../../src/gsp_datoviz"><code>gsp_datoviz</code></a>, and <a href="../../src/gsp_network"><code>gsp_network</code></a> — and a fourth is plausible at any time (<code>gsp_webgpu</code>, <code>gsp_three</code>, <code>gsp_plotly</code>, …). Read one of them and you have read the structure of all three: same subdirectory layout, same registration shape, same <code>RendererBase</code> contract, same per-visual file fan-out, same isinstance dispatch, same <code>(renderer, events, animator)</code> triad. The only thing each backend brings of its own is what happens <em>inside</em> <code>_render_visual()</code> and how <code>show()</code> blocks the process.</p>
+<p>This document names the conventions that make the three packages a coherent ecosystem rather than three independent implementations, then walks through what is unique to each, then closes with a checklist for writing the fourth.</p>
+<p><strong>Audience.</strong> Someone reading a renderer to learn it, or someone about to write a fourth backend.</p>
+<p><strong>How to use this document.</strong> Each section names a pattern, points to the canonical file, and quotes the load-bearing lines. To verify a claim, open the cited file. To run the same example under all three renderers:</p>
+<pre><code class="language-bash">GSP_RENDERER=matplotlib python examples/points_example.py
+GSP_RENDERER=datoviz    python examples/points_example.py
+GSP_RENDERER=network    python examples/points_example.py    # needs the gsp_network server running
+</code></pre>
+<hr />
+<h2 id="2-the-five-design-principles">2. The Five Design Principles<a class="headerlink" href="#2-the-five-design-principles" title="Permanent link">&para;</a></h2>
+<p>The "why" before the "what".</p>
+<h3 id="21-one-interface-three-backends">2.1 One interface, three backends<a class="headerlink" href="#21-one-interface-three-backends" title="Permanent link">&para;</a></h3>
+<p>The contract is a six-method abstract base class — <a href="../../src/gsp/types/renderer_base.py"><code>RendererBase</code></a> at <a href="../../src/gsp/types/renderer_base.py#L15-L74">src/gsp/types/renderer_base.py:15-74</a>:</p>
+<pre><code class="language-python">class RendererBase(ABC):
+    @abstractmethod
+    def __init__(self, canvas: Canvas): ...
+    @abstractmethod
+    def render(self, viewports, visuals, model_matrices, cameras) -&gt; bytes: ...
+    @abstractmethod
+    def show(self) -&gt; None: ...
+    @abstractmethod
+    def close(self) -&gt; None: ...
+    @abstractmethod
+    def clear(self) -&gt; None: ...
+    @abstractmethod
+    def get_canvas(self) -&gt; Canvas: ...
+</code></pre>
+<p><code>MatplotlibRenderer</code>, <code>DatovizRenderer</code>, and <code>NetworkRenderer</code> are the only direct subclasses. Everything else — registries, animators, examples — talks to the abstract type.</p>
+<p><strong>Payoff.</strong> Adding a backend is a question of subclassing, not of touching the core. The rest of the library is free of any <code>if backend == "matplotlib"</code> branch.</p>
+<h3 id="22-the-three-fold-triad">2.2 The three-fold triad<a class="headerlink" href="#22-the-three-fold-triad" title="Permanent link">&para;</a></h3>
+<p>A renderer never ships alone. It always travels with a paired <code>ViewportEventsBase</code> and <code>AnimatorBase</code>, and the registry stores them together as a <code>RendererRegistryItem</code> (<a href="../../src/gsp/utils/renderer_registery.py#L14-L21">src/gsp/utils/renderer_registery.py:14-21</a>):</p>
+<pre><code class="language-python">@dataclass(frozen=True)
+class RendererRegistryItem:
+    renderer_name: str
+    renderer_base_type: Type[RendererBase]
+    viewport_event_base_type: Type[ViewportEventsBase]
+    animator_base_type: Type[AnimatorBase]
+</code></pre>
+<p>The reason: events and animators are renderer-specific. Matplotlib's events come through <code>mpl_connect</code>; datoviz's come through its own callback registration; the network animator drives remote renders by reusing matplotlib's <code>FuncAnimation</code> locally. They cannot be ported across backends, so they must be co-versioned with the renderer they belong to.</p>
+<p><strong>Payoff.</strong> Once you have a renderer instance, the registry can hand back the matched events and animator without you naming the backend again — see <a href="../../src/gsp/utils/renderer_registery.py#L93-L99"><code>RendererRegistry._get_item_by_renderer_base</code></a>. One name, three classes, always in sync.</p>
+<h3 id="23-self-registration-on-import">2.3 Self-registration on import<a class="headerlink" href="#23-self-registration-on-import" title="Permanent link">&para;</a></h3>
+<p>Each package's <code>__init__.py</code> calls <code>register_renderer_&lt;name&gt;()</code> at import time. There is no central manifest listing the available backends. <a href="../../src/gsp_matplotlib/__init__.py#L15-L17">src/gsp_matplotlib/<strong>init</strong>.py:15-17</a>:</p>
+<pre><code class="language-python">from .renderer_registration import register_renderer_matplotlib
+
+register_renderer_matplotlib()
+</code></pre>
+<p>The registration function itself is six lines (<a href="../../src/gsp_matplotlib/renderer_registration.py#L10-L17">src/gsp_matplotlib/renderer_registration.py:10-17</a>):</p>
+<pre><code class="language-python">def register_renderer_matplotlib():
+    RendererRegistry.register_renderer(
+        renderer_name=&quot;matplotlib&quot;,
+        renderer_base_type=MatplotlibRenderer,
+        viewport_event_base_type=ViewportEventsMatplotlib,
+        animator_base_type=AnimatorMatplotlib,
+    )
+</code></pre>
+<p><code>gsp_datoviz</code> and <code>gsp_network</code> follow the same shape line-for-line.</p>
+<p><strong>Payoff.</strong> Installing a backend package is the only step needed to make it available. <code>pip install gsp_webgpu</code> — and the name <code>"webgpu"</code> exists in the registry the first time anything imports it.</p>
+<h3 id="24-static-class-dispatch-not-a-plugin-registry">2.4 Static-class dispatch, not a plugin registry<a class="headerlink" href="#24-static-class-dispatch-not-a-plugin-registry" title="Permanent link">&para;</a></h3>
+<p>Per-visual rendering is a hand-written <code>isinstance</code> chain in <code>_render_visual()</code>, dispatching to a static class with a single <code>render(renderer, viewport, visual, model_matrix, camera)</code> method. Eight visual types today; eight <code>if/elif</code> arms (<a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L202-L238">src/gsp_matplotlib/renderer/matplotlib_renderer.py:202-238</a>):</p>
+<pre><code class="language-python">def _render_visual(self, viewport, visual, model_matrix, camera):
+    if isinstance(visual, Image):
+        from gsp_matplotlib.renderer.matplotlib_renderer_image import RendererImage
+        RendererImage.render(self, viewport, visual, model_matrix, camera)
+    elif isinstance(visual, Pixels):
+        from gsp_matplotlib.renderer.matplotlib_renderer_pixels import RendererPixels
+        RendererPixels.render(self, viewport, visual, model_matrix, camera)
+    elif isinstance(visual, Points):
+        ...
+    else:
+        raise NotImplementedError(...)
+</code></pre>
+<p><code>DatovizRenderer._render_visual</code> (<a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L185-L219">datoviz_renderer.py:185-219</a>) has the same eight arms in the same order.</p>
+<p><strong>Payoff.</strong> The control flow is grep-able and traceable in five seconds. A registry would let third parties add visual types at runtime — a cost we don't need to pay for a fixed set of eight built-in visuals. To add a ninth visual to the project, you add one arm to each backend's <code>_render_visual()</code>.</p>
+<h3 id="25-bytes-out-not-pixels-out">2.5 Bytes out, not pixels out<a class="headerlink" href="#25-bytes-out-not-pixels-out" title="Permanent link">&para;</a></h3>
+<p><code>render()</code> returns <code>bytes</code> — PNG by default. Matplotlib accepts an <code>image_format</code> argument and plumbs it straight to <code>figure.savefig(format=...)</code>, so the same scene comes back as PNG, SVG, or PDF (<a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L107-L200">matplotlib_renderer.py:107-200</a>). The network renderer returns the PNG bytes it received over HTTP (<a href="../../src/gsp_network/renderer/network_renderer.py#L96-L167">network_renderer.py:96-167</a>).</p>
+<p><strong>Payoff.</strong> The unified <code>bytes</code> return type is what makes <code>NetworkRenderer</code> possible without changing any caller. Whatever a local renderer would have produced, the network renderer can produce too — by paying postage instead of compute.</p>
+<hr />
+<h2 id="3-the-canonical-package-skeleton">3. The Canonical Package Skeleton<a class="headerlink" href="#3-the-canonical-package-skeleton" title="Permanent link">&para;</a></h2>
+<p>Every renderer package has the same shape on disk. Use <a href="../../src/gsp_matplotlib"><code>src/gsp_matplotlib/</code></a> as the reference:</p>
+<pre><code>gsp_&lt;backend&gt;/
+├── __init__.py                          # imports submodules, calls register_*
+├── renderer_registration.py             # one function: register_renderer_&lt;name&gt;()
+├── renderer/
+│   ├── &lt;backend&gt;_renderer.py            # the RendererBase implementation
+│   └── &lt;backend&gt;_renderer_&lt;visual&gt;.py   # one file per visual type (8 today)
+├── animator/
+│   └── animator_&lt;backend&gt;.py            # AnimatorBase implementation
+├── viewport_events/
+│   └── viewport_events_&lt;backend&gt;.py     # ViewportEventsBase implementation
+└── utils/                               # backend-specific helpers (optional)
+</code></pre>
+<p>The mapping across the three backends is direct:</p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Shared base</th>
+<th>gsp_matplotlib</th>
+<th>gsp_datoviz</th>
+<th>gsp_network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Renderer</td>
+<td><a href="../../src/gsp/types/renderer_base.py"><code>RendererBase</code></a></td>
+<td><a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py"><code>MatplotlibRenderer</code></a></td>
+<td><a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py"><code>DatovizRenderer</code></a></td>
+<td><a href="../../src/gsp_network/renderer/network_renderer.py"><code>NetworkRenderer</code></a></td>
+</tr>
+<tr>
+<td>Animator</td>
+<td><a href="../../src/gsp/types/animator_base.py"><code>AnimatorBase</code></a></td>
+<td><a href="../../src/gsp_matplotlib/animator/animator_matplotlib.py"><code>AnimatorMatplotlib</code></a></td>
+<td><a href="../../src/gsp_datoviz/animator/animator_datoviz.py"><code>AnimatorDatoviz</code></a></td>
+<td><a href="../../src/gsp_network/animator/animator_network.py"><code>AnimatorNetwork</code></a></td>
+</tr>
+<tr>
+<td>Events</td>
+<td><a href="../../src/gsp/types/viewport_events_base.py"><code>ViewportEventsBase</code></a></td>
+<td><a href="../../src/gsp_matplotlib/viewport_events/viewport_events_matplotlib.py"><code>ViewportEventsMatplotlib</code></a></td>
+<td><a href="../../src/gsp_datoviz/viewport_events/viewport_events_datoviz.py"><code>ViewportEventsDatoviz</code></a></td>
+<td><a href="../../src/gsp_network/viewport_events/viewport_events_network.py"><code>ViewportEventsNetwork</code></a></td>
+</tr>
+<tr>
+<td>Registration</td>
+<td>n/a</td>
+<td><a href="../../src/gsp_matplotlib/renderer_registration.py"><code>renderer_registration.py</code></a></td>
+<td><a href="../../src/gsp_datoviz/renderer_registration.py"><code>renderer_registration.py</code></a></td>
+<td><a href="../../src/gsp_network/renderer_registration.py"><code>renderer_registration.py</code></a></td>
+</tr>
+<tr>
+<td>Per-visual files</td>
+<td>n/a</td>
+<td>8 files, <code>matplotlib_renderer_*.py</code></td>
+<td>8 files, <code>datoviz_renderer_*.py</code></td>
+<td>none (zero local dispatch)</td>
+</tr>
+</tbody>
+</table>
+<p>Two notes on the table:</p>
+<ul>
+<li><strong>Network has no per-visual files.</strong> It's a thin client — the whole scene is serialised and shipped over HTTP, so there is nothing to dispatch on. The eight per-visual renderers exist on the <em>server's</em> renderer (matplotlib or datoviz), not the client's.</li>
+<li><strong><code>utils/</code> is backend-specific.</strong> <code>gsp_matplotlib/utils/</code> holds <code>ConverterUtils</code> (GSP ↔ matplotlib types) and <code>RendererUtils</code> (face culling, normals); <code>gsp_datoviz/utils/</code> holds its own converter; <code>gsp_network/tools/</code> holds the Flask server (<code>network_server.py</code>) and a port-kill utility. These directories carry no contract — only the renderer/animator/events triad does.</li>
+</ul>
+<hr />
+<h2 id="4-the-rendererbase-contract-method-by-method">4. The <code>RendererBase</code> Contract — Method by Method<a class="headerlink" href="#4-the-rendererbase-contract-method-by-method" title="Permanent link">&para;</a></h2>
+<p>Six abstract methods. Read <a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py"><code>MatplotlibRenderer</code></a> as the reference implementation; the other two are minor variations.</p>
+<h3 id="__init__canvas-canvas"><code>__init__(canvas: Canvas)</code><a class="headerlink" href="#__init__canvas-canvas" title="Permanent link">&para;</a></h3>
+<p>Store the canvas, allocate per-renderer state. Matplotlib creates a <code>Figure</code> sized from the canvas dimensions and DPI (<a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L46-L68">matplotlib_renderer.py:46-68</a>); datoviz creates a <code>dvz.App</code> and a <code>dvz_figure</code> (<a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L47-L69">datoviz_renderer.py:47-69</a>); network creates a local matplotlib figure to <em>display</em> the bytes it will receive (<a href="../../src/gsp_network/renderer/network_renderer.py#L44-L70">network_renderer.py:44-70</a>) and additionally takes <code>server_base_url</code> and <code>remote_renderer_name</code> arguments — the only constructor in the family that takes more than <code>canvas</code>.</p>
+<h3 id="renderviewports-visuals-model_matrices-cameras-bytes"><code>render(viewports, visuals, model_matrices, cameras) -&gt; bytes</code><a class="headerlink" href="#renderviewports-visuals-model_matrices-cameras-bytes" title="Permanent link">&para;</a></h3>
+<p>The workhorse. The four sequences are parallel — they must all have the same length, and matplotlib asserts it explicitly (<a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L136-L138">matplotlib_renderer.py:136-138</a>):</p>
+<pre><code class="language-python">assert (
+    len(viewports) == len(visuals) == len(model_matrices) == len(cameras)
+), f&quot;All length MUST be equal. Mismatched lengths: ...&quot;
+</code></pre>
+<p>The rendering loop is then a single <code>zip</code> (<a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L182-L183">matplotlib_renderer.py:182-183</a>):</p>
+<pre><code class="language-python">for viewport, visual, model_matrix, camera in zip(viewports, visuals, model_matrices, cameras):
+    self._render_visual(viewport, visual, model_matrix, camera)
+</code></pre>
+<p>Datoviz repeats this exact shape at <a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L147-L148">datoviz_renderer.py:147-148</a>. Network skips per-visual dispatch entirely and instead serialises the whole scene at <a href="../../src/gsp_network/renderer/network_renderer.py#L120-L126">network_renderer.py:120-126</a>.</p>
+<p>Two backends extend the signature: matplotlib adds <code>return_image: bool = True, image_format: str = "png"</code>; datoviz adds the same pair (but accepts only <code>"png"</code>). Network does not — it always returns the PNG it received.</p>
+<h3 id="show-none"><code>show() -&gt; None</code><a class="headerlink" href="#show-none" title="Permanent link">&para;</a></h3>
+<p>Blocking. Matplotlib calls <code>matplotlib.pyplot.show()</code> (<a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L90-L101">matplotlib_renderer.py:90-101</a>); datoviz registers a 'q'-to-quit keyboard handler and calls <code>self._dvz_app.run()</code> (<a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L87-L102">datoviz_renderer.py:87-102</a>); network reuses matplotlib's <code>pyplot.show()</code> to display the bytes it received (<a href="../../src/gsp_network/renderer/network_renderer.py#L169-L176">network_renderer.py:169-176</a>). All three short-circuit when the <code>GSP_TEST=True</code> environment variable is set, so test runs never hang.</p>
+<h3 id="close-none"><code>close() -&gt; None</code><a class="headerlink" href="#close-none" title="Permanent link">&para;</a></h3>
+<p>Release resources. Matplotlib stops the event loop and closes the figure (<a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L78-L88">matplotlib_renderer.py:78-88</a>); datoviz calls <code>self._dvz_app.destroy()</code> (<a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L71-L73">datoviz_renderer.py:71-73</a>); network mirrors matplotlib because that's where its display lives (<a href="../../src/gsp_network/renderer/network_renderer.py#L80-L86">network_renderer.py:80-86</a>).</p>
+<h3 id="clear-none"><code>clear() -&gt; None</code><a class="headerlink" href="#clear-none" title="Permanent link">&para;</a></h3>
+<p>Wipe the current frame. Matplotlib calls <code>figure.clf()</code>; network does the same. Datoviz currently raises <code>NotImplementedError</code> (<a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L104-L109">datoviz_renderer.py:104-109</a>) — the GSP scene doesn't currently need clearing because per-visual renderers update existing artists in place rather than rebuild.</p>
+<h3 id="get_canvas-canvas"><code>get_canvas() -&gt; Canvas</code><a class="headerlink" href="#get_canvas-canvas" title="Permanent link">&para;</a></h3>
+<p>Return the <code>Canvas</code> passed to <code>__init__</code>. One line in every backend.</p>
+<hr />
+<h2 id="5-the-per-visual-renderer-pattern">5. The Per-Visual Renderer Pattern<a class="headerlink" href="#5-the-per-visual-renderer-pattern" title="Permanent link">&para;</a></h2>
+<p>This is the load-bearing convention. The main <code>&lt;backend&gt;_renderer.py</code> orchestrates; the eight <code>&lt;backend&gt;_renderer_&lt;visual&gt;.py</code> files do the actual drawing.</p>
+<h3 id="51-the-dispatch-table-is-isinstance-not-a-dict">5.1 The dispatch table is <code>isinstance</code>, not a dict<a class="headerlink" href="#51-the-dispatch-table-is-isinstance-not-a-dict" title="Permanent link">&para;</a></h3>
+<p><code>_render_visual()</code> is the same shape in every backend that does local rendering. Matplotlib at <a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L202-L238">matplotlib_renderer.py:202-238</a> and datoviz at <a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L185-L219">datoviz_renderer.py:185-219</a> both use the same eight if/elif arms in the same order: <code>Image, Pixels, Points, Paths, Markers, Mesh, Segments, Texts</code>. The per-visual modules are imported lazily inside each arm — first to avoid eager imports of optional dependencies, second because the import itself is the dispatch table. To add a ninth visual, you add one arm to each <code>_render_visual()</code> and create one new <code>&lt;backend&gt;_renderer_&lt;newvisual&gt;.py</code> per backend.</p>
+<h3 id="52-the-per-visual-class-is-static-and-stateless">5.2 The per-visual class is static and stateless<a class="headerlink" href="#52-the-per-visual-class-is-static-and-stateless" title="Permanent link">&para;</a></h3>
+<p>Each <code>&lt;backend&gt;_renderer_&lt;visual&gt;.py</code> exports one class with a single static method:</p>
+<pre><code class="language-python">class RendererPoints:
+    @staticmethod
+    def render(renderer, viewport, points, model_matrix, camera):
+        ...
+</code></pre>
+<p>State lives on the <em>main</em> renderer, not on the per-visual class. Matplotlib stores artists in <code>self._artists</code> keyed by <code>f"{viewport_uuid}_{visual_uuid}"</code> (<a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L54-L58">matplotlib_renderer.py:54-58</a>); datoviz does the same in <code>self._dvz_visuals</code> (<a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L61-L69">datoviz_renderer.py:61-69</a>). The per-visual file is a <em>code-organisation unit</em>, not a lifecycle owner.</p>
+<h3 id="53-lazy-create-mutate-update">5.3 Lazy create, mutate-update<a class="headerlink" href="#53-lazy-create-mutate-update" title="Permanent link">&para;</a></h3>
+<p>The first <code>render()</code> call for a given <code>(viewport, visual)</code> pair creates the underlying artist or GPU object; subsequent calls mutate it in place. This is what makes the animator efficient — return only the changed visuals from your <code>@animator.event_listener</code> callback and the renderer does no rebuild work for the rest. The pattern hinges on the same <code>f"{viewport_uuid}_{visual_uuid}"</code> cache key in both backends, so a per-visual renderer can ask "have I seen this pair before?" with one dict lookup.</p>
+<hr />
+<h2 id="6-the-registry-and-discovery">6. The Registry and Discovery<a class="headerlink" href="#6-the-registry-and-discovery" title="Permanent link">&para;</a></h2>
+<p><code>RendererRegistry</code> is 100 lines (<a href="../../src/gsp/utils/renderer_registery.py#L24-L99">src/gsp/utils/renderer_registery.py:24-99</a>). Three entry points the rest of the library uses.</p>
+<p><strong><code>register_renderer(name, renderer_type, events_type, animator_type)</code></strong> — called once per package at import time. Stores the triad in a dict keyed by name.</p>
+<p><strong><code>create_renderer(name, canvas)</code></strong> — what <code>ExampleHelper.create_renderer</code> is built on. The example helper itself (<a href="../../examples/common/example_helper.py#L55-L74">examples/common/example_helper.py:55-74</a>) currently uses an <code>if/elif</code> chain rather than the registry — both work; the registry is the more general mechanism, the helper is the more readable one for example code.</p>
+<p><strong><code>create_viewport_events(renderer_base, viewport)</code></strong> and <strong><code>create_animator(renderer_base)</code></strong> — these look up the triad by <em>instance type</em>, not by name (<a href="../../src/gsp/utils/renderer_registery.py#L93-L99">renderer_registery.py:93-99</a>):</p>
+<pre><code class="language-python">@staticmethod
+def _get_item_by_renderer_base(renderer_base):
+    for item in RendererRegistry._registry.values():
+        if isinstance(renderer_base, item.renderer_base_type):
+            return item
+    raise ValueError(...)
+</code></pre>
+<p>This is why the triad is enforced. Once you have a renderer, the registry can hand you the matching events and animator without you ever naming the backend a second time. If a package shipped a renderer without its paired events/animator, this lookup would fail.</p>
+<hr />
+<h2 id="7-backend-specific-notes">7. Backend-Specific Notes<a class="headerlink" href="#7-backend-specific-notes" title="Permanent link">&para;</a></h2>
+<p>What is <em>unique</em> to each backend, kept short on purpose. The shared structure is in §3-6; everything below is the local colour.</p>
+<h3 id="71-gsp_matplotlib">7.1 gsp_matplotlib<a class="headerlink" href="#71-gsp_matplotlib" title="Permanent link">&para;</a></h3>
+<p>Reference: <a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L107-L200">matplotlib_renderer.py:107-200</a>.</p>
+<ul>
+<li><strong>One <code>Axes</code> per viewport, lazily created and cached</strong> in <code>self._axes</code> keyed by viewport UUID (<a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L143-L176">matplotlib_renderer.py:143-176</a>). Each axes is positioned in normalized figure coordinates, with <code>xlim/ylim</code> set to <code>(-1, 1)</code> to match GSP's NDC convention.</li>
+<li><strong>Multi-format output</strong> via <code>image_format=</code> plumbed straight to <code>figure.savefig(format=image_format, dpi=...)</code> (<a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L194">line 194</a>). PNG, SVG, PDF, JPG all work — the user picks at the <code>render()</code> call.</li>
+<li><strong>Animator wraps <code>matplotlib.animation.FuncAnimation</code></strong> and is the natural fit for video export (<code>FuncAnimation.save()</code> with ffmpeg or pillow writers chosen by file extension).</li>
+<li><strong>Events go through <code>mpl_connect</code></strong> (<a href="../../src/gsp_matplotlib/viewport_events/viewport_events_matplotlib.py">viewport_events_matplotlib.py</a>) and are clipped per-viewport, since multiple viewports share one matplotlib canvas.</li>
+</ul>
+<h3 id="72-gsp_datoviz">7.2 gsp_datoviz<a class="headerlink" href="#72-gsp_datoviz" title="Permanent link">&para;</a></h3>
+<p>Reference: <a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L114-L179">datoviz_renderer.py:114-179</a>.</p>
+<ul>
+<li><strong>GPU resources cached in <code>self._dvz_visuals</code></strong> keyed by <code>f"{viewport_uuid}_{visual_uuid}"</code>, with a <code>_dvz_panels</code> cache for the per-viewport datoviz <code>Panel</code> (<a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L225-L244">datoviz_renderer.py:225-244</a>). The "create once, mutate forever" rule from §5.3 matters most here because GPU resource churn would dominate frame cost.</li>
+<li><strong>MVP transform happens on the CPU</strong> before vertices are handed to datoviz — the GPU side sees pre-transformed positions, not matrices. Carry that in mind if you intend to wire datoviz visuals into a custom shader pipeline.</li>
+<li><strong>Y-axis flip</strong> between datoviz (top-left origin) and GSP (bottom-left). Visible in <code>_getOrCreateDvzPanel</code> at <a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L232">line 232</a>: <code>dvz_offset = (viewport.get_x(), self.get_canvas().get_height() - viewport.get_y() - viewport.get_height())</code>.</li>
+<li><strong>Screenshots require offscreen mode.</strong> If <code>render(..., return_image=True)</code> is called on an interactive <code>dvz.App</code>, the renderer transparently spawns a temporary offscreen <code>DatovizRenderer</code>, renders into it, captures the PNG, and destroys it (<a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L168-L177">lines 168-177</a>).</li>
+</ul>
+<h3 id="73-gsp_network">7.3 gsp_network<a class="headerlink" href="#73-gsp_network" title="Permanent link">&para;</a></h3>
+<p>Reference: <a href="../../src/gsp_network/renderer/network_renderer.py#L96-L167">network_renderer.py:96-167</a> and <a href="../../src/gsp_network/tools/network_server.py">network_server.py</a>.</p>
+<ul>
+<li><strong>Pure thin client.</strong> <code>render()</code> calls <code>PydanticSerializer.serialize(...)</code> to convert the whole scene into a JSON-friendly dict, POSTs it to <code>/render</code>, and decodes the PNG response into a local matplotlib figure for display. No per-visual dispatch on the client side — anything not serializable by <code>PydanticSerializer</code> cannot be sent.</li>
+<li><strong>Server side</strong> (<a href="../../src/gsp_network/tools/network_server.py#L51-L115">network_server.py:51-115</a>) is a Flask app with a single <code>/render</code> endpoint. The payload's <code>renderer_name</code> field selects which local renderer to instantiate (<a href="../../src/gsp_network/tools/network_server.py#L75-L79">lines 75-79</a>) — <code>MatplotlibRenderer</code> or <code>DatovizRenderer(offscreen=True)</code>. The server depends on those packages directly; the client does not.</li>
+<li><strong>Asymmetric events.</strong> Client input (mouse, keyboard) is captured locally via <a href="../../src/gsp_network/viewport_events/viewport_events_network.py"><code>ViewportEventsNetwork</code></a> and <strong>does not propagate to the server</strong>. Interactive controls (camera orbit, pan/zoom) execute locally; only the resulting frame request crosses the wire.</li>
+<li><strong>Full-scene transport per frame.</strong> No delta encoding; every <code>render()</code> ships the entire serialized scene. Suitable for moderate-rate interactive sessions, not real-time streaming.</li>
+</ul>
+<hr />
+<h2 id="8-writing-a-new-renderer-a-checklist">8. Writing a New Renderer: A Checklist<a class="headerlink" href="#8-writing-a-new-renderer-a-checklist" title="Permanent link">&para;</a></h2>
+<p>The "now you do it" section. Each item maps to a convention named above.</p>
+<ul>
+<li>[ ] <strong>Pick a name and create the package.</strong> <code>src/gsp_&lt;name&gt;/</code> with subdirectories <code>renderer/</code>, <code>animator/</code>, <code>viewport_events/</code>, plus <code>renderer_registration.py</code> and <code>__init__.py</code>. Mirror <a href="../../src/gsp_matplotlib"><code>src/gsp_matplotlib/</code></a> — copy the layout, rename the files.</li>
+<li>[ ] <strong>Subclass <code>RendererBase</code>.</strong> Implement the six abstract methods. <a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py"><code>MatplotlibRenderer</code></a> is the most readable reference; <a href="../../src/gsp_network/renderer/network_renderer.py"><code>NetworkRenderer</code></a> is the smallest.</li>
+<li>[ ] <strong>Decide your dispatch.</strong> If you can lean on a host library that has primitives for points/lines/meshes (matplotlib, datoviz, plotly, three.js), follow the per-visual-file pattern from §5: one file per visual type, hand-written <code>isinstance</code> chain in <code>_render_visual()</code>, static <code>render(renderer, viewport, visual, model_matrix, camera)</code> method on each. If you're rendering from scratch (e.g. raw OpenGL), the per-visual files are still the right unit — they just hold shader setup instead of library calls. If you're a thin client like <code>gsp_network</code>, you can skip the per-visual files entirely and serialise the whole scene.</li>
+<li>[ ] <strong>Cache lazily, mutate not rebuild.</strong> Store per-visual artist or GPU handles in <code>self._artists</code> (or <code>self._&lt;backend&gt;_visuals</code>) keyed by <code>f"{viewport_uuid}_{visual_uuid}"</code>. First render creates; subsequent renders update. This is what lets the animator be efficient (§5.3).</li>
+<li>[ ] <strong>Subclass <code>AnimatorBase</code> and <code>ViewportEventsBase</code>.</strong> They must be co-versioned with the renderer; the registry pairs them by instance type (§6). <a href="../../src/gsp_network/animator/animator_network.py"><code>AnimatorNetwork</code></a> is the simplest reference because it just reuses matplotlib's <code>FuncAnimation</code> loop.</li>
+<li>[ ] <strong>Self-register on import.</strong> Write <code>renderer_registration.py:register_renderer_&lt;name&gt;()</code> calling <code>RendererRegistry.register_renderer(...)</code> with all three classes; have <code>__init__.py</code> invoke that function at module top level. Six lines each, copy from <a href="../../src/gsp_matplotlib/renderer_registration.py"><code>gsp_matplotlib</code></a>.</li>
+<li>[ ] <strong>Add the name to <code>ExampleHelper</code>.</strong> Update the <code>Literal[...]</code> type alias and the <code>if/elif</code> arms in <a href="../../examples/common/example_helper.py">examples/common/example_helper.py</a> — <code>get_renderer_name</code>, <code>create_renderer</code>, <code>create_animator</code>, <code>create_viewport_events</code>. Three places, all near each other.</li>
+<li>[ ] <strong>Verify under an existing example.</strong> <code>GSP_RENDERER=&lt;your_name&gt; python examples/points_example.py</code> should produce a PNG in <code>examples/output/</code> visually equivalent to the matplotlib output. Cross-checking against an existing backend is what turns the example suite into a conformance test (see <a href="../philosophy_examples/">philosophy_examples.md §2.1</a>).</li>
+</ul>
+<hr />
+<h2 id="9-verification-how-to-read-this-document-against-the-code">9. Verification: how to read this document against the code<a class="headerlink" href="#9-verification-how-to-read-this-document-against-the-code" title="Permanent link">&para;</a></h2>
+<p>Every claim above is grounded in a file. The shell commands below confirm the structural claims directly.</p>
+<ol>
+<li>
+<p><strong>Parallel package layout (§3)</strong> — same subdirectories, same files in each backend:
+   <code>bash
+   ls src/gsp_matplotlib src/gsp_datoviz src/gsp_network</code></p>
+</li>
+<li>
+<p><strong>Same eight per-visual files in matplotlib and datoviz (§5.1)</strong> — datoviz and matplotlib mirror each other:
+   <code>bash
+   ls src/gsp_matplotlib/renderer/ src/gsp_datoviz/renderer/</code></p>
+</li>
+<li>
+<p><strong>Three registration sites, same shape (§2.3)</strong>:
+   <code>bash
+   grep -n "RendererRegistry.register_renderer" src/gsp_*/renderer_registration.py</code></p>
+</li>
+<li>
+<p><strong>Same isinstance dispatch chain in both local backends (§5.1)</strong>:
+   <code>bash
+   grep -n "isinstance(visual," src/gsp_matplotlib/renderer/matplotlib_renderer.py src/gsp_datoviz/renderer/datoviz_renderer.py</code></p>
+</li>
+<li>
+<p><strong><code>RendererBase</code> is the only inheritance edge (§2.1)</strong>:
+   <code>bash
+   grep -rn "class.*RendererBase" src/gsp_*/renderer/</code></p>
+</li>
+<li>
+<p><strong>The triad is enforced by the registry (§2.2)</strong> — read <code>_get_item_by_renderer_base</code> in:
+   <code>bash
+   sed -n '93,99p' src/gsp/utils/renderer_registery.py</code></p>
+</li>
+<li>
+<p><strong><code>GSP_RENDERER</code> is the only env-var gate (§1)</strong> — example code reads it:
+   <code>bash
+   grep -n "GSP_RENDERER" examples/common/example_helper.py</code></p>
+</li>
+</ol>
+<p>When the code drifts from this document — change the document. The renderer packages are the source of truth; this file just names what they already do.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/vispy/GSP_API" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>
