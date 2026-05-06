@@ -6,15 +6,15 @@ import sys
 # pip imports
 import numpy as np
 
-
 # local imports
 from common.example_helper import ExampleHelper
 from gsp.types.visual_base import VisualBase
 from gsp_pydantic.serializer.pydantic_parser import PydanticParser
-from session_record_example import PydanticSession, PydanticSessionItem
+from examples.session_01_record_example import PydanticSession, PydanticSessionItem
 
 
 def main():
+    """Example of how to play back a recorded session file."""
     # fix random seed for reproducibility
     np.random.seed(0)
 
@@ -35,7 +35,7 @@ def main():
     gsp_session = PydanticSession.model_validate(session_dict)
 
     # =============================================================================
-    #
+    # Create Pydantic parser
     # =============================================================================
     # create a pydantic parser
     pydantic_parser = PydanticParser()
