@@ -6,7 +6,6 @@ import pathlib
 import numpy as np
 from pydantic import BaseModel
 
-
 # local imports
 from gsp.constants import Constants
 from gsp.core import Canvas, Viewport
@@ -26,11 +25,15 @@ from gsp_pydantic.types.pydantic_dict import PydanticDict
 # Pydantic models
 # =============================================================================
 class PydanticSessionItem(BaseModel):
+    """Represents a single item in a GSP session, containing a timestamp and serialized scene data."""
+
     timestamp: float
     serialized_data: PydanticDict
 
 
 class PydanticSession(BaseModel):
+    """Represents a GSP session, which is a collection of session items."""
+
     items: list[PydanticSessionItem]
 
 
@@ -38,6 +41,7 @@ class PydanticSession(BaseModel):
 # main()
 # =============================================================================
 def main():
+    """Example of how to record a GSP session."""
     # fix random seed for reproducibility
     np.random.seed(0)
 

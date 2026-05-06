@@ -78,6 +78,9 @@ mkdocs_philosophy_copy: ## Copy philosophy .md files into mkdocs source
 	mkdir -p mkdocs_source/philosophy/markdowns/
 	cp docs/philosophy/markdowns/*.md mkdocs_source/philosophy/markdowns/
 
+mkdocs_build_gallery: ## Build the MkDocs documentation site for the gallery
+	python ./tools/build_gallery.py
+
 mkdocs_serve: ## Serve the MkDocs documentation locally
 	mkdocs serve
 

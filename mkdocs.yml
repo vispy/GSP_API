@@ -29,6 +29,9 @@ plugins:
             napoleon_google_docstring: true
             napoleon_numpy_docstring: true
 
+extra_css:
+  - stylesheets/gallery.css
+
 # Social media links in the footer
 extra:
   social:
@@ -43,6 +46,7 @@ repo_name: GSP_API
 nav:
   - Home: index.md
   - About: about.md
+  - Gallery: gallery.md
   - Philosophy:
       - Overview: philosophy/README.md
       - Whitepaper: philosophy/whitepaper.md

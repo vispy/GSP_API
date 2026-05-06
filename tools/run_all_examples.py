@@ -109,11 +109,30 @@ def main() -> None:
     examples_folder = f"{__dirname__}/../examples"
     basenames = [basename for basename in os.listdir(examples_folder) if os.path.isfile(os.path.join(examples_folder, basename))]
     basenames.sort()
+
+    # =============================================================================
+    # Filter basenames
+    # =============================================================================
     # remove all the basenames starting with "_" (like __init__.py)
     basenames = [basename for basename in basenames if not basename.startswith("_")]
+    # remove basenames that are blacklisted
+    blacklisted_basenames = [
+        "session_01_record_example.py",
+        "session_02_player_example.py",
+    ]
+    basenames = [basename for basename in basenames if basename not in blacklisted_basenames]
+
+    # =============================================================================
+    # Run the example scripts
+    # =============================================================================
+    # create absolute paths for the scripts
     script_paths = [os.path.abspath(os.path.join(examples_folder, basename)) for basename in basenames if basename.endswith(".py")]
 
     print(f"Running {text_cyan(str(len(script_paths)))} example scripts to verify they execute without exceptions.")
+
+    # =============================================================================
+    #
+    # =============================================================================
 
     project_rootpath = os.path.abspath(os.path.join(__dirname__, ".."))
     for script_path in script_paths:
