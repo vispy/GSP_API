@@ -1,3 +1,38 @@
+- in `src/gsp/geometry/geometry.py`, fix the .sanity_check() inheritance issue
+- fix all the TODO
+- add it in the network renderer
+
+- https://datoviz.org/reference/api_c/#dvz_visual_cull
+---
+
+- getStarted.html
+- white paper
+  - ask AI
+- design principles for API
+  - design principles for rendering library API
+  - design principles for rendering library API with multiple backends
+- clarifier next steps
+- doc web
+- page - per example
+  - small blabla + copy paste code
+  - done by scripts
+
+---
+- output a json-schema
+  - make a tools to check the json-schema
+
+---
+
+- launch a AI request
+  - review example
+  - which is an outlier
+  - fix them to be consistent
+- review the whole code
+  - review consistency between 2 renderers
+- review serializer
+  - do you serialisaser
+
+---
 - TODO ask about datoviz text rendering
   - write standalone code that anchor and rotation are irrelevant in datoviz text rendering
 - fixed text rendering anchor + rotation in datoviz - required for vispy_axes

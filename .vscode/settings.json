@@ -1,4 +1,7 @@
 {
+    // set claude code to use plan mode by default
+    "claudeCode.initialPermissionMode": "plan",
+    // 
     "python.testing.pytestArgs": [
         "tests"
     ],

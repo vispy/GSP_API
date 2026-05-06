@@ -71,6 +71,9 @@ network_server_clean_debug: ## Clean the network server debug folder
 
 ###############################################################################
 
+philosophy_pdf: ## Build the philosophy PDF from the markdown source
+	cd ./docs/philosophy && npx md-to-pdf *.md 
+
 mkdocs_serve: ## Serve the MkDocs documentation locally
 	mkdocs serve
 

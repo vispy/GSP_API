@@ -20,17 +20,19 @@ class BufferType(Enum):
     uint8 = 2
     int32 = 3
     int8 = 4
-    vec2 = 5
+    vec1 = 5
+    """vector of 1 float32."""
+    vec2 = 6
     """vector of 2 float32."""
-    vec3 = 6
+    vec3 = 7
     """vector of 3 float32."""
-    vec4 = 7
+    vec4 = 8
     """vector of 4 float32."""
-    uvec4 = 8
+    uvec4 = 9
     """vector of 4 uint32."""
-    mat4 = 9  # 4x4 matrix
+    mat4 = 10  # 4x4 matrix
     """Matrix 4x4 of float32. Column-major order."""
-    rgba8 = 10  # RGBA
+    rgba8 = 11  # RGBA
     """4 unsigned bytes representing red, green, blue, alpha channels. each channel in [0, 255]."""
 
     @staticmethod
@@ -56,6 +58,8 @@ class BufferType(Enum):
             return 4
         elif buffer_type == BufferType.int8:
             return 1
+        elif buffer_type == BufferType.vec1:
+            return 4  # 1 * 4 bytes (float32)
         elif buffer_type == BufferType.vec2:
             return 8  # 2 * 4 bytes (float32)
         elif buffer_type == BufferType.vec3:
@@ -94,7 +98,7 @@ class BufferType(Enum):
             return np.dtype(np.int32)
         elif buffer_type == BufferType.int8:
             return np.dtype(np.int8)
-        elif buffer_type in (BufferType.vec2, BufferType.vec3, BufferType.vec4):
+        elif buffer_type in (BufferType.vec1, BufferType.vec2, BufferType.vec3, BufferType.vec4):
             return np.dtype(np.float32)
         elif buffer_type == BufferType.rgba8:
             return np.dtype(np.uint32)
@@ -114,6 +118,8 @@ class BufferType(Enum):
         Raises:
             ValueError: If the numpy array cannot be converted to a BufferType.
         """
+        if len(ndarray.shape) == 2 and ndarray.dtype == np.dtype(np.float32) and ndarray.shape[1] == 1:
+            return BufferType.vec1
         if len(ndarray.shape) == 2 and ndarray.dtype == np.dtype(np.float32) and ndarray.shape[1] == 2:
             return BufferType.vec2
         elif len(ndarray.shape) == 2 and ndarray.dtype == np.dtype(np.float32) and ndarray.shape[1] == 3:
@@ -135,7 +141,9 @@ class BufferType(Enum):
         Returns:
             A tuple representing the shape for numpy array elements.
         """
-        if buffer_type == BufferType.vec2:
+        if buffer_type == BufferType.vec1:
+            return (1,)
+        elif buffer_type == BufferType.vec2:
             return (2,)
         elif buffer_type == BufferType.vec3:
             return (3,)

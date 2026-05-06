@@ -1,10 +1,19 @@
 """Common constants for GSP including color definitions."""
 
+# stdlib imports
+from enum import Enum
+
+# local imports
 from .types.color import Color
 
 
 class Constants:
     """Common constants in GSP. e.g. colors."""
+
+    class FaceCulling(Enum):
+        FrontSide = 0
+        BackSide = 1
+        BothSides = 2
 
     class Color:
         """Common colors as RGBA bytearrays.
