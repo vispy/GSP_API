@@ -286,10 +286,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#api-reference" class="md-nav__link">
+  <a href="#philosophy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API Reference
+        Philosophy
       
     </span>
   </a>
@@ -297,10 +297,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#philosophy" class="md-nav__link">
+  <a href="#api-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Philosophy
+        API Reference
       
     </span>
   </a>
@@ -868,10 +868,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#api-reference" class="md-nav__link">
+  <a href="#philosophy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API Reference
+        Philosophy
       
     </span>
   </a>
@@ -879,10 +879,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#philosophy" class="md-nav__link">
+  <a href="#api-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Philosophy
+        API Reference
       
     </span>
   </a>
@@ -912,6 +912,16 @@
 <h1 id="gsp-documentation">GSP Documentation<a class="headerlink" href="#gsp-documentation" title="Permanent link">&para;</a></h1>
 <p>Graphic Server Protocol — a backend-agnostic scene-description API for 2D/3D scientific visualization in Python.</p>
 <p>GSP provides a unified, declarative interface for describing scientific visualizations across multiple rendering backends. Whether you're building interactive plots with Matplotlib, high-performance 3D scenes with Datoviz, or remote visualization systems over the network, GSP abstracts away backend-specific details. This documentation covers the core protocol, available renderers, and the architectural principles that make GSP flexible and extensible.</p>
+<h2 id="philosophy">Philosophy<a class="headerlink" href="#philosophy" title="Permanent link">&para;</a></h2>
+<p>GSP is built on a set of core design principles that prioritize clarity, flexibility, and composability. This section explores the architectural decisions, design patterns, and philosophical foundations that guide GSP's development. Whether you're contributing to GSP or simply curious about why certain decisions were made, these documents provide a comprehensive view of the project's vision and technical rationale.</p>
+<ul>
+<li><a href="philosophy/">Overview</a> — Index of all philosophy and design documents</li>
+<li><a href="philosophy/whitepaper/">Whitepaper</a> — High-level pitch: motivation, architecture, ecosystem positioning</li>
+<li><a href="philosophy/philosophy_gsp_core/">GSP Core</a> — Deep dive on the contract layer and the five design principles behind <code>src/gsp/</code></li>
+<li><a href="philosophy/philosophy_packages/">Packages</a> — Seven packages and the three-tier layered architecture</li>
+<li><a href="philosophy/philosophy_renderers/">Renderers</a> — Conventions shared across <code>gsp_matplotlib</code>, <code>gsp_datoviz</code>, and <code>gsp_network</code></li>
+<li><a href="philosophy/philosophy_examples/">Examples</a> — Pattern catalog and design principles behind the 50+ example scripts</li>
+</ul>
 <h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
 <p>GSP is organized into seven core packages, each serving a specific role in the visualization pipeline. The Core protocol provides the foundational abstractions, while specialized packages handle rendering across different backends, network communication, and high-level utilities. Each module below exposes a cohesive API designed for both simplicity and extensibility.</p>
 <ul>
@@ -922,16 +932,6 @@
 <li><a href="api/gsp_datoviz/">GSP Datoviz</a> — High-performance Datoviz rendering backend</li>
 <li><a href="api/gsp_extra/">GSP Extra</a> — Additional utilities, animation helpers, and high-level 3D components</li>
 <li><a href="api/vispy_2/">VisPy 2</a> — Interactive axes display and pan/zoom built on top of GSP</li>
-</ul>
-<h2 id="philosophy">Philosophy<a class="headerlink" href="#philosophy" title="Permanent link">&para;</a></h2>
-<p>GSP is built on a set of core design principles that prioritize clarity, flexibility, and composability. This section explores the architectural decisions, design patterns, and philosophical foundations that guide GSP's development. Whether you're contributing to GSP or simply curious about why certain decisions were made, these documents provide a comprehensive view of the project's vision and technical rationale.</p>
-<ul>
-<li><a href="philosophy/">Overview</a> — Index of all philosophy and design documents</li>
-<li><a href="philosophy/whitepaper/">Whitepaper</a> — High-level pitch: motivation, architecture, ecosystem positioning</li>
-<li><a href="philosophy/philosophy_gsp_core/">GSP Core</a> — Deep dive on the contract layer and the five design principles behind <code>src/gsp/</code></li>
-<li><a href="philosophy/philosophy_packages/">Packages</a> — Seven packages and the three-tier layered architecture</li>
-<li><a href="philosophy/philosophy_renderers/">Renderers</a> — Conventions shared across <code>gsp_matplotlib</code>, <code>gsp_datoviz</code>, and <code>gsp_network</code></li>
-<li><a href="philosophy/philosophy_examples/">Examples</a> — Pattern catalog and design principles behind the 50+ example scripts</li>
 </ul>
 
 

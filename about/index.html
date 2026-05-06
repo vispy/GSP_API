@@ -315,10 +315,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#what-is-gsp" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        What is GSP?
       
     </span>
   </a>
@@ -326,10 +326,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#description" class="md-nav__link">
+  <a href="#motivation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Description
+        Motivation
       
     </span>
   </a>
@@ -337,10 +337,65 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#contact" class="md-nav__link">
+  <a href="#key-features" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Contact
+        Key Features
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#backends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backends
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#author-organization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Author &amp; Organization
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        License
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contributing
       
     </span>
   </a>
@@ -881,10 +936,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#what-is-gsp" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        What is GSP?
       
     </span>
   </a>
@@ -892,10 +947,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#description" class="md-nav__link">
+  <a href="#motivation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Description
+        Motivation
       
     </span>
   </a>
@@ -903,10 +958,65 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#contact" class="md-nav__link">
+  <a href="#key-features" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Contact
+        Key Features
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#backends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backends
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#author-organization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Author &amp; Organization
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        License
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contributing
       
     </span>
   </a>
@@ -934,12 +1044,58 @@
 
 
 <h1 id="about">About<a class="headerlink" href="#about" title="Permanent link">&para;</a></h1>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>This page provides information about the project.</p>
-<h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
-<p>Add your description here.</p>
-<h2 id="contact">Contact<a class="headerlink" href="#contact" title="Permanent link">&para;</a></h2>
-<p>For questions or support, please contact us.</p>
+<h2 id="what-is-gsp">What is GSP?<a class="headerlink" href="#what-is-gsp" title="Permanent link">&para;</a></h2>
+<p>GSP (Graphic Server Protocol) is a backend-agnostic Python library for describing and rendering 2D and 3D scientific visualizations. It defines a single declarative scene model — canvas, viewports, cameras, visuals, transforms, geometry, materials — and dispatches that scene to one of several interchangeable rendering backends at runtime. The same visualization code runs against a CPU-bound Matplotlib renderer, a GPU-accelerated Datoviz/Vulkan renderer, or a Flask-based network renderer without modification. Backend selection is a one-line change; the scene description is invariant.</p>
+<h2 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link">&para;</a></h2>
+<p>Scientific visualization in Python has historically coupled the scene API to the renderer. Matplotlib, Datoviz, VisPy, Plotly, and Bokeh each ship their own scene model and their own rendering pipeline as an indivisible unit. Switching backends means rewriting visualization code. Remote and headless rendering adds a third axis of fragmentation: it is typically implemented as a separate stack with its own protocol, disconnected from local rendering. GSP treats the scene as the invariant and the renderer as the variable. The full problem statement and design rationale are in the <a href="../philosophy/whitepaper/">Whitepaper</a>.</p>
+<h2 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Unified declarative scene model across all backends (Canvas, Viewport, Camera, eight visual primitives, TransformChain)</li>
+<li>Three first-party renderer backends: Matplotlib, Datoviz, and a network renderer</li>
+<li>Runtime backend selection — <code>RendererRegistry.create_renderer("matplotlib"|"datoviz"|"network", canvas)</code> — no code changes required to switch</li>
+<li>Pydantic v2 serialization layer (<code>gsp_pydantic</code>) for JSON export and base64-encoded buffer transport</li>
+<li>Network rendering over Flask: client serializes the scene, server renders and returns a PNG</li>
+<li>Python 3.13+ with strict mypy compliance throughout</li>
+</ul>
+<h2 id="backends">Backends<a class="headerlink" href="#backends" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th>Type</th>
+<th>Package</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Matplotlib</td>
+<td>CPU rasterization</td>
+<td><code>gsp_matplotlib</code></td>
+<td>Publication figures, portable environments</td>
+</tr>
+<tr>
+<td>Datoviz</td>
+<td>GPU (Vulkan)</td>
+<td><code>gsp_datoviz</code></td>
+<td>Large datasets, interactive high-performance rendering</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>Remote / Flask</td>
+<td><code>gsp_network</code></td>
+<td>Headless servers, HPC clusters, cloud notebooks</td>
+</tr>
+</tbody>
+</table>
+<h2 id="project-status">Project Status<a class="headerlink" href="#project-status" title="Permanent link">&para;</a></h2>
+<p>GSP is a research prototype at version 0.1.0. It has known bugs, an active TODO list, and no published PyPI release. The architecture is stable enough to run all examples in the <a href="../gallery/">Gallery</a> against both local backends, but the API may change before a stable release. It is not recommended for production use at this stage.</p>
+<h2 id="author-organization">Author &amp; Organization<a class="headerlink" href="#author-organization" title="Permanent link">&para;</a></h2>
+<p>GSP is developed by <a href="mailto:jerome.etienne@gmail.com">Jerome Etienne</a> under the <a href="https://github.com/vispy">vispy</a> GitHub organization. The source repository is at <a href="https://github.com/vispy/GSP_API">github.com/vispy/GSP_API</a>.</p>
+<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
+<p>BSD 3-Clause License — copyright 2025, vispy. See <code>LICENSE</code> in the repository root.</p>
+<h2 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h2>
+<p>Bug reports, feature requests, and pull requests are welcome on the <a href="https://github.com/vispy/GSP_API">GitHub repository</a>. Please open an issue before submitting a large PR to align on scope and design.</p>
 
 
 
