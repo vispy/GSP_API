@@ -4,7 +4,7 @@ The VisPy 2 package provides high-level components for interactive axes display 
 
 ## Overview
 
-::: vispy_2
+::: vispy2
     handler: python
     options:
       show_root_heading: true
@@ -15,7 +15,7 @@ The VisPy 2 package provides high-level components for interactive axes display 
 
 The axes module provides components for displaying and interacting with 2D axes in a viewport.
 
-::: vispy_2.axes
+::: vispy2.axes
     handler: python
     options:
       show_root_heading: true
@@ -24,8 +24,8 @@ The axes module provides components for displaying and interacting with 2D axes 
 
 ### Axes Display
 
-::: vispy_2.axes.axes_display
+::: vispy2.axes.axes_display
 
 ### Axes Pan Zoom
 
-::: vispy_2.axes.axes_panzoom
+::: vispy2.axes.axes_panzoom
