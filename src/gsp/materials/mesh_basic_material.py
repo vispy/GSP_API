@@ -1,7 +1,6 @@
 # pip imports
 import numpy as np
 
-
 # local imports
 from ..constants import Constants
 from .mesh_material import MeshMaterial
@@ -13,11 +12,11 @@ class MeshBasicMaterial(MeshMaterial):
 
     __slots__ = "texture"
 
-    def __init__(self, colors: TransBuf, edge_colors: TransBuf, edge_widths: TransBuf, face_sorting: bool, face_culling: Constants.FaceCulling):
+    def __init__(self, face_colors: TransBuf, edge_colors: TransBuf, edge_widths: TransBuf, face_sorting: bool, face_culling: Constants.FaceCulling):
         """Initialize a MeshBasicMaterial instance.
 
         Args:
-            colors (TransBuf): Color for the MeshBasicMaterial
+            face_colors (TransBuf): Vertex colors of the mesh, shape (N, 4) RGBA format.
             edge_colors (TransBuf): array of point edge colors
             edge_widths (TransBuf): array of point edge widths
             face_sorting (bool, optional): Whether to sort faces by depth (painter's algorithm)
@@ -25,7 +24,7 @@ class MeshBasicMaterial(MeshMaterial):
         """
         super().__init__()
 
-        self._colors: TransBuf = colors
+        self._face_colors: TransBuf = face_colors
         """Vertex colors of the mesh, shape (N, 4) RGBA format."""
         self._edge_colors: TransBuf = edge_colors
         """Edge colors of the mesh, shape (N, 4)."""
@@ -46,7 +45,7 @@ class MeshBasicMaterial(MeshMaterial):
         Returns:
             TransBuf: Vertex colors of the mesh, shape (N, 4) RGBA format.
         """
-        return self._colors
+        return self._face_colors
 
     def set_colors(self, colors: TransBuf) -> None:
         """Set the vertex colors.
@@ -54,7 +53,7 @@ class MeshBasicMaterial(MeshMaterial):
         Args:
             colors (TransBuf): Vertex colors of the mesh, shape (N, 4) RGBA format.
         """
-        self._colors = colors
+        self._face_colors = colors
         self.check_attributes()
 
     def get_edge_colors(self) -> TransBuf:
@@ -131,7 +130,7 @@ class MeshBasicMaterial(MeshMaterial):
 
     def check_attributes(self) -> None:
         """Check that the attributes are valid and consistent."""
-        self.sanity_check_attributes(self._colors)
+        self.sanity_check_attributes(self._face_colors)
 
     @staticmethod
     def sanity_check_attributes_buffer(

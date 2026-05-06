@@ -43,8 +43,8 @@ def main():
 
     # Load a obj geometry
     # obj_path = pathlib.Path(__file__).parent / "models" / "cube.obj"
-    # obj_path = pathlib.Path(__file__).parent / "models" / "suzanne.obj"
-    obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
+    obj_path = pathlib.Path(__file__).parent / "models" / "suzanne.obj"
+    # obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
     mesh_geometry = MeshUtils.parse_obj_file_manual(str(obj_path))
 
     # TODO fix the colors
@@ -52,15 +52,14 @@ def main():
     positions_numpy = Bufferx.to_numpy(positions_buffer).reshape(-1, 3)
     position_count = positions_numpy.shape[0]
 
-    # TODO rename colors_numpy as face_colors_numpy
-    colors_numpy = np.array([[255, 0, 255, 255]] * position_count, dtype=np.uint8)  # magenta color for all vertices
-    colors_buffer = Bufferx.from_numpy(colors_numpy, BufferType.rgba8)
+    face_colors_numpy = np.array([[255, 0, 255, 255]] * position_count, dtype=np.uint8)  # magenta color for all vertices
+    face_colors_buffer = Bufferx.from_numpy(face_colors_numpy, BufferType.rgba8)
     edge_colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.black], dtype=np.uint8), BufferType.rgba8)
     edge_widths_buffer = Bufferx.from_numpy(np.array([0.5], dtype=np.float32), BufferType.float32)
     # TODO issue when i change those value
     face_sorting = True
-    face_culling = Constants.FaceCulling.BothSides
-    mesh_material = MeshBasicMaterial(colors_buffer, edge_colors_buffer, edge_widths_buffer, face_sorting, face_culling)
+    face_culling = Constants.FaceCulling.FrontSide
+    mesh_material = MeshBasicMaterial(face_colors_buffer, edge_colors_buffer, edge_widths_buffer, face_sorting, face_culling)
 
     if False:
         position_x = 0.0
@@ -150,7 +149,7 @@ def main():
 
             position_x = 0.0
             position_y = 0.0
-            position_z = -2.0
+            position_z = 0.0
 
             scale_x = 1.0
             scale_y = 1.0
@@ -170,7 +169,7 @@ def main():
 
         animator.start()
 
-    animation_enabled = False
+    animation_enabled = True
     if animation_enabled is False:
         render_static()
     else:
