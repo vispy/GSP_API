@@ -43,6 +43,13 @@ repo_name: GSP_API
 nav:
   - Home: index.md
   - About: about.md
+  - Philosophy:
+      - Overview: philosophy/README.md
+      - Whitepaper: philosophy/whitepaper.md
+      - GSP Core: philosophy/philosophy_gsp_core.md
+      - Packages: philosophy/philosophy_packages.md
+      - Renderers: philosophy/philosophy_renderers.md
+      - Examples: philosophy/philosophy_examples.md
   - API Reference:
       - GSP: api/gsp.md
       - GSP Network: api/gsp_network.md
