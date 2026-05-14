@@ -56,10 +56,17 @@ def create_depth_material() -> MeshDepthMaterial:
     return MeshDepthMaterial(edge_colors_buffer, edge_widths_buffer, True, Constants.FaceCulling.FrontSide)
 
 
+# Intended world-space positions for the Phong directional light.
+# Used both for the initial lights setup (when model_matrix is identity, model space == world space)
+# and by update_phong_lights_world_fixed() to keep the light anchored as the mesh rotates.
+PHONG_DIRECTIONAL_LIGHT_WORLD_POSITION = np.array([5.0, 5.0, 5.0], dtype=np.float32)
+PHONG_DIRECTIONAL_TARGET_WORLD_POSITION = np.array([0.0, 0.0, 0.0], dtype=np.float32)
+
+
 def create_phong_lights() -> Sequence[Light]:
     """Build a small default light scene: one ambient + one directional. Positions are in model space."""
-    light_position = Bufferx.from_numpy(np.array([[5.0, 5.0, 5.0]], dtype=np.float32), BufferType.vec3)
-    target_position = Bufferx.from_numpy(np.array([[0.0, 0.0, 0.0]], dtype=np.float32), BufferType.vec3)
+    light_position = Bufferx.from_numpy(PHONG_DIRECTIONAL_LIGHT_WORLD_POSITION.reshape(1, 3), BufferType.vec3)
+    target_position = Bufferx.from_numpy(PHONG_DIRECTIONAL_TARGET_WORLD_POSITION.reshape(1, 3), BufferType.vec3)
     return [
         AmbientLight(color=Constants.Color.gray, intensity=0.3),
         DirectionalLight(
@@ -69,6 +76,26 @@ def create_phong_lights() -> Sequence[Light]:
             intensity=0.8,
         ),
     ]
+
+
+def update_phong_lights_world_fixed(lights: Sequence[Light], model_matrix_numpy: np.ndarray) -> None:
+    """Anchor each light at its world-space position even as the mesh's model_matrix changes.
+
+    Since light positions are stored in model space and transformed by model_matrix at render time,
+    setting model_space_pos = inverse(model_matrix) @ desired_world_pos cancels out the model
+    transform and the light appears fixed in world space.
+    """
+    inverse_model = np.linalg.inv(model_matrix_numpy)
+
+    def to_model_space_buffer(world_position: np.ndarray) -> object:
+        world_homogeneous = np.append(world_position, 1.0)
+        model_xyz = (inverse_model @ world_homogeneous)[:3].astype(np.float32)
+        return Bufferx.from_numpy(model_xyz.reshape(1, 3), BufferType.vec3)
+
+    for light in lights:
+        if isinstance(light, DirectionalLight):
+            light.set_light_position(to_model_space_buffer(PHONG_DIRECTIONAL_LIGHT_WORLD_POSITION))
+            light.set_target_position(to_model_space_buffer(PHONG_DIRECTIONAL_TARGET_WORLD_POSITION))
 
 
 def create_phong_material(position_count: int) -> MeshPhongMaterial:
@@ -230,6 +257,10 @@ def main():
             matrix_mvp = matrix_translation @ matrix_scale @ matrix_rotation
 
             model_matrix = Bufferx.from_numpy(np.array([matrix_mvp]), BufferType.mat4)
+
+            # Keep Phong lights anchored in world space as the mesh rotates.
+            if material_type == "phong":
+                update_phong_lights_world_fixed(mesh.get_material().get_lights(), matrix_mvp)
 
             renderer_base.render([viewport], [mesh], [model_matrix], [camera])
             changed_visuals: list[VisualBase] = []
