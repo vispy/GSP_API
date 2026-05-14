@@ -111,10 +111,9 @@ def main():
     model_matrix_numpy = axes_transform_numpy @ model_matrix_numpy
     model_matrix = Bufferx.from_numpy(np.array([model_matrix_numpy]), BufferType.mat4)
 
-    # Create a camera — stand back at z=4 looking at the origin, with a 45° perspective.
-    # Identity view/projection would render world-space directly to NDC, which leaves
-    # the model viewed from the wrong side of the OpenGL convention (face-toward-+z
-    # models end up looking back-facing). A real lookat+perspective is the right setup.
+    # Real lookat + perspective camera; identity matrices view from the wrong
+    # side of OpenGL's NDC convention. See
+    # https://github.com/vispy/GSP_API/issues/21#issuecomment-4450405931
     view_matrix_numpy = glm.lookat(eye=(0, 0, 4), center=(0, 0, 0), up=(0, 1, 0))
     projection_matrix_numpy = glm.perspective(fovy=45.0, aspect=canvas.get_width() / canvas.get_height(), znear=0.1, zfar=10.0)
     view_matrix = Bufferx.from_numpy(np.array([view_matrix_numpy], dtype=np.float32), BufferType.mat4)
