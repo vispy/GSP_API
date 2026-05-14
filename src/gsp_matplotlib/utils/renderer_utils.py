@@ -1,3 +1,5 @@
+"""Shared numpy helpers used by the matplotlib per-material mesh renderers."""
+
 # pip imports
 import matplotlib.artist
 import numpy as np

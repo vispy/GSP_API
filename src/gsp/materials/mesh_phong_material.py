@@ -1,3 +1,5 @@
+"""MeshPhongMaterial: flat per-face Phong shading using a list of lights carried on the material."""
+
 # pip imports
 from typing import Sequence
 

@@ -1,7 +1,9 @@
+"""DirectionalLight: light defined by two model-space positions (light and target)."""
+
 # local imports
 from ..constants import Constants
-from ..types.transbuf import TransBuf
 from ..types.color import Color
+from ..types.transbuf import TransBuf
 from .light import Light
 
 
@@ -24,16 +26,12 @@ class DirectionalLight(Light):
             color (Color): The light color as an rgba bytearray. Defaults to white.
             intensity (float): A float multiplier applied to the light color. Defaults to 1.0.
         """
-        super().__init__()
+        super().__init__(color, intensity)
 
         self._light_position: TransBuf = light_position
         """Model-space position of the light, vec3 buffer of count 1."""
         self._target_position: TransBuf = target_position
         """Model-space position the light points at, vec3 buffer of count 1."""
-        self._color: Color = color
-        """Light color as an rgba bytearray of 4 uint8 values."""
-        self._intensity: float = intensity
-        """Intensity multiplier applied to the light color."""
 
     # =============================================================================
     # get/set attributes
@@ -54,19 +52,3 @@ class DirectionalLight(Light):
     def set_target_position(self, target_position: TransBuf) -> None:
         """Set the model-space position the light points at."""
         self._target_position = target_position
-
-    def get_color(self) -> Color:
-        """Get the light color."""
-        return self._color
-
-    def set_color(self, color: Color) -> None:
-        """Set the light color."""
-        self._color = color
-
-    def get_intensity(self) -> float:
-        """Get the light intensity."""
-        return self._intensity
-
-    def set_intensity(self, intensity: float) -> None:
-        """Set the light intensity."""
-        self._intensity = intensity

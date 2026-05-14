@@ -1,3 +1,5 @@
+"""MeshNormalMaterial: colors each face by its view-space normal direction."""
+
 # local imports
 from ..constants import Constants
 from .mesh_material import MeshMaterial

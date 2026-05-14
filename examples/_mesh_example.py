@@ -21,7 +21,7 @@ from gsp.materials.mesh_depth_material import MeshDepthMaterial
 from gsp.materials.mesh_phong_material import MeshPhongMaterial
 from gsp.types.visual_base import VisualBase
 from gsp.visuals.mesh import Mesh
-from gsp.types import Buffer, BufferType
+from gsp.types import Buffer, BufferType  # noqa: F401 -- Buffer used as a return annotation
 from gsp.geometry import MeshGeometry
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
@@ -87,7 +87,7 @@ def update_phong_lights_world_fixed(lights: Sequence[Light], model_matrix_numpy:
     """
     inverse_model = np.linalg.inv(model_matrix_numpy)
 
-    def to_model_space_buffer(world_position: np.ndarray) -> object:
+    def to_model_space_buffer(world_position: np.ndarray) -> Buffer:
         world_homogeneous = np.append(world_position, 1.0)
         model_xyz = (inverse_model @ world_homogeneous)[:3].astype(np.float32)
         return Bufferx.from_numpy(model_xyz.reshape(1, 3), BufferType.vec3)
@@ -266,7 +266,9 @@ def main():
 
             # Keep Phong lights anchored in world space as the mesh rotates.
             if material_type == "phong":
-                update_phong_lights_world_fixed(mesh.get_material().get_lights(), matrix_mvp)
+                phong_material = mesh.get_material()
+                assert isinstance(phong_material, MeshPhongMaterial)
+                update_phong_lights_world_fixed(phong_material.get_lights(), matrix_mvp)
 
             renderer_base.render([viewport], [mesh], [model_matrix], [camera])
             changed_visuals: list[VisualBase] = []

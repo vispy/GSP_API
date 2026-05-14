@@ -1,3 +1,5 @@
+"""MeshDepthMaterial: colors each face by its view-space depth (near = white, far = black)."""
+
 # local imports
 from ..constants import Constants
 from .mesh_material import MeshMaterial
