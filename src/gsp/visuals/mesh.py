@@ -88,7 +88,7 @@ class Mesh(VisualBase):
         """
         # perform sanity checks on geometry and material attributes
         geometry.check_attributes()
-        material.check_attributes()
+        material.check_attributes_buffer()
 
         Mesh.sanity_check_attributes(geometry, material)
 

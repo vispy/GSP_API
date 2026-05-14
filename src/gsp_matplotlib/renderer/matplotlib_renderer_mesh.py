@@ -44,7 +44,9 @@ class RendererMesh:
         """
         mesh_geometry = mesh.get_geometry()
         mesh_material = mesh.get_material()
-        assert isinstance(mesh_material, MeshBasicMaterial), f"Expected material to be a MeshBasicMaterial, got {type(mesh_material)}"  # TODO support other MeshMaterial types
+        assert isinstance(
+            mesh_material, MeshBasicMaterial
+        ), f"Expected material to be a MeshBasicMaterial, got {type(mesh_material)}"  # TODO support other MeshMaterial types
 
         # =============================================================================
         # Transform vertices with MVP matrix
@@ -70,6 +72,15 @@ class RendererMesh:
         material_edge_colors_buffer = TransBufUtils.to_buffer(mesh_material.get_edge_colors())
         material_edge_widths_buffer = TransBufUtils.to_buffer(mesh_material.get_edge_widths())
 
+        # =============================================================================
+        # Sanity checks attributes buffers
+        # =============================================================================
+
+        Mesh.sanity_check_attributes_buffer(
+            mesh.get_geometry(),
+            mesh.get_material(),
+        )
+
         # Convert buffers to numpy arrays
         geometry_indices_numpy = Bufferx.to_numpy(geometry_indices_buffer).flatten().reshape(-1, 3)  # shape(face_count, 3)
         material_colors_numpy = Bufferx.to_numpy(material_colors_buffer) / 255.0  # convert from 0-255 to 0-1 range for matplotlib
@@ -93,15 +104,6 @@ class RendererMesh:
         material_colors_numpy = _to_per_face(material_colors_numpy)
         material_edge_colors_numpy = _to_per_face(material_edge_colors_numpy)
         material_edge_widths_numpy = _to_per_face(material_edge_widths_numpy)
-
-        # =============================================================================
-        # Sanity checks attributes buffers
-        # =============================================================================
-
-        Mesh.sanity_check_attributes_buffer(
-            mesh.get_geometry(),
-            mesh.get_material(),
-        )
 
         # =============================================================================
         # Compute the NDC faces_vertices

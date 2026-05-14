@@ -5,6 +5,8 @@ import numpy as np
 from ..constants import Constants
 from .mesh_material import MeshMaterial
 from ..types.transbuf import TransBuf
+from ..types.buffer_type import BufferType
+from ..utils.transbuf_utils import TransBufUtils
 
 
 class MeshBasicMaterial(MeshMaterial):
@@ -132,16 +134,25 @@ class MeshBasicMaterial(MeshMaterial):
         """Check that the attributes are valid and consistent."""
         self.sanity_check_attributes(self._face_colors)
 
+    def check_attributes_buffer(self) -> None:
+        """Check that the attribute buffers are valid and consistent."""
+        face_colors_buffer = TransBufUtils.to_buffer(self._face_colors)
+        edge_colors_buffer = TransBufUtils.to_buffer(self._edge_colors)
+        self.sanity_check_attributes_buffer(face_colors_buffer, edge_colors_buffer)
+
     @staticmethod
     def sanity_check_attributes_buffer(
         colors: TransBuf,
+        edge_colors: TransBuf,
     ) -> None:
         """Same as .sanity_check_attributes() but accept only Buffers.
 
         Args:
-            colors (TransBuf): The vertex colors.
+            colors (TransBuf): The face colors.
+            edge_colors (TransBuf): The edge colors.
         """
-        MeshBasicMaterial.sanity_check_attributes(colors)
+        assert colors.get_type() == BufferType.rgba8, f"face_colors buffer must be rgba8, got {colors.get_type()}"
+        assert edge_colors.get_type() == BufferType.rgba8, f"edge_colors buffer must be rgba8, got {edge_colors.get_type()}"
 
     @staticmethod
     def sanity_check_attributes(

@@ -24,3 +24,7 @@ class MeshMaterial(Material):
     @abstractmethod
     def check_attributes(self) -> None:
         """Check the attributes of the material for validity."""
+
+    @abstractmethod
+    def check_attributes_buffer(self) -> None:
+        """Check the attribute buffers of the material for validity."""
