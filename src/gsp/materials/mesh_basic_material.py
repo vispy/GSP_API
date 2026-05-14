@@ -6,6 +6,7 @@ from ..constants import Constants
 from .mesh_material import MeshMaterial
 from ..types.transbuf import TransBuf
 from ..types.buffer_type import BufferType
+from ..types.buffer import Buffer
 from ..utils.transbuf_utils import TransBufUtils
 
 
@@ -142,8 +143,8 @@ class MeshBasicMaterial(MeshMaterial):
 
     @staticmethod
     def sanity_check_attributes_buffer(
-        colors: TransBuf,
-        edge_colors: TransBuf,
+        colors: Buffer,
+        edge_colors: Buffer,
     ) -> None:
         """Same as .sanity_check_attributes() but accept only Buffers.
 
