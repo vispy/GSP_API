@@ -144,7 +144,7 @@ def main():
     position_count = positions_numpy.shape[0]
 
     # Pick which material to render with: "basic" | "normal" | "depth" | "phong"
-    material_type = "phong"
+    material_type = "normal"
     if material_type == "basic":
         mesh_material = create_basic_material(position_count)
     elif material_type == "normal":
