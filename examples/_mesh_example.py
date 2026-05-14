@@ -106,8 +106,14 @@ def create_phong_material(position_count: int) -> MeshPhongMaterial:
     edge_widths_buffer = Bufferx.from_numpy(np.array([0.5], dtype=np.float32), BufferType.float32)
     lights = create_phong_lights()
     return MeshPhongMaterial(
-        diffuse_color, specular_color, 32.0, lights,
-        edge_colors_buffer, edge_widths_buffer, True, Constants.FaceCulling.FrontSide,
+        diffuse_color,
+        specular_color,
+        32.0,
+        lights,
+        edge_colors_buffer,
+        edge_widths_buffer,
+        True,
+        Constants.FaceCulling.FrontSide,
     )
 
 
