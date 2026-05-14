@@ -12,6 +12,7 @@ from gsp.core.viewport import Viewport
 from gsp.materials.mesh_basic_material import MeshBasicMaterial
 from gsp.materials.mesh_normal_material import MeshNormalMaterial
 from gsp.materials.mesh_depth_material import MeshDepthMaterial
+from gsp.materials.mesh_phong_material import MeshPhongMaterial
 from gsp.utils.math_utils import MathUtils
 from gsp.visuals.mesh import Mesh
 from gsp.utils.transbuf_utils import TransBufUtils
@@ -20,6 +21,7 @@ from .matplotlib_renderer import MatplotlibRenderer
 from .matplotlib_renderer_mesh_basic import RendererMeshBasic
 from .matplotlib_renderer_mesh_normal import RendererMeshNormal
 from .matplotlib_renderer_mesh_depth import RendererMeshDepth
+from .matplotlib_renderer_mesh_phong import RendererMeshPhong
 from ..extra.bufferx import Bufferx
 from ..utils.renderer_utils import RendererUtils
 
@@ -89,6 +91,10 @@ class RendererMesh:
         view_model_matrix = view_matrix_numpy @ model_matrix_numpy
         vertices_view_numpy, _ = MathUtils.apply_transform_matrix(vertices_numpy, view_model_matrix)
 
+        # world-space vertices and camera position needed by MeshPhongMaterial; cheap to compute even when unused
+        vertices_world_numpy, _ = MathUtils.apply_transform_matrix(vertices_numpy, model_matrix_numpy)
+        camera_position_world = (np.linalg.inv(view_matrix_numpy) @ np.array([0.0, 0.0, 0.0, 1.0]))[:3]
+
         # sanity checks on derived shapes
         assert faces_vertices_ndc.shape == (face_count, 3, 3), f"Expected faces_vertices_ndc shape {(face_count, 3, 3)}, got {faces_vertices_ndc.shape}"
         assert faces_vertices_2d.shape == (face_count, 3, 2), f"Expected faces_vertices_2d shape {(face_count, 3, 2)}, got {faces_vertices_2d.shape}"
@@ -108,6 +114,11 @@ class RendererMesh:
         elif isinstance(mesh_material, MeshDepthMaterial):
             face_colors_numpy, material_edge_colors_numpy, material_edge_widths_numpy = RendererMeshDepth.compute_attributes(
                 mesh, geometry_indices_numpy, vertices_view_numpy, faces_vertices_ndc, projection_matrix_numpy, vertex_count, face_count,
+            )
+        elif isinstance(mesh_material, MeshPhongMaterial):
+            face_colors_numpy, material_edge_colors_numpy, material_edge_widths_numpy = RendererMeshPhong.compute_attributes(
+                mesh, geometry_indices_numpy, vertices_view_numpy, vertices_world_numpy, faces_vertices_ndc,
+                projection_matrix_numpy, model_matrix_numpy, camera_position_world, vertex_count, face_count,
             )
         else:
             raise NotImplementedError(f"Mesh material {type(mesh_material)} not supported")

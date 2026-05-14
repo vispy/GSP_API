@@ -9,10 +9,16 @@ import time
 import numpy as np
 
 # local imports
+from typing import Sequence
+
 from gsp.core import Canvas, Viewport
+from gsp.lights.ambient_light import AmbientLight
+from gsp.lights.directional_light import DirectionalLight
+from gsp.lights.light import Light
 from gsp.materials.mesh_basic_material import MeshBasicMaterial
 from gsp.materials.mesh_normal_material import MeshNormalMaterial
 from gsp.materials.mesh_depth_material import MeshDepthMaterial
+from gsp.materials.mesh_phong_material import MeshPhongMaterial
 from gsp.types.visual_base import VisualBase
 from gsp.visuals.mesh import Mesh
 from gsp.types import Buffer, BufferType
@@ -50,6 +56,34 @@ def create_depth_material() -> MeshDepthMaterial:
     return MeshDepthMaterial(edge_colors_buffer, edge_widths_buffer, True, Constants.FaceCulling.FrontSide)
 
 
+def create_phong_lights() -> Sequence[Light]:
+    """Build a small default light scene: one ambient + one directional. Positions are in model space."""
+    light_position = Bufferx.from_numpy(np.array([[5.0, 5.0, 5.0]], dtype=np.float32), BufferType.vec3)
+    target_position = Bufferx.from_numpy(np.array([[0.0, 0.0, 0.0]], dtype=np.float32), BufferType.vec3)
+    return [
+        AmbientLight(color=Constants.Color.gray, intensity=0.3),
+        DirectionalLight(
+            light_position=light_position,
+            target_position=target_position,
+            color=Constants.Color.white,
+            intensity=0.8,
+        ),
+    ]
+
+
+def create_phong_material(position_count: int) -> MeshPhongMaterial:
+    """Create a MeshPhongMaterial with a default light setup; flat per-face Phong shading."""
+    diffuse_color = Bufferx.from_numpy(np.array([[255, 0, 255, 255]] * position_count, dtype=np.uint8), BufferType.rgba8)
+    specular_color = Bufferx.from_numpy(np.array([[255, 255, 255, 255]], dtype=np.uint8), BufferType.rgba8)
+    edge_colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.black], dtype=np.uint8), BufferType.rgba8)
+    edge_widths_buffer = Bufferx.from_numpy(np.array([0.5], dtype=np.float32), BufferType.float32)
+    lights = create_phong_lights()
+    return MeshPhongMaterial(
+        diffuse_color, specular_color, 32.0, lights,
+        edge_colors_buffer, edge_widths_buffer, True, Constants.FaceCulling.FrontSide,
+    )
+
+
 def main():
     """Main function for the pixels example."""
     # fix random seed for reproducibility
@@ -76,14 +110,16 @@ def main():
     positions_numpy = Bufferx.to_numpy(positions_buffer).reshape(-1, 3)
     position_count = positions_numpy.shape[0]
 
-    # Pick which material to render with: "basic" | "normal" | "depth"
-    material_type = "depth"
+    # Pick which material to render with: "basic" | "normal" | "depth" | "phong"
+    material_type = "phong"
     if material_type == "basic":
         mesh_material = create_basic_material(position_count)
     elif material_type == "normal":
         mesh_material = create_normal_material()
     elif material_type == "depth":
         mesh_material = create_depth_material()
+    elif material_type == "phong":
+        mesh_material = create_phong_material(position_count)
     else:
         raise ValueError(f"Unknown material_type {material_type!r}")
 

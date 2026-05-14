@@ -60,6 +60,21 @@ class RendererUtils:
         raise ValueError(f"unexpected attribute length {array.shape[0]}; expected 1, face_count={face_count}, or vertex_count={vertex_count}")
 
     @staticmethod
+    def _compute_face_normals(vertices: np.ndarray, geometry_indices: np.ndarray) -> np.ndarray:
+        """Compute per-face unit normals via the triangle cross product in the input space.
+
+        Whatever coordinate system ``vertices`` is in, the returned normals are in the same space.
+        """
+        faces_vertices = vertices[geometry_indices]  # (face_count, 3, 3)
+        edge_a = faces_vertices[:, 1] - faces_vertices[:, 0]
+        edge_b = faces_vertices[:, 2] - faces_vertices[:, 0]
+        face_normals = np.cross(edge_a, edge_b)
+        norms = np.linalg.norm(face_normals, axis=1, keepdims=True)
+        # avoid division by zero on degenerate faces; they'll be culled separately
+        norms = np.where(norms == 0.0, 1.0, norms)
+        return face_normals / norms
+
+    @staticmethod
     def compute_face_normals_view(vertices_view: np.ndarray, geometry_indices: np.ndarray) -> np.ndarray:
         """Compute per-face normals in view space via the triangle cross product.
 
@@ -70,14 +85,20 @@ class RendererUtils:
         Returns:
             np.ndarray: Unit per-face normals in view space, shape (face_count, 3).
         """
-        faces_vertices_view = vertices_view[geometry_indices]  # (face_count, 3, 3)
-        edge_a = faces_vertices_view[:, 1] - faces_vertices_view[:, 0]
-        edge_b = faces_vertices_view[:, 2] - faces_vertices_view[:, 0]
-        face_normals = np.cross(edge_a, edge_b)
-        norms = np.linalg.norm(face_normals, axis=1, keepdims=True)
-        # avoid division by zero on degenerate faces; they'll be culled separately
-        norms = np.where(norms == 0.0, 1.0, norms)
-        return face_normals / norms
+        return RendererUtils._compute_face_normals(vertices_view, geometry_indices)
+
+    @staticmethod
+    def compute_face_normals_world(vertices_world: np.ndarray, geometry_indices: np.ndarray) -> np.ndarray:
+        """Compute per-face normals in world space via the triangle cross product.
+
+        Args:
+            vertices_world (np.ndarray): Vertices in world space, shape (vertex_count, 3).
+            geometry_indices (np.ndarray): Triangle indices, shape (face_count, 3).
+
+        Returns:
+            np.ndarray: Unit per-face normals in world space, shape (face_count, 3).
+        """
+        return RendererUtils._compute_face_normals(vertices_world, geometry_indices)
 
     @staticmethod
     def compute_face_depths_ndc(faces_vertices_ndc: np.ndarray) -> np.ndarray:
