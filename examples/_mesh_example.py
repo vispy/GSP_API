@@ -11,6 +11,8 @@ import numpy as np
 # local imports
 from gsp.core import Canvas, Viewport
 from gsp.materials.mesh_basic_material import MeshBasicMaterial
+from gsp.materials.mesh_normal_material import MeshNormalMaterial
+from gsp.materials.mesh_depth_material import MeshDepthMaterial
 from gsp.types.visual_base import VisualBase
 from gsp.visuals.mesh import Mesh
 from gsp.types import Buffer, BufferType
@@ -23,6 +25,29 @@ from gsp.constants import Constants
 from common.example_helper import ExampleHelper
 from gsp_extra.mpl3d import glm
 from gsp.utils.transbuf_utils import TransBufUtils
+
+
+def create_basic_material(position_count: int) -> MeshBasicMaterial:
+    """Create a MeshBasicMaterial with magenta faces and a thin black wireframe."""
+    face_colors_numpy = np.array([[255, 0, 255, 255]] * position_count, dtype=np.uint8)
+    face_colors_buffer = Bufferx.from_numpy(face_colors_numpy, BufferType.rgba8)
+    edge_colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.black], dtype=np.uint8), BufferType.rgba8)
+    edge_widths_buffer = Bufferx.from_numpy(np.array([0.5], dtype=np.float32), BufferType.float32)
+    return MeshBasicMaterial(face_colors_buffer, edge_colors_buffer, edge_widths_buffer, True, Constants.FaceCulling.FrontSide)
+
+
+def create_normal_material() -> MeshNormalMaterial:
+    """Create a MeshNormalMaterial; face colors are derived from view-space normals at render time."""
+    edge_colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.black], dtype=np.uint8), BufferType.rgba8)
+    edge_widths_buffer = Bufferx.from_numpy(np.array([0.5], dtype=np.float32), BufferType.float32)
+    return MeshNormalMaterial(edge_colors_buffer, edge_widths_buffer, True, Constants.FaceCulling.FrontSide)
+
+
+def create_depth_material() -> MeshDepthMaterial:
+    """Create a MeshDepthMaterial; face colors are derived from view-space depth at render time."""
+    edge_colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.black], dtype=np.uint8), BufferType.rgba8)
+    edge_widths_buffer = Bufferx.from_numpy(np.array([0.5], dtype=np.float32), BufferType.float32)
+    return MeshDepthMaterial(edge_colors_buffer, edge_widths_buffer, True, Constants.FaceCulling.FrontSide)
 
 
 def main():
@@ -47,19 +72,20 @@ def main():
     # obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
     mesh_geometry = MeshUtils.parse_obj_file_manual(str(obj_path))
 
-    # TODO fix the colors
     positions_buffer = TransBufUtils.to_buffer(mesh_geometry.get_positions())
     positions_numpy = Bufferx.to_numpy(positions_buffer).reshape(-1, 3)
     position_count = positions_numpy.shape[0]
 
-    face_colors_numpy = np.array([[255, 0, 255, 255]] * position_count, dtype=np.uint8)  # magenta color for all vertices
-    face_colors_buffer = Bufferx.from_numpy(face_colors_numpy, BufferType.rgba8)
-    edge_colors_buffer = Bufferx.from_numpy(np.array([Constants.Color.black], dtype=np.uint8), BufferType.rgba8)
-    edge_widths_buffer = Bufferx.from_numpy(np.array([0.5], dtype=np.float32), BufferType.float32)
-    # TODO issue when i change those value
-    face_sorting = True
-    face_culling = Constants.FaceCulling.FrontSide
-    mesh_material = MeshBasicMaterial(face_colors_buffer, edge_colors_buffer, edge_widths_buffer, face_sorting, face_culling)
+    # Pick which material to render with: "basic" | "normal" | "depth"
+    material_type = "depth"
+    if material_type == "basic":
+        mesh_material = create_basic_material(position_count)
+    elif material_type == "normal":
+        mesh_material = create_normal_material()
+    elif material_type == "depth":
+        mesh_material = create_depth_material()
+    else:
+        raise ValueError(f"Unknown material_type {material_type!r}")
 
     if False:
         position_x = 0.0
