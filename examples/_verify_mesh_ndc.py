@@ -75,10 +75,11 @@ def probe(projection_name: str, projection_matrix: np.ndarray) -> None:
         _, tri_ndc = MathUtils.apply_transform_matrix(triangle, mvp_matrix)
         tri_2d = tri_ndc[:, :2]
         cross_z = screen_cross_z(tri_2d)
-        # Current code (renderer_utils.py:62-63): FrontSide is visible when
-        # cross_z <= -threshold. A camera-facing CCW triangle SHOULD be visible
-        # under FrontSide, so we expect cross_z to be negative.
-        front_side_correct = cross_z <= -CROSS_THRESHOLD
+        # Current code (renderer_utils.py): FrontSide is visible when
+        # cross_z >= +threshold (CCW in NDC, OpenGL / glTF convention). A
+        # camera-facing CCW triangle SHOULD be visible under FrontSide, so we
+        # expect cross_z to be positive.
+        front_side_correct = cross_z >= +CROSS_THRESHOLD
         if abs(cross_z) < CROSS_THRESHOLD:
                 front_status = 'DEGENERATE'
         else:
