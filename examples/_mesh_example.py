@@ -155,9 +155,9 @@ def main():
     # =============================================================================
 
     # Load a obj geometry
-    # obj_path = pathlib.Path(__file__).parent / "models" / "cube.obj"
+    obj_path = pathlib.Path(__file__).parent / "models" / "cube.obj"
     # obj_path = pathlib.Path(__file__).parent / "models" / "suzanne.obj"
-    obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
+    # obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
     mesh_geometry = MeshUtils.parse_obj_file_manual(str(obj_path))
 
     positions_buffer = TransBufUtils.to_buffer(mesh_geometry.get_positions())
@@ -165,7 +165,7 @@ def main():
     position_count = positions_numpy.shape[0]
 
     # Pick which material to render with: "basic" | "normal" | "depth" | "phong" | "textured"
-    material_type = "textured"
+    material_type = "normal"
     if material_type == "basic":
         mesh_material = create_basic_material(position_count)
     elif material_type == "normal":
