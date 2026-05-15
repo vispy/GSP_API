@@ -77,8 +77,19 @@ def main():
     # Render the canvas
     # =============================================================================
 
-    # Create a camera
-    camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+    # Real lookat + perspective camera; identity matrices view from the wrong
+    # side of OpenGL's NDC convention. Fixes
+    # https://github.com/vispy/GSP_API/issues/22
+    view_matrix_numpy = glm.lookat(eye=(0, 0, 4), center=(0, 0, 0), up=(0, 1, 0))
+    projection_matrix_numpy = glm.perspective(
+            fovy=45.0,
+            aspect=canvas.get_width() / canvas.get_height(),
+            znear=0.1,
+            zfar=10.0,
+    )
+    view_matrix = Bufferx.from_numpy(np.array([view_matrix_numpy], dtype=np.float32), BufferType.mat4)
+    projection_matrix = Bufferx.from_numpy(np.array([projection_matrix_numpy], dtype=np.float32), BufferType.mat4)
+    camera = Camera(view_matrix, projection_matrix)
 
     # =============================================================================
     # Build the scene
@@ -89,21 +100,6 @@ def main():
     object3d_pixel = Object3D("Pixels Object3D")
     object3d_pixel.attach_visual(pixels)
     object3d_scene.add(object3d_pixel)
-
-    # =============================================================================
-    #
-    # =============================================================================
-
-    camera_world = np.eye(4, dtype=np.float32) @ glm.translate(np.array([0.0, 0.0, 2.0], dtype=np.float32))
-
-    # projection_matrix_numpy = glm.perspective(45.0, canvas.get_width() / canvas.get_height(), 0.1, 100.0)
-    projection_matrix_numpy = glm.ortho(-1.0, 1.0, -1.0, 1.0, 0.1, 100.0)
-    projection_matrix_buffer = Bufferx.from_numpy(np.array([projection_matrix_numpy], dtype=np.float32), BufferType.mat4)
-    camera.set_projection_matrix(projection_matrix_buffer)
-
-    view_matrix_numpy = np.linalg.inv(camera_world)
-    view_matrix_buffer = Bufferx.from_numpy(np.array([view_matrix_numpy]), BufferType.mat4)
-    camera.set_view_matrix(view_matrix_buffer)
 
     # =============================================================================
     #
