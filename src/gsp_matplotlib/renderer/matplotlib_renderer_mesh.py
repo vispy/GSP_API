@@ -13,6 +13,7 @@ from gsp.materials.mesh_basic_material import MeshBasicMaterial
 from gsp.materials.mesh_normal_material import MeshNormalMaterial
 from gsp.materials.mesh_depth_material import MeshDepthMaterial
 from gsp.materials.mesh_phong_material import MeshPhongMaterial
+from gsp.materials.mesh_textured_material import MeshTexturedMaterial
 from gsp.utils.math_utils import MathUtils
 from gsp.visuals.mesh import Mesh
 from gsp.utils.transbuf_utils import TransBufUtils
@@ -22,6 +23,7 @@ from .matplotlib_renderer_mesh_basic import RendererMeshBasic
 from .matplotlib_renderer_mesh_normal import RendererMeshNormal
 from .matplotlib_renderer_mesh_depth import RendererMeshDepth
 from .matplotlib_renderer_mesh_phong import RendererMeshPhong
+from .matplotlib_renderer_mesh_textured import RendererMeshTextured
 from ..extra.bufferx import Bufferx
 from ..utils.renderer_utils import RendererUtils
 
@@ -98,6 +100,25 @@ class RendererMesh:
         # sanity checks on derived shapes
         assert faces_vertices_ndc.shape == (face_count, 3, 3), f"Expected faces_vertices_ndc shape {(face_count, 3, 3)}, got {faces_vertices_ndc.shape}"
         assert faces_vertices_2d.shape == (face_count, 3, 2), f"Expected faces_vertices_2d shape {(face_count, 3, 2)}, got {faces_vertices_2d.shape}"
+
+        # =============================================================================
+        # Textured material has its own render path (per-face AxesImages, not PolyCollection)
+        # =============================================================================
+
+        if isinstance(mesh_material, MeshTexturedMaterial):
+            return RendererMeshTextured.render(
+                renderer,
+                viewport,
+                mesh,
+                geometry_indices_numpy,
+                vertices_world_numpy,
+                faces_vertices_ndc,
+                faces_vertices_2d,
+                model_matrix_numpy,
+                camera_position_world,
+                vertex_count,
+                face_count,
+            )
 
         # =============================================================================
         # Dispatch to per-material attribute computation

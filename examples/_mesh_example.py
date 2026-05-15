@@ -19,6 +19,7 @@ from gsp.materials.mesh_basic_material import MeshBasicMaterial
 from gsp.materials.mesh_normal_material import MeshNormalMaterial
 from gsp.materials.mesh_depth_material import MeshDepthMaterial
 from gsp.materials.mesh_phong_material import MeshPhongMaterial
+from gsp.materials.mesh_textured_material import MeshTexturedMaterial
 from gsp.types.visual_base import VisualBase
 from gsp.visuals.mesh import Mesh
 from gsp.types import Buffer, BufferType  # noqa: F401 -- Buffer used as a return annotation
@@ -26,6 +27,7 @@ from gsp.geometry import MeshGeometry
 from gsp.core import Camera
 from gsp_extra.bufferx import Bufferx
 from gsp_extra.misc.mesh_utils import MeshUtils
+from gsp_extra.misc.texture_utils import TextureUtils
 from gsp.utils.group_utils import GroupUtils
 from gsp.constants import Constants
 from common.example_helper import ExampleHelper
@@ -117,6 +119,25 @@ def create_phong_material(position_count: int) -> MeshPhongMaterial:
     )
 
 
+def create_textured_material() -> MeshTexturedMaterial:
+    """Create a MeshTexturedMaterial using examples/images/UV_Grid_Sm.jpg as the texture, with default Phong lights."""
+    texture_path = pathlib.Path(__file__).parent / "images" / "UV_Grid_Sm.jpg"
+    texture = TextureUtils.load_image(str(texture_path))
+
+    color = Bufferx.from_numpy(np.array([Constants.Color.white], dtype=np.uint8), BufferType.rgba8)
+    specular_color = Bufferx.from_numpy(np.array([[255, 255, 255, 255]], dtype=np.uint8), BufferType.rgba8)
+    lights = create_phong_lights()
+    return MeshTexturedMaterial(
+        texture,
+        color,
+        specular_color,
+        32.0,
+        lights,
+        True,
+        Constants.FaceCulling.FrontSide,
+    )
+
+
 def main():
     """Main function for the pixels example."""
     # fix random seed for reproducibility
@@ -135,16 +156,16 @@ def main():
 
     # Load a obj geometry
     # obj_path = pathlib.Path(__file__).parent / "models" / "cube.obj"
-    obj_path = pathlib.Path(__file__).parent / "models" / "suzanne.obj"
-    # obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
+    # obj_path = pathlib.Path(__file__).parent / "models" / "suzanne.obj"
+    obj_path = pathlib.Path(__file__).parent / "models" / "head.obj"
     mesh_geometry = MeshUtils.parse_obj_file_manual(str(obj_path))
 
     positions_buffer = TransBufUtils.to_buffer(mesh_geometry.get_positions())
     positions_numpy = Bufferx.to_numpy(positions_buffer).reshape(-1, 3)
     position_count = positions_numpy.shape[0]
 
-    # Pick which material to render with: "basic" | "normal" | "depth" | "phong"
-    material_type = "phong"
+    # Pick which material to render with: "basic" | "normal" | "depth" | "phong" | "textured"
+    material_type = "textured"
     if material_type == "basic":
         mesh_material = create_basic_material(position_count)
     elif material_type == "normal":
@@ -153,6 +174,8 @@ def main():
         mesh_material = create_depth_material()
     elif material_type == "phong":
         mesh_material = create_phong_material(position_count)
+    elif material_type == "textured":
+        mesh_material = create_textured_material()
     else:
         raise ValueError(f"Unknown material_type {material_type!r}")
 
@@ -269,6 +292,10 @@ def main():
                 phong_material = mesh.get_material()
                 assert isinstance(phong_material, MeshPhongMaterial)
                 update_phong_lights_world_fixed(phong_material.get_lights(), matrix_mvp)
+            elif material_type == "textured":
+                textured_material = mesh.get_material()
+                assert isinstance(textured_material, MeshTexturedMaterial)
+                update_phong_lights_world_fixed(textured_material.get_lights(), matrix_mvp)
 
             renderer_base.render([viewport], [mesh], [model_matrix], [camera])
             changed_visuals: list[VisualBase] = []

@@ -1,11 +1,14 @@
 """Per-material attribute computation for MeshPhongMaterial."""
 
 # pip imports
+from typing import Sequence
+
 import numpy as np
 
 # local imports
 from gsp.lights.ambient_light import AmbientLight
 from gsp.lights.directional_light import DirectionalLight
+from gsp.lights.light import Light
 from gsp.lights.point_light import PointLight
 from gsp.materials.mesh_phong_material import MeshPhongMaterial
 from gsp.types.transbuf import TransBuf
@@ -64,10 +67,6 @@ class RendererMeshPhong:
         faces_vertices_world = vertices_world_numpy[geometry_indices_numpy]  # (face_count, 3, 3)
         face_centroids_world = faces_vertices_world.mean(axis=1)  # (face_count, 3)
 
-        # Per-face view direction (toward camera).
-        view_dirs = camera_position_world[np.newaxis, :] - face_centroids_world  # (face_count, 3)
-        view_dirs = view_dirs / np.maximum(np.linalg.norm(view_dirs, axis=1, keepdims=True), 1e-12)
-
         # Material colors broadcast to per-face.
         diffuse_buffer = TransBufUtils.to_buffer(material.get_diffuse_color())
         specular_buffer = TransBufUtils.to_buffer(material.get_specular_color())
@@ -76,7 +75,65 @@ class RendererMeshPhong:
         diffuse_per_face = RendererUtils.to_per_face(diffuse_numpy, face_count, vertex_count, geometry_indices_numpy)
         specular_per_face = RendererUtils.to_per_face(specular_numpy, face_count, vertex_count, geometry_indices_numpy)
 
-        # Accumulate RGB face color over the light list.
+        face_rgb = RendererMeshPhong.shade_faces_flat(
+            diffuse_per_face=diffuse_per_face,
+            specular_per_face=specular_per_face,
+            shininess=shininess,
+            lights=lights,
+            face_normals_world=face_normals_world,
+            face_centroids_world=face_centroids_world,
+            camera_position_world=camera_position_world,
+            model_matrix_numpy=model_matrix_numpy,
+            face_count=face_count,
+        )
+        face_alpha = np.ones((face_count, 1), dtype=face_rgb.dtype)
+        face_colors_per_face = np.concatenate([face_rgb, face_alpha], axis=1)
+
+        edge_colors_buffer = TransBufUtils.to_buffer(material.get_edge_colors())
+        edge_widths_buffer = TransBufUtils.to_buffer(material.get_edge_widths())
+        edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer) / 255.0
+        edge_widths_numpy = Bufferx.to_numpy(edge_widths_buffer).flatten()
+        edge_colors_per_face = RendererUtils.to_per_face(edge_colors_numpy, face_count, vertex_count, geometry_indices_numpy)
+        edge_widths_per_face = RendererUtils.to_per_face(edge_widths_numpy, face_count, vertex_count, geometry_indices_numpy)
+
+        return face_colors_per_face, edge_colors_per_face, edge_widths_per_face
+
+    # =============================================================================
+    # Shared flat Phong shading helper (also used by RendererMeshTextured)
+    # =============================================================================
+
+    @staticmethod
+    def shade_faces_flat(
+        diffuse_per_face: np.ndarray,
+        specular_per_face: np.ndarray,
+        shininess: float,
+        lights: Sequence[Light],
+        face_normals_world: np.ndarray,
+        face_centroids_world: np.ndarray,
+        camera_position_world: np.ndarray,
+        model_matrix_numpy: np.ndarray,
+        face_count: int,
+    ) -> np.ndarray:
+        """Accumulate per-face RGB shading over a list of lights (Lambert diffuse + Phong specular).
+
+        Args:
+            diffuse_per_face (np.ndarray): (face_count, 3) RGB in [0, 1]. Also serves as the ambient base.
+            specular_per_face (np.ndarray): (face_count, 3) RGB in [0, 1].
+            shininess (float): Phong specular exponent.
+            lights (Sequence[Light]): Mix of AmbientLight, DirectionalLight, PointLight.
+            face_normals_world (np.ndarray): (face_count, 3) unit normals in world space.
+            face_centroids_world (np.ndarray): (face_count, 3) face centroids in world space.
+            camera_position_world (np.ndarray): (3,) camera position in world space.
+            model_matrix_numpy (np.ndarray): (4, 4) model matrix used to transform light positions.
+            face_count (int): Number of faces.
+
+        Returns:
+            np.ndarray: (face_count, 3) RGB in [0, 1], clipped.
+        """
+        # Per-face view direction (toward camera).
+        view_dirs = camera_position_world[np.newaxis, :] - face_centroids_world  # (face_count, 3)
+        view_dirs = view_dirs / np.maximum(np.linalg.norm(view_dirs, axis=1, keepdims=True), 1e-12)
+
         face_rgb = np.zeros((face_count, 3), dtype=np.float64)
         for light in lights:
             light_color_rgb = np.asarray(light.get_color(), dtype=np.float64)[:3] / 255.0
@@ -115,18 +172,7 @@ class RendererMeshPhong:
 
             face_rgb += diffuse_term + specular_term
 
-        face_rgb = np.clip(face_rgb, 0.0, 1.0)
-        face_alpha = np.ones((face_count, 1), dtype=face_rgb.dtype)
-        face_colors_per_face = np.concatenate([face_rgb, face_alpha], axis=1)
-
-        edge_colors_buffer = TransBufUtils.to_buffer(material.get_edge_colors())
-        edge_widths_buffer = TransBufUtils.to_buffer(material.get_edge_widths())
-        edge_colors_numpy = Bufferx.to_numpy(edge_colors_buffer) / 255.0
-        edge_widths_numpy = Bufferx.to_numpy(edge_widths_buffer).flatten()
-        edge_colors_per_face = RendererUtils.to_per_face(edge_colors_numpy, face_count, vertex_count, geometry_indices_numpy)
-        edge_widths_per_face = RendererUtils.to_per_face(edge_widths_numpy, face_count, vertex_count, geometry_indices_numpy)
-
-        return face_colors_per_face, edge_colors_per_face, edge_widths_per_face
+        return np.clip(face_rgb, 0.0, 1.0)
 
     @staticmethod
     def _transform_position_to_world(position_transbuf: TransBuf, model_matrix_numpy: np.ndarray) -> np.ndarray:
