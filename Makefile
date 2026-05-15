@@ -75,8 +75,9 @@ philosophy_pdf: ## Build the philosophy PDF from the markdown source
 	cd ./docs/philosophy && npx md-to-pdf *.md
 
 mkdocs_philosophy_copy: ## Copy philosophy .md files into mkdocs source
-	mkdir -p mkdocs_source/philosophy/markdowns/
-	cp docs/philosophy/markdowns/*.md mkdocs_source/philosophy/markdowns/
+	cp docs/philosophy/markdowns/philosophy_*.md mkdocs_source/philosophy/
+	cp docs/philosophy/markdowns/whitepaper.md mkdocs_source/philosophy/
+	python3 tools/rewrite_doc_links.py mkdocs_source/philosophy/
 
 mkdocs_build_gallery: ## Build the MkDocs documentation site for the gallery
 	python ./tools/build_gallery.py

@@ -13,7 +13,7 @@ GSP_RENDERER=matplotlib python examples/<file>.py
 GSP_RENDERER=datoviz    python examples/<file>.py
 ```
 
-> **Heads-up: `examples/README.md` says `GSP_BACKEND`, but the code reads `GSP_RENDERER`.** The factory in [examples/common/example_helper.py:42](../../examples/common/example_helper.py#L42) is the source of truth — `os.environ.get("GSP_RENDERER", ...)`. Use `GSP_RENDERER` when running examples; the README is stale.
+> **Heads-up: `examples/README.md` says `GSP_BACKEND`, but the code reads `GSP_RENDERER`.** The factory in [examples/common/example_helper.py:42](https://github.com/vispy/GSP_API/blob/main/examples/common/example_helper.py#L42) is the source of truth — `os.environ.get("GSP_RENDERER", ...)`. Use `GSP_RENDERER` when running examples; the README is stale.
 
 ---
 
@@ -72,7 +72,7 @@ renderer_base.show()
 
 ## 3. The Canonical Skeleton
 
-Every basic example follows the same seven steps. [`examples/points_example.py`](../../examples/points_example.py) is the reference template — read it once and the rest of the directory becomes structurally familiar.
+Every basic example follows the same seven steps. [`examples/points_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/points_example.py) is the reference template — read it once and the rest of the directory becomes structurally familiar.
 
 ### Step 1 — Imports
 Three tiers, in this order:
@@ -174,7 +174,7 @@ The output filename pattern `{stem}_{renderer_name}.png` ensures `matplotlib` an
 | Colormap | `CmapUtils.get_color_map("plasma", normalized_values)` | Returns an rgba8 buffer keyed off a numpy array of normalised floats. |
 | DPI-aware sizes | `UnitUtils.pixel_to_point(1, canvas.get_dpi())` | Use this anywhere a width is in points (line widths, edge widths, font sizes). |
 
-**Demonstrated in:** [`points_example.py`](../../examples/points_example.py), [`markers_example.py`](../../examples/markers_example.py), [`buffer_example.py`](../../examples/buffer_example.py), [`image_example.py`](../../examples/image_example.py).
+**Demonstrated in:** [`points_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/points_example.py), [`markers_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/markers_example.py), [`buffer_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/buffer_example.py), [`image_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/image_example.py).
 
 ### 4.2 Multi-viewport composition
 
@@ -191,9 +191,9 @@ renderer_base.render(
 
 Layouts emerge from how you place the viewports in pixel coordinates:
 
-- **Tiled grid** — `Viewport(0, 0, w/2, h/2)`, `Viewport(w/2, 0, w/2, h/2)`, … as in [`viewport_multi_example.py`](../../examples/viewport_multi_example.py).
-- **Overlapping** — viewports whose rectangles intersect; later list entries paint over earlier ones. See [`viewport_overlapping_example.py`](../../examples/viewport_overlapping_example.py).
-- **Stacked / event-driven** — vertical stacks with input attached, in [`viewport_events_example.py`](../../examples/viewport_events_example.py).
+- **Tiled grid** — `Viewport(0, 0, w/2, h/2)`, `Viewport(w/2, 0, w/2, h/2)`, … as in [`viewport_multi_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/viewport_multi_example.py).
+- **Overlapping** — viewports whose rectangles intersect; later list entries paint over earlier ones. See [`viewport_overlapping_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/viewport_overlapping_example.py).
+- **Stacked / event-driven** — vertical stacks with input attached, in [`viewport_events_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/viewport_events_example.py).
 
 **Demonstrated in:** `viewport_multi_example.py`, `viewport_overlapping_example.py`, `viewport_events_example.py`.
 
@@ -218,7 +218,7 @@ axes_display.new_limits_event.subscribe(re_render_callback)
 
 `AxesPanZoom` itself contains no rendering logic — it only mutates `axes_display` limits in response to events. The re-render is triggered by subscribing to `new_limits_event`. This separation (events → controller → display → render trigger) is the canonical interactive shape.
 
-**Demonstrated in:** [`viewport_events_example.py`](../../examples/viewport_events_example.py), [`vispy_axes_panzoom_example.py`](../../examples/vispy_axes_panzoom_example.py), [`vispy_axes_multiple_panzoom_example.py`](../../examples/vispy_axes_multiple_panzoom_example.py), [`camera_control_example.py`](../../examples/camera_control_example.py).
+**Demonstrated in:** [`viewport_events_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/viewport_events_example.py), [`vispy_axes_panzoom_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_panzoom_example.py), [`vispy_axes_multiple_panzoom_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_multiple_panzoom_example.py), [`camera_control_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/camera_control_example.py).
 
 ### 4.4 Axes layers (managed → display → panzoom)
 
@@ -226,9 +226,9 @@ Three abstraction levels, increasing in control:
 
 | Layer | Purpose | When to reach for it |
 |---|---|---|
-| `AxesManaged` | Wraps a viewport, auto-handles pan/zoom, labels, and titles. | Tutorial code, quick plots, demos. See [`vispy_axes_managed_example.py`](../../examples/vispy_axes_managed_example.py). |
-| `AxesDisplay` | Exposes the viewport, transform matrix, and `new_limits_event`. No interaction baked in. | When you want custom event wiring. See [`vispy_axes_display_example.py`](../../examples/vispy_axes_display_example.py). |
-| `AxesPanZoom` | Pure input controller — listens to `ViewportEvents`, mutates an `AxesDisplay`. | Pair with `AxesDisplay` for full control. See [`vispy_axes_panzoom_example.py`](../../examples/vispy_axes_panzoom_example.py). |
+| `AxesManaged` | Wraps a viewport, auto-handles pan/zoom, labels, and titles. | Tutorial code, quick plots, demos. See [`vispy_axes_managed_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_managed_example.py). |
+| `AxesDisplay` | Exposes the viewport, transform matrix, and `new_limits_event`. No interaction baked in. | When you want custom event wiring. See [`vispy_axes_display_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_display_example.py). |
+| `AxesPanZoom` | Pure input controller — listens to `ViewportEvents`, mutates an `AxesDisplay`. | Pair with `AxesDisplay` for full control. See [`vispy_axes_panzoom_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_panzoom_example.py). |
 
 The split is deliberate: rendering, display state, and interaction can each be replaced independently.
 
@@ -267,7 +267,7 @@ renderer_base.render(viewports, visuals, model_matrices, cameras)
 
 `Object3D.pre_render` is the bridge: it flattens a hierarchy into the four parallel lists the renderer expects. The renderer's API does not change — only the way the lists are produced.
 
-**Demonstrated in:** [`simple_model_matrix.py`](../../examples/simple_model_matrix.py), [`object3d_example.py`](../../examples/object3d_example.py), [`camera_control_example.py`](../../examples/camera_control_example.py), [`vispy_basic_example.py`](../../examples/vispy_basic_example.py).
+**Demonstrated in:** [`simple_model_matrix.py`](https://github.com/vispy/GSP_API/blob/main/examples/simple_model_matrix.py), [`object3d_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/object3d_example.py), [`camera_control_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/camera_control_example.py), [`vispy_basic_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_basic_example.py).
 
 ### 4.6 Animation: `@animator.event_listener`
 
@@ -306,7 +306,7 @@ def on_save():
 
 Same callback, same `start(...)`; the animator writes an `.mp4` and emits `on_video_saved` when the duration is reached.
 
-**Demonstrated in:** [`animator_example.py`](../../examples/animator_example.py), [`texts_animated_example.py`](../../examples/texts_animated_example.py), [`dynamic_groups_example.py`](../../examples/dynamic_groups_example.py), [`object3d_example.py`](../../examples/object3d_example.py).
+**Demonstrated in:** [`animator_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/animator_example.py), [`texts_animated_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/texts_animated_example.py), [`dynamic_groups_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/dynamic_groups_example.py), [`object3d_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/object3d_example.py).
 
 ### 4.7 Groups: index → attribute association
 
@@ -322,9 +322,9 @@ colors_buffer.set_data(Constants.Color.red + Constants.Color.green, 0, 2)
 pixels.set_attributes(colors=colors_buffer, groups=groups)
 ```
 
-Calling `set_attributes(...)` again with new groups remaps colours without recreating the visual or its position buffer — this is the basis of `dynamic_groups_example.py`'s real-time re-styling. `GroupUtils.get_group_count(...)` (visible in [`viewport_multi_example.py`](../../examples/viewport_multi_example.py) and [`object3d_example.py`](../../examples/object3d_example.py)) computes group counts when each vertex is its own group.
+Calling `set_attributes(...)` again with new groups remaps colours without recreating the visual or its position buffer — this is the basis of `dynamic_groups_example.py`'s real-time re-styling. `GroupUtils.get_group_count(...)` (visible in [`viewport_multi_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/viewport_multi_example.py) and [`object3d_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/object3d_example.py)) computes group counts when each vertex is its own group.
 
-**Demonstrated in:** [`groups_example.py`](../../examples/groups_example.py), [`dynamic_groups_example.py`](../../examples/dynamic_groups_example.py), [`viewport_multi_example.py`](../../examples/viewport_multi_example.py).
+**Demonstrated in:** [`groups_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/groups_example.py), [`dynamic_groups_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/dynamic_groups_example.py), [`viewport_multi_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/viewport_multi_example.py).
 
 ### 4.8 Sessions: timestamped Pydantic snapshots
 
@@ -357,7 +357,7 @@ renderer_base.render(viewports, visuals, model_matrices, cameras)
 
 A session can be persisted to JSON, shipped over the wire, or replayed in CI for regression testing.
 
-**Demonstrated in:** [`session_record_example.py`](../../examples/session_record_example.py), [`session_player_example.py`](../../examples/session_player_example.py).
+**Demonstrated in:** [`session_record_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/session_record_example.py), [`session_player_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/session_player_example.py).
 
 ### 4.9 Transforms and serialization
 
@@ -373,9 +373,9 @@ transform_deserialized = TransformChain.deserialize(transform_serialized)
 
 This is the right tool when the pipeline itself is what you want to ship — for lazy evaluation, remote execution, or recording the construction recipe rather than the final array.
 
-**Pydantic full-scene serialization.** As in §4.8, but used standalone in [`pydantic_cycle_example.py`](../../examples/pydantic_cycle_example.py) to demonstrate full round-trip of a scene (visuals + buffers + transforms) through Pydantic dictionaries.
+**Pydantic full-scene serialization.** As in §4.8, but used standalone in [`pydantic_cycle_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/pydantic_cycle_example.py) to demonstrate full round-trip of a scene (visuals + buffers + transforms) through Pydantic dictionaries.
 
-**Demonstrated in:** [`transform_example.py`](../../examples/transform_example.py), [`transform_build_sample.py`](../../examples/transform_build_sample.py), [`transform_serialization_example.py`](../../examples/transform_serialization_example.py), [`transform_visual_example.py`](../../examples/transform_visual_example.py), [`pydantic_cycle_example.py`](../../examples/pydantic_cycle_example.py).
+**Demonstrated in:** [`transform_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/transform_example.py), [`transform_build_sample.py`](https://github.com/vispy/GSP_API/blob/main/examples/transform_build_sample.py), [`transform_serialization_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/transform_serialization_example.py), [`transform_visual_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/transform_visual_example.py), [`pydantic_cycle_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/pydantic_cycle_example.py).
 
 ### 4.10 Vector and remote output
 
@@ -387,7 +387,7 @@ rendered_svg = renderer.render([viewport], [paths], [model_matrix], [camera], im
 rendered_pdf = renderer.render([viewport], [paths], [model_matrix], [camera], image_format="pdf")
 ```
 
-See [`svg_pdf_example.py`](../../examples/svg_pdf_example.py).
+See [`svg_pdf_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/svg_pdf_example.py).
 
 **Remote rendering.** `NetworkRenderer` implements the same `RendererBase` contract but sends the scene over HTTP to a remote `gsp_server` (which itself runs matplotlib or datoviz):
 
@@ -398,15 +398,15 @@ rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
 
 Local code is identical to single-machine code. The choice of remote backend is parameterised — set `GSP_REMOTE_RENDERER=matplotlib|datoviz` when `GSP_RENDERER=network`.
 
-**Demonstrated in:** [`svg_pdf_example.py`](../../examples/svg_pdf_example.py), [`network_client_example.py`](../../examples/network_client_example.py).
+**Demonstrated in:** [`svg_pdf_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/svg_pdf_example.py), [`network_client_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/network_client_example.py).
 
 ---
 
 ## 5. The `common/` Helpers Reference
 
-Three files live in [examples/common/](../../examples/common/):
+Three files live in [examples/common/](https://github.com/vispy/GSP_API/blob/main/examples/common/):
 
-### `ExampleHelper` ([example_helper.py](../../examples/common/example_helper.py))
+### `ExampleHelper` ([example_helper.py](https://github.com/vispy/GSP_API/blob/main/examples/common/example_helper.py))
 
 The factory that hides backend selection. Most examples use it; the few that instantiate `MatplotlibRenderer` / `DatovizRenderer` / `NetworkRenderer` directly do so deliberately to demonstrate a backend-specific feature.
 
@@ -462,7 +462,7 @@ The "now you do it" section. Each box mirrors a step in the canonical skeleton o
   Look for both PNGs in `examples/output/`. They should be visually equivalent.
 - [ ] **For animated examples**, use `@animator.event_listener` and return only changed visuals.
 - [ ] **For interactive examples**, build the chain `ExampleHelper.create_viewport_events → AxesPanZoom → AxesDisplay.new_limits_event → re-render` rather than wiring callbacks ad hoc.
-- [ ] **Add a row** to the appropriate table in [`examples/README.md`](../../examples/README.md).
+- [ ] **Add a row** to the appropriate table in [`examples/README.md`](https://github.com/vispy/GSP_API/blob/main/examples/README.md).
 
 ---
 
@@ -484,8 +484,8 @@ The "now you do it" section. Each box mirrors a step in the canonical skeleton o
 Every claim in this document is grounded in a specific file. To verify:
 
 1. **For a pattern in §4** — open the cited example file, locate the snippet quoted here, and run it under both backends as shown in §1. The output PNGs in `examples/output/` are the proof.
-2. **For an `ExampleHelper` method** — see [examples/common/example_helper.py](../../examples/common/example_helper.py); each method is small enough to read in full.
-3. **For the env-var name** — `grep -rn "GSP_RENDERER\|GSP_BACKEND" examples/ src/`. Only [example_helper.py:42](../../examples/common/example_helper.py#L42) uses `GSP_RENDERER` from code; `GSP_BACKEND` appears only in the (stale) README.
+2. **For an `ExampleHelper` method** — see [examples/common/example_helper.py](https://github.com/vispy/GSP_API/blob/main/examples/common/example_helper.py); each method is small enough to read in full.
+3. **For the env-var name** — `grep -rn "GSP_RENDERER\|GSP_BACKEND" examples/ src/`. Only [example_helper.py:42](https://github.com/vispy/GSP_API/blob/main/examples/common/example_helper.py#L42) uses `GSP_RENDERER` from code; `GSP_BACKEND` appears only in the (stale) README.
 4. **For a snippet quoted verbatim** — `grep -n "<snippet>" examples/<file>.py`. Examples cited above:
    - `grep -n "ExampleHelper.create_renderer" examples/*.py`
    - `grep -n "@animator.event_listener" examples/animator_example.py`

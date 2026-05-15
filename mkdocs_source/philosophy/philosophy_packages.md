@@ -2,7 +2,7 @@
 
 ## 1. Preamble
 
-The repo is split across **seven Python packages** under [src/](../../src/). The split is not arbitrary — each package occupies a specific layer of the architecture, and dependencies flow strictly downward. This document names the layers, walks each package, and shows how they cooperate.
+The repo is split across **seven Python packages** under [src/](https://github.com/vispy/GSP_API/blob/main/src/). The split is not arbitrary — each package occupies a specific layer of the architecture, and dependencies flow strictly downward. This document names the layers, walks each package, and shows how they cooperate.
 
 **Audience.** A contributor opening this repo for the first time, or one returning after months away.
 
@@ -31,7 +31,7 @@ Three tiers, each smaller in scope than the one above it.
 
 ### 2.1 Contract layer
 
-[`gsp`](../../src/gsp/) — the abstract protocol. Defines what a Canvas, Viewport, Visual, Buffer, and Renderer *are*, with no commitment to how rendering happens. Imports from no sibling package.
+[`gsp`](https://github.com/vispy/GSP_API/blob/main/src/gsp/) — the abstract protocol. Defines what a Canvas, Viewport, Visual, Buffer, and Renderer *are*, with no commitment to how rendering happens. Imports from no sibling package.
 
 ### 2.2 Backend layer
 
@@ -39,9 +39,9 @@ Three packages, each implementing the abstract bases of `gsp`. They self-registe
 
 | Package | Backend | Target use case |
 |---|---|---|
-| [`gsp_matplotlib`](../../src/gsp_matplotlib/) | matplotlib | Static images, CI, publication-quality PNG/SVG/PDF |
-| [`gsp_datoviz`](../../src/gsp_datoviz/) | datoviz (GPU) | Interactive, real-time, GPU-accelerated |
-| [`gsp_network`](../../src/gsp_network/) | HTTP client + Flask server | Remote rendering; server delegates to one of the other two backends |
+| [`gsp_matplotlib`](https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/) | matplotlib | Static images, CI, publication-quality PNG/SVG/PDF |
+| [`gsp_datoviz`](https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/) | datoviz (GPU) | Interactive, real-time, GPU-accelerated |
+| [`gsp_network`](https://github.com/vispy/GSP_API/blob/main/src/gsp_network/) | HTTP client + Flask server | Remote rendering; server delegates to one of the other two backends |
 
 ### 2.3 Convenience / facade layer
 
@@ -49,9 +49,9 @@ Three packages that build on `gsp` *without* taking a dependency on any backend.
 
 | Package | Role |
 |---|---|
-| [`gsp_extra`](../../src/gsp_extra/) | Helpers above the protocol: `Object3D` scene-graph hierarchy, camera controls, `Bufferx` numpy bridge |
-| [`gsp_pydantic`](../../src/gsp_pydantic/) | Round-trip the entire scene through pydantic models (for sessions, network, snapshot tests) |
-| [`vispy2`](../../src/vispy2/) | High-level matplotlib-like facade: `scatter`, `plot`, `imshow`, and the `AxesManaged` / `AxesDisplay` / `AxesPanZoom` stack |
+| [`gsp_extra`](https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/) | Helpers above the protocol: `Object3D` scene-graph hierarchy, camera controls, `Bufferx` numpy bridge |
+| [`gsp_pydantic`](https://github.com/vispy/GSP_API/blob/main/src/gsp_pydantic/) | Round-trip the entire scene through pydantic models (for sessions, network, snapshot tests) |
+| [`vispy2`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/) | High-level matplotlib-like facade: `scatter`, `plot`, `imshow`, and the `AxesManaged` / `AxesDisplay` / `AxesPanZoom` stack |
 
 ### 2.4 The golden rule: dependencies point downward
 
@@ -72,7 +72,7 @@ Three packages that build on `gsp` *without* taking a dependency on any backend.
 - Convenience packages never depend on backends — they speak to the abstract types only.
 - The lone "horizontal" edge is `gsp_network → gsp_pydantic`: the network backend uses serialization to put scenes on the wire.
 
-The table describes the **renderer-side** dependency graph — the part of each package a user imports to render. The `gsp_network` package additionally ships an executable Flask server under [tools/](../../src/gsp_network/tools/) that does import both backends to dispatch incoming requests. That tool is a deployment artefact, not a library dependency — see §3.4.
+The table describes the **renderer-side** dependency graph — the part of each package a user imports to render. The `gsp_network` package additionally ships an executable Flask server under [tools/](https://github.com/vispy/GSP_API/blob/main/src/gsp_network/tools/) that does import both backends to dispatch incoming requests. That tool is a deployment artefact, not a library dependency — see §3.4.
 
 This is what makes the env-var swap `GSP_RENDERER=matplotlib|datoviz|network` actually work — see [philosophy_examples.md §2.1](./philosophy_examples.md).
 
@@ -96,13 +96,13 @@ grep -rn "^from gsp_\|^import gsp_" src/gsp/   # no matches
 
 | Subpackage | Role | Key exports |
 |---|---|---|
-| [`gsp.core`](../../src/gsp/core/) | Scene-graph containers | `Canvas`, `Viewport`, `Camera`, `Texture`, `Event` |
-| [`gsp.visuals`](../../src/gsp/visuals/) | Concrete visuals (data containers, not draw commands) | `Points`, `Pixels`, `Markers`, `Paths`, `Segments`, `Texts`, `Image`, `Mesh` |
-| [`gsp.types`](../../src/gsp/types/) | Abstract bases + value types | `RendererBase`, `VisualBase`, `AnimatorBase`, `ViewportEventsBase`, `SerializerBase`, `Buffer`, `BufferType`, `Color`, `MarkerShape`, `CapStyle`, `JoinStyle`, `TextAlign`, `ImageInterpolation`, `Group`, `TransBuf` |
-| [`gsp.transforms`](../../src/gsp/transforms/) | `TransformChain` and registry | `TransformChain`, `TransformLinkBase`, `TransformRegistry` |
-| [`gsp.geometry`](../../src/gsp/geometry/) | Geometry containers | `Geometry`, `MeshGeometry` |
-| [`gsp.materials`](../../src/gsp/materials/) | Material descriptors | `Material`, `MeshBasicMaterial`, `MeshMaterial` |
-| [`gsp.utils`](../../src/gsp/utils/) | Free functions and the registry | `RendererRegistry`, `CmapUtils`, `GroupUtils`, `UnitUtils`, `ViewportUnitUtils`, `MathUtils`, `UuidUtils` |
+| [`gsp.core`](https://github.com/vispy/GSP_API/blob/main/src/gsp/core/) | Scene-graph containers | `Canvas`, `Viewport`, `Camera`, `Texture`, `Event` |
+| [`gsp.visuals`](https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/) | Concrete visuals (data containers, not draw commands) | `Points`, `Pixels`, `Markers`, `Paths`, `Segments`, `Texts`, `Image`, `Mesh` |
+| [`gsp.types`](https://github.com/vispy/GSP_API/blob/main/src/gsp/types/) | Abstract bases + value types | `RendererBase`, `VisualBase`, `AnimatorBase`, `ViewportEventsBase`, `SerializerBase`, `Buffer`, `BufferType`, `Color`, `MarkerShape`, `CapStyle`, `JoinStyle`, `TextAlign`, `ImageInterpolation`, `Group`, `TransBuf` |
+| [`gsp.transforms`](https://github.com/vispy/GSP_API/blob/main/src/gsp/transforms/) | `TransformChain` and registry | `TransformChain`, `TransformLinkBase`, `TransformRegistry` |
+| [`gsp.geometry`](https://github.com/vispy/GSP_API/blob/main/src/gsp/geometry/) | Geometry containers | `Geometry`, `MeshGeometry` |
+| [`gsp.materials`](https://github.com/vispy/GSP_API/blob/main/src/gsp/materials/) | Material descriptors | `Material`, `MeshBasicMaterial`, `MeshMaterial` |
+| [`gsp.utils`](https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/) | Free functions and the registry | `RendererRegistry`, `CmapUtils`, `GroupUtils`, `UnitUtils`, `ViewportUnitUtils`, `MathUtils`, `UuidUtils` |
 
 **Key entry points.** Most user code touches:
 
@@ -115,7 +115,7 @@ from gsp.utils.renderer_registery import RendererRegistry
 from gsp.constants import Constants
 ```
 
-A note on imports: [src/gsp/types/__init__.py](../../src/gsp/types/__init__.py) deliberately does not re-export `RendererBase` or `SerializerBase` (to avoid a circular import). Import them from the submodule instead:
+A note on imports: [src/gsp/types/__init__.py](https://github.com/vispy/GSP_API/blob/main/src/gsp/types/__init__.py) deliberately does not re-export `RendererBase` or `SerializerBase` (to avoid a circular import). Import them from the submodule instead:
 
 ```python
 from gsp.types.renderer_base import RendererBase
@@ -130,7 +130,7 @@ RendererRegistry.create_viewport_events(renderer, vp)     # → ViewportEventsBa
 RendererRegistry.create_animator(renderer)                # → AnimatorBase
 ```
 
-Definition: [src/gsp/utils/renderer_registery.py:24-100](../../src/gsp/utils/renderer_registery.py#L24-L100). Every backend's `renderer_registration.py` calls `register_renderer(...)` to add itself.
+Definition: [src/gsp/utils/renderer_registery.py:24-100](https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/renderer_registery.py#L24-L100). Every backend's `renderer_registration.py` calls `register_renderer(...)` to add itself.
 
 ---
 
@@ -142,9 +142,9 @@ Definition: [src/gsp/utils/renderer_registery.py:24-100](../../src/gsp/utils/ren
 
 | Contract | Class | File |
 |---|---|---|
-| `RendererBase` | `MatplotlibRenderer` | [renderer/matplotlib_renderer.py:38](../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L38) |
-| `AnimatorBase` | `AnimatorMatplotlib` | [animator/animator_matplotlib.py:37](../../src/gsp_matplotlib/animator/animator_matplotlib.py#L37) |
-| `ViewportEventsBase` | `ViewportEventsMatplotlib` | [viewport_events/viewport_events_matplotlib.py:22](../../src/gsp_matplotlib/viewport_events/viewport_events_matplotlib.py#L22) |
+| `RendererBase` | `MatplotlibRenderer` | [renderer/matplotlib_renderer.py:38](https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/renderer/matplotlib_renderer.py#L38) |
+| `AnimatorBase` | `AnimatorMatplotlib` | [animator/animator_matplotlib.py:37](https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/animator/animator_matplotlib.py#L37) |
+| `ViewportEventsBase` | `ViewportEventsMatplotlib` | [viewport_events/viewport_events_matplotlib.py:22](https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/viewport_events/viewport_events_matplotlib.py#L22) |
 
 Per-visual rendering is split across one file per visual type (`matplotlib_renderer_points.py`, `matplotlib_renderer_mesh.py`, …) — same pattern in every backend.
 
@@ -157,9 +157,9 @@ renderer = RendererRegistry.create_renderer("matplotlib", canvas)
 png_bytes = renderer.render([viewport], [visual], [model_matrix], [camera])
 ```
 
-The matplotlib backend additionally accepts `image_format="png"|"svg"|"pdf"` for vector output — see [examples/svg_pdf_example.py](../../examples/svg_pdf_example.py).
+The matplotlib backend additionally accepts `image_format="png"|"svg"|"pdf"` for vector output — see [examples/svg_pdf_example.py](https://github.com/vispy/GSP_API/blob/main/examples/svg_pdf_example.py).
 
-**Registration.** [renderer_registration.py:10-17](../../src/gsp_matplotlib/renderer_registration.py#L10-L17):
+**Registration.** [renderer_registration.py:10-17](https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/renderer_registration.py#L10-L17):
 
 ```python
 RendererRegistry.register_renderer(
@@ -180,9 +180,9 @@ RendererRegistry.register_renderer(
 
 | Contract | Class | File |
 |---|---|---|
-| `RendererBase` | `DatovizRenderer` | [renderer/datoviz_renderer.py:41](../../src/gsp_datoviz/renderer/datoviz_renderer.py#L41) |
-| `AnimatorBase` | `AnimatorDatoviz` | [animator/animator_datoviz.py:19](../../src/gsp_datoviz/animator/animator_datoviz.py#L19) |
-| `ViewportEventsBase` | `ViewportEventsDatoviz` | [viewport_events/viewport_events_datoviz.py:11](../../src/gsp_datoviz/viewport_events/viewport_events_datoviz.py#L11) |
+| `RendererBase` | `DatovizRenderer` | [renderer/datoviz_renderer.py:41](https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/renderer/datoviz_renderer.py#L41) |
+| `AnimatorBase` | `AnimatorDatoviz` | [animator/animator_datoviz.py:19](https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/animator/animator_datoviz.py#L19) |
+| `ViewportEventsBase` | `ViewportEventsDatoviz` | [viewport_events/viewport_events_datoviz.py:11](https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/viewport_events/viewport_events_datoviz.py#L11) |
 
 Same per-visual file split as the matplotlib backend.
 
@@ -193,7 +193,7 @@ import gsp_datoviz
 renderer = RendererRegistry.create_renderer("datoviz", canvas)
 ```
 
-**Registration.** [renderer_registration.py:10-17](../../src/gsp_datoviz/renderer_registration.py#L10-L17).
+**Registration.** [renderer_registration.py:10-17](https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/renderer_registration.py#L10-L17).
 
 ---
 
@@ -205,9 +205,9 @@ renderer = RendererRegistry.create_renderer("datoviz", canvas)
 
 | Contract | Class | File |
 |---|---|---|
-| `RendererBase` | `NetworkRenderer` | [renderer/network_renderer.py:38](../../src/gsp_network/renderer/network_renderer.py#L38) |
-| `AnimatorBase` | `AnimatorNetwork` | [animator/animator_network.py:26](../../src/gsp_network/animator/animator_network.py#L26) |
-| `ViewportEventsBase` | `ViewportEventsNetwork` | [viewport_events/viewport_events_network.py:15](../../src/gsp_network/viewport_events/viewport_events_network.py#L15) |
+| `RendererBase` | `NetworkRenderer` | [renderer/network_renderer.py:38](https://github.com/vispy/GSP_API/blob/main/src/gsp_network/renderer/network_renderer.py#L38) |
+| `AnimatorBase` | `AnimatorNetwork` | [animator/animator_network.py:26](https://github.com/vispy/GSP_API/blob/main/src/gsp_network/animator/animator_network.py#L26) |
+| `ViewportEventsBase` | `ViewportEventsNetwork` | [viewport_events/viewport_events_network.py:15](https://github.com/vispy/GSP_API/blob/main/src/gsp_network/viewport_events/viewport_events_network.py#L15) |
 
 **How to use it (client side).**
 
@@ -226,7 +226,7 @@ The client serializes the scene with `gsp_pydantic`, POSTs it, and returns the r
 python -m gsp_network.tools.network_server
 ```
 
-Server picks a backend **per request**, reading `payload["renderer_name"]` at [network_server.py:75-79](../../src/gsp_network/tools/network_server.py#L75-L79):
+Server picks a backend **per request**, reading `payload["renderer_name"]` at [network_server.py:75-79](https://github.com/vispy/GSP_API/blob/main/src/gsp_network/tools/network_server.py#L75-L79):
 
 ```python
 if renderer_name == "matplotlib":
@@ -247,7 +247,7 @@ This is the only place in the codebase where a backend is mentioned by name outs
 
 **Boundaries.** Serialization only. No rendering, no state, no UI.
 
-**Key entry points** ([serializer/__init__.py:3-4](../../src/gsp_pydantic/serializer/__init__.py#L3-L4)):
+**Key entry points** ([serializer/__init__.py:3-4](https://github.com/vispy/GSP_API/blob/main/src/gsp_pydantic/serializer/__init__.py#L3-L4)):
 
 ```python
 from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
@@ -268,7 +268,7 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
 **Two consumers.**
 
 1. The `gsp_network` server, which deserializes incoming payloads.
-2. The session record/replay examples — see [philosophy_examples.md §4.8](./philosophy_examples.md) and [examples/session_record_example.py](../../examples/session_record_example.py).
+2. The session record/replay examples — see [philosophy_examples.md §4.8](./philosophy_examples.md) and [examples/session_record_example.py](https://github.com/vispy/GSP_API/blob/main/examples/session_record_example.py).
 
 ---
 
@@ -282,12 +282,12 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
 
 | Helper | What it does | Where |
 |---|---|---|
-| `Object3D` | Scene-graph node with parent/child links and Euler-angle local transforms. `Object3D.pre_render(viewport, scene, camera)` flattens a hierarchy into the four parallel lists `RendererBase.render(...)` consumes. | [object3d.py:20](../../src/gsp_extra/object3d.py#L20), `pre_render` at [object3d.py:229](../../src/gsp_extra/object3d.py#L229) |
-| `Bufferx` | The standard numpy → GPU bridge. `Bufferx.from_numpy(arr, BufferType.vec3)` and `Bufferx.mat4_identity()` show up in every example. | [bufferx.py](../../src/gsp_extra/bufferx.py) |
-| `AwsdControls`, `TrackballControls` | Camera control schemes that mutate an `Object3D` from `ViewportEvents`. | [camera_controls/](../../src/gsp_extra/camera_controls/) |
-| `RenderItem` | A bundle of `(viewport, visual, model_matrix, camera)` — useful when you want to manipulate render entries as a list rather than four parallel ones. | [misc/render_item.py](../../src/gsp_extra/misc/render_item.py) |
-| `TextureUtils`, `MeshUtils` | Image loaders, mesh helpers. | [misc/](../../src/gsp_extra/misc/) |
-| Transform links | `TransformLoad` and friends — building blocks for `TransformChain`. | [transform_links/](../../src/gsp_extra/transform_links/) |
+| `Object3D` | Scene-graph node with parent/child links and Euler-angle local transforms. `Object3D.pre_render(viewport, scene, camera)` flattens a hierarchy into the four parallel lists `RendererBase.render(...)` consumes. | [object3d.py:20](https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/object3d.py#L20), `pre_render` at [object3d.py:229](https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/object3d.py#L229) |
+| `Bufferx` | The standard numpy → GPU bridge. `Bufferx.from_numpy(arr, BufferType.vec3)` and `Bufferx.mat4_identity()` show up in every example. | [bufferx.py](https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/bufferx.py) |
+| `AwsdControls`, `TrackballControls` | Camera control schemes that mutate an `Object3D` from `ViewportEvents`. | [camera_controls/](https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/camera_controls/) |
+| `RenderItem` | A bundle of `(viewport, visual, model_matrix, camera)` — useful when you want to manipulate render entries as a list rather than four parallel ones. | [misc/render_item.py](https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/misc/render_item.py) |
+| `TextureUtils`, `MeshUtils` | Image loaders, mesh helpers. | [misc/](https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/misc/) |
+| Transform links | `TransformLoad` and friends — building blocks for `TransformChain`. | [transform_links/](https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/transform_links/) |
 
 **The `Object3D.pre_render` bridge.** The renderer's contract is *four parallel lists*; an `Object3D` tree is hierarchical. `pre_render` is the adapter — see [philosophy_examples.md §4.5](./philosophy_examples.md) for the canonical usage. It lets you build scenes with `add()`/`remove()`/`attach_visual()` and still call the unchanged renderer API.
 
@@ -301,10 +301,10 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
 
 | Module | Exports |
 |---|---|
-| [`vispy2.axes`](../../src/vispy2/axes/__init__.py) | `AxesManaged`, `AxesDisplay`, `AxesPanZoom`, `AxisTickLocator`, `AxisTickFormatter` |
-| [`vispy2.scatter`](../../src/vispy2/scatter/scatter.py) | `scatter(...)` |
-| [`vispy2.plot`](../../src/vispy2/plot/plot.py) | `plot(...)` |
-| [`vispy2.imshow`](../../src/vispy2/imshow/imshow.py) | `imshow(...)` |
+| [`vispy2.axes`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/axes/__init__.py) | `AxesManaged`, `AxesDisplay`, `AxesPanZoom`, `AxisTickLocator`, `AxisTickFormatter` |
+| [`vispy2.scatter`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/scatter/scatter.py) | `scatter(...)` |
+| [`vispy2.plot`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/plot/plot.py) | `plot(...)` |
+| [`vispy2.imshow`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/imshow/imshow.py) | `imshow(...)` |
 
 **The Axes ladder** (rendering / state / interaction, separable):
 
@@ -324,7 +324,7 @@ This is the same separation described in [philosophy_examples.md §4.4](./philos
 
 The pattern is reproducible: every backend follows the same shape. To add `gsp_<backend>`:
 
-1. **Mirror the layout** of [gsp_matplotlib/](../../src/gsp_matplotlib/):
+1. **Mirror the layout** of [gsp_matplotlib/](https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/):
    ```
    src/gsp_<backend>/
    ├── __init__.py
@@ -338,14 +338,14 @@ The pattern is reproducible: every backend follows the same shape. To add `gsp_<
    └── renderer_registration.py
    ```
 
-2. **Implement the three contracts** from [src/gsp/types/](../../src/gsp/types/):
+2. **Implement the three contracts** from [src/gsp/types/](https://github.com/vispy/GSP_API/blob/main/src/gsp/types/):
    - `RendererBase` — concrete `render(viewports, visuals, model_matrices, cameras, **opts)`.
    - `AnimatorBase` — frame loop driving the renderer.
    - `ViewportEventsBase` — backend-specific input plumbing.
 
-3. **Provide a `register_renderer_<backend>()` function** that calls `RendererRegistry.register_renderer(...)` — copy [src/gsp_matplotlib/renderer_registration.py](../../src/gsp_matplotlib/renderer_registration.py) verbatim and rename.
+3. **Provide a `register_renderer_<backend>()` function** that calls `RendererRegistry.register_renderer(...)` — copy [src/gsp_matplotlib/renderer_registration.py](https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/renderer_registration.py) verbatim and rename.
 
-4. **Wire into the example helper** at [examples/common/example_helper.py:42](../../examples/common/example_helper.py#L42) so `GSP_RENDERER=<backend>` becomes a valid value.
+4. **Wire into the example helper** at [examples/common/example_helper.py:42](https://github.com/vispy/GSP_API/blob/main/examples/common/example_helper.py#L42) so `GSP_RENDERER=<backend>` becomes a valid value.
 
 That is the full surface area. Existing examples will run under the new backend without modification.
 
@@ -396,7 +396,7 @@ gsp_pydantic.PydanticSerializer  gsp_pydantic.PydanticParser   DatovizRenderer
                                                           (chosen per request)
 ```
 
-**Package map:** client side uses `gsp_network` (renderer + serializer call) and `gsp_pydantic`. Server side uses `gsp_network.tools.network_server`, which itself imports `gsp_matplotlib` and `gsp_datoviz` at the top of [network_server.py:19-20](../../src/gsp_network/tools/network_server.py#L19-L20) and dispatches per `payload["renderer_name"]` at [network_server.py:75-79](../../src/gsp_network/tools/network_server.py#L75-L79).
+**Package map:** client side uses `gsp_network` (renderer + serializer call) and `gsp_pydantic`. Server side uses `gsp_network.tools.network_server`, which itself imports `gsp_matplotlib` and `gsp_datoviz` at the top of [network_server.py:19-20](https://github.com/vispy/GSP_API/blob/main/src/gsp_network/tools/network_server.py#L19-L20) and dispatches per `payload["renderer_name"]` at [network_server.py:75-79](https://github.com/vispy/GSP_API/blob/main/src/gsp_network/tools/network_server.py#L75-L79).
 
 The user's local code is identical to single-machine code — only the renderer constructor changes.
 
@@ -440,6 +440,6 @@ Every claim above is grounded in a specific file. To verify:
    ```
    Exactly three matches: matplotlib, datoviz, network. If a fourth appears, §2.2 needs a new row.
 
-4. **The extension recipe in §4.** Every step points at an existing file; copying [src/gsp_matplotlib/](../../src/gsp_matplotlib/) is the literal blueprint.
+4. **The extension recipe in §4.** Every step points at an existing file; copying [src/gsp_matplotlib/](https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/) is the literal blueprint.
 
 When the code drifts from this document — change the document. The package layout is the source of truth; this file just names what it already is.

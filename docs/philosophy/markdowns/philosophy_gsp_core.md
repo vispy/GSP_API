@@ -280,7 +280,7 @@ Four more abstract bases live in `gsp.types/`. Each is small; each is implemente
 
 | Contract | Methods (abstract) | Implemented by |
 |---|---|---|
-| [`RendererBase`](../../src/gsp/types/renderer_base.py) | `__init__(canvas)`, `render(...)`, `show()`, `close()`, `clear()`, `get_canvas()` — see [philosophy_renderers.md §4](./philosophy_renderers.md#4-the-rendererbase-contract--method-by-method) | the three backends |
+| [`RendererBase`](../../src/gsp/types/renderer_base.py) | `__init__(canvas)`, `render(...)`, `show()`, `close()`, `clear()`, `get_canvas()` — see [philosophy_renderers.md §4](./philosophy_renderers.md#4-the-rendererbase-contract-method-by-method) | the three backends |
 | [`AnimatorBase`](../../src/gsp/types/animator_base.py) | `__init__(renderer)`, `add_callback`, `remove_callback`, `event_listener` (decorator), `start(viewports, visuals, ...)`, `stop()`. Plus public `on_video_saved: Event` | the three backends |
 | [`ViewportEventsBase`](../../src/gsp/types/viewport_events_base.py) | `__init__(renderer, viewport)`. Plus seven public `Event` slots: `key_press_event`, `key_release_event`, `button_press_event`, `button_release_event`, `mouse_move_event`, `mouse_scroll_event`, `canvas_resize_event` | the three backends |
 | [`SerializerBase`](../../src/gsp/types/serializer_base.py) | `serialize(viewports, visuals, model_matrices, cameras) -> dict` | `gsp_pydantic` |
