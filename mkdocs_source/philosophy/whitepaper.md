@@ -79,7 +79,6 @@ src/
 ├── gsp_network/          Flask client/server renderer
 ├── gsp_pydantic/         Pydantic mirror types and serializer
 ├── gsp_extra/            Auxiliary helpers
-├── gsp_nico/             Collaborator sandbox
 └── vispy2/               Higher-level VisPy-style API on top of gsp
 ```
 
@@ -381,7 +380,6 @@ GSP_API is at version 0.1.0; the `description` field of `pyproject.toml` is empt
 ### 10.2 In-flight work
 
 - Active feature branch `mesh_include_2` extends mesh handling.
-- Collaborator sandboxes (`examples_nico/`, `src/gsp_nico/`) carry experimental code that has not been promoted into the public API.
 - About 17 work-in-progress examples (underscore-prefixed) exercise unstable surfaces, including pyramid-loading examples, multi-renderer testers, and mesh variants.
 
 ### 10.3 Planned

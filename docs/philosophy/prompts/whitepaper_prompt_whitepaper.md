@@ -27,7 +27,7 @@ Tech stack: Python ≥3.13, NumPy, Matplotlib, Datoviz (GPU/Vulkan), Pydantic v2
 
 Differentiation: Unlike matplotlib, Datoviz, or VisPy — each of which owns both the API and the renderer — GSP_API is just the API layer, with three interchangeable renderers behind it (CPU/Matplotlib, GPU/Datoviz, remote/network). Switching backends is an env-var change, not a code rewrite, which makes it useful as a portability layer or as a research vehicle for studying rendering-API design across backends (an explicit goal in TODO.md: "design principles for rendering library API with multiple backends").
 
-Maturity level: Prototype / research. Version 0.1.0, empty description field in pyproject.toml, an active TODO.md listing unresolved bugs (text anchor/rotation in datoviz, network-renderer clearing semantics, sanity-check inheritance issues), an in-flight feature branch (mesh_include_2), and an examples_nico / gsp_nico collaborator sandbox — all consistent with active R&D rather than a released product.
+Maturity level: Prototype / research. Version 0.1.0, empty description field in pyproject.toml, an active TODO.md listing unresolved bugs (text anchor/rotation in datoviz, network-renderer clearing semantics, sanity-check inheritance issues), and an in-flight feature branch (mesh_include_2) — all consistent with active R&D rather than a released product.
 
 Links:
 - Repo URL: not configured locally — no remote.origin.url is referenced in the tree; ask the maintainer for the canonical Git host

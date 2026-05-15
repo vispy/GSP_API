@@ -28,7 +28,7 @@ lint: lint_pyright lint_ruff ## Run all linters
 	
 
 lint_pyright: ## Run pyright type checker on src and examples
-	pyright ./src/gsp/ ./src/gsp_matplotlib/ ./src/gsp_datoviz/ ./src/gsp_pydantic/ ./src/gsp_nico/ ./src/gsp_extra ./src/vispy2 ./examples/ 
+	pyright ./src/gsp/ ./src/gsp_matplotlib/ ./src/gsp_datoviz/ ./src/gsp_pydantic/ ./src/gsp_extra ./src/vispy2 ./examples/
 
 # lint_pydoclint: ## Run pydocstyle to check for docstring style issues
 # 	pydoclint ./src/gsp ./src/gsp_matplotlib ./src/gsp_datoviz ./src/gsp_pydantic ./src/gsp_network ./examples/gsp_extra
