@@ -1674,7 +1674,7 @@
 GSP_RENDERER=datoviz    python examples/&lt;file&gt;.py
 </code></pre>
 <blockquote>
-<p><strong>Heads-up: <code>examples/README.md</code> says <code>GSP_BACKEND</code>, but the code reads <code>GSP_RENDERER</code>.</strong> The factory in <a href="../../examples/common/example_helper.py#L42">examples/common/example_helper.py:42</a> is the source of truth — <code>os.environ.get("GSP_RENDERER", ...)</code>. Use <code>GSP_RENDERER</code> when running examples; the README is stale.</p>
+<p><strong>Heads-up: <code>examples/README.md</code> says <code>GSP_BACKEND</code>, but the code reads <code>GSP_RENDERER</code>.</strong> The factory in <a href="https://github.com/vispy/GSP_API/blob/main/examples/common/example_helper.py#L42">examples/common/example_helper.py:42</a> is the source of truth — <code>os.environ.get("GSP_RENDERER", ...)</code>. Use <code>GSP_RENDERER</code> when running examples; the README is stale.</p>
 </blockquote>
 <hr />
 <h2 id="2-the-five-design-principles">2. The Five Design Principles<a class="headerlink" href="#2-the-five-design-principles" title="Permanent link">&para;</a></h2>
@@ -1710,7 +1710,7 @@ renderer_base.show()
 <p><strong>Payoff.</strong> The same script works in CI (PNG lands in <code>examples/output/</code>, no display required) and at a developer's desk (interactive window opens). One code path, two audiences.</p>
 <hr />
 <h2 id="3-the-canonical-skeleton">3. The Canonical Skeleton<a class="headerlink" href="#3-the-canonical-skeleton" title="Permanent link">&para;</a></h2>
-<p>Every basic example follows the same seven steps. <a href="../../examples/points_example.py"><code>examples/points_example.py</code></a> is the reference template — read it once and the rest of the directory becomes structurally familiar.</p>
+<p>Every basic example follows the same seven steps. <a href="https://github.com/vispy/GSP_API/blob/main/examples/points_example.py"><code>examples/points_example.py</code></a> is the reference template — read it once and the rest of the directory becomes structurally familiar.</p>
 <h3 id="step-1-imports">Step 1 — Imports<a class="headerlink" href="#step-1-imports" title="Permanent link">&para;</a></h3>
 <p>Three tiers, in this order:</p>
 <pre><code class="language-python"># stdlib imports
@@ -1806,7 +1806,7 @@ renderer_base.show()
 </tr>
 </tbody>
 </table>
-<p><strong>Demonstrated in:</strong> <a href="../../examples/points_example.py"><code>points_example.py</code></a>, <a href="../../examples/markers_example.py"><code>markers_example.py</code></a>, <a href="../../examples/buffer_example.py"><code>buffer_example.py</code></a>, <a href="../../examples/image_example.py"><code>image_example.py</code></a>.</p>
+<p><strong>Demonstrated in:</strong> <a href="https://github.com/vispy/GSP_API/blob/main/examples/points_example.py"><code>points_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/markers_example.py"><code>markers_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/buffer_example.py"><code>buffer_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/image_example.py"><code>image_example.py</code></a>.</p>
 <h3 id="42-multi-viewport-composition">4.2 Multi-viewport composition<a class="headerlink" href="#42-multi-viewport-composition" title="Permanent link">&para;</a></h3>
 <p>Multiple viewports render in a single call by extending the four parallel lists. Each list position is one <em>(viewport, visual, model_matrix, camera)</em> quadruple:</p>
 <pre><code class="language-python">renderer_base.render(
@@ -1818,9 +1818,9 @@ renderer_base.show()
 </code></pre>
 <p>Layouts emerge from how you place the viewports in pixel coordinates:</p>
 <ul>
-<li><strong>Tiled grid</strong> — <code>Viewport(0, 0, w/2, h/2)</code>, <code>Viewport(w/2, 0, w/2, h/2)</code>, … as in <a href="../../examples/viewport_multi_example.py"><code>viewport_multi_example.py</code></a>.</li>
-<li><strong>Overlapping</strong> — viewports whose rectangles intersect; later list entries paint over earlier ones. See <a href="../../examples/viewport_overlapping_example.py"><code>viewport_overlapping_example.py</code></a>.</li>
-<li><strong>Stacked / event-driven</strong> — vertical stacks with input attached, in <a href="../../examples/viewport_events_example.py"><code>viewport_events_example.py</code></a>.</li>
+<li><strong>Tiled grid</strong> — <code>Viewport(0, 0, w/2, h/2)</code>, <code>Viewport(w/2, 0, w/2, h/2)</code>, … as in <a href="https://github.com/vispy/GSP_API/blob/main/examples/viewport_multi_example.py"><code>viewport_multi_example.py</code></a>.</li>
+<li><strong>Overlapping</strong> — viewports whose rectangles intersect; later list entries paint over earlier ones. See <a href="https://github.com/vispy/GSP_API/blob/main/examples/viewport_overlapping_example.py"><code>viewport_overlapping_example.py</code></a>.</li>
+<li><strong>Stacked / event-driven</strong> — vertical stacks with input attached, in <a href="https://github.com/vispy/GSP_API/blob/main/examples/viewport_events_example.py"><code>viewport_events_example.py</code></a>.</li>
 </ul>
 <p><strong>Demonstrated in:</strong> <code>viewport_multi_example.py</code>, <code>viewport_overlapping_example.py</code>, <code>viewport_events_example.py</code>.</p>
 <h3 id="43-interaction-viewportevents-axespanzoom">4.3 Interaction: ViewportEvents + AxesPanZoom<a class="headerlink" href="#43-interaction-viewportevents-axespanzoom" title="Permanent link">&para;</a></h3>
@@ -1836,7 +1836,7 @@ viewport_events.mouse_scroll_event.subscribe(on_mouse_scroll)
 axes_display.new_limits_event.subscribe(re_render_callback)
 </code></pre>
 <p><code>AxesPanZoom</code> itself contains no rendering logic — it only mutates <code>axes_display</code> limits in response to events. The re-render is triggered by subscribing to <code>new_limits_event</code>. This separation (events → controller → display → render trigger) is the canonical interactive shape.</p>
-<p><strong>Demonstrated in:</strong> <a href="../../examples/viewport_events_example.py"><code>viewport_events_example.py</code></a>, <a href="../../examples/vispy_axes_panzoom_example.py"><code>vispy_axes_panzoom_example.py</code></a>, <a href="../../examples/vispy_axes_multiple_panzoom_example.py"><code>vispy_axes_multiple_panzoom_example.py</code></a>, <a href="../../examples/camera_control_example.py"><code>camera_control_example.py</code></a>.</p>
+<p><strong>Demonstrated in:</strong> <a href="https://github.com/vispy/GSP_API/blob/main/examples/viewport_events_example.py"><code>viewport_events_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_panzoom_example.py"><code>vispy_axes_panzoom_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_multiple_panzoom_example.py"><code>vispy_axes_multiple_panzoom_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/camera_control_example.py"><code>camera_control_example.py</code></a>.</p>
 <h3 id="44-axes-layers-managed-display-panzoom">4.4 Axes layers (managed → display → panzoom)<a class="headerlink" href="#44-axes-layers-managed-display-panzoom" title="Permanent link">&para;</a></h3>
 <p>Three abstraction levels, increasing in control:</p>
 <table>
@@ -1851,17 +1851,17 @@ axes_display.new_limits_event.subscribe(re_render_callback)
 <tr>
 <td><code>AxesManaged</code></td>
 <td>Wraps a viewport, auto-handles pan/zoom, labels, and titles.</td>
-<td>Tutorial code, quick plots, demos. See <a href="../../examples/vispy_axes_managed_example.py"><code>vispy_axes_managed_example.py</code></a>.</td>
+<td>Tutorial code, quick plots, demos. See <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_managed_example.py"><code>vispy_axes_managed_example.py</code></a>.</td>
 </tr>
 <tr>
 <td><code>AxesDisplay</code></td>
 <td>Exposes the viewport, transform matrix, and <code>new_limits_event</code>. No interaction baked in.</td>
-<td>When you want custom event wiring. See <a href="../../examples/vispy_axes_display_example.py"><code>vispy_axes_display_example.py</code></a>.</td>
+<td>When you want custom event wiring. See <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_display_example.py"><code>vispy_axes_display_example.py</code></a>.</td>
 </tr>
 <tr>
 <td><code>AxesPanZoom</code></td>
 <td>Pure input controller — listens to <code>ViewportEvents</code>, mutates an <code>AxesDisplay</code>.</td>
-<td>Pair with <code>AxesDisplay</code> for full control. See <a href="../../examples/vispy_axes_panzoom_example.py"><code>vispy_axes_panzoom_example.py</code></a>.</td>
+<td>Pair with <code>AxesDisplay</code> for full control. See <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_panzoom_example.py"><code>vispy_axes_panzoom_example.py</code></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -1892,7 +1892,7 @@ viewports, visuals, model_matrices, cameras = Object3D.pre_render(viewport, obje
 renderer_base.render(viewports, visuals, model_matrices, cameras)
 </code></pre>
 <p><code>Object3D.pre_render</code> is the bridge: it flattens a hierarchy into the four parallel lists the renderer expects. The renderer's API does not change — only the way the lists are produced.</p>
-<p><strong>Demonstrated in:</strong> <a href="../../examples/simple_model_matrix.py"><code>simple_model_matrix.py</code></a>, <a href="../../examples/object3d_example.py"><code>object3d_example.py</code></a>, <a href="../../examples/camera_control_example.py"><code>camera_control_example.py</code></a>, <a href="../../examples/vispy_basic_example.py"><code>vispy_basic_example.py</code></a>.</p>
+<p><strong>Demonstrated in:</strong> <a href="https://github.com/vispy/GSP_API/blob/main/examples/simple_model_matrix.py"><code>simple_model_matrix.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/object3d_example.py"><code>object3d_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/camera_control_example.py"><code>camera_control_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_basic_example.py"><code>vispy_basic_example.py</code></a>.</p>
 <h3 id="46-animation-animatorevent_listener">4.6 Animation: <code>@animator.event_listener</code><a class="headerlink" href="#46-animation-animatorevent_listener" title="Permanent link">&para;</a></h3>
 <p>Animation is event-driven, stateless per frame, and minimises GPU work via delta rendering. The pattern:</p>
 <pre><code class="language-python">animator = ExampleHelper.create_animator(renderer_base)
@@ -1922,7 +1922,7 @@ def on_save():
     renderer_base.close()
 </code></pre>
 <p>Same callback, same <code>start(...)</code>; the animator writes an <code>.mp4</code> and emits <code>on_video_saved</code> when the duration is reached.</p>
-<p><strong>Demonstrated in:</strong> <a href="../../examples/animator_example.py"><code>animator_example.py</code></a>, <a href="../../examples/texts_animated_example.py"><code>texts_animated_example.py</code></a>, <a href="../../examples/dynamic_groups_example.py"><code>dynamic_groups_example.py</code></a>, <a href="../../examples/object3d_example.py"><code>object3d_example.py</code></a>.</p>
+<p><strong>Demonstrated in:</strong> <a href="https://github.com/vispy/GSP_API/blob/main/examples/animator_example.py"><code>animator_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/texts_animated_example.py"><code>texts_animated_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/dynamic_groups_example.py"><code>dynamic_groups_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/object3d_example.py"><code>object3d_example.py</code></a>.</p>
 <h3 id="47-groups-index-attribute-association">4.7 Groups: index → attribute association<a class="headerlink" href="#47-groups-index-attribute-association" title="Permanent link">&para;</a></h3>
 <p>Groups let one visual carry heterogeneous attributes by mapping vertex indices to attribute slots:</p>
 <pre><code class="language-python">groups = [
@@ -1933,8 +1933,8 @@ colors_buffer = Buffer(2, BufferType.rgba8)
 colors_buffer.set_data(Constants.Color.red + Constants.Color.green, 0, 2)
 pixels.set_attributes(colors=colors_buffer, groups=groups)
 </code></pre>
-<p>Calling <code>set_attributes(...)</code> again with new groups remaps colours without recreating the visual or its position buffer — this is the basis of <code>dynamic_groups_example.py</code>'s real-time re-styling. <code>GroupUtils.get_group_count(...)</code> (visible in <a href="../../examples/viewport_multi_example.py"><code>viewport_multi_example.py</code></a> and <a href="../../examples/object3d_example.py"><code>object3d_example.py</code></a>) computes group counts when each vertex is its own group.</p>
-<p><strong>Demonstrated in:</strong> <a href="../../examples/groups_example.py"><code>groups_example.py</code></a>, <a href="../../examples/dynamic_groups_example.py"><code>dynamic_groups_example.py</code></a>, <a href="../../examples/viewport_multi_example.py"><code>viewport_multi_example.py</code></a>.</p>
+<p>Calling <code>set_attributes(...)</code> again with new groups remaps colours without recreating the visual or its position buffer — this is the basis of <code>dynamic_groups_example.py</code>'s real-time re-styling. <code>GroupUtils.get_group_count(...)</code> (visible in <a href="https://github.com/vispy/GSP_API/blob/main/examples/viewport_multi_example.py"><code>viewport_multi_example.py</code></a> and <a href="https://github.com/vispy/GSP_API/blob/main/examples/object3d_example.py"><code>object3d_example.py</code></a>) computes group counts when each vertex is its own group.</p>
+<p><strong>Demonstrated in:</strong> <a href="https://github.com/vispy/GSP_API/blob/main/examples/groups_example.py"><code>groups_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/dynamic_groups_example.py"><code>dynamic_groups_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/viewport_multi_example.py"><code>viewport_multi_example.py</code></a>.</p>
 <h3 id="48-sessions-timestamped-pydantic-snapshots">4.8 Sessions: timestamped Pydantic snapshots<a class="headerlink" href="#48-sessions-timestamped-pydantic-snapshots" title="Permanent link">&para;</a></h3>
 <p>A "session" is a sequence of <code>(timestamp, serialized_scene)</code> pairs. Recording produces it; playback consumes it.</p>
 <p><strong>Recording:</strong></p>
@@ -1956,7 +1956,7 @@ _, viewports, visuals, model_matrices, cameras = pydantic_parser.parse(session_i
 renderer_base.render(viewports, visuals, model_matrices, cameras)
 </code></pre>
 <p>A session can be persisted to JSON, shipped over the wire, or replayed in CI for regression testing.</p>
-<p><strong>Demonstrated in:</strong> <a href="../../examples/session_record_example.py"><code>session_record_example.py</code></a>, <a href="../../examples/session_player_example.py"><code>session_player_example.py</code></a>.</p>
+<p><strong>Demonstrated in:</strong> <a href="https://github.com/vispy/GSP_API/blob/main/examples/session_record_example.py"><code>session_record_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/session_player_example.py"><code>session_player_example.py</code></a>.</p>
 <h3 id="49-transforms-and-serialization">4.9 Transforms and serialization<a class="headerlink" href="#49-transforms-and-serialization" title="Permanent link">&para;</a></h3>
 <p>Two complementary serialization paths exist.</p>
 <p><strong><code>TransformChain</code> (data pipelines).</strong> A chain of operations on a buffer, serializable to JSON, deserializable back to an executable chain:</p>
@@ -1965,25 +1965,25 @@ renderer_base.render(viewports, visuals, model_matrices, cameras)
 transform_deserialized = TransformChain.deserialize(transform_serialized)
 </code></pre>
 <p>This is the right tool when the pipeline itself is what you want to ship — for lazy evaluation, remote execution, or recording the construction recipe rather than the final array.</p>
-<p><strong>Pydantic full-scene serialization.</strong> As in §4.8, but used standalone in <a href="../../examples/pydantic_cycle_example.py"><code>pydantic_cycle_example.py</code></a> to demonstrate full round-trip of a scene (visuals + buffers + transforms) through Pydantic dictionaries.</p>
-<p><strong>Demonstrated in:</strong> <a href="../../examples/transform_example.py"><code>transform_example.py</code></a>, <a href="../../examples/transform_build_sample.py"><code>transform_build_sample.py</code></a>, <a href="../../examples/transform_serialization_example.py"><code>transform_serialization_example.py</code></a>, <a href="../../examples/transform_visual_example.py"><code>transform_visual_example.py</code></a>, <a href="../../examples/pydantic_cycle_example.py"><code>pydantic_cycle_example.py</code></a>.</p>
+<p><strong>Pydantic full-scene serialization.</strong> As in §4.8, but used standalone in <a href="https://github.com/vispy/GSP_API/blob/main/examples/pydantic_cycle_example.py"><code>pydantic_cycle_example.py</code></a> to demonstrate full round-trip of a scene (visuals + buffers + transforms) through Pydantic dictionaries.</p>
+<p><strong>Demonstrated in:</strong> <a href="https://github.com/vispy/GSP_API/blob/main/examples/transform_example.py"><code>transform_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/transform_build_sample.py"><code>transform_build_sample.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/transform_serialization_example.py"><code>transform_serialization_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/transform_visual_example.py"><code>transform_visual_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/pydantic_cycle_example.py"><code>pydantic_cycle_example.py</code></a>.</p>
 <h3 id="410-vector-and-remote-output">4.10 Vector and remote output<a class="headerlink" href="#410-vector-and-remote-output" title="Permanent link">&para;</a></h3>
 <p><strong>Vector formats.</strong> The matplotlib renderer accepts an <code>image_format</code> argument; the same scene comes back as PNG, SVG, or PDF bytes:</p>
 <pre><code class="language-python">rendered_png = renderer.render([viewport], [paths], [model_matrix], [camera], image_format=&quot;png&quot;)
 rendered_svg = renderer.render([viewport], [paths], [model_matrix], [camera], image_format=&quot;svg&quot;)
 rendered_pdf = renderer.render([viewport], [paths], [model_matrix], [camera], image_format=&quot;pdf&quot;)
 </code></pre>
-<p>See <a href="../../examples/svg_pdf_example.py"><code>svg_pdf_example.py</code></a>.</p>
+<p>See <a href="https://github.com/vispy/GSP_API/blob/main/examples/svg_pdf_example.py"><code>svg_pdf_example.py</code></a>.</p>
 <p><strong>Remote rendering.</strong> <code>NetworkRenderer</code> implements the same <code>RendererBase</code> contract but sends the scene over HTTP to a remote <code>gsp_server</code> (which itself runs matplotlib or datoviz):</p>
 <pre><code class="language-python">renderer = NetworkRenderer(canvas, server_base_url=&quot;http://localhost:5000&quot;, remote_renderer_name=&quot;datoviz&quot;)
 rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
 </code></pre>
 <p>Local code is identical to single-machine code. The choice of remote backend is parameterised — set <code>GSP_REMOTE_RENDERER=matplotlib|datoviz</code> when <code>GSP_RENDERER=network</code>.</p>
-<p><strong>Demonstrated in:</strong> <a href="../../examples/svg_pdf_example.py"><code>svg_pdf_example.py</code></a>, <a href="../../examples/network_client_example.py"><code>network_client_example.py</code></a>.</p>
+<p><strong>Demonstrated in:</strong> <a href="https://github.com/vispy/GSP_API/blob/main/examples/svg_pdf_example.py"><code>svg_pdf_example.py</code></a>, <a href="https://github.com/vispy/GSP_API/blob/main/examples/network_client_example.py"><code>network_client_example.py</code></a>.</p>
 <hr />
 <h2 id="5-the-common-helpers-reference">5. The <code>common/</code> Helpers Reference<a class="headerlink" href="#5-the-common-helpers-reference" title="Permanent link">&para;</a></h2>
-<p>Three files live in <a href="../../examples/common/">examples/common/</a>:</p>
-<h3 id="examplehelper-example_helperpy"><code>ExampleHelper</code> (<a href="../../examples/common/example_helper.py">example_helper.py</a>)<a class="headerlink" href="#examplehelper-example_helperpy" title="Permanent link">&para;</a></h3>
+<p>Three files live in <a href="https://github.com/vispy/GSP_API/blob/main/examples/common/">examples/common/</a>:</p>
+<h3 id="examplehelper-example_helperpy"><code>ExampleHelper</code> (<a href="https://github.com/vispy/GSP_API/blob/main/examples/common/example_helper.py">example_helper.py</a>)<a class="headerlink" href="#examplehelper-example_helperpy" title="Permanent link">&para;</a></h3>
 <p>The factory that hides backend selection. Most examples use it; the few that instantiate <code>MatplotlibRenderer</code> / <code>DatovizRenderer</code> / <code>NetworkRenderer</code> directly do so deliberately to demonstrate a backend-specific feature.</p>
 <table>
 <thead>
@@ -2058,7 +2058,7 @@ rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
   Look for both PNGs in <code>examples/output/</code>. They should be visually equivalent.</li>
 <li>[ ] <strong>For animated examples</strong>, use <code>@animator.event_listener</code> and return only changed visuals.</li>
 <li>[ ] <strong>For interactive examples</strong>, build the chain <code>ExampleHelper.create_viewport_events → AxesPanZoom → AxesDisplay.new_limits_event → re-render</code> rather than wiring callbacks ad hoc.</li>
-<li>[ ] <strong>Add a row</strong> to the appropriate table in <a href="../../examples/README.md"><code>examples/README.md</code></a>.</li>
+<li>[ ] <strong>Add a row</strong> to the appropriate table in <a href="https://github.com/vispy/GSP_API/blob/main/examples/README.md"><code>examples/README.md</code></a>.</li>
 </ul>
 <hr />
 <h2 id="7-naming-and-filename-conventions">7. Naming and Filename Conventions<a class="headerlink" href="#7-naming-and-filename-conventions" title="Permanent link">&para;</a></h2>
@@ -2101,8 +2101,8 @@ rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
 <p>Every claim in this document is grounded in a specific file. To verify:</p>
 <ol>
 <li><strong>For a pattern in §4</strong> — open the cited example file, locate the snippet quoted here, and run it under both backends as shown in §1. The output PNGs in <code>examples/output/</code> are the proof.</li>
-<li><strong>For an <code>ExampleHelper</code> method</strong> — see <a href="../../examples/common/example_helper.py">examples/common/example_helper.py</a>; each method is small enough to read in full.</li>
-<li><strong>For the env-var name</strong> — <code>grep -rn "GSP_RENDERER\|GSP_BACKEND" examples/ src/</code>. Only <a href="../../examples/common/example_helper.py#L42">example_helper.py:42</a> uses <code>GSP_RENDERER</code> from code; <code>GSP_BACKEND</code> appears only in the (stale) README.</li>
+<li><strong>For an <code>ExampleHelper</code> method</strong> — see <a href="https://github.com/vispy/GSP_API/blob/main/examples/common/example_helper.py">examples/common/example_helper.py</a>; each method is small enough to read in full.</li>
+<li><strong>For the env-var name</strong> — <code>grep -rn "GSP_RENDERER\|GSP_BACKEND" examples/ src/</code>. Only <a href="https://github.com/vispy/GSP_API/blob/main/examples/common/example_helper.py#L42">example_helper.py:42</a> uses <code>GSP_RENDERER</code> from code; <code>GSP_BACKEND</code> appears only in the (stale) README.</li>
 <li><strong>For a snippet quoted verbatim</strong> — <code>grep -n "&lt;snippet&gt;" examples/&lt;file&gt;.py</code>. Examples cited above:</li>
 <li><code>grep -n "ExampleHelper.create_renderer" examples/*.py</code></li>
 <li><code>grep -n "@animator.event_listener" examples/animator_example.py</code></li>

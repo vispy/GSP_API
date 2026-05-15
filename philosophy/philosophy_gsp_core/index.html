@@ -1601,7 +1601,7 @@
 
 <h1 id="philosophy-of-the-gsp-core-package">Philosophy of the GSP Core Package<a class="headerlink" href="#philosophy-of-the-gsp-core-package" title="Permanent link">&para;</a></h1>
 <h2 id="1-preamble">1. Preamble<a class="headerlink" href="#1-preamble" title="Permanent link">&para;</a></h2>
-<p>The <a href="../../src/gsp/"><code>gsp</code></a> package is the <strong>contract layer</strong> of GSP_API: the abstract protocol that every backend implements and that every convenience layer builds on. It defines what a <code>Canvas</code>, <code>Viewport</code>, <code>Camera</code>, <code>Buffer</code>, and <code>Visual</code> <em>are</em>; it does not draw anything.</p>
+<p>The <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/"><code>gsp</code></a> package is the <strong>contract layer</strong> of GSP_API: the abstract protocol that every backend implements and that every convenience layer builds on. It defines what a <code>Canvas</code>, <code>Viewport</code>, <code>Camera</code>, <code>Buffer</code>, and <code>Visual</code> <em>are</em>; it does not draw anything.</p>
 <p>This document is a focused tour of <code>src/gsp/</code>. The two companion docs already cover the wider ecosystem and the renderer side:</p>
 <ul>
 <li><a href="../philosophy_packages/">philosophy_packages.md</a> — the seven-package split, with §3.1 a one-page sketch of <code>gsp</code> that this document expands.</li>
@@ -1620,17 +1620,17 @@
 <h2 id="2-design-philosophy">2. Design Philosophy<a class="headerlink" href="#2-design-philosophy" title="Permanent link">&para;</a></h2>
 <p>Five principles. Together they are the "why" before the "what" of every section that follows.</p>
 <h3 id="21-contract-not-implementation">2.1 Contract, not implementation<a class="headerlink" href="#21-contract-not-implementation" title="Permanent link">&para;</a></h3>
-<p><code>gsp</code> defines <em>what</em> a renderer must do, never <em>how</em>. The six-method <a href="../../src/gsp/types/renderer_base.py"><code>RendererBase</code></a> is a pure ABC; the three backend packages are the only direct subclasses. The same is true of <code>AnimatorBase</code>, <code>ViewportEventsBase</code>, <code>SerializerBase</code>, and <code>TransformLinkBase</code> — all abstract, all subclassed outside this package. Verification:</p>
+<p><code>gsp</code> defines <em>what</em> a renderer must do, never <em>how</em>. The six-method <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/renderer_base.py"><code>RendererBase</code></a> is a pure ABC; the three backend packages are the only direct subclasses. The same is true of <code>AnimatorBase</code>, <code>ViewportEventsBase</code>, <code>SerializerBase</code>, and <code>TransformLinkBase</code> — all abstract, all subclassed outside this package. Verification:</p>
 <pre><code class="language-bash">grep -rn &quot;class .*RendererBase\|class .*AnimatorBase\|class .*ViewportEventsBase&quot; src/gsp/types/
 # only the abstract bases themselves; no concrete implementations
 </code></pre>
 <h3 id="22-data-not-commands">2.2 Data, not commands<a class="headerlink" href="#22-data-not-commands" title="Permanent link">&para;</a></h3>
-<p>A <code>Visual</code> is a record of attributes — positions, colors, sizes — not a procedure. There is no <code>Visual.draw()</code>. Rendering is the verb owned by <code>RendererBase.render(viewports, visuals, model_matrices, cameras)</code> (<a href="../../src/gsp/types/renderer_base.py">renderer_base.py</a>) — visuals appear there as <em>arguments</em>, never as actors. Same for <code>Canvas</code>, <code>Viewport</code>, <code>Camera</code>, <code>Texture</code>, <code>Geometry</code>: they are inert data containers.</p>
+<p>A <code>Visual</code> is a record of attributes — positions, colors, sizes — not a procedure. There is no <code>Visual.draw()</code>. Rendering is the verb owned by <code>RendererBase.render(viewports, visuals, model_matrices, cameras)</code> (<a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/renderer_base.py">renderer_base.py</a>) — visuals appear there as <em>arguments</em>, never as actors. Same for <code>Canvas</code>, <code>Viewport</code>, <code>Camera</code>, <code>Texture</code>, <code>Geometry</code>: they are inert data containers.</p>
 <p>This separation is what lets a single scene description run unchanged through every backend.</p>
 <h3 id="23-lazy-data-via-transbuf">2.3 Lazy data via <code>TransBuf</code><a class="headerlink" href="#23-lazy-data-via-transbuf" title="Permanent link">&para;</a></h3>
-<p>Every place a <code>Visual</code> or <code>Geometry</code> or <code>Camera</code> accepts buffer-shaped data, the type is not <code>Buffer</code> — it is <code>TransBuf = TransformChain | Buffer</code> (<a href="../../src/gsp/types/transbuf.py#L11">transbuf.py:11</a>). A field can hold either a concrete <code>Buffer</code> <em>or</em> a <code>TransformChain</code> that produces one when run. The chain is executed at render time, by the backend, via <a href="../../src/gsp/utils/transbuf_utils.py"><code>TransBufUtils.to_buffer</code></a>. This is the lazy-evaluation seam — see §6.</p>
+<p>Every place a <code>Visual</code> or <code>Geometry</code> or <code>Camera</code> accepts buffer-shaped data, the type is not <code>Buffer</code> — it is <code>TransBuf = TransformChain | Buffer</code> (<a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/transbuf.py#L11">transbuf.py:11</a>). A field can hold either a concrete <code>Buffer</code> <em>or</em> a <code>TransformChain</code> that produces one when run. The chain is executed at render time, by the backend, via <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/transbuf_utils.py"><code>TransBufUtils.to_buffer</code></a>. This is the lazy-evaluation seam — see §6.</p>
 <h3 id="24-self-registration-over-manifests">2.4 Self-registration over manifests<a class="headerlink" href="#24-self-registration-over-manifests" title="Permanent link">&para;</a></h3>
-<p>Two registries — <a href="../../src/gsp/utils/renderer_registery.py"><code>RendererRegistry</code></a> and <a href="../../src/gsp/transforms/transform_registry.py"><code>TransformRegistry</code></a> — let backends and transform-link types plug in by <em>importing</em> themselves. There is no central manifest of available renderers or links; the act of <code>import gsp_matplotlib</code> calls <code>RendererRegistry.register_renderer(...)</code> at module top level. This is the same pattern in both directions, and it is what makes <code>pip install gsp_&lt;backend&gt;</code> enough to make the backend visible.</p>
+<p>Two registries — <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/renderer_registery.py"><code>RendererRegistry</code></a> and <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/transforms/transform_registry.py"><code>TransformRegistry</code></a> — let backends and transform-link types plug in by <em>importing</em> themselves. There is no central manifest of available renderers or links; the act of <code>import gsp_matplotlib</code> calls <code>RendererRegistry.register_renderer(...)</code> at module top level. This is the same pattern in both directions, and it is what makes <code>pip install gsp_&lt;backend&gt;</code> enough to make the backend visible.</p>
 <h3 id="25-numpy-stdlib-only">2.5 Numpy + stdlib only<a class="headerlink" href="#25-numpy-stdlib-only" title="Permanent link">&para;</a></h3>
 <p>Already shown in §1. Stated once more because it is a structural property: the contract layer carries no library dependencies that consumers don't already have.</p>
 <hr />
@@ -1646,45 +1646,45 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="../../src/gsp/types/"><code>gsp.types</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/"><code>gsp.types</code></a></td>
 <td>Abstract bases + value types — the lowest layer</td>
 <td>(none — leaf)</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/core/"><code>gsp.core</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/core/"><code>gsp.core</code></a></td>
 <td>Scene-graph containers (<code>Canvas</code>, <code>Viewport</code>, <code>Camera</code>, <code>Texture</code>, <code>Event</code>)</td>
 <td><code>types</code>, <code>utils</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/transforms/"><code>gsp.transforms</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/transforms/"><code>gsp.transforms</code></a></td>
 <td><code>TransformChain</code>, <code>TransformLinkBase</code>, <code>TransformRegistry</code>, in-core links</td>
 <td><code>types</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/geometry/"><code>gsp.geometry</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/geometry/"><code>gsp.geometry</code></a></td>
 <td><code>Geometry</code>, <code>MeshGeometry</code> — vertex containers</td>
 <td><code>types</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/materials/"><code>gsp.materials</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/materials/"><code>gsp.materials</code></a></td>
 <td><code>Material</code> and friends — material descriptors</td>
 <td><code>types</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/visuals/"><code>gsp.visuals</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/"><code>gsp.visuals</code></a></td>
 <td>The eight concrete visuals</td>
 <td><code>types</code>, <code>core</code>, <code>geometry</code>, <code>materials</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/utils/"><code>gsp.utils</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/"><code>gsp.utils</code></a></td>
 <td>Free functions and the registries</td>
 <td><code>types</code>, <code>core</code></td>
 </tr>
 </tbody>
 </table>
-<p>Plus two top-level files: <a href="../../src/gsp/__init__.py"><code>gsp/__init__.py</code></a> (six imports, no logic) and <a href="../../src/gsp/constants.py"><code>gsp/constants.py</code></a> (<code>Constants.FaceCulling</code> and <code>Constants.Color</code> presets).</p>
+<p>Plus two top-level files: <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/__init__.py"><code>gsp/__init__.py</code></a> (six imports, no logic) and <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/constants.py"><code>gsp/constants.py</code></a> (<code>Constants.FaceCulling</code> and <code>Constants.Color</code> presets).</p>
 <p><strong>Internal dependency direction.</strong> <code>types</code> is the leaf — every other subpackage depends on it. <code>transforms</code>, <code>geometry</code>, <code>materials</code> build on <code>types</code> only. <code>visuals</code> builds on all of the above. <code>utils</code> and <code>core</code> cross-cut.</p>
-<p><strong>The deliberate non-re-export.</strong> <a href="../../src/gsp/types/__init__.py#L16-L18"><code>gsp/types/__init__.py:16-18</code></a> does <em>not</em> re-export <code>RendererBase</code> or <code>SerializerBase</code>:</p>
+<p><strong>The deliberate non-re-export.</strong> <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/__init__.py#L16-L18"><code>gsp/types/__init__.py:16-18</code></a> does <em>not</em> re-export <code>RendererBase</code> or <code>SerializerBase</code>:</p>
 <pre><code class="language-python"># FIXME those 2 are creating a circular import
 # from .renderer_base import RendererBase
 # from .serializer_base import SerializerBase
@@ -1698,18 +1698,18 @@ from gsp.types.serializer_base import SerializerBase
 <h2 id="4-core-concept-buffer">4. Core Concept: Buffer<a class="headerlink" href="#4-core-concept-buffer" title="Permanent link">&para;</a></h2>
 <p>A <code>Buffer</code> is the smallest unit of typed bulk data the protocol knows about. It is the wire-format the contract layer speaks.</p>
 <h3 id="41-the-class">4.1 The class<a class="headerlink" href="#41-the-class" title="Permanent link">&para;</a></h3>
-<p><a href="../../src/gsp/types/buffer.py#L13"><code>Buffer</code></a> is a typed, single-dimension array. From its docstring:</p>
+<p><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/buffer.py#L13"><code>Buffer</code></a> is a typed, single-dimension array. From its docstring:</p>
 <blockquote>
 <p>Typed array with single dimension. It is immutable in count and type, but mutable in content.</p>
 </blockquote>
-<p>Three fields, set once at construction and never resized (<a href="../../src/gsp/types/buffer.py#L19-L29">buffer.py:19-29</a>):</p>
+<p>Three fields, set once at construction and never resized (<a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/buffer.py#L19-L29">buffer.py:19-29</a>):</p>
 <pre><code class="language-python">self._count: int = count
 self._type: BufferType = buffer_type
 self._bytearray: bytearray = bytearray(count * item_size)
 </code></pre>
 <p>The element count and type are part of the buffer's identity; only the bytes inside are mutable. <code>Buffer</code> exposes <code>get_data(offset, count)</code> (which returns a <em>new</em> sliced <code>Buffer</code>), <code>set_data(bytes, offset, count)</code> (copy semantics), and <code>to_bytearray()</code> / <code>from_bytearray()</code> for serialization.</p>
 <h3 id="42-buffertype-the-type-axis">4.2 <code>BufferType</code> — the type axis<a class="headerlink" href="#42-buffertype-the-type-axis" title="Permanent link">&para;</a></h3>
-<p><a href="../../src/gsp/types/buffer_type.py#L15"><code>BufferType</code></a> is a 12-variant enum, modelled on GLSL types:</p>
+<p><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/buffer_type.py#L15"><code>BufferType</code></a> is a 12-variant enum, modelled on GLSL types:</p>
 <table>
 <thead>
 <tr>
@@ -1740,9 +1740,9 @@ self._bytearray: bytearray = bytearray(count * item_size)
 </tr>
 </tbody>
 </table>
-<p>The enum carries three static helpers (<a href="../../src/gsp/types/buffer_type.py#L38-L132">buffer_type.py:38-132</a>): <code>get_item_size(type)</code> returns bytes-per-element, <code>to_numpy_dtype(type)</code> and <code>from_numpy(arr)</code> bridge to numpy.</p>
+<p>The enum carries three static helpers (<a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/buffer_type.py#L38-L132">buffer_type.py:38-132</a>): <code>get_item_size(type)</code> returns bytes-per-element, <code>to_numpy_dtype(type)</code> and <code>from_numpy(arr)</code> bridge to numpy.</p>
 <h3 id="43-the-numpy-bridge">4.3 The numpy bridge<a class="headerlink" href="#43-the-numpy-bridge" title="Permanent link">&para;</a></h3>
-<p><code>Buffer</code> itself does <em>not</em> hold a numpy array — it holds raw bytes. The actual numpy adapter, <code>Bufferx</code>, lives in <a href="../../src/gsp_extra/bufferx.py"><code>gsp_extra</code></a> and is the helper users call in practice (<code>Bufferx.from_numpy(arr, BufferType.vec3)</code>). This split is deliberate: <code>Buffer</code> in the contract layer is byte-level so that serialization, network transport, and GPU-upload can all speak it natively; the numpy ergonomics live one layer up.</p>
+<p><code>Buffer</code> itself does <em>not</em> hold a numpy array — it holds raw bytes. The actual numpy adapter, <code>Bufferx</code>, lives in <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/bufferx.py"><code>gsp_extra</code></a> and is the helper users call in practice (<code>Bufferx.from_numpy(arr, BufferType.vec3)</code>). This split is deliberate: <code>Buffer</code> in the contract layer is byte-level so that serialization, network transport, and GPU-upload can all speak it natively; the numpy ergonomics live one layer up.</p>
 <h3 id="44-where-buffer-is-consumed">4.4 Where <code>Buffer</code> is consumed<a class="headerlink" href="#44-where-buffer-is-consumed" title="Permanent link">&para;</a></h3>
 <p>Almost every data-bearing slot in the protocol is a <code>TransBuf</code>, which resolves to a <code>Buffer</code> at render time. The consumers:</p>
 <ul>
@@ -1757,14 +1757,14 @@ self._bytearray: bytearray = bytearray(count * item_size)
 <p>A <code>Visual</code> is a record of <em>what</em> you want drawn, not a <em>how</em>. Every concrete visual is a data container; the rendering happens elsewhere.</p>
 <h3 id="51-evidence-data-container-not-draw-command">5.1 Evidence: data container, not draw command<a class="headerlink" href="#51-evidence-data-container-not-draw-command" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../src/gsp/types/visual_base.py#L15"><code>VisualBase</code></a> has no <code>render()</code> method. Its only members are <code>_uuid</code> and <code>userData</code>:
+<li><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/visual_base.py#L15"><code>VisualBase</code></a> has no <code>render()</code> method. Its only members are <code>_uuid</code> and <code>userData</code>:
   <code>python
   class VisualBase:
       __slots__ = ["_uuid", "userData"]
       def __init__(self):
           self._uuid: str = UuidUtils.generate_uuid()
           self.userData: dict[str, Any] = {}</code></li>
-<li>The verb <code>render</code> lives on <a href="../../src/gsp/types/renderer_base.py"><code>RendererBase</code></a>; visuals appear there as <strong>arguments</strong>.</li>
+<li>The verb <code>render</code> lives on <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/renderer_base.py"><code>RendererBase</code></a>; visuals appear there as <strong>arguments</strong>.</li>
 <li>Each backend's <code>_render_visual()</code> is a hand-written <code>isinstance</code> chain over the eight visual classes — see <a href="../philosophy_renderers/#51-the-dispatch-table-is-isinstance-not-a-dict">philosophy_renderers.md §5.1</a>. The visual is the <em>subject</em> of dispatch, never the actor.</li>
 </ul>
 <h3 id="52-the-catalogue">5.2 The catalogue<a class="headerlink" href="#52-the-catalogue" title="Permanent link">&para;</a></h3>
@@ -1781,37 +1781,37 @@ self._bytearray: bytearray = bytearray(count * item_size)
 <tr>
 <td><code>Points</code></td>
 <td><code>positions</code>, <code>sizes</code>, <code>face_colors</code>, <code>edge_colors</code>, <code>edge_widths</code></td>
-<td><a href="../../src/gsp/visuals/points.py">points.py</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/points.py">points.py</a></td>
 </tr>
 <tr>
 <td><code>Markers</code></td>
 <td><code>Points</code> fields + <code>marker_shape</code> (<code>MarkerShape</code> enum)</td>
-<td><a href="../../src/gsp/visuals/markers.py">markers.py</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/markers.py">markers.py</a></td>
 </tr>
 <tr>
 <td><code>Pixels</code></td>
 <td><code>positions</code>, <code>colors</code>, <code>groups</code> (<code>Groups</code> value type)</td>
-<td><a href="../../src/gsp/visuals/pixels.py">pixels.py</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/pixels.py">pixels.py</a></td>
 </tr>
 <tr>
 <td><code>Paths</code></td>
 <td><code>positions</code>, <code>path_sizes</code>, <code>colors</code>, <code>line_widths</code>, <code>cap_style</code>, <code>join_style</code></td>
-<td><a href="../../src/gsp/visuals/paths.py">paths.py</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/paths.py">paths.py</a></td>
 </tr>
 <tr>
 <td><code>Segments</code></td>
 <td><code>positions</code>, <code>line_widths</code>, <code>colors</code>, <code>cap_style</code></td>
-<td><a href="../../src/gsp/visuals/segments.py">segments.py</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/segments.py">segments.py</a></td>
 </tr>
 <tr>
 <td><code>Texts</code></td>
 <td><code>positions</code>, <code>colors</code>, <code>font_sizes</code>, <code>angles</code>, plus <code>strings</code>, <code>textAligns</code>, <code>font_name</code> (Python lists / strings, not buffers)</td>
-<td><a href="../../src/gsp/visuals/texts.py">texts.py</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/texts.py">texts.py</a></td>
 </tr>
 <tr>
 <td><code>Image</code></td>
 <td><code>texture</code> (<code>Texture</code>), <code>position</code>, <code>image_extent</code>, <code>image_interpolation</code></td>
-<td><a href="../../src/gsp/visuals/image.py">image.py</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/image.py">image.py</a></td>
 </tr>
 </tbody>
 </table>
@@ -1823,19 +1823,19 @@ self._bytearray: bytearray = bytearray(count * item_size)
 <li>A <code>check_attributes()</code> instance method that delegates to a static <code>sanity_check_attributes(...)</code> (and <code>sanity_check_attributes_buffer(...)</code> for the post-conversion check).</li>
 <li><code>__slots__</code> on every visual — no surprise attributes.</li>
 </ul>
-<p>Most validation bodies are stubs (<code>pass</code>); <code>Texts</code> is the most complete, asserting that <code>positions</code>, <code>colors</code>, <code>font_sizes</code>, <code>angles</code>, and <code>textAligns</code> all match the string count (<a href="../../src/gsp/visuals/texts.py#L177-L211">texts.py:177-211</a>).</p>
+<p>Most validation bodies are stubs (<code>pass</code>); <code>Texts</code> is the most complete, asserting that <code>positions</code>, <code>colors</code>, <code>font_sizes</code>, <code>angles</code>, and <code>textAligns</code> all match the string count (<a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/texts.py#L177-L211">texts.py:177-211</a>).</p>
 <p>To verify: <code>grep -rn "class.*VisualBase" src/gsp/visuals/</code> returns eight matches (the seven above plus <code>Mesh</code>).</p>
 <hr />
 <h2 id="6-core-concept-transform">6. Core Concept: Transform<a class="headerlink" href="#6-core-concept-transform" title="Permanent link">&para;</a></h2>
 <p>A <code>TransformChain</code> is a CPU-side, lazy data-transformation pipeline. It is what makes a <code>Buffer</code> slot something you can populate without computing the bytes up front — and something you can serialize and re-execute on another machine.</p>
 <h3 id="61-the-motivation-in-one-type">6.1 The motivation in one type<a class="headerlink" href="#61-the-motivation-in-one-type" title="Permanent link">&para;</a></h3>
-<p><a href="../../src/gsp/types/transbuf.py#L11"><code>transbuf.py:11</code></a>:</p>
+<p><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/transbuf.py#L11"><code>transbuf.py:11</code></a>:</p>
 <pre><code class="language-python">TransBuf = TransformChain | Buffer
 </code></pre>
 <p>Every buffer-shaped field on every visual / camera / texture / geometry has type <code>TransBuf</code>. A consumer can hand in a fully-baked <code>Buffer</code> <em>or</em> a description of how to make one. The renderer doesn't care which until render time.</p>
 <h3 id="62-transformchain">6.2 <code>TransformChain</code><a class="headerlink" href="#62-transformchain" title="Permanent link">&para;</a></h3>
-<p><a href="../../src/gsp/transforms/transform_chain.py#L17"><code>TransformChain</code></a> holds three things (<a href="../../src/gsp/transforms/transform_chain.py#L20-L40">lines 20-40</a>): an ordered list of <code>TransformLinkBase</code> instances, the expected output <code>buffer_count</code>, and the expected output <code>buffer_type</code> (either may be left undefined as <code>-1</code> / <code>None</code>).</p>
-<p>The execution model is a pipe-fold (<a href="../../src/gsp/transforms/transform_chain.py#L126-L149"><code>run()</code> at lines 126-149</a>):</p>
+<p><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/transforms/transform_chain.py#L17"><code>TransformChain</code></a> holds three things (<a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/transforms/transform_chain.py#L20-L40">lines 20-40</a>): an ordered list of <code>TransformLinkBase</code> instances, the expected output <code>buffer_count</code>, and the expected output <code>buffer_type</code> (either may be left undefined as <code>-1</code> / <code>None</code>).</p>
+<p>The execution model is a pipe-fold (<a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/transforms/transform_chain.py#L126-L149"><code>run()</code> at lines 126-149</a>):</p>
 <pre><code class="language-python">def run(self) -&gt; Buffer:
     buffer = None
     for link in self.__links:
@@ -1845,7 +1845,7 @@ self._bytearray: bytearray = bytearray(count * item_size)
 </code></pre>
 <p>Each link reads the previous link's output and produces a new <code>Buffer</code>. The first link receives <code>None</code> — which is the convention for "source" links that load or generate data.</p>
 <h3 id="63-transformlinkbase">6.3 <code>TransformLinkBase</code><a class="headerlink" href="#63-transformlinkbase" title="Permanent link">&para;</a></h3>
-<p><a href="../../src/gsp/transforms/transform_link_base.py#L13"><code>TransformLinkBase</code></a> is a three-method ABC:</p>
+<p><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/transforms/transform_link_base.py#L13"><code>TransformLinkBase</code></a> is a three-method ABC:</p>
 <pre><code class="language-python">class TransformLinkBase(ABC):
     @abstractmethod
     def apply(self, buffer_src: Buffer | None) -&gt; Buffer: ...
@@ -1857,7 +1857,7 @@ self._bytearray: bytearray = bytearray(count * item_size)
 </code></pre>
 <p><code>apply</code> does the work; <code>serialize</code> / <code>deserialize</code> make the chain transportable.</p>
 <h3 id="64-transformregistry">6.4 <code>TransformRegistry</code><a class="headerlink" href="#64-transformregistry" title="Permanent link">&para;</a></h3>
-<p><a href="../../src/gsp/transforms/transform_registry.py"><code>TransformRegistry</code></a> is the deserialization seam, mirroring <code>RendererRegistry</code>. It is a string→class map: a serialized link carries a <code>link_type</code> string, and on deserialization the chain looks up the class via <code>TransformRegistry.get_link_class(name)</code> and calls its <code>deserialize(data)</code>. Concrete link modules self-register at import time, the same way backends do.</p>
+<p><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/transforms/transform_registry.py"><code>TransformRegistry</code></a> is the deserialization seam, mirroring <code>RendererRegistry</code>. It is a string→class map: a serialized link carries a <code>link_type</code> string, and on deserialization the chain looks up the class via <code>TransformRegistry.get_link_class(name)</code> and calls its <code>deserialize(data)</code>. Concrete link modules self-register at import time, the same way backends do.</p>
 <h3 id="65-concrete-links">6.5 Concrete links<a class="headerlink" href="#65-concrete-links" title="Permanent link">&para;</a></h3>
 <p>Two by default — one in core, one in <code>gsp_extra</code>:</p>
 <table>
@@ -1871,19 +1871,19 @@ self._bytearray: bytearray = bytearray(count * item_size)
 <tbody>
 <tr>
 <td><code>TransformLinkImmediate</code></td>
-<td><a href="../../src/gsp/transforms/links/transform_link_immediate.py"><code>gsp/transforms/links/transform_link_immediate.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/transforms/links/transform_link_immediate.py"><code>gsp/transforms/links/transform_link_immediate.py</code></a></td>
 <td>Returns a fixed <code>Buffer</code>; ignores its input. The "constant" of the system.</td>
 </tr>
 <tr>
 <td><code>TransformLoad</code></td>
-<td><a href="../../src/gsp_extra/transform_links/transform_load.py"><code>gsp_extra/transform_links/transform_load.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/transform_links/transform_load.py"><code>gsp_extra/transform_links/transform_load.py</code></a></td>
 <td>Loads from a URI (file, <code>.npy</code>, image, HTTP) into a <code>Buffer</code>. Source link.</td>
 </tr>
 </tbody>
 </table>
 <p>The split is deliberate: in-core links are minimal (no I/O, no decoders); URI loading is a <code>gsp_extra</code> concern.</p>
 <h3 id="66-where-the-chain-runs">6.6 Where the chain runs<a class="headerlink" href="#66-where-the-chain-runs" title="Permanent link">&para;</a></h3>
-<p>Backends — not <code>gsp</code> itself — execute chains. Every per-visual renderer in <code>gsp_matplotlib</code> and <code>gsp_datoviz</code> calls <a href="../../src/gsp/utils/transbuf_utils.py#L25-L47"><code>TransBufUtils.to_buffer(trans_buf)</code></a> before reading data:</p>
+<p>Backends — not <code>gsp</code> itself — execute chains. Every per-visual renderer in <code>gsp_matplotlib</code> and <code>gsp_datoviz</code> calls <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/transbuf_utils.py#L25-L47"><code>TransBufUtils.to_buffer(trans_buf)</code></a> before reading data:</p>
 <pre><code class="language-python">if isinstance(trans_buf, Buffer):
     return trans_buf
 elif isinstance(trans_buf, TransformChain):
@@ -1905,29 +1905,29 @@ elif isinstance(trans_buf, TransformChain):
 </thead>
 <tbody>
 <tr>
-<td><a href="../../src/gsp/types/renderer_base.py"><code>RendererBase</code></a></td>
-<td><code>__init__(canvas)</code>, <code>render(...)</code>, <code>show()</code>, <code>close()</code>, <code>clear()</code>, <code>get_canvas()</code> — see <a href="../philosophy_renderers/#4-the-rendererbase-contract--method-by-method">philosophy_renderers.md §4</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/renderer_base.py"><code>RendererBase</code></a></td>
+<td><code>__init__(canvas)</code>, <code>render(...)</code>, <code>show()</code>, <code>close()</code>, <code>clear()</code>, <code>get_canvas()</code> — see <a href="../philosophy_renderers/#4-the-rendererbase-contract-method-by-method">philosophy_renderers.md §4</a></td>
 <td>the three backends</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/types/animator_base.py"><code>AnimatorBase</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/animator_base.py"><code>AnimatorBase</code></a></td>
 <td><code>__init__(renderer)</code>, <code>add_callback</code>, <code>remove_callback</code>, <code>event_listener</code> (decorator), <code>start(viewports, visuals, ...)</code>, <code>stop()</code>. Plus public <code>on_video_saved: Event</code></td>
 <td>the three backends</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/types/viewport_events_base.py"><code>ViewportEventsBase</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/viewport_events_base.py"><code>ViewportEventsBase</code></a></td>
 <td><code>__init__(renderer, viewport)</code>. Plus seven public <code>Event</code> slots: <code>key_press_event</code>, <code>key_release_event</code>, <code>button_press_event</code>, <code>button_release_event</code>, <code>mouse_move_event</code>, <code>mouse_scroll_event</code>, <code>canvas_resize_event</code></td>
 <td>the three backends</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/types/serializer_base.py"><code>SerializerBase</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/serializer_base.py"><code>SerializerBase</code></a></td>
 <td><code>serialize(viewports, visuals, model_matrices, cameras) -&gt; dict</code></td>
 <td><code>gsp_pydantic</code></td>
 </tr>
 </tbody>
 </table>
-<p>The animator callback shape is <code>AnimatorFunc: Callable[[float], Sequence[VisualBase]]</code> (<a href="../../src/gsp/types/animator_types.py">animator_types.py</a>) — given an elapsed time, return the visuals that changed this frame. Returning a short list is what lets the renderer's lazy-create / mutate-update cache stay efficient (<a href="../philosophy_renderers/#53-lazy-create-mutate-update">philosophy_renderers.md §5.3</a>).</p>
-<p>The <a href="../../src/gsp/core/event.py#L10"><code>Event</code></a> class itself is a small generic pub/sub primitive: <code>subscribe</code>, <code>unsubscribe</code>, <code>dispatch</code>, plus an <code>event_listener</code> decorator form. It is the only piece of behaviour-bearing code in <code>core/</code>; everything else there is data.</p>
+<p>The animator callback shape is <code>AnimatorFunc: Callable[[float], Sequence[VisualBase]]</code> (<a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/animator_types.py">animator_types.py</a>) — given an elapsed time, return the visuals that changed this frame. Returning a short list is what lets the renderer's lazy-create / mutate-update cache stay efficient (<a href="../philosophy_renderers/#53-lazy-create-mutate-update">philosophy_renderers.md §5.3</a>).</p>
+<p>The <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/core/event.py#L10"><code>Event</code></a> class itself is a small generic pub/sub primitive: <code>subscribe</code>, <code>unsubscribe</code>, <code>dispatch</code>, plus an <code>event_listener</code> decorator form. It is the only piece of behaviour-bearing code in <code>core/</code>; everything else there is data.</p>
 <hr />
 <h2 id="8-the-scene-graph-containers-gspcore">8. The scene-graph containers (<code>gsp.core</code>)<a class="headerlink" href="#8-the-scene-graph-containers-gspcore" title="Permanent link">&para;</a></h2>
 <p>Five classes. All of them are pure data — fields with getters and setters, no methods that draw.</p>
@@ -1941,27 +1941,27 @@ elif isinstance(trans_buf, TransformChain):
 </thead>
 <tbody>
 <tr>
-<td><a href="../../src/gsp/core/canvas.py"><code>Canvas</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/core/canvas.py"><code>Canvas</code></a></td>
 <td><code>width</code>, <code>height</code>, <code>dpi</code>, <code>background_color</code>, <code>userData</code></td>
 <td>Root render surface. Backends size their figure / app from these.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/core/viewport.py"><code>Viewport</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/core/viewport.py"><code>Viewport</code></a></td>
 <td><code>x</code>, <code>y</code>, <code>width</code>, <code>height</code>, <code>background_color</code>, <code>userData</code></td>
 <td>Rectangular sub-region of the canvas. Pixel coords, origin bottom-left.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/core/camera.py"><code>Camera</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/core/camera.py"><code>Camera</code></a></td>
 <td><code>view_matrix</code> (TransBuf), <code>projection_matrix</code> (TransBuf), <code>userData</code></td>
 <td>One of the four parallel lists <code>RendererBase.render</code> consumes.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/core/texture.py"><code>Texture</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/core/texture.py"><code>Texture</code></a></td>
 <td><code>data</code> (TransBuf), <code>width</code>, <code>height</code>, <code>userData</code></td>
 <td>Held by <code>Image</code> visual.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/core/event.py"><code>Event</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/core/event.py"><code>Event</code></a></td>
 <td>generic <code>Callback</code> type parameter</td>
 <td>The pub/sub primitive used by <code>ViewportEventsBase</code> and <code>AnimatorBase</code>.</td>
 </tr>
@@ -2030,44 +2030,44 @@ elif isinstance(trans_buf, TransformChain):
 </thead>
 <tbody>
 <tr>
-<td><a href="../../src/gsp/utils/renderer_registery.py"><code>renderer_registery.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/renderer_registery.py"><code>renderer_registery.py</code></a></td>
 <td><code>RendererRegistry</code> — backend triad registration. Full coverage in <a href="../philosophy_renderers/#6-the-registry-and-discovery">philosophy_renderers.md §6</a>.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/utils/transbuf_utils.py"><code>transbuf_utils.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/transbuf_utils.py"><code>transbuf_utils.py</code></a></td>
 <td><code>TransBufUtils.to_buffer(trans_buf) -&gt; Buffer</code> — the §6.6 dispatch.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/utils/uuid_utils.py"><code>uuid_utils.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/uuid_utils.py"><code>uuid_utils.py</code></a></td>
 <td><code>UuidUtils.generate_uuid()</code> — UUID v4, deterministic when <code>GSP_UUID_COUNTER</code> is set (test mode).</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/utils/math_utils.py"><code>math_utils.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/math_utils.py"><code>math_utils.py</code></a></td>
 <td><code>MathUtils.apply_mvp_to_vertices_transform(...)</code> — CPU-side MVP for backends that don't transform on the GPU.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/utils/cmap_utils.py"><code>cmap_utils.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/cmap_utils.py"><code>cmap_utils.py</code></a></td>
 <td>Colormap name lookup against matplotlib's registry.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/utils/group_utils.py"><code>group_utils.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/group_utils.py"><code>group_utils.py</code></a></td>
 <td><code>GroupUtils.get_group_count(...)</code> — interprets the <code>Groups</code> value type.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/utils/unit_utils.py"><code>unit_utils.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/unit_utils.py"><code>unit_utils.py</code></a></td>
 <td>Inch/cm and point/pixel conversions, DPI-aware.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/utils/viewport_unit_utils.py"><code>viewport_unit_utils.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/viewport_unit_utils.py"><code>viewport_unit_utils.py</code></a></td>
 <td>Viewport pixel ↔ NDC conversion.</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/utils/log_utils.py"><code>log_utils.py</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/log_utils.py"><code>log_utils.py</code></a></td>
 <td>A pre-configured loguru <code>logger</code>.</td>
 </tr>
 </tbody>
 </table>
-<p><a href="../../src/gsp/constants.py"><code>gsp/constants.py</code></a> ships two things, both flat and useful:</p>
+<p><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/constants.py"><code>gsp/constants.py</code></a> ships two things, both flat and useful:</p>
 <ul>
 <li><code>Constants.FaceCulling</code> — Enum: <code>FrontSide(0)</code>, <code>BackSide(1)</code>, <code>BothSides(2)</code>.</li>
 <li><code>Constants.Color</code> — named <code>bytearray</code> colour presets: <code>white</code>, <code>black</code>, <code>red</code>, <code>green</code>, <code>blue</code>, <code>yellow</code>, <code>magenta</code>, <code>cyan</code>, <code>light_gray</code>, <code>gray</code>, <code>dark_gray</code>, <code>transparent</code>.</li>
@@ -2085,32 +2085,32 @@ elif isinstance(trans_buf, TransformChain):
 </thead>
 <tbody>
 <tr>
-<td><a href="../../src/gsp_matplotlib/"><code>gsp_matplotlib</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/"><code>gsp_matplotlib</code></a></td>
 <td><code>RendererBase</code>, <code>AnimatorBase</code>, <code>ViewportEventsBase</code>, all visuals/types</td>
 <td>matplotlib-backed renderer triad; multi-format export (PNG/SVG/PDF)</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp_datoviz/"><code>gsp_datoviz</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/"><code>gsp_datoviz</code></a></td>
 <td>same three contracts</td>
 <td>GPU/interactive renderer triad</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp_network/"><code>gsp_network</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_network/"><code>gsp_network</code></a></td>
 <td>same three contracts</td>
 <td>thin-client renderer triad over HTTP</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp_pydantic/"><code>gsp_pydantic</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_pydantic/"><code>gsp_pydantic</code></a></td>
 <td><code>SerializerBase</code>, the whole data tree</td>
 <td>pydantic models + parser, JSON round-trip</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp_extra/"><code>gsp_extra</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/"><code>gsp_extra</code></a></td>
 <td>abstract types</td>
 <td><code>Object3D</code> scene graph, <code>Bufferx</code> numpy bridge, camera controls, <code>TransformLoad</code></td>
 </tr>
 <tr>
-<td><a href="../../src/vispy2/"><code>vispy2</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/vispy2/"><code>vispy2</code></a></td>
 <td>abstract types (via <code>gsp_extra</code>)</td>
 <td>matplotlib-like facade (<code>scatter</code>, <code>plot</code>, <code>imshow</code>, <code>Axes*</code>)</td>
 </tr>

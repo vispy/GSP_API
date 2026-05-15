@@ -1369,7 +1369,7 @@
 
 <h1 id="philosophy-of-gsp_api-packages">Philosophy of GSP_API Packages<a class="headerlink" href="#philosophy-of-gsp_api-packages" title="Permanent link">&para;</a></h1>
 <h2 id="1-preamble">1. Preamble<a class="headerlink" href="#1-preamble" title="Permanent link">&para;</a></h2>
-<p>The repo is split across <strong>seven Python packages</strong> under <a href="../../src/">src/</a>. The split is not arbitrary — each package occupies a specific layer of the architecture, and dependencies flow strictly downward. This document names the layers, walks each package, and shows how they cooperate.</p>
+<p>The repo is split across <strong>seven Python packages</strong> under <a href="https://github.com/vispy/GSP_API/blob/main/src/">src/</a>. The split is not arbitrary — each package occupies a specific layer of the architecture, and dependencies flow strictly downward. This document names the layers, walks each package, and shows how they cooperate.</p>
 <p><strong>Audience.</strong> A contributor opening this repo for the first time, or one returning after months away.</p>
 <p><strong>The two-sentence rule</strong> that governs the split:</p>
 <blockquote>
@@ -1389,7 +1389,7 @@ grep -rn &quot;RendererRegistry.register_renderer&quot; src/
 <h2 id="2-the-layered-architecture">2. The Layered Architecture<a class="headerlink" href="#2-the-layered-architecture" title="Permanent link">&para;</a></h2>
 <p>Three tiers, each smaller in scope than the one above it.</p>
 <h3 id="21-contract-layer">2.1 Contract layer<a class="headerlink" href="#21-contract-layer" title="Permanent link">&para;</a></h3>
-<p><a href="../../src/gsp/"><code>gsp</code></a> — the abstract protocol. Defines what a Canvas, Viewport, Visual, Buffer, and Renderer <em>are</em>, with no commitment to how rendering happens. Imports from no sibling package.</p>
+<p><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/"><code>gsp</code></a> — the abstract protocol. Defines what a Canvas, Viewport, Visual, Buffer, and Renderer <em>are</em>, with no commitment to how rendering happens. Imports from no sibling package.</p>
 <h3 id="22-backend-layer">2.2 Backend layer<a class="headerlink" href="#22-backend-layer" title="Permanent link">&para;</a></h3>
 <p>Three packages, each implementing the abstract bases of <code>gsp</code>. They self-register at import time so callers can request a renderer by name without taking a build-time dependency on it.</p>
 <table>
@@ -1402,17 +1402,17 @@ grep -rn &quot;RendererRegistry.register_renderer&quot; src/
 </thead>
 <tbody>
 <tr>
-<td><a href="../../src/gsp_matplotlib/"><code>gsp_matplotlib</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/"><code>gsp_matplotlib</code></a></td>
 <td>matplotlib</td>
 <td>Static images, CI, publication-quality PNG/SVG/PDF</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp_datoviz/"><code>gsp_datoviz</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/"><code>gsp_datoviz</code></a></td>
 <td>datoviz (GPU)</td>
 <td>Interactive, real-time, GPU-accelerated</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp_network/"><code>gsp_network</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_network/"><code>gsp_network</code></a></td>
 <td>HTTP client + Flask server</td>
 <td>Remote rendering; server delegates to one of the other two backends</td>
 </tr>
@@ -1429,15 +1429,15 @@ grep -rn &quot;RendererRegistry.register_renderer&quot; src/
 </thead>
 <tbody>
 <tr>
-<td><a href="../../src/gsp_extra/"><code>gsp_extra</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/"><code>gsp_extra</code></a></td>
 <td>Helpers above the protocol: <code>Object3D</code> scene-graph hierarchy, camera controls, <code>Bufferx</code> numpy bridge</td>
 </tr>
 <tr>
-<td><a href="../../src/gsp_pydantic/"><code>gsp_pydantic</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_pydantic/"><code>gsp_pydantic</code></a></td>
 <td>Round-trip the entire scene through pydantic models (for sessions, network, snapshot tests)</td>
 </tr>
 <tr>
-<td><a href="../../src/vispy2/"><code>vispy2</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/vispy2/"><code>vispy2</code></a></td>
 <td>High-level matplotlib-like facade: <code>scatter</code>, <code>plot</code>, <code>imshow</code>, and the <code>AxesManaged</code> / <code>AxesDisplay</code> / <code>AxesPanZoom</code> stack</td>
 </tr>
 </tbody>
@@ -1536,7 +1536,7 @@ grep -rn &quot;RendererRegistry.register_renderer&quot; src/
 <li>Convenience packages never depend on backends — they speak to the abstract types only.</li>
 <li>The lone "horizontal" edge is <code>gsp_network → gsp_pydantic</code>: the network backend uses serialization to put scenes on the wire.</li>
 </ul>
-<p>The table describes the <strong>renderer-side</strong> dependency graph — the part of each package a user imports to render. The <code>gsp_network</code> package additionally ships an executable Flask server under <a href="../../src/gsp_network/tools/">tools/</a> that does import both backends to dispatch incoming requests. That tool is a deployment artefact, not a library dependency — see §3.4.</p>
+<p>The table describes the <strong>renderer-side</strong> dependency graph — the part of each package a user imports to render. The <code>gsp_network</code> package additionally ships an executable Flask server under <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_network/tools/">tools/</a> that does import both backends to dispatch incoming requests. That tool is a deployment artefact, not a library dependency — see §3.4.</p>
 <p>This is what makes the env-var swap <code>GSP_RENDERER=matplotlib|datoviz|network</code> actually work — see <a href="../philosophy_examples/">philosophy_examples.md §2.1</a>.</p>
 <hr />
 <h2 id="3-per-package-reference">3. Per-Package Reference<a class="headerlink" href="#3-per-package-reference" title="Permanent link">&para;</a></h2>
@@ -1557,37 +1557,37 @@ grep -rn &quot;RendererRegistry.register_renderer&quot; src/
 </thead>
 <tbody>
 <tr>
-<td><a href="../../src/gsp/core/"><code>gsp.core</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/core/"><code>gsp.core</code></a></td>
 <td>Scene-graph containers</td>
 <td><code>Canvas</code>, <code>Viewport</code>, <code>Camera</code>, <code>Texture</code>, <code>Event</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/visuals/"><code>gsp.visuals</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/visuals/"><code>gsp.visuals</code></a></td>
 <td>Concrete visuals (data containers, not draw commands)</td>
 <td><code>Points</code>, <code>Pixels</code>, <code>Markers</code>, <code>Paths</code>, <code>Segments</code>, <code>Texts</code>, <code>Image</code>, <code>Mesh</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/types/"><code>gsp.types</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/"><code>gsp.types</code></a></td>
 <td>Abstract bases + value types</td>
 <td><code>RendererBase</code>, <code>VisualBase</code>, <code>AnimatorBase</code>, <code>ViewportEventsBase</code>, <code>SerializerBase</code>, <code>Buffer</code>, <code>BufferType</code>, <code>Color</code>, <code>MarkerShape</code>, <code>CapStyle</code>, <code>JoinStyle</code>, <code>TextAlign</code>, <code>ImageInterpolation</code>, <code>Group</code>, <code>TransBuf</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/transforms/"><code>gsp.transforms</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/transforms/"><code>gsp.transforms</code></a></td>
 <td><code>TransformChain</code> and registry</td>
 <td><code>TransformChain</code>, <code>TransformLinkBase</code>, <code>TransformRegistry</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/geometry/"><code>gsp.geometry</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/geometry/"><code>gsp.geometry</code></a></td>
 <td>Geometry containers</td>
 <td><code>Geometry</code>, <code>MeshGeometry</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/materials/"><code>gsp.materials</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/materials/"><code>gsp.materials</code></a></td>
 <td>Material descriptors</td>
 <td><code>Material</code>, <code>MeshBasicMaterial</code>, <code>MeshMaterial</code></td>
 </tr>
 <tr>
-<td><a href="../../src/gsp/utils/"><code>gsp.utils</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/"><code>gsp.utils</code></a></td>
 <td>Free functions and the registry</td>
 <td><code>RendererRegistry</code>, <code>CmapUtils</code>, <code>GroupUtils</code>, <code>UnitUtils</code>, <code>ViewportUnitUtils</code>, <code>MathUtils</code>, <code>UuidUtils</code></td>
 </tr>
@@ -1601,7 +1601,7 @@ from gsp.types.buffer_type import BufferType
 from gsp.utils.renderer_registery import RendererRegistry
 from gsp.constants import Constants
 </code></pre>
-<p>A note on imports: <a href="../../src/gsp/types/__init__.py">src/gsp/types/<strong>init</strong>.py</a> deliberately does not re-export <code>RendererBase</code> or <code>SerializerBase</code> (to avoid a circular import). Import them from the submodule instead:</p>
+<p>A note on imports: <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/__init__.py">src/gsp/types/<strong>init</strong>.py</a> deliberately does not re-export <code>RendererBase</code> or <code>SerializerBase</code> (to avoid a circular import). Import them from the submodule instead:</p>
 <pre><code class="language-python">from gsp.types.renderer_base import RendererBase
 from gsp.types.serializer_base import SerializerBase
 </code></pre>
@@ -1610,7 +1610,7 @@ from gsp.types.serializer_base import SerializerBase
 RendererRegistry.create_viewport_events(renderer, vp)     # → ViewportEventsBase
 RendererRegistry.create_animator(renderer)                # → AnimatorBase
 </code></pre>
-<p>Definition: <a href="../../src/gsp/utils/renderer_registery.py#L24-L100">src/gsp/utils/renderer_registery.py:24-100</a>. Every backend's <code>renderer_registration.py</code> calls <code>register_renderer(...)</code> to add itself.</p>
+<p>Definition: <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/utils/renderer_registery.py#L24-L100">src/gsp/utils/renderer_registery.py:24-100</a>. Every backend's <code>renderer_registration.py</code> calls <code>register_renderer(...)</code> to add itself.</p>
 <hr />
 <h3 id="32-gsp_matplotlib-static-ci-backend">3.2 <code>gsp_matplotlib</code> — static / CI backend<a class="headerlink" href="#32-gsp_matplotlib-static-ci-backend" title="Permanent link">&para;</a></h3>
 <p><strong>What it is.</strong> The default backend. Renders to PNG/SVG/PDF via matplotlib. Needs no GPU; ideal for CI, headless servers, and publication output.</p>
@@ -1627,17 +1627,17 @@ RendererRegistry.create_animator(renderer)                # → AnimatorBase
 <tr>
 <td><code>RendererBase</code></td>
 <td><code>MatplotlibRenderer</code></td>
-<td><a href="../../src/gsp_matplotlib/renderer/matplotlib_renderer.py#L38">renderer/matplotlib_renderer.py:38</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/renderer/matplotlib_renderer.py#L38">renderer/matplotlib_renderer.py:38</a></td>
 </tr>
 <tr>
 <td><code>AnimatorBase</code></td>
 <td><code>AnimatorMatplotlib</code></td>
-<td><a href="../../src/gsp_matplotlib/animator/animator_matplotlib.py#L37">animator/animator_matplotlib.py:37</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/animator/animator_matplotlib.py#L37">animator/animator_matplotlib.py:37</a></td>
 </tr>
 <tr>
 <td><code>ViewportEventsBase</code></td>
 <td><code>ViewportEventsMatplotlib</code></td>
-<td><a href="../../src/gsp_matplotlib/viewport_events/viewport_events_matplotlib.py#L22">viewport_events/viewport_events_matplotlib.py:22</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/viewport_events/viewport_events_matplotlib.py#L22">viewport_events/viewport_events_matplotlib.py:22</a></td>
 </tr>
 </tbody>
 </table>
@@ -1648,8 +1648,8 @@ from gsp.utils.renderer_registery import RendererRegistry
 renderer = RendererRegistry.create_renderer(&quot;matplotlib&quot;, canvas)
 png_bytes = renderer.render([viewport], [visual], [model_matrix], [camera])
 </code></pre>
-<p>The matplotlib backend additionally accepts <code>image_format="png"|"svg"|"pdf"</code> for vector output — see <a href="../../examples/svg_pdf_example.py">examples/svg_pdf_example.py</a>.</p>
-<p><strong>Registration.</strong> <a href="../../src/gsp_matplotlib/renderer_registration.py#L10-L17">renderer_registration.py:10-17</a>:</p>
+<p>The matplotlib backend additionally accepts <code>image_format="png"|"svg"|"pdf"</code> for vector output — see <a href="https://github.com/vispy/GSP_API/blob/main/examples/svg_pdf_example.py">examples/svg_pdf_example.py</a>.</p>
+<p><strong>Registration.</strong> <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/renderer_registration.py#L10-L17">renderer_registration.py:10-17</a>:</p>
 <pre><code class="language-python">RendererRegistry.register_renderer(
     renderer_name=&quot;matplotlib&quot;,
     renderer_base_type=MatplotlibRenderer,
@@ -1673,17 +1673,17 @@ png_bytes = renderer.render([viewport], [visual], [model_matrix], [camera])
 <tr>
 <td><code>RendererBase</code></td>
 <td><code>DatovizRenderer</code></td>
-<td><a href="../../src/gsp_datoviz/renderer/datoviz_renderer.py#L41">renderer/datoviz_renderer.py:41</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/renderer/datoviz_renderer.py#L41">renderer/datoviz_renderer.py:41</a></td>
 </tr>
 <tr>
 <td><code>AnimatorBase</code></td>
 <td><code>AnimatorDatoviz</code></td>
-<td><a href="../../src/gsp_datoviz/animator/animator_datoviz.py#L19">animator/animator_datoviz.py:19</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/animator/animator_datoviz.py#L19">animator/animator_datoviz.py:19</a></td>
 </tr>
 <tr>
 <td><code>ViewportEventsBase</code></td>
 <td><code>ViewportEventsDatoviz</code></td>
-<td><a href="../../src/gsp_datoviz/viewport_events/viewport_events_datoviz.py#L11">viewport_events/viewport_events_datoviz.py:11</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/viewport_events/viewport_events_datoviz.py#L11">viewport_events/viewport_events_datoviz.py:11</a></td>
 </tr>
 </tbody>
 </table>
@@ -1692,7 +1692,7 @@ png_bytes = renderer.render([viewport], [visual], [model_matrix], [camera])
 <pre><code class="language-python">import gsp_datoviz
 renderer = RendererRegistry.create_renderer(&quot;datoviz&quot;, canvas)
 </code></pre>
-<p><strong>Registration.</strong> <a href="../../src/gsp_datoviz/renderer_registration.py#L10-L17">renderer_registration.py:10-17</a>.</p>
+<p><strong>Registration.</strong> <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_datoviz/renderer_registration.py#L10-L17">renderer_registration.py:10-17</a>.</p>
 <hr />
 <h3 id="34-gsp_network-remote-rendering">3.4 <code>gsp_network</code> — remote rendering<a class="headerlink" href="#34-gsp_network-remote-rendering" title="Permanent link">&para;</a></h3>
 <p><strong>What it is.</strong> A two-piece package for rendering across the network: a thin HTTP client (<code>NetworkRenderer</code>) on the user side, and a Flask server (<code>tools/network_server.py</code>) on the rendering host.</p>
@@ -1709,17 +1709,17 @@ renderer = RendererRegistry.create_renderer(&quot;datoviz&quot;, canvas)
 <tr>
 <td><code>RendererBase</code></td>
 <td><code>NetworkRenderer</code></td>
-<td><a href="../../src/gsp_network/renderer/network_renderer.py#L38">renderer/network_renderer.py:38</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_network/renderer/network_renderer.py#L38">renderer/network_renderer.py:38</a></td>
 </tr>
 <tr>
 <td><code>AnimatorBase</code></td>
 <td><code>AnimatorNetwork</code></td>
-<td><a href="../../src/gsp_network/animator/animator_network.py#L26">animator/animator_network.py:26</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_network/animator/animator_network.py#L26">animator/animator_network.py:26</a></td>
 </tr>
 <tr>
 <td><code>ViewportEventsBase</code></td>
 <td><code>ViewportEventsNetwork</code></td>
-<td><a href="../../src/gsp_network/viewport_events/viewport_events_network.py#L15">viewport_events/viewport_events_network.py:15</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_network/viewport_events/viewport_events_network.py#L15">viewport_events/viewport_events_network.py:15</a></td>
 </tr>
 </tbody>
 </table>
@@ -1733,7 +1733,7 @@ png_bytes = renderer.render([viewport], [visual], [model_matrix], [camera])
 <p><strong>How to use it (server side).</strong></p>
 <pre><code class="language-bash">python -m gsp_network.tools.network_server
 </code></pre>
-<p>Server picks a backend <strong>per request</strong>, reading <code>payload["renderer_name"]</code> at <a href="../../src/gsp_network/tools/network_server.py#L75-L79">network_server.py:75-79</a>:</p>
+<p>Server picks a backend <strong>per request</strong>, reading <code>payload["renderer_name"]</code> at <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_network/tools/network_server.py#L75-L79">network_server.py:75-79</a>:</p>
 <pre><code class="language-python">if renderer_name == &quot;matplotlib&quot;:
     renderer = MatplotlibRenderer(parsed_canvas)
 else:
@@ -1745,7 +1745,7 @@ else:
 <h3 id="35-gsp_pydantic-full-scene-serialization">3.5 <code>gsp_pydantic</code> — full-scene serialization<a class="headerlink" href="#35-gsp_pydantic-full-scene-serialization" title="Permanent link">&para;</a></h3>
 <p><strong>What it is.</strong> Bidirectional translation between a live GSP scene (canvas + viewports + visuals + buffers + transforms + cameras) and a tree of pydantic models. Round-trips through JSON.</p>
 <p><strong>Boundaries.</strong> Serialization only. No rendering, no state, no UI.</p>
-<p><strong>Key entry points</strong> (<a href="../../src/gsp_pydantic/serializer/__init__.py#L3-L4">serializer/<strong>init</strong>.py:3-4</a>):</p>
+<p><strong>Key entry points</strong> (<a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_pydantic/serializer/__init__.py#L3-L4">serializer/<strong>init</strong>.py:3-4</a>):</p>
 <pre><code class="language-python">from gsp_pydantic.serializer.pydantic_serializer import PydanticSerializer
 from gsp_pydantic.serializer.pydantic_parser import PydanticParser
 </code></pre>
@@ -1760,7 +1760,7 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
 <p><strong>Two consumers.</strong></p>
 <ol>
 <li>The <code>gsp_network</code> server, which deserializes incoming payloads.</li>
-<li>The session record/replay examples — see <a href="../philosophy_examples/">philosophy_examples.md §4.8</a> and <a href="../../examples/session_record_example.py">examples/session_record_example.py</a>.</li>
+<li>The session record/replay examples — see <a href="../philosophy_examples/">philosophy_examples.md §4.8</a> and <a href="https://github.com/vispy/GSP_API/blob/main/examples/session_record_example.py">examples/session_record_example.py</a>.</li>
 </ol>
 <hr />
 <h3 id="36-gsp_extra-convenience-helpers">3.6 <code>gsp_extra</code> — convenience helpers<a class="headerlink" href="#36-gsp_extra-convenience-helpers" title="Permanent link">&para;</a></h3>
@@ -1779,32 +1779,32 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
 <tr>
 <td><code>Object3D</code></td>
 <td>Scene-graph node with parent/child links and Euler-angle local transforms. <code>Object3D.pre_render(viewport, scene, camera)</code> flattens a hierarchy into the four parallel lists <code>RendererBase.render(...)</code> consumes.</td>
-<td><a href="../../src/gsp_extra/object3d.py#L20">object3d.py:20</a>, <code>pre_render</code> at <a href="../../src/gsp_extra/object3d.py#L229">object3d.py:229</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/object3d.py#L20">object3d.py:20</a>, <code>pre_render</code> at <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/object3d.py#L229">object3d.py:229</a></td>
 </tr>
 <tr>
 <td><code>Bufferx</code></td>
 <td>The standard numpy → GPU bridge. <code>Bufferx.from_numpy(arr, BufferType.vec3)</code> and <code>Bufferx.mat4_identity()</code> show up in every example.</td>
-<td><a href="../../src/gsp_extra/bufferx.py">bufferx.py</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/bufferx.py">bufferx.py</a></td>
 </tr>
 <tr>
 <td><code>AwsdControls</code>, <code>TrackballControls</code></td>
 <td>Camera control schemes that mutate an <code>Object3D</code> from <code>ViewportEvents</code>.</td>
-<td><a href="../../src/gsp_extra/camera_controls/">camera_controls/</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/camera_controls/">camera_controls/</a></td>
 </tr>
 <tr>
 <td><code>RenderItem</code></td>
 <td>A bundle of <code>(viewport, visual, model_matrix, camera)</code> — useful when you want to manipulate render entries as a list rather than four parallel ones.</td>
-<td><a href="../../src/gsp_extra/misc/render_item.py">misc/render_item.py</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/misc/render_item.py">misc/render_item.py</a></td>
 </tr>
 <tr>
 <td><code>TextureUtils</code>, <code>MeshUtils</code></td>
 <td>Image loaders, mesh helpers.</td>
-<td><a href="../../src/gsp_extra/misc/">misc/</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/misc/">misc/</a></td>
 </tr>
 <tr>
 <td>Transform links</td>
 <td><code>TransformLoad</code> and friends — building blocks for <code>TransformChain</code>.</td>
-<td><a href="../../src/gsp_extra/transform_links/">transform_links/</a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/transform_links/">transform_links/</a></td>
 </tr>
 </tbody>
 </table>
@@ -1822,19 +1822,19 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
 </thead>
 <tbody>
 <tr>
-<td><a href="../../src/vispy2/axes/__init__.py"><code>vispy2.axes</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/vispy2/axes/__init__.py"><code>vispy2.axes</code></a></td>
 <td><code>AxesManaged</code>, <code>AxesDisplay</code>, <code>AxesPanZoom</code>, <code>AxisTickLocator</code>, <code>AxisTickFormatter</code></td>
 </tr>
 <tr>
-<td><a href="../../src/vispy2/scatter/scatter.py"><code>vispy2.scatter</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/vispy2/scatter/scatter.py"><code>vispy2.scatter</code></a></td>
 <td><code>scatter(...)</code></td>
 </tr>
 <tr>
-<td><a href="../../src/vispy2/plot/plot.py"><code>vispy2.plot</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/vispy2/plot/plot.py"><code>vispy2.plot</code></a></td>
 <td><code>plot(...)</code></td>
 </tr>
 <tr>
-<td><a href="../../src/vispy2/imshow/imshow.py"><code>vispy2.imshow</code></a></td>
+<td><a href="https://github.com/vispy/GSP_API/blob/main/src/vispy2/imshow/imshow.py"><code>vispy2.imshow</code></a></td>
 <td><code>imshow(...)</code></td>
 </tr>
 </tbody>
@@ -1873,7 +1873,7 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
 <p>The pattern is reproducible: every backend follows the same shape. To add <code>gsp_&lt;backend&gt;</code>:</p>
 <ol>
 <li>
-<p><strong>Mirror the layout</strong> of <a href="../../src/gsp_matplotlib/">gsp_matplotlib/</a>:
+<p><strong>Mirror the layout</strong> of <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/">gsp_matplotlib/</a>:
    <code>src/gsp_&lt;backend&gt;/
    ├── __init__.py
    ├── renderer/
@@ -1886,7 +1886,7 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
    └── renderer_registration.py</code></p>
 </li>
 <li>
-<p><strong>Implement the three contracts</strong> from <a href="../../src/gsp/types/">src/gsp/types/</a>:</p>
+<p><strong>Implement the three contracts</strong> from <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp/types/">src/gsp/types/</a>:</p>
 </li>
 <li><code>RendererBase</code> — concrete <code>render(viewports, visuals, model_matrices, cameras, **opts)</code>.</li>
 <li><code>AnimatorBase</code> — frame loop driving the renderer.</li>
@@ -1894,10 +1894,10 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
 <p><code>ViewportEventsBase</code> — backend-specific input plumbing.</p>
 </li>
 <li>
-<p><strong>Provide a <code>register_renderer_&lt;backend&gt;()</code> function</strong> that calls <code>RendererRegistry.register_renderer(...)</code> — copy <a href="../../src/gsp_matplotlib/renderer_registration.py">src/gsp_matplotlib/renderer_registration.py</a> verbatim and rename.</p>
+<p><strong>Provide a <code>register_renderer_&lt;backend&gt;()</code> function</strong> that calls <code>RendererRegistry.register_renderer(...)</code> — copy <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/renderer_registration.py">src/gsp_matplotlib/renderer_registration.py</a> verbatim and rename.</p>
 </li>
 <li>
-<p><strong>Wire into the example helper</strong> at <a href="../../examples/common/example_helper.py#L42">examples/common/example_helper.py:42</a> so <code>GSP_RENDERER=&lt;backend&gt;</code> becomes a valid value.</p>
+<p><strong>Wire into the example helper</strong> at <a href="https://github.com/vispy/GSP_API/blob/main/examples/common/example_helper.py#L42">examples/common/example_helper.py:42</a> so <code>GSP_RENDERER=&lt;backend&gt;</code> becomes a valid value.</p>
 </li>
 </ol>
 <p>That is the full surface area. Existing examples will run under the new backend without modification.</p>
@@ -1936,7 +1936,7 @@ NetworkRenderer  ──HTTP──&gt;  network_server.py  ──────&gt;
 gsp_pydantic.PydanticSerializer  gsp_pydantic.PydanticParser   DatovizRenderer
                                                           (chosen per request)
 </code></pre>
-<p><strong>Package map:</strong> client side uses <code>gsp_network</code> (renderer + serializer call) and <code>gsp_pydantic</code>. Server side uses <code>gsp_network.tools.network_server</code>, which itself imports <code>gsp_matplotlib</code> and <code>gsp_datoviz</code> at the top of <a href="../../src/gsp_network/tools/network_server.py#L19-L20">network_server.py:19-20</a> and dispatches per <code>payload["renderer_name"]</code> at <a href="../../src/gsp_network/tools/network_server.py#L75-L79">network_server.py:75-79</a>.</p>
+<p><strong>Package map:</strong> client side uses <code>gsp_network</code> (renderer + serializer call) and <code>gsp_pydantic</code>. Server side uses <code>gsp_network.tools.network_server</code>, which itself imports <code>gsp_matplotlib</code> and <code>gsp_datoviz</code> at the top of <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_network/tools/network_server.py#L19-L20">network_server.py:19-20</a> and dispatches per <code>payload["renderer_name"]</code> at <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_network/tools/network_server.py#L75-L79">network_server.py:75-79</a>.</p>
 <p>The user's local code is identical to single-machine code — only the renderer constructor changes.</p>
 <hr />
 <h2 id="6-stability-matrix">6. Stability Matrix<a class="headerlink" href="#6-stability-matrix" title="Permanent link">&para;</a></h2>
@@ -2010,7 +2010,7 @@ gsp_pydantic.PydanticSerializer  gsp_pydantic.PydanticParser   DatovizRenderer
    Exactly three matches: matplotlib, datoviz, network. If a fourth appears, §2.2 needs a new row.</p>
 </li>
 <li>
-<p><strong>The extension recipe in §4.</strong> Every step points at an existing file; copying <a href="../../src/gsp_matplotlib/">src/gsp_matplotlib/</a> is the literal blueprint.</p>
+<p><strong>The extension recipe in §4.</strong> Every step points at an existing file; copying <a href="https://github.com/vispy/GSP_API/blob/main/src/gsp_matplotlib/">src/gsp_matplotlib/</a> is the literal blueprint.</p>
 </li>
 </ol>
 <p>When the code drifts from this document — change the document. The package layout is the source of truth; this file just names what it already is.</p>
