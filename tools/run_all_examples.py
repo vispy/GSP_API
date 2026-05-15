@@ -36,21 +36,22 @@ def text_red(text: str) -> str:
 # =============================================================================
 # launch example script
 # =============================================================================
-def launch_example(cmdline_args: list[str], env_variables: dict[str, str], verbose: bool) -> bool:
+def launch_example(cmdline_args: list[str], env_variables: dict[str, str]) -> tuple[bool, str, str]:
     """Launches the example script with the given command line arguments.
 
     Arguments:
         cmdline_args: List of command line arguments to pass to the script.
         env_variables: Environment variables to set for the script.
-        verbose: If True, print more detailed output.
 
     Returns:
-        True if the script ran successfully, False otherwise.
+        Tuple of (success, stdout, stderr). success is True if the script ran
+        successfully, False otherwise. stdout and stderr contain the captured
+        output from the subprocess (empty strings if nothing was captured).
     """
-    try:
-        # Add a environment variable to disable interactive mode in the example
-        env = dict(**os.environ, **env_variables)
+    # Add a environment variable to disable interactive mode in the example
+    env = dict(**os.environ, **env_variables)
 
+    try:
         result = subprocess.run(
             cmdline_args,
             check=True,  # Raises CalledProcessError if script fails
@@ -58,16 +59,10 @@ def launch_example(cmdline_args: list[str], env_variables: dict[str, str], verbo
             text=True,  # Capture output as string instead of bytes
             env=env,
         )
-        # print("Script B ran successfully.")
-        # print("Output:", result.stdout)
-        run_success = True if result.returncode == 0 else False
+        return (True, result.stdout or "", result.stderr or "")
 
     except subprocess.CalledProcessError as error:
-        if verbose:
-            print("Error Output:", error.stderr)
-        run_success = False
-
-    return run_success
+        return (False, error.stdout or "", error.stderr or "")
 
 
 ###############################################################################
@@ -101,9 +96,7 @@ def main() -> None:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose mode with more verbose output.")
-    args = parser.parse_args(local_args)
-
-    verbose_mode = True if args.verbose else False
+    parser.parse_args(local_args)
 
     # get script paths in the examples folder
     examples_folder = f"{__dirname__}/../examples"
@@ -167,7 +160,7 @@ def main() -> None:
             }
 
             # launch the example script
-            run_success = launch_example([sys.executable, script_path, *example_args], env_variables=env_variables, verbose=verbose_mode)
+            run_success, out, err = launch_example([sys.executable, script_path, *example_args], env_variables=env_variables)
 
             # display X in red if failed, or a check in green if successful
             if run_success:
@@ -176,6 +169,10 @@ def main() -> None:
                 print(f"{text_red('Failed')}")
 
             if not run_success:
+                if out:
+                    print(out)
+                if err:
+                    print(err, file=sys.stderr)
                 sys.exit(1)
 
     print(f"All {text_cyan(str(len(script_paths)))} example scripts ran successfully. {text_green('OK')}")
