@@ -6,26 +6,47 @@
       "cost_class": "high_or_current",
       "description": "The current interactive Codex session. Use for Mission Control and M001 until aisw providers are configured."
     },
-    "codex-cheap-placeholder": {
+    "codex-ibl": {
       "kind": "codex_exec",
-      "enabled": false,
-      "aisw_context": "REPLACE_WITH_AISW_CODEX_CONTEXT",
-      "cost_class": "cheap",
-      "command_template": "bash -lc 'eval \"$(aisw context use {aisw_context} --emit-env)\"; codex exec --json --sandbox workspace-write --cd {worktree} \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
-      "description": "Enable after M001 inspects aisw contexts."
+      "enabled": true,
+      "aisw_context": "codex/ibl",
+      "aisw_tool": "codex",
+      "aisw_profile": "ibl",
+      "cost_class": "medium",
+      "command_template": "bash -lc 'aisw use codex ibl --state-mode isolated --non-interactive --quiet; cd {worktree}; codex exec --json --sandbox workspace-write --cd {worktree} \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
+      "description": "Real aisw Codex profile found by M001. `aisw status --json` reports this profile active and credentials present."
     },
     "claude-medium-placeholder": {
       "kind": "claude_cli",
       "enabled": false,
-      "aisw_context": "REPLACE_WITH_AISW_CLAUDE_CONTEXT",
+      "aisw_context": "MISSING_AISW_CLAUDE_PROFILE",
       "cost_class": "medium",
-      "command_template": "bash -lc 'eval \"$(aisw context use {aisw_context} --emit-env)\"; cd {worktree}; claude -p --output-format stream-json --permission-mode acceptEdits \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
-      "description": "Enable after M001 inspects aisw contexts."
+      "command_template": "bash -lc 'aisw use claude {aisw_context} --state-mode isolated --non-interactive --quiet; cd {worktree}; claude -p --output-format stream-json --permission-mode acceptEdits \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
+      "description": "Disabled because `aisw list claude --json` returned no Claude profiles and `aisw status --json` reported no Claude credentials present."
     }
   },
   "selection_policy": {
-    "cheap": ["codex-cheap-placeholder"],
-    "medium": ["claude-medium-placeholder", "codex-cheap-placeholder"],
+    "cheap": ["codex-ibl"],
+    "medium": ["codex-ibl", "claude-medium-placeholder"],
     "high": ["local-main-codex"]
+  },
+  "inventory": {
+    "checked_at": "2026-06-20",
+    "aisw_binary": "/Users/cyrille/.local/bin/aisw",
+    "commands_run": [
+      "command -v aisw",
+      "aisw list --json",
+      "aisw status --json",
+      "aisw list codex --json",
+      "aisw list claude --json",
+      "aisw use --help"
+    ],
+    "codex_profiles": ["adikia", "adikia-ai", "ibl", "ucl"],
+    "active_codex_profile": "ibl",
+    "claude_profiles": [],
+    "notes": [
+      "Installed aisw uses `aisw use <tool> <profile>` rather than the bootstrap template's `aisw context use` syntax.",
+      "No credential contents were read or recorded."
+    ]
   }
 }

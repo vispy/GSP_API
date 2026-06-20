@@ -17,6 +17,20 @@ Draft. Launch after M002 creates the protocol spine.
 - CONF-POINT-001: add point fixture/test.
 - CONF-IMAGE-001: add image fixture/test.
 
+## Legacy inputs
+
+- `LEGACY_MAP.md`
+- `src/gsp_matplotlib/renderer/matplotlib_renderer.py`
+- `src/gsp_matplotlib/renderer/matplotlib_renderer_points.py`
+- `src/gsp_matplotlib/renderer/matplotlib_renderer_image.py`
+- `examples/points_example.py`
+- `examples/image_example.py`
+- `examples/expected/`
+
+## Scope guard
+
+Keep Matplotlib as the reference/conformance backend. Prefer narrow fixtures over broad example-suite rewrites.
+
 ## Stop conditions
 
 Stop if image coordinate semantics or vector export semantics require architecture decisions.

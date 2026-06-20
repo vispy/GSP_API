@@ -14,6 +14,18 @@ Draft.
 - updated spec/backends/datoviz.md
 - external handoff task files for Datoviz repo if needed
 
+## Legacy inputs
+
+- `LEGACY_MAP.md`
+- `src/gsp_datoviz/renderer/datoviz_renderer.py`
+- `src/gsp_datoviz/renderer/datoviz_renderer_points.py`
+- `src/gsp_datoviz/renderer/datoviz_renderer_image.py`
+- Datoviz-related examples under `examples/`
+
+## Scope guard
+
+This is an assessment mission before implementation. Compare the legacy Datoviz adapter against Datoviz v0.4 public APIs, especially private imports, visual creation/update, panel mapping, offscreen screenshots, capability reporting, and query/readback feasibility.
+
 ## Stop conditions
 
 This mission may require ChatGPT Pro consultation if a Datoviz v0.4 API break decision is needed.
