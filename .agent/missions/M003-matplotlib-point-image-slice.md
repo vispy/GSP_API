@@ -6,7 +6,7 @@ Make the Matplotlib backend consume the first formal GSP point and image models.
 
 ## State
 
-Draft. Launch after M002 creates the protocol spine.
+Completed in the current Codex session.
 
 ## Expected tasks
 
@@ -34,3 +34,11 @@ Keep Matplotlib as the reference/conformance backend. Prefer narrow fixtures ove
 ## Stop conditions
 
 Stop if image coordinate semantics or vector export semantics require architecture decisions.
+
+## Result
+
+- Added first formal protocol visual models: `PointVisual` and `ImageVisual`.
+- Added explicit `ImageOrigin` and `ImageInterpolation` fields for the image reference slice.
+- Added `gsp_matplotlib.protocol_renderer` for direct Matplotlib rendering of the formal models.
+- Added focused conformance tests for point and image artists.
+- Left the legacy `MatplotlibRenderer` and examples unchanged.

@@ -9,6 +9,7 @@ from .commands import CommandBatch, CommandKind, ProtocolCommand
 from .ids import ObjectRef, new_id, validate_id
 from .resources import AttributeSource, BufferResource, ResourceLocality, ResourceMutability, ResourceUsage
 from .transports import CommandResult, InProcessGSPServer, InProcessTransport, InitializeResult
+from .visuals import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, PointVisual
 
 __all__ = [
     "AdaptationDecision",
@@ -19,10 +20,15 @@ __all__ = [
     "CommandBatch",
     "CommandKind",
     "CommandResult",
+    "CoordinateSpace",
+    "ImageInterpolation",
+    "ImageOrigin",
+    "ImageVisual",
     "InitializeResult",
     "InProcessGSPServer",
     "InProcessTransport",
     "ObjectRef",
+    "PointVisual",
     "ProtocolCommand",
     "ResourceLocality",
     "ResourceMutability",

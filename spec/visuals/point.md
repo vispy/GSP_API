@@ -16,3 +16,15 @@ Query payload first slice:
 - item id;
 - data/visual coordinate if available;
 - displayed RGBA.
+
+## M003 first protocol model
+
+`gsp.protocol.PointVisual` is the first formal point model.
+
+It requires:
+
+- `id`;
+- `positions` as float32/float64 `(N, 2)` or `(N, 3)`;
+- `colors` as rgba8 `(N, 4)` or float color `(N, 4)` in `[0, 1]`;
+- `sizes` as a scalar or float array `(N,)`, interpreted as Matplotlib-compatible screen marker area for the reference slice;
+- `coordinate_space`, initially `ndc` or `data`.

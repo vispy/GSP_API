@@ -6,7 +6,7 @@ Assess exactly how GSP point/image/query/capability concepts map to Datoviz v0.4
 
 ## State
 
-Draft.
+Ready for Mission Control discussion. Launch only after explicit approval.
 
 ## Expected output
 
