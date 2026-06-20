@@ -19,3 +19,8 @@ Needed decision or documentation:
 GSP dependency:
 
 - The first implementation can render RGBA8 images, but should not claim complete image semantics until these details are fixed.
+
+M007 update:
+
+- `src/gsp_datoviz/protocol_renderer.py` implements the bounded RGBA8 convenience path with explicit `texcoords` for `ImageOrigin.UPPER/LOWER`.
+- The adapter rejects scalar, grayscale, floating-point, non-nearest, and non-NDC image cases until the sampled-field contract is confirmed.

@@ -1,13 +1,29 @@
-"""GSP Datoviz package."""
+"""GSP Datoviz integration package.
 
-from . import animator
-from . import renderer
-from . import utils
-from . import viewport_events
+The legacy renderer subpackages target the older Datoviz Python wrapper surface.
+Datoviz v0.4 protocol work lives in :mod:`gsp_datoviz.protocol_renderer` and must
+remain importable even when those legacy wrapper modules are absent.
+"""
 
-# =============================================================================
-# Register network renderer into GSP
-# =============================================================================
-from .renderer_registration import register_renderer_datoviz
+from __future__ import annotations
 
-register_renderer_datoviz()
+
+_LEGACY_IMPORT_ERROR: ModuleNotFoundError | None = None
+
+try:
+    from .renderer_registration import register_renderer_datoviz
+except ModuleNotFoundError as exc:
+    if exc.name == "datoviz" or (exc.name is not None and exc.name.startswith("datoviz.")):
+        _LEGACY_IMPORT_ERROR = exc
+
+        def register_renderer_datoviz() -> None:
+            """Report why the legacy Datoviz renderer cannot be registered."""
+            raise _LEGACY_IMPORT_ERROR
+
+    else:
+        raise
+else:
+    register_renderer_datoviz()
+
+
+__all__ = ["register_renderer_datoviz"]

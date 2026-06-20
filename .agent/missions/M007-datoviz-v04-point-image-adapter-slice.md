@@ -10,7 +10,7 @@ Query support is explicitly out of scope until Python can decode `DvzQueryResult
 
 ## State
 
-Draft.
+Completed.
 
 ## Required reading
 

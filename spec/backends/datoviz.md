@@ -44,3 +44,30 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 - Use sampled fields (`dvz_sampled_field`, `dvz_visual_set_field`) for scalar/color images where possible; `dvz_visual_set_texture` is a transitional RGBA8 convenience path.
 - Do not claim query support in the Python GSP adapter until query results are decodable.
 - Do not edit the Datoviz repository from this repo; create handoff tasks for Datoviz-side API or binding gaps.
+
+## M007 adapter slice
+
+The first Datoviz v0.4 protocol adapter lives in `src/gsp_datoviz/protocol_renderer.py`.
+It is intentionally separate from the legacy Datoviz renderer path and targets only the
+top-level C-shaped facade (`dvz_scene`, `dvz_figure`, `dvz_panel_full`, `dvz_point`,
+`dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_texture`, and
+`dvz_panel_add_visual`).
+
+Current supported surface:
+
+| GSP concept | Datoviz v0.4 path | M007 status |
+|---|---|---|
+| Capability snapshot | static GSP `CapabilitySnapshot` | implemented for first slice |
+| Session/figure/panel | `dvz_scene()` + `dvz_figure()` + `dvz_panel_full()` | implemented |
+| Point visual | `dvz_point()` + `position`, `color`, `diameter` attributes | implemented for NDC positions |
+| Point size | GSP marker-area size converted to Datoviz diameter pixels | implemented |
+| Image visual | `dvz_image()` + `position`, `texcoords`, `dvz_visual_set_texture()` | implemented for uint8 RGB/RGBA, nearest, NDC extents |
+| Image scalar fields | sampled-field path | deferred to `DATOVIZ-V04-IMAGE-FIELD-CONTRACT` |
+| Queries | Datoviz panel query APIs | not advertised; deferred to `DATOVIZ-V04-QUERY-BINDING` |
+
+The adapter raises explicit unsupported errors for semantics not locked in this slice:
+
+- non-NDC point/image coordinates;
+- non-nearest image interpolation;
+- scalar, grayscale, or floating-point images that should use sampled fields;
+- query/readback support.

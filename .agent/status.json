@@ -1,5 +1,5 @@
 {
-  "current_stage": "S007",
+  "current_stage": "S008",
   "stages": [
     {"id": "S001", "title": "Agentic control plane and legacy map", "state": "completed", "progress": 100},
     {"id": "S002", "title": "Protocol spine", "state": "completed", "progress": 100},
@@ -7,8 +7,8 @@
     {"id": "S004", "title": "Datoviz v0.4 adapter assessment", "state": "completed", "progress": 100},
     {"id": "S005", "title": "Query proof", "state": "completed", "progress": 100},
     {"id": "S006", "title": "Protocol hardening and conformance baseline", "state": "completed", "progress": 100},
-    {"id": "S007", "title": "Datoviz v0.4 adapter slice", "state": "active", "progress": 0},
-    {"id": "S008", "title": "VisPy2 producer MVP", "state": "planned", "progress": 0},
+    {"id": "S007", "title": "Datoviz v0.4 adapter slice", "state": "completed", "progress": 100},
+    {"id": "S008", "title": "VisPy2 producer MVP", "state": "active", "progress": 0},
     {"id": "S009", "title": "Query hardening and Datoviz handoff", "state": "planned", "progress": 0},
     {"id": "S010", "title": "Agentic control plane provider hardening", "state": "planned", "progress": 0},
     {"id": "S011", "title": "Extensions and virtual data source architecture proof", "state": "planned", "progress": 0}
@@ -20,8 +20,8 @@
     {"id": "M004", "title": "Datoviz v0.4 adapter assessment", "stage": "S004", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 4},
     {"id": "M005", "title": "Query proof", "stage": "S005", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 5},
     {"id": "M006", "title": "Protocol hardening and conformance baseline", "stage": "S006", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 6},
-    {"id": "M007", "title": "Datoviz v0.4 point/image adapter slice", "stage": "S007", "state": "ready", "agent": null, "progress": 0, "priority": 7},
-    {"id": "M008", "title": "VisPy2 producer MVP", "stage": "S008", "state": "draft", "agent": null, "progress": 0, "priority": 8},
+    {"id": "M007", "title": "Datoviz v0.4 point/image adapter slice", "stage": "S007", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 7},
+    {"id": "M008", "title": "VisPy2 producer MVP", "stage": "S008", "state": "ready", "agent": null, "progress": 0, "priority": 8},
     {"id": "M009", "title": "Query hardening and Datoviz handoff", "stage": "S009", "state": "draft", "agent": null, "progress": 0, "priority": 9},
     {"id": "M010", "title": "Agentic control plane provider hardening", "stage": "S010", "state": "draft", "agent": null, "progress": 0, "priority": 10},
     {"id": "M011", "title": "Extensions and virtual data source architecture proof", "stage": "S011", "state": "draft", "agent": null, "progress": 0, "priority": 11}
@@ -31,7 +31,7 @@
     {"id": "Q001", "summary": "Claude worker provider is not configured in aisw; add a Claude profile if medium Claude workers are desired", "requires_human": true, "requires_chatgpt_pro": false, "state": "open"}
   ],
   "recommendations": [
-    "Discuss and approve M007 Datoviz v0.4 point/image adapter slice as the next mission.",
+    "Discuss and approve M008 VisPy2 producer MVP as the next mission.",
     "Use the enabled codex-ibl provider for external Codex workers if launching approved bounded missions.",
     "Configure a Claude aisw profile before launching Claude worker missions."
   ]
