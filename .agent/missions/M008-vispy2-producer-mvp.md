@@ -8,7 +8,7 @@ The MVP should prove that VisPy2 can be a high-level Python producer of GSP call
 
 ## State
 
-Draft.
+Completed.
 
 ## Required reading
 

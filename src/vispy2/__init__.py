@@ -1,12 +1,7 @@
-"""VisPy 2 package."""
+"""VisPy2 experimental producer API."""
 
 from . import axes
-
-# import scatter functions
-from .scatter.scatter import scatter
-
-# import plot functions
 from .plot.plot import plot
+from .protocol import Axes, Figure, imshow, scatter, subplots
 
-# import imshow functions
-from .imshow.imshow import imshow
+__all__ = ["Axes", "Figure", "axes", "imshow", "plot", "scatter", "subplots"]
