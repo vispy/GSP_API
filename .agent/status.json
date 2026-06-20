@@ -1,12 +1,12 @@
 {
-  "current_stage": "S005",
+  "current_stage": "S006",
   "stages": [
     {"id": "S001", "title": "Agentic control plane and legacy map", "state": "completed", "progress": 100},
     {"id": "S002", "title": "Protocol spine", "state": "completed", "progress": 100},
     {"id": "S003", "title": "Matplotlib reference slice", "state": "completed", "progress": 100},
     {"id": "S004", "title": "Datoviz v0.4 adapter assessment", "state": "completed", "progress": 100},
-    {"id": "S005", "title": "Query proof", "state": "active", "progress": 0},
-    {"id": "S006", "title": "Extensions and virtual data source proof", "state": "planned", "progress": 0},
+    {"id": "S005", "title": "Query proof", "state": "completed", "progress": 100},
+    {"id": "S006", "title": "Extensions and virtual data source proof", "state": "active", "progress": 0},
     {"id": "S007", "title": "VisPy2 first API slice", "state": "planned", "progress": 0}
   ],
   "missions": [
@@ -14,14 +14,14 @@
     {"id": "M002", "title": "Protocol spine", "stage": "S002", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 2},
     {"id": "M003", "title": "Matplotlib point/image reference slice", "stage": "S003", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 3},
     {"id": "M004", "title": "Datoviz v0.4 adapter assessment", "stage": "S004", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 4},
-    {"id": "M005", "title": "Query proof", "stage": "S005", "state": "ready", "agent": null, "progress": 0, "priority": 5}
+    {"id": "M005", "title": "Query proof", "stage": "S005", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 5}
   ],
   "review_queue": [],
   "open_questions": [
     {"id": "Q001", "summary": "Claude worker provider is not configured in aisw; add a Claude profile if medium Claude workers are desired", "requires_human": true, "requires_chatgpt_pro": false, "state": "open"}
   ],
   "recommendations": [
-    "Discuss and approve M005 Query proof as the next mission.",
+    "Create and discuss M006 Extensions and virtual data source proof as the next mission.",
     "Use the enabled codex-ibl provider for external Codex workers if launching approved bounded missions.",
     "Configure a Claude aisw profile before launching Claude worker missions."
   ]
