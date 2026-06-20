@@ -13,6 +13,22 @@ Needed Datoviz-side outcome:
 - either expose `DvzQueryResult` fields in the generated ctypes binding;
 - or provide a stable helper that converts `DvzQueryResult` to a Python dict/struct with documented fields.
 
+Expected Python-visible fields or helper keys:
+
+- request identity or correlation id;
+- query status/result status;
+- hit boolean;
+- target kind or visual family;
+- visual identity or stable application-provided visual id;
+- item id for point/item hits;
+- pixel or texel coordinates for image hits;
+- panel/framebuffer coordinate;
+- visual/data coordinate if Datoviz resolved it;
+- value kind and payload bytes/scalar/vector where available;
+- displayed RGBA or enough information for GSP to reconstruct it;
+- diagnostic/error text for unsupported, stale/dropped, or failed results.
+
 GSP dependency:
 
 - GSP Datoviz adapter must not advertise full query/readback support until this is solved.
+- Once solved, GSP can enable `panel-query`, then `point-item`, then `image-texel` incrementally.

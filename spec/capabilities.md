@@ -26,3 +26,8 @@ Adaptation outcomes:
 Unsupported behavior must not silently degrade.
 
 M002 implementation note: `gsp.protocol.CapabilitySnapshot` exposes advertised protocol versions, transports, buffer dtypes, visual families, transform placements, query modes, output formats, extensions, and a minimal explicit adaptation decision helper.
+
+M009 query hardening note: `CapabilitySnapshot.query_modes` is the coarse planning surface for
+panel query/readback support. `supports_query_mode()` and `adapt_query_mode()` mirror visual-family
+capability checks. A backend must not claim a query mode until it can return the corresponding
+`QueryResult` status and payload semantics.

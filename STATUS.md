@@ -12,9 +12,9 @@ tools/agentctl next
 
 Current state:
 
-- Completed through M008 VisPy2 producer MVP.
-- Current stage: S009 planning / next mission selection.
-- Recommended next mission: M009 Query hardening and Datoviz handoff.
+- Completed through M009 query hardening and Datoviz handoff.
+- Current stage: S010 planning / next mission selection.
+- Recommended next mission: M010 agentic control plane provider hardening.
 
 Notes:
 
@@ -24,3 +24,4 @@ Notes:
 - M007 added a bounded Datoviz v0.4 protocol renderer using the local C-shaped `dvz_*` facade.
 - Datoviz query support remains deferred until Python can decode `DvzQueryResult`.
 - M008 added an experimental VisPy2 producer MVP that emits GSP protocol point/image visuals and renders through the Matplotlib reference backend.
+- M009 hardened query statuses, query capability checks, and Datoviz query handoff tasks.

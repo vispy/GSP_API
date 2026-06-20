@@ -38,6 +38,9 @@ class QueryStatus(str, Enum):
     MISS = "miss"
     OUTSIDE_PANEL = "outside-panel"
     UNSUPPORTED = "unsupported"
+    STALE = "stale"
+    DROPPED = "dropped"
+    FAILED = "failed"
 
 
 class VisualFamily(str, Enum):
@@ -95,5 +98,17 @@ class QueryResult:
             raise ValueError("hit results must set hit=True")
         if self.status != QueryStatus.HIT and self.hit:
             raise ValueError("non-hit results must set hit=False")
-        if self.status == QueryStatus.UNSUPPORTED and not self.diagnostic:
-            raise ValueError("unsupported query results require a diagnostic")
+        if self.status in (QueryStatus.UNSUPPORTED, QueryStatus.STALE, QueryStatus.DROPPED, QueryStatus.FAILED):
+            if not self.diagnostic:
+                raise ValueError(f"{self.status.value} query results require a diagnostic")
+        if self.status != QueryStatus.HIT and (
+            self.visual_id is not None
+            or self.visual_family is not None
+            or self.item_id is not None
+            or self.texel is not None
+            or self.visual_coordinate is not None
+            or self.data_coordinate is not None
+            or self.displayed_rgba is not None
+            or self.value is not None
+        ):
+            raise ValueError("non-hit query results must not include hit payload fields")

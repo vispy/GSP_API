@@ -8,7 +8,7 @@ This mission must not implement Datoviz Python query decoding unless the require
 
 ## State
 
-Draft.
+Completed.
 
 ## Required reading
 

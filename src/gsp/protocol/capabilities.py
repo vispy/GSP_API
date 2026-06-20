@@ -72,6 +72,10 @@ class CapabilitySnapshot:
         """Return whether a buffer dtype is advertised."""
         return dtype in self.buffer_dtypes
 
+    def supports_query_mode(self, mode: str) -> bool:
+        """Return whether a query/readback mode is advertised."""
+        return mode in self.query_modes
+
     def adapt_visual(self, family: str) -> AdaptationDecision:
         """Return a minimal adaptation decision for a visual family."""
         if self.supports_visual(family):
@@ -79,4 +83,13 @@ class CapabilitySnapshot:
         return AdaptationDecision(
             AdaptationOutcome.REJECT,
             f"visual family {family!r} is not supported by {self.server_name}",
+        )
+
+    def adapt_query_mode(self, mode: str) -> AdaptationDecision:
+        """Return a minimal adaptation decision for a query/readback mode."""
+        if self.supports_query_mode(mode):
+            return AdaptationDecision(AdaptationOutcome.ACCEPT)
+        return AdaptationDecision(
+            AdaptationOutcome.REJECT,
+            f"query mode {mode!r} is not supported by {self.server_name}",
         )

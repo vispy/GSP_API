@@ -56,6 +56,23 @@ def test_capability_snapshot_adaptation_decision():
     assert rejected.diagnostic is not None
 
 
+def test_capability_snapshot_query_mode_adaptation_decision():
+    """Query support is advertised explicitly and rejects unsupported modes."""
+    caps = CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        query_modes=("panel-query", "point-item"),
+    )
+
+    assert caps.supports_query_mode("panel-query")
+    assert caps.adapt_query_mode("point-item").outcome == AdaptationOutcome.ACCEPT
+
+    rejected = caps.adapt_query_mode("image-texel")
+    assert rejected.outcome == AdaptationOutcome.REJECT
+    assert rejected.diagnostic is not None
+
+
 def test_buffer_resource_can_hold_memoryview_without_serialization():
     """The in-process path can carry direct memory without JSON/base64."""
     payload = bytearray(12)

@@ -20,13 +20,26 @@ class QueryVisualEntry:
     z_order: int = 0
 
 
-def query_visuals(request: QueryRequest, entries: Iterable[QueryVisualEntry]) -> QueryResult:
+def query_visuals(
+    request: QueryRequest,
+    entries: Iterable[QueryVisualEntry],
+    *,
+    panel_bounds: tuple[float, float, float, float] | None = None,
+) -> QueryResult:
     """Answer a panel query against formal visual models.
 
     This reference implementation evaluates simple data/NDC coordinates directly.
     It is deliberately CPU-side and deterministic; Datoviz should later provide a
     GPU-authoritative implementation with the same result schema.
     """
+    if panel_bounds is not None and not _contains(panel_bounds, request.coordinate):
+        return QueryResult(
+            request_id=request.id,
+            status=QueryStatus.OUTSIDE_PANEL,
+            hit=False,
+            panel_coordinate=request.coordinate,
+        )
+
     hits: list[QueryResult] = []
     for entry in sorted(entries, key=lambda item: item.z_order, reverse=True):
         visual = entry.visual
@@ -47,6 +60,36 @@ def query_visuals(request: QueryRequest, entries: Iterable[QueryVisualEntry]) ->
             panel_coordinate=request.coordinate,
         )
     return hits[0]
+
+
+def unsupported_query_result(request: QueryRequest, diagnostic: str) -> QueryResult:
+    """Return a standard unsupported query result for capability-gated callers."""
+    return QueryResult(
+        request_id=request.id,
+        status=QueryStatus.UNSUPPORTED,
+        hit=False,
+        panel_coordinate=request.coordinate,
+        diagnostic=diagnostic,
+    )
+
+
+def failed_query_result(request: QueryRequest, diagnostic: str) -> QueryResult:
+    """Return a standard backend/readback failure query result."""
+    return QueryResult(
+        request_id=request.id,
+        status=QueryStatus.FAILED,
+        hit=False,
+        panel_coordinate=request.coordinate,
+        diagnostic=diagnostic,
+    )
+
+
+def _contains(bounds: tuple[float, float, float, float], coordinate: tuple[float, float]) -> bool:
+    left, right, bottom, top = bounds
+    x, y = coordinate
+    x_min, x_max = sorted((left, right))
+    y_min, y_max = sorted((bottom, top))
+    return x_min <= x <= x_max and y_min <= y <= y_max
 
 
 def _query_point_visual(request: QueryRequest, visual: PointVisual) -> QueryResult | None:

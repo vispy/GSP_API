@@ -71,3 +71,17 @@ The adapter raises explicit unsupported errors for semantics not locked in this 
 - non-nearest image interpolation;
 - scalar, grayscale, or floating-point images that should use sampled fields;
 - query/readback support.
+
+## M009 query handoff
+
+Datoviz v0.4 query APIs are still not advertised by the GSP Datoviz adapter. Before GSP can enable
+`panel-query`, `point-item`, or `image-texel` for Datoviz, Python must be able to decode
+`DvzQueryResult` or call a stable helper returning equivalent fields.
+
+Required parity targets:
+
+- point hits must map to GSP `QueryStatus.HIT`, `VisualFamily.POINT`, `visual_id`, and `item_id`;
+- image hits must map to GSP `QueryStatus.HIT`, `VisualFamily.IMAGE`, `texel`, displayed RGBA, and
+  source value where available;
+- misses, outside-panel, unsupported, stale/dropped async results, and backend failures must map to
+  distinct GSP statuses without hit payload fields.

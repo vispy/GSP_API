@@ -69,7 +69,7 @@ def test_conformance_matplotlib_reference_artists():
 
 
 def test_query_result_status_invariants_are_locked():
-    """Query status invariants distinguish hit, miss, and unsupported."""
+    """Query status invariants distinguish hit and all non-hit statuses."""
     QueryResult(
         request_id="query:outside",
         status=QueryStatus.OUTSIDE_PANEL,
@@ -91,4 +91,22 @@ def test_query_result_status_invariants_are_locked():
             status=QueryStatus.UNSUPPORTED,
             hit=False,
             panel_coordinate=(0.0, 0.0),
+        )
+
+    for status in (QueryStatus.STALE, QueryStatus.DROPPED, QueryStatus.FAILED):
+        with pytest.raises(ValueError, match=status.value):
+            QueryResult(
+                request_id=f"query:{status.value}",
+                status=status,
+                hit=False,
+                panel_coordinate=(0.0, 0.0),
+            )
+
+    with pytest.raises(ValueError, match="non-hit query results"):
+        QueryResult(
+            request_id="query:bad-miss",
+            status=QueryStatus.MISS,
+            hit=False,
+            panel_coordinate=(0.0, 0.0),
+            visual_id="visual:points",
         )

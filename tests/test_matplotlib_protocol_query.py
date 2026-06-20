@@ -3,7 +3,7 @@
 import numpy as np
 
 from gsp.protocol import ImageOrigin, ImageVisual, PointVisual, QueryRequest, QueryStatus, VisualFamily
-from gsp_matplotlib.protocol_query import QueryVisualEntry, query_visuals
+from gsp_matplotlib.protocol_query import QueryVisualEntry, failed_query_result, query_visuals, unsupported_query_result
 
 
 def test_query_returns_frontmost_point_over_image():
@@ -83,3 +83,36 @@ def test_query_returns_miss_when_no_visual_contains_coordinate():
     assert result.status == QueryStatus.MISS
     assert not result.hit
     assert result.visual_id is None
+
+
+def test_query_returns_outside_panel_before_testing_visuals():
+    """Panel bounds produce outside-panel rather than miss."""
+    points = PointVisual(
+        id="visual:points",
+        positions=np.array([[10.0, 10.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+        sizes=np.array([100.0], dtype=np.float32),
+    )
+
+    result = query_visuals(
+        QueryRequest(id="query:outside", panel_id="panel:main", coordinate=(10.0, 10.0)),
+        [QueryVisualEntry(points)],
+        panel_bounds=(-1.0, 1.0, -1.0, 1.0),
+    )
+
+    assert result.status == QueryStatus.OUTSIDE_PANEL
+    assert not result.hit
+    assert result.visual_id is None
+
+
+def test_query_helper_results_use_diagnostics_for_terminal_failures():
+    """Unsupported and failed are distinct non-hit terminal statuses."""
+    request = QueryRequest(id="query:unsupported", panel_id="panel:main", coordinate=(0.0, 0.0))
+
+    unsupported = unsupported_query_result(request, "backend does not advertise point-item queries")
+    failed = failed_query_result(request, "readback buffer allocation failed")
+
+    assert unsupported.status == QueryStatus.UNSUPPORTED
+    assert unsupported.diagnostic == "backend does not advertise point-item queries"
+    assert failed.status == QueryStatus.FAILED
+    assert failed.diagnostic == "readback buffer allocation failed"
