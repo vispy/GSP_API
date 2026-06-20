@@ -1,8 +1,8 @@
-# ADR-0003 - GSP v0.1 vertical slice
+# ADR-0003 - GSP v0.1 Vertical Slice
 
 ## Status
 
-Proposed
+Accepted
 
 ## Context
 
@@ -10,9 +10,11 @@ M001-M005 established the first GSP protocol spine, point/image visual models, M
 
 The project needs a stable mini-contract before expanding into Datoviz implementation, VisPy2 producer APIs, extensions, virtual data sources, and distributed rendering.
 
+This ADR defines the contract that M006 hardens. It is deliberately small: a vertical slice that future agents can consume, test, and extend without inventing parallel models.
+
 ## Decision
 
-The GSP v0.1 vertical slice covers:
+The GSP v0.1 vertical slice is accepted as the current mini-contract for this branch. It covers:
 
 - stable GSP identifiers;
 - capability snapshots;
@@ -21,9 +23,18 @@ The GSP v0.1 vertical slice covers:
 - point visual;
 - image visual;
 - Matplotlib reference rendering;
-- deterministic reference panel query for point-over-image.
+- deterministic reference panel query for point-over-image;
+- conformance fixtures and tests for the above.
 
 The local desktop path must not require JSON/base64. JSON/base64 may exist only for fixtures, debug, replay, or transport-specific paths.
+
+The authoritative implementation surface for this slice is:
+
+- `src/gsp/protocol/`
+- `src/gsp_matplotlib/protocol_renderer.py`
+- `src/gsp_matplotlib/protocol_query.py`
+- `fixtures/conformance/`
+- `tests/test_*protocol*` and `tests/test_conformance_baseline.py`
 
 ## In scope
 
@@ -33,6 +44,7 @@ The local desktop path must not require JSON/base64. JSON/base64 may exist only 
 - Deterministic CPU reference query.
 - Basic capability model sufficient for the current slice.
 - Tests and fixtures that protect current behavior.
+- Capability baseline for the v0.1 slice.
 
 ## Out of scope
 
@@ -45,6 +57,9 @@ The local desktop path must not require JSON/base64. JSON/base64 may exist only 
 - Full Matplotlib compatibility.
 - Arbitrary custom visual plugins.
 - Production transport format.
+- Mandatory JSON/base64 for local execution.
+- Datoviz implementation changes.
+- VisPy2 implementation changes.
 
 ## Consequences
 
@@ -52,6 +67,8 @@ The local desktop path must not require JSON/base64. JSON/base64 may exist only 
 - Matplotlib remains the reference backend for this slice.
 - Datoviz v0.4 remains the flagship GPU backend target, but is not required to pass v0.1 conformance until its adapter slice exists.
 - Query semantics can be hardened incrementally, but M006 must not broaden them beyond the first deterministic reference proof.
+- Conformance fixtures should prefer Python/in-process objects. If serialized fixtures are added later, they must be secondary debug/replay artifacts and not the local fast path.
+- Breaking changes to identifiers, visual field requirements, query statuses, or Matplotlib reference assumptions must update this ADR or supersede it.
 
 ## Open questions
 
