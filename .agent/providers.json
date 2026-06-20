@@ -1,0 +1,31 @@
+{
+  "providers": {
+    "local-main-codex": {
+      "kind": "manual_main_session",
+      "role": "mission_control_and_bootstrap",
+      "cost_class": "high_or_current",
+      "description": "The current interactive Codex session. Use for Mission Control and M001 until aisw providers are configured."
+    },
+    "codex-cheap-placeholder": {
+      "kind": "codex_exec",
+      "enabled": false,
+      "aisw_context": "REPLACE_WITH_AISW_CODEX_CONTEXT",
+      "cost_class": "cheap",
+      "command_template": "bash -lc 'eval \"$(aisw context use {aisw_context} --emit-env)\"; codex exec --json --sandbox workspace-write --cd {worktree} \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
+      "description": "Enable after M001 inspects aisw contexts."
+    },
+    "claude-medium-placeholder": {
+      "kind": "claude_cli",
+      "enabled": false,
+      "aisw_context": "REPLACE_WITH_AISW_CLAUDE_CONTEXT",
+      "cost_class": "medium",
+      "command_template": "bash -lc 'eval \"$(aisw context use {aisw_context} --emit-env)\"; cd {worktree}; claude -p --output-format stream-json --permission-mode acceptEdits \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
+      "description": "Enable after M001 inspects aisw contexts."
+    }
+  },
+  "selection_policy": {
+    "cheap": ["codex-cheap-placeholder"],
+    "medium": ["claude-medium-placeholder", "codex-cheap-placeholder"],
+    "high": ["local-main-codex"]
+  }
+}

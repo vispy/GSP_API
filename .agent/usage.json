@@ -1,0 +1,8 @@
+{
+  "accounts": [
+    {"id": "chatgpt-pro", "kind": "manual_chatgpt", "role": "high reasoning planning/spec/review", "state": "available", "notes": "Use when Mission Control creates a ChatGPT Pro consultation packet."},
+    {"id": "codex-via-aisw", "kind": "codex", "role": "worker agents", "state": "unknown until M001 aisw inventory"},
+    {"id": "claude-via-aisw", "kind": "claude", "role": "worker/review agents", "state": "unknown until M001 aisw inventory"}
+  ],
+  "sessions": []
+}

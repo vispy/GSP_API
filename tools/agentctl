@@ -1,0 +1,395 @@
+#!/usr/bin/env python3
+"""Minimal repo-local Mission Control CLI.
+
+This intentionally uses only the Python standard library.
+It is a small tool surface that Codex can call under the hood.
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as _dt
+import json
+import os
+import pathlib
+import subprocess
+import sys
+import textwrap
+from typing import Any
+
+
+ROOT = pathlib.Path.cwd()
+
+
+def repo_root() -> pathlib.Path:
+    try:
+        out = subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip()
+        return pathlib.Path(out)
+    except Exception:
+        return pathlib.Path.cwd()
+
+
+def load_json(path: pathlib.Path, default: Any) -> Any:
+    if not path.exists():
+        return default
+    with path.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def save_json(path: pathlib.Path, data: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with tmp.open("w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, sort_keys=False)
+        f.write("\n")
+    tmp.replace(path)
+
+
+def now_id() -> str:
+    return _dt.datetime.now().strftime("R%Y%m%d-%H%M%S")
+
+
+def md_table(headers: list[str], rows: list[list[Any]]) -> str:
+    def cell(x: Any) -> str:
+        return str(x) if x is not None else ""
+    out = []
+    out.append("| " + " | ".join(headers) + " |")
+    out.append("|" + "|".join(["---" for _ in headers]) + "|")
+    for row in rows:
+        out.append("| " + " | ".join(cell(x).replace("\n", "<br>") for x in row) + " |")
+    return "\n".join(out)
+
+
+def status(root: pathlib.Path) -> dict[str, Any]:
+    return load_json(root / ".agent" / "status.json", {})
+
+
+def providers(root: pathlib.Path) -> dict[str, Any]:
+    return load_json(root / ".agent" / "providers.json", {"providers": {}})
+
+
+def usage(root: pathlib.Path) -> dict[str, Any]:
+    return load_json(root / ".agent" / "usage.json", {"accounts": [], "sessions": []})
+
+
+def project(root: pathlib.Path) -> dict[str, Any]:
+    return load_json(root / ".agent" / "project.json", {})
+
+
+def get_mission(st: dict[str, Any], mission_id: str) -> dict[str, Any] | None:
+    for m in st.get("missions", []):
+        if m.get("id") == mission_id:
+            return m
+    return None
+
+
+def find_prefixed_file(directory: pathlib.Path, prefix: str) -> pathlib.Path | None:
+    if not directory.exists():
+        return None
+    for p in sorted(directory.iterdir()):
+        if p.is_file() and p.name.startswith(prefix):
+            return p
+    return None
+
+
+def cmd_brief(args: argparse.Namespace) -> int:
+    root = repo_root()
+    st = status(root)
+    print(f"# Project brief\n")
+    print(f"Repo: `{root}`")
+    print(f"Current stage: `{st.get('current_stage', 'unknown')}`\n")
+    stages = st.get("stages", [])
+    if stages:
+        print("## Stages\n")
+        print(md_table(["Stage", "Title", "State", "Progress"], [[s.get("id"), s.get("title"), s.get("state"), str(s.get("progress", 0)) + "%"] for s in stages]))
+        print()
+    missions = st.get("missions", [])
+    if missions:
+        print("## Missions\n")
+        print(md_table(["Mission", "Title", "State", "Agent", "Progress", "Priority"], [[m.get("id"), m.get("title"), m.get("state"), m.get("agent"), str(m.get("progress", 0)) + "%", m.get("priority")] for m in missions]))
+        print()
+    questions = st.get("open_questions", [])
+    if questions:
+        print("## Open questions\n")
+        print(md_table(["ID", "Summary", "Human", "ChatGPT Pro", "State"], [[q.get("id"), q.get("summary"), q.get("requires_human"), q.get("requires_chatgpt_pro"), q.get("state")] for q in questions]))
+        print()
+    recs = st.get("recommendations", [])
+    if recs:
+        print("## Recommendations\n")
+        for i, rec in enumerate(recs, 1):
+            print(f"{i}. {rec}")
+    return 0
+
+
+def cmd_review_now(args: argparse.Namespace) -> int:
+    root = repo_root()
+    st = status(root)
+    print("# Review queue\n")
+    reviews = st.get("review_queue", [])
+    questions = [q for q in st.get("open_questions", []) if q.get("state") == "open"]
+    needs = []
+    for r in reviews:
+        needs.append([r.get("id"), "review", r.get("summary", ""), r.get("priority", "")])
+    for q in questions:
+        needs.append([q.get("id"), "question", q.get("summary", ""), "human" if q.get("requires_human") else ""]) 
+    ready = [m for m in st.get("missions", []) if m.get("state") in ("approved", "ready")]
+    for m in ready:
+        needs.append([m.get("id"), "mission", m.get("title", ""), m.get("state")])
+    if not needs:
+        print("No review items found.")
+    else:
+        print(md_table(["ID", "Type", "Summary", "Priority/State"], needs))
+    print("\n## Suggested action\n")
+    if questions:
+        print("Resolve open human questions before launching dependent external workers.")
+    elif ready:
+        print("Use `tools/agentctl launch-approved` when the user says 'do it'.")
+    else:
+        print("Ask Mission Control to propose or refine the next mission.")
+    return 0
+
+
+def cmd_next(args: argparse.Namespace) -> int:
+    root = repo_root()
+    st = status(root)
+    missions = sorted(st.get("missions", []), key=lambda m: m.get("priority", 999))
+    rows = []
+    for m in missions:
+        if m.get("state") in ("draft", "ready", "approved", "blocked"):
+            rows.append([m.get("id"), m.get("title"), m.get("state"), m.get("stage"), m.get("priority")])
+    print("# Recommended next missions\n")
+    if rows:
+        print(md_table(["Mission", "Title", "State", "Stage", "Priority"], rows))
+    else:
+        print("No next missions listed.")
+    return 0
+
+
+def cmd_usage(args: argparse.Namespace) -> int:
+    root = repo_root()
+    u = usage(root)
+    p = providers(root)
+    print("# Usage and providers\n")
+    accounts = u.get("accounts", [])
+    if accounts:
+        print("## Accounts\n")
+        print(md_table(["ID", "Kind", "Role", "State", "Notes"], [[a.get("id"), a.get("kind"), a.get("role"), a.get("state"), a.get("notes", "")] for a in accounts]))
+        print()
+    providers_dict = p.get("providers", {})
+    if providers_dict:
+        print("## Providers\n")
+        rows = []
+        for pid, spec in providers_dict.items():
+            rows.append([pid, spec.get("kind"), spec.get("enabled", spec.get("kind") == "manual_main_session"), spec.get("aisw_context", ""), spec.get("cost_class", ""), spec.get("description", "")])
+        print(md_table(["Provider", "Kind", "Enabled", "aisw context", "Cost", "Description"], rows))
+    return 0
+
+
+def cmd_mission(args: argparse.Namespace) -> int:
+    root = repo_root()
+    if args.mission_cmd == "list":
+        st = status(root)
+        print(md_table(["Mission", "Title", "Stage", "State", "Agent", "Progress"], [[m.get("id"), m.get("title"), m.get("stage"), m.get("state"), m.get("agent"), str(m.get("progress", 0)) + "%"] for m in st.get("missions", [])]))
+        return 0
+    if args.mission_cmd == "show":
+        path = find_prefixed_file(root / ".agent" / "missions", args.id)
+        if not path:
+            print(f"Mission file not found for {args.id}", file=sys.stderr)
+            return 2
+        print(path.read_text(encoding="utf-8"))
+        return 0
+    return 2
+
+
+def cmd_task(args: argparse.Namespace) -> int:
+    root = repo_root()
+    if args.task_cmd == "list":
+        task_dir = root / ".agent" / "tasks"
+        rows = []
+        for p in sorted(task_dir.glob("*.md")):
+            rows.append([p.stem.split("-")[0] if "-" in p.stem else p.stem, p.name])
+        print(md_table(["ID hint", "File"], rows))
+        return 0
+    if args.task_cmd == "show":
+        path = find_prefixed_file(root / ".agent" / "tasks", args.id)
+        if not path:
+            print(f"Task file not found for {args.id}", file=sys.stderr)
+            return 2
+        print(path.read_text(encoding="utf-8"))
+        return 0
+    return 2
+
+
+def mission_prompt(root: pathlib.Path, mission_id: str) -> str:
+    mission_file = find_prefixed_file(root / ".agent" / "missions", mission_id)
+    if not mission_file:
+        raise SystemExit(f"Mission file not found for {mission_id}")
+    parts = []
+    for rel in ["AGENTS.md", "PROJECT_CHARTER.md", "ARCHITECTURE.md", "SPEC_INDEX.md"]:
+        p = root / rel
+        if p.exists():
+            text = p.read_text(encoding="utf-8")
+            parts.append(f"# File: {rel}\n\n{text}\n")
+    parts.append(f"# Mission file: {mission_file.relative_to(root)}\n\n{mission_file.read_text(encoding='utf-8')}\n")
+    parts.append(textwrap.dedent(f"""
+    # Execution instruction
+
+    Execute mission {mission_id} exactly. Follow AGENTS.md.
+    Commit coherent changes if the mission asks for commits.
+    Stop if a stop condition is reached.
+    End with a final report.
+    """))
+    return "\n\n".join(parts)
+
+
+def cmd_launch(args: argparse.Namespace) -> int:
+    root = repo_root()
+    st = status(root)
+    pconf = providers(root).get("providers", {})
+    mids = []
+    if args.approved:
+        mids = [m.get("id") for m in st.get("missions", []) if m.get("state") == "approved"]
+    else:
+        mids = [args.id]
+    if not mids:
+        print("No approved missions to launch.")
+        return 0
+    for mid in mids:
+        m = get_mission(st, mid)
+        if not m:
+            print(f"Mission {mid} not found", file=sys.stderr)
+            continue
+        provider_id = args.provider or m.get("agent") or "local-main-codex"
+        provider = pconf.get(provider_id)
+        if not provider:
+            print(f"Provider {provider_id} not found for {mid}", file=sys.stderr)
+            continue
+        prompt = mission_prompt(root, mid)
+        run_id = now_id() + "-" + mid
+        run_dir = root / ".agent" / "runs" / run_id
+        run_dir.mkdir(parents=True, exist_ok=True)
+        prompt_file = run_dir / "prompt.md"
+        prompt_file.write_text(prompt, encoding="utf-8")
+        run_meta = {
+            "id": run_id,
+            "mission": mid,
+            "provider": provider_id,
+            "status": "prepared",
+            "created_at": _dt.datetime.now().isoformat(),
+            "prompt_file": str(prompt_file),
+        }
+        if provider.get("kind") == "manual_main_session" or not provider.get("enabled", False):
+            run_meta["status"] = "manual_required"
+            save_json(run_dir / "run.json", run_meta)
+            print(f"# Mission {mid} prepared for manual/current-session execution\n")
+            print(f"Prompt file: `{prompt_file}`\n")
+            print("Provider is manual or disabled. The current Mission Control agent should execute this mission directly, or configure providers first.")
+            continue
+        # external provider path
+        worktree_parent = root.parent / f"{root.name}-agent-worktrees"
+        worktree = worktree_parent / run_id
+        worktree_parent.mkdir(parents=True, exist_ok=True)
+        branch = f"agent/{run_id}"
+        if not worktree.exists():
+            subprocess.check_call(["git", "worktree", "add", "-B", branch, str(worktree), "HEAD"], cwd=root)
+        cmd_template = provider.get("command_template")
+        if not cmd_template:
+            print(f"Provider {provider_id} has no command_template", file=sys.stderr)
+            continue
+        cmd = cmd_template.format(
+            aisw_context=provider.get("aisw_context", ""),
+            prompt_file=str(prompt_file),
+            run_dir=str(run_dir),
+            worktree=str(worktree),
+            mission_id=mid,
+            run_id=run_id,
+        )
+        run_meta.update({"status": "running", "worktree": str(worktree), "branch": branch, "command": cmd})
+        save_json(run_dir / "run.json", run_meta)
+        with (run_dir / "launcher.log").open("w", encoding="utf-8") as log:
+            proc = subprocess.Popen(cmd, cwd=root, shell=True, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+        run_meta["pid"] = proc.pid
+        save_json(run_dir / "run.json", run_meta)
+        m["state"] = "running"
+        m["agent"] = provider_id
+        save_json(root / ".agent" / "status.json", st)
+        print(f"Launched {mid} as {run_id} with provider {provider_id}.")
+    return 0
+
+
+def cmd_runs(args: argparse.Namespace) -> int:
+    root = repo_root()
+    run_dir = root / ".agent" / "runs"
+    rows = []
+    if run_dir.exists():
+        for p in sorted(run_dir.iterdir(), reverse=True):
+            meta = load_json(p / "run.json", {})
+            if meta:
+                rows.append([meta.get("id"), meta.get("mission"), meta.get("provider"), meta.get("status"), meta.get("pid", ""), meta.get("created_at", "")])
+    print("# Runs\n")
+    if rows:
+        print(md_table(["Run", "Mission", "Provider", "Status", "PID", "Created"], rows))
+    else:
+        print("No runs found.")
+    return 0
+
+
+def cmd_pro_packet(args: argparse.Namespace) -> int:
+    root = repo_root()
+    cdir = root / ".agent" / "consultations"
+    print("# ChatGPT Pro consultation packets\n")
+    files = sorted(cdir.glob("P*.md")) if cdir.exists() else []
+    if not files:
+        print("No consultation packets found.")
+        return 0
+    for p in files:
+        print(f"- `{p.relative_to(root)}`")
+    if args.id:
+        path = find_prefixed_file(cdir, args.id)
+        if path:
+            print("\n---\n")
+            print(path.read_text(encoding="utf-8"))
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(prog="agentctl")
+    sub = parser.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("brief").set_defaults(func=cmd_brief)
+    sub.add_parser("review-now").set_defaults(func=cmd_review_now)
+    sub.add_parser("next").set_defaults(func=cmd_next)
+    sub.add_parser("usage").set_defaults(func=cmd_usage)
+    sub.add_parser("runs").set_defaults(func=cmd_runs)
+
+    p_m = sub.add_parser("mission")
+    msub = p_m.add_subparsers(dest="mission_cmd", required=True)
+    msub.add_parser("list")
+    p_show = msub.add_parser("show")
+    p_show.add_argument("id")
+    p_m.set_defaults(func=cmd_mission)
+
+    p_t = sub.add_parser("task")
+    tsub = p_t.add_subparsers(dest="task_cmd", required=True)
+    tsub.add_parser("list")
+    t_show = tsub.add_parser("show")
+    t_show.add_argument("id")
+    p_t.set_defaults(func=cmd_task)
+
+    p_launch = sub.add_parser("launch")
+    p_launch.add_argument("id")
+    p_launch.add_argument("--provider", default=None)
+    p_launch.set_defaults(func=cmd_launch, approved=False)
+
+    p_la = sub.add_parser("launch-approved")
+    p_la.add_argument("--provider", default=None)
+    p_la.set_defaults(func=cmd_launch, approved=True, id=None)
+
+    p_pro = sub.add_parser("pro-packet")
+    p_pro.add_argument("id", nargs="?", default=None)
+    p_pro.set_defaults(func=cmd_pro_packet)
+
+    args = parser.parse_args(argv)
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

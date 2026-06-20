@@ -1,0 +1,23 @@
+{
+  "project": {
+    "name": "gsp-vispy2",
+    "kind": "existing-repo",
+    "repository_hint": "https://github.com/vispy/GSP_API",
+    "integration_branch": "agentic-gsp-vispy2",
+    "direct_commits": true,
+    "pull_requests": false
+  },
+  "mission_control": {
+    "primary_interface": "codex_conversation",
+    "tool": "tools/agentctl",
+    "human_style": "natural_language",
+    "dashboard_style": "markdown_tables_returned_by_tools"
+  },
+  "policy": {
+    "launch_only_approved_missions": true,
+    "require_final_report": true,
+    "require_status_update": true,
+    "require_tests_for_code": true,
+    "require_chatgpt_pro_consultation_for_architecture_risks": true
+  }
+}
