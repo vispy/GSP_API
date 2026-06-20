@@ -2,7 +2,7 @@
 
 Status: M004 assessment.
 
-This document assesses how the current GSP point/image/query/capability concepts map to Datoviz v0.4. It is intentionally not an implementation patch. The legacy `src/gsp_datoviz/` adapter remains unchanged.
+This document assesses how the current GSP point/image/query/capability concepts map to Datoviz v0.4 as found in the sibling checkout `../datoviz/` on its current branch. It is intentionally not an implementation patch. The legacy `src/gsp_datoviz/` adapter remains unchanged.
 
 ## Executive Summary
 
@@ -24,7 +24,7 @@ GSP files:
 - `src/gsp/protocol/`
 - `src/gsp/protocol/visuals.py`
 
-Datoviz docs and local package:
+Authoritative Datoviz v0.4 inputs from `../datoviz/`:
 
 - `/Users/cyrille/GIT/Viz/datoviz/docs/start/quickstart.md`
 - `/Users/cyrille/GIT/Viz/datoviz/docs/start/choose-your-layer.md`
@@ -35,11 +35,6 @@ Datoviz docs and local package:
 - `/Users/cyrille/GIT/Viz/datoviz/docs/how-to/pick-and-probe.md`
 - `/Users/cyrille/GIT/Viz/datoviz/docs/how-to/probe-fields.md`
 - local introspection of `/Users/cyrille/GIT/Viz/datoviz/datoviz/`
-
-Online primary docs checked:
-
-- <https://datoviz.org/reference/api_c/>
-- <https://datoviz.org/reference/api_py/>
 
 ## Environment Inventory
 
@@ -53,9 +48,9 @@ Local introspection found:
 - `datoviz._texture`: missing
 - `dvz_scene`, `dvz_figure`, `dvz_panel`, `dvz_panel_full`, `dvz_point`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_field`, `dvz_visual_set_texture`, `dvz_capability_snapshot`, `dvz_panel_query`, `dvz_panel_query_now`, and `dvz_scene_poll_query`: present
 
-Important mismatch:
+Important constraint:
 
-- The public online Python API reference still documents a high-level `datoviz._app.App`/visual wrapper surface. The local v0.4 docs say the normal Python facade preserves C-shaped `dvz_*` names and does not provide the old high-level plotting wrapper. For GSP implementation, use the local v0.4 C-shaped API as the implementation target.
+- Do not use online Datoviz API pages as authority for this GSP v0.4 work unless they are verified against `../datoviz/` current branch. The inspected local v0.4 docs say the normal Python facade preserves C-shaped `dvz_*` names and does not provide the old high-level plotting wrapper. For GSP implementation, use the local v0.4 C-shaped API as the implementation target.
 
 ## Legacy Adapter Breakage
 
@@ -211,7 +206,7 @@ Do not port the old adapter in place line-by-line. Instead:
 The following Datoviz-side or binding-side tasks should be resolved before a full GSP Datoviz backend implementation claims parity:
 
 - Expose a stable Python binding for `DvzQueryResult` fields or provide a decoded query-result helper.
-- Clarify the promoted Python facade contract in docs versus online high-level `App` reference, so GSP agents do not target the obsolete wrapper.
+- Clarify the promoted Python facade contract in the `../datoviz/` docs/release artifacts, so GSP agents do not target obsolete wrapper examples or any stale published pages.
 - Confirm image interpolation and origin handling for `DvzSampledField`/`dvz_image`.
 - Confirm whether GSP should use `dvz_visual_set_texture()` for RGBA8 only or move immediately to sampled fields for all images.
 
