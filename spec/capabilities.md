@@ -24,3 +24,5 @@ Adaptation outcomes:
 - reject with fatal diagnostic.
 
 Unsupported behavior must not silently degrade.
+
+M002 implementation note: `gsp.protocol.CapabilitySnapshot` exposes advertised protocol versions, transports, buffer dtypes, visual families, transform placements, query modes, output formats, extensions, and a minimal explicit adaptation decision helper.

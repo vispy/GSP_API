@@ -25,3 +25,17 @@ The first implementation should prove:
 2. Matplotlib reference rendering;
 3. Datoviz v0.4 mapping assessment;
 4. one panel-query proof.
+
+## M002 protocol spine
+
+The first concrete protocol models live in `src/gsp/protocol/`.
+
+They define:
+
+- stable protocol IDs and object references;
+- `CapabilitySnapshot` and adaptation decisions;
+- contiguous `BufferResource` and `AttributeSource` descriptors;
+- ordered `CommandBatch` and minimum command categories;
+- an `InProcessTransport` contract for the local fast path.
+
+These models intentionally coexist beside the legacy object graph. Legacy renderers are not yet required to consume them directly.

@@ -6,7 +6,7 @@ Create the first minimal GSP protocol spine without changing renderers.
 
 ## State
 
-Ready for Mission Control discussion. Launch only after explicit approval.
+Completed in the current Codex session.
 
 ## Expected tasks
 
@@ -46,3 +46,10 @@ Create the protocol spine beside the legacy object graph. Do not rewrite Matplot
 ## Stop conditions
 
 Stop for ChatGPT Pro consultation if resource semantics, transforms, or transport boundaries become unclear.
+
+## Result
+
+- Added `src/gsp/protocol/` with stable IDs, capabilities, resources, command batches, and an in-process transport contract.
+- Added `tests/test_protocol_spine.py`.
+- Kept legacy renderers and examples unchanged.
+- Deferred non-contiguous owned resources beyond M002; `AttributeSource.stride_bytes` can describe strided attribute reads.

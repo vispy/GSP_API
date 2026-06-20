@@ -22,3 +22,5 @@ A buffer resource should eventually carry:
 - optional external source.
 
 Open v0.1 question: whether to support arbitrary strides immediately or require contiguous buffers first.
+
+M002 decision: the initial `BufferResource` model requires contiguous buffers. Strided views may be represented by `AttributeSource.stride_bytes`, but non-contiguous resource ownership is deferred until a later resource mission.

@@ -12,3 +12,5 @@ Required transport classes:
 | network | Remote renderer and server-side data fetch |
 
 The local desktop path must not require JSON/base64 serialization.
+
+M002 implementation note: `gsp.protocol.InProcessTransport` forwards `CommandBatch` objects directly to an in-process server interface. `BufferResource.data` may carry a `memoryview` on this path so local byte ownership does not require JSON/base64.

@@ -22,6 +22,10 @@ Draft.
 - `src/gsp_datoviz/renderer/datoviz_renderer_image.py`
 - Datoviz-related examples under `examples/`
 
+## Known observation from M002 validation
+
+`PYTHONPATH=src python -c "import gsp; import gsp_datoviz"` failed in the current environment because `src/gsp_datoviz/renderer/datoviz_renderer.py` imports `datoviz._panel`, which is unavailable. Treat this as assessment input for the v0.4 gap analysis, not as an M002 regression.
+
 ## Scope guard
 
 This is an assessment mission before implementation. Compare the legacy Datoviz adapter against Datoviz v0.4 public APIs, especially private imports, visual creation/update, panel mapping, offscreen screenshots, capability reporting, and query/readback feasibility.
