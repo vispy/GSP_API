@@ -34,7 +34,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 | Point visual | `dvz_point()` plus `dvz_visual_set_data()` for `position`, `color`, `diameter` | feasible after point-size semantic alignment |
 | Image visual | `dvz_image()` plus `position`, `texcoords`, sampled field or texture binding | feasible after image origin/interpolation confirmation |
 | Capabilities | `dvz_capability_snapshot()` | feasible |
-| Queries | `dvz_panel_query()` / `dvz_scene_poll_query()` | conceptually aligned; Python binding cannot yet decode `DvzQueryResult` fields |
+| Queries | `dvz_panel_query()` / `dvz_scene_poll_query()` | conceptually aligned; local `../datoviz` now exposes Python `DvzQueryResult` fields |
 | Capture | offscreen view capture or `dvz.capture()` | feasible for PNG screenshots only |
 
 ### Implementation constraints
@@ -74,9 +74,11 @@ The adapter raises explicit unsupported errors for semantics not locked in this 
 
 ## M009 query handoff
 
-Datoviz v0.4 query APIs are still not advertised by the GSP Datoviz adapter. Before GSP can enable
-`panel-query`, `point-item`, or `image-texel` for Datoviz, Python must be able to decode
-`DvzQueryResult` or call a stable helper returning equivalent fields.
+Datoviz v0.4 query APIs are still not advertised by the GSP Datoviz adapter. During M009, Python
+query decoding was blocked because `DvzQueryResult` fields were unavailable. A later local inventory
+of `../datoviz` on `v0.4-dev` found that `DvzQueryResult` now exposes Python `_fields_`, including
+status, hit, visual identity, target ids, item/texel ids, positions, displayed RGBA, and scalar/vector
+payload fields. This unblocks a bounded Datoviz query decoder/proof mission.
 
 Required parity targets:
 
@@ -85,3 +87,16 @@ Required parity targets:
   source value where available;
 - misses, outside-panel, unsupported, stale/dropped async results, and backend failures must map to
   distinct GSP statuses without hit payload fields.
+
+## Post-M011 parity gap update
+
+The current GSP Datoviz adapter is still a slice, not parity:
+
+- implemented: point visual, RGBA/RGB uint8 image via `dvz_visual_set_texture`, static capabilities;
+- not implemented: sampled-field image path, Datoviz capability translation, query decoding,
+  runtime query execution proof, offscreen/capture proof, tiled-source support.
+
+Recommended next mission: Datoviz query/capability parity. Scope it to translating
+`dvz_capability_snapshot()` and decoding `DvzQueryResult` into GSP `CapabilitySnapshot` and
+`QueryResult`, with skip-clean runtime tests. Keep sampled-field scalar images, capture, and tiled
+data-source Datoviz support as explicit follow-ups unless required for the query proof.
