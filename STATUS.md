@@ -12,9 +12,9 @@ tools/agentctl next
 
 Current state:
 
-- Completed through M009 query hardening and Datoviz handoff.
-- Current stage: S010 planning / next mission selection.
-- Recommended next mission: M010 agentic control plane provider hardening.
+- Completed through M010 agentic control plane provider hardening.
+- Current stage: S011 planning / next mission selection.
+- Recommended next mission: M011 extensions and virtual data source architecture proof.
 
 Notes:
 
@@ -25,3 +25,4 @@ Notes:
 - Datoviz query support remains deferred until Python can decode `DvzQueryResult`.
 - M008 added an experimental VisPy2 producer MVP that emits GSP protocol point/image visuals and renders through the Matplotlib reference backend.
 - M009 hardened query statuses, query capability checks, and Datoviz query handoff tasks.
+- M010 refreshed safe aisw provider inventory: Codex profiles `adikia`/`ibl` and Claude profile `main` are available as enabled providers. No credentials or tokens are recorded.

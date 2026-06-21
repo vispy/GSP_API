@@ -82,6 +82,21 @@ def get_mission(st: dict[str, Any], mission_id: str) -> dict[str, Any] | None:
     return None
 
 
+def provider_rows(pconf: dict[str, Any]) -> list[list[Any]]:
+    rows = []
+    for pid, spec in pconf.get("providers", {}).items():
+        rows.append([
+            pid,
+            spec.get("kind"),
+            spec.get("enabled", spec.get("kind") == "manual_main_session"),
+            spec.get("aisw_context", ""),
+            spec.get("aisw_profile", ""),
+            spec.get("cost_class", ""),
+            spec.get("description", ""),
+        ])
+    return rows
+
+
 def find_prefixed_file(directory: pathlib.Path, prefix: str) -> pathlib.Path | None:
     if not directory.exists():
         return None
@@ -94,6 +109,7 @@ def find_prefixed_file(directory: pathlib.Path, prefix: str) -> pathlib.Path | N
 def cmd_brief(args: argparse.Namespace) -> int:
     root = repo_root()
     st = status(root)
+    pconf = providers(root)
     print(f"# Project brief\n")
     print(f"Repo: `{root}`")
     print(f"Current stage: `{st.get('current_stage', 'unknown')}`\n")
@@ -108,9 +124,20 @@ def cmd_brief(args: argparse.Namespace) -> int:
         print(md_table(["Mission", "Title", "State", "Agent", "Progress", "Priority"], [[m.get("id"), m.get("title"), m.get("state"), m.get("agent"), str(m.get("progress", 0)) + "%", m.get("priority")] for m in missions]))
         print()
     questions = st.get("open_questions", [])
-    if questions:
+    open_questions = [q for q in questions if q.get("state") == "open"]
+    if open_questions:
         print("## Open questions\n")
-        print(md_table(["ID", "Summary", "Human", "ChatGPT Pro", "State"], [[q.get("id"), q.get("summary"), q.get("requires_human"), q.get("requires_chatgpt_pro"), q.get("state")] for q in questions]))
+        print(md_table(["ID", "Summary", "Human", "ChatGPT Pro", "State"], [[q.get("id"), q.get("summary"), q.get("requires_human"), q.get("requires_chatgpt_pro"), q.get("state")] for q in open_questions]))
+        print()
+    blocked = [m for m in missions if m.get("state") == "blocked"]
+    if blocked:
+        print("## Blocked missions\n")
+        print(md_table(["Mission", "Title", "Stage", "Agent"], [[m.get("id"), m.get("title"), m.get("stage"), m.get("agent")] for m in blocked]))
+        print()
+    rows = provider_rows(pconf)
+    if rows:
+        print("## Provider summary\n")
+        print(md_table(["Provider", "Kind", "Enabled", "aisw context", "Profile", "Cost", "Description"], rows))
         print()
     recs = st.get("recommendations", [])
     if recs:
@@ -132,8 +159,12 @@ def cmd_review_now(args: argparse.Namespace) -> int:
     for q in questions:
         needs.append([q.get("id"), "question", q.get("summary", ""), "human" if q.get("requires_human") else ""]) 
     ready = [m for m in st.get("missions", []) if m.get("state") in ("approved", "ready")]
+    approved = [m for m in ready if m.get("state") == "approved"]
     for m in ready:
         needs.append([m.get("id"), "mission", m.get("title", ""), m.get("state")])
+    blocked = [m for m in st.get("missions", []) if m.get("state") == "blocked"]
+    for m in blocked:
+        needs.append([m.get("id"), "blocked", m.get("title", ""), m.get("agent", "")])
     if not needs:
         print("No review items found.")
     else:
@@ -141,8 +172,12 @@ def cmd_review_now(args: argparse.Namespace) -> int:
     print("\n## Suggested action\n")
     if questions:
         print("Resolve open human questions before launching dependent external workers.")
-    elif ready:
+    elif blocked:
+        print("Review blocked missions and either resolve blockers or create a consultation packet.")
+    elif approved:
         print("Use `tools/agentctl launch-approved` when the user says 'do it'.")
+    elif ready:
+        print("Ask Mission Control to approve the ready mission, or execute it directly in the current session when appropriate.")
     else:
         print("Ask Mission Control to propose or refine the next mission.")
     return 0
@@ -159,6 +194,9 @@ def cmd_next(args: argparse.Namespace) -> int:
     print("# Recommended next missions\n")
     if rows:
         print(md_table(["Mission", "Title", "State", "Stage", "Priority"], rows))
+        ready = [row for row in rows if row[2] == "ready"]
+        if ready:
+            print(f"\nSuggested next mission: `{ready[0][0]}`.")
     else:
         print("No next missions listed.")
     return 0
@@ -177,10 +215,25 @@ def cmd_usage(args: argparse.Namespace) -> int:
     providers_dict = p.get("providers", {})
     if providers_dict:
         print("## Providers\n")
-        rows = []
-        for pid, spec in providers_dict.items():
-            rows.append([pid, spec.get("kind"), spec.get("enabled", spec.get("kind") == "manual_main_session"), spec.get("aisw_context", ""), spec.get("cost_class", ""), spec.get("description", "")])
-        print(md_table(["Provider", "Kind", "Enabled", "aisw context", "Cost", "Description"], rows))
+        print(md_table(["Provider", "Kind", "Enabled", "aisw context", "Profile", "Cost", "Description"], provider_rows(p)))
+        print()
+    inventory = p.get("inventory", {})
+    if inventory:
+        print("## Safe inventory\n")
+        rows = [
+            ["checked_at", inventory.get("checked_at", "")],
+            ["aisw_binary", inventory.get("aisw_binary", "")],
+            ["active_codex_profile", inventory.get("active_codex_profile", "")],
+            ["active_claude_profile", inventory.get("active_claude_profile", "")],
+            ["codex_profiles", ", ".join(inventory.get("codex_profiles", []))],
+            ["claude_profiles", ", ".join(inventory.get("claude_profiles", []))],
+        ]
+        print(md_table(["Key", "Value"], rows))
+        notes = inventory.get("notes", [])
+        if notes:
+            print("\nNotes:")
+            for note in notes:
+                print(f"- {note}")
     return 0
 
 
@@ -320,16 +373,22 @@ def cmd_runs(args: argparse.Namespace) -> int:
     root = repo_root()
     run_dir = root / ".agent" / "runs"
     rows = []
+    totals: dict[str, int] = {}
     if run_dir.exists():
         for p in sorted(run_dir.iterdir(), reverse=True):
             meta = load_json(p / "run.json", {})
             if meta:
-                rows.append([meta.get("id"), meta.get("mission"), meta.get("provider"), meta.get("status"), meta.get("pid", ""), meta.get("created_at", "")])
+                state = meta.get("status", "unknown")
+                totals[state] = totals.get(state, 0) + 1
+                rows.append([meta.get("id"), meta.get("mission"), meta.get("provider"), state, meta.get("pid", ""), meta.get("created_at", "")])
     print("# Runs\n")
     if rows:
         print(md_table(["Run", "Mission", "Provider", "Status", "PID", "Created"], rows))
+        print()
+        print(md_table(["Status", "Count"], [[k, v] for k, v in sorted(totals.items())]))
     else:
         print("No runs found.")
+        print("\nRun metadata should be stored as `.agent/runs/<RUN_ID>/run.json`.")
     return 0
 
 

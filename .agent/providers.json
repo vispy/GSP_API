@@ -14,24 +14,36 @@
       "aisw_profile": "ibl",
       "cost_class": "medium",
       "command_template": "bash -lc 'aisw use codex ibl --state-mode isolated --non-interactive --quiet; cd {worktree}; codex exec --json --sandbox workspace-write --cd {worktree} \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
-      "description": "Real aisw Codex profile found by M001. `aisw status --json` reports this profile active and credentials present."
+      "description": "Stored aisw Codex profile. Available for isolated worker launches; not the active profile during M010 inventory."
     },
-    "claude-medium-placeholder": {
-      "kind": "claude_cli",
-      "enabled": false,
-      "aisw_context": "MISSING_AISW_CLAUDE_PROFILE",
+    "codex-adikia": {
+      "kind": "codex_exec",
+      "enabled": true,
+      "aisw_context": "codex/adikia",
+      "aisw_tool": "codex",
+      "aisw_profile": "adikia",
       "cost_class": "medium",
-      "command_template": "bash -lc 'aisw use claude {aisw_context} --state-mode isolated --non-interactive --quiet; cd {worktree}; claude -p --output-format stream-json --permission-mode acceptEdits \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
-      "description": "Disabled because `aisw list claude --json` returned no Claude profiles and `aisw status --json` reported no Claude credentials present."
+      "command_template": "bash -lc 'aisw use codex adikia --state-mode isolated --non-interactive --quiet; cd {worktree}; codex exec --json --sandbox workspace-write --cd {worktree} \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
+      "description": "Active aisw Codex profile during M010 inventory; credentials present."
+    },
+    "claude-main": {
+      "kind": "claude_cli",
+      "enabled": true,
+      "aisw_context": "claude/main",
+      "aisw_tool": "claude",
+      "aisw_profile": "main",
+      "cost_class": "medium",
+      "command_template": "bash -lc 'aisw use claude main --state-mode isolated --non-interactive --quiet; cd {worktree}; claude -p --output-format stream-json --permission-mode acceptEdits \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
+      "description": "Active aisw Claude profile during M010 inventory; credentials present. Use only for approved bounded missions."
     }
   },
   "selection_policy": {
-    "cheap": ["codex-ibl"],
-    "medium": ["codex-ibl", "claude-medium-placeholder"],
+    "cheap": ["codex-adikia", "codex-ibl"],
+    "medium": ["codex-adikia", "codex-ibl", "claude-main"],
     "high": ["local-main-codex"]
   },
   "inventory": {
-    "checked_at": "2026-06-20",
+    "checked_at": "2026-06-21",
     "aisw_binary": "/Users/cyrille/.local/bin/aisw",
     "commands_run": [
       "command -v aisw",
@@ -42,10 +54,12 @@
       "aisw use --help"
     ],
     "codex_profiles": ["adikia", "adikia-ai", "ibl", "ucl"],
-    "active_codex_profile": "ibl",
-    "claude_profiles": [],
+    "active_codex_profile": "adikia",
+    "claude_profiles": ["main"],
+    "active_claude_profile": "main",
     "notes": [
       "Installed aisw uses `aisw use <tool> <profile>` rather than the bootstrap template's `aisw context use` syntax.",
+      "M010 safe inventory found a real Claude profile named `main`; the former placeholder has been replaced by provider `claude-main`.",
       "No credential contents were read or recorded."
     ]
   }

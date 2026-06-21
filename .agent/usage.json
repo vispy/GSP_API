@@ -1,8 +1,8 @@
 {
   "accounts": [
     {"id": "chatgpt-pro", "kind": "manual_chatgpt", "role": "high reasoning planning/spec/review", "state": "available", "notes": "Use when Mission Control creates a ChatGPT Pro consultation packet."},
-    {"id": "codex-via-aisw", "kind": "codex", "role": "worker agents", "state": "available", "notes": "aisw profile `ibl` is enabled as provider `codex-ibl`."},
-    {"id": "claude-via-aisw", "kind": "claude", "role": "worker/review agents", "state": "missing_profile", "notes": "`aisw list claude --json` returned no profiles during M001."}
+    {"id": "codex-via-aisw", "kind": "codex", "role": "worker agents", "state": "available", "notes": "aisw profiles `adikia` and `ibl` are enabled as providers `codex-adikia` and `codex-ibl`."},
+    {"id": "claude-via-aisw", "kind": "claude", "role": "worker/review agents", "state": "available", "notes": "aisw profile `main` is enabled as provider `claude-main`."}
   ],
   "sessions": []
 }
