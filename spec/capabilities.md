@@ -31,3 +31,8 @@ M009 query hardening note: `CapabilitySnapshot.query_modes` is the coarse planni
 panel query/readback support. `supports_query_mode()` and `adapt_query_mode()` mirror visual-family
 capability checks. A backend must not claim a query mode until it can return the corresponding
 `QueryResult` status and payload semantics.
+
+M011 extension/data-source note: `CapabilitySnapshot.extensions` advertises supported extension
+contracts such as `gsp.tiled-image@0.1`. Additional booleans describe whether a backend supports
+static extension manifests, virtual data sources, tiled image sources, and specific localities.
+Unsupported extension contracts must reject with diagnostics via `adapt_extension()`.

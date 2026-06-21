@@ -20,3 +20,10 @@ The backend should consume formal GSP models, not define protocol semantics.
 - `ImageVisual` to `matplotlib.image.AxesImage`.
 
 This is a narrow conformance slice beside the legacy renderer. The legacy `MatplotlibRenderer` remains available for existing examples.
+
+## M011 tiled-source reference proof
+
+`gsp_matplotlib.tiled_image` materializes a `TiledImageSource` viewport mosaic through
+`FakeTiledImageProvider` and renders it via the existing image protocol renderer. It also provides a
+reference tiled-image query helper that returns normal `QueryResult` fields plus
+`TiledImageQueryPayload`.

@@ -75,3 +75,22 @@ The v0.1 names currently used by conformance fixtures are:
 Backends that do not advertise a mode must reject planning with a diagnostic or return
 `unsupported` for direct query attempts. The Datoviz v0.4 adapter currently advertises no query
 modes because Python cannot decode `DvzQueryResult`.
+
+## M011 tiled-source query payload
+
+`QueryResult` can carry a typed extension payload on hit results:
+
+- `extension_payload_kind`
+- `extension_payload`
+
+For `gsp.tiled-image@0.1`, the payload is `TiledImageQueryPayload` and reports:
+
+- source id;
+- level;
+- tile x/y;
+- tile-local texel x/y;
+- level-local source x/y;
+- optional UV coordinate;
+- source value.
+
+Non-hit query results must not include extension payload fields.

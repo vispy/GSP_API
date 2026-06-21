@@ -40,3 +40,13 @@ It requires:
 - explicit `origin`, initially `upper` or `lower`.
 
 M003 does not resolve all image coordinate conventions. It makes row origin explicit in the model so Matplotlib does not define the protocol by default.
+
+## M011 tiled-source proof
+
+M011 keeps eager `ImageVisual.image` unchanged and adds a separate tiled-source reference proof.
+The data source describes availability and materialization; image placement and origin semantics
+remain visual/protocol concerns.
+
+The Matplotlib tiled-source helper materializes a viewport mosaic and renders it through the
+existing eager image reference path. Future work may add an explicit `data_source_ref` to image
+visuals, but M011 does not broaden `ImageVisual`.

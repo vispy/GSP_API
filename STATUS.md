@@ -12,9 +12,9 @@ tools/agentctl next
 
 Current state:
 
-- Completed through M010 agentic control plane provider hardening.
-- Current stage: S011 blocked pending ChatGPT Pro consultation.
-- Recommended next action: send `.agent/consultations/P001-extensions-virtual-data-source-scope.md` to ChatGPT Pro and capture the response.
+- Completed through M011 extensions and virtual data-source architecture proof.
+- Current stage: M001-M011 foundation complete.
+- Recommended next action: review the completed foundation and decide the next mission pack focus.
 
 Notes:
 
@@ -26,4 +26,4 @@ Notes:
 - M008 added an experimental VisPy2 producer MVP that emits GSP protocol point/image visuals and renders through the Matplotlib reference backend.
 - M009 hardened query statuses, query capability checks, and Datoviz query handoff tasks.
 - M010 refreshed safe aisw provider inventory: Codex profiles `adikia`/`ibl` and Claude profile `main` are available as enabled providers. No credentials or tokens are recorded.
-- M011 is paused before implementation because extension and virtual data-source scope requires high-reasoning architecture consultation.
+- M011 accepted ADR-0004, added static extension/data-source models, and proved a local fake tiled-image Matplotlib mosaic/query path without network or credentials.

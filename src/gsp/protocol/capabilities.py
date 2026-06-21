@@ -50,6 +50,17 @@ class CapabilitySnapshot:
     query_modes: tuple[str, ...] = ()
     output_formats: tuple[str, ...] = ()
     extensions: tuple[str, ...] = ()
+    supports_extension_manifests: bool = False
+    supports_virtual_data_sources: bool = False
+    supports_tiled_image_sources: bool = False
+    supports_in_memory_data_sources: bool = False
+    supports_synthetic_data_sources: bool = False
+    supports_local_file_data_sources: bool = False
+    supports_client_fetch_data_sources: bool = False
+    supports_server_fetch_data_sources: bool = False
+    supports_remote_handle_data_sources: bool = False
+    max_tiles_per_request: int = 0
+    max_mosaic_pixels: int = 0
     max_buffer_bytes: int | None = None
     deterministic: bool | None = None
     metadata: dict[str, object] = field(default_factory=dict)
@@ -63,6 +74,10 @@ class CapabilitySnapshot:
             raise ValueError("at least one transport kind is required")
         if self.max_buffer_bytes is not None and self.max_buffer_bytes < 0:
             raise ValueError("max_buffer_bytes must be non-negative")
+        if self.max_tiles_per_request < 0:
+            raise ValueError("max_tiles_per_request must be non-negative")
+        if self.max_mosaic_pixels < 0:
+            raise ValueError("max_mosaic_pixels must be non-negative")
 
     def supports_visual(self, family: str) -> bool:
         """Return whether a visual family is advertised."""
@@ -75,6 +90,10 @@ class CapabilitySnapshot:
     def supports_query_mode(self, mode: str) -> bool:
         """Return whether a query/readback mode is advertised."""
         return mode in self.query_modes
+
+    def supports_extension(self, extension: str) -> bool:
+        """Return whether an extension capability is advertised."""
+        return extension in self.extensions
 
     def adapt_visual(self, family: str) -> AdaptationDecision:
         """Return a minimal adaptation decision for a visual family."""
@@ -92,4 +111,13 @@ class CapabilitySnapshot:
         return AdaptationDecision(
             AdaptationOutcome.REJECT,
             f"query mode {mode!r} is not supported by {self.server_name}",
+        )
+
+    def adapt_extension(self, extension: str) -> AdaptationDecision:
+        """Return a minimal adaptation decision for an extension capability."""
+        if self.supports_extension(extension):
+            return AdaptationDecision(AdaptationOutcome.ACCEPT)
+        return AdaptationDecision(
+            AdaptationOutcome.REJECT,
+            f"extension {extension!r} is not supported by {self.server_name}",
         )

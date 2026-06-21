@@ -90,6 +90,8 @@ class QueryResult:
     data_coordinate: tuple[float, float] | None = None
     displayed_rgba: tuple[float, float, float, float] | None = None
     value: object | None = None
+    extension_payload_kind: str | None = None
+    extension_payload: object | None = None
     diagnostic: str | None = None
 
     def __post_init__(self) -> None:
@@ -110,5 +112,9 @@ class QueryResult:
             or self.data_coordinate is not None
             or self.displayed_rgba is not None
             or self.value is not None
+            or self.extension_payload_kind is not None
+            or self.extension_payload is not None
         ):
             raise ValueError("non-hit query results must not include hit payload fields")
+        if (self.extension_payload is None) != (self.extension_payload_kind is None):
+            raise ValueError("extension payload kind and value must be provided together")
