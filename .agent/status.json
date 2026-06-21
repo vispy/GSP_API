@@ -11,7 +11,7 @@
     {"id": "S008", "title": "VisPy2 producer MVP", "state": "completed", "progress": 100},
     {"id": "S009", "title": "Query hardening and Datoviz handoff", "state": "completed", "progress": 100},
     {"id": "S010", "title": "Agentic control plane provider hardening", "state": "completed", "progress": 100},
-    {"id": "S011", "title": "Extensions and virtual data source architecture proof", "state": "active", "progress": 0}
+    {"id": "S011", "title": "Extensions and virtual data source architecture proof", "state": "blocked", "progress": 10}
   ],
   "missions": [
     {"id": "M001", "title": "Bootstrap agentic control plane and legacy map", "stage": "S001", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 1},
@@ -24,13 +24,17 @@
     {"id": "M008", "title": "VisPy2 producer MVP", "stage": "S008", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 8},
     {"id": "M009", "title": "Query hardening and Datoviz handoff", "stage": "S009", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 9},
     {"id": "M010", "title": "Agentic control plane provider hardening", "stage": "S010", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 10},
-    {"id": "M011", "title": "Extensions and virtual data source architecture proof", "stage": "S011", "state": "ready", "agent": null, "progress": 0, "priority": 11}
+    {"id": "M011", "title": "Extensions and virtual data source architecture proof", "stage": "S011", "state": "blocked", "agent": "local-main-codex", "progress": 10, "priority": 11}
   ],
-  "review_queue": [],
-  "open_questions": [],
+  "review_queue": [
+    {"id": "P001", "type": "consultation", "summary": "ChatGPT Pro response needed for extension and virtual data-source v0.1 scope", "priority": "high", "state": "pending"}
+  ],
+  "open_questions": [
+    {"id": "Q002", "summary": "Paste or commit ChatGPT Pro response to .agent/consultations/P001 before M011 implementation", "requires_human": true, "requires_chatgpt_pro": true, "state": "open"}
+  ],
   "recommendations": [
-    "Discuss and approve M011 Extensions and virtual data source architecture proof as the next mission.",
-    "Use enabled Codex or Claude providers only for approved bounded missions.",
-    "Keep ChatGPT Pro consultation packets for high-level architecture decisions."
+    "Send .agent/consultations/P001-extensions-virtual-data-source-scope.md to ChatGPT Pro.",
+    "Paste or commit the ChatGPT Pro response before implementing M011.",
+    "After consultation, create the extension/data-source ADR and a bounded local fake tiled-image proof mission."
   ]
 }

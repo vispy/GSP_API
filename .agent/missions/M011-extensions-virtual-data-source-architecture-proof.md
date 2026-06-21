@@ -8,7 +8,7 @@ This mission should not implement a large distributed renderer. It should produc
 
 ## State
 
-Draft. Requires ChatGPT Pro consultation before implementation beyond documentation.
+Blocked pending ChatGPT Pro consultation response.
 
 ## Required reading
 
