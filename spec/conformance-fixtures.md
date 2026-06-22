@@ -60,5 +60,9 @@ The report remains diagnostic:
 The future versioned fixture schema and array/base64 transport require architectural review before
 implementation. The decision packet is `.agent/consultations/P005-versioned-conformance-fixture-schema.md`.
 
-Dependent implementation remains blocked until the consultation response is pasted or committed.
-The current `debug-json` report remains diagnostic and non-authoritative.
+The consultation response is recorded in `.agent/consultations/P005-response.md`.
+It recommends a separate authoritative `gsp.conformance.fixture` schema while keeping the current
+`debug-json` report diagnostic and non-authoritative.
+
+Next implementation should begin with an ADR/spec skeleton before any array transport, JSON fixture
+files, or Datoviz conformance pass requirements are added.

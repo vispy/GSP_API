@@ -482,6 +482,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 40
+    },
+    {
+      "id": "M041",
+      "title": "Fixture schema ADR and spec skeleton",
+      "stage": "S018",
+      "state": "planned",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 41
     }
   ],
   "review_queue": [],
@@ -495,14 +504,14 @@
     },
     {
       "id": "Q040-VERSIONED-FIXTURE-SCHEMA",
-      "summary": "Await ChatGPT Pro architecture decision for versioned conformance fixture schema and array/base64 transport before implementation.",
-      "requires_human": true,
-      "requires_chatgpt_pro": true,
-      "state": "open"
+      "summary": "Resolved by P005 response: keep debug-json diagnostic, create separate gsp.conformance.fixture schema, start with ADR/spec skeleton before array transport.",
+      "requires_human": false,
+      "requires_chatgpt_pro": false,
+      "state": "closed"
     }
   ],
   "recommendations": [
-    "This needs ChatGPT Pro consultation: paste .agent/consultations/P005-versioned-conformance-fixture-schema.md into ChatGPT Pro and commit or paste the response before implementing versioned fixture schema or array/base64 transport.",
+    "Start M041: commit the fixture schema ADR/spec skeleton for gsp.conformance.fixture@0.1, without implementing array transport or JSON fixture files.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }
