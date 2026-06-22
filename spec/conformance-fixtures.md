@@ -27,3 +27,18 @@ honest: Datoviz is visible in the matrix, but skipped until a backend replay ada
 application visual IDs and define guide/tiled-source expectations.
 
 This matrix is not a runtime certification suite and does not add JSON/base64 fixtures.
+
+## M038 debug-json report
+
+The debug-json report serializes the current semantic replay summary into JSON-safe dictionaries.
+It is intended for inspection and lightweight report comparison only.
+
+Required properties:
+
+- includes backend outcomes from the conformance matrix;
+- includes Matplotlib semantic replay query summaries;
+- includes the Datoviz skip reason;
+- omits NumPy arrays and memory buffers;
+- sets `schema_authority=false`.
+
+This report is not the versioned fixture schema and is not a base64 array transport.

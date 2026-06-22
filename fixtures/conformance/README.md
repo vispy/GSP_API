@@ -19,6 +19,7 @@ They are Python/in-process fixtures, not JSON fixtures. This is intentional: the
   Matplotlib reference rendering, and typed tiled-image query payload.
 - In-process replay harness that returns semantic point/image, guide, and tiled-source results.
 - Backend conformance matrix with Matplotlib pass and Datoviz clean-skip expectations.
+- Minimal debug-json report over semantic replay results, with array transport omitted.
 
 ## Reference Backend
 
@@ -31,4 +32,5 @@ Matplotlib is the reference/conformance backend for this baseline. Tests inspect
 - VisPy2 producer API.
 - Production transport encodings.
 - JSON/base64 replay fixtures.
+- Versioned JSON schema authority.
 - General `data` / `guides` / `all-rendered` query-scope precedence.
