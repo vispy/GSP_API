@@ -38,6 +38,7 @@ GSP_BACKEND=datoviz python examples/example_name.py
 | `image_example.py` | Displaying images and raster data | Image rendering and texture mapping |
 | `texts_example.py` | Text rendering and typography | Adding and styling text in visualizations |
 | `texts_animated_example.py` | Animated text elements | Text animation and dynamic updates |
+| `vispy2_protocol_guides.py` | VisPy2 protocol guide API | Scatter, image, limits, labels, title, ticks, and grid intent |
 
 ### 3D and Camera Examples
 

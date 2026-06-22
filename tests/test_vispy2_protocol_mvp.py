@@ -1,11 +1,15 @@
 """Tests for the minimal VisPy2 GSP producer API."""
 
+from pathlib import Path
+import runpy
+
 import matplotlib
 
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 
 import vispy2 as vp
 from gsp.protocol import (
@@ -178,3 +182,43 @@ def test_vispy2_guide_apis_render_through_matplotlib_reference():
         assert any(line.get_visible() for line in mpl_axes.get_ygridlines())
     finally:
         plt.close(mpl_fig)
+
+
+def test_vispy2_guide_example_covers_public_guide_surface():
+    namespace = runpy.run_path(str(Path("examples/vispy2_protocol_guides.py")))
+    fig = namespace["fig"]
+    ax = namespace["ax"]
+
+    assert ax.get_xlim() == (-1.0, 1.0)
+    assert ax.get_ylim() == (-1.0, 1.0)
+    assert ax.get_xlabel() == "x position"
+    assert ax.get_ylabel() == "y position"
+    assert ax.get_title() == "VisPy2 guide API"
+    assert ax.get_xticks() == (-1.0, 0.0, 1.0)
+    assert ax.get_yticks() == (-1.0, 0.0, 1.0)
+
+    x_guide, y_guide = fig.axis_guides()
+    assert x_guide.grid_visible is True
+    assert y_guide.grid_visible is True
+    assert x_guide.tick_spec.kind == TickSpecKind.EXPLICIT
+    assert x_guide.tick_spec.explicit_labels == ("left", "center", "right")
+    assert len(fig.visuals()) == 2
+    assert len(fig.panel_text_guides()) == 1
+
+
+@pytest.mark.parametrize(
+    "example",
+    [
+        "examples/vispy2_protocol_scatter.py",
+        "examples/vispy2_protocol_imshow.py",
+        "examples/vispy2_protocol_point_over_image.py",
+        "examples/vispy2_protocol_guides.py",
+    ],
+)
+def test_vispy2_protocol_examples_are_runnable(example):
+    namespace = runpy.run_path(str(Path(example)))
+    fig = namespace["fig"]
+
+    assert fig.visuals()
+    assert fig.panels()
+    assert fig.views()
