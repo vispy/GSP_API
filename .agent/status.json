@@ -1,5 +1,5 @@
 {
-  "current_stage": "S018",
+  "current_stage": "S019",
   "stages": [
     {
       "id": "S001",
@@ -112,8 +112,8 @@
     {
       "id": "S019",
       "title": "Packaging, docs, and examples",
-      "state": "planned",
-      "progress": 0
+      "state": "in_progress",
+      "progress": 20
     },
     {
       "id": "S020",
@@ -509,6 +509,33 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 43
+    },
+    {
+      "id": "M044",
+      "title": "Packaging/import/docs audit",
+      "stage": "S019",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 44
+    },
+    {
+      "id": "M045",
+      "title": "Packaging/import-surface cleanup",
+      "stage": "S019",
+      "state": "planned",
+      "agent": null,
+      "progress": 0,
+      "priority": 45
+    },
+    {
+      "id": "M046",
+      "title": "Docs/examples consistency cleanup",
+      "stage": "S019",
+      "state": "planned",
+      "agent": null,
+      "progress": 0,
+      "priority": 46
     }
   ],
   "review_queue": [],
@@ -529,7 +556,7 @@
     }
   ],
   "recommendations": [
-    "Start S019 with packaging/import-surface and docs examples audit now that S018 has a minimal authoritative fixture path.",
+    "Continue S019 with M045 packaging/import-surface cleanup, then M046 README/docs/examples consistency cleanup.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }
