@@ -18,6 +18,7 @@ They are Python/in-process fixtures, not JSON fixtures. This is intentional: the
 - Local tiled-source fixture with static manifest linkage, clipped viewport mosaic materialization,
   Matplotlib reference rendering, and typed tiled-image query payload.
 - In-process replay harness that returns semantic point/image, guide, and tiled-source results.
+- Backend conformance matrix with Matplotlib pass and Datoviz clean-skip expectations.
 
 ## Reference Backend
 
@@ -26,6 +27,7 @@ Matplotlib is the reference/conformance backend for this baseline. Tests inspect
 ## Not Covered Yet
 
 - Datoviz rendering or query execution.
+- Datoviz conformance pass requirements.
 - VisPy2 producer API.
 - Production transport encodings.
 - JSON/base64 replay fixtures.

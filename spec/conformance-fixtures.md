@@ -14,3 +14,16 @@ without JSON/base64 serialization and returns semantic results for:
 
 This harness is not a transport encoding and is not a schema authority. JSON/base64 fixture files,
 debug-json replay, backend matrices, and pixel/image comparison remain follow-up S018 work.
+
+## M037 backend conformance matrix
+
+The backend matrix is still Python/in-process. It records expected replay outcomes explicitly:
+
+- `matplotlib`: `pass`, using the deterministic reference replay harness;
+- `datoviz`: `skip`, with a diagnostic reason derived from the active Python binding state.
+
+The Datoviz entry is intentionally present even before it can pass. This keeps conformance reports
+honest: Datoviz is visible in the matrix, but skipped until a backend replay adapter can map stable
+application visual IDs and define guide/tiled-source expectations.
+
+This matrix is not a runtime certification suite and does not add JSON/base64 fixtures.
