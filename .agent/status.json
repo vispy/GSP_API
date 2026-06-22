@@ -71,7 +71,7 @@
       "id": "S012",
       "title": "Matplotlib strict guide/tick provider baseline",
       "state": "in_progress",
-      "progress": 25
+      "progress": 35
     },
     {
       "id": "S013",
@@ -235,9 +235,9 @@
       "id": "M013",
       "title": "Matplotlib AxisGuide and PanelTextGuide rendering",
       "stage": "S012",
-      "state": "planned",
+      "state": "in_progress",
       "agent": "codex-worker",
-      "progress": 0,
+      "progress": 10,
       "priority": 13
     },
     {
