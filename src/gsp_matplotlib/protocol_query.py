@@ -8,7 +8,7 @@ from typing import Iterable
 
 import numpy as np
 
-from gsp.protocol.query import QueryRequest, QueryResult, QueryStatus, VisualFamily
+from gsp.protocol.query import QueryHitPolicy, QueryRequest, QueryResult, QueryStatus, VisualFamily
 from gsp.protocol.visuals import ImageOrigin, ImageVisual, PointVisual
 
 
@@ -58,6 +58,14 @@ def query_visuals(
             status=QueryStatus.MISS,
             hit=False,
             panel_coordinate=request.coordinate,
+        )
+    if request.hit_policy == QueryHitPolicy.ALL:
+        return QueryResult(
+            request_id=request.id,
+            status=QueryStatus.HIT,
+            hit=True,
+            panel_coordinate=request.coordinate,
+            hits=tuple(hit.hits[0] for hit in hits),
         )
     return hits[0]
 

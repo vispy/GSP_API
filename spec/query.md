@@ -119,3 +119,17 @@ all eligible hits sorted front-to-back once a backend advertises that support.
 Direct query execution does not return partial results. Unsupported requested scope, hit policy,
 payload, extension payload, or guide-provider behavior returns `unsupported`, not an adapted hit or
 miss.
+
+## S015 Matplotlib scoped reference routing
+
+The Matplotlib/reference path routes scoped queries as follows:
+
+- `data` uses the existing deterministic point/image query path and ignores guides;
+- `guides` uses bounded semantic `AxisGuide` query support and ignores data visuals;
+- `all-rendered` merges queryable data and guide hits using the bounded reference `z_order` fields
+  as the comparable render-order key;
+- `hit_policy=frontmost` returns the first front-to-back hit;
+- `hit_policy=all` returns all eligible hits front-to-back in `QueryResult.hits`;
+- `all-rendered` with guide entries requires a `View2D`, otherwise it returns `unsupported`.
+
+This is a reference/conformance route, not a claim that every backend can support `all-rendered`.

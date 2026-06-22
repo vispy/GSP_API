@@ -13,6 +13,7 @@ from gsp.protocol import (
     QueryRequest,
     QueryResult,
     QueryStatus,
+    QueryHitPolicy,
     View2D,
     resolve_ticks,
 )
@@ -44,6 +45,14 @@ def query_axis_guides(
         if hit is not None:
             hits.append(hit)
     if hits:
+        if request.hit_policy == QueryHitPolicy.ALL:
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.HIT,
+                hit=True,
+                panel_coordinate=request.coordinate,
+                hits=tuple(hit.hits[0] for hit in hits),
+            )
         return hits[0]
     return QueryResult(
         request_id=request.id,
