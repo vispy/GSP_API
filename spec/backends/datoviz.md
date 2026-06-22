@@ -226,9 +226,35 @@ capture binding readiness, and runs the bounded query wrapper. After Datoviz com
 - the smoke can assign and read `request_id`, `status`, `hit`, `panel_position`, `visual_id`,
   `item_id`, `texel_id`, `display_rgba`, `scalar`, `vector`, and `label`.
 
-The bounded query wrapper still returns `dropped` in the smoke when no resolved query result is
-available during its single poll. That is now an execution/frame-production question, not a Python
-decode binding blocker.
+## M031 live offscreen query result proof
+
+GSP now proves the Datoviz v0.4-dev live query path when the regenerated Datoviz wheel-stage Python
+binding is paired with repaired native runtime libraries from the built wheel:
+
+```bash
+PYTHONPATH=../datoviz/build/manylinux-x86_64/wheel-stage:. \
+LD_LIBRARY_PATH=../datoviz/build/manylinux-x86_64/wheel-stage/datoviz:/tmp/gsp-datoviz-wheelhouse-smoke/datoviz.libs:/tmp/gsp-datoviz-wheelhouse-smoke/datoviz \
+DVZ_WHEEL_RUNTIME_DIRS=/tmp/gsp-datoviz-wheelhouse-smoke/datoviz.libs:/tmp/gsp-datoviz-wheelhouse-smoke/datoviz:../datoviz/build/manylinux-x86_64/wheel-stage/datoviz \
+DVZ_SHADERC_RUNTIME_LIBRARY=/tmp/gsp-datoviz-wheelhouse-smoke/datoviz/libshaderc_shared.so.1 \
+uv run python tools/datoviz_v04_smoke.py --require-query-ready --require-live-query-hit
+```
+
+Adapter behavior added in M031:
+
+- point visuals call `dvz_visual_set_query_capabilities(..., DVZ_QUERY_CAPABILITY_ITEM)`;
+- image visuals call `dvz_visual_set_query_capabilities(..., ITEM | PIXEL)`;
+- `query_panel()` queues a Datoviz panel query, renders one offscreen frame when
+  `dvz_view_render_once()`/equivalent is available, polls `dvz_scene_poll_query()`, and decodes the
+  live result;
+- the smoke reports `live_query_status`, `live_query_hit`, visual identity fields, displayed color,
+  value, and diagnostics.
+
+Current live proof result: `live_query_status=hit`, `live_query_hit=true`, and
+`live_query_visual_id="datoviz:visual:1"`. The same smoke confirms that `DvzQueryResult._fields_`
+contains `visual_family`, `item_id`, `texel_id`, `display_rgba`, `value_kind`, `scalar`, `vector`,
+and `label`, and synthetic field readback succeeds. However, the current mixed v0.4-dev runtime
+artifact leaves `visual_family`, `item_id`, `texel`, displayed color, and value unset in the live
+result. Treat that as the remaining Datoviz live payload parity gap.
 
 ## Post-M011 parity gap update
 

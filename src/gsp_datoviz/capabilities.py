@@ -30,6 +30,7 @@ _REQUIRED_DVZ_CAPTURE_FUNCTIONS = (
 )
 
 _DVZ_CAPTURE_RENDER_FUNCTIONS = (
+    "dvz_view_render_once",
     "dvz_app_render_once",
     "dvz_app_run",
 )
@@ -89,7 +90,7 @@ def datoviz_v04_capability_snapshot(dvz: ModuleType | Any | None = None) -> Capa
 
     if dvz is None:
         try:
-            import datoviz as imported_dvz
+            import datoviz as imported_dvz  # type: ignore[import-untyped]
         except ModuleNotFoundError:
             diagnostics = ("Datoviz is not importable; using conservative static GSP slice capabilities",)
         else:
@@ -218,7 +219,7 @@ def datoviz_v04_capture_diagnostics(dvz: ModuleType | Any) -> tuple[str, ...]:
     """Return missing requirements for v0.4 offscreen PNG capture."""
     diagnostics = [f"missing {name}" for name in _REQUIRED_DVZ_CAPTURE_FUNCTIONS if not hasattr(dvz, name)]
     if not any(hasattr(dvz, name) for name in _DVZ_CAPTURE_RENDER_FUNCTIONS):
-        diagnostics.append("missing one of dvz_app_render_once, dvz_app_run")
+        diagnostics.append("missing one of dvz_view_render_once, dvz_app_render_once, dvz_app_run")
     return tuple(diagnostics)
 
 

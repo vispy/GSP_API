@@ -11,6 +11,7 @@ from typing import Any
 import numpy as np
 
 from gsp.protocol import ImageVisual, PointVisual, QueryCoordinateSpace, QueryRequest
+from gsp.protocol.query import QueryStatus
 from gsp_datoviz.capabilities import datoviz_v04_capture_diagnostics, datoviz_v04_capture_ready
 from gsp_datoviz.protocol_renderer import (
     DatovizV04ProtocolRenderer,
@@ -43,6 +44,11 @@ def main() -> int:
         "--require-query-ready",
         action="store_true",
         help="fail if DvzQueryResult is not decodable from Python",
+    )
+    parser.add_argument(
+        "--require-live-query-hit",
+        action="store_true",
+        help="fail if the adapter cannot queue, render, poll, and decode a live hit",
     )
     args = parser.parse_args()
 
@@ -103,10 +109,23 @@ def main() -> int:
                     coordinate_space=QueryCoordinateSpace.PANEL,
                 )
             )
-            report["bounded_query_status"] = query_result.status.value
-            report["bounded_query_diagnostic"] = query_result.diagnostic
+            report["live_query_status"] = query_result.status.value
+            report["live_query_hit"] = query_result.hit
+            report["live_query_visual_family"] = (
+                query_result.visual_family.value if hasattr(query_result.visual_family, "value") else query_result.visual_family
+            )
+            report["live_query_visual_id"] = query_result.visual_id
+            report["live_query_item_id"] = query_result.item_id
+            report["live_query_texel"] = query_result.texel
+            report["live_query_displayed_rgba"] = query_result.displayed_rgba
+            report["live_query_value"] = query_result.value
+            report["live_query_diagnostic"] = query_result.diagnostic
     except Exception as exc:
         report["error"] = f"GSP Datoviz v0.4 adapter smoke failed: {type(exc).__name__}: {exc}"
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return 1
+    if args.require_live_query_hit and report.get("live_query_status") != QueryStatus.HIT.value:
+        report["error"] = "GSP Datoviz v0.4 adapter did not produce a live query hit"
         print(json.dumps(report, indent=2, sort_keys=True))
         return 1
 

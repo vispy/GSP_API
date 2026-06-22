@@ -95,7 +95,7 @@
       "id": "S016",
       "title": "Datoviz capability/query parity next pack",
       "state": "in_progress",
-      "progress": 95
+      "progress": 98
     },
     {
       "id": "S017",
@@ -392,6 +392,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 30
+    },
+    {
+      "id": "M031",
+      "title": "Datoviz live offscreen query result proof",
+      "stage": "S016",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 31
     }
   ],
   "review_queue": [],
@@ -405,7 +414,7 @@
     }
   ],
   "recommendations": [
-    "Execute the next Datoviz slice: produce and decode a resolved live query result after a v0.4 offscreen/frame execution path.",
+    "Decide whether the remaining Datoviz live query identity payload gap belongs in Datoviz or GSP: current v0.4-dev smoke returns hit=true and visual_id but leaves visual_family/item_id/texel/value unset.",
     "Keep guide/all-rendered query scopes and hit_policy=all deferred until Datoviz can prove ordering and guide-query semantics."
   ]
 }

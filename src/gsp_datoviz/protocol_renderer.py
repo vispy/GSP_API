@@ -67,8 +67,11 @@ DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
 DVZ_FIELD_SEMANTIC_COLOR = 4
 DVZ_COLOR_ROLE_SRGB_COLOR = 1
 DVZ_SCENE_TARGET_NONE = 0
+DVZ_SCENE_TARGET_ITEM = 2
 DVZ_QUERY_HIT_FRONTMOST = 0
 DVZ_QUERY_PROFILE_UNSUPPORTED = 0
+DVZ_QUERY_CAPABILITY_ITEM = 0x02
+DVZ_QUERY_CAPABILITY_PIXEL = 0x10
 
 
 class DatovizV04Unavailable(RuntimeError):
@@ -97,7 +100,7 @@ def datoviz_v04_sampled_field_diagnostics(module: ModuleType | Any) -> tuple[str
 def import_datoviz_v04() -> ModuleType:
     """Import Datoviz and validate the C-shaped v0.4 facade."""
     try:
-        import datoviz as dvz
+        import datoviz as dvz  # type: ignore[import-untyped]
     except ModuleNotFoundError as exc:
         raise DatovizV04Unavailable("Datoviz is not importable") from exc
 
@@ -173,6 +176,7 @@ class DatovizV04ProtocolRenderer:
         diameters = _diameters_from_marker_area(visual.sizes, positions.shape[0])
 
         dvz_visual = self.dvz.dvz_point(self.scene, 0)
+        _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
         self.dvz.dvz_visual_set_data(dvz_visual, "position", positions)
         self.dvz.dvz_visual_set_data(dvz_visual, "color", colors)
         self.dvz.dvz_visual_set_data(dvz_visual, "diameter", diameters)
@@ -193,6 +197,7 @@ class DatovizV04ProtocolRenderer:
         height, width = pixels.shape[:2]
 
         dvz_visual = self.dvz.dvz_image(self.scene, 0)
+        _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM | DVZ_QUERY_CAPABILITY_PIXEL)
         self.dvz.dvz_visual_set_data(dvz_visual, "position", positions)
         self.dvz.dvz_visual_set_data(dvz_visual, "texcoords", texcoords)
         if datoviz_v04_sampled_field_ready(self.dvz):
@@ -264,12 +269,17 @@ class DatovizV04ProtocolRenderer:
         return self.offscreen_view
 
     def _render_offscreen_frame(self) -> None:
-        render_once = getattr(self.dvz, "dvz_app_render_once", None)
-        if render_once is not None:
-            result = render_once(self.app)
+        view_render_once = getattr(self.dvz, "dvz_view_render_once", None)
+        if view_render_once is not None:
+            result = view_render_once(self.offscreen_view)
         else:
-            result = self.dvz.dvz_app_run(self.app, 1)
-        if result not in (0, None):
+            app_render_once = getattr(self.dvz, "dvz_app_render_once", None)
+            if app_render_once is not None:
+                result = app_render_once(self.app)
+            else:
+                result = self.dvz.dvz_app_run(self.app, 1)
+        frame_ready = getattr(self.dvz, "DVZ_CANVAS_FRAME_READY", 0)
+        if result not in (0, None, frame_ready):
             raise DatovizV04Unsupported("Datoviz offscreen frame render failed")
 
     def query_panel(self, request: QueryRequest) -> QueryResult:
@@ -287,12 +297,12 @@ class DatovizV04ProtocolRenderer:
 
         dvz_request = self.dvz.dvz_query_request()
         dvz_request.request_id = _datoviz_request_id(request.id)
-        dvz_request.target = getattr(self.dvz, "DVZ_SCENE_TARGET_NONE", DVZ_SCENE_TARGET_NONE)
+        dvz_request.target = getattr(self.dvz, "DVZ_SCENE_TARGET_ITEM", DVZ_SCENE_TARGET_ITEM)
         dvz_request.hit_policy = getattr(self.dvz, "DVZ_QUERY_HIT_FRONTMOST", DVZ_QUERY_HIT_FRONTMOST)
         dvz_request.profile = getattr(self.dvz, "DVZ_QUERY_PROFILE_UNSUPPORTED", DVZ_QUERY_PROFILE_UNSUPPORTED)
 
         x, y = request.coordinate
-        if self.dvz.dvz_panel_query(self.panel, float(x), float(y), dvz_request) != 0:
+        if _panel_query(self.dvz, self.panel, float(x), float(y), dvz_request) != 0:
             return QueryResult(
                 request_id=request.id,
                 status=QueryStatus.FAILED,
@@ -301,8 +311,12 @@ class DatovizV04ProtocolRenderer:
                 diagnostic="Datoviz panel query enqueue failed",
             )
 
+        if _query_frame_resolution_ready(self.dvz):
+            self._ensure_offscreen_view()
+            self._render_offscreen_frame()
+
         raw_result = self.dvz.DvzQueryResult()
-        if not self.dvz.dvz_scene_poll_query(self.scene, raw_result):
+        if not _scene_poll_query(self.dvz, self.scene, raw_result):
             return QueryResult(
                 request_id=request.id,
                 status=QueryStatus.DROPPED,
@@ -407,6 +421,33 @@ def _set_visual_field(dvz: Any, visual: Any, slot_name: str, sampled_field: Any)
         return bool(dvz.dvz_visual_set_field(visual, slot_name, sampled_field))
     except (ctypes.ArgumentError, TypeError):
         return bool(dvz.dvz_visual_set_field(visual, slot_name.encode("utf-8"), sampled_field))
+
+
+def _set_query_capabilities(dvz: Any, visual: Any, capabilities: int) -> None:
+    setter = getattr(dvz, "dvz_visual_set_query_capabilities", None)
+    if setter is None:
+        return
+    setter(visual, capabilities)
+
+
+def _query_frame_resolution_ready(dvz: Any) -> bool:
+    if not hasattr(dvz, "dvz_app") or not hasattr(dvz, "dvz_view_offscreen"):
+        return False
+    return hasattr(dvz, "dvz_view_render_once") or hasattr(dvz, "dvz_app_render_once") or hasattr(dvz, "dvz_app_run")
+
+
+def _panel_query(dvz: Any, panel: Any, x: float, y: float, request: Any) -> int:
+    try:
+        return int(dvz.dvz_panel_query(panel, x, y, ctypes.byref(request)))
+    except TypeError:
+        return int(dvz.dvz_panel_query(panel, x, y, request))
+
+
+def _scene_poll_query(dvz: Any, scene: Any, out_result: Any) -> bool:
+    try:
+        return bool(dvz.dvz_scene_poll_query(scene, ctypes.byref(out_result)))
+    except TypeError:
+        return bool(dvz.dvz_scene_poll_query(scene, out_result))
 
 
 def _datoviz_query_request_diagnostic(request: QueryRequest) -> str | None:

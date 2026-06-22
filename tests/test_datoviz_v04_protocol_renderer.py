@@ -254,6 +254,12 @@ class FakeDatovizV04WithCapture(FakeDatovizV04):
         self.app_destroyed = True
 
 
+class FakeDatovizV04WithQueryCapabilities(FakeDatovizV04):
+    def dvz_visual_set_query_capabilities(self, visual, capabilities):
+        self.calls.append(("set_query_capabilities", visual, capabilities))
+        return None
+
+
 class FakeDvzQueryResult:
     _fields_ = (("request_id", object), ("status", object), ("hit", object))
 
@@ -300,6 +306,26 @@ class FakeDatovizV04WithRuntimeQuery(FakeDatovizV04WithQuery):
         for name, value in vars(self.result).items():
             setattr(out_result, name, value)
         return True
+
+
+class FakeDatovizV04WithLiveRuntimeQuery(FakeDatovizV04WithRuntimeQuery):
+    DVZ_CANVAS_FRAME_READY = 0
+
+    def dvz_app(self, scene):
+        self.calls.append(("app", scene))
+        return "app"
+
+    def dvz_view_offscreen(self, app, figure, width, height):
+        self.calls.append(("view_offscreen", app, figure, width, height))
+        return "offscreen-view"
+
+    def dvz_view_render_once(self, view):
+        self.calls.append(("view_render_once", view))
+        return self.DVZ_CANVAS_FRAME_READY
+
+    def dvz_app_destroy(self, app):
+        self.calls.append(("app_destroy", app))
+        return None
 
 
 def _calls(fake, name):
@@ -492,7 +518,7 @@ def test_query_panel_queues_polls_and_decodes_datoviz_result():
     assert result.item_id == 5
     query_request = _calls(fake, "panel_query")[0][4]
     assert query_request.request_id > 0
-    assert query_request.target == 0
+    assert query_request.target == 2
     assert query_request.hit_policy == 0
     assert query_request.profile == 0
     assert _calls(fake, "panel_query")[0][:4] == ("panel_query", "panel", 12.0, 34.0)
@@ -513,6 +539,34 @@ def test_query_panel_returns_dropped_when_bounded_poll_has_no_result():
 
     assert result.status == QueryStatus.DROPPED
     assert result.diagnostic == "Datoviz query produced no resolved result during bounded poll"
+
+
+def test_query_panel_renders_offscreen_frame_before_poll_when_available():
+    fake = FakeDatovizV04WithLiveRuntimeQuery(
+        FakeDvzQueryResult(
+            request_id=99,
+            status=DVZ_QUERY_STATUS_HIT,
+            hit=True,
+            visual_id=123,
+            visual_family=DVZ_SCENE_VISUAL_FAMILY_POINT,
+            item_id=5,
+        )
+    )
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, width=64, height=64)
+
+    result = renderer.query_panel(
+        QueryRequest(
+            id="query:runtime",
+            panel_id="panel:main",
+            coordinate=(32.0, 32.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+        )
+    )
+
+    names = [call[0] for call in fake.calls]
+    assert result.status == QueryStatus.HIT
+    assert names.index("panel_query") < names.index("view_render_once") < names.index("scene_poll_query")
+    assert _calls(fake, "view_offscreen") == [("view_offscreen", "app", "figure", 64, 64)]
 
 
 def test_query_panel_rejects_unadvertised_scopes_and_policies():
@@ -575,7 +629,7 @@ def test_capability_snapshot_selects_datoviz_axis_provider_when_facade_exposes_s
 
 
 def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
-    fake = FakeDatovizV04()
+    fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
     visual = PointVisual(
         id="visual:points",
@@ -592,11 +646,12 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     np.testing.assert_allclose(set_data[0][3], [[-0.5, 0.25, 0.0], [0.5, -0.25, 0.0]])
     np.testing.assert_array_equal(set_data[1][3], [[255, 0, 0, 255], [0, 128, 255, 128]])
     np.testing.assert_allclose(set_data[2][3], [2.0, 4.0], rtol=1e-6)
+    assert _calls(fake, "set_query_capabilities") == [("set_query_capabilities", "point-visual", 0x02)]
     assert _calls(fake, "add_visual")[-1] == ("add_visual", "panel", "point-visual", None)
 
 
 def test_add_image_visual_uses_texture_convenience_path_and_origin_texcoords():
-    fake = FakeDatovizV04()
+    fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     image = np.array(
         [
@@ -627,6 +682,7 @@ def test_add_image_visual_uses_texture_convenience_path_and_origin_texcoords():
     assert texture_call[3:] == (2, 2)
     assert texture_call[2].shape == (2, 2, 4)
     np.testing.assert_array_equal(texture_call[2][:, :, 3], 255)
+    assert _calls(fake, "set_query_capabilities") == [("set_query_capabilities", "image-visual", 0x12)]
 
 
 def test_add_image_visual_uses_sampled_field_path_when_available():
