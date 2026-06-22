@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import ctypes
+
 import numpy as np
 import pytest
 
 from gsp.protocol import ImageOrigin, ImageVisual, PointVisual
-from gsp.protocol import AxisProviderRequest, View2D
+from gsp.protocol import AxisProviderRequest, QueryStatus, View2D, VisualFamily
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
     DATOVIZ_V04_AXIS_PROVIDER,
@@ -19,6 +21,18 @@ from gsp_datoviz.protocol_renderer import (
     DatovizV04Unsupported,
     capability_snapshot,
     is_datoviz_v04_facade,
+)
+from gsp_datoviz.query import (
+    DVZ_QUERY_STATUS_DECODE_FAILED,
+    DVZ_QUERY_STATUS_HIT,
+    DVZ_QUERY_STATUS_MISS,
+    DVZ_QUERY_STATUS_NO_CAPABLE_VISUAL,
+    DVZ_QUERY_STATUS_OUTSIDE_PANEL,
+    DVZ_QUERY_STATUS_STALE_DROPPED,
+    DVZ_QUERY_VALUE_VEC4,
+    DVZ_SCENE_VISUAL_FAMILY_IMAGE,
+    DVZ_SCENE_VISUAL_FAMILY_POINT,
+    decode_dvz_query_result,
 )
 
 
@@ -139,6 +153,32 @@ class FakeDatovizV04WithCapabilities(FakeDatovizV04WithAxes):
         return FakeDvzCapabilitySnapshot()
 
 
+class FakeDvzQueryResult:
+    def __init__(self, **kwargs):
+        self.request_id = 7
+        self.status = DVZ_QUERY_STATUS_MISS
+        self.hit = False
+        self.panel_position = (0.25, 0.75)
+        self.framebuffer_position = (25, 75)
+        self.visual_id = 0
+        self.visual_family = 0
+        self.item_id = 0
+        self.texel_id = 0
+        self.has_visual_position = False
+        self.visual_position = (0.0, 0.0, 0.0)
+        self.has_data_position = False
+        self.data_position = (0.0, 0.0, 0.0)
+        self.has_display_rgba = False
+        self.display_rgba = (0.0, 0.0, 0.0, 0.0)
+        self.value_kind = 0
+        self.vector = (0.0, 0.0, 0.0, 0.0)
+        self.scalar = 0.0
+        self.category_id = 0
+        self.label = b""
+        for name, value in kwargs.items():
+            setattr(self, name, value)
+
+
 def _calls(fake, name):
     return [call for call in fake.calls if call[0] == name]
 
@@ -179,6 +219,88 @@ def test_renderer_capabilities_use_runtime_datoviz_capability_snapshot_when_avai
     assert _calls(fake, "capability_snapshot") == [("capability_snapshot",)]
     assert caps.max_buffer_bytes == 512 * 1024 * 1024
     assert caps.metadata["datoviz_raw_capabilities"]["supports_readback"] is True
+
+
+def test_decode_datoviz_query_statuses_to_gsp_statuses():
+    assert decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_MISS)).status == QueryStatus.MISS
+    assert (
+        decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_OUTSIDE_PANEL)).status
+        == QueryStatus.OUTSIDE_PANEL
+    )
+    assert (
+        decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_NO_CAPABLE_VISUAL)).status
+        == QueryStatus.UNSUPPORTED
+    )
+    assert (
+        decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_STALE_DROPPED)).status
+        == QueryStatus.DROPPED
+    )
+    assert decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_DECODE_FAILED)).status == QueryStatus.FAILED
+
+
+def test_decode_datoviz_point_hit_to_gsp_query_result():
+    result = decode_dvz_query_result(
+        FakeDvzQueryResult(
+            request_id=42,
+            status=DVZ_QUERY_STATUS_HIT,
+            hit=True,
+            visual_id=123,
+            visual_family=DVZ_SCENE_VISUAL_FAMILY_POINT,
+            item_id=5,
+            has_visual_position=True,
+            visual_position=(0.1, 0.2, 0.0),
+            has_data_position=True,
+            data_position=(1.0, 2.0, 0.0),
+        )
+    )
+
+    assert result.request_id == "query:datoviz-42"
+    assert result.status == QueryStatus.HIT
+    assert result.visual_id == "datoviz:visual:123"
+    assert result.visual_family == VisualFamily.POINT
+    assert result.item_id == 5
+    assert result.visual_coordinate == (0.1, 0.2)
+    assert result.data_coordinate == (1.0, 2.0)
+
+
+def test_decode_datoviz_image_hit_to_gsp_query_result():
+    result = decode_dvz_query_result(
+        FakeDvzQueryResult(
+            status=DVZ_QUERY_STATUS_HIT,
+            hit=True,
+            visual_id=456,
+            visual_family=DVZ_SCENE_VISUAL_FAMILY_IMAGE,
+            texel_id=9,
+            has_display_rgba=True,
+            display_rgba=(0.25, 0.5, 0.75, 1.0),
+            value_kind=DVZ_QUERY_VALUE_VEC4,
+            vector=(1.0, 0.5, 0.25, 1.0),
+        )
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.visual_family == VisualFamily.IMAGE
+    assert result.texel == (0, 9)
+    assert result.displayed_rgba == (0.25, 0.5, 0.75, 1.0)
+    assert result.value == (1.0, 0.5, 0.25, 1.0)
+
+
+def test_decode_datoviz_query_accepts_ctypes_array_fields():
+    result = decode_dvz_query_result(
+        FakeDvzQueryResult(
+            status=DVZ_QUERY_STATUS_HIT,
+            hit=True,
+            visual_id=456,
+            visual_family=DVZ_SCENE_VISUAL_FAMILY_IMAGE,
+            has_display_rgba=True,
+            display_rgba=(ctypes.c_double * 4)(0.25, 0.5, 0.75, 1.0),
+            value_kind=DVZ_QUERY_VALUE_VEC4,
+            vector=(ctypes.c_double * 4)(1.0, 0.5, 0.25, 1.0),
+        )
+    )
+
+    assert result.displayed_rgba == (0.25, 0.5, 0.75, 1.0)
+    assert result.value == (1.0, 0.5, 0.25, 1.0)
 
 
 def test_facade_shape_rejects_missing_v04_functions():
@@ -371,3 +493,20 @@ def test_imported_datoviz_capability_snapshot_translates_when_available():
     assert caps.server_name == "datoviz-v0.4-protocol-slice"
     assert "datoviz_raw_capabilities" in caps.metadata
     assert caps.query_modes == ()
+
+
+def test_imported_datoviz_query_result_binding_is_decodable_when_available():
+    dvz = pytest.importorskip("datoviz")
+    query_result_type = getattr(dvz, "DvzQueryResult", None)
+    if query_result_type is None or not hasattr(query_result_type, "_fields_"):
+        pytest.skip("installed Datoviz binding does not expose decodable DvzQueryResult fields")
+
+    raw = query_result_type()
+    raw.request_id = 1
+    raw.status = DVZ_QUERY_STATUS_MISS
+    raw.hit = False
+
+    result = decode_dvz_query_result(raw)
+
+    assert result.request_id == "query:datoviz-1"
+    assert result.status == QueryStatus.MISS

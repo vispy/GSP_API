@@ -111,6 +111,21 @@ If `dvz_capability_snapshot()` is unavailable, the adapter falls back to the con
 GSP slice and records a diagnostic in metadata. Real runtime smoke tests skip cleanly when the
 installed binding is still Datoviz 0.3.5 or otherwise lacks the v0.4 capability symbol.
 
+## M025 query decode parity slice
+
+The Datoviz adapter now includes a pure decoder for Python-visible `DvzQueryResult`-shaped objects.
+This decoder is tested with synthetic objects and maps:
+
+- Datoviz `hit`, `miss`, and `outside-panel` statuses to matching GSP `QueryStatus` values;
+- Datoviz stale/dropped results to GSP `dropped`;
+- Datoviz unsupported target/profile/family/format statuses to GSP `unsupported`;
+- Datoviz GPU/readback/decode/unknown failures to GSP `failed`;
+- point visual hits to GSP `VisualFamily.POINT` with `item_id`;
+- image visual hits to GSP `VisualFamily.IMAGE` with displayed RGBA and value when present.
+
+This remains decode parity, not runtime query parity. The adapter still advertises no query modes
+until a runtime execution path and application visual-id mapping are validated.
+
 ## Post-M011 parity gap update
 
 The current GSP Datoviz adapter is still a slice, not parity:
