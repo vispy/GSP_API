@@ -18,9 +18,10 @@ from gsp.protocol import (
     ViewportTileRequest,
     VisualFamily,
 )
-from gsp.protocol.extensions import TILED_IMAGE_EXTENSION_CAPABILITY
+from gsp.protocol.extensions import TILED_IMAGE_QUERY_PAYLOAD_KIND
 from gsp.protocol.visuals import ImageInterpolation
 from gsp_matplotlib.protocol_renderer import render_image_visual
+from gsp_matplotlib.protocol_query import unsupported_query_result
 
 
 def render_tiled_image_source(
@@ -58,6 +59,9 @@ def query_tiled_image_source(
     visual_id: str = "visual:tiled-image",
 ) -> QueryResult:
     """Answer a reference query against a materialized tiled-image source."""
+    if not set(request.requested_extension_payload_kinds).issubset({TILED_IMAGE_QUERY_PAYLOAD_KIND}):
+        return unsupported_query_result(request, "tiled-image query cannot satisfy requested extension payloads")
+
     left, right, bottom, top = extent
     x, y = request.coordinate
     x_min, x_max = sorted((left, right))
@@ -109,6 +113,6 @@ def query_tiled_image_source(
         data_coordinate=(float(x), float(y)),
         displayed_rgba=rgba01,
         value=rgba8,
-        extension_payload_kind=f"{TILED_IMAGE_EXTENSION_CAPABILITY}.query",
+        extension_payload_kind=TILED_IMAGE_QUERY_PAYLOAD_KIND,
         extension_payload=payload,
     )

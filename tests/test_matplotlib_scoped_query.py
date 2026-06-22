@@ -6,19 +6,24 @@ from gsp.protocol import (
     AxisDimension,
     AxisGuide,
     AxisSide,
+    FakeTiledImageProvider,
     PointVisual,
     QueryContributionKind,
     QueryHitPolicy,
     QueryRequest,
     QueryScope,
     QueryStatus,
+    TILED_IMAGE_QUERY_PAYLOAD_KIND,
+    TiledImageQueryPayload,
+    TiledImageSource,
     TickSpec,
     TickSpecKind,
     View2D,
 )
 from gsp_matplotlib.guide_query import QueryGuideEntry
 from gsp_matplotlib.protocol_query import QueryVisualEntry
-from gsp_matplotlib.scoped_query import query_scoped_scene
+from gsp_matplotlib.scoped_query import QueryExtensionEntry, query_scoped_scene
+from gsp_matplotlib.tiled_image import query_tiled_image_source
 
 
 def _point() -> PointVisual:
@@ -46,6 +51,32 @@ def _x_guide() -> AxisGuide:
             explicit_labels=("zero", "half", "one"),
             target_count=None,
         ),
+    )
+
+
+def _tiled_source() -> TiledImageSource:
+    return TiledImageSource(
+        id="source:tiles",
+        shape=(8, 8, 4),
+        tile_shape=(4, 4),
+        extent=(-1.0, 1.0, -1.0, 1.0),
+    )
+
+
+def _tiled_entry(*, z_order: int = 0) -> QueryExtensionEntry:
+    source = _tiled_source()
+    provider = FakeTiledImageProvider(source)
+    return QueryExtensionEntry(
+        lambda request: query_tiled_image_source(
+            request,
+            source,
+            provider,
+            source_rect=(2, 2, 4, 4),
+            extent=(-1.0, 1.0, -1.0, 1.0),
+            visual_id="visual:tiled-image",
+        ),
+        extension_payload_kinds=(TILED_IMAGE_QUERY_PAYLOAD_KIND,),
+        z_order=z_order,
     )
 
 
@@ -119,3 +150,80 @@ def test_scoped_query_all_rendered_with_guides_requires_view():
 
     assert result.status == QueryStatus.UNSUPPORTED
     assert "View2D" in result.diagnostic
+
+
+def test_scoped_query_data_returns_tiled_extension_payload():
+    result = query_scoped_scene(
+        QueryRequest(
+            id="query:tiled",
+            panel_id="panel:main",
+            coordinate=(0.25, 0.25),
+            scope=QueryScope.DATA,
+            requested_extension_payload_kinds=(TILED_IMAGE_QUERY_PAYLOAD_KIND,),
+        ),
+        extension_entries=(_tiled_entry(),),
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.visual_id == "visual:tiled-image"
+    assert result.extension_payload_kind == TILED_IMAGE_QUERY_PAYLOAD_KIND
+    assert isinstance(result.extension_payload, TiledImageQueryPayload)
+    assert result.hits[0].contribution_kind == QueryContributionKind.DATA
+    assert result.extension_payload.source_id == "source:tiles"
+    assert result.extension_payload.tile_x == 1
+    assert result.extension_payload.texel_x == 0
+
+
+def test_scoped_query_all_rendered_sorts_extension_hits_with_data_hits():
+    result = query_scoped_scene(
+        QueryRequest(
+            id="query:all-rendered-extension",
+            panel_id="panel:main",
+            coordinate=(0.5, -1.0),
+            scope=QueryScope.ALL_RENDERED,
+            hit_policy=QueryHitPolicy.ALL,
+        ),
+        visual_entries=(QueryVisualEntry(_point(), z_order=0),),
+        extension_entries=(_tiled_entry(z_order=2),),
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert [hit.visual_id for hit in result.hits] == ["visual:tiled-image", "visual:points"]
+    assert result.hits[0].extension_payload_kind == TILED_IMAGE_QUERY_PAYLOAD_KIND
+    assert result.hits[1].extension_payload_kind is None
+
+
+def test_scoped_query_all_rendered_extension_payload_request_filters_ineligible_guides():
+    result = query_scoped_scene(
+        QueryRequest(
+            id="query:all-rendered-extension-request",
+            panel_id="panel:main",
+            coordinate=(0.5, -1.0),
+            scope=QueryScope.ALL_RENDERED,
+            requested_extension_payload_kinds=(TILED_IMAGE_QUERY_PAYLOAD_KIND,),
+        ),
+        extension_entries=(_tiled_entry(z_order=0),),
+        view=_view(),
+        guide_entries=(QueryGuideEntry(_x_guide(), z_order=2),),
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.visual_id == "visual:tiled-image"
+    assert result.extension_payload_kind == TILED_IMAGE_QUERY_PAYLOAD_KIND
+    assert [hit.visual_id for hit in result.hits] == ["visual:tiled-image"]
+
+
+def test_scoped_query_data_rejects_unsupported_extension_payload_kind():
+    result = query_scoped_scene(
+        QueryRequest(
+            id="query:bad-extension",
+            panel_id="panel:main",
+            coordinate=(0.25, 0.25),
+            scope=QueryScope.DATA,
+            requested_extension_payload_kinds=("gsp.other@0.1.query",),
+        ),
+        extension_entries=(_tiled_entry(),),
+    )
+
+    assert result.status == QueryStatus.UNSUPPORTED
+    assert "extension payload" in result.diagnostic

@@ -18,6 +18,7 @@ from gsp.protocol import (
     QueryResult,
     QueryStatus,
     TILED_IMAGE_EXTENSION_CAPABILITY,
+    TILED_IMAGE_QUERY_PAYLOAD_KIND,
     TileIndex,
     TileRequest,
     TiledImageQueryPayload,
@@ -151,7 +152,7 @@ def test_tiled_image_query_reports_tile_and_source_coordinates():
     assert result.texel == (3, 4)
     assert result.value == (4, 3, 0, 255)
     assert result.displayed_rgba == (4 / 255.0, 3 / 255.0, 0.0, 1.0)
-    assert result.extension_payload_kind == f"{TILED_IMAGE_EXTENSION_CAPABILITY}.query"
+    assert result.extension_payload_kind == TILED_IMAGE_QUERY_PAYLOAD_KIND
     assert isinstance(result.extension_payload, TiledImageQueryPayload)
     assert result.extension_payload.source_id == "source:tiles"
     assert result.extension_payload.tile_x == 1
@@ -184,5 +185,5 @@ def test_query_result_requires_extension_payload_kind_and_value_together():
             status=QueryStatus.HIT,
             hit=True,
             panel_coordinate=(0.0, 0.0),
-            extension_payload_kind=f"{TILED_IMAGE_EXTENSION_CAPABILITY}.query",
+            extension_payload_kind=TILED_IMAGE_QUERY_PAYLOAD_KIND,
         )

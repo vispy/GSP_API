@@ -64,6 +64,7 @@ class ExtensionManifest:
 TILED_IMAGE_EXTENSION_ID = "gsp.tiled-image"
 TILED_IMAGE_EXTENSION_VERSION = "0.1"
 TILED_IMAGE_EXTENSION_CAPABILITY = "gsp.tiled-image@0.1"
+TILED_IMAGE_QUERY_PAYLOAD_KIND = f"{TILED_IMAGE_EXTENSION_CAPABILITY}.query"
 
 
 def tiled_image_extension_manifest() -> ExtensionManifest:
@@ -77,5 +78,5 @@ def tiled_image_extension_manifest() -> ExtensionManifest:
         requires=("virtual-data-source",),
         schema={"source_kind": "tiled-image", "credential_policy": "none"},
         implementations={"matplotlib": "reference", "datoviz": "unsupported"},
-        query_contract={"payload": "gsp.tiled-image.query@0.1"},
+        query_contract={"payload": TILED_IMAGE_QUERY_PAYLOAD_KIND},
     )

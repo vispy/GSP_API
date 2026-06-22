@@ -133,3 +133,22 @@ The Matplotlib/reference path routes scoped queries as follows:
 - `all-rendered` with guide entries requires a `View2D`, otherwise it returns `unsupported`.
 
 This is a reference/conformance route, not a claim that every backend can support `all-rendered`.
+
+## M023 scoped extension query payloads
+
+The Matplotlib/reference scoped query path also accepts data-scoped extension query entries. These
+entries expose their supported extension payload kinds and participate in `data` and `all-rendered`
+queries as data contributions.
+
+For the built-in tiled-image proof, `TILED_IMAGE_QUERY_PAYLOAD_KIND` is
+`gsp.tiled-image@0.1.query`. Scoped tiled-image hits carry the same `TiledImageQueryPayload` used by
+the direct M011 tiled-source query helper.
+
+Reference behavior:
+
+- `data` scope can return extension hits and extension payloads;
+- `all-rendered` merges extension hits with core data and guide hits using bounded reference
+  `z_order`;
+- requests for unsupported extension payload kinds return `unsupported` with a diagnostic;
+- requested extension payload kinds limit direct reference routing to entries that can satisfy
+  those payloads rather than returning a core visual hit without the requested extension payload.

@@ -45,6 +45,7 @@ from .extensions import (
     TILED_IMAGE_EXTENSION_CAPABILITY,
     TILED_IMAGE_EXTENSION_ID,
     TILED_IMAGE_EXTENSION_VERSION,
+    TILED_IMAGE_QUERY_PAYLOAD_KIND,
     tiled_image_extension_manifest,
 )
 from .guides import (
@@ -139,6 +140,7 @@ __all__ = [
     "TILED_IMAGE_EXTENSION_CAPABILITY",
     "TILED_IMAGE_EXTENSION_ID",
     "TILED_IMAGE_EXTENSION_VERSION",
+    "TILED_IMAGE_QUERY_PAYLOAD_KIND",
     "TileAvailability",
     "TileEncoding",
     "TileIndex",
