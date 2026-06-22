@@ -88,6 +88,11 @@ First-slice array validation is deferred to M042. The intended initial constrain
 deterministic, contiguous arrays only; `float32` and `uint8`; `memory_order="C"`;
 `encoding="base64"`; `compression="none"`; SHA-256 over decoded uncompressed bytes.
 
+M042 implements validation for this first slice. `uint8` chunks use
+`byte_order="not-applicable"`; `float32` chunks use `byte_order="little"`. The validator rejects
+unsupported dtypes, encodings, compression modes, memory orders, byte-length mismatches, checksum
+mismatches, invalid base64, and missing required fields.
+
 Virtual and tiled sources live under `resources.virtual_sources`. They describe logical source data,
 tiling, bounds behavior, and deterministic materialization rules. They are not full eager buffers,
 and huge virtual datasets must not be serialized as ordinary arrays.
