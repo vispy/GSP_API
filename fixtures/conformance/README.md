@@ -12,6 +12,9 @@ They are Python/in-process fixtures, not JSON fixtures. This is intentional: the
 - Image visual with rgba8 data, explicit extent, and explicit origin.
 - Point-over-image panel query with frontmost z-order behavior.
 - Matplotlib reference rendering for point and image visuals.
+- Semantic x/y guide fixture with explicit x ticks, deterministic auto y ticks, labels, grid intent,
+  and panel title.
+- Guide query fixture coverage for tick hits, misses, and unsupported provider status.
 
 ## Reference Backend
 
@@ -25,3 +28,4 @@ Matplotlib is the reference/conformance backend for this baseline. Tests inspect
 - Virtual or tiled data sources.
 - Production transport encodings.
 - JSON/base64 replay fixtures.
+- General `data` / `guides` / `all-rendered` query-scope precedence.

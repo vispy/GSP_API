@@ -1,5 +1,5 @@
 {
-  "current_stage": "S012",
+  "current_stage": "S013",
   "stages": [
     {
       "id": "S001",
@@ -70,13 +70,13 @@
     {
       "id": "S012",
       "title": "Matplotlib strict guide/tick provider baseline",
-      "state": "in_progress",
-      "progress": 80
+      "state": "completed",
+      "progress": 100
     },
     {
       "id": "S013",
       "title": "VisPy2 semantic guide API growth",
-      "state": "planned",
+      "state": "in_progress",
       "progress": 0
     },
     {
@@ -253,9 +253,9 @@
       "id": "M015",
       "title": "Guide conformance fixtures",
       "stage": "S012",
-      "state": "planned",
-      "agent": "claude-worker",
-      "progress": 0,
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
       "priority": 15
     },
     {
@@ -289,8 +289,8 @@
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Execute M015 next: guide conformance fixtures for the completed tick/render/query reference slice.",
-    "Use ChatGPT Pro before implementing broad data/guides/all-rendered query-scope precedence beyond the bounded M014 guide-query helper.",
+    "Execute M016 next: VisPy2 label/title/tick/grid APIs on top of the completed S012 guide baseline.",
+    "Use ChatGPT Pro before implementing broad data/guides/all-rendered query-scope precedence beyond the bounded M014/M015 guide-query fixtures.",
     "Keep Datoviz v0.4 binding evidence work parallel and capability-gated; do not edit the external Datoviz repo."
   ]
 }

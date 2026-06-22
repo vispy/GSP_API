@@ -2,9 +2,19 @@
 
 import pytest
 
-from fixtures.conformance import capability_snapshot_fixture, point_over_image_scene
+from fixtures.conformance import capability_snapshot_fixture, guide_scene, point_over_image_scene
 from fixtures.conformance.baseline import position_buffer_resource_fixture
-from gsp.protocol import AdaptationOutcome, QueryResult, QueryStatus, VisualFamily
+from gsp.protocol import (
+    GUIDE_QUERY_PAYLOAD_KIND,
+    AdaptationOutcome,
+    AxisDimension,
+    GuideQueryPayload,
+    QueryResult,
+    QueryStatus,
+    VisualFamily,
+)
+from gsp_matplotlib.guide_query import query_axis_guides, unsupported_guide_query_result
+from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.protocol_query import query_visuals
 from gsp_matplotlib.protocol_renderer import render_image_visual, render_point_visual
 
@@ -16,7 +26,7 @@ def test_conformance_capability_snapshot_locks_v01_surface():
     assert caps.protocol_versions == ("0.1",)
     assert [transport.value for transport in caps.transports] == ["inproc"]
     assert caps.visual_families == ("point", "image")
-    assert caps.query_modes == ("panel-query", "point-item", "image-texel")
+    assert caps.query_modes == ("panel-query", "point-item", "image-texel", "guide-query")
     assert caps.deterministic is True
     assert caps.adapt_visual("point").outcome == AdaptationOutcome.ACCEPT
     assert caps.adapt_visual("mesh").outcome == AdaptationOutcome.REJECT
@@ -66,6 +76,82 @@ def test_conformance_matplotlib_reference_artists():
         assert len(point_artist.get_offsets()) == 2
     finally:
         plt.close(fig)
+
+
+def test_conformance_guide_fixture_locks_semantic_intent():
+    """The guide fixture captures the accepted S012 axis/title surface."""
+    scene = guide_scene()
+
+    assert scene.view.panel_id == "panel:guide-main"
+    assert scene.x_axis.label_text == "time"
+    assert scene.x_axis.grid_visible is True
+    assert scene.x_axis.tick_spec.explicit_values == (0.0, 0.5, 1.0)
+    assert scene.x_axis.tick_spec.explicit_labels == ("zero", "half", "one")
+    assert scene.y_axis.label_text == "value"
+    assert scene.y_axis.tick_spec.target_count == 4
+    assert scene.title.text == "Guide fixture"
+
+
+def test_conformance_matplotlib_reference_guides():
+    """Matplotlib guide rendering must preserve deterministic fixture ticks."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    scene = guide_scene()
+    fig, ax = plt.subplots()
+    try:
+        render_axis_guides(ax, scene.view, (scene.x_axis, scene.y_axis))
+        render_panel_text_guides(ax, (scene.title,))
+
+        assert list(ax.get_xticks()) == [0.0, 0.5, 1.0]
+        assert [label.get_text() for label in ax.get_xticklabels()] == ["zero", "half", "one"]
+        assert [label.get_text() for label in ax.get_yticklabels()] == [
+            "-1.0",
+            "-0.5",
+            "0",
+            "0.5",
+            "1.0",
+        ]
+        assert ax.get_xlabel() == "time"
+        assert ax.get_ylabel() == "value"
+        assert ax.get_title() == "Guide fixture"
+        assert any(line.get_visible() for line in ax.get_xgridlines())
+    finally:
+        plt.close(fig)
+
+
+def test_conformance_guide_query_returns_tick_payload():
+    """The canonical guide query returns a typed guide payload."""
+    scene = guide_scene()
+
+    result = query_axis_guides(scene.tick_query, scene.view, scene.guide_entries)
+
+    assert result.status == QueryStatus.HIT
+    assert result.visual_id == scene.x_axis.id
+    assert result.item_id == 1
+    assert result.extension_payload_kind == GUIDE_QUERY_PAYLOAD_KIND
+    assert isinstance(result.extension_payload, GuideQueryPayload)
+    assert result.extension_payload.guide_id == scene.x_axis.id
+    assert result.extension_payload.role == "tick"
+    assert result.extension_payload.axis_dimension == AxisDimension.X
+    assert result.extension_payload.tick_value == 0.5
+    assert result.extension_payload.text_value == "half"
+
+
+def test_conformance_guide_query_miss_and_unsupported_statuses():
+    """Guide misses and unsupported providers remain distinct statuses."""
+    scene = guide_scene()
+
+    miss = query_axis_guides(scene.miss_query, scene.view, scene.guide_entries)
+    unsupported = unsupported_guide_query_result(scene.tick_query, "datoviz.v04.panel_axis.wip")
+
+    assert miss.status == QueryStatus.MISS
+    assert not miss.hit
+    assert unsupported.status == QueryStatus.UNSUPPORTED
+    assert not unsupported.hit
+    assert "does not support guide queries" in unsupported.diagnostic
 
 
 def test_query_result_status_invariants_are_locked():
