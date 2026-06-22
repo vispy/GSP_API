@@ -7,6 +7,7 @@ not use the older ``datoviz.App`` or ``datoviz.visuals`` wrapper APIs.
 
 from __future__ import annotations
 
+import ctypes
 from dataclasses import dataclass, field
 from dataclasses import replace
 from math import pi
@@ -196,7 +197,7 @@ class DatovizV04ProtocolRenderer:
         self.dvz.dvz_visual_set_data(dvz_visual, "texcoords", texcoords)
         if datoviz_v04_sampled_field_ready(self.dvz):
             sampled_field = self._create_rgba8_sampled_field(pixels, width, height)
-            if not self.dvz.dvz_visual_set_field(dvz_visual, "field", sampled_field):
+            if not _set_visual_field(self.dvz, dvz_visual, "field", sampled_field):
                 raise DatovizV04Unsupported("Datoviz sampled-field image binding failed")
             self.sampled_fields[visual.id] = sampled_field
         else:
@@ -399,6 +400,13 @@ def _set_data_view_payload(view: Any, pixels: npt.NDArray[np.uint8]) -> None:
         view.data = pixels
     except TypeError:
         view.data = pixels.ctypes.data
+
+
+def _set_visual_field(dvz: Any, visual: Any, slot_name: str, sampled_field: Any) -> bool:
+    try:
+        return bool(dvz.dvz_visual_set_field(visual, slot_name, sampled_field))
+    except (ctypes.ArgumentError, TypeError):
+        return bool(dvz.dvz_visual_set_field(visual, slot_name.encode("utf-8"), sampled_field))
 
 
 def _datoviz_query_request_diagnostic(request: QueryRequest) -> str | None:

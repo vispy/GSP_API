@@ -307,7 +307,7 @@ def _calls(fake, name):
 
 
 def test_capability_snapshot_defers_query_support():
-    caps = capability_snapshot()
+    caps = gsp_capability_snapshot_from_datoviz(None, dvz=None, source="static-gsp-slice")
 
     assert caps.server_name == "datoviz-v0.4-protocol-slice"
     assert caps.visual_families == ("point", "image")

@@ -383,12 +383,29 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 29
+    },
+    {
+      "id": "M030",
+      "title": "Datoviz v0.4-dev binding activation and live runtime smoke",
+      "stage": "S016",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 30
     }
   ],
   "review_queue": [],
-  "open_questions": [],
+  "open_questions": [
+    {
+      "id": "Q030-DATOVIZ-QUERY-RESULT-FIELDS",
+      "summary": "Datoviz v0.4-dev wheel-stage exposes DvzQueryResult as a ctypes.Structure without _fields_, so GSP cannot decode live query results from Python yet.",
+      "requires_human": false,
+      "requires_chatgpt_pro": false,
+      "state": "open"
+    }
+  ],
   "recommendations": [
-    "Execute M030 next: Datoviz v0.4-dev binding activation and live runtime smoke.",
-    "Before Datoviz query/capability parity implementation, activate a v0.4-dev Python facade/raw binding; the current GSP environment imports Datoviz 0.3.5."
+    "Resolve or hand off the Datoviz v0.4 Python binding gap for DvzQueryResult._fields_.",
+    "Keep GSP query readiness gated until the active v0.4 binding exposes decodable DvzQueryResult fields."
   ]
 }
