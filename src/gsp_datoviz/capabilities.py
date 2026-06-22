@@ -11,6 +11,17 @@ from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics
 
 DATOVIZ_V04_AXIS_PROVIDER = "datoviz.v04.panel_axis.wip"
 
+_REQUIRED_DVZ_CAPTURE_FUNCTIONS = (
+    "dvz_app",
+    "dvz_view_offscreen",
+    "dvz_view_capture_png",
+)
+
+_DVZ_CAPTURE_RENDER_FUNCTIONS = (
+    "dvz_app_render_once",
+    "dvz_app_run",
+)
+
 _REQUIRED_DVZ_AXIS_FUNCTIONS = (
     "dvz_panel_set_domain",
     "dvz_panel_view2d",
@@ -99,11 +110,14 @@ def gsp_capability_snapshot_from_datoviz(
     if raw_fields.get("texture_format_rg32uint") is True:
         texture_formats.append("rg32uint")
 
+    capture_diagnostics = datoviz_v04_capture_diagnostics(dvz) if dvz is not None else ("Datoviz is not importable",)
+
     metadata: dict[str, object] = {
         "datoviz_api": "v0.4 dvz_* facade",
         "datoviz_capability_source": source,
         "image_path": "dvz_visual_set_texture RGBA8 convenience path",
         "query_support": "deferred until DvzQueryResult is decodable from Python",
+        "capture_support": "PNG capture is advertised only when offscreen view capture bindings are available",
         "axis_provider": "datoviz.v04.panel_axis.wip when v0.4-dev Python symbols are exposed",
     }
     if raw_fields:
@@ -127,6 +141,12 @@ def gsp_capability_snapshot_from_datoviz(
         )
     if diagnostics:
         metadata["datoviz_capability_diagnostics"] = diagnostics
+    output_formats: tuple[str, ...] = ()
+    if capture_diagnostics:
+        metadata["datoviz_capture_diagnostics"] = capture_diagnostics
+    else:
+        output_formats = ("png",)
+        metadata["capture_support"] = "offscreen PNG screenshot/export; not scientific readback"
     query_diagnostics = datoviz_v04_query_binding_diagnostics(dvz) if dvz is not None else ("Datoviz is not importable",)
     query_modes: tuple[str, ...] = ()
     if query_diagnostics:
@@ -143,12 +163,25 @@ def gsp_capability_snapshot_from_datoviz(
         texture_formats=tuple(texture_formats),
         visual_families=("point", "image"),
         query_modes=query_modes,
-        output_formats=(),
+        output_formats=output_formats,
         deterministic=False,
         max_buffer_bytes=_optional_nonnegative_int(raw_fields.get("max_buffer_size")),
         axis_providers=(datoviz_v04_axis_provider_capability(dvz),),
         metadata=metadata,
     )
+
+
+def datoviz_v04_capture_ready(dvz: ModuleType | Any) -> bool:
+    """Return whether a facade exposes the bounded offscreen PNG capture path."""
+    return not datoviz_v04_capture_diagnostics(dvz)
+
+
+def datoviz_v04_capture_diagnostics(dvz: ModuleType | Any) -> tuple[str, ...]:
+    """Return missing requirements for v0.4 offscreen PNG capture."""
+    diagnostics = [f"missing {name}" for name in _REQUIRED_DVZ_CAPTURE_FUNCTIONS if not hasattr(dvz, name)]
+    if not any(hasattr(dvz, name) for name in _DVZ_CAPTURE_RENDER_FUNCTIONS):
+        diagnostics.append("missing one of dvz_app_render_once, dvz_app_run")
+    return tuple(diagnostics)
 
 
 def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) -> AxisProviderCapability:

@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from math import pi
+from pathlib import Path
+import tempfile
 from types import ModuleType
 from typing import Any, cast
 
@@ -17,7 +19,12 @@ import numpy.typing as npt
 
 from gsp.protocol import CapabilitySnapshot, ImageOrigin, ImageVisual, PointVisual, View2D
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
-from gsp_datoviz.capabilities import datoviz_v04_axis_provider_capability, datoviz_v04_capability_snapshot
+from gsp_datoviz.capabilities import (
+    datoviz_v04_axis_provider_capability,
+    datoviz_v04_capability_snapshot,
+    datoviz_v04_capture_diagnostics,
+    datoviz_v04_capture_ready,
+)
 
 
 _REQUIRED_DVZ_V04_FUNCTIONS = (
@@ -96,6 +103,8 @@ class DatovizV04ProtocolRenderer:
     scene: Any = field(init=False)
     figure: Any = field(init=False)
     panel: Any = field(init=False)
+    app: Any | None = field(default=None, init=False)
+    offscreen_view: Any | None = field(default=None, init=False)
     visuals: dict[str, Any] = field(default_factory=dict, init=False)
     sampled_fields: dict[str, Any] = field(default_factory=dict, init=False)
     _closed: bool = field(default=False, init=False)
@@ -121,6 +130,9 @@ class DatovizV04ProtocolRenderer:
         """Destroy the scene when the facade exposes a destroy helper."""
         if self._closed:
             return
+        destroy_app = getattr(self.dvz, "dvz_app_destroy", None)
+        if destroy_app is not None and self.app is not None:
+            destroy_app(self.app)
         destroy = getattr(self.dvz, "dvz_scene_destroy", None)
         if destroy is not None:
             destroy(self.scene)
@@ -197,6 +209,49 @@ class DatovizV04ProtocolRenderer:
         if not self.dvz.dvz_sampled_field_set_data(sampled_field, view):
             raise DatovizV04Unsupported("Datoviz sampled-field image upload failed")
         return sampled_field
+
+    def capture_png_bytes(self) -> bytes:
+        """Render one offscreen frame and return PNG screenshot/export bytes."""
+        if not datoviz_v04_capture_ready(self.dvz):
+            diagnostics = ", ".join(datoviz_v04_capture_diagnostics(self.dvz))
+            raise DatovizV04Unavailable(f"Datoviz offscreen PNG capture is unavailable: {diagnostics}")
+
+        view = self._ensure_offscreen_view()
+        self._render_offscreen_frame()
+
+        path: Path | None = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as file:
+                path = Path(file.name)
+            result = self.dvz.dvz_view_capture_png(view, str(path))
+            if result != 0:
+                raise DatovizV04Unsupported("Datoviz offscreen PNG capture failed")
+            return path.read_bytes()
+        finally:
+            if path is not None:
+                path.unlink(missing_ok=True)
+
+    def _ensure_offscreen_view(self) -> Any:
+        """Create the lazy offscreen app/view pair used by PNG capture."""
+        if self.offscreen_view is not None:
+            return self.offscreen_view
+
+        self.app = self.dvz.dvz_app(self.scene)
+        if self.app is None:
+            raise DatovizV04Unavailable("Datoviz offscreen app creation failed")
+        self.offscreen_view = self.dvz.dvz_view_offscreen(self.app, self.figure, self.width, self.height)
+        if self.offscreen_view is None:
+            raise DatovizV04Unavailable("Datoviz offscreen view creation failed")
+        return self.offscreen_view
+
+    def _render_offscreen_frame(self) -> None:
+        render_once = getattr(self.dvz, "dvz_app_render_once", None)
+        if render_once is not None:
+            result = render_once(self.app)
+        else:
+            result = self.dvz.dvz_app_run(self.app, 1)
+        if result not in (0, None):
+            raise DatovizV04Unsupported("Datoviz offscreen frame render failed")
 
     def configure_view2d_axes(
         self,

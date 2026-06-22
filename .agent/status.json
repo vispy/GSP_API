@@ -95,7 +95,7 @@
       "id": "S016",
       "title": "Datoviz capability/query parity next pack",
       "state": "in_progress",
-      "progress": 80
+      "progress": 90
     },
     {
       "id": "S017",
@@ -365,12 +365,21 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 27
+    },
+    {
+      "id": "M028",
+      "title": "Datoviz capture/offscreen parity",
+      "stage": "S016",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 28
     }
   ],
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Execute M028 next: Datoviz capture/offscreen parity.",
+    "Execute M029 next: Datoviz runtime point/image query execution proof.",
     "Before Datoviz query/capability parity implementation, activate a v0.4-dev Python facade/raw binding; the current GSP environment imports Datoviz 0.3.5."
   ]
 }

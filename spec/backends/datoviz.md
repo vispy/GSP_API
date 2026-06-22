@@ -163,13 +163,32 @@ visual's `"field"` slot. If sampled-field symbols are unavailable, the existing 
 Scalar float sampled fields and color-scale semantics remain deferred. They require explicit scale
 and colormap binding decisions before GSP can claim scalar image parity.
 
+## M028 capture/offscreen parity slice
+
+The Datoviz adapter now has a bounded offscreen PNG capture path. The GSP capability snapshot
+advertises `output_formats=("png",)` only when the active v0.4 Python facade exposes:
+
+- `dvz_app`;
+- `dvz_view_offscreen`;
+- `dvz_view_capture_png`;
+- either `dvz_app_render_once` or `dvz_app_run`.
+
+`DatovizV04ProtocolRenderer.capture_png_bytes()` lazily creates an offscreen app/view pair for the
+existing scene and figure, renders one frame, captures via `dvz_view_capture_png()`, reads the PNG
+bytes, and removes the temporary file. The capture result is screenshot/export output: sRGB RGBA8
+PNG bytes, not scientific linear readback.
+
+Raw RGBA capture, canvas readback, video capture, visual conformance image comparison, and
+headless GPU runtime execution remain deferred.
+
 ## Post-M011 parity gap update
 
 The current GSP Datoviz adapter is still a slice, not parity:
 
-- implemented: point visual, RGBA/RGB uint8 image via `dvz_visual_set_texture`, static capabilities;
-- not implemented: sampled-field image path, Datoviz capability translation, query decoding,
-  runtime query execution proof, offscreen/capture proof, tiled-source support.
+- implemented: point visual, RGBA/RGB uint8 image via texture fallback or sampled field, Datoviz
+  capability translation, query decoding and binding gate, bounded offscreen PNG capture;
+- not implemented: scalar sampled-field images, point/image runtime query execution proof,
+  scientific readback, tiled-source support.
 
 Recommended next mission: establish the Datoviz v0.4 Python facade/raw binding import path, then
 implement Datoviz query/capability parity. Scope implementation to translating

@@ -13,6 +13,8 @@ from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
     DATOVIZ_V04_AXIS_PROVIDER,
     datoviz_v04_axis_provider_capability,
+    datoviz_v04_capture_diagnostics,
+    datoviz_v04_capture_ready,
     gsp_capability_snapshot_from_datoviz,
 )
 from gsp_datoviz.protocol_renderer import (
@@ -215,6 +217,34 @@ class FakeDatovizV04WithSampledFields(FakeDatovizV04):
         return True
 
 
+class FakeDatovizV04WithCapture(FakeDatovizV04):
+    def __init__(self):
+        super().__init__()
+        self.app_destroyed = False
+
+    def dvz_app(self, scene):
+        self.calls.append(("app", scene))
+        return "app"
+
+    def dvz_view_offscreen(self, app, figure, width, height):
+        self.calls.append(("view_offscreen", app, figure, width, height))
+        return "offscreen-view"
+
+    def dvz_app_render_once(self, app):
+        self.calls.append(("render_once", app))
+        return 0
+
+    def dvz_view_capture_png(self, view, path):
+        self.calls.append(("capture_png", view, path))
+        with open(path, "wb") as file:
+            file.write(b"\x89PNG\r\n\x1a\nfake")
+        return 0
+
+    def dvz_app_destroy(self, app):
+        self.calls.append(("app_destroy", app))
+        self.app_destroyed = True
+
+
 class FakeDvzQueryResult:
     def __init__(self, **kwargs):
         self.request_id = 7
@@ -270,6 +300,17 @@ def test_datoviz_capability_translation_preserves_raw_fields_without_overclaimin
     assert caps.metadata["datoviz_query_profiles"] == ("u32_r32", "u64_2xr32")
     assert caps.metadata["datoviz_raw_capabilities"]["max_texture_dimension_2d"] == 8192
     assert caps.axis_providers[0].provider_status == "adapted"
+
+
+def test_datoviz_capabilities_promote_png_output_only_when_capture_binding_is_ready():
+    promoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithCapture()).capabilities()
+    unpromoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04()).capabilities()
+
+    assert datoviz_v04_capture_ready(FakeDatovizV04WithCapture())
+    assert promoted.output_formats == ("png",)
+    assert promoted.metadata["capture_support"] == "offscreen PNG screenshot/export; not scientific readback"
+    assert unpromoted.output_formats == ()
+    assert "datoviz_capture_diagnostics" in unpromoted.metadata
 
 
 def test_renderer_capabilities_use_runtime_datoviz_capability_snapshot_when_available():
@@ -512,6 +553,31 @@ def test_sampled_field_readiness_reports_missing_symbols():
     assert "dvz_sampled_field" in " ".join(datoviz_v04_sampled_field_diagnostics(fake))
 
 
+def test_capture_png_bytes_uses_offscreen_view_and_returns_png_bytes():
+    fake = FakeDatovizV04WithCapture()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
+
+    png = renderer.capture_png_bytes()
+
+    assert png.startswith(b"\x89PNG")
+    assert _calls(fake, "app") == [("app", "scene")]
+    assert _calls(fake, "view_offscreen") == [("view_offscreen", "app", "figure", 320, 240)]
+    assert _calls(fake, "render_once") == [("render_once", "app")]
+    capture_calls = _calls(fake, "capture_png")
+    assert capture_calls[0][1] == "offscreen-view"
+    assert capture_calls[0][2].endswith(".png")
+
+
+def test_capture_png_bytes_rejects_missing_capture_binding():
+    fake = FakeDatovizV04()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    assert not datoviz_v04_capture_ready(fake)
+    assert "dvz_view_capture_png" in " ".join(datoviz_v04_capture_diagnostics(fake))
+    with pytest.raises(DatovizV04Unavailable, match="offscreen PNG capture is unavailable"):
+        renderer.capture_png_bytes()
+
+
 def test_lower_origin_texcoords_are_not_flipped():
     fake = FakeDatovizV04()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
@@ -570,6 +636,17 @@ def test_renderer_close_uses_scene_destroy_when_available():
         assert renderer.scene == "scene"
 
     assert fake.destroyed is True
+    assert _calls(fake, "destroy") == [("destroy", "scene")]
+
+
+def test_renderer_close_destroys_lazy_capture_app_when_available():
+    fake = FakeDatovizV04WithCapture()
+
+    with DatovizV04ProtocolRenderer(dvz=fake) as renderer:
+        renderer.capture_png_bytes()
+
+    assert fake.app_destroyed is True
+    assert _calls(fake, "app_destroy") == [("app_destroy", "app")]
     assert _calls(fake, "destroy") == [("destroy", "scene")]
 
 
@@ -656,3 +733,11 @@ def test_imported_datoviz_sampled_field_binding_smoke_when_available():
         pytest.skip("installed Datoviz binding does not expose sampled-field image symbols")
 
     assert datoviz_v04_sampled_field_diagnostics(dvz) == ()
+
+
+def test_imported_datoviz_capture_binding_smoke_when_available():
+    dvz = pytest.importorskip("datoviz")
+    if not datoviz_v04_capture_ready(dvz):
+        pytest.skip("installed Datoviz binding does not expose offscreen PNG capture symbols")
+
+    assert datoviz_v04_capture_diagnostics(dvz) == ()
