@@ -59,6 +59,11 @@ When a question is too architectural, uncertain, or expensive for a low/medium w
 4. tell the user: "This needs ChatGPT Pro consultation";
 5. pause dependent implementation until the user pastes or commits the result.
 
+ChatGPT Pro consultation packets must be self-contained. Do not rely on attached files, file paths,
+or "context files to provide alongside this prompt" as required context. Embed all relevant project
+facts, constraints, source excerpts, API findings, prior decisions, and expected output format in the
+single prompt text so the user can paste one complete prompt into ChatGPT Pro.
+
 Use ChatGPT Pro for:
 
 - architecture decisions;
