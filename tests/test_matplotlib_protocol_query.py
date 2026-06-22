@@ -2,7 +2,20 @@
 
 import numpy as np
 
-from gsp.protocol import ImageOrigin, ImageVisual, PointVisual, QueryRequest, QueryStatus, VisualFamily
+import pytest
+
+from gsp.protocol import (
+    ImageOrigin,
+    ImageVisual,
+    PointVisual,
+    QueryContributionKind,
+    QueryHit,
+    QueryRequest,
+    QueryResult,
+    QueryScope,
+    QueryStatus,
+    VisualFamily,
+)
 from gsp_matplotlib.protocol_query import QueryVisualEntry, failed_query_result, query_visuals, unsupported_query_result
 
 
@@ -33,6 +46,17 @@ def test_query_returns_frontmost_point_over_image():
     )
 
     assert result.status == QueryStatus.HIT
+    assert result.hits == (
+        QueryHit(
+            contribution_kind=QueryContributionKind.DATA,
+            visual_id="visual:points",
+            visual_family=VisualFamily.POINT,
+            item_id=0,
+            visual_coordinate=(0.25, 0.25),
+            data_coordinate=(0.25, 0.25),
+            displayed_rgba=(1.0, 0.0, 0.0, 1.0),
+        ),
+    )
     assert result.visual_family == VisualFamily.POINT
     assert result.visual_id == "visual:points"
     assert result.item_id == 0
@@ -64,6 +88,66 @@ def test_query_returns_image_texel_and_value():
     assert result.texel == (0, 1)
     assert result.value == (40, 50, 60, 255)
     assert result.displayed_rgba == (40 / 255.0, 50 / 255.0, 60 / 255.0, 1.0)
+
+
+def test_query_request_defaults_to_data_scope():
+    request = QueryRequest(id="query:default-scope", panel_id="panel:main", coordinate=(0.0, 0.0))
+
+    assert request.scope == QueryScope.DATA
+    assert request.requested_extension_payload_kinds == ()
+
+
+def test_query_result_with_hits_mirrors_first_hit_to_compatibility_fields():
+    hit = QueryHit(
+        contribution_kind=QueryContributionKind.DATA,
+        visual_id="visual:points",
+        visual_family=VisualFamily.POINT,
+        item_id=2,
+        visual_coordinate=(0.1, 0.2),
+        data_coordinate=(0.1, 0.2),
+        displayed_rgba=(0.0, 1.0, 0.0, 1.0),
+    )
+
+    result = QueryResult(
+        request_id="query:hit-list",
+        status=QueryStatus.HIT,
+        hit=True,
+        panel_coordinate=(0.1, 0.2),
+        hits=(hit,),
+    )
+
+    assert result.visual_id == "visual:points"
+    assert result.visual_family == VisualFamily.POINT
+    assert result.item_id == 2
+    assert result.displayed_rgba == (0.0, 1.0, 0.0, 1.0)
+
+
+def test_query_result_can_represent_all_hits_front_to_back():
+    back = QueryHit(contribution_kind=QueryContributionKind.DATA, visual_id="visual:image", visual_family=VisualFamily.IMAGE)
+    front = QueryHit(contribution_kind=QueryContributionKind.DATA, visual_id="visual:points", visual_family=VisualFamily.POINT)
+
+    result = QueryResult(
+        request_id="query:all",
+        status=QueryStatus.HIT,
+        hit=True,
+        panel_coordinate=(0.0, 0.0),
+        hits=(front, back),
+    )
+
+    assert result.hits == (front, back)
+    assert result.visual_id == "visual:points"
+    assert result.visual_family == VisualFamily.POINT
+
+
+def test_non_hit_query_results_reject_hit_payload_fields():
+    with pytest.raises(ValueError, match="non-hit query results"):
+        QueryResult(
+            request_id="query:bad-miss",
+            status=QueryStatus.MISS,
+            hit=False,
+            panel_coordinate=(0.0, 0.0),
+            hits=(QueryHit(contribution_kind=QueryContributionKind.DATA, visual_id="visual:points"),),
+        )
 
 
 def test_query_returns_miss_when_no_visual_contains_coordinate():

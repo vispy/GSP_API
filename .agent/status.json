@@ -88,8 +88,8 @@
     {
       "id": "S015",
       "title": "Unified query scopes and capability semantics",
-      "state": "planned",
-      "progress": 0
+      "state": "in_progress",
+      "progress": 20
     },
     {
       "id": "S016",
@@ -284,13 +284,22 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 18
+    },
+    {
+      "id": "M019",
+      "title": "Query scope protocol model",
+      "stage": "S015",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 19
     }
   ],
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Propose S015 next: unified query scopes and capability semantics, likely requiring ChatGPT Pro consultation before implementation.",
-    "Use ChatGPT Pro before implementing broad data/guides/all-rendered query-scope precedence beyond the bounded M014/M015 guide-query fixtures.",
+    "Execute M020 next: typed query capability schema for data/guides/all-rendered scopes.",
+    "Keep Matplotlib scoped query routing and Datoviz query parity as follow-up missions after typed capabilities land.",
     "Before Datoviz query/capability parity implementation, activate a v0.4-dev Python facade/raw binding; the current GSP environment imports Datoviz 0.3.5."
   ]
 }

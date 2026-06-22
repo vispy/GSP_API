@@ -94,3 +94,28 @@ For `gsp.tiled-image@0.1`, the payload is `TiledImageQueryPayload` and reports:
 - source value.
 
 Non-hit query results must not include extension payload fields.
+
+## S015 unified query scopes
+
+`QueryRequest` now carries an explicit `scope`:
+
+| Scope | Meaning |
+|---|---|
+| `data` | Query user data visuals and data-scoped extension visuals. This is the default for compatibility. |
+| `guides` | Query semantic GSP guide contributions such as axes, ticks, spines, grid, labels, titles, and panel text guides. |
+| `all-rendered` | Query eligible data and guide contributions merged in final rendered order. |
+
+`all-rendered` is a strict semantic request. It is not inferred from separate `data` and `guides`
+support. If a backend cannot prove global rendered ordering across eligible contributions, it must
+return `unsupported` with a diagnostic.
+
+`QueryResult.hits` is the canonical hit list. Existing top-level fields such as `visual_id`,
+`visual_family`, `item_id`, `texel`, `displayed_rgba`, `value`, and extension payload fields remain
+as compatibility mirrors of `hits[0]`.
+
+For `hit_policy=frontmost`, `hits` contains the frontmost hit. For `hit_policy=all`, `hits` contains
+all eligible hits sorted front-to-back once a backend advertises that support.
+
+Direct query execution does not return partial results. Unsupported requested scope, hit policy,
+payload, extension payload, or guide-provider behavior returns `unsupported`, not an adapted hit or
+miss.
