@@ -71,7 +71,7 @@
       "id": "S012",
       "title": "Matplotlib strict guide/tick provider baseline",
       "state": "in_progress",
-      "progress": 60
+      "progress": 70
     },
     {
       "id": "S013",
@@ -244,9 +244,9 @@
       "id": "M014",
       "title": "Reference guide query support",
       "stage": "S012",
-      "state": "planned",
+      "state": "in_progress",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 10,
       "priority": 14
     },
     {
