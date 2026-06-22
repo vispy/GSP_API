@@ -20,6 +20,8 @@ from gsp_datoviz.protocol_renderer import (
     DatovizV04Unavailable,
     DatovizV04Unsupported,
     capability_snapshot,
+    datoviz_v04_sampled_field_diagnostics,
+    datoviz_v04_sampled_field_ready,
     is_datoviz_v04_facade,
 )
 from gsp_datoviz.query import (
@@ -173,6 +175,44 @@ class FakeDatovizV04WithQuery(FakeDatovizV04WithCapabilities):
     def dvz_scene_poll_query(self, scene, out_result):
         self.calls.append(("scene_poll_query", scene, out_result))
         return False
+
+
+class FakeSampledFieldDesc:
+    dim = None
+    format = None
+    semantic = None
+    color_role = None
+    width = None
+    height = None
+    depth = None
+
+
+class FakeFieldDataView:
+    data = None
+    bytes_per_row = 0
+    rows_per_image = 0
+
+
+class FakeDatovizV04WithSampledFields(FakeDatovizV04):
+    def dvz_sampled_field_desc(self):
+        self.calls.append(("sampled_field_desc",))
+        return FakeSampledFieldDesc()
+
+    def dvz_field_data_view(self):
+        self.calls.append(("field_data_view",))
+        return FakeFieldDataView()
+
+    def dvz_sampled_field(self, scene, desc):
+        self.calls.append(("sampled_field", scene, desc))
+        return "sampled-field"
+
+    def dvz_sampled_field_set_data(self, sampled_field, view):
+        self.calls.append(("sampled_field_set_data", sampled_field, view))
+        return True
+
+    def dvz_visual_set_field(self, visual, slot_name, sampled_field):
+        self.calls.append(("set_field", visual, slot_name, sampled_field))
+        return True
 
 
 class FakeDvzQueryResult:
@@ -429,6 +469,49 @@ def test_add_image_visual_uses_texture_convenience_path_and_origin_texcoords():
     np.testing.assert_array_equal(texture_call[2][:, :, 3], 255)
 
 
+def test_add_image_visual_uses_sampled_field_path_when_available():
+    fake = FakeDatovizV04WithSampledFields()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    image = np.array(
+        [
+            [[255, 0, 0], [0, 255, 0]],
+            [[0, 0, 255], [255, 255, 255]],
+        ],
+        dtype=np.uint8,
+    )
+    visual = ImageVisual(
+        id="visual:image",
+        image=image,
+        extent=(-1.0, 1.0, -0.5, 0.5),
+        origin=ImageOrigin.UPPER,
+    )
+
+    renderer.add_image_visual(visual)
+
+    assert datoviz_v04_sampled_field_ready(fake)
+    assert _calls(fake, "set_texture") == []
+    sampled_call = _calls(fake, "sampled_field")[0]
+    desc = sampled_call[2]
+    assert desc.dim == 0
+    assert desc.format == 22
+    assert desc.semantic == 4
+    assert desc.color_role == 1
+    assert (desc.width, desc.height, desc.depth) == (2, 2, 1)
+    upload_view = _calls(fake, "sampled_field_set_data")[0][2]
+    assert upload_view.bytes_per_row == 8
+    assert upload_view.rows_per_image == 2
+    assert upload_view.data.shape == (2, 2, 4)
+    assert _calls(fake, "set_field") == [("set_field", "image-visual", "field", "sampled-field")]
+    assert renderer.sampled_fields["visual:image"] == "sampled-field"
+
+
+def test_sampled_field_readiness_reports_missing_symbols():
+    fake = FakeDatovizV04()
+
+    assert not datoviz_v04_sampled_field_ready(fake)
+    assert "dvz_sampled_field" in " ".join(datoviz_v04_sampled_field_diagnostics(fake))
+
+
 def test_lower_origin_texcoords_are_not_flipped():
     fake = FakeDatovizV04()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
@@ -565,3 +648,11 @@ def test_imported_datoviz_query_capability_promotes_when_binding_is_ready():
     assert caps.supports_query_mode("panel-query")
     assert not caps.supports_query_mode("point-item")
     assert not caps.supports_query_mode("image-texel")
+
+
+def test_imported_datoviz_sampled_field_binding_smoke_when_available():
+    dvz = pytest.importorskip("datoviz")
+    if not datoviz_v04_sampled_field_ready(dvz):
+        pytest.skip("installed Datoviz binding does not expose sampled-field image symbols")
+
+    assert datoviz_v04_sampled_field_diagnostics(dvz) == ()

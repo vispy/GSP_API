@@ -31,6 +31,19 @@ _REQUIRED_DVZ_V04_FUNCTIONS = (
     "dvz_visual_set_texture",
 )
 
+_REQUIRED_DVZ_SAMPLED_FIELD_FUNCTIONS = (
+    "dvz_sampled_field_desc",
+    "dvz_field_data_view",
+    "dvz_sampled_field",
+    "dvz_sampled_field_set_data",
+    "dvz_visual_set_field",
+)
+
+DVZ_FIELD_DIM_2D = 0
+DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
+DVZ_FIELD_SEMANTIC_COLOR = 4
+DVZ_COLOR_ROLE_SRGB_COLOR = 1
+
 
 class DatovizV04Unavailable(RuntimeError):
     """Raised when the imported Datoviz facade is not the expected v0.4 shape."""
@@ -43,6 +56,16 @@ class DatovizV04Unsupported(ValueError):
 def is_datoviz_v04_facade(module: ModuleType | Any) -> bool:
     """Return whether a module-like object exposes the required v0.4 facade."""
     return all(hasattr(module, name) for name in _REQUIRED_DVZ_V04_FUNCTIONS)
+
+
+def datoviz_v04_sampled_field_ready(module: ModuleType | Any) -> bool:
+    """Return whether a facade exposes the sampled-field image binding path."""
+    return not datoviz_v04_sampled_field_diagnostics(module)
+
+
+def datoviz_v04_sampled_field_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
+    """Return missing sampled-field binding requirements."""
+    return tuple(f"missing {name}" for name in _REQUIRED_DVZ_SAMPLED_FIELD_FUNCTIONS if not hasattr(module, name))
 
 
 def import_datoviz_v04() -> ModuleType:
@@ -74,6 +97,7 @@ class DatovizV04ProtocolRenderer:
     figure: Any = field(init=False)
     panel: Any = field(init=False)
     visuals: dict[str, Any] = field(default_factory=dict, init=False)
+    sampled_fields: dict[str, Any] = field(default_factory=dict, init=False)
     _closed: bool = field(default=False, init=False)
 
     def __post_init__(self) -> None:
@@ -140,10 +164,39 @@ class DatovizV04ProtocolRenderer:
         dvz_visual = self.dvz.dvz_image(self.scene, 0)
         self.dvz.dvz_visual_set_data(dvz_visual, "position", positions)
         self.dvz.dvz_visual_set_data(dvz_visual, "texcoords", texcoords)
-        self.dvz.dvz_visual_set_texture(dvz_visual, pixels, width, height)
+        if datoviz_v04_sampled_field_ready(self.dvz):
+            sampled_field = self._create_rgba8_sampled_field(pixels, width, height)
+            if not self.dvz.dvz_visual_set_field(dvz_visual, "field", sampled_field):
+                raise DatovizV04Unsupported("Datoviz sampled-field image binding failed")
+            self.sampled_fields[visual.id] = sampled_field
+        else:
+            self.dvz.dvz_visual_set_texture(dvz_visual, pixels, width, height)
         self.dvz.dvz_panel_add_visual(self.panel, dvz_visual, None)
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
+
+    def _create_rgba8_sampled_field(self, pixels: npt.NDArray[np.uint8], width: int, height: int) -> Any:
+        """Create and upload a scene-owned RGBA8 sampled field."""
+        desc = self.dvz.dvz_sampled_field_desc()
+        desc.dim = DVZ_FIELD_DIM_2D
+        desc.format = DVZ_FIELD_FORMAT_RGBA8_UNORM
+        desc.semantic = DVZ_FIELD_SEMANTIC_COLOR
+        desc.color_role = DVZ_COLOR_ROLE_SRGB_COLOR
+        desc.width = width
+        desc.height = height
+        desc.depth = 1
+
+        sampled_field = self.dvz.dvz_sampled_field(self.scene, desc)
+        if sampled_field is None:
+            raise DatovizV04Unsupported("Datoviz sampled-field image allocation failed")
+
+        view = self.dvz.dvz_field_data_view()
+        _set_data_view_payload(view, pixels)
+        view.bytes_per_row = width * 4
+        view.rows_per_image = height
+        if not self.dvz.dvz_sampled_field_set_data(sampled_field, view):
+            raise DatovizV04Unsupported("Datoviz sampled-field image upload failed")
+        return sampled_field
 
     def configure_view2d_axes(
         self,
@@ -225,6 +278,13 @@ def _rgba8_image(image: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:
         return np.ascontiguousarray(image)
     alpha = np.full((*image.shape[:2], 1), 255, dtype=np.uint8)
     return np.ascontiguousarray(np.concatenate([image, alpha], axis=2))
+
+
+def _set_data_view_payload(view: Any, pixels: npt.NDArray[np.uint8]) -> None:
+    try:
+        view.data = pixels
+    except TypeError:
+        view.data = pixels.ctypes.data
 
 
 def _image_positions(extent: tuple[float, float, float, float]) -> npt.NDArray[np.float32]:

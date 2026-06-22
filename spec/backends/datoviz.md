@@ -144,6 +144,25 @@ Point/image-specific query modes (`point-item`, `image-texel`) are still not adv
 slice. Those require a real runtime query execution proof plus stable application visual-id mapping
 and payload validation.
 
+## M027 sampled-field image parity slice
+
+The Datoviz image adapter now prefers the explicit sampled-field path for bounded RGBA8 images when
+the active v0.4 Python facade exposes:
+
+- `dvz_sampled_field_desc`;
+- `dvz_field_data_view`;
+- `dvz_sampled_field`;
+- `dvz_sampled_field_set_data`;
+- `dvz_visual_set_field`.
+
+For supported uint8 RGB/RGBA images, the adapter creates a scene-owned 2D `RGBA8_UNORM` sampled
+field with color semantic and sRGB role, uploads tightly packed data, and binds it to the image
+visual's `"field"` slot. If sampled-field symbols are unavailable, the existing transitional
+`dvz_visual_set_texture()` RGBA8 path remains as fallback.
+
+Scalar float sampled fields and color-scale semantics remain deferred. They require explicit scale
+and colormap binding decisions before GSP can claim scalar image parity.
+
 ## Post-M011 parity gap update
 
 The current GSP Datoviz adapter is still a slice, not parity:
