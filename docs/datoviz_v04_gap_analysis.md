@@ -1,6 +1,7 @@
 # Datoviz v0.4 Gap Analysis For GSP
 
-Status: M004 assessment, with post-M011 local Datoviz inventory update.
+Status: M004 assessment, with post-M011 local Datoviz inventory update and M018 binding evidence
+refresh.
 
 This document assesses how the current GSP point/image/query/capability concepts map to Datoviz v0.4 as found in the sibling checkout `../datoviz/` on its current branch. It is intentionally not an implementation patch. The legacy `src/gsp_datoviz/` adapter remains unchanged.
 
@@ -10,7 +11,14 @@ Datoviz v0.4 can support a GSP backend, but not through the old v0.3-style Pytho
 
 The old adapter imports `datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `datoviz._figure`, and `datoviz._texture`. In the local Datoviz checkout/package these surfaces are missing. The adapter therefore needs a rewrite around `dvz_scene`, `dvz_figure`, `dvz_panel`, `dvz_point`, `dvz_image`, `dvz_visual_set_data`, sampled fields, query APIs, and capture APIs.
 
-Point rendering maps cleanly. Image rendering maps, but the preferred v0.4 path is sampled fields plus `dvz_visual_set_field`; `dvz_visual_set_texture` is documented as a transitional convenience wrapper. Query concepts are aligned with GSP's panel-query model. During M004/M009, Python-side query result decoding was blocked because `DvzQueryResult` had no `_fields_`; a later local inventory of `../datoviz` on `v0.4-dev` found that `DvzQueryResult` now exposes fields. Capability snapshots are available and should drive GSP adaptation.
+Point rendering maps cleanly. Image rendering maps, but the preferred v0.4 path is sampled fields
+plus `dvz_visual_set_field`; `dvz_visual_set_texture` is documented as a transitional convenience
+wrapper. Query concepts are aligned with GSP's panel-query model. During M004/M009, Python-side
+query result decoding was blocked because `DvzQueryResult` had no `_fields_`. M018 confirms that
+the current `../datoviz` v0.4-dev headers now define a rich `DvzQueryResult` struct, but the current
+GSP virtual environment still imports Datoviz `0.3.5` and exposes none of the v0.4 `dvz_*` facade
+or ctypes classes. Capability snapshots are available in the headers and should drive GSP
+adaptation once a v0.4-dev Python binding is active.
 
 ## Inputs Inspected
 
@@ -58,9 +66,9 @@ Checked against the local sibling checkout `../datoviz` on `v0.4-dev` after M011
 - `dvz_sampled_field`, `dvz_sampled_field_set_data`, `dvz_visual_set_field`: present
 - `dvz_capability_snapshot`: present
 - `dvz_panel_query`, `dvz_panel_query_now`, `dvz_scene_poll_query`: present
-- `DvzQueryResult`: present and now exposes Python `_fields_`
+- `DvzQueryResult`: present in the current header with a decodable field layout
 
-Notable `DvzQueryResult` fields now visible to Python include:
+Notable `DvzQueryResult` fields in the current header include:
 
 - request/frame identity: `request_id`, `freshness_serial`
 - status and hit: `status`, `hit`
@@ -70,9 +78,17 @@ Notable `DvzQueryResult` fields now visible to Python include:
 - item payload ids: `item_id`, `group_id`, `face_id`, `vertex_id`, `voxel_id`, `texel_id`
 - color/value payloads: `display_rgba`, `value_kind`, `scalar`, `vector`, `category_id`, `label`, `unit`, `scale`
 
-This removes the earlier binding blocker for a bounded Datoviz query parity mission. It does not by
-itself prove runtime query correctness, panel/query request setup, visual query capability enabling,
-or mapping of Datoviz enum values to GSP `QueryStatus`/`VisualFamily`.
+M018 environment check:
+
+- `PYTHONPATH=. uv run python` in this repo imports `datoviz 0.3.5` from the local virtual
+  environment.
+- That installed package exposes no public `dvz_*` symbols, no `DvzQueryResult`, and no
+  `DvzCapabilitySnapshot`.
+- The header evidence removes a C ABI uncertainty, but the GSP runtime binding blocker remains until
+  the v0.4-dev Python facade/raw binding is installed or put on `PYTHONPATH`.
+
+This does not by itself prove runtime query correctness, panel/query request setup, visual query
+capability enabling, or mapping of Datoviz enum values to GSP `QueryStatus`/`VisualFamily`.
 
 Important constraint:
 
@@ -203,8 +219,10 @@ Local ctypes exposes:
 M004/M009 blocking gap, now updated:
 
 - Earlier local introspection found `DvzQueryResult` exposed without `_fields_`, blocking Python-side decoding.
-- Post-M011 inventory found `_fields_` available in `../datoviz` on `v0.4-dev`.
-- The next Datoviz mission should implement a bounded decoder from `DvzQueryResult` to GSP `QueryResult`, with skip-clean runtime tests if Datoviz query execution is unavailable in CI/local headless environments.
+- M018 inventory found the needed fields in `../datoviz` v0.4-dev headers.
+- The next Datoviz mission should first establish a v0.4-dev Python facade/raw binding import path,
+  then implement a bounded decoder from `DvzQueryResult` to GSP `QueryResult`, with skip-clean
+  runtime tests if Datoviz query execution is unavailable in CI/local headless environments.
 
 ## Capture And Readback
 
@@ -227,13 +245,15 @@ Do not port the old adapter in place line-by-line. Instead:
 5. Gate every feature through a translated `CapabilitySnapshot`.
 6. Add import-only and no-GPU construction tests first.
 7. Add offscreen capture tests only when the environment can create a Datoviz offscreen view reliably.
-8. Add query decode tests now that `DvzQueryResult` is decodable from Python; keep runtime query execution tests skip-clean if app/offscreen runtime is unavailable.
+8. Add query decode tests once `DvzQueryResult` is decodable from the active Python binding; keep
+   runtime query execution tests skip-clean if app/offscreen runtime is unavailable.
 
 ## Required Handoffs
 
 The following Datoviz-side or binding-side tasks should be resolved before a full GSP Datoviz backend implementation claims parity:
 
-- Keep the Python `DvzQueryResult` fields stable, or provide a decoded query-result helper.
+- Keep the `DvzQueryResult` fields stable in the v0.4 Python binding, or provide a decoded
+  query-result helper.
 - Clarify the promoted Python facade contract in the `../datoviz/` docs/release artifacts, so GSP agents do not target obsolete wrapper examples or any stale published pages.
 - Confirm image interpolation and origin handling for `DvzSampledField`/`dvz_image`.
 - Confirm whether GSP should use `dvz_visual_set_texture()` for RGBA8 only or move immediately to sampled fields for all images.
@@ -244,7 +264,8 @@ Start with bounded Datoviz query/capability parity:
 
 1. Translate `dvz_capability_snapshot()` into GSP `CapabilitySnapshot` instead of the current static
    Datoviz adapter capability surface.
-2. Add a pure decoder from Python `DvzQueryResult` instances to GSP `QueryResult`.
+2. Add a pure decoder from Python `DvzQueryResult` instances to GSP `QueryResult` once the active
+   environment imports a v0.4 binding.
 3. Map Datoviz query statuses and visual families to GSP enums with explicit diagnostics for
    unsupported/stale/dropped/failed cases.
 4. Enable Datoviz query modes only when the adapter can produce the corresponding GSP semantics.

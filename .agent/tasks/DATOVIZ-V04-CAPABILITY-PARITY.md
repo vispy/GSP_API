@@ -7,9 +7,12 @@ Finding:
 
 - Local `../datoviz` on `v0.4-dev` exposes `dvz_capability_snapshot()`.
 - Current `src/gsp_datoviz/protocol_renderer.py` returns a static `CapabilitySnapshot`.
+- M018 found that the current GSP virtual environment imports Datoviz `0.3.5`, which does not expose
+  `dvz_capability_snapshot()` or `DvzCapabilitySnapshot`.
 
 Required GSP behavior:
 
+- first establish a v0.4-dev Python facade/raw binding import path for runtime tests;
 - translate Datoviz resource, texture, readback, shader, and query-profile flags into GSP
   `CapabilitySnapshot` fields where the mapping is clear;
 - keep unknown/ambiguous Datoviz fields in `metadata` rather than overclaiming support;

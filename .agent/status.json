@@ -1,5 +1,5 @@
 {
-  "current_stage": "S014",
+  "current_stage": "S015",
   "stages": [
     {
       "id": "S001",
@@ -82,8 +82,8 @@
     {
       "id": "S014",
       "title": "Datoviz v0.4 binding evidence and handoff",
-      "state": "planned",
-      "progress": 0
+      "state": "completed",
+      "progress": 100
     },
     {
       "id": "S015",
@@ -280,17 +280,17 @@
       "id": "M018",
       "title": "Datoviz v0.4 header/binding evidence refresh",
       "stage": "S014",
-      "state": "planned",
-      "agent": "codex-worker",
-      "progress": 0,
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
       "priority": 18
     }
   ],
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Execute M018 next: Datoviz v0.4 header/binding evidence refresh.",
+    "Propose S015 next: unified query scopes and capability semantics, likely requiring ChatGPT Pro consultation before implementation.",
     "Use ChatGPT Pro before implementing broad data/guides/all-rendered query-scope precedence beyond the bounded M014/M015 guide-query fixtures.",
-    "Keep Datoviz v0.4 binding evidence work parallel and capability-gated; do not edit the external Datoviz repo."
+    "Before Datoviz query/capability parity implementation, activate a v0.4-dev Python facade/raw binding; the current GSP environment imports Datoviz 0.3.5."
   ]
 }
