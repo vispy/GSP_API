@@ -17,6 +17,7 @@ They are Python/in-process fixtures, not JSON fixtures. This is intentional: the
 - Guide query fixture coverage for tick hits, misses, and unsupported provider status.
 - Local tiled-source fixture with static manifest linkage, clipped viewport mosaic materialization,
   Matplotlib reference rendering, and typed tiled-image query payload.
+- In-process replay harness that returns semantic point/image, guide, and tiled-source results.
 
 ## Reference Backend
 

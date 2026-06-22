@@ -12,16 +12,19 @@ from .baseline import (
     tiled_image_source_fixture,
     tiled_source_scene,
 )
+from .replay import InProcessReplayResult, replay_conformance_fixtures
 
 __all__ = [
     "ConformanceScene",
     "GuideConformanceScene",
+    "InProcessReplayResult",
     "TiledSourceConformanceScene",
     "capability_snapshot_fixture",
     "guide_scene",
     "image_visual_fixture",
     "point_over_image_scene",
     "point_visual_fixture",
+    "replay_conformance_fixtures",
     "tiled_image_source_fixture",
     "tiled_source_scene",
 ]
