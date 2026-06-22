@@ -7,7 +7,7 @@ GSP-resolved ticks as the strict conformance source.
 
 ## State
 
-Planned.
+Completed.
 
 ## Required reading
 
@@ -57,9 +57,22 @@ Planned.
 - Existing point/image rendering still works with guides present.
 - Tests pass with `PYTHONPATH=. uv run pytest`.
 
+## Result
+
+Completed by local-main-codex. Added `src/gsp_matplotlib/guides.py`, wired VisPy2
+Matplotlib rendering to realize semantic axis guides, and added
+`tests/test_matplotlib_guides.py`.
+
+Verification:
+
+```bash
+PYTHONPATH=. uv run pytest
+```
+
+Result: 88 passed, 1 skipped.
+
 ## Stop conditions
 
 Stop if guide rendering requires changing `AxisGuide` semantics at ADR scope, if tests depend on
 pixel-perfect font/layout comparisons, or if implementation would make generated guide primitives
 part of the user visual stream.
-

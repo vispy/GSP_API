@@ -14,7 +14,21 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from gsp.protocol import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, Panel, PointVisual, View2D, VisualAttachment
+from gsp.protocol import (
+    AxisDimension,
+    AxisGuide,
+    AxisSide,
+    CoordinateSpace,
+    ImageInterpolation,
+    ImageOrigin,
+    ImageVisual,
+    Panel,
+    PanelTextGuide,
+    PointVisual,
+    View2D,
+    VisualAttachment,
+)
+from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.protocol_renderer import render_image_visual, render_point_visual
 
 
@@ -50,6 +64,14 @@ class Figure:
         """Return data visual attachments to panels/views."""
         return tuple(attachment for axes in self.axes for attachment in axes.attachments)
 
+    def axis_guides(self) -> tuple[AxisGuide, ...]:
+        """Return semantic axis guide intent without expanding guide visuals."""
+        return tuple(guide for axes in self.axes for guide in axes.axis_guides)
+
+    def panel_text_guides(self) -> tuple[PanelTextGuide, ...]:
+        """Return semantic panel text guide intent without expanding guide visuals."""
+        return tuple(guide for axes in self.axes for guide in axes.panel_text_guides)
+
     def render_matplotlib(self) -> tuple[Any, Any]:
         """Render the protocol scene through the Matplotlib reference backend."""
         import matplotlib.pyplot as plt
@@ -63,10 +85,13 @@ class Figure:
             else:
                 raise TypeError(f"unsupported protocol visual: {type(visual)!r}")
         if self.axes:
-            view = self.axes[0].view
+            axes_model = self.axes[0]
+            view = axes_model.view
             mpl_axes.set_xlim(view.x_range)
             mpl_axes.set_ylim(view.y_range)
             mpl_axes.set_aspect("equal" if view.aspect_policy.value == "equal" else "auto")
+            render_axis_guides(mpl_axes, view, tuple(axes_model.axis_guides))
+            render_panel_text_guides(mpl_axes, tuple(axes_model.panel_text_guides))
         return fig, mpl_axes
 
     def savefig(self, path: str | Path, **kwargs: Any) -> None:
@@ -97,6 +122,8 @@ class Axes:
     panel: Panel = field(init=False)
     view: View2D = field(init=False)
     attachments: list[VisualAttachment] = field(default_factory=list)
+    axis_guides: list[AxisGuide] = field(default_factory=list)
+    panel_text_guides: list[PanelTextGuide] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         index = len(self.figure.axes) + 1
@@ -104,6 +131,12 @@ class Axes:
         view_id = f"view:{index}"
         self.panel = Panel(id=panel_id, figure_id=self.figure.id)
         self.view = View2D(id=view_id, panel_id=panel_id)
+        self.axis_guides.extend(
+            [
+                AxisGuide(id=f"guide:x-{index}", view_id=view_id, dimension=AxisDimension.X, side=AxisSide.BOTTOM),
+                AxisGuide(id=f"guide:y-{index}", view_id=view_id, dimension=AxisDimension.Y, side=AxisSide.LEFT),
+            ]
+        )
 
     def set_xlim(self, left: float, right: float) -> tuple[float, float]:
         """Set the semantic x range for this 2D view."""

@@ -71,7 +71,7 @@
       "id": "S012",
       "title": "Matplotlib strict guide/tick provider baseline",
       "state": "in_progress",
-      "progress": 35
+      "progress": 60
     },
     {
       "id": "S013",
@@ -235,9 +235,9 @@
       "id": "M013",
       "title": "Matplotlib AxisGuide and PanelTextGuide rendering",
       "stage": "S012",
-      "state": "in_progress",
+      "state": "completed",
       "agent": "codex-worker",
-      "progress": 10,
+      "progress": 100,
       "priority": 13
     },
     {
@@ -289,8 +289,8 @@
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Review and execute M013 next: Matplotlib AxisGuide and PanelTextGuide rendering from semantic guide objects.",
+    "Review M013 and execute M014 next: reference guide query support, unless query-scope semantics require the planned ChatGPT Pro consultation first.",
     "Keep Datoviz v0.4 binding evidence work parallel and capability-gated; do not edit the external Datoviz repo.",
-    "Use ChatGPT Pro next only for query scopes, remote data security, dynamic extension loading, Datoviz query lifecycle, nonlinear axes, text conformance policy, or broad VisPy2 API expansion."
+    "Use ChatGPT Pro before hardening data/guides/all-rendered query scopes beyond the bounded M014 reference behavior."
   ]
 }
