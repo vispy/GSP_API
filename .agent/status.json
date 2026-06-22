@@ -1,5 +1,5 @@
 {
-  "current_stage": "S015",
+  "current_stage": "S016",
   "stages": [
     {
       "id": "S001",
@@ -94,8 +94,8 @@
     {
       "id": "S016",
       "title": "Datoviz capability/query parity next pack",
-      "state": "planned",
-      "progress": 0
+      "state": "in_progress",
+      "progress": 20
     },
     {
       "id": "S017",
@@ -329,12 +329,21 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 23
+    },
+    {
+      "id": "M024",
+      "title": "Datoviz v0.4 capability parity",
+      "stage": "S016",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 24
     }
   ],
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Plan S016 next: Datoviz capability/query parity next pack.",
+    "Execute M025 next: Datoviz v0.4 query decode parity.",
     "Before Datoviz query/capability parity implementation, activate a v0.4-dev Python facade/raw binding; the current GSP environment imports Datoviz 0.3.5."
   ]
 }

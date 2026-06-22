@@ -94,6 +94,23 @@ Required parity targets:
 - misses, outside-panel, unsupported, stale/dropped async results, and backend failures must map to
   distinct GSP statuses without hit payload fields.
 
+## M024 capability parity slice
+
+The Datoviz adapter now translates `dvz_capability_snapshot()` into GSP `CapabilitySnapshot` when
+the active Python facade exposes it. The translation is intentionally conservative:
+
+- `max_buffer_size` maps to `CapabilitySnapshot.max_buffer_bytes`;
+- proven Datoviz texture flags add `r32uint`/`rg32uint` alongside the existing RGBA8 texture path;
+- readback flags stay in raw metadata until capture/offscreen parity is implemented;
+- raw Datoviz capability fields are preserved in `metadata["datoviz_raw_capabilities"]`;
+- shader formats and query profile bits are preserved as metadata;
+- `query_modes` and typed query capabilities remain empty until `DvzQueryResult` decoding and
+  status/payload mapping are implemented and tested.
+
+If `dvz_capability_snapshot()` is unavailable, the adapter falls back to the conservative static
+GSP slice and records a diagnostic in metadata. Real runtime smoke tests skip cleanly when the
+installed binding is still Datoviz 0.3.5 or otherwise lacks the v0.4 capability symbol.
+
 ## Post-M011 parity gap update
 
 The current GSP Datoviz adapter is still a slice, not parity:

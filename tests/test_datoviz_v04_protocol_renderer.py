@@ -8,7 +8,11 @@ import pytest
 from gsp.protocol import ImageOrigin, ImageVisual, PointVisual
 from gsp.protocol import AxisProviderRequest, View2D
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
-from gsp_datoviz.capabilities import DATOVIZ_V04_AXIS_PROVIDER, datoviz_v04_axis_provider_capability
+from gsp_datoviz.capabilities import (
+    DATOVIZ_V04_AXIS_PROVIDER,
+    datoviz_v04_axis_provider_capability,
+    gsp_capability_snapshot_from_datoviz,
+)
 from gsp_datoviz.protocol_renderer import (
     DatovizV04ProtocolRenderer,
     DatovizV04Unavailable,
@@ -101,6 +105,40 @@ class FakeDatovizV04WithAxes(FakeDatovizV04):
         return True
 
 
+class FakeDvzCapabilitySnapshot:
+    struct_size = 128
+    flags = 0
+    max_buffer_size = 512 * 1024 * 1024
+    max_texture_dimension_2d = 8192
+    max_bind_groups = 8
+    max_vertex_buffers = 16
+    max_color_attachments = 4
+    max_color_sample_count = 8
+    max_depth_sample_count = 8
+    shader_format_wgsl = True
+    shader_format_glsl = False
+    render_target_format_rgba16float = True
+    render_target_format_r16float = False
+    supports_render_target_sampling = True
+    supports_color_blending = True
+    supports_readback = True
+    min_texture_copy_bytes_per_row_alignment = 256
+    max_readback_size = 64 * 1024 * 1024
+    texture_format_r32uint = True
+    texture_format_rg32uint = True
+    render_target_format_r32uint = True
+    render_target_format_rg32uint = False
+    query_profile_u32_r32 = True
+    query_profile_u64_rg32 = False
+    query_profile_u64_2xr32 = True
+
+
+class FakeDatovizV04WithCapabilities(FakeDatovizV04WithAxes):
+    def dvz_capability_snapshot(self):
+        self.calls.append(("capability_snapshot",))
+        return FakeDvzCapabilitySnapshot()
+
+
 def _calls(fake, name):
     return [call for call in fake.calls if call[0] == name]
 
@@ -114,6 +152,33 @@ def test_capability_snapshot_defers_query_support():
     assert caps.query_modes == ()
     assert caps.metadata["datoviz_api"] == "v0.4 dvz_* facade"
     assert caps.axis_providers[0].provider_id == DATOVIZ_V04_AXIS_PROVIDER
+
+
+def test_datoviz_capability_translation_preserves_raw_fields_without_overclaiming_query_support():
+    caps = gsp_capability_snapshot_from_datoviz(FakeDvzCapabilitySnapshot(), dvz=FakeDatovizV04WithAxes())
+
+    assert caps.server_name == "datoviz-v0.4-protocol-slice"
+    assert caps.max_buffer_bytes == 512 * 1024 * 1024
+    assert caps.texture_formats == ("rgba8", "r32uint", "rg32uint")
+    assert caps.output_formats == ()
+    assert caps.query_modes == ()
+    assert caps.query_capabilities == ()
+    assert caps.metadata["datoviz_capability_source"] == "dvz_capability_snapshot"
+    assert caps.metadata["datoviz_shader_formats"] == ("wgsl",)
+    assert caps.metadata["datoviz_query_profiles"] == ("u32_r32", "u64_2xr32")
+    assert caps.metadata["datoviz_raw_capabilities"]["max_texture_dimension_2d"] == 8192
+    assert caps.axis_providers[0].provider_status == "adapted"
+
+
+def test_renderer_capabilities_use_runtime_datoviz_capability_snapshot_when_available():
+    fake = FakeDatovizV04WithCapabilities()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    caps = renderer.capabilities()
+
+    assert _calls(fake, "capability_snapshot") == [("capability_snapshot",)]
+    assert caps.max_buffer_bytes == 512 * 1024 * 1024
+    assert caps.metadata["datoviz_raw_capabilities"]["supports_readback"] is True
 
 
 def test_facade_shape_rejects_missing_v04_functions():
@@ -294,3 +359,15 @@ def test_imported_datoviz_binding_has_expected_v04_shape_when_available():
         pytest.skip("installed Datoviz binding is not the v0.4 facade")
 
     assert is_datoviz_v04_facade(dvz)
+
+
+def test_imported_datoviz_capability_snapshot_translates_when_available():
+    dvz = pytest.importorskip("datoviz")
+    if not hasattr(dvz, "dvz_capability_snapshot"):
+        pytest.skip("installed Datoviz binding does not expose dvz_capability_snapshot")
+
+    caps = gsp_capability_snapshot_from_datoviz(dvz.dvz_capability_snapshot(), dvz=dvz)
+
+    assert caps.server_name == "datoviz-v0.4-protocol-slice"
+    assert "datoviz_raw_capabilities" in caps.metadata
+    assert caps.query_modes == ()

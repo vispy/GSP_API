@@ -7,17 +7,17 @@ not use the older ``datoviz.App`` or ``datoviz.visuals`` wrapper APIs.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 from math import pi
 from types import ModuleType
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import numpy.typing as npt
 
-from gsp.protocol import CapabilitySnapshot, ImageOrigin, ImageVisual, PointVisual, TransportKind, View2D
+from gsp.protocol import CapabilitySnapshot, ImageOrigin, ImageVisual, PointVisual, View2D
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
-from gsp_datoviz.capabilities import datoviz_v04_axis_provider_capability
+from gsp_datoviz.capabilities import datoviz_v04_axis_provider_capability, datoviz_v04_capability_snapshot
 
 
 _REQUIRED_DVZ_V04_FUNCTIONS = (
@@ -55,36 +55,19 @@ def import_datoviz_v04() -> ModuleType:
     if not is_datoviz_v04_facade(dvz):
         missing = [name for name in _REQUIRED_DVZ_V04_FUNCTIONS if not hasattr(dvz, name)]
         raise DatovizV04Unavailable(f"Datoviz facade is missing v0.4 functions: {missing}")
-    return dvz
+    return cast(ModuleType, dvz)
 
 
 def capability_snapshot() -> CapabilitySnapshot:
     """Return the GSP capability surface for the current bounded adapter slice."""
-    return CapabilitySnapshot(
-        server_name="datoviz-v0.4-protocol-slice",
-        protocol_versions=("0.1",),
-        transports=(TransportKind.INPROC,),
-        buffer_dtypes=("float32", "uint8", "rgba8"),
-        texture_formats=("rgba8",),
-        visual_families=("point", "image"),
-        query_modes=(),
-        output_formats=(),
-        deterministic=False,
-        axis_providers=(datoviz_v04_axis_provider_capability(),),
-        metadata={
-            "datoviz_api": "v0.4 dvz_* facade",
-            "image_path": "dvz_visual_set_texture RGBA8 convenience path",
-            "query_support": "deferred until DvzQueryResult is decodable from Python",
-            "axis_provider": "datoviz.v04.panel_axis.wip when v0.4-dev Python symbols are exposed",
-        },
-    )
+    return datoviz_v04_capability_snapshot()
 
 
 @dataclass
 class DatovizV04ProtocolRenderer:
     """Minimal point/image renderer using Datoviz v0.4 top-level functions."""
 
-    dvz: ModuleType | Any | None = None
+    dvz: Any = None
     width: int = 800
     height: int = 600
     scene: Any = field(init=False)
@@ -107,12 +90,8 @@ class DatovizV04ProtocolRenderer:
         self.panel = self.dvz.dvz_panel_full(self.figure)
 
     def capabilities(self) -> CapabilitySnapshot:
-        """Return the static capability snapshot for this first adapter slice."""
-        snapshot = capability_snapshot()
-        return replace(
-            snapshot,
-            axis_providers=(datoviz_v04_axis_provider_capability(self.dvz),),
-        )
+        """Return the capability snapshot for this adapter slice."""
+        return datoviz_v04_capability_snapshot(self.dvz)
 
     def close(self) -> None:
         """Destroy the scene when the facade exposes a destroy helper."""

@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from types import ModuleType
-from typing import Any
+from typing import Any, cast
 
-from gsp.protocol import AxisProviderCapability
+from gsp.protocol import AxisProviderCapability, CapabilitySnapshot, TransportKind
 
 
 DATOVIZ_V04_AXIS_PROVIDER = "datoviz.v04.panel_axis.wip"
@@ -28,6 +28,120 @@ _OPTIONAL_DVZ_AXIS_FUNCTIONS = (
     "dvz_panel_data_to_visual_positions",
 )
 
+_DVZ_CAPABILITY_FIELDS = (
+    "struct_size",
+    "flags",
+    "max_buffer_size",
+    "max_texture_dimension_2d",
+    "max_bind_groups",
+    "max_vertex_buffers",
+    "max_color_attachments",
+    "max_color_sample_count",
+    "max_depth_sample_count",
+    "shader_format_wgsl",
+    "shader_format_glsl",
+    "render_target_format_rgba16float",
+    "render_target_format_r16float",
+    "supports_render_target_sampling",
+    "supports_color_blending",
+    "supports_readback",
+    "min_texture_copy_bytes_per_row_alignment",
+    "max_readback_size",
+    "texture_format_r32uint",
+    "texture_format_rg32uint",
+    "render_target_format_r32uint",
+    "render_target_format_rg32uint",
+    "query_profile_u32_r32",
+    "query_profile_u64_rg32",
+    "query_profile_u64_2xr32",
+)
+
+
+def datoviz_v04_capability_snapshot(dvz: ModuleType | Any | None = None) -> CapabilitySnapshot:
+    """Return the bounded GSP capability snapshot for the Datoviz v0.4 adapter."""
+    raw_snapshot = None
+    source = "static-gsp-slice"
+    diagnostics: tuple[str, ...] = ()
+
+    if dvz is None:
+        try:
+            import datoviz as imported_dvz
+        except ModuleNotFoundError:
+            diagnostics = ("Datoviz is not importable; using conservative static GSP slice capabilities",)
+        else:
+            dvz = imported_dvz
+    if dvz is not None and hasattr(dvz, "dvz_capability_snapshot"):
+        raw_snapshot = dvz.dvz_capability_snapshot()
+        source = "dvz_capability_snapshot"
+    elif dvz is not None:
+        diagnostics = ("Datoviz Python binding is missing dvz_capability_snapshot; using conservative static GSP slice capabilities",)
+
+    return gsp_capability_snapshot_from_datoviz(raw_snapshot, dvz=dvz, source=source, diagnostics=diagnostics)
+
+
+def gsp_capability_snapshot_from_datoviz(
+    raw_snapshot: Any | None,
+    *,
+    dvz: ModuleType | Any | None = None,
+    source: str = "dvz_capability_snapshot",
+    diagnostics: tuple[str, ...] = (),
+) -> CapabilitySnapshot:
+    """Translate a Datoviz v0.4 capability snapshot into the GSP capability surface.
+
+    The translation deliberately advertises only features implemented by the current GSP Datoviz
+    adapter. Raw Datoviz capability fields are retained in metadata for later parity missions.
+    """
+    raw_fields = _raw_capability_fields(raw_snapshot) if raw_snapshot is not None else {}
+    texture_formats = ["rgba8"]
+    if raw_fields.get("texture_format_r32uint") is True:
+        texture_formats.append("r32uint")
+    if raw_fields.get("texture_format_rg32uint") is True:
+        texture_formats.append("rg32uint")
+
+    metadata: dict[str, object] = {
+        "datoviz_api": "v0.4 dvz_* facade",
+        "datoviz_capability_source": source,
+        "image_path": "dvz_visual_set_texture RGBA8 convenience path",
+        "query_support": "deferred until DvzQueryResult is decodable from Python",
+        "axis_provider": "datoviz.v04.panel_axis.wip when v0.4-dev Python symbols are exposed",
+    }
+    if raw_fields:
+        metadata["datoviz_raw_capabilities"] = raw_fields
+        metadata["datoviz_shader_formats"] = tuple(
+            name
+            for name, supported in (
+                ("wgsl", raw_fields.get("shader_format_wgsl")),
+                ("glsl", raw_fields.get("shader_format_glsl")),
+            )
+            if supported is True
+        )
+        metadata["datoviz_query_profiles"] = tuple(
+            name
+            for name, supported in (
+                ("u32_r32", raw_fields.get("query_profile_u32_r32")),
+                ("u64_rg32", raw_fields.get("query_profile_u64_rg32")),
+                ("u64_2xr32", raw_fields.get("query_profile_u64_2xr32")),
+            )
+            if supported is True
+        )
+    if diagnostics:
+        metadata["datoviz_capability_diagnostics"] = diagnostics
+
+    return CapabilitySnapshot(
+        server_name="datoviz-v0.4-protocol-slice",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        buffer_dtypes=("float32", "uint8", "rgba8"),
+        texture_formats=tuple(texture_formats),
+        visual_families=("point", "image"),
+        query_modes=(),
+        output_formats=(),
+        deterministic=False,
+        max_buffer_bytes=_optional_nonnegative_int(raw_fields.get("max_buffer_size")),
+        axis_providers=(datoviz_v04_axis_provider_capability(dvz),),
+        metadata=metadata,
+    )
+
 
 def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) -> AxisProviderCapability:
     """Return the Datoviz v0.4-dev native axis provider capability.
@@ -37,9 +151,11 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
     """
     if dvz is None:
         try:
-            import datoviz as dvz
+            import datoviz as imported_dvz
         except ModuleNotFoundError:
             return _unsupported("Datoviz is not importable")
+        else:
+            dvz = imported_dvz
 
     missing = tuple(name for name in _REQUIRED_DVZ_AXIS_FUNCTIONS if not hasattr(dvz, name))
     if missing:
@@ -72,6 +188,21 @@ def datoviz_v04_axis_symbols(dvz: ModuleType | Any) -> dict[str, bool]:
     """Return required/optional Datoviz axis symbol availability for diagnostics/tests."""
     names = _REQUIRED_DVZ_AXIS_FUNCTIONS + _OPTIONAL_DVZ_AXIS_FUNCTIONS
     return {name: hasattr(dvz, name) for name in names}
+
+
+def _raw_capability_fields(raw_snapshot: Any) -> dict[str, object]:
+    fields: dict[str, object] = {}
+    for name in _DVZ_CAPABILITY_FIELDS:
+        if hasattr(raw_snapshot, name):
+            fields[name] = getattr(raw_snapshot, name)
+    return fields
+
+
+def _optional_nonnegative_int(value: object | None) -> int | None:
+    if value is None:
+        return None
+    integer = int(cast(Any, value))
+    return integer if integer >= 0 else None
 
 
 def _unsupported(diagnostic: str) -> AxisProviderCapability:
