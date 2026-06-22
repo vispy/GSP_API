@@ -1,36 +1,296 @@
 {
-  "current_stage": "S011",
+  "current_stage": "S012",
   "stages": [
-    {"id": "S001", "title": "Agentic control plane and legacy map", "state": "completed", "progress": 100},
-    {"id": "S002", "title": "Protocol spine", "state": "completed", "progress": 100},
-    {"id": "S003", "title": "Matplotlib reference slice", "state": "completed", "progress": 100},
-    {"id": "S004", "title": "Datoviz v0.4 adapter assessment", "state": "completed", "progress": 100},
-    {"id": "S005", "title": "Query proof", "state": "completed", "progress": 100},
-    {"id": "S006", "title": "Protocol hardening and conformance baseline", "state": "completed", "progress": 100},
-    {"id": "S007", "title": "Datoviz v0.4 adapter slice", "state": "completed", "progress": 100},
-    {"id": "S008", "title": "VisPy2 producer MVP", "state": "completed", "progress": 100},
-    {"id": "S009", "title": "Query hardening and Datoviz handoff", "state": "completed", "progress": 100},
-    {"id": "S010", "title": "Agentic control plane provider hardening", "state": "completed", "progress": 100},
-    {"id": "S011", "title": "Extensions and virtual data source architecture proof", "state": "completed", "progress": 100}
+    {
+      "id": "S001",
+      "title": "Agentic control plane and legacy map",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S002",
+      "title": "Protocol spine",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S003",
+      "title": "Matplotlib reference slice",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S004",
+      "title": "Datoviz v0.4 adapter assessment",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S005",
+      "title": "Query proof",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S006",
+      "title": "Protocol hardening and conformance baseline",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S007",
+      "title": "Datoviz v0.4 adapter slice",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S008",
+      "title": "VisPy2 producer MVP",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S009",
+      "title": "Query hardening and Datoviz handoff",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S010",
+      "title": "Agentic control plane provider hardening",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S011",
+      "title": "Extensions and virtual data source architecture proof",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S012",
+      "title": "Matplotlib strict guide/tick provider baseline",
+      "state": "planned",
+      "progress": 0
+    },
+    {
+      "id": "S013",
+      "title": "VisPy2 semantic guide API growth",
+      "state": "planned",
+      "progress": 0
+    },
+    {
+      "id": "S014",
+      "title": "Datoviz v0.4 binding evidence and handoff",
+      "state": "planned",
+      "progress": 0
+    },
+    {
+      "id": "S015",
+      "title": "Unified query scopes and capability semantics",
+      "state": "planned",
+      "progress": 0
+    },
+    {
+      "id": "S016",
+      "title": "Datoviz capability/query parity next pack",
+      "state": "planned",
+      "progress": 0
+    },
+    {
+      "id": "S017",
+      "title": "Extension and virtual data-source hardening",
+      "state": "planned",
+      "progress": 0
+    },
+    {
+      "id": "S018",
+      "title": "Conformance fixture and replay harness",
+      "state": "planned",
+      "progress": 0
+    },
+    {
+      "id": "S019",
+      "title": "Packaging, docs, and examples",
+      "state": "planned",
+      "progress": 0
+    },
+    {
+      "id": "S020",
+      "title": "Remote data and dynamic extension security pre-design",
+      "state": "planned",
+      "progress": 0
+    }
   ],
   "missions": [
-    {"id": "M001", "title": "Bootstrap agentic control plane and legacy map", "stage": "S001", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 1},
-    {"id": "M002", "title": "Protocol spine", "stage": "S002", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 2},
-    {"id": "M003", "title": "Matplotlib point/image reference slice", "stage": "S003", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 3},
-    {"id": "M004", "title": "Datoviz v0.4 adapter assessment", "stage": "S004", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 4},
-    {"id": "M005", "title": "Query proof", "stage": "S005", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 5},
-    {"id": "M006", "title": "Protocol hardening and conformance baseline", "stage": "S006", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 6},
-    {"id": "M007", "title": "Datoviz v0.4 point/image adapter slice", "stage": "S007", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 7},
-    {"id": "M008", "title": "VisPy2 producer MVP", "stage": "S008", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 8},
-    {"id": "M009", "title": "Query hardening and Datoviz handoff", "stage": "S009", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 9},
-    {"id": "M010", "title": "Agentic control plane provider hardening", "stage": "S010", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 10},
-    {"id": "M011", "title": "Extensions and virtual data source architecture proof", "stage": "S011", "state": "completed", "agent": "local-main-codex", "progress": 100, "priority": 11}
+    {
+      "id": "M001",
+      "title": "Bootstrap agentic control plane and legacy map",
+      "stage": "S001",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 1
+    },
+    {
+      "id": "M002",
+      "title": "Protocol spine",
+      "stage": "S002",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 2
+    },
+    {
+      "id": "M003",
+      "title": "Matplotlib point/image reference slice",
+      "stage": "S003",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 3
+    },
+    {
+      "id": "M004",
+      "title": "Datoviz v0.4 adapter assessment",
+      "stage": "S004",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 4
+    },
+    {
+      "id": "M005",
+      "title": "Query proof",
+      "stage": "S005",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 5
+    },
+    {
+      "id": "M006",
+      "title": "Protocol hardening and conformance baseline",
+      "stage": "S006",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 6
+    },
+    {
+      "id": "M007",
+      "title": "Datoviz v0.4 point/image adapter slice",
+      "stage": "S007",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 7
+    },
+    {
+      "id": "M008",
+      "title": "VisPy2 producer MVP",
+      "stage": "S008",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 8
+    },
+    {
+      "id": "M009",
+      "title": "Query hardening and Datoviz handoff",
+      "stage": "S009",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 9
+    },
+    {
+      "id": "M010",
+      "title": "Agentic control plane provider hardening",
+      "stage": "S010",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 10
+    },
+    {
+      "id": "M011",
+      "title": "Extensions and virtual data source architecture proof",
+      "stage": "S011",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 11
+    },
+    {
+      "id": "M012",
+      "title": "Strict tick resolver and guide-provider foundation",
+      "stage": "S012",
+      "state": "planned",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 12
+    },
+    {
+      "id": "M013",
+      "title": "Matplotlib AxisGuide and PanelTextGuide rendering",
+      "stage": "S012",
+      "state": "planned",
+      "agent": "codex-worker",
+      "progress": 0,
+      "priority": 13
+    },
+    {
+      "id": "M014",
+      "title": "Reference guide query support",
+      "stage": "S012",
+      "state": "planned",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 14
+    },
+    {
+      "id": "M015",
+      "title": "Guide conformance fixtures",
+      "stage": "S012",
+      "state": "planned",
+      "agent": "claude-worker",
+      "progress": 0,
+      "priority": 15
+    },
+    {
+      "id": "M016",
+      "title": "VisPy2 label/title/tick/grid APIs",
+      "stage": "S013",
+      "state": "planned",
+      "agent": "codex-worker",
+      "progress": 0,
+      "priority": 16
+    },
+    {
+      "id": "M017",
+      "title": "VisPy2 examples and guide API tests",
+      "stage": "S013",
+      "state": "planned",
+      "agent": "claude-worker",
+      "progress": 0,
+      "priority": 17
+    },
+    {
+      "id": "M018",
+      "title": "Datoviz v0.4 header/binding evidence refresh",
+      "stage": "S014",
+      "state": "planned",
+      "agent": "codex-worker",
+      "progress": 0,
+      "priority": 18
+    }
   ],
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Review M001-M011 as the completed agentic GSP/VisPy2 foundation.",
-    "Decide whether the next pack should focus on Datoviz parity, VisPy2 API growth, or tiled data-source follow-up.",
-    "Keep real remote fetch, credentials, and plugin loading out of scope until a dedicated security ADR exists."
+    "Execute M012 as the immediate next mission: deterministic strict tick resolver and guide-provider foundation.",
+    "Keep Datoviz v0.4 binding evidence work parallel and capability-gated; do not edit the external Datoviz repo.",
+    "Use ChatGPT Pro next only for query scopes, remote data security, dynamic extension loading, Datoviz query lifecycle, nonlinear axes, text conformance policy, or broad VisPy2 API expansion."
   ]
 }

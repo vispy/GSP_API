@@ -13,8 +13,10 @@ tools/agentctl next
 Current state:
 
 - Completed through M011 extensions and virtual data-source architecture proof.
-- Current stage: M001-M011 foundation complete.
-- Recommended next action: review the completed foundation and decide the next mission pack focus.
+- Post-S011 roadmap accepted from `.agent/consultations/P003-response.md`.
+- Current stage: S012 Matplotlib strict guide/tick provider baseline.
+- Next mission: M012 strict tick resolver and guide-provider foundation.
+- Parallel planning priority: Datoviz v0.4 Python binding evidence and handoff.
 
 Notes:
 
@@ -27,3 +29,5 @@ Notes:
 - M009 hardened query statuses, query capability checks, and Datoviz query handoff tasks.
 - M010 refreshed safe aisw provider inventory: Codex profiles `adikia`/`ibl` and Claude profile `main` are available as enabled providers. No credentials or tokens are recorded.
 - M011 accepted ADR-0004, added static extension/data-source models, and proved a local fake tiled-image Matplotlib mosaic/query path without network or credentials.
+- ADR-0005 defines semantic axis intent with capability-resolved realization providers.
+- M012 starts the deterministic `auto-linear-nice-v0` tick resolver and strict guide-provider foundation.
