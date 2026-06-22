@@ -27,3 +27,10 @@ This is a narrow conformance slice beside the legacy renderer. The legacy `Matpl
 `FakeTiledImageProvider` and renders it via the existing image protocol renderer. It also provides a
 reference tiled-image query helper that returns normal `QueryResult` fields plus
 `TiledImageQueryPayload`.
+
+## M032 clipped tiled-source extent
+
+When a tiled-source viewport source rectangle is partially outside source bounds, the Matplotlib
+reference path renders only the clipped mosaic. The rendered `AxesImage` extent is clipped
+proportionally to match the clipped source rectangle, and `query_tiled_image_source()` uses the same
+clipped extent for hit testing and payload coordinates.

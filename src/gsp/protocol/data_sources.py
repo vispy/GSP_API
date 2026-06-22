@@ -244,7 +244,7 @@ class ViewportTileRequest:
     def __post_init__(self) -> None:
         validate_id(self.source_id)
         x, y, width, height = self.source_rect
-        if x < 0 or y < 0 or width <= 0 or height <= 0:
+        if width <= 0 or height <= 0:
             raise ValueError("source_rect must be x, y, width, height with positive size")
         if self.level < 0:
             raise ValueError("level must be non-negative")

@@ -1,5 +1,5 @@
 {
-  "current_stage": "S016",
+  "current_stage": "S017",
   "stages": [
     {
       "id": "S001",
@@ -94,14 +94,14 @@
     {
       "id": "S016",
       "title": "Datoviz capability/query parity next pack",
-      "state": "in_progress",
-      "progress": 98
+      "state": "completed",
+      "progress": 100
     },
     {
       "id": "S017",
       "title": "Extension and virtual data-source hardening",
-      "state": "planned",
-      "progress": 0
+      "state": "in_progress",
+      "progress": 20
     },
     {
       "id": "S018",
@@ -401,6 +401,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 31
+    },
+    {
+      "id": "M032",
+      "title": "Tiled-source viewport semantics hardening",
+      "stage": "S017",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 32
     }
   ],
   "review_queue": [],
@@ -414,7 +423,7 @@
     }
   ],
   "recommendations": [
-    "Decide whether the remaining Datoviz live query identity payload gap belongs in Datoviz or GSP: current v0.4-dev smoke returns hit=true and visual_id but leaves visual_family/item_id/texel/value unset.",
-    "Keep guide/all-rendered query scopes and hit_policy=all deferred until Datoviz can prove ordering and guide-query semantics."
+    "Continue S017 with static extension manifest validation and extension-source linkage hardening.",
+    "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

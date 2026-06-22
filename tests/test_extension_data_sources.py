@@ -92,6 +92,24 @@ def test_fake_tiled_provider_returns_direct_numpy_tile_and_mosaic():
     ]
 
 
+def test_fake_tiled_provider_clips_partial_edge_mosaic_deterministically():
+    source = _source()
+    provider = FakeTiledImageProvider(source)
+
+    mosaic = provider.get_viewport_mosaic(
+        ViewportTileRequest(source_id=source.id, level=0, source_rect=(-2, -1, 5, 6))
+    )
+
+    assert mosaic.source_rect == (0, 0, 3, 5)
+    assert mosaic.data.shape == (5, 3, 4)
+    np.testing.assert_array_equal(mosaic.data[0, 0], [0, 0, 0, 255])
+    np.testing.assert_array_equal(mosaic.data[-1, -1], [2, 4, 0, 255])
+    assert [index for index in mosaic.tile_indices] == [
+        TileIndex(level=0, x=0, y=0),
+        TileIndex(level=0, x=0, y=1),
+    ]
+
+
 def test_capability_snapshot_advertises_tiled_image_extension_support():
     caps = CapabilitySnapshot(
         server_name="matplotlib-reference",
@@ -134,6 +152,28 @@ def test_matplotlib_reference_renders_tiled_viewport_mosaic():
         plt.close(fig)
 
 
+def test_matplotlib_reference_renders_clipped_tiled_mosaic_at_clipped_extent():
+    source = _source()
+    provider = FakeTiledImageProvider(source)
+    fig, ax = plt.subplots()
+    try:
+        artist = render_tiled_image_source(
+            ax,
+            source,
+            provider,
+            source_rect=(-2, -2, 4, 4),
+            extent=(-1.0, 1.0, -1.0, 1.0),
+            visual_id="visual:tiled-image",
+        )
+
+        assert artist.get_array().shape == (2, 2, 4)
+        assert tuple(artist.get_extent()) == (0.0, 1.0, -1.0, 0.0)
+        np.testing.assert_array_equal(artist.get_array()[0, 0], [0, 0, 0, 255])
+        np.testing.assert_array_equal(artist.get_array()[-1, -1], [1, 1, 0, 255])
+    finally:
+        plt.close(fig)
+
+
 def test_tiled_image_query_reports_tile_and_source_coordinates():
     source = _source()
     provider = FakeTiledImageProvider(source)
@@ -159,6 +199,38 @@ def test_tiled_image_query_reports_tile_and_source_coordinates():
     assert result.extension_payload.tile_y == 0
     assert result.extension_payload.texel_x == 0
     assert result.extension_payload.texel_y == 3
+
+
+def test_tiled_image_query_uses_clipped_extent_for_partial_edge_source_rect():
+    source = _source()
+    provider = FakeTiledImageProvider(source)
+
+    outside_rendered = query_tiled_image_source(
+        QueryRequest(id="query:tiled-edge-miss", panel_id="panel:main", coordinate=(-0.5, 0.5)),
+        source,
+        provider,
+        source_rect=(-2, -2, 4, 4),
+        extent=(-1.0, 1.0, -1.0, 1.0),
+        visual_id="visual:tiled-image",
+    )
+    inside_rendered = query_tiled_image_source(
+        QueryRequest(id="query:tiled-edge-hit", panel_id="panel:main", coordinate=(0.25, -0.25)),
+        source,
+        provider,
+        source_rect=(-2, -2, 4, 4),
+        extent=(-1.0, 1.0, -1.0, 1.0),
+        visual_id="visual:tiled-image",
+    )
+
+    assert outside_rendered.status == QueryStatus.MISS
+    assert inside_rendered.status == QueryStatus.HIT
+    assert inside_rendered.texel == (0, 0)
+    assert inside_rendered.value == (0, 0, 0, 255)
+    assert isinstance(inside_rendered.extension_payload, TiledImageQueryPayload)
+    assert inside_rendered.extension_payload.source_x == 0
+    assert inside_rendered.extension_payload.source_y == 0
+    assert inside_rendered.extension_payload.tile_x == 0
+    assert inside_rendered.extension_payload.tile_y == 0
 
 
 def test_tiled_image_query_miss_uses_existing_non_hit_semantics():
