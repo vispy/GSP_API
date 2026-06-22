@@ -11,6 +11,7 @@ This file tells agents where to find authoritative design information.
 | Capabilities/adaptation | spec/capabilities.md |
 | Resources/buffers/textures | spec/resources.md |
 | Query/readback | spec/query.md |
+| Conformance fixtures/schema | spec/conformance-fixtures.md |
 | Extensions | spec/extensions.md |
 | Virtual data sources/LOD | spec/data_sources.md |
 | Point visual | spec/visuals/point.md |

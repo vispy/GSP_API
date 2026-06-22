@@ -25,3 +25,8 @@ requiring Datoviz to pass, or adding JSON fixture files.
 ## Source
 
 ChatGPT Pro response recorded in `.agent/consultations/P005-response.md`.
+
+## Result
+
+Completed. ADR-0007 and `spec/conformance-fixtures.md` define the fixture schema decision and
+skeleton without implementing array transport or JSON fixture files.

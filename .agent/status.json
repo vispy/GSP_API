@@ -107,7 +107,7 @@
       "id": "S018",
       "title": "Conformance fixture and replay harness",
       "state": "in_progress",
-      "progress": 70
+      "progress": 80
     },
     {
       "id": "S019",
@@ -487,10 +487,19 @@
       "id": "M041",
       "title": "Fixture schema ADR and spec skeleton",
       "stage": "S018",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 41
+    },
+    {
+      "id": "M042",
+      "title": "Typed base64 array chunk validation",
+      "stage": "S018",
       "state": "planned",
       "agent": "local-main-codex",
       "progress": 0,
-      "priority": 41
+      "priority": 42
     }
   ],
   "review_queue": [],
@@ -511,7 +520,7 @@
     }
   ],
   "recommendations": [
-    "Start M041: commit the fixture schema ADR/spec skeleton for gsp.conformance.fixture@0.1, without implementing array transport or JSON fixture files.",
+    "Continue S018 with M042: typed base64 array chunk schema and validation for small contiguous float32/uint8 arrays.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }
