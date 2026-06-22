@@ -14,13 +14,14 @@ Current state:
 
 - Completed through M011 extensions and virtual data-source architecture proof.
 - Post-S011 roadmap accepted from `.agent/consultations/P003-response.md`.
-- Current stage: S012 Matplotlib strict guide/tick provider baseline.
+- Current stage: S013 VisPy2 semantic guide API growth.
 - M012 strict tick resolver and guide-provider foundation is complete.
 - M013 Matplotlib AxisGuide and PanelTextGuide rendering is complete.
 - M014 reference guide query support is complete.
 - M015 guide conformance fixtures is complete.
 - S012 Matplotlib strict guide/tick provider baseline is complete.
-- Next stage: S013 VisPy2 semantic guide API growth.
+- M016 VisPy2 label/title/tick/grid APIs is complete.
+- Next mission: M017 VisPy2 examples and guide API tests.
 - Parallel planning priority: Datoviz v0.4 Python binding evidence and handoff.
 
 Notes:
@@ -39,3 +40,4 @@ Notes:
 - M013 added Matplotlib native rendering for semantic `AxisGuide` ticks/labels/grid and `PanelTextGuide` titles.
 - M014 added bounded reference guide query support with `GuideQueryPayload`, without hardening the broader query-scope model.
 - M015 added guide/tick/title conformance fixtures and semantic Matplotlib/guide-query conformance checks.
+- M016 added public VisPy2 guide APIs that emit semantic `AxisGuide`, `TickSpec`, and `PanelTextGuide` intent.

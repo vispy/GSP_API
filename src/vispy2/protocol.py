@@ -6,7 +6,7 @@ objects. Rendering is delegated to the Matplotlib reference protocol backend.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from itertools import count
 from pathlib import Path
 from typing import Any
@@ -24,7 +24,10 @@ from gsp.protocol import (
     ImageVisual,
     Panel,
     PanelTextGuide,
+    PanelTextRole,
     PointVisual,
+    TickSpec,
+    TickSpecKind,
     View2D,
     VisualAttachment,
 )
@@ -168,6 +171,73 @@ class Axes:
         """Return the semantic y range for this 2D view."""
         return self.view.y_range
 
+    def set_xlabel(self, text: str | None) -> str | None:
+        """Set the semantic x-axis label."""
+        self._set_axis_guide(AxisDimension.X, label_text=text)
+        return text
+
+    def get_xlabel(self) -> str | None:
+        """Return the semantic x-axis label."""
+        return self._axis_guide(AxisDimension.X).label_text
+
+    def set_ylabel(self, text: str | None) -> str | None:
+        """Set the semantic y-axis label."""
+        self._set_axis_guide(AxisDimension.Y, label_text=text)
+        return text
+
+    def get_ylabel(self) -> str | None:
+        """Return the semantic y-axis label."""
+        return self._axis_guide(AxisDimension.Y).label_text
+
+    def set_title(self, text: str | None) -> str | None:
+        """Set or clear the semantic panel title."""
+        self.panel_text_guides = [guide for guide in self.panel_text_guides if guide.role != PanelTextRole.TITLE]
+        if text:
+            self.panel_text_guides.append(
+                PanelTextGuide(
+                    id=f"guide:title-{self._index}",
+                    panel_id=self.panel.id,
+                    role=PanelTextRole.TITLE,
+                    text=text,
+                )
+            )
+        return text
+
+    def get_title(self) -> str | None:
+        """Return the semantic panel title, if any."""
+        for guide in self.panel_text_guides:
+            if guide.role == PanelTextRole.TITLE:
+                return guide.text
+        return None
+
+    def set_xticks(self, ticks: npt.ArrayLike, labels: tuple[str, ...] | list[str] | None = None) -> tuple[float, ...]:
+        """Set explicit semantic x-axis tick values and optional labels."""
+        values = _tick_values(ticks)
+        self._set_axis_guide(AxisDimension.X, tick_spec=_explicit_tick_spec(values, labels))
+        return values
+
+    def get_xticks(self) -> tuple[float, ...]:
+        """Return explicit semantic x-axis ticks, or an empty tuple for non-explicit ticks."""
+        spec = self._axis_guide(AxisDimension.X).tick_spec
+        return spec.explicit_values if spec.kind == TickSpecKind.EXPLICIT else ()
+
+    def set_yticks(self, ticks: npt.ArrayLike, labels: tuple[str, ...] | list[str] | None = None) -> tuple[float, ...]:
+        """Set explicit semantic y-axis tick values and optional labels."""
+        values = _tick_values(ticks)
+        self._set_axis_guide(AxisDimension.Y, tick_spec=_explicit_tick_spec(values, labels))
+        return values
+
+    def get_yticks(self) -> tuple[float, ...]:
+        """Return explicit semantic y-axis ticks, or an empty tuple for non-explicit ticks."""
+        spec = self._axis_guide(AxisDimension.Y).tick_spec
+        return spec.explicit_values if spec.kind == TickSpecKind.EXPLICIT else ()
+
+    def grid(self, visible: bool = True, *, axis: str = "both") -> None:
+        """Set semantic grid visibility for x, y, or both axis guides."""
+        dimensions = _grid_dimensions(axis)
+        for dimension in dimensions:
+            self._set_axis_guide(dimension, grid_visible=bool(visible))
+
     def scatter(
         self,
         x: npt.ArrayLike,
@@ -193,6 +263,23 @@ class Axes:
         self.visuals.append(visual)
         self.attachments.append(VisualAttachment(visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id))
         return visual
+
+    @property
+    def _index(self) -> int:
+        return int(self.panel.id.rsplit(":", maxsplit=1)[1])
+
+    def _axis_guide(self, dimension: AxisDimension) -> AxisGuide:
+        for guide in self.axis_guides:
+            if guide.dimension == dimension:
+                return guide
+        raise LookupError(f"missing {dimension.value} axis guide")
+
+    def _set_axis_guide(self, dimension: AxisDimension, **changes: Any) -> None:
+        for index, guide in enumerate(self.axis_guides):
+            if guide.dimension == dimension:
+                self.axis_guides[index] = replace(guide, **changes)
+                return
+        raise LookupError(f"missing {dimension.value} axis guide")
 
     def imshow(
         self,
@@ -295,3 +382,31 @@ def _interpolation(value: str | ImageInterpolation) -> ImageInterpolation:
     if isinstance(value, ImageInterpolation):
         return value
     return ImageInterpolation(value)
+
+
+def _tick_values(values: npt.ArrayLike) -> tuple[float, ...]:
+    array = np.asarray(values, dtype=np.float64)
+    if array.ndim != 1:
+        raise ValueError("ticks must be one-dimensional")
+    return tuple(float(value) for value in array)
+
+
+def _explicit_tick_spec(values: tuple[float, ...], labels: tuple[str, ...] | list[str] | None) -> TickSpec:
+    if not values:
+        return TickSpec(kind=TickSpecKind.NONE, target_count=None)
+    return TickSpec(
+        kind=TickSpecKind.EXPLICIT,
+        explicit_values=values,
+        explicit_labels=tuple(labels) if labels is not None else None,
+        target_count=None,
+    )
+
+
+def _grid_dimensions(axis: str) -> tuple[AxisDimension, ...]:
+    if axis == "both":
+        return (AxisDimension.X, AxisDimension.Y)
+    if axis == "x":
+        return (AxisDimension.X,)
+    if axis == "y":
+        return (AxisDimension.Y,)
+    raise ValueError("axis must be 'both', 'x', or 'y'")

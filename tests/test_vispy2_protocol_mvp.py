@@ -8,7 +8,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import vispy2 as vp
-from gsp.protocol import CoordinateSpace, ImageOrigin, ImageVisual, PointVisual, View2D
+from gsp.protocol import (
+    AxisDimension,
+    CoordinateSpace,
+    ImageOrigin,
+    ImageVisual,
+    PanelTextRole,
+    PointVisual,
+    TickSpecKind,
+    View2D,
+)
 
 
 def test_subplots_scatter_emits_point_visual():
@@ -99,3 +108,73 @@ def test_top_level_helpers_emit_protocol_visuals():
 
     assert isinstance(point, PointVisual)
     assert isinstance(image, ImageVisual)
+
+
+def test_vispy2_guide_apis_emit_semantic_protocol_guides():
+    fig, ax = vp.subplots()
+
+    ax.set_xlabel("time")
+    ax.set_ylabel("value")
+    ax.set_title("Demo")
+    ax.set_xticks([0.0, 0.5, 1.0], labels=["zero", "half", "one"])
+    ax.set_yticks([-1.0, 0.0, 1.0])
+    ax.grid(True, axis="x")
+
+    x_guide, y_guide = fig.axis_guides()
+    title = fig.panel_text_guides()[0]
+
+    assert x_guide.dimension == AxisDimension.X
+    assert x_guide.label_text == "time"
+    assert x_guide.grid_visible is True
+    assert x_guide.tick_spec.kind == TickSpecKind.EXPLICIT
+    assert x_guide.tick_spec.explicit_values == (0.0, 0.5, 1.0)
+    assert x_guide.tick_spec.explicit_labels == ("zero", "half", "one")
+    assert y_guide.dimension == AxisDimension.Y
+    assert y_guide.label_text == "value"
+    assert y_guide.grid_visible is False
+    assert y_guide.tick_spec.explicit_values == (-1.0, 0.0, 1.0)
+    assert title.role == PanelTextRole.TITLE
+    assert title.text == "Demo"
+    assert fig.visuals() == ()
+
+
+def test_vispy2_guide_api_getters_and_clear_title():
+    fig, ax = vp.subplots()
+
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_title("Temporary")
+    ax.set_title(None)
+    ax.set_xticks([])
+
+    assert ax.get_xlabel() == "x"
+    assert ax.get_ylabel() == "y"
+    assert ax.get_title() is None
+    assert ax.get_xticks() == ()
+    assert fig.panel_text_guides() == ()
+    assert fig.axis_guides()[0].tick_spec.kind == TickSpecKind.NONE
+
+
+def test_vispy2_guide_apis_render_through_matplotlib_reference():
+    fig, ax = vp.subplots()
+    ax.set_xlim(0.0, 1.0)
+    ax.set_ylim(-1.0, 1.0)
+    ax.set_xlabel("time")
+    ax.set_ylabel("value")
+    ax.set_title("Demo")
+    ax.set_xticks([0.0, 0.5, 1.0], labels=["zero", "half", "one"])
+    ax.grid(True)
+    point = ax.scatter(np.array([[0.5, 0.0]], dtype=np.float32), id="visual:points")
+
+    mpl_fig, mpl_axes = fig.render_matplotlib()
+    try:
+        assert fig.visuals() == (point,)
+        assert list(mpl_axes.get_xticks()) == [0.0, 0.5, 1.0]
+        assert [label.get_text() for label in mpl_axes.get_xticklabels()] == ["zero", "half", "one"]
+        assert mpl_axes.get_xlabel() == "time"
+        assert mpl_axes.get_ylabel() == "value"
+        assert mpl_axes.get_title() == "Demo"
+        assert any(line.get_visible() for line in mpl_axes.get_xgridlines())
+        assert any(line.get_visible() for line in mpl_axes.get_ygridlines())
+    finally:
+        plt.close(mpl_fig)

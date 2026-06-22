@@ -77,7 +77,7 @@
       "id": "S013",
       "title": "VisPy2 semantic guide API growth",
       "state": "in_progress",
-      "progress": 0
+      "progress": 50
     },
     {
       "id": "S014",
@@ -262,9 +262,9 @@
       "id": "M016",
       "title": "VisPy2 label/title/tick/grid APIs",
       "stage": "S013",
-      "state": "planned",
-      "agent": "codex-worker",
-      "progress": 0,
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
       "priority": 16
     },
     {
@@ -289,7 +289,7 @@
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Execute M016 next: VisPy2 label/title/tick/grid APIs on top of the completed S012 guide baseline.",
+    "Execute M017 next: VisPy2 examples and guide API tests for scatter/image/limits/labels/title/ticks/grid.",
     "Use ChatGPT Pro before implementing broad data/guides/all-rendered query-scope precedence beyond the bounded M014/M015 guide-query fixtures.",
     "Keep Datoviz v0.4 binding evidence work parallel and capability-gated; do not edit the external Datoviz repo."
   ]
