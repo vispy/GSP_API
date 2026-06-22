@@ -54,3 +54,11 @@ The report remains diagnostic:
 - output is stable enough for local inspection and CI logs;
 - consumers must not treat the report shape as the versioned compatibility schema;
 - array/base64 transport remains deferred.
+
+## M040 versioned fixture schema decision packet
+
+The future versioned fixture schema and array/base64 transport require architectural review before
+implementation. The decision packet is `.agent/consultations/P005-versioned-conformance-fixture-schema.md`.
+
+Dependent implementation remains blocked until the consultation response is pasted or committed.
+The current `debug-json` report remains diagnostic and non-authoritative.

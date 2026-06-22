@@ -107,7 +107,7 @@
       "id": "S018",
       "title": "Conformance fixture and replay harness",
       "state": "in_progress",
-      "progress": 65
+      "progress": 70
     },
     {
       "id": "S019",
@@ -473,6 +473,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 39
+    },
+    {
+      "id": "M040",
+      "title": "Versioned fixture schema decision packet",
+      "stage": "S018",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 40
     }
   ],
   "review_queue": [],
@@ -483,10 +492,17 @@
       "requires_human": false,
       "requires_chatgpt_pro": false,
       "state": "closed"
+    },
+    {
+      "id": "Q040-VERSIONED-FIXTURE-SCHEMA",
+      "summary": "Await ChatGPT Pro architecture decision for versioned conformance fixture schema and array/base64 transport before implementation.",
+      "requires_human": true,
+      "requires_chatgpt_pro": true,
+      "state": "open"
     }
   ],
   "recommendations": [
-    "Continue S018 with a bounded decision packet for the future versioned fixture schema and array/base64 transport, without implementing the schema yet.",
+    "This needs ChatGPT Pro consultation: paste .agent/consultations/P005-versioned-conformance-fixture-schema.md into ChatGPT Pro and commit or paste the response before implementing versioned fixture schema or array/base64 transport.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }
