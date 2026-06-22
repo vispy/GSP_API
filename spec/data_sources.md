@@ -90,3 +90,17 @@ The link is valid only when:
 
 This validation is a local static check. It must not load plugins, run manifest code, or infer remote
 data access behavior.
+
+## M034 fixture coverage
+
+The conformance fixture package includes a local tiled-source scene for S018 replay readiness. The
+fixture locks:
+
+- the built-in `gsp.tiled-image@0.1` static manifest;
+- a synthetic `TiledImageSource`;
+- a partially clipped `ViewportTileRequest`;
+- deterministic `ViewportMosaicResult` tile ordering;
+- Matplotlib reference rendering extent;
+- typed `TiledImageQueryPayload` coordinates and value.
+
+The fixture remains Python/in-process. JSON/base64 replay encoding is deferred to S018.

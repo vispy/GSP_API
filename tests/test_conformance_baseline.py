@@ -2,7 +2,7 @@
 
 import pytest
 
-from fixtures.conformance import capability_snapshot_fixture, guide_scene, point_over_image_scene
+from fixtures.conformance import capability_snapshot_fixture, guide_scene, point_over_image_scene, tiled_source_scene
 from fixtures.conformance.baseline import position_buffer_resource_fixture
 from gsp.protocol import (
     GUIDE_QUERY_PAYLOAD_KIND,
@@ -11,12 +11,17 @@ from gsp.protocol import (
     GuideQueryPayload,
     QueryResult,
     QueryStatus,
+    TILED_IMAGE_EXTENSION_CAPABILITY,
+    TILED_IMAGE_QUERY_PAYLOAD_KIND,
+    TileIndex,
+    TiledImageQueryPayload,
     VisualFamily,
 )
 from gsp_matplotlib.guide_query import query_axis_guides, unsupported_guide_query_result
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.protocol_query import query_visuals
 from gsp_matplotlib.protocol_renderer import render_image_visual, render_point_visual
+from gsp_matplotlib.tiled_image import query_tiled_image_source, render_tiled_image_source
 
 
 def test_conformance_capability_snapshot_locks_v01_surface():
@@ -152,6 +157,64 @@ def test_conformance_guide_query_miss_and_unsupported_statuses():
     assert unsupported.status == QueryStatus.UNSUPPORTED
     assert not unsupported.hit
     assert "does not support guide queries" in unsupported.diagnostic
+
+
+def test_conformance_tiled_source_fixture_locks_manifest_and_mosaic():
+    """The tiled-source fixture is static, local, and deterministic."""
+    scene = tiled_source_scene()
+
+    scene.source.validate_manifest_link(scene.manifest)
+    mosaic = scene.provider.get_viewport_mosaic(scene.mosaic_request)
+
+    assert scene.manifest.capability == TILED_IMAGE_EXTENSION_CAPABILITY
+    assert scene.source.id == "source:tiled-fixture"
+    assert scene.source.locality.value == "synthetic"
+    assert scene.source.credential_policy.value == "none"
+    assert scene.mosaic_request.source_rect == (-2, -2, 4, 4)
+    assert mosaic.source_rect == (0, 0, 2, 2)
+    assert mosaic.data.shape == (2, 2, 4)
+    assert mosaic.tile_indices == (TileIndex(level=0, x=0, y=0),)
+
+
+def test_conformance_tiled_source_matplotlib_render_and_query():
+    """Matplotlib reference tiled-source behavior is fixture-backed for S018 replay."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    scene = tiled_source_scene()
+    fig, ax = plt.subplots()
+    try:
+        artist = render_tiled_image_source(
+            ax,
+            scene.source,
+            scene.provider,
+            source_rect=scene.mosaic_request.source_rect,
+            extent=scene.extent,
+            visual_id=scene.visual_id,
+        )
+        result = query_tiled_image_source(
+            scene.query,
+            scene.source,
+            scene.provider,
+            source_rect=scene.mosaic_request.source_rect,
+            extent=scene.extent,
+            visual_id=scene.visual_id,
+        )
+
+        assert artist.get_gid() == scene.visual_id
+        assert tuple(artist.get_extent()) == (0.0, 1.0, -1.0, 0.0)
+        assert result.status == QueryStatus.HIT
+        assert result.visual_id == scene.visual_id
+        assert result.extension_payload_kind == TILED_IMAGE_QUERY_PAYLOAD_KIND
+        assert isinstance(result.extension_payload, TiledImageQueryPayload)
+        assert result.extension_payload.source_id == scene.source.id
+        assert result.extension_payload.source_x == 0
+        assert result.extension_payload.source_y == 0
+        assert result.extension_payload.value == (0, 0, 0, 255)
+    finally:
+        plt.close(fig)
 
 
 def test_query_result_status_invariants_are_locked():

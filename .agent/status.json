@@ -101,7 +101,7 @@
       "id": "S017",
       "title": "Extension and virtual data-source hardening",
       "state": "in_progress",
-      "progress": 40
+      "progress": 60
     },
     {
       "id": "S018",
@@ -419,6 +419,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 33
+    },
+    {
+      "id": "M034",
+      "title": "Tiled-source conformance fixture coverage",
+      "stage": "S017",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 34
     }
   ],
   "review_queue": [],
@@ -432,7 +441,7 @@
     }
   ],
   "recommendations": [
-    "Continue S017 with deterministic tiled-source fixture coverage for S018 replay readiness.",
+    "Continue S017 with a final extension/data-source hardening review, then open S018 conformance replay harness planning.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

@@ -12,6 +12,7 @@ from gsp.protocol import (
     AxisSide,
     BufferResource,
     CapabilitySnapshot,
+    FakeTiledImageProvider,
     GuideQueryPolicy,
     ImageOrigin,
     ImageVisual,
@@ -22,9 +23,13 @@ from gsp.protocol import (
     ResourceUsage,
     TickSpec,
     TickSpecKind,
+    TiledImageSource,
+    ViewportTileRequest,
     TransportKind,
     View2D,
+    tiled_image_extension_manifest,
 )
+from gsp.protocol.extensions import ExtensionManifest
 from gsp_matplotlib.guide_query import QueryGuideEntry
 from gsp_matplotlib.protocol_query import QueryVisualEntry
 
@@ -50,6 +55,19 @@ class GuideConformanceScene:
     tick_query: QueryRequest
     miss_query: QueryRequest
     guide_entries: tuple[QueryGuideEntry, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class TiledSourceConformanceScene:
+    """Local tiled-source conformance fixture with deterministic edge clipping."""
+
+    manifest: ExtensionManifest
+    source: TiledImageSource
+    provider: FakeTiledImageProvider
+    mosaic_request: ViewportTileRequest
+    query: QueryRequest
+    extent: tuple[float, float, float, float]
+    visual_id: str
 
 
 def point_visual_fixture() -> PointVisual:
@@ -145,6 +163,34 @@ def guide_scene() -> GuideConformanceScene:
             coordinate=(0.25, 0.25),
         ),
         guide_entries=(QueryGuideEntry(x_axis, z_order=1), QueryGuideEntry(y_axis, z_order=0)),
+    )
+
+
+def tiled_image_source_fixture() -> TiledImageSource:
+    """Return the canonical local tiled-image source fixture."""
+    return TiledImageSource(
+        id="source:tiled-fixture",
+        shape=(8, 8, 4),
+        tile_shape=(4, 4),
+        levels=1,
+        level_downsample=(1,),
+        extent=(-1.0, 1.0, -1.0, 1.0),
+    )
+
+
+def tiled_source_scene() -> TiledSourceConformanceScene:
+    """Return a tiled-source scene covering clipped viewport materialization and query."""
+    source = tiled_image_source_fixture()
+    manifest = tiled_image_extension_manifest()
+    source.validate_manifest_link(manifest)
+    return TiledSourceConformanceScene(
+        manifest=manifest,
+        source=source,
+        provider=FakeTiledImageProvider(source),
+        mosaic_request=ViewportTileRequest(source_id=source.id, level=0, source_rect=(-2, -2, 4, 4)),
+        query=QueryRequest(id="query:tiled-fixture", panel_id="panel:main", coordinate=(0.25, -0.25)),
+        extent=(-1.0, 1.0, -1.0, 1.0),
+        visual_id="visual:tiled-fixture",
     )
 
 
