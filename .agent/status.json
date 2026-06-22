@@ -89,7 +89,7 @@
       "id": "S015",
       "title": "Unified query scopes and capability semantics",
       "state": "in_progress",
-      "progress": 40
+      "progress": 60
     },
     {
       "id": "S016",
@@ -302,13 +302,22 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 20
+    },
+    {
+      "id": "M021",
+      "title": "Query planner and axis-provider composition",
+      "stage": "S015",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 21
     }
   ],
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Execute M021 next: query planner and axis-provider composition for data/guides/all-rendered support.",
-    "Keep Matplotlib scoped query routing and Datoviz query parity as follow-up missions after planner composition lands.",
+    "Execute M022 next: Matplotlib scoped query routing for data/guides/all-rendered.",
+    "Keep Datoviz query parity as a follow-up after Matplotlib reference scoped query behavior lands.",
     "Before Datoviz query/capability parity implementation, activate a v0.4-dev Python facade/raw binding; the current GSP environment imports Datoviz 0.3.5."
   ]
 }

@@ -12,6 +12,8 @@ from gsp.protocol import (
     InitializeResult,
     InProcessTransport,
     ProtocolCommand,
+    AxisProviderCapability,
+    QueryPlanningContext,
     QueryHitPolicy,
     QueryOrderingGuarantee,
     QueryPayload,
@@ -24,6 +26,7 @@ from gsp.protocol import (
     TransportKind,
     new_id,
     validate_id,
+    query_scope_for_axis_requirement,
 )
 
 
@@ -199,6 +202,134 @@ def test_all_rendered_query_capability_requires_global_ordering():
 
     assert rejected.outcome == AdaptationOutcome.REJECT
     assert "global render-order" in rejected.diagnostic
+
+
+def test_axis_query_scope_requirement_maps_to_query_scope():
+    assert query_scope_for_axis_requirement("none") is None
+    assert query_scope_for_axis_requirement("data_only") == QueryScope.DATA
+    assert query_scope_for_axis_requirement("guides") == QueryScope.GUIDES
+    assert query_scope_for_axis_requirement("all_rendered") == QueryScope.ALL_RENDERED
+
+
+def test_query_planning_allows_data_scope_with_non_queryable_guides():
+    caps = CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        query_capabilities=(QueryScopeCapability(scope=QueryScope.DATA),),
+    )
+    provider = AxisProviderCapability(
+        provider_id="datoviz.v04.panel_axis.wip",
+        backend_id="datoviz",
+        provider_status="adapted",
+        supports_guide_query=False,
+    )
+
+    decision = caps.adapt_query_request_for_scene(
+        QueryRequest(id="query:data", panel_id="panel:main", coordinate=(0.0, 0.0)),
+        QueryPlanningContext(selected_axis_provider=provider, guides_visible=True),
+    )
+
+    assert decision.outcome == AdaptationOutcome.ACCEPT
+
+
+def test_query_planning_rejects_guides_scope_with_non_queryable_axis_provider():
+    caps = CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        query_capabilities=(QueryScopeCapability(scope=QueryScope.GUIDES),),
+    )
+    provider = AxisProviderCapability(
+        provider_id="datoviz.v04.panel_axis.wip",
+        backend_id="datoviz",
+        provider_status="adapted",
+        supports_guide_query=False,
+    )
+
+    decision = caps.adapt_query_request_for_scene(
+        QueryRequest(id="query:guides", panel_id="panel:main", coordinate=(0.0, 0.0), scope=QueryScope.GUIDES),
+        QueryPlanningContext(selected_axis_provider=provider, guides_visible=True),
+    )
+
+    assert decision.outcome == AdaptationOutcome.REJECT
+    assert "guide query support" in decision.diagnostic
+    assert "datoviz.v04.panel_axis.wip" in decision.diagnostic
+
+
+def test_query_planning_rejects_all_rendered_when_visible_guides_are_not_queryable():
+    caps = CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        query_capabilities=(
+            QueryScopeCapability(
+                scope=QueryScope.ALL_RENDERED,
+                ordering=QueryOrderingGuarantee.GLOBAL_RENDER_ORDER,
+            ),
+        ),
+    )
+    provider = AxisProviderCapability(
+        provider_id="datoviz.v04.panel_axis.wip",
+        backend_id="datoviz",
+        provider_status="adapted",
+        supports_guide_query=False,
+    )
+
+    decision = caps.adapt_query_request_for_scene(
+        QueryRequest(id="query:all-rendered", panel_id="panel:main", coordinate=(0.0, 0.0), scope=QueryScope.ALL_RENDERED),
+        QueryPlanningContext(selected_axis_provider=provider, guides_visible=True),
+    )
+
+    assert decision.outcome == AdaptationOutcome.REJECT
+    assert "guide query support" in decision.diagnostic
+
+
+def test_query_planning_accepts_guides_scope_with_queryable_axis_provider():
+    caps = CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        query_capabilities=(QueryScopeCapability(scope=QueryScope.GUIDES),),
+    )
+    provider = AxisProviderCapability(
+        provider_id="matplotlib.native.axes.v0",
+        backend_id="matplotlib",
+        provider_status="strict",
+        supports_guide_query=True,
+        supports_text_query=True,
+    )
+
+    decision = caps.adapt_query_request_for_scene(
+        QueryRequest(id="query:guides", panel_id="panel:main", coordinate=(0.0, 0.0), scope=QueryScope.GUIDES),
+        QueryPlanningContext(selected_axis_provider=provider, guides_visible=True, text_query_required=True),
+    )
+
+    assert decision.outcome == AdaptationOutcome.ACCEPT
+
+
+def test_query_planning_rejects_text_query_when_axis_provider_lacks_text_query():
+    caps = CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        query_capabilities=(QueryScopeCapability(scope=QueryScope.GUIDES),),
+    )
+    provider = AxisProviderCapability(
+        provider_id="matplotlib.native.axes.v0",
+        backend_id="matplotlib",
+        provider_status="strict",
+        supports_guide_query=True,
+        supports_text_query=False,
+    )
+
+    decision = caps.adapt_query_request_for_scene(
+        QueryRequest(id="query:guides", panel_id="panel:main", coordinate=(0.0, 0.0), scope=QueryScope.GUIDES),
+        QueryPlanningContext(selected_axis_provider=provider, text_query_required=True),
+    )
+
+    assert decision.outcome == AdaptationOutcome.REJECT
+    assert "text query support" in decision.diagnostic
 
 
 def test_buffer_resource_can_hold_memoryview_without_serialization():

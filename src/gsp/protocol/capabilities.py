@@ -227,6 +227,28 @@ class AxisProviderRequest:
     query_scope_requirement: AxisQueryScopeRequirement = "none"
 
 
+@dataclass(frozen=True, slots=True)
+class QueryPlanningContext:
+    """Scene/provider context needed to validate a query request."""
+
+    selected_axis_provider: "AxisProviderCapability | None" = None
+    guides_visible: bool = False
+    text_query_required: bool = False
+
+
+def query_scope_for_axis_requirement(requirement: AxisQueryScopeRequirement) -> QueryScope | None:
+    """Map axis-provider query requirements to the unified query scope model."""
+    if requirement == "none":
+        return None
+    if requirement == "data_only":
+        return QueryScope.DATA
+    if requirement == "guides":
+        return QueryScope.GUIDES
+    if requirement == "all_rendered":
+        return QueryScope.ALL_RENDERED
+    raise ValueError(f"unknown axis query scope requirement: {requirement!r}")
+
+
 def select_axis_provider(
     providers: tuple[AxisProviderCapability, ...],
     request: AxisProviderRequest | None = None,
@@ -353,6 +375,23 @@ class CapabilitySnapshot:
             )
         return capability.supports_request(request)
 
+    def adapt_query_request_for_scene(
+        self,
+        request: QueryRequest,
+        context: QueryPlanningContext | None = None,
+    ) -> AdaptationDecision:
+        """Return a query decision after composing scene/provider constraints."""
+        decision = self.adapt_query_request(request)
+        if decision.outcome != AdaptationOutcome.ACCEPT:
+            return decision
+
+        context = context or QueryPlanningContext()
+        if request.scope == QueryScope.GUIDES:
+            return _adapt_guide_query_provider(request, context)
+        if request.scope == QueryScope.ALL_RENDERED and context.guides_visible:
+            return _adapt_guide_query_provider(request, context)
+        return decision
+
     def adapt_extension(self, extension: str) -> AdaptationDecision:
         """Return a minimal adaptation decision for an extension capability."""
         if self.supports_extension(extension):
@@ -371,3 +410,23 @@ def _first(items: Iterable[_T]) -> _T | None:
     for item in items:
         return item
     return None
+
+
+def _adapt_guide_query_provider(request: QueryRequest, context: QueryPlanningContext) -> AdaptationDecision:
+    provider = context.selected_axis_provider
+    if provider is None:
+        return AdaptationDecision(
+            AdaptationOutcome.REJECT,
+            f"query scope {request.scope.value!r} requires a selected axis provider for guide contributions",
+        )
+    if not provider.supports_guide_query:
+        return AdaptationDecision(
+            AdaptationOutcome.REJECT,
+            f"query scope {request.scope.value!r} requires guide query support from axis provider {provider.provider_id!r}",
+        )
+    if context.text_query_required and not provider.supports_text_query:
+        return AdaptationDecision(
+            AdaptationOutcome.REJECT,
+            f"query scope {request.scope.value!r} requires text query support from axis provider {provider.provider_id!r}",
+        )
+    return AdaptationDecision(AdaptationOutcome.ACCEPT)

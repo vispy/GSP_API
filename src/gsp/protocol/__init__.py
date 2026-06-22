@@ -11,10 +11,12 @@ from .capabilities import (
     AxisProviderRequest,
     CapabilitySnapshot,
     QueryOrderingGuarantee,
+    QueryPlanningContext,
     QueryScopeCapability,
     QueryTargetCapability,
     QueryTargetKind,
     TransportKind,
+    query_scope_for_axis_requirement,
     select_axis_provider,
 )
 from .commands import CommandBatch, CommandKind, ProtocolCommand
@@ -122,6 +124,7 @@ __all__ = [
     "QueryHitPolicy",
     "QueryOrderingGuarantee",
     "QueryPayload",
+    "QueryPlanningContext",
     "QueryRequest",
     "QueryResult",
     "QueryScope",
@@ -154,6 +157,7 @@ __all__ = [
     "VisualCoordinateSpace",
     "VisualFamily",
     "new_id",
+    "query_scope_for_axis_requirement",
     "resolve_ticks",
     "select_axis_provider",
     "tiled_image_extension_manifest",

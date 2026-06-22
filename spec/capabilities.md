@@ -52,6 +52,18 @@ inferred from separate `data` and `guides` capabilities.
 Unsupported requested scope, hit policy, payload, extension payload, or ordering guarantee rejects
 planning with a diagnostic. Direct query execution must not silently return partial results.
 
+S015 planner composition note: typed query capability support is necessary but not always sufficient.
+For guide and all-rendered queries, planning must intersect the global query capability with the
+selected axis/guide provider capability:
+
+- `data` scope can remain supported even when visible guides are rendered by a non-queryable provider;
+- `guides` scope requires a selected provider with `supports_guide_query=True`;
+- `guides` scope requiring guide text/label payloads also requires `supports_text_query=True`;
+- `all-rendered` with visible guides requires global render-order support and a selected provider
+  that can query those guide contributions;
+- providers that render guides but cannot query them must reject guide/all-rendered planning with a
+  diagnostic, not silently produce misses.
+
 M011 extension/data-source note: `CapabilitySnapshot.extensions` advertises supported extension
 contracts such as `gsp.tiled-image@0.1`. Additional booleans describe whether a backend supports
 static extension manifests, virtual data sources, tiled image sources, and specific localities.
