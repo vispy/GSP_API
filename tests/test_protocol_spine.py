@@ -12,6 +12,14 @@ from gsp.protocol import (
     InitializeResult,
     InProcessTransport,
     ProtocolCommand,
+    QueryHitPolicy,
+    QueryOrderingGuarantee,
+    QueryPayload,
+    QueryRequest,
+    QueryScope,
+    QueryScopeCapability,
+    QueryTargetCapability,
+    QueryTargetKind,
     ResourceUsage,
     TransportKind,
     new_id,
@@ -71,6 +79,126 @@ def test_capability_snapshot_query_mode_adaptation_decision():
     rejected = caps.adapt_query_mode("image-texel")
     assert rejected.outcome == AdaptationOutcome.REJECT
     assert rejected.diagnostic is not None
+
+
+def test_typed_query_capability_accepts_matching_request():
+    """Typed query capabilities are the protocol-authoritative query planning surface."""
+    caps = CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        query_modes=("panel-query",),
+        query_capabilities=(
+            QueryScopeCapability(
+                scope=QueryScope.DATA,
+                hit_policies=(QueryHitPolicy.FRONTMOST, QueryHitPolicy.ALL),
+                ordering=QueryOrderingGuarantee.SCOPE_RENDER_ORDER,
+                targets=(
+                    QueryTargetCapability(
+                        target_kind=QueryTargetKind.VISUAL_FAMILY,
+                        target="point",
+                        payloads=(QueryPayload.IDENTITY, QueryPayload.COORDINATE, QueryPayload.COLOR),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    request = QueryRequest(
+        id="query:points",
+        panel_id="panel:main",
+        coordinate=(0.0, 0.0),
+        hit_policy=QueryHitPolicy.ALL,
+        requested_payload=(QueryPayload.IDENTITY, QueryPayload.COLOR),
+    )
+
+    assert caps.supports_query_scope(QueryScope.DATA)
+    assert caps.adapt_query_request(request).outcome == AdaptationOutcome.ACCEPT
+    assert caps.supports_query_mode("panel-query")
+
+
+def test_typed_query_capability_rejects_missing_scope_and_does_not_infer_all_rendered():
+    """All-rendered must be explicitly advertised, not inferred from data plus guides."""
+    caps = CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        query_capabilities=(
+            QueryScopeCapability(scope=QueryScope.DATA),
+            QueryScopeCapability(scope=QueryScope.GUIDES),
+        ),
+    )
+
+    rejected = caps.adapt_query_request(
+        QueryRequest(id="query:all-rendered", panel_id="panel:main", coordinate=(0.0, 0.0), scope=QueryScope.ALL_RENDERED)
+    )
+
+    assert rejected.outcome == AdaptationOutcome.REJECT
+    assert "all-rendered" in rejected.diagnostic
+
+
+def test_typed_query_capability_rejects_unsupported_payload_and_extension_payload():
+    """Requested payloads and extension payload kinds are required when present."""
+    caps = CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        query_capabilities=(
+            QueryScopeCapability(
+                scope=QueryScope.DATA,
+                targets=(
+                    QueryTargetCapability(
+                        target_kind=QueryTargetKind.EXTENSION_VISUAL,
+                        target="gsp.tiled-image",
+                        payloads=(QueryPayload.IDENTITY, QueryPayload.COORDINATE),
+                        extension_payload_kinds=("gsp.tiled-image@0.1",),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    value_rejected = caps.adapt_query_request(
+        QueryRequest(
+            id="query:value",
+            panel_id="panel:main",
+            coordinate=(0.0, 0.0),
+            requested_payload=(QueryPayload.IDENTITY, QueryPayload.VALUE),
+        )
+    )
+    extension_rejected = caps.adapt_query_request(
+        QueryRequest(
+            id="query:extension",
+            panel_id="panel:main",
+            coordinate=(0.0, 0.0),
+            requested_extension_payload_kinds=("other-extension@0.1",),
+        )
+    )
+
+    assert value_rejected.outcome == AdaptationOutcome.REJECT
+    assert extension_rejected.outcome == AdaptationOutcome.REJECT
+
+
+def test_all_rendered_query_capability_requires_global_ordering():
+    """All-rendered support needs the strict global ordering guarantee."""
+    caps = CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        query_capabilities=(
+            QueryScopeCapability(
+                scope=QueryScope.ALL_RENDERED,
+                ordering=QueryOrderingGuarantee.SCOPE_RENDER_ORDER,
+            ),
+        ),
+    )
+
+    rejected = caps.adapt_query_request(
+        QueryRequest(id="query:all-rendered", panel_id="panel:main", coordinate=(0.0, 0.0), scope=QueryScope.ALL_RENDERED)
+    )
+
+    assert rejected.outcome == AdaptationOutcome.REJECT
+    assert "global render-order" in rejected.diagnostic
 
 
 def test_buffer_resource_can_hold_memoryview_without_serialization():

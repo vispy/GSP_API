@@ -7,6 +7,8 @@ from enum import Enum
 from collections.abc import Iterable
 from typing import Literal, TypeVar
 
+from .query import QueryCoordinateSpace, QueryHitPolicy, QueryPayload, QueryRequest, QueryScope
+
 
 class TransportKind(str, Enum):
     """Known transport classes."""
@@ -39,6 +41,124 @@ class AdaptationDecision:
     def __post_init__(self) -> None:
         if self.outcome != AdaptationOutcome.ACCEPT and not self.diagnostic:
             raise ValueError("non-accept adaptation decisions require a diagnostic")
+
+
+class QueryOrderingGuarantee(str, Enum):
+    """Ordering guarantees for query hits within or across scopes."""
+
+    NONE = "none"
+    SCOPE_RENDER_ORDER = "scope-render-order"
+    GLOBAL_RENDER_ORDER = "global-render-order"
+
+
+class QueryTargetKind(str, Enum):
+    """Kind of target covered by one query capability entry."""
+
+    VISUAL_FAMILY = "visual-family"
+    GUIDE_ROLE = "guide-role"
+    EXTENSION_VISUAL = "extension-visual"
+
+
+@dataclass(frozen=True, slots=True)
+class QueryTargetCapability:
+    """Capability for querying one visual family, guide role, or extension target."""
+
+    target_kind: QueryTargetKind
+    target: str
+    payloads: tuple[QueryPayload, ...] = ()
+    payload_sets: tuple[tuple[QueryPayload, ...], ...] = ()
+    extension_payload_kinds: tuple[str, ...] = ()
+    supports_text_query: bool = False
+    diagnostics: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.target:
+            raise ValueError("query target must not be empty")
+        for payload_set in self.payload_sets:
+            if not payload_set:
+                raise ValueError("query payload_sets must not contain empty sets")
+        for kind in self.extension_payload_kinds:
+            if not kind:
+                raise ValueError("extension payload kinds must not be empty")
+
+    def supports_payloads(self, requested: tuple[QueryPayload, ...]) -> bool:
+        """Return whether this target supports the requested applicable payloads."""
+        if not requested:
+            return True
+        requested_set = set(requested)
+        if self.payload_sets:
+            return any(requested_set.issubset(set(payload_set)) for payload_set in self.payload_sets)
+        if self.payloads:
+            return requested_set.issubset(set(self.payloads))
+        return True
+
+    def supports_extension_payloads(self, requested: tuple[str, ...]) -> bool:
+        """Return whether this target supports all requested extension payload kinds."""
+        return set(requested).issubset(set(self.extension_payload_kinds))
+
+
+@dataclass(frozen=True, slots=True)
+class QueryScopeCapability:
+    """Capability for querying a contribution scope."""
+
+    scope: QueryScope
+    coordinate_spaces: tuple[QueryCoordinateSpace, ...] = (QueryCoordinateSpace.PANEL, QueryCoordinateSpace.DATA)
+    hit_policies: tuple[QueryHitPolicy, ...] = (QueryHitPolicy.FRONTMOST,)
+    targets: tuple[QueryTargetCapability, ...] = ()
+    ordering: QueryOrderingGuarantee = QueryOrderingGuarantee.NONE
+    definitive_miss: bool = True
+    provider_ids: tuple[str, ...] = ()
+    diagnostics: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.coordinate_spaces:
+            raise ValueError("query scope capability requires at least one coordinate space")
+        if not self.hit_policies:
+            raise ValueError("query scope capability requires at least one hit policy")
+        for provider_id in self.provider_ids:
+            if not provider_id:
+                raise ValueError("query provider ids must not be empty")
+
+    def supports_request(self, request: QueryRequest) -> AdaptationDecision:
+        """Return whether this scope capability can satisfy a query request."""
+        if request.scope != self.scope:
+            return AdaptationDecision(
+                AdaptationOutcome.REJECT,
+                f"query scope {request.scope.value!r} is not covered by {self.scope.value!r}",
+            )
+        if request.coordinate_space not in self.coordinate_spaces:
+            return AdaptationDecision(
+                AdaptationOutcome.REJECT,
+                f"query coordinate space {request.coordinate_space.value!r} is not supported for scope {self.scope.value!r}",
+            )
+        if request.hit_policy not in self.hit_policies:
+            return AdaptationDecision(
+                AdaptationOutcome.REJECT,
+                f"query hit policy {request.hit_policy.value!r} is not supported for scope {self.scope.value!r}",
+            )
+        if request.hit_policy == QueryHitPolicy.ALL and self.ordering == QueryOrderingGuarantee.NONE:
+            return AdaptationDecision(
+                AdaptationOutcome.REJECT,
+                f"query hit policy 'all' requires an ordering guarantee for scope {self.scope.value!r}",
+            )
+        if request.scope == QueryScope.ALL_RENDERED and self.ordering != QueryOrderingGuarantee.GLOBAL_RENDER_ORDER:
+            return AdaptationDecision(
+                AdaptationOutcome.REJECT,
+                "query scope 'all-rendered' requires a global render-order guarantee",
+            )
+        unsupported_targets = tuple(
+            target
+            for target in self.targets
+            if not target.supports_payloads(request.requested_payload)
+            or not target.supports_extension_payloads(request.requested_extension_payload_kinds)
+        )
+        if unsupported_targets:
+            target = unsupported_targets[0]
+            return AdaptationDecision(
+                AdaptationOutcome.REJECT,
+                f"query target {target.target!r} cannot satisfy requested payloads for scope {self.scope.value!r}",
+            )
+        return AdaptationDecision(AdaptationOutcome.ACCEPT)
 
 
 AxisProviderStatus = Literal["strict", "adapted", "experimental", "unsupported"]
@@ -140,6 +260,7 @@ class CapabilitySnapshot:
     visual_families: tuple[str, ...] = ()
     transform_placements: tuple[str, ...] = ()
     query_modes: tuple[str, ...] = ()
+    query_capabilities: tuple[QueryScopeCapability, ...] = ()
     output_formats: tuple[str, ...] = ()
     extensions: tuple[str, ...] = ()
     supports_extension_manifests: bool = False
@@ -184,6 +305,14 @@ class CapabilitySnapshot:
         """Return whether a query/readback mode is advertised."""
         return mode in self.query_modes
 
+    def query_capability(self, scope: QueryScope) -> QueryScopeCapability | None:
+        """Return an advertised typed query capability by scope."""
+        return _first(capability for capability in self.query_capabilities if capability.scope == scope)
+
+    def supports_query_scope(self, scope: QueryScope) -> bool:
+        """Return whether a typed query scope is advertised."""
+        return self.query_capability(scope) is not None
+
     def supports_extension(self, extension: str) -> bool:
         """Return whether an extension capability is advertised."""
         return extension in self.extensions
@@ -213,6 +342,16 @@ class CapabilitySnapshot:
             AdaptationOutcome.REJECT,
             f"query mode {mode!r} is not supported by {self.server_name}",
         )
+
+    def adapt_query_request(self, request: QueryRequest) -> AdaptationDecision:
+        """Return an adaptation decision for a typed query request."""
+        capability = self.query_capability(request.scope)
+        if capability is None:
+            return AdaptationDecision(
+                AdaptationOutcome.REJECT,
+                f"query scope {request.scope.value!r} is not supported by {self.server_name}",
+            )
+        return capability.supports_request(request)
 
     def adapt_extension(self, extension: str) -> AdaptationDecision:
         """Return a minimal adaptation decision for an extension capability."""
