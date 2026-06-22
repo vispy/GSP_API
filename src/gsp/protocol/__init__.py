@@ -53,7 +53,17 @@ from .guides import (
 )
 from .ids import ObjectRef, new_id, validate_id
 from .panels import AspectPolicy, Panel, View2D, VisualAttachment, VisualCoordinateSpace
-from .query import QueryCoordinateSpace, QueryHitPolicy, QueryPayload, QueryRequest, QueryResult, QueryStatus, VisualFamily
+from .query import (
+    GUIDE_QUERY_PAYLOAD_KIND,
+    GuideQueryPayload,
+    QueryCoordinateSpace,
+    QueryHitPolicy,
+    QueryPayload,
+    QueryRequest,
+    QueryResult,
+    QueryStatus,
+    VisualFamily,
+)
 from .resources import AttributeSource, BufferResource, ResourceLocality, ResourceMutability, ResourceUsage
 from .transports import CommandResult, InProcessGSPServer, InProcessTransport, InitializeResult
 from .ticks import ResolvedTicks, resolve_ticks
@@ -87,6 +97,8 @@ __all__ = [
     "ExtensionSupportLevel",
     "FakeTiledImageProvider",
     "GuideQueryPolicy",
+    "GUIDE_QUERY_PAYLOAD_KIND",
+    "GuideQueryPayload",
     "InitializeResult",
     "InProcessGSPServer",
     "InProcessTransport",

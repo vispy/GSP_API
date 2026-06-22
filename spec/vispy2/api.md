@@ -56,3 +56,9 @@ only as adapted output unless they render the GSP-resolved values and labels exa
 The Matplotlib reference path realizes semantic `AxisGuide` objects with native Matplotlib axes
 artists, but tick values and labels still come from GSP-resolved semantics. `PanelTextGuide` title
 intent is rendered as a Matplotlib title.
+
+## Guide query
+
+The reference Matplotlib path has bounded guide-query support for semantic axis tick/spine
+contributions. Guide-specific fields are carried in `GuideQueryPayload`. The broader query-scope
+model for `data`, `guides`, and `all-rendered` remains consultation-gated.

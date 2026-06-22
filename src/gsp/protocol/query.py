@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from .ids import validate_id
+from .guides import AxisDimension
 
 
 class QueryCoordinateSpace(str, Enum):
@@ -48,6 +49,25 @@ class VisualFamily(str, Enum):
 
     POINT = "point"
     IMAGE = "image"
+
+
+GUIDE_QUERY_PAYLOAD_KIND = "gsp.guide-query@0.1"
+
+
+@dataclass(frozen=True, slots=True)
+class GuideQueryPayload:
+    """Guide-specific payload for bounded reference guide queries."""
+
+    guide_id: str
+    role: str
+    axis_dimension: AxisDimension | None = None
+    tick_value: float | None = None
+    text_value: str | None = None
+
+    def __post_init__(self) -> None:
+        validate_id(self.guide_id)
+        if not self.role:
+            raise ValueError("guide query role must not be empty")
 
 
 @dataclass(frozen=True, slots=True)

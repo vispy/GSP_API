@@ -17,7 +17,8 @@ Current state:
 - Current stage: S012 Matplotlib strict guide/tick provider baseline.
 - M012 strict tick resolver and guide-provider foundation is complete.
 - M013 Matplotlib AxisGuide and PanelTextGuide rendering is complete.
-- Next mission: M014 reference guide query support.
+- M014 reference guide query support is complete.
+- Next mission: M015 guide conformance fixtures.
 - Parallel planning priority: Datoviz v0.4 Python binding evidence and handoff.
 
 Notes:
@@ -34,3 +35,4 @@ Notes:
 - ADR-0005 defines semantic axis intent with capability-resolved realization providers.
 - M012 added deterministic `auto-linear-nice-v0` tick resolution, explicit tick pass-through, and resolver tests.
 - M013 added Matplotlib native rendering for semantic `AxisGuide` ticks/labels/grid and `PanelTextGuide` titles.
+- M014 added bounded reference guide query support with `GuideQueryPayload`, without hardening the broader query-scope model.

@@ -71,7 +71,7 @@
       "id": "S012",
       "title": "Matplotlib strict guide/tick provider baseline",
       "state": "in_progress",
-      "progress": 70
+      "progress": 80
     },
     {
       "id": "S013",
@@ -244,9 +244,9 @@
       "id": "M014",
       "title": "Reference guide query support",
       "stage": "S012",
-      "state": "in_progress",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 10,
+      "progress": 100,
       "priority": 14
     },
     {
@@ -289,8 +289,8 @@
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Review M013 and execute M014 next: reference guide query support, unless query-scope semantics require the planned ChatGPT Pro consultation first.",
-    "Keep Datoviz v0.4 binding evidence work parallel and capability-gated; do not edit the external Datoviz repo.",
-    "Use ChatGPT Pro before hardening data/guides/all-rendered query scopes beyond the bounded M014 reference behavior."
+    "Execute M015 next: guide conformance fixtures for the completed tick/render/query reference slice.",
+    "Use ChatGPT Pro before implementing broad data/guides/all-rendered query-scope precedence beyond the bounded M014 guide-query helper.",
+    "Keep Datoviz v0.4 binding evidence work parallel and capability-gated; do not edit the external Datoviz repo."
   ]
 }

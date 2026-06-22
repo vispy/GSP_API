@@ -7,7 +7,7 @@ the broader query-scope consultation gate for future `data`, `guides`, and `all-
 
 ## State
 
-Planned.
+Completed.
 
 ## Required reading
 
@@ -52,8 +52,23 @@ Planned.
 - Existing visual query tests still pass.
 - Full test suite passes.
 
+## Result
+
+Completed by local-main-codex. Added `GuideQueryPayload`, `GUIDE_QUERY_PAYLOAD_KIND`,
+`src/gsp_matplotlib/guide_query.py`, and `tests/test_matplotlib_guide_query.py`.
+
+This mission intentionally did not implement the broader `data` / `guides` / `all-rendered` query
+scope model. That remains gated on the planned query-scope consultation.
+
+Verification:
+
+```bash
+PYTHONPATH=. uv run pytest
+```
+
+Result: 93 passed, 1 skipped.
+
 ## Stop conditions
 
 Stop if implementing guide query requires broad query-scope precedence/payload decisions or exact
 text/glyph hit testing. Those belong to the planned ChatGPT Pro query-scope consultation.
-
