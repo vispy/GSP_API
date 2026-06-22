@@ -14,7 +14,7 @@ This mission prepares M013 to perform actual Matplotlib guide/title/grid renderi
 
 ## State
 
-Planned.
+Completed.
 
 ## Required reading
 
@@ -73,6 +73,19 @@ Planned.
 - Matplotlib remains declared strict only for the current semantic slice.
 - Datoviz behavior remains provider-gated and skip-clean when v0.4 bindings are unavailable.
 
+## Result
+
+Completed by local-main-codex. Added `src/gsp/protocol/ticks.py`, exported `ResolvedTicks` and
+`resolve_ticks`, and added `tests/test_tick_resolver.py`.
+
+Verification:
+
+```bash
+PYTHONPATH=. uv run pytest
+```
+
+Result: 83 passed, 1 skipped.
+
 ## Tests
 
 ```bash
@@ -92,4 +105,3 @@ Stop if:
 - correct behavior would require making Matplotlib native locator output normative;
 - implementation would append generated guide/tick/title objects into `Figure.visuals()`;
 - Datoviz capability changes would require guessing behavior from unavailable Python bindings.
-

@@ -70,8 +70,8 @@
     {
       "id": "S012",
       "title": "Matplotlib strict guide/tick provider baseline",
-      "state": "planned",
-      "progress": 0
+      "state": "in_progress",
+      "progress": 25
     },
     {
       "id": "S013",
@@ -226,9 +226,9 @@
       "id": "M012",
       "title": "Strict tick resolver and guide-provider foundation",
       "stage": "S012",
-      "state": "planned",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 12
     },
     {
@@ -289,7 +289,7 @@
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Execute M012 as the immediate next mission: deterministic strict tick resolver and guide-provider foundation.",
+    "Review and execute M013 next: Matplotlib AxisGuide and PanelTextGuide rendering from semantic guide objects.",
     "Keep Datoviz v0.4 binding evidence work parallel and capability-gated; do not edit the external Datoviz repo.",
     "Use ChatGPT Pro next only for query scopes, remote data security, dynamic extension loading, Datoviz query lifecycle, nonlinear axes, text conformance policy, or broad VisPy2 API expansion."
   ]

@@ -46,3 +46,9 @@ Axes are semantic panel/view/guide intent, not ordinary user data visuals. Backe
 that intent through capability-declared axis providers, such as Matplotlib native axes or Datoviz
 v0.4-dev panel axes. Generated primitive axes are backend artifacts and must not be appended to
 `Figure.visuals()`.
+
+## Tick resolution
+
+`auto-linear-nice-v0` is resolved by GSP reference code, not by Matplotlib locators or Datoviz native
+auto ticks. Explicit tick values and labels pass through exactly. Backends may use native auto ticks
+only as adapted output unless they render the GSP-resolved values and labels exactly.

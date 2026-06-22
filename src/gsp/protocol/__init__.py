@@ -56,6 +56,7 @@ from .panels import AspectPolicy, Panel, View2D, VisualAttachment, VisualCoordin
 from .query import QueryCoordinateSpace, QueryHitPolicy, QueryPayload, QueryRequest, QueryResult, QueryStatus, VisualFamily
 from .resources import AttributeSource, BufferResource, ResourceLocality, ResourceMutability, ResourceUsage
 from .transports import CommandResult, InProcessGSPServer, InProcessTransport, InitializeResult
+from .ticks import ResolvedTicks, resolve_ticks
 from .visuals import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, PointVisual
 
 __all__ = [
@@ -105,6 +106,7 @@ __all__ = [
     "ResourceLocality",
     "ResourceMutability",
     "ResourceUsage",
+    "ResolvedTicks",
     "TILED_IMAGE_EXTENSION_CAPABILITY",
     "TILED_IMAGE_EXTENSION_ID",
     "TILED_IMAGE_EXTENSION_VERSION",
@@ -126,6 +128,7 @@ __all__ = [
     "VisualCoordinateSpace",
     "VisualFamily",
     "new_id",
+    "resolve_ticks",
     "select_axis_provider",
     "tiled_image_extension_manifest",
     "validate_id",
