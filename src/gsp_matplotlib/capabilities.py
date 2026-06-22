@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from gsp.protocol import AxisProviderCapability, CapabilitySnapshot, TransportKind
+from gsp.protocol import AxisProviderCapability, CapabilitySnapshot, TILED_IMAGE_EXTENSION_CAPABILITY, TransportKind
 
 
 MATPLOTLIB_NATIVE_AXIS_PROVIDER = "matplotlib.native.axes.v0"
@@ -38,6 +38,13 @@ def capability_snapshot() -> CapabilitySnapshot:
         visual_families=("point", "image"),
         query_modes=("panel-query", "point-item", "image-texel"),
         output_formats=("png", "svg", "pdf"),
+        extensions=(TILED_IMAGE_EXTENSION_CAPABILITY,),
+        supports_extension_manifests=True,
+        supports_virtual_data_sources=True,
+        supports_tiled_image_sources=True,
+        supports_synthetic_data_sources=True,
+        max_tiles_per_request=256,
+        max_mosaic_pixels=4096,
         deterministic=True,
         axis_providers=(matplotlib_axis_provider_capability(),),
     )

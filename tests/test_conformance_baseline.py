@@ -32,6 +32,11 @@ def test_conformance_capability_snapshot_locks_v01_surface():
     assert [transport.value for transport in caps.transports] == ["inproc"]
     assert caps.visual_families == ("point", "image")
     assert caps.query_modes == ("panel-query", "point-item", "image-texel", "guide-query")
+    assert caps.supports_extension(TILED_IMAGE_EXTENSION_CAPABILITY)
+    assert caps.supports_extension_manifests
+    assert caps.supports_virtual_data_sources
+    assert caps.supports_tiled_image_sources
+    assert caps.supports_synthetic_data_sources
     assert caps.deterministic is True
     assert caps.adapt_visual("point").outcome == AdaptationOutcome.ACCEPT
     assert caps.adapt_visual("mesh").outcome == AdaptationOutcome.REJECT

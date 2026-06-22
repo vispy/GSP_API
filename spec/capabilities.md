@@ -73,3 +73,7 @@ M033 manifest adaptation note: `CapabilitySnapshot.adapt_extension_manifest()` f
 static manifest, then requires `supports_extension_manifests=True`, then adapts the manifest's
 canonical capability string. This keeps manifest support explicit and prevents a backend from
 silently accepting unadvertised extension contracts.
+
+M035 final S017 review note: the Matplotlib reference capability surface and the v0.1 conformance
+capability fixture both advertise `gsp.tiled-image@0.1`, static manifest support, virtual
+data-source support, local tiled-image sources, synthetic locality, and bounded tile/mosaic limits.

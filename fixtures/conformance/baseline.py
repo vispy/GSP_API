@@ -196,6 +196,7 @@ def tiled_source_scene() -> TiledSourceConformanceScene:
 
 def capability_snapshot_fixture() -> CapabilitySnapshot:
     """Return the v0.1 reference capability snapshot fixture."""
+    tiled_manifest = tiled_image_extension_manifest()
     return CapabilitySnapshot(
         server_name="gsp-v0.1-reference",
         protocol_versions=("0.1",),
@@ -205,6 +206,13 @@ def capability_snapshot_fixture() -> CapabilitySnapshot:
         visual_families=("point", "image"),
         query_modes=("panel-query", "point-item", "image-texel", "guide-query"),
         output_formats=("matplotlib-artist",),
+        extensions=(tiled_manifest.capability,),
+        supports_extension_manifests=True,
+        supports_virtual_data_sources=True,
+        supports_tiled_image_sources=True,
+        supports_synthetic_data_sources=True,
+        max_tiles_per_request=256,
+        max_mosaic_pixels=4096,
         deterministic=True,
         metadata={"fixture": "v0.1-conformance"},
     )

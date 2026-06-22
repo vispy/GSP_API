@@ -1,5 +1,5 @@
 {
-  "current_stage": "S017",
+  "current_stage": "S018",
   "stages": [
     {
       "id": "S001",
@@ -100,13 +100,13 @@
     {
       "id": "S017",
       "title": "Extension and virtual data-source hardening",
-      "state": "in_progress",
-      "progress": 60
+      "state": "completed",
+      "progress": 100
     },
     {
       "id": "S018",
       "title": "Conformance fixture and replay harness",
-      "state": "planned",
+      "state": "in_progress",
       "progress": 0
     },
     {
@@ -428,6 +428,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 34
+    },
+    {
+      "id": "M035",
+      "title": "Extension data-source hardening closure",
+      "stage": "S017",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 35
     }
   ],
   "review_queue": [],
@@ -441,7 +450,7 @@
     }
   ],
   "recommendations": [
-    "Continue S017 with a final extension/data-source hardening review, then open S018 conformance replay harness planning.",
+    "Start S018 with a bounded in-process replay harness over existing conformance fixtures before adding JSON/base64 transport fixtures.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }
