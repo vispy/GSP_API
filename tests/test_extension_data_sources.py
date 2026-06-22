@@ -13,6 +13,8 @@ from gsp.protocol import (
     CapabilitySnapshot,
     CredentialPolicy,
     DataLocality,
+    ExtensionKind,
+    ExtensionManifest,
     FakeTiledImageProvider,
     QueryRequest,
     QueryResult,
@@ -25,7 +27,10 @@ from gsp.protocol import (
     TiledImageSource,
     TransportKind,
     ViewportTileRequest,
+    extension_capability,
     tiled_image_extension_manifest,
+    validate_extension_manifest,
+    validate_tiled_image_source_manifest_link,
 )
 from gsp_matplotlib.tiled_image import query_tiled_image_source, render_tiled_image_source
 
@@ -46,9 +51,29 @@ def test_tiled_image_extension_manifest_is_static_metadata():
 
     assert manifest.id == "gsp.tiled-image"
     assert manifest.version == "0.1"
+    assert manifest.capability == TILED_IMAGE_EXTENSION_CAPABILITY
+    assert extension_capability(manifest.id, manifest.version) == TILED_IMAGE_EXTENSION_CAPABILITY
     assert manifest.implementations["matplotlib"] == "reference"
     assert manifest.implementations["datoviz"] == "unsupported"
     assert manifest.fallback_policy == "reject"
+    assert validate_extension_manifest(manifest) is manifest
+
+
+def test_extension_manifest_rejects_non_static_or_misnamespaced_contracts():
+    with pytest.raises(ValueError, match="dot-separated"):
+        ExtensionManifest(id="BadExtension", version="0.1", kind=ExtensionKind.DATA_SOURCE, title="Bad")
+
+    with pytest.raises(ValueError, match="numeric"):
+        ExtensionManifest(id="gsp.bad", version="v1", kind=ExtensionKind.DATA_SOURCE, title="Bad")
+
+    with pytest.raises(ValueError, match="query payload"):
+        ExtensionManifest(
+            id="gsp.bad",
+            version="0.1",
+            kind=ExtensionKind.QUERY_PAYLOAD,
+            title="Bad",
+            query_contract={"payload": "other@0.1.query"},
+        )
 
 
 def test_tiled_image_source_rejects_executable_credentials_and_remote_fetch():
@@ -126,9 +151,53 @@ def test_capability_snapshot_advertises_tiled_image_extension_support():
 
     assert caps.supports_extension(TILED_IMAGE_EXTENSION_CAPABILITY)
     assert caps.adapt_extension(TILED_IMAGE_EXTENSION_CAPABILITY).outcome == AdaptationOutcome.ACCEPT
+    assert caps.adapt_extension_manifest(tiled_image_extension_manifest()).outcome == AdaptationOutcome.ACCEPT
     rejected = caps.adapt_extension("gsp.remote-fetch@0.1")
     assert rejected.outcome == AdaptationOutcome.REJECT
     assert rejected.diagnostic is not None
+
+
+def test_capability_snapshot_rejects_unadvertised_static_extension_manifest():
+    manifest = tiled_image_extension_manifest()
+    caps = CapabilitySnapshot(
+        server_name="minimal",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        supports_extension_manifests=True,
+    )
+
+    rejected = caps.adapt_extension_manifest(manifest)
+
+    assert rejected.outcome == AdaptationOutcome.REJECT
+    assert "gsp.tiled-image@0.1" in rejected.diagnostic
+
+
+def test_tiled_image_source_validates_static_manifest_linkage():
+    source = _source()
+    manifest = tiled_image_extension_manifest()
+
+    source.validate_manifest_link(manifest)
+    validate_tiled_image_source_manifest_link(source, manifest)
+
+    with pytest.raises(ValueError, match="extension_version"):
+        source_with_wrong_version = TiledImageSource(
+            id="source:tiles",
+            shape=(8, 8, 4),
+            tile_shape=(4, 4),
+            extension_version="0.2",
+        )
+        source_with_wrong_version.validate_manifest_link(manifest)
+
+    with pytest.raises(ValueError, match="source_kind"):
+        source.validate_manifest_link(
+            ExtensionManifest(
+                id="gsp.tiled-image",
+                version="0.1",
+                kind=ExtensionKind.DATA_SOURCE,
+                title="Broken tiled image manifest",
+                schema={"source_kind": "other", "credential_policy": "none"},
+            )
+        )
 
 
 def test_matplotlib_reference_renders_tiled_viewport_mosaic():

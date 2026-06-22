@@ -101,7 +101,7 @@
       "id": "S017",
       "title": "Extension and virtual data-source hardening",
       "state": "in_progress",
-      "progress": 20
+      "progress": 40
     },
     {
       "id": "S018",
@@ -410,6 +410,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 32
+    },
+    {
+      "id": "M033",
+      "title": "Static extension manifest validation",
+      "stage": "S017",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 33
     }
   ],
   "review_queue": [],
@@ -423,7 +432,7 @@
     }
   ],
   "recommendations": [
-    "Continue S017 with static extension manifest validation and extension-source linkage hardening.",
+    "Continue S017 with deterministic tiled-source fixture coverage for S018 replay readiness.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

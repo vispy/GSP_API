@@ -68,3 +68,8 @@ M011 extension/data-source note: `CapabilitySnapshot.extensions` advertises supp
 contracts such as `gsp.tiled-image@0.1`. Additional booleans describe whether a backend supports
 static extension manifests, virtual data sources, tiled image sources, and specific localities.
 Unsupported extension contracts must reject with diagnostics via `adapt_extension()`.
+
+M033 manifest adaptation note: `CapabilitySnapshot.adapt_extension_manifest()` first validates the
+static manifest, then requires `supports_extension_manifests=True`, then adapts the manifest's
+canonical capability string. This keeps manifest support explicit and prevents a backend from
+silently accepting unadvertised extension contracts.

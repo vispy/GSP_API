@@ -10,7 +10,7 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from .extensions import TILED_IMAGE_EXTENSION_ID, TILED_IMAGE_EXTENSION_VERSION
+from .extensions import ExtensionKind, ExtensionManifest, TILED_IMAGE_EXTENSION_ID, TILED_IMAGE_EXTENSION_VERSION
 from .ids import validate_id
 
 
@@ -188,6 +188,10 @@ class TiledImageSource:
             materialization_policy=self.materialization_policy,
             metadata={"tile_shape": self.tile_shape, "levels": self.levels},
         )
+
+    def validate_manifest_link(self, manifest: ExtensionManifest) -> None:
+        """Validate that this source is linked to a compatible static extension manifest."""
+        validate_tiled_image_source_manifest_link(self, manifest)
 
     def shape_for_level(self, level: int) -> tuple[int, int]:
         """Return level-local image height and width."""
@@ -384,3 +388,17 @@ def _clip_rect(rect: tuple[int, int, int, int], width: int, height: int) -> tupl
     x1 = min(width, x + rect_w)
     y1 = min(height, y + rect_h)
     return x0, y0, max(0, x1 - x0), max(0, y1 - y0)
+
+
+def validate_tiled_image_source_manifest_link(source: TiledImageSource, manifest: ExtensionManifest) -> None:
+    """Validate static manifest linkage for the built-in tiled-image source proof."""
+    if manifest.kind != ExtensionKind.DATA_SOURCE:
+        raise ValueError("tiled image source requires a data-source extension manifest")
+    if source.extension_id != manifest.id:
+        raise ValueError("tiled image source extension_id does not match manifest id")
+    if source.extension_version != manifest.version:
+        raise ValueError("tiled image source extension_version does not match manifest version")
+    if manifest.schema.get("source_kind") != DataSourceKind.TILED_IMAGE.value:
+        raise ValueError("tiled image manifest schema must declare source_kind='tiled-image'")
+    if manifest.schema.get("credential_policy") != CredentialPolicy.NONE.value:
+        raise ValueError("tiled image manifest schema must declare credential_policy='none'")

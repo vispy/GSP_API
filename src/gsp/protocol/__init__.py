@@ -37,6 +37,7 @@ from .data_sources import (
     TiledImageSource,
     ViewportMosaicResult,
     ViewportTileRequest,
+    validate_tiled_image_source_manifest_link,
 )
 from .extensions import (
     ExtensionKind,
@@ -46,7 +47,9 @@ from .extensions import (
     TILED_IMAGE_EXTENSION_ID,
     TILED_IMAGE_EXTENSION_VERSION,
     TILED_IMAGE_QUERY_PAYLOAD_KIND,
+    extension_capability,
     tiled_image_extension_manifest,
+    validate_extension_manifest,
 )
 from .guides import (
     AxisDimension,
@@ -158,10 +161,13 @@ __all__ = [
     "VisualAttachment",
     "VisualCoordinateSpace",
     "VisualFamily",
+    "extension_capability",
     "new_id",
     "query_scope_for_axis_requirement",
     "resolve_ticks",
     "select_axis_provider",
     "tiled_image_extension_manifest",
+    "validate_extension_manifest",
     "validate_id",
+    "validate_tiled_image_source_manifest_link",
 ]

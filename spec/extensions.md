@@ -45,3 +45,19 @@ Explicitly out of scope:
 - executable manifest hooks;
 - runtime shader or backend extension loading;
 - cloud/data credentials.
+
+## M033 static manifest validation
+
+Extension manifests are validated as static protocol metadata:
+
+- extension ids are dot-separated lowercase name segments;
+- versions are numeric dot-separated components;
+- the canonical capability string is `<extension-id>@<version>`;
+- implementation declarations must use known statuses such as `reference`, `native`, `adapted`,
+  `experimental`, or `unsupported`;
+- query payload contracts must be namespaced under the manifest capability, for example
+  `gsp.tiled-image@0.1.query`.
+
+Capability snapshots may adapt a manifest directly. A backend accepts a manifest only when it
+advertises both static manifest support and the manifest capability string. This does not discover,
+load, or execute extension code.

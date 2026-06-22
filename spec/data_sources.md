@@ -76,3 +76,17 @@ Matplotlib reference rendering and tiled-image queries must use the same clipped
 When clipping reduces the materialized source region, the rendered image extent is clipped
 proportionally, and queries outside that clipped extent miss even if they are inside the originally
 requested extent.
+
+## M033 extension-source linkage
+
+`TiledImageSource` is linked to the built-in static extension manifest by extension id and version.
+The link is valid only when:
+
+- the manifest kind is `data-source`;
+- the source `extension_id` matches the manifest id;
+- the source `extension_version` matches the manifest version;
+- the manifest schema declares `source_kind="tiled-image"`;
+- the manifest schema declares `credential_policy="none"`.
+
+This validation is a local static check. It must not load plugins, run manifest code, or infer remote
+data access behavior.

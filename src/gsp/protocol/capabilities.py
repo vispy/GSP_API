@@ -7,6 +7,7 @@ from enum import Enum
 from collections.abc import Iterable
 from typing import Literal, TypeVar
 
+from .extensions import ExtensionManifest, validate_extension_manifest
 from .query import QueryCoordinateSpace, QueryHitPolicy, QueryPayload, QueryRequest, QueryScope
 
 
@@ -400,6 +401,19 @@ class CapabilitySnapshot:
             AdaptationOutcome.REJECT,
             f"extension {extension!r} is not supported by {self.server_name}",
         )
+
+    def adapt_extension_manifest(self, manifest: ExtensionManifest) -> AdaptationDecision:
+        """Return an adaptation decision for a static extension manifest."""
+        try:
+            validate_extension_manifest(manifest)
+        except ValueError as exc:
+            return AdaptationDecision(AdaptationOutcome.REJECT, str(exc))
+        if not self.supports_extension_manifests:
+            return AdaptationDecision(
+                AdaptationOutcome.REJECT,
+                f"extension manifests are not supported by {self.server_name}",
+            )
+        return self.adapt_extension(manifest.capability)
 
 
 def _find_provider(providers: tuple[AxisProviderCapability, ...], provider_id: str) -> AxisProviderCapability | None:
