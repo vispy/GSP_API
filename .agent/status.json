@@ -106,8 +106,8 @@
     {
       "id": "S018",
       "title": "Conformance fixture and replay harness",
-      "state": "in_progress",
-      "progress": 90
+      "state": "completed",
+      "progress": 100
     },
     {
       "id": "S019",
@@ -505,9 +505,9 @@
       "id": "M043",
       "title": "Minimal JSON conformance fixture",
       "stage": "S018",
-      "state": "planned",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 43
     }
   ],
@@ -529,7 +529,7 @@
     }
   ],
   "recommendations": [
-    "Continue S018 with M043: encode the current semantic slice as a minimal gsp.conformance.fixture@0.1 JSON fixture without replacing in-process fixtures.",
+    "Start S019 with packaging/import-surface and docs examples audit now that S018 has a minimal authoritative fixture path.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

@@ -1,0 +1,372 @@
+{
+  "schema_kind": "gsp.conformance.fixture",
+  "schema_version": "0.1.0",
+  "metadata": {
+    "fixture_id": "gsp.fixtures.v0_1.point_image_guides_tiled",
+    "fixture_revision": 1,
+    "title": "Point/image/guide/tiled semantic conformance fixture",
+    "stability": "draft-conformance",
+    "deterministic": true,
+    "tags": ["v0.1", "semantic", "matplotlib-reference"]
+  },
+  "protocol": {
+    "gsp_protocol_version": "0.1",
+    "compatible_protocol_range": ">=0.1 <0.2",
+    "required_transports": ["inproc", "debug-json"],
+    "runtime_transport_required": false
+  },
+  "features_required": [
+    "fixture.base64-array@0.1",
+    "fixture.query-result@0.1",
+    "fixture.backend-expectation@0.1"
+  ],
+  "features_optional": [
+    "fixture.virtual-source@0.1"
+  ],
+  "capabilities": {
+    "snapshot_id": "gsp.capability-snapshot.v0_1.reference",
+    "visual_families": ["point", "image"],
+    "query": {
+      "coordinate_spaces": ["data"],
+      "scopes": ["data", "guides", "all-rendered"],
+      "hit_policies": ["frontmost"],
+      "payloads": ["identity", "coordinate", "color", "value"]
+    },
+    "extensions": [
+      {
+        "payload_kind": "gsp.guide-query@0.1",
+        "required": true
+      },
+      {
+        "payload_kind": "gsp.tiled-image@0.1.query",
+        "required": false
+      }
+    ]
+  },
+  "extension_manifests": [
+    {
+      "extension_id": "gsp.guides",
+      "extension_version": "0.1",
+      "payload_kinds": ["gsp.guide-query@0.1"],
+      "capability_required": "guides.query@0.1"
+    },
+    {
+      "extension_id": "gsp.tiled-image",
+      "extension_version": "0.1",
+      "payload_kinds": ["gsp.tiled-image@0.1.source", "gsp.tiled-image@0.1.query"],
+      "capability_required": "gsp.tiled-image@0.1"
+    }
+  ],
+  "resources": {
+    "arrays": [
+      {
+        "resource_id": "res.point.positions",
+        "array_id": "arr.point.positions.xy",
+        "kind": "buffer",
+        "semantic_role": "point.positions.xy",
+        "dtype": "float32",
+        "shape": [2, 2],
+        "byte_order": "little",
+        "memory_order": "C",
+        "encoding": "base64",
+        "compression": "none",
+        "byte_length": 16,
+        "checksum": {
+          "algorithm": "sha256",
+          "scope": "decoded_uncompressed_bytes",
+          "value": "59e923bd791fbfaeab6f8d7304a294d0e83b82b11c91ccc1504d51394644bda9"
+        },
+        "data_base64": "AACAPgAAgD4AAAC/AAAAvw=="
+      },
+      {
+        "resource_id": "res.point.colors",
+        "array_id": "arr.point.colors.rgba8",
+        "kind": "buffer",
+        "semantic_role": "point.colors.rgba8",
+        "dtype": "uint8",
+        "shape": [2, 4],
+        "byte_order": "not-applicable",
+        "memory_order": "C",
+        "encoding": "base64",
+        "compression": "none",
+        "byte_length": 8,
+        "checksum": {
+          "algorithm": "sha256",
+          "scope": "decoded_uncompressed_bytes",
+          "value": "e0b8f3a91e53b2aee7be9493043f0d54efa0b1d7bfa018ea8f192295a7229836"
+        },
+        "data_base64": "/wAA/wAA//8="
+      },
+      {
+        "resource_id": "res.point.sizes",
+        "array_id": "arr.point.sizes.scalar",
+        "kind": "buffer",
+        "semantic_role": "point.sizes.scalar",
+        "dtype": "float32",
+        "shape": [2],
+        "byte_order": "little",
+        "memory_order": "C",
+        "encoding": "base64",
+        "compression": "none",
+        "byte_length": 8,
+        "checksum": {
+          "algorithm": "sha256",
+          "scope": "decoded_uncompressed_bytes",
+          "value": "8562ba990a5da657fd3e6f51825d89c9ba17a831211e015cbff2528dc62db92d"
+        },
+        "data_base64": "AACAPuxRuD0="
+      },
+      {
+        "resource_id": "res.image.rgba8",
+        "array_id": "arr.image.rgba8",
+        "kind": "buffer",
+        "semantic_role": "image.rgba8",
+        "dtype": "uint8",
+        "shape": [2, 2, 4],
+        "byte_order": "not-applicable",
+        "memory_order": "C",
+        "encoding": "base64",
+        "compression": "none",
+        "byte_length": 16,
+        "checksum": {
+          "algorithm": "sha256",
+          "scope": "decoded_uncompressed_bytes",
+          "value": "a8e82e241e77a364da8b4c18a4c545bb1a1f9605242599ff6619b9f50c52c2d6"
+        },
+        "data_base64": "ChQe/ygyPP9GUFr/ZG54/w=="
+      }
+    ],
+    "virtual_sources": [
+      {
+        "source_id": "source:tiled-fixture",
+        "source_kind": "tiled-image",
+        "payload_kind": "gsp.tiled-image@0.1.source",
+        "logical": {
+          "dtype": "uint8",
+          "shape": [8, 8, 4],
+          "color_model": "rgba8",
+          "extent": [-1.0, 1.0, -1.0, 1.0],
+          "origin": "upper"
+        },
+        "tiling": {
+          "tile_shape": [4, 4],
+          "addressing": "source-pixel-rect",
+          "bounds_policy": "clip-to-source"
+        },
+        "materialization": {
+          "mode": "synthetic-local",
+          "generator_id": "gsp.fixtures.synthetic.rgba-tiled-image@0.1",
+          "parameters": {
+            "seed": 0
+          }
+        },
+        "expected_semantics": {
+          "viewport_mosaic_source_rect": [0, 0, 2, 2],
+          "viewport_mosaic_shape": [2, 2, 4]
+        }
+      }
+    ]
+  },
+  "scene": {
+    "panels": [
+      {
+        "panel_id": "panel:main"
+      },
+      {
+        "panel_id": "panel:guide-main"
+      }
+    ],
+    "views": [
+      {
+        "view_id": "view:guide-main",
+        "panel_id": "panel:guide-main",
+        "x_range": [0.0, 1.0],
+        "y_range": [-1.0, 1.0]
+      }
+    ],
+    "visuals": [
+      {
+        "visual_id": "visual:image-fixture",
+        "family": "image",
+        "panel_id": "panel:main",
+        "z_index": 0,
+        "extent": [-1.0, 1.0, -1.0, 1.0],
+        "origin": "upper",
+        "resources": {
+          "rgba": "res.image.rgba8"
+        }
+      },
+      {
+        "visual_id": "visual:point-fixture",
+        "family": "point",
+        "panel_id": "panel:main",
+        "z_index": 1,
+        "resources": {
+          "positions": "res.point.positions",
+          "colors": "res.point.colors",
+          "sizes": "res.point.sizes"
+        }
+      },
+      {
+        "visual_id": "visual:tiled-fixture",
+        "family": "image",
+        "panel_id": "panel:main",
+        "z_index": 0,
+        "source_id": "source:tiled-fixture"
+      }
+    ],
+    "guides": [
+      {
+        "guide_id": "guide:x-fixture",
+        "view_id": "view:guide-main",
+        "axis": "x",
+        "label": "time",
+        "ticks": [0.0, 0.5, 1.0],
+        "labels": ["zero", "half", "one"],
+        "grid_intent": true
+      },
+      {
+        "guide_id": "guide:y-fixture",
+        "view_id": "view:guide-main",
+        "axis": "y",
+        "label": "value",
+        "target_count": 4
+      }
+    ],
+    "title": {
+      "guide_id": "guide:title-fixture",
+      "panel_id": "panel:guide-main",
+      "text": "Guide fixture"
+    }
+  },
+  "queries": [
+    {
+      "query_id": "query:point-over-image",
+      "request": {
+        "panel_id": "panel:main",
+        "coordinate_space": "data",
+        "coordinate": [0.25, 0.25],
+        "scope": "data",
+        "hit_policy": "frontmost",
+        "payloads": ["identity", "coordinate", "color", "value"]
+      },
+      "expected_result": {
+        "request_id": "query:point-over-image",
+        "status": "hit",
+        "hit": true,
+        "panel_coordinate": [0.25, 0.25],
+        "visual_family": "point",
+        "visual_id": "visual:point-fixture",
+        "item_id": 0,
+        "displayed_rgba": [1.0, 0.0, 0.0, 1.0],
+        "extension_payloads": []
+      }
+    },
+    {
+      "query_id": "query:guide-tick",
+      "request": {
+        "panel_id": "panel:guide-main",
+        "coordinate_space": "data",
+        "coordinate": [0.5, -1.0],
+        "scope": "guides",
+        "hit_policy": "frontmost",
+        "payloads": ["identity", "coordinate", "value"]
+      },
+      "expected_result": {
+        "request_id": "query:guide-tick",
+        "status": "hit",
+        "hit": true,
+        "panel_coordinate": [0.5, -1.0],
+        "visual_id": "guide:x-fixture",
+        "item_id": 1,
+        "extension_payloads": [
+          {
+            "payload_kind": "gsp.guide-query@0.1",
+            "extension_id": "gsp.guides",
+            "payload_schema_version": "0.1",
+            "value": {
+              "guide_id": "guide:x-fixture",
+              "role": "tick",
+              "axis": "x",
+              "tick_value": 0.5,
+              "label": "half"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "query_id": "query:guide-miss",
+      "request": {
+        "panel_id": "panel:guide-main",
+        "coordinate_space": "data",
+        "coordinate": [0.25, 0.25],
+        "scope": "guides",
+        "hit_policy": "frontmost",
+        "payloads": ["identity", "coordinate", "value"]
+      },
+      "expected_result": {
+        "request_id": "query:guide-miss",
+        "status": "miss",
+        "hit": false,
+        "panel_coordinate": [0.25, 0.25]
+      }
+    },
+    {
+      "query_id": "query:tiled-fixture",
+      "request": {
+        "panel_id": "panel:main",
+        "coordinate_space": "data",
+        "coordinate": [0.25, -0.25],
+        "scope": "data",
+        "hit_policy": "frontmost",
+        "payloads": ["identity", "coordinate", "color", "value"]
+      },
+      "expected_result": {
+        "request_id": "query:tiled-fixture",
+        "status": "hit",
+        "hit": true,
+        "panel_coordinate": [0.25, -0.25],
+        "visual_id": "visual:tiled-fixture",
+        "extension_payloads": [
+          {
+            "payload_kind": "gsp.tiled-image@0.1.query",
+            "extension_id": "gsp.tiled-image",
+            "payload_schema_version": "0.1",
+            "value": {
+              "source_id": "source:tiled-fixture",
+              "level": 0,
+              "source_xy": [0, 0],
+              "value": [0, 0, 0, 255]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "backend_expectations": {
+    "matplotlib": {
+      "expectation": "pass",
+      "required": true,
+      "diagnostic_required_on_non_pass": true
+    },
+    "datoviz": {
+      "expectation": "skip",
+      "required": false,
+      "reason_code": "datoviz.runtime-query-identity-fields-unavailable",
+      "diagnostic_required": true
+    }
+  },
+  "outputs": {
+    "semantic_replay": {
+      "required": true,
+      "checks": [
+        "visual_families",
+        "extension_presence",
+        "query_results",
+        "tiled_mosaic_shape",
+        "tiled_mosaic_source_rect"
+      ]
+    }
+  }
+}

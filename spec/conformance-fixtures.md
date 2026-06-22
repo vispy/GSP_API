@@ -326,3 +326,16 @@ ADR-0007 accepts a separate authoritative `gsp.conformance.fixture` schema begin
 resource/query/backend expectation skeletons, and a non-normative pseudo-JSON example.
 
 Array transport validation, JSON fixture files, and Datoviz pass requirements remain deferred.
+
+## M043 minimal JSON conformance fixture
+
+`fixtures/conformance/minimal_v0_1.json` encodes the current point, image, guide, and tiled-source
+semantic slice as `gsp.conformance.fixture@0.1`.
+
+The fixture uses typed base64 chunks for eager point/image arrays. Guide ticks and labels remain
+semantic JSON values. The tiled source is represented as a virtual source manifest, not a full eager
+array.
+
+`fixtures.conformance.json_fixture.replay_minimal_json_fixture()` validates the fixture and replays
+it through the existing Matplotlib reference adapter. The Python/in-process fixtures remain the local
+fast path.

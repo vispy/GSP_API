@@ -27,3 +27,9 @@ desktop use, or adding VisPy2 producer API conformance.
 ## Source
 
 ChatGPT Pro response recorded in `.agent/consultations/P005-response.md`.
+
+## Result
+
+Completed. `fixtures/conformance/minimal_v0_1.json` encodes the current semantic slice and
+`fixtures.conformance.json_fixture.replay_minimal_json_fixture()` validates it through the
+Matplotlib reference replay path without replacing in-process fixtures.

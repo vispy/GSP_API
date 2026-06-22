@@ -21,6 +21,7 @@ They are Python/in-process fixtures, not JSON fixtures. This is intentional: the
 - Backend conformance matrix with Matplotlib pass and Datoviz clean-skip expectations.
 - Minimal debug-json report over semantic replay results, with array transport omitted.
 - Deterministic `tools/conformance_debug_report.py` diagnostic report output.
+- Minimal authoritative `gsp.conformance.fixture@0.1` JSON fixture for the current semantic slice.
 
 ## Reference Backend
 
@@ -32,8 +33,8 @@ Matplotlib is the reference/conformance backend for this baseline. Tests inspect
 - Datoviz conformance pass requirements.
 - VisPy2 producer API.
 - Production transport encodings.
-- JSON/base64 replay fixtures.
-- Versioned JSON schema authority.
+- Broad JSON/base64 fixture coverage beyond the minimal v0.1 semantic slice.
+- Full schema validation beyond first-slice array chunk checks.
 - General `data` / `guides` / `all-rendered` query-scope precedence.
 
 ## Diagnostic Report
