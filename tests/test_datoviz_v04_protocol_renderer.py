@@ -8,7 +8,16 @@ import numpy as np
 import pytest
 
 from gsp.protocol import ImageOrigin, ImageVisual, PointVisual
-from gsp.protocol import AxisProviderRequest, QueryStatus, View2D, VisualFamily
+from gsp.protocol import (
+    AxisProviderRequest,
+    QueryCoordinateSpace,
+    QueryHitPolicy,
+    QueryRequest,
+    QueryScope,
+    QueryStatus,
+    View2D,
+    VisualFamily,
+)
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
     DATOVIZ_V04_AXIS_PROVIDER,
@@ -246,6 +255,8 @@ class FakeDatovizV04WithCapture(FakeDatovizV04):
 
 
 class FakeDvzQueryResult:
+    _fields_ = (("request_id", object), ("status", object), ("hit", object))
+
     def __init__(self, **kwargs):
         self.request_id = 7
         self.status = DVZ_QUERY_STATUS_MISS
@@ -269,6 +280,26 @@ class FakeDvzQueryResult:
         self.label = b""
         for name, value in kwargs.items():
             setattr(self, name, value)
+
+
+class FakeDatovizV04WithRuntimeQuery(FakeDatovizV04WithQuery):
+    DvzQueryResult = FakeDvzQueryResult
+
+    def __init__(self, result=None):
+        super().__init__()
+        self.result = result
+
+    def dvz_query_request(self):
+        self.calls.append(("query_request",))
+        return type("FakeDvzQueryRequest", (), {})()
+
+    def dvz_scene_poll_query(self, scene, out_result):
+        self.calls.append(("scene_poll_query", scene, out_result))
+        if self.result is None:
+            return False
+        for name, value in vars(self.result).items():
+            setattr(out_result, name, value)
+        return True
 
 
 def _calls(fake, name):
@@ -337,9 +368,16 @@ def test_datoviz_capabilities_promote_panel_query_only_when_query_binding_is_rea
     promoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithQuery()).capabilities()
     unpromoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithCapabilities()).capabilities()
 
-    assert promoted.query_modes == ("panel-query",)
-    assert not promoted.supports_query_mode("point-item")
-    assert not promoted.supports_query_mode("image-texel")
+    assert promoted.query_modes == ("panel-query", "point-item", "image-texel")
+    assert promoted.supports_query_scope(QueryScope.DATA)
+    assert promoted.adapt_query_request(
+        QueryRequest(
+            id="query:datoviz",
+            panel_id="panel:main",
+            coordinate=(0.0, 0.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+        )
+    ).outcome.value == "accept"
     assert "datoviz_query_binding_diagnostics" not in promoted.metadata
     assert unpromoted.query_modes == ()
     assert "datoviz_query_binding_diagnostics" in unpromoted.metadata
@@ -425,6 +463,87 @@ def test_decode_datoviz_query_accepts_ctypes_array_fields():
 
     assert result.displayed_rgba == (0.25, 0.5, 0.75, 1.0)
     assert result.value == (1.0, 0.5, 0.25, 1.0)
+
+
+def test_query_panel_queues_polls_and_decodes_datoviz_result():
+    fake = FakeDatovizV04WithRuntimeQuery(
+        FakeDvzQueryResult(
+            request_id=99,
+            status=DVZ_QUERY_STATUS_HIT,
+            hit=True,
+            visual_id=123,
+            visual_family=DVZ_SCENE_VISUAL_FAMILY_POINT,
+            item_id=5,
+        )
+    )
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    request = QueryRequest(
+        id="query:runtime",
+        panel_id="panel:main",
+        coordinate=(12.0, 34.0),
+        coordinate_space=QueryCoordinateSpace.PANEL,
+    )
+
+    result = renderer.query_panel(request)
+
+    assert result.request_id == "query:runtime"
+    assert result.status == QueryStatus.HIT
+    assert result.visual_family == VisualFamily.POINT
+    assert result.item_id == 5
+    query_request = _calls(fake, "panel_query")[0][4]
+    assert query_request.request_id > 0
+    assert query_request.target == 0
+    assert query_request.hit_policy == 0
+    assert query_request.profile == 0
+    assert _calls(fake, "panel_query")[0][:4] == ("panel_query", "panel", 12.0, 34.0)
+    assert _calls(fake, "scene_poll_query")[0][1] == "scene"
+
+
+def test_query_panel_returns_dropped_when_bounded_poll_has_no_result():
+    fake = FakeDatovizV04WithRuntimeQuery()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    request = QueryRequest(
+        id="query:runtime",
+        panel_id="panel:main",
+        coordinate=(12.0, 34.0),
+        coordinate_space=QueryCoordinateSpace.PANEL,
+    )
+
+    result = renderer.query_panel(request)
+
+    assert result.status == QueryStatus.DROPPED
+    assert result.diagnostic == "Datoviz query produced no resolved result during bounded poll"
+
+
+def test_query_panel_rejects_unadvertised_scopes_and_policies():
+    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithRuntimeQuery())
+
+    guides = renderer.query_panel(
+        QueryRequest(
+            id="query:guides",
+            panel_id="panel:main",
+            coordinate=(0.0, 0.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            scope=QueryScope.GUIDES,
+        )
+    )
+    all_hits = renderer.query_panel(
+        QueryRequest(
+            id="query:all",
+            panel_id="panel:main",
+            coordinate=(0.0, 0.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            hit_policy=QueryHitPolicy.ALL,
+        )
+    )
+    data_coordinates = renderer.query_panel(QueryRequest(id="query:data", panel_id="panel:main", coordinate=(0.0, 0.0)))
+
+    assert guides.status == QueryStatus.UNSUPPORTED
+    assert "data scope only" in str(guides.diagnostic)
+    assert all_hits.status == QueryStatus.UNSUPPORTED
+    assert "frontmost" in str(all_hits.diagnostic)
+    assert data_coordinates.status == QueryStatus.UNSUPPORTED
+    assert "panel coordinates" in str(data_coordinates.diagnostic)
 
 
 def test_facade_shape_rejects_missing_v04_functions():
@@ -723,8 +842,8 @@ def test_imported_datoviz_query_capability_promotes_when_binding_is_ready():
     caps = capability_snapshot()
 
     assert caps.supports_query_mode("panel-query")
-    assert not caps.supports_query_mode("point-item")
-    assert not caps.supports_query_mode("image-texel")
+    assert caps.supports_query_mode("point-item")
+    assert caps.supports_query_mode("image-texel")
 
 
 def test_imported_datoviz_sampled_field_binding_smoke_when_available():

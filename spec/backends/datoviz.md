@@ -181,14 +181,37 @@ PNG bytes, not scientific linear readback.
 Raw RGBA capture, canvas readback, video capture, visual conformance image comparison, and
 headless GPU runtime execution remain deferred.
 
+## M029 runtime point/image query execution proof
+
+The Datoviz adapter now includes a bounded runtime query wrapper for the v0.4 queue/poll binding.
+When the active Python facade exposes the M026 query requirements, the GSP capability snapshot
+promotes:
+
+- `panel-query`;
+- `point-item`;
+- `image-texel`;
+- typed `data`-scope query capability for frontmost panel-coordinate requests.
+
+`DatovizV04ProtocolRenderer.query_panel()` accepts only `QueryScope.DATA`,
+`QueryCoordinateSpace.PANEL`, and `QueryHitPolicy.FRONTMOST` in this slice. It creates a
+`DvzQueryRequest`, assigns a stable numeric request id derived from the GSP query id, queues with
+`dvz_panel_query()`, polls once with `dvz_scene_poll_query()`, decodes the returned
+`DvzQueryResult`, and remaps the result id back to the GSP request id. A bounded poll with no
+available result returns `dropped` with a diagnostic.
+
+Guide scope, all-rendered scope, `hit_policy=all`, extension query payloads, and live GPU/headless
+execution proof remain deferred. Runtime tests skip cleanly while the installed GSP environment
+imports Datoviz 0.3.5 rather than a v0.4-dev facade.
+
 ## Post-M011 parity gap update
 
 The current GSP Datoviz adapter is still a slice, not parity:
 
 - implemented: point visual, RGBA/RGB uint8 image via texture fallback or sampled field, Datoviz
-  capability translation, query decoding and binding gate, bounded offscreen PNG capture;
-- not implemented: scalar sampled-field images, point/image runtime query execution proof,
-  scientific readback, tiled-source support.
+  capability translation, query decoding and binding gate, bounded point/image query execution
+  wrapper, bounded offscreen PNG capture;
+- not implemented: scalar sampled-field images, live GPU/headless query execution validation,
+  guide/all-rendered query scopes, scientific readback, tiled-source support.
 
 Recommended next mission: establish the Datoviz v0.4 Python facade/raw binding import path, then
 implement Datoviz query/capability parity. Scope implementation to translating

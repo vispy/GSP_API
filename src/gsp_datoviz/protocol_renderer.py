@@ -8,16 +8,30 @@ not use the older ``datoviz.App`` or ``datoviz.visuals`` wrapper APIs.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from dataclasses import replace
 from math import pi
 from pathlib import Path
 import tempfile
 from types import ModuleType
 from typing import Any, cast
+from zlib import crc32
 
 import numpy as np
 import numpy.typing as npt
 
-from gsp.protocol import CapabilitySnapshot, ImageOrigin, ImageVisual, PointVisual, View2D
+from gsp.protocol import (
+    CapabilitySnapshot,
+    ImageOrigin,
+    ImageVisual,
+    PointVisual,
+    QueryCoordinateSpace,
+    QueryHitPolicy,
+    QueryRequest,
+    QueryResult,
+    QueryScope,
+    QueryStatus,
+    View2D,
+)
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
     datoviz_v04_axis_provider_capability,
@@ -25,6 +39,7 @@ from gsp_datoviz.capabilities import (
     datoviz_v04_capture_diagnostics,
     datoviz_v04_capture_ready,
 )
+from gsp_datoviz.query import decode_dvz_query_result, datoviz_v04_query_binding_diagnostics, datoviz_v04_query_binding_ready
 
 
 _REQUIRED_DVZ_V04_FUNCTIONS = (
@@ -50,6 +65,9 @@ DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
 DVZ_FIELD_SEMANTIC_COLOR = 4
 DVZ_COLOR_ROLE_SRGB_COLOR = 1
+DVZ_SCENE_TARGET_NONE = 0
+DVZ_QUERY_HIT_FRONTMOST = 0
+DVZ_QUERY_PROFILE_UNSUPPORTED = 0
 
 
 class DatovizV04Unavailable(RuntimeError):
@@ -253,6 +271,47 @@ class DatovizV04ProtocolRenderer:
         if result not in (0, None):
             raise DatovizV04Unsupported("Datoviz offscreen frame render failed")
 
+    def query_panel(self, request: QueryRequest) -> QueryResult:
+        """Queue and poll one Datoviz panel query for data-scope panel coordinates."""
+        request_diagnostic = _datoviz_query_request_diagnostic(request)
+        if request_diagnostic is not None:
+            unsupported = _unsupported_query_result(request, request_diagnostic)
+            if unsupported is not None:
+                return unsupported
+        if not datoviz_v04_query_binding_ready(self.dvz):
+            diagnostics = ", ".join(datoviz_v04_query_binding_diagnostics(self.dvz))
+            unsupported = _unsupported_query_result(request, f"Datoviz query binding is unavailable: {diagnostics}")
+            if unsupported is not None:
+                return unsupported
+
+        dvz_request = self.dvz.dvz_query_request()
+        dvz_request.request_id = _datoviz_request_id(request.id)
+        dvz_request.target = getattr(self.dvz, "DVZ_SCENE_TARGET_NONE", DVZ_SCENE_TARGET_NONE)
+        dvz_request.hit_policy = getattr(self.dvz, "DVZ_QUERY_HIT_FRONTMOST", DVZ_QUERY_HIT_FRONTMOST)
+        dvz_request.profile = getattr(self.dvz, "DVZ_QUERY_PROFILE_UNSUPPORTED", DVZ_QUERY_PROFILE_UNSUPPORTED)
+
+        x, y = request.coordinate
+        if self.dvz.dvz_panel_query(self.panel, float(x), float(y), dvz_request) != 0:
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.FAILED,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic="Datoviz panel query enqueue failed",
+            )
+
+        raw_result = self.dvz.DvzQueryResult()
+        if not self.dvz.dvz_scene_poll_query(self.scene, raw_result):
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.DROPPED,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic="Datoviz query produced no resolved result during bounded poll",
+            )
+
+        return replace(decode_dvz_query_result(raw_result), request_id=request.id)
+
     def configure_view2d_axes(
         self,
         view: View2D,
@@ -340,6 +399,34 @@ def _set_data_view_payload(view: Any, pixels: npt.NDArray[np.uint8]) -> None:
         view.data = pixels
     except TypeError:
         view.data = pixels.ctypes.data
+
+
+def _datoviz_query_request_diagnostic(request: QueryRequest) -> str | None:
+    if request.scope != QueryScope.DATA:
+        return f"Datoviz v0.4 query slice supports data scope only, got {request.scope.value!r}"
+    if request.coordinate_space != QueryCoordinateSpace.PANEL:
+        return f"Datoviz v0.4 query slice supports panel coordinates only, got {request.coordinate_space.value!r}"
+    if request.hit_policy != QueryHitPolicy.FRONTMOST:
+        return f"Datoviz v0.4 query slice supports frontmost hit policy only, got {request.hit_policy.value!r}"
+    if request.requested_extension_payload_kinds:
+        return "Datoviz v0.4 query slice does not support extension query payloads"
+    return None
+
+
+def _unsupported_query_result(request: QueryRequest, diagnostic: str | None) -> QueryResult | None:
+    if diagnostic is None:
+        return None
+    return QueryResult(
+        request_id=request.id,
+        status=QueryStatus.UNSUPPORTED,
+        hit=False,
+        panel_coordinate=request.coordinate,
+        diagnostic=diagnostic,
+    )
+
+
+def _datoviz_request_id(request_id: str) -> int:
+    return crc32(request_id.encode("utf-8")) or 1
 
 
 def _image_positions(extent: tuple[float, float, float, float]) -> npt.NDArray[np.float32]:

@@ -5,7 +5,19 @@ from __future__ import annotations
 from types import ModuleType
 from typing import Any, cast
 
-from gsp.protocol import AxisProviderCapability, CapabilitySnapshot, TransportKind
+from gsp.protocol import (
+    AxisProviderCapability,
+    CapabilitySnapshot,
+    QueryCoordinateSpace,
+    QueryHitPolicy,
+    QueryOrderingGuarantee,
+    QueryPayload,
+    QueryScope,
+    QueryScopeCapability,
+    QueryTargetCapability,
+    QueryTargetKind,
+    TransportKind,
+)
 from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics
 
 
@@ -149,11 +161,13 @@ def gsp_capability_snapshot_from_datoviz(
         metadata["capture_support"] = "offscreen PNG screenshot/export; not scientific readback"
     query_diagnostics = datoviz_v04_query_binding_diagnostics(dvz) if dvz is not None else ("Datoviz is not importable",)
     query_modes: tuple[str, ...] = ()
+    query_capabilities: tuple[QueryScopeCapability, ...] = ()
     if query_diagnostics:
         metadata["datoviz_query_binding_diagnostics"] = query_diagnostics
     else:
-        query_modes = ("panel-query",)
-        metadata["query_support"] = "panel-query decode and queue/poll binding available; point/image modes not promoted"
+        query_modes = ("panel-query", "point-item", "image-texel")
+        query_capabilities = (_datoviz_data_query_capability(),)
+        metadata["query_support"] = "data-scope point/image query queue, poll, and decode binding available"
 
     return CapabilitySnapshot(
         server_name="datoviz-v0.4-protocol-slice",
@@ -163,11 +177,35 @@ def gsp_capability_snapshot_from_datoviz(
         texture_formats=tuple(texture_formats),
         visual_families=("point", "image"),
         query_modes=query_modes,
+        query_capabilities=query_capabilities,
         output_formats=output_formats,
         deterministic=False,
         max_buffer_bytes=_optional_nonnegative_int(raw_fields.get("max_buffer_size")),
         axis_providers=(datoviz_v04_axis_provider_capability(dvz),),
         metadata=metadata,
+    )
+
+
+def _datoviz_data_query_capability() -> QueryScopeCapability:
+    return QueryScopeCapability(
+        scope=QueryScope.DATA,
+        coordinate_spaces=(QueryCoordinateSpace.PANEL,),
+        hit_policies=(QueryHitPolicy.FRONTMOST,),
+        ordering=QueryOrderingGuarantee.NONE,
+        targets=(
+            QueryTargetCapability(
+                target_kind=QueryTargetKind.VISUAL_FAMILY,
+                target="point",
+                payloads=(QueryPayload.IDENTITY, QueryPayload.COORDINATE, QueryPayload.COLOR, QueryPayload.VALUE),
+                diagnostics=("point source-value payload may be absent if Datoviz returns no value fields",),
+            ),
+            QueryTargetCapability(
+                target_kind=QueryTargetKind.VISUAL_FAMILY,
+                target="image",
+                payloads=(QueryPayload.IDENTITY, QueryPayload.COORDINATE, QueryPayload.COLOR, QueryPayload.VALUE),
+            ),
+        ),
+        diagnostics=("Datoviz v0.4 data query supports frontmost panel-coordinate requests only in this slice",),
     )
 
 
