@@ -47,15 +47,15 @@ Completed.
 
 - A smoke command can activate the local v0.4-dev wheel-stage and import the `dvz_*` facade.
 - Smoke reports sampled-field and capture readiness.
-- Smoke reports query readiness separately and fails in strict mode when the binding is incomplete.
+- Smoke reports query readiness separately and verifies required `DvzQueryResult` fields when the binding is complete.
 - Default GSP test suite remains clean with the pinned Datoviz 0.3.5 dependency.
 
 ## Result
 
 Completed by local-main-codex. Added `tools/datoviz_v04_smoke.py`, verified v0.4-dev wheel-stage
 facade activation, fixed the sampled-field slot-name call for ctypes `c_char_p`, made the static
-capability test independent of the active Datoviz import, and recorded the remaining query binding
-gap.
+capability test independent of the active Datoviz import, and verified the updated Datoviz query
+binding after commit `8bb192c2da6df70279eedac5b2eaed9f45aab96c`.
 
 Smoke command:
 
@@ -71,7 +71,10 @@ Result:
 - sampled-field binding: ready;
 - capture binding: ready;
 - adapter point/image setup: ready;
-- query binding: blocked by `missing DvzQueryResult._fields_`.
+- query binding: ready;
+- promoted query modes: `panel-query`, `point-item`, `image-texel`;
+- required `DvzQueryResult` fields: present and assignment/readback verified;
+- bounded query wrapper: returns `dropped` when no resolved result is available during the single poll.
 
 Verification:
 
@@ -79,7 +82,7 @@ Verification:
 PYTHONPATH=. uv run pytest
 ```
 
-Result: 145 passed, 6 skipped. The v0.4 wheel-stage path test reported 32 passed, 2 skipped.
+Result: 145 passed, 6 skipped. The v0.4 wheel-stage path test reported 34 passed.
 
 ## Stop conditions
 

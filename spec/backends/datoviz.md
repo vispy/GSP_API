@@ -216,16 +216,19 @@ uv run python tools/datoviz_v04_smoke.py
 
 The smoke imports `datoviz` from the v0.4-dev wheel-stage, validates the `dvz_*` facade shape,
 constructs `DatovizV04ProtocolRenderer`, adds point and image visuals, verifies sampled-field and
-capture binding readiness, and runs the bounded query wrapper. On the current local checkout,
-sampled fields and capture are ready, while query remains correctly gated off:
+capture binding readiness, and runs the bounded query wrapper. After Datoviz commit
+`8bb192c2da6df70279eedac5b2eaed9f45aab96c`, Python query-result decoding is ready:
 
-- `query_ready=false`;
-- diagnostic: `missing DvzQueryResult._fields_`;
-- bounded query status: `unsupported`.
+- `query_ready=true`;
+- promoted query modes: `panel-query`, `point-item`, `image-texel`;
+- `DvzQueryResult._fields_` includes the required fields for status, hit identity, coordinates,
+  displayed color, scalar/vector value, and label payloads;
+- the smoke can assign and read `request_id`, `status`, `hit`, `panel_position`, `visual_id`,
+  `item_id`, `texel_id`, `display_rgba`, `scalar`, `vector`, and `label`.
 
-This means GSP can activate and exercise the local v0.4 facade for non-query adapter smoke, but it
-must not claim Python-decodable runtime query readiness until the generated Datoviz Python binding
-gives `DvzQueryResult` concrete ctypes fields.
+The bounded query wrapper still returns `dropped` in the smoke when no resolved query result is
+available during its single poll. That is now an execution/frame-production question, not a Python
+decode binding blocker.
 
 ## Post-M011 parity gap update
 
@@ -234,9 +237,8 @@ The current GSP Datoviz adapter is still a slice, not parity:
 - implemented: point visual, RGBA/RGB uint8 image via texture fallback or sampled field, Datoviz
   capability translation, query decoding and binding gate, bounded point/image query execution
   wrapper, bounded offscreen PNG capture, v0.4-dev wheel-stage smoke harness;
-- not implemented: Python-decodable `DvzQueryResult` in the active v0.4 binding, scalar sampled-field
-  images, live GPU/headless query execution validation, guide/all-rendered query scopes, scientific
-  readback, tiled-source support.
+- not implemented: scalar sampled-field images, live GPU/headless query execution validation,
+  guide/all-rendered query scopes, scientific readback, tiled-source support.
 
 Recommended next mission: establish the Datoviz v0.4 Python facade/raw binding import path, then
 implement Datoviz query/capability parity. Scope implementation to translating

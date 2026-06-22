@@ -814,7 +814,10 @@ def test_imported_datoviz_capability_snapshot_translates_when_available():
 
     assert caps.server_name == "datoviz-v0.4-protocol-slice"
     assert "datoviz_raw_capabilities" in caps.metadata
-    assert caps.query_modes == ()
+    if datoviz_v04_query_binding_ready(dvz):
+        assert caps.query_modes == ("panel-query", "point-item", "image-texel")
+    else:
+        assert caps.query_modes == ()
 
 
 def test_imported_datoviz_query_result_binding_is_decodable_when_available():

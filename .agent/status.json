@@ -398,14 +398,14 @@
   "open_questions": [
     {
       "id": "Q030-DATOVIZ-QUERY-RESULT-FIELDS",
-      "summary": "Datoviz v0.4-dev wheel-stage exposes DvzQueryResult as a ctypes.Structure without _fields_, so GSP cannot decode live query results from Python yet.",
+      "summary": "Resolved by Datoviz commit 8bb192c2da6df70279eedac5b2eaed9f45aab96c: DvzQueryResult now exposes _fields_ and GSP smoke can read required query fields.",
       "requires_human": false,
       "requires_chatgpt_pro": false,
-      "state": "open"
+      "state": "closed"
     }
   ],
   "recommendations": [
-    "Resolve or hand off the Datoviz v0.4 Python binding gap for DvzQueryResult._fields_.",
-    "Keep GSP query readiness gated until the active v0.4 binding exposes decodable DvzQueryResult fields."
+    "Execute the next Datoviz slice: produce and decode a resolved live query result after a v0.4 offscreen/frame execution path.",
+    "Keep guide/all-rendered query scopes and hit_policy=all deferred until Datoviz can prove ordering and guide-query semantics."
   ]
 }

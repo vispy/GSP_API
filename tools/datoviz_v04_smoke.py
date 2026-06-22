@@ -21,6 +21,22 @@ from gsp_datoviz.protocol_renderer import (
 from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics, datoviz_v04_query_binding_ready
 
 
+_REQUIRED_QUERY_RESULT_FIELDS = (
+    "request_id",
+    "status",
+    "hit",
+    "panel_position",
+    "visual_id",
+    "item_id",
+    "texel_id",
+    "display_rgba",
+    "value_kind",
+    "scalar",
+    "vector",
+    "label",
+)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -43,6 +59,8 @@ def main() -> int:
     report["is_v04_facade"] = is_datoviz_v04_facade(dvz)
     report["query_ready"] = datoviz_v04_query_binding_ready(dvz)
     report["query_diagnostics"] = datoviz_v04_query_binding_diagnostics(dvz)
+    report["query_result_fields"] = _query_result_fields(dvz)
+    report["query_result_field_readback"] = _query_result_field_readback(dvz)
     report["sampled_field_ready"] = datoviz_v04_sampled_field_ready(dvz)
     report["sampled_field_diagnostics"] = datoviz_v04_sampled_field_diagnostics(dvz)
     report["capture_ready"] = datoviz_v04_capture_ready(dvz)
@@ -95,6 +113,52 @@ def main() -> int:
     report["ok"] = True
     print(json.dumps(report, indent=2, sort_keys=True))
     return 0
+
+
+def _query_result_fields(dvz: Any) -> dict[str, bool]:
+    query_result_type = getattr(dvz, "DvzQueryResult", None)
+    fields = getattr(query_result_type, "_fields_", ())
+    field_names = {name for name, *_ in fields}
+    return {name: name in field_names for name in _REQUIRED_QUERY_RESULT_FIELDS}
+
+
+def _query_result_field_readback(dvz: Any) -> dict[str, Any] | None:
+    query_result_type = getattr(dvz, "DvzQueryResult", None)
+    if query_result_type is None or not hasattr(query_result_type, "_fields_"):
+        return None
+
+    result = query_result_type()
+    result.request_id = 123
+    result.status = 2
+    result.hit = False
+    result.panel_position[0] = 12.0
+    result.panel_position[1] = 34.0
+    result.visual_id = 456
+    result.item_id = 7
+    result.texel_id = 8
+    result.display_rgba[0] = 0.25
+    result.display_rgba[1] = 0.5
+    result.display_rgba[2] = 0.75
+    result.display_rgba[3] = 1.0
+    result.scalar = 3.5
+    result.vector[0] = 1.0
+    result.vector[1] = 2.0
+    result.vector[2] = 3.0
+    result.vector[3] = 4.0
+    result.label = b"query-label"
+    return {
+        "request_id": result.request_id,
+        "status": int(result.status),
+        "hit": bool(result.hit),
+        "panel_position": tuple(result.panel_position),
+        "visual_id": result.visual_id,
+        "item_id": result.item_id,
+        "texel_id": result.texel_id,
+        "display_rgba": tuple(result.display_rgba),
+        "scalar": result.scalar,
+        "vector": tuple(result.vector),
+        "label": bytes(result.label).split(b"\x00", 1)[0].decode("utf-8"),
+    }
 
 
 if __name__ == "__main__":
