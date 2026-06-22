@@ -6,6 +6,7 @@ from types import ModuleType
 from typing import Any, cast
 
 from gsp.protocol import AxisProviderCapability, CapabilitySnapshot, TransportKind
+from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics
 
 
 DATOVIZ_V04_AXIS_PROVIDER = "datoviz.v04.panel_axis.wip"
@@ -126,6 +127,13 @@ def gsp_capability_snapshot_from_datoviz(
         )
     if diagnostics:
         metadata["datoviz_capability_diagnostics"] = diagnostics
+    query_diagnostics = datoviz_v04_query_binding_diagnostics(dvz) if dvz is not None else ("Datoviz is not importable",)
+    query_modes: tuple[str, ...] = ()
+    if query_diagnostics:
+        metadata["datoviz_query_binding_diagnostics"] = query_diagnostics
+    else:
+        query_modes = ("panel-query",)
+        metadata["query_support"] = "panel-query decode and queue/poll binding available; point/image modes not promoted"
 
     return CapabilitySnapshot(
         server_name="datoviz-v0.4-protocol-slice",
@@ -134,7 +142,7 @@ def gsp_capability_snapshot_from_datoviz(
         buffer_dtypes=("float32", "uint8", "rgba8"),
         texture_formats=tuple(texture_formats),
         visual_families=("point", "image"),
-        query_modes=(),
+        query_modes=query_modes,
         output_formats=(),
         deterministic=False,
         max_buffer_bytes=_optional_nonnegative_int(raw_fields.get("max_buffer_size")),

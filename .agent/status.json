@@ -95,7 +95,7 @@
       "id": "S016",
       "title": "Datoviz capability/query parity next pack",
       "state": "in_progress",
-      "progress": 40
+      "progress": 60
     },
     {
       "id": "S017",
@@ -347,12 +347,21 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 25
+    },
+    {
+      "id": "M026",
+      "title": "Datoviz v0.4 runtime query smoke and capability promotion",
+      "stage": "S016",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 26
     }
   ],
   "review_queue": [],
   "open_questions": [],
   "recommendations": [
-    "Execute M026 next: Datoviz v0.4 runtime query smoke and capability promotion.",
+    "Execute M027 next: Datoviz image sampled-field parity.",
     "Before Datoviz query/capability parity implementation, activate a v0.4-dev Python facade/raw binding; the current GSP environment imports Datoviz 0.3.5."
   ]
 }

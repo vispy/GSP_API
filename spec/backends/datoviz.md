@@ -126,6 +126,24 @@ This decoder is tested with synthetic objects and maps:
 This remains decode parity, not runtime query parity. The adapter still advertises no query modes
 until a runtime execution path and application visual-id mapping are validated.
 
+## M026 runtime query binding gate
+
+The Datoviz adapter now has a conditional query capability gate. When the active Python facade
+exposes all of the following v0.4 query-binding requirements:
+
+- `dvz_query_request`;
+- `dvz_panel_query`;
+- `dvz_scene_poll_query`;
+- `DvzQueryResult` with decodable `_fields_`;
+
+the GSP Datoviz capability snapshot advertises coarse `panel-query` support. If any requirement is
+missing, query modes remain empty and the missing binding pieces are recorded in
+`metadata["datoviz_query_binding_diagnostics"]`.
+
+Point/image-specific query modes (`point-item`, `image-texel`) are still not advertised in this
+slice. Those require a real runtime query execution proof plus stable application visual-id mapping
+and payload validation.
+
 ## Post-M011 parity gap update
 
 The current GSP Datoviz adapter is still a slice, not parity:

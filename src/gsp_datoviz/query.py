@@ -32,6 +32,12 @@ DVZ_QUERY_VALUE_VEC4 = 4
 DVZ_QUERY_VALUE_CATEGORY = 5
 DVZ_QUERY_VALUE_TEXT = 6
 
+_REQUIRED_DVZ_QUERY_FUNCTIONS = (
+    "dvz_query_request",
+    "dvz_panel_query",
+    "dvz_scene_poll_query",
+)
+
 _UNSUPPORTED_STATUSES = {
     DVZ_QUERY_STATUS_NO_CAPABLE_VISUAL,
     DVZ_QUERY_STATUS_UNSUPPORTED_TARGET,
@@ -264,3 +270,19 @@ def _status_name(status: int) -> str:
         DVZ_QUERY_STATUS_READBACK_FAILED: "readback-failed",
         DVZ_QUERY_STATUS_DECODE_FAILED: "decode-failed",
     }.get(status, f"unknown-{status}")
+
+
+def datoviz_v04_query_binding_ready(dvz: Any) -> bool:
+    """Return whether a Datoviz facade exposes the minimal decodable query binding."""
+    return not datoviz_v04_query_binding_diagnostics(dvz)
+
+
+def datoviz_v04_query_binding_diagnostics(dvz: Any) -> tuple[str, ...]:
+    """Return missing Datoviz v0.4 query binding requirements."""
+    missing = [name for name in _REQUIRED_DVZ_QUERY_FUNCTIONS if not hasattr(dvz, name)]
+    query_result_type = getattr(dvz, "DvzQueryResult", None)
+    if query_result_type is None:
+        missing.append("DvzQueryResult")
+    elif not hasattr(query_result_type, "_fields_"):
+        missing.append("DvzQueryResult._fields_")
+    return tuple(f"missing {name}" for name in missing)

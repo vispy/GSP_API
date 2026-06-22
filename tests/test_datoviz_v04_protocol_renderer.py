@@ -33,6 +33,8 @@ from gsp_datoviz.query import (
     DVZ_SCENE_VISUAL_FAMILY_IMAGE,
     DVZ_SCENE_VISUAL_FAMILY_POINT,
     decode_dvz_query_result,
+    datoviz_v04_query_binding_diagnostics,
+    datoviz_v04_query_binding_ready,
 )
 
 
@@ -153,6 +155,26 @@ class FakeDatovizV04WithCapabilities(FakeDatovizV04WithAxes):
         return FakeDvzCapabilitySnapshot()
 
 
+class FakeDvzQueryResultType:
+    _fields_ = (("request_id", object), ("status", object), ("hit", object))
+
+
+class FakeDatovizV04WithQuery(FakeDatovizV04WithCapabilities):
+    DvzQueryResult = FakeDvzQueryResultType
+
+    def dvz_query_request(self):
+        self.calls.append(("query_request",))
+        return "query-request"
+
+    def dvz_panel_query(self, panel, x, y, request):
+        self.calls.append(("panel_query", panel, x, y, request))
+        return 0
+
+    def dvz_scene_poll_query(self, scene, out_result):
+        self.calls.append(("scene_poll_query", scene, out_result))
+        return False
+
+
 class FakeDvzQueryResult:
     def __init__(self, **kwargs):
         self.request_id = 7
@@ -219,6 +241,27 @@ def test_renderer_capabilities_use_runtime_datoviz_capability_snapshot_when_avai
     assert _calls(fake, "capability_snapshot") == [("capability_snapshot",)]
     assert caps.max_buffer_bytes == 512 * 1024 * 1024
     assert caps.metadata["datoviz_raw_capabilities"]["supports_readback"] is True
+
+
+def test_datoviz_query_binding_readiness_requires_queue_poll_and_decodable_result():
+    ready = FakeDatovizV04WithQuery()
+    incomplete = FakeDatovizV04WithCapabilities()
+
+    assert datoviz_v04_query_binding_ready(ready)
+    assert datoviz_v04_query_binding_diagnostics(ready) == ()
+    assert "DvzQueryResult" in " ".join(datoviz_v04_query_binding_diagnostics(incomplete))
+
+
+def test_datoviz_capabilities_promote_panel_query_only_when_query_binding_is_ready():
+    promoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithQuery()).capabilities()
+    unpromoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithCapabilities()).capabilities()
+
+    assert promoted.query_modes == ("panel-query",)
+    assert not promoted.supports_query_mode("point-item")
+    assert not promoted.supports_query_mode("image-texel")
+    assert "datoviz_query_binding_diagnostics" not in promoted.metadata
+    assert unpromoted.query_modes == ()
+    assert "datoviz_query_binding_diagnostics" in unpromoted.metadata
 
 
 def test_decode_datoviz_query_statuses_to_gsp_statuses():
@@ -510,3 +553,15 @@ def test_imported_datoviz_query_result_binding_is_decodable_when_available():
 
     assert result.request_id == "query:datoviz-1"
     assert result.status == QueryStatus.MISS
+
+
+def test_imported_datoviz_query_capability_promotes_when_binding_is_ready():
+    dvz = pytest.importorskip("datoviz")
+    if not datoviz_v04_query_binding_ready(dvz):
+        pytest.skip("installed Datoviz binding does not expose the v0.4 query binding")
+
+    caps = capability_snapshot()
+
+    assert caps.supports_query_mode("panel-query")
+    assert not caps.supports_query_mode("point-item")
+    assert not caps.supports_query_mode("image-texel")
