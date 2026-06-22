@@ -20,6 +20,7 @@ They are Python/in-process fixtures, not JSON fixtures. This is intentional: the
 - In-process replay harness that returns semantic point/image, guide, and tiled-source results.
 - Backend conformance matrix with Matplotlib pass and Datoviz clean-skip expectations.
 - Minimal debug-json report over semantic replay results, with array transport omitted.
+- Deterministic `tools/conformance_debug_report.py` diagnostic report output.
 
 ## Reference Backend
 
@@ -34,3 +35,9 @@ Matplotlib is the reference/conformance backend for this baseline. Tests inspect
 - JSON/base64 replay fixtures.
 - Versioned JSON schema authority.
 - General `data` / `guides` / `all-rendered` query-scope precedence.
+
+## Diagnostic Report
+
+`tools/conformance_debug_report.py` prints deterministic, sorted debug JSON for inspection and CI
+diagnostics. It is explicitly non-authoritative: consumers must not treat it as the versioned
+fixture schema or as an array transport contract.

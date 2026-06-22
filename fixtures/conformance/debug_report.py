@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from enum import Enum
 from typing import TypeAlias
 
@@ -23,6 +24,14 @@ def conformance_debug_report() -> dict[str, JsonValue]:
         "array_transport": "omitted",
         "backends": [_backend_report(entry) for entry in backend_conformance_matrix()],
     }
+
+
+def conformance_debug_report_json() -> str:
+    """Return deterministic debug JSON for humans and CI diagnostics.
+
+    This is intentionally not a fixture schema or compatibility contract.
+    """
+    return json.dumps(conformance_debug_report(), indent=2, sort_keys=True) + "\n"
 
 
 def _backend_report(entry: BackendConformanceExpectation) -> dict[str, JsonValue]:

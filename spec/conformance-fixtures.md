@@ -42,3 +42,15 @@ Required properties:
 - sets `schema_authority=false`.
 
 This report is not the versioned fixture schema and is not a base64 array transport.
+
+## M039 diagnostic report hardening
+
+`conformance_debug_report_json()` and `tools/conformance_debug_report.py` provide deterministic,
+sorted, newline-terminated JSON output for diagnostics.
+
+The report remains diagnostic:
+
+- `schema_authority` stays `false`;
+- output is stable enough for local inspection and CI logs;
+- consumers must not treat the report shape as the versioned compatibility schema;
+- array/base64 transport remains deferred.

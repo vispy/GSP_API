@@ -107,7 +107,7 @@
       "id": "S018",
       "title": "Conformance fixture and replay harness",
       "state": "in_progress",
-      "progress": 50
+      "progress": 65
     },
     {
       "id": "S019",
@@ -464,6 +464,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 38
+    },
+    {
+      "id": "M039",
+      "title": "Diagnostic conformance report hardening",
+      "stage": "S018",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 39
     }
   ],
   "review_queue": [],
@@ -477,7 +486,7 @@
     }
   ],
   "recommendations": [
-    "Continue S018 by deciding whether debug-json should remain diagnostic or graduate into a versioned fixture schema before adding array/base64 transport.",
+    "Continue S018 with a bounded decision packet for the future versioned fixture schema and array/base64 transport, without implementing the schema yet.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }
