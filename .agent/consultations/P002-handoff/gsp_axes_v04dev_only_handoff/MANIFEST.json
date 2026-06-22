@@ -1,0 +1,19 @@
+{
+  "package": "gsp_axes_v04dev_only_handoff",
+  "created": "2026-06-22",
+  "purpose": "Updated P002 axes architecture handoff using Datoviz v0.4-dev GitHub branch as the sole Datoviz authority.",
+  "files": [
+    "ADR-002-axis-realization-providers-v04dev.md",
+    "CODEX_AGENT_REPLY.md",
+    "CONFORMANCE_TESTS.md",
+    "DATOVIZ_V04DEV_GITHUB_FINDINGS.md",
+    "MANIFEST.json",
+    "PROVIDER_INTERFACE_SKETCH.md",
+    "README_FOR_CODEX.md",
+    "RISKS_AND_STOP_CONDITIONS.md",
+    "SOURCE_NOTES.json",
+    "TASK_PLAN.md",
+    "UPDATED_ARCHITECTURE_RECOMMENDATION.md",
+    "original_prompt/P002_prompt.md"
+  ]
+}

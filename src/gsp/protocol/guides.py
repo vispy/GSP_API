@@ -1,0 +1,105 @@
+"""Semantic guide protocol models for axes and panel text."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import Enum
+
+from .ids import validate_id
+
+
+class AxisDimension(str, Enum):
+    """Supported 2D axis dimensions."""
+
+    X = "x"
+    Y = "y"
+
+
+class AxisSide(str, Enum):
+    """Supported 2D axis sides for the first guide slice."""
+
+    BOTTOM = "bottom"
+    LEFT = "left"
+
+
+class TickSpecKind(str, Enum):
+    """Tick authority for an axis guide."""
+
+    NONE = "none"
+    EXPLICIT = "explicit"
+    AUTO_LINEAR_NICE_V0 = "auto-linear-nice-v0"
+    BACKEND_ADAPTED = "backend-adapted"
+
+
+class GuideQueryPolicy(str, Enum):
+    """Whether guide contributions participate in guide-scoped queries."""
+
+    NON_QUERYABLE = "non-queryable"
+    QUERYABLE = "queryable"
+
+
+class PanelTextRole(str, Enum):
+    """Panel-level text guide roles."""
+
+    TITLE = "title"
+    SUBTITLE = "subtitle"
+
+
+@dataclass(frozen=True, slots=True)
+class TickSpec:
+    """Semantic tick specification for an axis guide."""
+
+    kind: TickSpecKind = TickSpecKind.AUTO_LINEAR_NICE_V0
+    explicit_values: tuple[float, ...] = ()
+    explicit_labels: tuple[str, ...] | None = None
+    target_count: int | None = 7
+
+    def __post_init__(self) -> None:
+        if self.kind == TickSpecKind.EXPLICIT:
+            if not self.explicit_values:
+                raise ValueError("explicit TickSpec requires explicit_values")
+            if self.explicit_labels is not None and len(self.explicit_labels) != len(self.explicit_values):
+                raise ValueError("explicit tick labels must match explicit tick values")
+        if self.target_count is not None and self.target_count <= 0:
+            raise ValueError("target_count must be positive")
+
+
+@dataclass(frozen=True, slots=True)
+class AxisGuide:
+    """Semantic axis guide intent attached to a View2D."""
+
+    id: str
+    view_id: str
+    dimension: AxisDimension
+    side: AxisSide
+    visible: bool = True
+    label_text: str | None = None
+    spine_visible: bool = True
+    grid_visible: bool = False
+    tick_spec: TickSpec = field(default_factory=TickSpec)
+    query_policy: GuideQueryPolicy = GuideQueryPolicy.NON_QUERYABLE
+
+    def __post_init__(self) -> None:
+        validate_id(self.id)
+        validate_id(self.view_id)
+        if self.dimension == AxisDimension.X and self.side != AxisSide.BOTTOM:
+            raise ValueError("the first axis guide slice supports x guides on the bottom side only")
+        if self.dimension == AxisDimension.Y and self.side != AxisSide.LEFT:
+            raise ValueError("the first axis guide slice supports y guides on the left side only")
+
+
+@dataclass(frozen=True, slots=True)
+class PanelTextGuide:
+    """Semantic panel-level text guide such as a title."""
+
+    id: str
+    panel_id: str
+    role: PanelTextRole
+    text: str
+    query_policy: GuideQueryPolicy = GuideQueryPolicy.NON_QUERYABLE
+
+    def __post_init__(self) -> None:
+        validate_id(self.id)
+        validate_id(self.panel_id)
+        if not self.text:
+            raise ValueError("panel text guide text must not be empty")

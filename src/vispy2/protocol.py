@@ -14,7 +14,7 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from gsp.protocol import ImageInterpolation, ImageOrigin, ImageVisual, PointVisual
+from gsp.protocol import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, Panel, PointVisual, View2D, VisualAttachment
 from gsp_matplotlib.protocol_renderer import render_image_visual, render_point_visual
 
 
@@ -26,6 +26,7 @@ class Figure:
     """Container for the minimal VisPy2 protocol scene."""
 
     axes: list["Axes"] = field(default_factory=list)
+    id: str = "figure:main"
 
     def add_axes(self) -> "Axes":
         """Add one protocol-producing axes to the figure."""
@@ -36,6 +37,18 @@ class Figure:
     def visuals(self) -> tuple[PointVisual | ImageVisual, ...]:
         """Return protocol visuals in creation order."""
         return tuple(visual for axes in self.axes for visual in axes.visuals)
+
+    def panels(self) -> tuple[Panel, ...]:
+        """Return semantic panels without expanding guide visuals."""
+        return tuple(axes.panel for axes in self.axes)
+
+    def views(self) -> tuple[View2D, ...]:
+        """Return semantic 2D views without expanding guide visuals."""
+        return tuple(axes.view for axes in self.axes)
+
+    def attachments(self) -> tuple[VisualAttachment, ...]:
+        """Return data visual attachments to panels/views."""
+        return tuple(attachment for axes in self.axes for attachment in axes.attachments)
 
     def render_matplotlib(self) -> tuple[Any, Any]:
         """Render the protocol scene through the Matplotlib reference backend."""
@@ -49,7 +62,11 @@ class Figure:
                 render_point_visual(mpl_axes, visual)
             else:
                 raise TypeError(f"unsupported protocol visual: {type(visual)!r}")
-        mpl_axes.set_aspect("auto")
+        if self.axes:
+            view = self.axes[0].view
+            mpl_axes.set_xlim(view.x_range)
+            mpl_axes.set_ylim(view.y_range)
+            mpl_axes.set_aspect("equal" if view.aspect_policy.value == "equal" else "auto")
         return fig, mpl_axes
 
     def savefig(self, path: str | Path, **kwargs: Any) -> None:
@@ -77,6 +94,46 @@ class Axes:
 
     figure: Figure
     visuals: list[PointVisual | ImageVisual] = field(default_factory=list)
+    panel: Panel = field(init=False)
+    view: View2D = field(init=False)
+    attachments: list[VisualAttachment] = field(default_factory=list)
+
+    def __post_init__(self) -> None:
+        index = len(self.figure.axes) + 1
+        panel_id = f"panel:{index}"
+        view_id = f"view:{index}"
+        self.panel = Panel(id=panel_id, figure_id=self.figure.id)
+        self.view = View2D(id=view_id, panel_id=panel_id)
+
+    def set_xlim(self, left: float, right: float) -> tuple[float, float]:
+        """Set the semantic x range for this 2D view."""
+        self.view = View2D(
+            id=self.view.id,
+            panel_id=self.view.panel_id,
+            x_range=(float(left), float(right)),
+            y_range=self.view.y_range,
+            aspect_policy=self.view.aspect_policy,
+        )
+        return self.view.x_range
+
+    def set_ylim(self, bottom: float, top: float) -> tuple[float, float]:
+        """Set the semantic y range for this 2D view."""
+        self.view = View2D(
+            id=self.view.id,
+            panel_id=self.view.panel_id,
+            x_range=self.view.x_range,
+            y_range=(float(bottom), float(top)),
+            aspect_policy=self.view.aspect_policy,
+        )
+        return self.view.y_range
+
+    def get_xlim(self) -> tuple[float, float]:
+        """Return the semantic x range for this 2D view."""
+        return self.view.x_range
+
+    def get_ylim(self) -> tuple[float, float]:
+        """Return the semantic y range for this 2D view."""
+        return self.view.y_range
 
     def scatter(
         self,
@@ -98,8 +155,10 @@ class Axes:
             positions=positions,
             colors=colors,
             sizes=sizes,
+            coordinate_space=CoordinateSpace.DATA,
         )
         self.visuals.append(visual)
+        self.attachments.append(VisualAttachment(visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id))
         return visual
 
     def imshow(
@@ -125,10 +184,12 @@ class Axes:
             id=id or _visual_id("image"),
             image=image_array,
             extent=extent,
+            coordinate_space=CoordinateSpace.DATA,
             origin=_origin(origin),
             interpolation=_interpolation(interpolation),
         )
         self.visuals.append(visual)
+        self.attachments.append(VisualAttachment(visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id))
         return visual
 
 

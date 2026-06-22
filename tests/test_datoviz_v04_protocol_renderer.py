@@ -6,7 +6,9 @@ import numpy as np
 import pytest
 
 from gsp.protocol import ImageOrigin, ImageVisual, PointVisual
+from gsp.protocol import AxisProviderRequest, View2D
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
+from gsp_datoviz.capabilities import DATOVIZ_V04_AXIS_PROVIDER, datoviz_v04_axis_provider_capability
 from gsp_datoviz.protocol_renderer import (
     DatovizV04ProtocolRenderer,
     DatovizV04Unavailable,
@@ -60,6 +62,45 @@ class FakeDatovizV04:
         self.destroyed = True
 
 
+class FakeDatovizV04WithAxes(FakeDatovizV04):
+    """Recorder exposing the verified v0.4-dev native axis symbols."""
+
+    DVZ_DIM_X = 0
+    DVZ_DIM_Y = 1
+
+    def dvz_panel_set_domain(self, panel, dim, minimum, maximum):
+        self.calls.append(("set_domain", panel, dim, minimum, maximum))
+        return 0
+
+    def dvz_panel_view2d(self):
+        self.calls.append(("view2d",))
+        return "view2d"
+
+    def dvz_panel_set_view2d(self, panel, view):
+        self.calls.append(("set_view2d", panel, view))
+        return 0
+
+    def dvz_panel_axis(self, panel, dim):
+        self.calls.append(("panel_axis", panel, dim))
+        return f"axis:{dim}"
+
+    def dvz_axis_tick_policy(self):
+        self.calls.append(("tick_policy",))
+        return "tick-policy"
+
+    def dvz_axis_set_tick_policy(self, axis, policy):
+        self.calls.append(("set_tick_policy", axis, policy))
+        return True
+
+    def dvz_axis_set_grid(self, axis, visible):
+        self.calls.append(("set_grid", axis, visible))
+        return True
+
+    def dvz_axis_set_label(self, axis, label):
+        self.calls.append(("set_label", axis, label))
+        return True
+
+
 def _calls(fake, name):
     return [call for call in fake.calls if call[0] == name]
 
@@ -72,6 +113,7 @@ def test_capability_snapshot_defers_query_support():
     assert caps.texture_formats == ("rgba8",)
     assert caps.query_modes == ()
     assert caps.metadata["datoviz_api"] == "v0.4 dvz_* facade"
+    assert caps.axis_providers[0].provider_id == DATOVIZ_V04_AXIS_PROVIDER
 
 
 def test_facade_shape_rejects_missing_v04_functions():
@@ -82,6 +124,24 @@ def test_facade_shape_rejects_missing_v04_functions():
 
     with pytest.raises(DatovizV04Unavailable, match="missing v0.4 functions"):
         DatovizV04ProtocolRenderer(dvz=IncompleteDatoviz())
+
+
+def test_datoviz_axis_provider_is_capability_gated():
+    unsupported = datoviz_v04_axis_provider_capability(FakeDatovizV04())
+    supported = datoviz_v04_axis_provider_capability(FakeDatovizV04WithAxes())
+
+    assert unsupported.provider_status == "unsupported"
+    assert supported.provider_status == "adapted"
+    assert supported.supports_backend_auto_ticks
+    assert not supported.supports_explicit_ticks
+
+
+def test_capability_snapshot_selects_datoviz_axis_provider_when_facade_exposes_symbols():
+    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithAxes())
+    provider = renderer.capabilities().select_axis_provider(AxisProviderRequest(policy="prefer_native", tick_authority="backend_resolved"))
+
+    assert provider is not None
+    assert provider.provider_id == DATOVIZ_V04_AXIS_PROVIDER
 
 
 def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
@@ -200,7 +260,37 @@ def test_renderer_close_uses_scene_destroy_when_available():
     assert _calls(fake, "destroy") == [("destroy", "scene")]
 
 
+def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
+    fake = FakeDatovizV04WithAxes()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    renderer.configure_view2d_axes(View2D(id="view:main", panel_id="panel:main", x_range=(-1.0, 2.0), y_range=(-3.0, 4.0)), x_label="x", y_label="y", grid=True)
+
+    assert _calls(fake, "set_domain") == [
+        ("set_domain", "panel", 0, -1.0, 2.0),
+        ("set_domain", "panel", 1, -3.0, 4.0),
+    ]
+    assert _calls(fake, "set_view2d") == [("set_view2d", "panel", "view2d")]
+    assert _calls(fake, "panel_axis") == [("panel_axis", "panel", 0), ("panel_axis", "panel", 1)]
+    assert _calls(fake, "set_tick_policy") == [("set_tick_policy", "axis:0", "tick-policy"), ("set_tick_policy", "axis:1", "tick-policy")]
+    assert _calls(fake, "set_grid") == [("set_grid", "axis:0", True), ("set_grid", "axis:1", True)]
+    assert _calls(fake, "set_label") == [("set_label", "axis:0", "x"), ("set_label", "axis:1", "y")]
+
+
+def test_configure_view2d_axes_rejects_unavailable_or_strict_explicit_ticks():
+    with pytest.raises(DatovizV04Unavailable, match="missing v0.4-dev axis symbols"):
+        DatovizV04ProtocolRenderer(dvz=FakeDatovizV04()).configure_view2d_axes(View2D(id="view:main", panel_id="panel:main"))
+
+    with pytest.raises(DatovizV04Unsupported, match="explicit GSP ticks"):
+        DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithAxes()).configure_view2d_axes(
+            View2D(id="view:main", panel_id="panel:main"),
+            backend_auto_ticks=False,
+        )
+
+
 def test_imported_datoviz_binding_has_expected_v04_shape_when_available():
     dvz = pytest.importorskip("datoviz")
+    if not is_datoviz_v04_facade(dvz):
+        pytest.skip("installed Datoviz binding is not the v0.4 facade")
 
     assert is_datoviz_v04_facade(dvz)

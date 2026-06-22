@@ -3,6 +3,9 @@
 Datoviz v0.4 is the flagship high-performance GPU backend for GSP.
 
 The old GSP Datoviz adapter targeting Datoviz v0.3 should be treated as legacy mapping reference only.
+For axes implementation, the source of truth is `github.com/datoviz/datoviz` branch `v0.4-dev`
+and the local checkout headers under `include/datoviz/`. Do not implement from `datoviz.org` or
+v0.3-era `panel.axes(...)` examples.
 
 Target mapping:
 
@@ -100,3 +103,18 @@ Recommended next mission: Datoviz query/capability parity. Scope it to translati
 `dvz_capability_snapshot()` and decoding `DvzQueryResult` into GSP `CapabilitySnapshot` and
 `QueryResult`, with skip-clean runtime tests. Keep sampled-field scalar images, capture, and tiled
 data-source Datoviz support as explicit follow-ups unless required for the query proof.
+
+## P002 axis provider update
+
+Datoviz v0.4-dev headers expose a native panel-axis candidate provider:
+
+- `dvz_panel_set_domain()`;
+- `dvz_panel_view2d()` / `dvz_panel_set_view2d()`;
+- `dvz_panel_axis()`;
+- `dvz_axis_set_label()`;
+- `dvz_axis_set_tick_policy()`;
+- optional grid/style/visible-domain helpers.
+
+GSP models this as `datoviz.v04.panel_axis.wip`. The provider is capability-gated on actual Python
+facade/raw binding symbols. Native backend auto ticks are adapted output unless Datoviz can accept
+GSP-resolved explicit ticks or an equivalent declared GSP policy.

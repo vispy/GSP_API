@@ -1,0 +1,36 @@
+{
+  "created": "2026-06-22",
+  "supersedes": [
+    "gsp_axes_native_provider_handoff.zip",
+    "gsp_axes_native_provider_update_2026-06-22.zip"
+  ],
+  "datoviz_source_of_truth": {
+    "repo": "https://github.com/datoviz/datoviz",
+    "branch": "v0.4-dev",
+    "checked_files": [
+      "README.md",
+      "include/datoviz/scene.h",
+      "include/datoviz/scene/types.h",
+      "include/datoviz/scene/enums.h",
+      "include/datoviz/scene/text.h",
+      "include/datoviz/scene/scale.h",
+      "include/datoviz/scene/plot.h"
+    ],
+    "direct_urls": [
+      "https://github.com/datoviz/datoviz/tree/v0.4-dev",
+      "https://github.com/datoviz/datoviz/blob/v0.4-dev/README.md",
+      "https://raw.githubusercontent.com/datoviz/datoviz/v0.4-dev/include/datoviz/scene.h",
+      "https://raw.githubusercontent.com/datoviz/datoviz/v0.4-dev/include/datoviz/scene/types.h",
+      "https://raw.githubusercontent.com/datoviz/datoviz/v0.4-dev/include/datoviz/scene/enums.h"
+    ]
+  },
+  "intentionally_excluded_as_authority": [
+    "datoviz.org v0.3-era pages",
+    "v0.3 Python plotting examples unless duplicated and verified in the v0.4-dev checkout"
+  ],
+  "key_verified_claims": [
+    "v0.4-dev branch README says v0.4-dev is a retained scene/DRP2/native runtime branch, not a v0.3 Python plotting compatibility layer.",
+    "v0.4-dev include/datoviz/scene.h exposes panel domains, View2D policy, visible-domain readback, data-to-visual normalization, panel-owned axes, tick policy, labels, style, grid, units, and datetime hooks.",
+    "Datoviz v0.4-dev should be modeled as a native axis provider candidate, capability-gated and initially named WIP."
+  ]
+}

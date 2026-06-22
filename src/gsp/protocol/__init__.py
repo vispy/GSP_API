@@ -4,7 +4,15 @@ This package contains transport-independent protocol models. It is designed to
 coexist with the legacy object graph while the protocol layer is introduced.
 """
 
-from .capabilities import AdaptationDecision, AdaptationOutcome, CapabilitySnapshot, TransportKind
+from .capabilities import (
+    AdaptationDecision,
+    AdaptationOutcome,
+    AxisProviderCapability,
+    AxisProviderRequest,
+    CapabilitySnapshot,
+    TransportKind,
+    select_axis_provider,
+)
 from .commands import CommandBatch, CommandKind, ProtocolCommand
 from .data_sources import (
     CredentialPolicy,
@@ -33,7 +41,18 @@ from .extensions import (
     TILED_IMAGE_EXTENSION_VERSION,
     tiled_image_extension_manifest,
 )
+from .guides import (
+    AxisDimension,
+    AxisGuide,
+    AxisSide,
+    GuideQueryPolicy,
+    PanelTextGuide,
+    PanelTextRole,
+    TickSpec,
+    TickSpecKind,
+)
 from .ids import ObjectRef, new_id, validate_id
+from .panels import AspectPolicy, Panel, View2D, VisualAttachment, VisualCoordinateSpace
 from .query import QueryCoordinateSpace, QueryHitPolicy, QueryPayload, QueryRequest, QueryResult, QueryStatus, VisualFamily
 from .resources import AttributeSource, BufferResource, ResourceLocality, ResourceMutability, ResourceUsage
 from .transports import CommandResult, InProcessGSPServer, InProcessTransport, InitializeResult
@@ -42,7 +61,13 @@ from .visuals import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisu
 __all__ = [
     "AdaptationDecision",
     "AdaptationOutcome",
+    "AspectPolicy",
     "AttributeSource",
+    "AxisProviderCapability",
+    "AxisProviderRequest",
+    "AxisDimension",
+    "AxisGuide",
+    "AxisSide",
     "BufferResource",
     "CapabilitySnapshot",
     "CommandBatch",
@@ -60,11 +85,15 @@ __all__ = [
     "ExtensionManifest",
     "ExtensionSupportLevel",
     "FakeTiledImageProvider",
+    "GuideQueryPolicy",
     "InitializeResult",
     "InProcessGSPServer",
     "InProcessTransport",
     "MaterializationPolicy",
     "ObjectRef",
+    "Panel",
+    "PanelTextGuide",
+    "PanelTextRole",
     "PointVisual",
     "ProtocolCommand",
     "QueryCoordinateSpace",
@@ -85,13 +114,19 @@ __all__ = [
     "TileRequest",
     "TileResult",
     "TileStatus",
+    "TickSpec",
+    "TickSpecKind",
     "TiledImageQueryPayload",
     "TiledImageSource",
     "TransportKind",
+    "View2D",
     "ViewportMosaicResult",
     "ViewportTileRequest",
+    "VisualAttachment",
+    "VisualCoordinateSpace",
     "VisualFamily",
     "new_id",
+    "select_axis_provider",
     "tiled_image_extension_manifest",
     "validate_id",
 ]

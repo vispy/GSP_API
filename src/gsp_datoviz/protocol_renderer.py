@@ -7,7 +7,7 @@ not use the older ``datoviz.App`` or ``datoviz.visuals`` wrapper APIs.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from math import pi
 from types import ModuleType
 from typing import Any
@@ -15,8 +15,9 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from gsp.protocol import CapabilitySnapshot, ImageOrigin, ImageVisual, PointVisual, TransportKind
+from gsp.protocol import CapabilitySnapshot, ImageOrigin, ImageVisual, PointVisual, TransportKind, View2D
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
+from gsp_datoviz.capabilities import datoviz_v04_axis_provider_capability
 
 
 _REQUIRED_DVZ_V04_FUNCTIONS = (
@@ -69,10 +70,12 @@ def capability_snapshot() -> CapabilitySnapshot:
         query_modes=(),
         output_formats=(),
         deterministic=False,
+        axis_providers=(datoviz_v04_axis_provider_capability(),),
         metadata={
             "datoviz_api": "v0.4 dvz_* facade",
             "image_path": "dvz_visual_set_texture RGBA8 convenience path",
             "query_support": "deferred until DvzQueryResult is decodable from Python",
+            "axis_provider": "datoviz.v04.panel_axis.wip when v0.4-dev Python symbols are exposed",
         },
     )
 
@@ -105,7 +108,11 @@ class DatovizV04ProtocolRenderer:
 
     def capabilities(self) -> CapabilitySnapshot:
         """Return the static capability snapshot for this first adapter slice."""
-        return capability_snapshot()
+        snapshot = capability_snapshot()
+        return replace(
+            snapshot,
+            axis_providers=(datoviz_v04_axis_provider_capability(self.dvz),),
+        )
 
     def close(self) -> None:
         """Destroy the scene when the facade exposes a destroy helper."""
@@ -158,6 +165,51 @@ class DatovizV04ProtocolRenderer:
         self.dvz.dvz_panel_add_visual(self.panel, dvz_visual, None)
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
+
+    def configure_view2d_axes(
+        self,
+        view: View2D,
+        *,
+        x_label: str | None = None,
+        y_label: str | None = None,
+        grid: bool = False,
+        backend_auto_ticks: bool = True,
+    ) -> None:
+        """Configure Datoviz v0.4-dev native panel domains and panel-owned axes.
+
+        This is a capability-gated proof. It uses only the local v0.4-dev C ABI names
+        verified in ``include/datoviz/scene.h`` and exposed by the supplied Python facade.
+        """
+        provider = datoviz_v04_axis_provider_capability(self.dvz)
+        if provider.provider_status == "unsupported":
+            diagnostic = provider.diagnostics[0] if provider.diagnostics else "Datoviz native axis provider is unavailable"
+            raise DatovizV04Unavailable(diagnostic)
+        if not backend_auto_ticks:
+            raise DatovizV04Unsupported("Datoviz native axis provider cannot realize explicit GSP ticks in this slice")
+
+        dim_x = getattr(self.dvz, "DVZ_DIM_X", 0)
+        dim_y = getattr(self.dvz, "DVZ_DIM_Y", 1)
+        self.dvz.dvz_panel_set_domain(self.panel, dim_x, view.x_range[0], view.x_range[1])
+        self.dvz.dvz_panel_set_domain(self.panel, dim_y, view.y_range[0], view.y_range[1])
+
+        panel_view = self.dvz.dvz_panel_view2d()
+        self.dvz.dvz_panel_set_view2d(self.panel, panel_view)
+
+        x_axis = self.dvz.dvz_panel_axis(self.panel, dim_x)
+        y_axis = self.dvz.dvz_panel_axis(self.panel, dim_y)
+
+        tick_policy = self.dvz.dvz_axis_tick_policy()
+        self.dvz.dvz_axis_set_tick_policy(x_axis, tick_policy)
+        self.dvz.dvz_axis_set_tick_policy(y_axis, tick_policy)
+
+        if hasattr(self.dvz, "dvz_axis_set_grid"):
+            self.dvz.dvz_axis_set_grid(x_axis, grid)
+            self.dvz.dvz_axis_set_grid(y_axis, grid)
+
+        if x_label is not None:
+            self.dvz.dvz_axis_set_label(x_axis, x_label)
+        if y_label is not None:
+            self.dvz.dvz_axis_set_label(y_axis, y_label)
 
 
 def _positions_3d(positions: npt.NDArray[np.float32] | npt.NDArray[np.float64]) -> npt.NDArray[np.float32]:
