@@ -2,3 +2,5 @@
 
 from .geometry import Geometry
 from .mesh_geometry import MeshGeometry
+
+__all__ = ["Geometry", "MeshGeometry"]

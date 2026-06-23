@@ -226,7 +226,7 @@ class AnimatorNetwork(AnimatorBase):
     # =============================================================================
     # .stop()
     # =============================================================================
-    def stop(self):
+    def stop(self) -> None:
         """Stop the animation loop.
 
         Stops the Matplotlib animation timer and clears internal state.

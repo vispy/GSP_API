@@ -8,3 +8,13 @@ from .mesh_normal_material import MeshNormalMaterial
 from .mesh_depth_material import MeshDepthMaterial
 from .mesh_phong_material import MeshPhongMaterial
 from .mesh_textured_material import MeshTexturedMaterial
+
+__all__ = [
+    "Material",
+    "MeshBasicMaterial",
+    "MeshDepthMaterial",
+    "MeshMaterial",
+    "MeshNormalMaterial",
+    "MeshPhongMaterial",
+    "MeshTexturedMaterial",
+]

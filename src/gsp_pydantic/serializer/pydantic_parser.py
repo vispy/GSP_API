@@ -50,7 +50,7 @@ from ..types.pydantic_dict import PydanticDict
 class PydanticParser:
     """Parser that converts Pydantic models into GSP data structures."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the PydanticParser."""
         pass
 

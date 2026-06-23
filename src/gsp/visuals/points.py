@@ -134,7 +134,7 @@ class Points(VisualBase):
         self.sanity_check_attributes(self._positions, self._sizes, self._face_colors, self._edge_colors, self._edge_widths)
 
     @staticmethod
-    def sanity_check_attributes_buffer(positions: Buffer, sizes: Buffer, face_colors: Buffer, edge_colors: Buffer, edge_widths: Buffer):
+    def sanity_check_attributes_buffer(positions: Buffer, sizes: Buffer, face_colors: Buffer, edge_colors: Buffer, edge_widths: Buffer) -> None:
         """Same as .sanity_check_attributes() but accept only Buffers.
 
         - It is meant to be used after converting TransBuf to Buffer.

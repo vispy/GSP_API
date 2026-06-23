@@ -5,6 +5,8 @@ from ..types.transbuf import TransBuf
 from ..types.buffer import Buffer
 from ..types.marker_shape import MarkerShape
 
+__all__ = ["Markers", "MarkerShape"]
+
 
 class Markers(VisualBase):
     """Visual representation of markers with configurable properties.

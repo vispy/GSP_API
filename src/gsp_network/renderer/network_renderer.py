@@ -3,7 +3,7 @@
 # typing imports
 import io
 import os
-from typing import Sequence, TypedDict, Literal
+from typing import Sequence, TypedDict, Literal, cast
 import json
 
 # pip imports
@@ -164,7 +164,7 @@ class NetworkRenderer(RendererBase):
             self._axes_image.set_data((image_blended * 255.0).astype(np.uint8))
 
         # return png data as bytes
-        return image_png_data
+        return cast(bytes, image_png_data)
 
     def show(self) -> None:
         """Show the rendered canvas (blocking call)."""

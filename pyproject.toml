@@ -52,6 +52,7 @@ dev = [
     "ruff (>=0.14.9,<0.15.0)",
     "pyright (>=1.1.407,<2.0.0)",
     "types-colorama (>=0.4.15,<0.5.0)",
+    "types-requests (>=2.32.4,<3.0.0)",
     "scikit-image (>=0.25.2,<0.26.0)",
     "mkdocs (>=1.6.1,<2.0.0)",
     "mkdocs-material (>=9.7.0,<10.0.0)",
@@ -78,4 +79,8 @@ convention = "google"
 
 [[tool.mypy.overrides]]
 module = ["datoviz", "datoviz.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["http_constants", "http_constants.*"]
 ignore_missing_imports = true

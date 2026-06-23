@@ -1,7 +1,8 @@
 # Strict Mypy Type-Surface Plan
 
-Status: M047 in progress. The original import-surface blockers are resolved, but full strict mypy
-now exposes broader legacy typing debt. See `docs/mypy_strict_debt_inventory.md`.
+Status: M047 in progress. The original import-surface blockers and the first TransBuf/export/network
+slice are resolved, but full strict mypy still exposes broader legacy typing debt. See
+`docs/mypy_strict_debt_inventory.md`.
 
 `uv run mypy src/ --strict --show-error-codes` currently fails on type-surface problems that are
 separate from the M045 packaging cleanup.

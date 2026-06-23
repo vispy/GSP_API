@@ -7,7 +7,7 @@ from .renderer import NetworkRenderer
 from gsp.utils.renderer_registery import RendererRegistry
 
 
-def register_renderer_network():
+def register_renderer_network() -> None:
     """Register the Network renderer and its associated components into the RendererRegistry."""
     RendererRegistry.register_renderer(
         renderer_name="network",

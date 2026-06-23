@@ -4,11 +4,13 @@ This module defines type aliases that allow flexible use of either
 transformation chains or buffers in the GSP API.
 """
 
+from typing import TypeAlias
+
 from .buffer import Buffer
 from ..transforms.transform_chain import TransformChain
 
 
-TransBuf = TransformChain | Buffer
+TransBuf: TypeAlias = TransformChain | Buffer
 """Type alias for either a TransformChain or a Buffer.
 
 This union type allows functions and methods to accept either a

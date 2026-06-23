@@ -8,6 +8,7 @@
 import io
 import pathlib
 from datetime import datetime
+from typing import Any
 
 # pip imports
 from flask import Flask, request, send_file, Response, typing
@@ -73,6 +74,7 @@ def render_scene_json() -> Response:
     # Render the loaded scene with matplotlib or datoviz based on environment variable
     #
     renderer_name = payload["renderer_name"]
+    renderer: Any
     if renderer_name == "matplotlib":
         renderer = MatplotlibRenderer(parsed_canvas)
     else:
@@ -123,11 +125,11 @@ def render_scene_json() -> Response:
 class ServerSample:
     """Sample class to demonstrate server functionality."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the server sample."""
         pass
 
-    def run(self):
+    def run(self) -> None:
         """Run the Flask server."""
         flask_app.run(threaded=False, debug=False)  # Enable debug mode if desired
 

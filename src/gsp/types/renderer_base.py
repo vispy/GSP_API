@@ -20,7 +20,7 @@ class RendererBase(ABC):
     """
 
     @abstractmethod
-    def __init__(self, canvas: Canvas):
+    def __init__(self, canvas: Canvas) -> None:
         """Initialize the renderer with the given canvas.
 
         Args:

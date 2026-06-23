@@ -99,7 +99,7 @@ class Pixels(VisualBase):
         self.sanity_check_attributes(self.__positions, self.__colors, self.__groups)
 
     @staticmethod
-    def sanity_check_attributes_buffer(positions: Buffer, colors: Buffer, groups: Groups):
+    def sanity_check_attributes_buffer(positions: Buffer, colors: Buffer, groups: Groups) -> None:
         """Same as .sanity_check_attributes() but accept only Buffers.
 
         - It is meant to be used after converting TransBuf to Buffer.
@@ -111,7 +111,7 @@ class Pixels(VisualBase):
         Pixels.sanity_check_attributes(positions, colors, groups)
 
     @staticmethod
-    def sanity_check_attributes(positions: TransBuf, colors: TransBuf, groups: Groups):
+    def sanity_check_attributes(positions: TransBuf, colors: TransBuf, groups: Groups) -> None:
         """Check that the attributes are valid and consistent.
 
         Args:

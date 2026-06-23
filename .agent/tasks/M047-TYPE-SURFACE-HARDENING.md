@@ -31,8 +31,9 @@ M045 validation note and M046 follow-up planning.
 
 In progress. The original uncontrolled import-surface failures are resolved: Datoviz untyped imports
 are quarantined with a narrow mypy override, `types-colorama` is a dev dependency, and `gsp_extra`
-has explicit package markers and import smoke coverage. Strict mypy now reaches the wider tree and
-reports 539 legacy typing errors across 85 files; these are inventoried in
-`docs/mypy_strict_debt_inventory.md`. Do not mark this mission complete until the strict command
-passes or remaining failures are narrowed to documented optional/vendored boundaries without broad
-package-level ignores.
+has explicit package markers and import smoke coverage. The first TransBuf/export/network batch is
+also clean: the focused strict target covering `gsp.visuals`, `vispy2.scatter`, `vispy2.plot`,
+`gsp_network`, and `gsp_extra.object3d` passes. Full strict mypy now reports 191 legacy typing errors
+across 48 files; these are inventoried in `docs/mypy_strict_debt_inventory.md`. Do not mark this
+mission complete until the strict command passes or remaining failures are narrowed to documented
+optional/vendored boundaries without broad package-level ignores.

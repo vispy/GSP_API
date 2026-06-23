@@ -67,7 +67,7 @@ class Object3D:
     # .add/.remove
     # =============================================================================
 
-    def add(self, child: "Object3D"):
+    def add(self, child: "Object3D") -> None:
         """Add a child Object3D to this Object3D.
 
         Args:
@@ -75,7 +75,7 @@ class Object3D:
         """
         self.children.append(child)
 
-    def remove(self, child: "Object3D"):
+    def remove(self, child: "Object3D") -> None:
         """Remove a child Object3D from this Object3D.
 
         Args:
@@ -87,7 +87,7 @@ class Object3D:
     # .attach_visual/.detach_visual
     # =============================================================================
 
-    def attach_visual(self, visual: VisualBase):
+    def attach_visual(self, visual: VisualBase) -> None:
         """Add a visual to this Object3D.
 
         Args:
@@ -95,7 +95,7 @@ class Object3D:
         """
         self.visuals.append(visual)
 
-    def detach_visual(self, visual: VisualBase):
+    def detach_visual(self, visual: VisualBase) -> None:
         """Remove a visual from this Object3D.
 
         Args:
@@ -107,7 +107,7 @@ class Object3D:
     # .attach_camera/.detach_camera
     # =============================================================================
 
-    def attach_camera(self, camera: Camera):
+    def attach_camera(self, camera: Camera) -> None:
         """Add a camera to this Object3D.
 
         Args:
@@ -115,7 +115,7 @@ class Object3D:
         """
         self.cameras.append(camera)
 
-    def detach_camera(self, camera: Camera):
+    def detach_camera(self, camera: Camera) -> None:
         """Remove a camera from this Object3D.
 
         Args:
@@ -127,7 +127,7 @@ class Object3D:
     # .traverse
     # =============================================================================
 
-    def traverse(self):
+    def traverse(self) -> typing.Iterator["Object3D"]:
         """Generator to traverse the Object3D hierarchy."""
         yield self
         for child in self.children:
