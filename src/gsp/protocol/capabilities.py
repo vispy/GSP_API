@@ -295,6 +295,18 @@ class CapabilitySnapshot:
     supports_client_fetch_data_sources: bool = False
     supports_server_fetch_data_sources: bool = False
     supports_remote_handle_data_sources: bool = False
+    supported_data_source_localities: tuple[str, ...] = ()
+    supported_credential_policies: tuple[str, ...] = ()
+    supports_remote_fetch_descriptors: bool = False
+    supports_server_side_fetch: bool = False
+    supports_dynamic_extension_loading: bool = False
+    supports_package_entry_points: bool = False
+    supports_executable_extension_hooks: bool = False
+    supports_custom_decoders: bool = False
+    supports_runtime_shaders: bool = False
+    cache_modes: tuple[str, ...] = ()
+    security_redaction_profile: str | None = "gsp.s020.no-network"
+    diagnostic_redaction: bool = True
     max_tiles_per_request: int = 0
     max_mosaic_pixels: int = 0
     max_buffer_bytes: int | None = None
@@ -315,6 +327,10 @@ class CapabilitySnapshot:
             raise ValueError("max_tiles_per_request must be non-negative")
         if self.max_mosaic_pixels < 0:
             raise ValueError("max_mosaic_pixels must be non-negative")
+        if not self.diagnostic_redaction:
+            raise ValueError("S020 capability snapshots require diagnostic redaction")
+        if self.supports_dynamic_extension_loading:
+            raise ValueError("dynamic extension loading is not supported in S020")
 
     def supports_visual(self, family: str) -> bool:
         """Return whether a visual family is advertised."""

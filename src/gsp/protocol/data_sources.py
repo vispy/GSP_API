@@ -27,6 +27,12 @@ class DataLocality(str, Enum):
     """Where a virtual data source is materialized from."""
 
     IN_MEMORY = "in-memory"
+    PRECONFIGURED_SOURCE = "preconfigured-source"
+    LOCAL_FILE_SANDBOXED = "local-file-sandboxed"
+    CLIENT_MATERIALIZED = "client-materialized"
+    SERVER_RESOLVED_REMOTE = "server-resolved-remote"
+    DIRECT_REMOTE_FETCH = "direct-remote-fetch"
+    BROWSER_ORIGIN_FETCH = "browser-origin-fetch"
     LOCAL_FILE = "local-file"
     CLIENT_FETCH = "client-fetch"
     SERVER_FETCH = "server-fetch"
@@ -39,6 +45,9 @@ class CredentialPolicy(str, Enum):
 
     NONE = "none"
     PRECONFIGURED = "preconfigured"
+    PRECONFIGURED_REF = "preconfigured-ref"
+    DELEGATED = "delegated"
+    INLINE = "inline"
     FORBIDDEN = "forbidden"
 
 
@@ -93,6 +102,10 @@ class DataSourceDescriptor:
     origin: str = "upper"
     locality: DataLocality = DataLocality.IN_MEMORY
     credential_policy: CredentialPolicy = CredentialPolicy.NONE
+    source_ref: dict[str, str] | None = None
+    fetch_descriptor: dict[str, Any] | None = None
+    credential_ref: str | None = None
+    cache_policy: dict[str, Any] | None = None
     materialization_policy: MaterializationPolicy = MaterializationPolicy.FULL
     metadata: dict[str, Any] | None = None
 

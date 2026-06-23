@@ -78,6 +78,22 @@ from .query import (
     VisualFamily,
 )
 from .resources import AttributeSource, BufferResource, ResourceLocality, ResourceMutability, ResourceUsage
+from .security import (
+    REDACTED_CREDENTIAL_REF,
+    REDACTED_PATH,
+    REDACTED_SECRET,
+    REDACTED_SOURCE_REF,
+    REDACTED_URL,
+    S020_CREDENTIAL_POLICIES,
+    S020_EXECUTABLE_LOCALITIES,
+    SecurityDiagnostic,
+    SecurityDiagnosticCode,
+    SecurityValidationResult,
+    redact_security_value,
+    s020_security_capability_metadata,
+    validate_no_network_source_descriptor,
+    validate_static_manifest_security,
+)
 from .transports import CommandResult, InProcessGSPServer, InProcessTransport, InitializeResult
 from .ticks import ResolvedTicks, resolve_ticks
 from .visuals import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, PointVisual
@@ -136,10 +152,20 @@ __all__ = [
     "QueryStatus",
     "QueryTargetCapability",
     "QueryTargetKind",
+    "REDACTED_CREDENTIAL_REF",
+    "REDACTED_PATH",
+    "REDACTED_SECRET",
+    "REDACTED_SOURCE_REF",
+    "REDACTED_URL",
     "ResourceLocality",
     "ResourceMutability",
     "ResourceUsage",
     "ResolvedTicks",
+    "S020_CREDENTIAL_POLICIES",
+    "S020_EXECUTABLE_LOCALITIES",
+    "SecurityDiagnostic",
+    "SecurityDiagnosticCode",
+    "SecurityValidationResult",
     "TILED_IMAGE_EXTENSION_CAPABILITY",
     "TILED_IMAGE_EXTENSION_ID",
     "TILED_IMAGE_EXTENSION_VERSION",
@@ -164,10 +190,14 @@ __all__ = [
     "extension_capability",
     "new_id",
     "query_scope_for_axis_requirement",
+    "redact_security_value",
     "resolve_ticks",
+    "s020_security_capability_metadata",
     "select_axis_provider",
     "tiled_image_extension_manifest",
     "validate_extension_manifest",
     "validate_id",
+    "validate_no_network_source_descriptor",
+    "validate_static_manifest_security",
     "validate_tiled_image_source_manifest_link",
 ]

@@ -95,8 +95,14 @@ def validate_extension_manifest(manifest: ExtensionManifest) -> ExtensionManifes
     This helper is intentionally side-effect free: it does not import modules, discover plugins, or
     execute extension code.
     """
+    from .security import validate_static_manifest_security
+
     if manifest.capability != extension_capability(manifest.id, manifest.version):
         raise ValueError("extension capability mismatch")
+    security = validate_static_manifest_security(manifest)
+    if not security.accepted:
+        diagnostic = security.diagnostics[0]
+        raise ValueError(f"{diagnostic.code.value}: {diagnostic.message}")
     return manifest
 
 
