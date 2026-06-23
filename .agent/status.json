@@ -131,7 +131,7 @@
       "id": "S022",
       "title": "Remote source family selection and consultation",
       "state": "in_progress",
-      "progress": 5
+      "progress": 15
     }
   ],
   "missions": [
@@ -647,6 +647,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 57
+    },
+    {
+      "id": "M058",
+      "title": "S022 HTTP access and decoder architecture note",
+      "stage": "S022",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 58
     }
   ],
   "review_queue": [],
