@@ -240,12 +240,15 @@ def redact_security_value(value: object) -> JsonValue:
     return repr(value)
 
 
-def s020_security_capability_metadata() -> dict[str, JsonValue]:
+def s020_security_capability_metadata(
+    preconfigured_resolvers: tuple[Mapping[str, object], ...] = (),
+) -> dict[str, JsonValue]:
     """Return a conservative no-network capability metadata block."""
     return {
         "data_sources": {
             "supported_source_localities": [locality.value for locality in S020_EXECUTABLE_LOCALITIES],
             "supported_credential_policies": [policy.value for policy in S020_CREDENTIAL_POLICIES],
+            "preconfigured_resolvers": [redact_security_value(resolver) for resolver in preconfigured_resolvers],
             "remote_fetch_descriptors": {"accepted": False},
             "supports_server_side_fetch": {"accepted": False},
             "cache_modes": ["none", "session-memory"],
@@ -326,6 +329,8 @@ def _scan_manifest_mapping(
 
 def _redacted_placeholder_for_key(key: str) -> str | None:
     lowered = key.lower()
+    if lowered in ("credential_policy", "credential_policies", "supported_credential_policies"):
+        return None
     if "credential_ref" in lowered:
         return REDACTED_CREDENTIAL_REF
     if "source_ref" in lowered:

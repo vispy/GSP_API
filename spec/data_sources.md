@@ -201,3 +201,27 @@ Security-sensitive unsupported behavior rejects fatally. It must not silently cl
 simplify remote fetch, credentials, local paths, resource-limit violations, cache isolation failures,
 or query-scope violations unless a query contract explicitly allows a clipped result with a
 diagnostic.
+
+## S021 no-network preconfigured-source resolver proof
+
+The first implementation after S020 is a no-network resolver proof. It maps administrator/test
+`source_ref` handles to deterministic local `TiledImageSource` objects and `FakeTiledImageProvider`
+instances.
+
+The proof resolver:
+
+- accepts only `source_locality="preconfigured-source"` descriptors;
+- accepts only advertised `{resolver_id, source_id}` handles;
+- supports only tiled-image sources backed by synthetic or in-memory local providers;
+- supports only `credential_policy="none"`;
+- rejects `fetch_descriptor`, URL-like metadata, local paths, and credential references;
+- advertises `network_io=false`;
+- never opens files, resolves hosts, performs HTTP/object-store access, loads plugins, or uses
+  Datoviz.
+
+The built-in proof handle is:
+
+```text
+resolver_id = "gsp.test.synthetic-resolver"
+source_id = "public-demo-pyramid"
+```

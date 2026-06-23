@@ -394,6 +394,136 @@ class FakeTiledImageProvider:
         return data
 
 
+@dataclass(frozen=True, slots=True)
+class PreconfiguredSourceResolution:
+    """Result of resolving one no-network preconfigured source handle."""
+
+    accepted: bool
+    source_ref: dict[str, str]
+    source: TiledImageSource | None = None
+    provider: FakeTiledImageProvider | None = None
+    diagnostic: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.accepted:
+            if self.source is None or self.provider is None:
+                raise ValueError("accepted preconfigured source resolutions require source and provider")
+            if self.diagnostic is not None:
+                raise ValueError("accepted preconfigured source resolutions must not carry diagnostics")
+        elif not self.diagnostic:
+            raise ValueError("rejected preconfigured source resolutions require a diagnostic")
+
+
+class NoNetworkPreconfiguredSourceResolver:
+    """Resolve administrator/test source handles to deterministic local tiled sources.
+
+    This proof resolver never performs network I/O, path access, host resolution, credential lookup,
+    or dynamic extension loading. It maps opaque `resolver_id + source_id` handles to pre-registered
+    synthetic or in-memory tiled sources.
+    """
+
+    def __init__(self, resolver_id: str, sources: tuple[TiledImageSource, ...]):
+        validate_id(resolver_id)
+        if not sources:
+            raise ValueError("no-network resolver requires at least one source")
+        self.resolver_id = resolver_id
+        self._sources = {source.id: source for source in sources}
+        if len(self._sources) != len(sources):
+            raise ValueError("no-network resolver source ids must be unique")
+        for source in sources:
+            if source.locality not in (DataLocality.SYNTHETIC, DataLocality.IN_MEMORY):
+                raise ValueError("no-network resolver sources must be synthetic or in-memory")
+            if source.credential_policy != CredentialPolicy.NONE:
+                raise ValueError("no-network resolver sources must not require credentials")
+
+    @property
+    def source_refs(self) -> tuple[dict[str, str], ...]:
+        """Return opaque source refs advertised by this resolver."""
+        return tuple({"resolver_id": self.resolver_id, "source_id": source_id} for source_id in sorted(self._sources))
+
+    def capability_record(self) -> dict[str, object]:
+        """Return the public capability record for this resolver."""
+        return {
+            "resolver_id": self.resolver_id,
+            "source_kinds": (DataSourceKind.TILED_IMAGE.value,),
+            "credential_policies": (CredentialPolicy.NONE.value,),
+            "network_io": False,
+            "source_ids": tuple(sorted(self._sources)),
+        }
+
+    def descriptor_for(self, source_id: str, descriptor_id: str | None = None) -> DataSourceDescriptor:
+        """Return a preconfigured-source descriptor for an advertised source id."""
+        if source_id not in self._sources:
+            raise ValueError("source_id is not advertised by this resolver")
+        source = self._sources[source_id]
+        return DataSourceDescriptor(
+            id=descriptor_id or f"source:preconfigured-{source_id}",
+            kind=DataSourceKind.TILED_IMAGE,
+            extension_id=source.extension_id,
+            extension_version=source.extension_version,
+            shape=source.shape,
+            dtype=source.dtype,
+            channels=source.channels,
+            extent=source.extent,
+            origin=source.origin,
+            locality=DataLocality.PRECONFIGURED_SOURCE,
+            credential_policy=CredentialPolicy.NONE,
+            source_ref={"resolver_id": self.resolver_id, "source_id": source_id},
+            materialization_policy=source.materialization_policy,
+            metadata={"tile_shape": source.tile_shape, "levels": source.levels, "network_io": False},
+        )
+
+    def resolve(self, descriptor: DataSourceDescriptor) -> PreconfiguredSourceResolution:
+        """Resolve a validated descriptor to a deterministic source/provider pair."""
+        source_ref = descriptor.source_ref or {}
+        diagnostic = self._descriptor_diagnostic(descriptor)
+        if diagnostic is not None:
+            return PreconfiguredSourceResolution(False, dict(source_ref), diagnostic=diagnostic)
+        source_id = source_ref["source_id"]
+        source = self._sources[source_id]
+        return PreconfiguredSourceResolution(
+            True,
+            dict(source_ref),
+            source=source,
+            provider=FakeTiledImageProvider(source),
+        )
+
+    def _descriptor_diagnostic(self, descriptor: DataSourceDescriptor) -> str | None:
+        from .security import validate_no_network_source_descriptor
+
+        validation = validate_no_network_source_descriptor(descriptor, allowed_source_refs=self.source_refs)
+        if not validation.accepted:
+            diagnostic = validation.diagnostics[0]
+            return f"{diagnostic.code.value}: {diagnostic.message}"
+        if descriptor.kind != DataSourceKind.TILED_IMAGE:
+            return "GSP_SOURCE_HANDLE_UNKNOWN: resolver supports only tiled-image sources"
+        if descriptor.credential_policy != CredentialPolicy.NONE:
+            return "GSP_CREDENTIAL_POLICY_UNSUPPORTED: no-network resolver supports only credential_policy=none"
+        source_ref = descriptor.source_ref
+        if not source_ref:
+            return "GSP_SOURCE_HANDLE_UNKNOWN: missing preconfigured source_ref"
+        source_id = source_ref.get("source_id")
+        if source_id not in self._sources:
+            return "GSP_SOURCE_HANDLE_UNKNOWN: source_ref source_id is not advertised"
+        return None
+
+
+def demo_no_network_preconfigured_source_resolver() -> NoNetworkPreconfiguredSourceResolver:
+    """Return the deterministic S021 proof resolver."""
+    source = TiledImageSource(
+        id="public-demo-pyramid",
+        shape=(16, 16, 4),
+        tile_shape=(4, 4),
+        levels=2,
+        level_downsample=(1, 2),
+        extent=(-1.0, 1.0, -1.0, 1.0),
+    )
+    return NoNetworkPreconfiguredSourceResolver(
+        resolver_id="gsp.test.synthetic-resolver",
+        sources=(source,),
+    )
+
+
 def _clip_rect(rect: tuple[int, int, int, int], width: int, height: int) -> tuple[int, int, int, int]:
     x, y, rect_w, rect_h = rect
     x0 = max(0, x)

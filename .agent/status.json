@@ -125,7 +125,7 @@
       "id": "S021",
       "title": "No-network preconfigured-source resolver proof",
       "state": "in_progress",
-      "progress": 5
+      "progress": 40
     }
   ],
   "missions": [
@@ -614,6 +614,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 54
+    },
+    {
+      "id": "M055",
+      "title": "S021 no-network preconfigured-source resolver",
+      "stage": "S021",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 55
     }
   ],
   "review_queue": [],
@@ -641,7 +650,7 @@
     }
   ],
   "recommendations": [
-    "Next S021 mission: implement a no-network preconfigured-source resolver proof with deterministic synthetic/in-memory handles, capability advertisement, and fixture-backed diagnostics.",
+    "Next S021 mission: wire the no-network preconfigured-source resolver into conformance fixture validation/replay so the S021 proof is exercised through fixture records.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }
