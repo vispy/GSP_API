@@ -63,7 +63,7 @@ Current supported surface:
 | Capability snapshot | static GSP `CapabilitySnapshot` | implemented for first slice |
 | Session/figure/panel | `dvz_scene()` + `dvz_figure()` + `dvz_panel_full()` | implemented |
 | Point visual | `dvz_point()` + `position`, `color`, `diameter` attributes | implemented for NDC positions |
-| Point size | GSP marker-area size converted to Datoviz diameter pixels | implemented |
+| Point size | GSP screen-pixel diameter uploaded to Datoviz `diameter` | implemented |
 | Image visual | `dvz_image()` + `position`, `texcoords`, `dvz_visual_set_texture()` | implemented for uint8 RGB/RGBA, nearest, NDC extents |
 | Image scalar fields | sampled-field path | deferred to `DATOVIZ-V04-IMAGE-FIELD-CONTRACT` |
 | Queries | Datoviz panel query APIs | not advertised; deferred to `DATOVIZ-V04-QUERY-BINDING` |
@@ -74,6 +74,13 @@ The adapter raises explicit unsupported errors for semantics not locked in this 
 - non-nearest image interpolation;
 - scalar, grayscale, or floating-point images that should use sampled fields;
 - query/readback support.
+
+## M066 PointVisual retained path
+
+Point visuals are attached with an explicit `DvzVisualAttachDesc` instead of relying on a NULL
+descriptor. For the S023 NDC smoke cases, the adapter uses `coord_space=DVZ_COORD_DATA` with the
+default Datoviz panel domain `[-1, +1]`, matching the protocol NDC coordinate fixtures. The
+descriptor also sets `z_layer=0` for deterministic future layering.
 
 ## M009 query handoff
 

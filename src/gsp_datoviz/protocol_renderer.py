@@ -10,7 +10,6 @@ from __future__ import annotations
 import ctypes
 from dataclasses import dataclass, field
 from dataclasses import replace
-from math import pi
 from pathlib import Path
 import tempfile
 from types import ModuleType
@@ -72,6 +71,8 @@ DVZ_QUERY_HIT_FRONTMOST = 0
 DVZ_QUERY_PROFILE_UNSUPPORTED = 0
 DVZ_QUERY_CAPABILITY_ITEM = 0x02
 DVZ_QUERY_CAPABILITY_PIXEL = 0x10
+DVZ_COORD_VIEW = 0
+DVZ_COORD_DATA = 1
 
 
 class DatovizV04Unavailable(RuntimeError):
@@ -173,14 +174,14 @@ class DatovizV04ProtocolRenderer:
 
         positions = _positions_3d(visual.positions)
         colors = _rgba8(visual.colors)
-        diameters = _diameters_from_marker_area(visual.sizes, positions.shape[0])
+        diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
 
         dvz_visual = self.dvz.dvz_point(self.scene, 0)
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
         self.dvz.dvz_visual_set_data(dvz_visual, "position", positions)
         self.dvz.dvz_visual_set_data(dvz_visual, "color", colors)
         self.dvz.dvz_visual_set_data(dvz_visual, "diameter", diameters)
-        self.dvz.dvz_panel_add_visual(self.panel, dvz_visual, None)
+        self.dvz.dvz_panel_add_visual(self.panel, dvz_visual, _visual_attach_desc(self.dvz, coord_space="data", z_layer=0))
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
 
@@ -207,7 +208,7 @@ class DatovizV04ProtocolRenderer:
             self.sampled_fields[visual.id] = sampled_field
         else:
             self.dvz.dvz_visual_set_texture(dvz_visual, pixels, width, height)
-        self.dvz.dvz_panel_add_visual(self.panel, dvz_visual, None)
+        self.dvz.dvz_panel_add_visual(self.panel, dvz_visual, _visual_attach_desc(self.dvz, coord_space="data", z_layer=0))
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
 
@@ -387,15 +388,49 @@ def _rgba8(colors: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:
     return np.ascontiguousarray(np.rint(np.asarray(colors) * 255.0).clip(0, 255).astype(np.uint8))
 
 
-def _diameters_from_marker_area(
+def _diameters_from_pixel_diameters(
     sizes: npt.NDArray[np.float32] | npt.NDArray[np.float64] | float,
     count: int,
 ) -> npt.NDArray[np.float32]:
     if isinstance(sizes, np.ndarray):
-        area = np.asarray(sizes, dtype=np.float32)
+        diameters = np.asarray(sizes, dtype=np.float32)
     else:
-        area = np.full((count,), float(sizes), dtype=np.float32)
-    return np.ascontiguousarray(2.0 * np.sqrt(area / np.float32(pi), dtype=np.float32))
+        diameters = np.full((count,), float(sizes), dtype=np.float32)
+    return np.ascontiguousarray(diameters.reshape(-1))
+
+
+def _visual_attach_desc(dvz: Any, *, coord_space: str, z_layer: int) -> Any:
+    factory = getattr(dvz, "dvz_visual_attach_desc", None)
+    if factory is not None:
+        desc = factory()
+    else:
+        desc_type = getattr(dvz, "DvzVisualAttachDesc", None)
+        if desc_type is None:
+            raise DatovizV04Unavailable("Datoviz facade is missing DvzVisualAttachDesc")
+        desc = desc_type()
+        if hasattr(desc, "struct_size"):
+            desc.struct_size = ctypes.sizeof(desc_type)
+        if hasattr(desc, "flags"):
+            desc.flags = 0
+
+    desc.z_layer = z_layer
+    if coord_space == "data":
+        desc.coord_space = _coord_space_value(dvz, "DVZ_COORD_DATA", DVZ_COORD_DATA)
+    elif coord_space == "view":
+        desc.coord_space = _coord_space_value(dvz, "DVZ_COORD_VIEW", DVZ_COORD_VIEW)
+    else:
+        raise ValueError(f"unsupported Datoviz coordinate space: {coord_space}")
+    return desc
+
+
+def _coord_space_value(dvz: Any, name: str, fallback: int) -> int:
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, "DvzVisualCoordSpace", None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return fallback
 
 
 def _rgba8_image(image: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:

@@ -31,6 +31,13 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
             builder=_point_diameter_ramp_ndc,
         ),
         VisualQACase(
+            case_id="point/alpha_overlap_ndc",
+            title="Point alpha overlap in NDC",
+            family="point",
+            required_features=("point", "ndc", "rgba8", "alpha"),
+            builder=_point_alpha_overlap_ndc,
+        ),
+        VisualQACase(
             case_id="image/checker_nearest_ndc",
             title="Nearest checker image in NDC",
             family="image",
@@ -128,6 +135,39 @@ def _point_diameter_ramp_ndc() -> VisualQAScene:
         visuals=(visual,),
         arrays={"point_positions": positions, "point_colors": colors, "point_diameters": diameters},
         notes=("Horizontal point row with increasing requested pixel diameters.",),
+    )
+
+
+def _point_alpha_overlap_ndc() -> VisualQAScene:
+    positions = np.array(
+        [
+            [-0.18, 0.0],
+            [0.0, 0.0],
+            [0.18, 0.0],
+        ],
+        dtype=np.float32,
+    )
+    colors = np.array(
+        [
+            [230, 57, 70, 160],
+            [42, 157, 143, 160],
+            [38, 70, 83, 160],
+        ],
+        dtype=np.uint8,
+    )
+    sizes = np.full(positions.shape[0], 56.0, dtype=np.float32)
+    visual = PointVisual(
+        id="visual:point-alpha-overlap-ndc",
+        positions=positions,
+        colors=colors,
+        sizes=sizes,
+        coordinate_space=CoordinateSpace.NDC,
+    )
+    return VisualQAScene(
+        case_id="point/alpha_overlap_ndc",
+        visuals=(visual,),
+        arrays={"point_positions": positions, "point_colors": colors, "point_sizes": sizes},
+        notes=("Three overlapping semi-transparent points with fixed pixel diameters.",),
     )
 
 

@@ -59,3 +59,15 @@ Matplotlib reference rendering, Datoviz v0.4 retained-scene adapter, tests, and 
 - Stop if PointVisual semantics drift into marker/stroke/scalar-colormap scope.
 - Stop if Datoviz coordinate-space mapping cannot be verified; record blocker and keep Matplotlib
   reference work separate.
+
+## Completed
+
+Completed on 2026-06-23.
+
+- Accepted `PointVisual.sizes` as rendered screen-pixel diameters.
+- Added ADR-0010 and updated point/Datoviz specs.
+- Hardened PointVisual finite-value validation.
+- Updated Matplotlib and Datoviz protocol renderers for diameter semantics.
+- Added explicit Datoviz visual attach descriptors for the retained point path.
+- Added `point/alpha_overlap_ndc` QA coverage.
+- Verified Matplotlib and Datoviz point QA rendering.

@@ -39,7 +39,10 @@ ImageArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.fl
 
 @dataclass(frozen=True, slots=True)
 class PointVisual:
-    """Semantic point visual model for the protocol reference slice."""
+    """Semantic point visual model for the protocol reference slice.
+
+    ``sizes`` are rendered screen-pixel diameters, not backend marker-area units.
+    """
 
     id: str
     positions: FloatArray
@@ -53,6 +56,8 @@ class PointVisual:
             raise ValueError("positions must have shape (N, 2) or (N, 3)")
         if self.positions.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
             raise TypeError("positions must be float32 or float64")
+        if not np.all(np.isfinite(self.positions)):
+            raise ValueError("positions must be finite")
         point_count = self.positions.shape[0]
 
         if isinstance(self.sizes, np.ndarray):
@@ -62,10 +67,15 @@ class PointVisual:
                 raise ValueError("sizes must be scalar or shape (N,)")
             if self.sizes.shape[0] != point_count:
                 raise ValueError("sizes length must match positions")
+            if not np.all(np.isfinite(self.sizes)):
+                raise ValueError("sizes must be finite")
             if np.any(self.sizes < 0):
                 raise ValueError("sizes must be non-negative")
-        elif self.sizes < 0:
-            raise ValueError("sizes must be non-negative")
+        else:
+            if not np.isfinite(self.sizes):
+                raise ValueError("sizes must be finite")
+            if self.sizes < 0:
+                raise ValueError("sizes must be non-negative")
 
         if self.colors.ndim != 2 or self.colors.shape[1] != 4:
             raise ValueError("colors must have shape (N, 4)")
@@ -75,6 +85,8 @@ class PointVisual:
             return
         if self.colors.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
             raise TypeError("colors must be rgba8, float32, or float64")
+        if not np.all(np.isfinite(self.colors)):
+            raise ValueError("floating point colors must be finite")
         if np.any((self.colors < 0.0) | (self.colors > 1.0)):
             raise ValueError("floating point colors must be in [0, 1]")
 

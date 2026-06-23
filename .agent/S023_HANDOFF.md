@@ -4,22 +4,24 @@ Generated: 2026-06-23
 
 ## Current State
 
-S023 is in progress at 25%.
+S023 is in progress at 38%.
 
 Completed:
 
 - M064 - Datoviz v0.4 API audit and probe.
 - M065 - Visual QA harness foundation.
+- M066 - PointVisual v1 and Datoviz v0.4 retained point path.
 
 Next:
 
-- M066 - PointVisual v1 and Datoviz v0.4 retained point path.
+- M067 - MarkerVisual v1.
 
 Recent commits:
 
 - `5d9ec8e` - Implement Datoviz v0.4 API probe.
 - `1b92a8f` - Correct Datoviz v0.4 probe evidence.
 - `ea70c79` - Implement visual QA harness foundation.
+- local working tree - Complete M066 PointVisual v1.
 
 ## Datoviz Environment
 
@@ -88,10 +90,11 @@ New harness files:
 - `src/gsp/qa/visual/cli.py`
 - `src/gsp/qa/visual/__main__.py`
 
-Initial S023 cases:
+Current S023 cases:
 
 - `point/basic_ndc`
 - `point/diameter_ramp_ndc`
+- `point/alpha_overlap_ndc`
 - `image/checker_nearest_ndc`
 - `overlay/point_over_image_ndc`
 
@@ -151,22 +154,25 @@ Observed result:
 
 CLI smoke also rendered all four S023 cases with both Matplotlib and Datoviz in a temporary output directory.
 
-## M066 Review Point
+## M066 Completion
 
-Before implementing M066, freeze this semantic decision:
+M066 froze this semantic decision:
 
 - `PointVisual.sizes` should mean screen-pixel diameters.
 
-Recommendation: accept this. It aligns with Datoviz v0.4 `"diameter"` and makes manual visual QA
-straightforward.
+This is recorded in `adr/ADR-0010-pointvisual-size-units.md`.
 
-Known follow-up work for M066:
+Completed M066 work:
 
-- Write/adjust PointVisual v1 spec text.
-- Fix Matplotlib point mapping: `scatter(..., s=...)` takes area in points squared, not diameter.
-- Keep Datoviz mapping as direct `"diameter"` upload.
-- Replace NULL visual attachment in the Datoviz point path with an explicit attach descriptor for coordinate-space semantics.
-- Extend/harden point QA cases in the M065 harness.
-- Keep v0.3 Datoviz symbols banned except in explicit banned-symbol checks.
+- Point spec now defines `sizes` as rendered screen-pixel diameters.
+- Matplotlib converts protocol diameters to `scatter(..., s=...)` area units using figure DPI.
+- Datoviz maps protocol diameters directly to the retained point visual `"diameter"` upload.
+- Datoviz point/image visual attachment now uses an explicit `DvzVisualAttachDesc`.
+- `point/alpha_overlap_ndc` was added to the S023 visual QA suite.
+- Local M066 QA rendered all point cases in both Matplotlib and Datoviz.
 
-Stop if coordinate-space mapping remains ambiguous without a documented fixture/result.
+## M067 Review Point
+
+Before implementing M067, keep MarkerVisual distinct from PointVisual. MarkerVisual may add marker
+shape, angle, stroke, and edge styling, but PointVisual must remain the simple high-volume point
+family with position/color/diameter only.

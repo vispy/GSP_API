@@ -90,6 +90,15 @@ class FakeDatovizV04:
         self.calls.append(("add_visual", panel, visual, attach_desc))
         return 0
 
+    class DvzVisualAttachDesc(ctypes.Structure):
+        _fields_ = (
+            ("struct_size", ctypes.c_uint),
+            ("flags", ctypes.c_uint),
+            ("z_layer", ctypes.c_int),
+            ("controller_mode", ctypes.c_int),
+            ("coord_space", ctypes.c_int),
+        )
+
     def dvz_scene_destroy(self, scene):
         self.calls.append(("destroy", scene))
         self.destroyed = True
@@ -635,7 +644,7 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
         id="visual:points",
         positions=np.array([[-0.5, 0.25], [0.5, -0.25]], dtype=np.float32),
         colors=np.array([[1.0, 0.0, 0.0, 1.0], [0.0, 0.5, 1.0, 0.5]], dtype=np.float32),
-        sizes=np.array([np.pi, 4.0 * np.pi], dtype=np.float32),
+        sizes=np.array([2.0, 4.0], dtype=np.float32),
     )
 
     dvz_visual = renderer.add_point_visual(visual)
@@ -647,7 +656,12 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     np.testing.assert_array_equal(set_data[1][3], [[255, 0, 0, 255], [0, 128, 255, 128]])
     np.testing.assert_allclose(set_data[2][3], [2.0, 4.0], rtol=1e-6)
     assert _calls(fake, "set_query_capabilities") == [("set_query_capabilities", "point-visual", 0x02)]
-    assert _calls(fake, "add_visual")[-1] == ("add_visual", "panel", "point-visual", None)
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[:3] == ("add_visual", "panel", "point-visual")
+    attach_desc = add_visual_call[3]
+    assert isinstance(attach_desc, FakeDatovizV04.DvzVisualAttachDesc)
+    assert attach_desc.z_layer == 0
+    assert attach_desc.coord_space == 1
 
 
 def test_add_image_visual_uses_texture_convenience_path_and_origin_texcoords():

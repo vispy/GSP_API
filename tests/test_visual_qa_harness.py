@@ -16,6 +16,7 @@ def test_s023_case_registry_lists_initial_cases() -> None:
     assert case_ids == [
         "point/basic_ndc",
         "point/diameter_ramp_ndc",
+        "point/alpha_overlap_ndc",
         "image/checker_nearest_ndc",
         "overlay/point_over_image_ndc",
     ]
