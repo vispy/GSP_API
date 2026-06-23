@@ -113,7 +113,7 @@
       "id": "S019",
       "title": "Packaging, docs, and examples",
       "state": "in_progress",
-      "progress": 55
+      "progress": 80
     },
     {
       "id": "S020",
@@ -532,10 +532,19 @@
       "id": "M046",
       "title": "Docs/examples consistency cleanup",
       "stage": "S019",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 46
+    },
+    {
+      "id": "M047",
+      "title": "Strict mypy type-surface hardening",
+      "stage": "S019",
       "state": "planned",
       "agent": null,
       "progress": 0,
-      "priority": 46
+      "priority": 47
     }
   ],
   "review_queue": [],
@@ -556,7 +565,7 @@
     }
   ],
   "recommendations": [
-    "Continue S019 with M046 README/docs/examples consistency cleanup.",
+    "Continue S019 with M047 strict mypy type-surface hardening.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

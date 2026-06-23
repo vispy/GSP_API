@@ -268,7 +268,7 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
 **Two consumers.**
 
 1. The `gsp_network` server, which deserializes incoming payloads.
-2. The session record/replay examples — see [philosophy_examples.md §4.8](./philosophy_examples.md) and [examples/session_record_example.py](https://github.com/vispy/GSP_API/blob/main/examples/session_record_example.py).
+2. The session record/replay examples — see [philosophy_examples.md §4.8](./philosophy_examples.md) and [examples/session_01_record_example.py](https://github.com/vispy/GSP_API/blob/main/examples/session_01_record_example.py).
 
 ---
 

@@ -1,5 +1,5 @@
 # GSP_API
-Graphic Server Protocol Application User Interface
+Graphics Server Protocol Application User Interface
 
 A Python library that provides a unified API for scientific visualization across multiple renderers (Matplotlib, Datoviz).
 
@@ -46,11 +46,11 @@ GSP_RENDERER=datoviz python examples/buffer_example.py
 
 In-depth design documents live under [docs/philosophy/](docs/philosophy/):
 
-- [Whitepaper](docs/philosophy/whitepaper.md) — backend-agnostic scene-description API for scientific visualization in Python.
-- [Philosophy: Packages](docs/philosophy/philosophy_packages.md) — the seven-package split and how dependencies flow downward.
-- [Philosophy: GSP Core](docs/philosophy/philosophy_gsp_core.md) — the contract layer (`Canvas`, `Viewport`, `Camera`, `Buffer`, `Visual`).
-- [Philosophy: Renderers](docs/philosophy/philosophy_renderers.md) — the `RendererBase` contract and the Matplotlib / Datoviz / Network backends.
-- [Philosophy: Examples](docs/philosophy/philosophy_examples.md) — the shared skeleton behind every script in `examples/`.
+- [Whitepaper](docs/philosophy/markdowns/whitepaper.md) — backend-agnostic scene-description API for scientific visualization in Python.
+- [Philosophy: Packages](docs/philosophy/markdowns/philosophy_packages.md) — the seven-package split and how dependencies flow downward.
+- [Philosophy: GSP Core](docs/philosophy/markdowns/philosophy_gsp_core.md) — the contract layer (`Canvas`, `Viewport`, `Camera`, `Buffer`, `Visual`).
+- [Philosophy: Renderers](docs/philosophy/markdowns/philosophy_renderers.md) — the `RendererBase` contract and the Matplotlib / Datoviz / Network backends.
+- [Philosophy: Examples](docs/philosophy/markdowns/philosophy_examples.md) — the shared skeleton behind every script in `examples/`.
 
 ---
 
@@ -63,11 +63,13 @@ A. Create a virtual environment, activate it, and run `pip install -e .` from th
 A. After installation, run any script under `examples/`, e.g. `python examples/buffer_example.py`. See the [Running](#running) section.
 
 ### Q. How do I switch renderers?
-A. Set the `GSP_RENDERER` environment variable to either `matplotlib` or `datoviz` before running your script:
+A. Set the `GSP_RENDERER` environment variable to `matplotlib`, `datoviz`, or `network` before running examples that use `examples/common/example_helper.py`:
 
 ```bash
 GSP_RENDERER=datoviz python your_script.py
 ```
+
+Datoviz legacy renderer support is optional. Install it with `pip install -e ".[datoviz-legacy]"` when using examples that require the older Datoviz Python wrapper. Datoviz v0.4 protocol work is capability-gated separately and is not a default install dependency.
 
 ### Q. How do I run the tests?
 A. Tests live under `tests/` and run with pytest:

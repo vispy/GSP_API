@@ -1,6 +1,6 @@
 # GSP_API Examples
 
-This directory contains example scripts demonstrating the features and capabilities of the GSP_API visualization library. All examples work with both **Matplotlib** and **DatoViz** backends.
+This directory contains example scripts demonstrating the features and capabilities of the GSP_API visualization library. Most legacy examples use Matplotlib by default through `examples/common/example_helper.py`. Some also target the optional legacy Datoviz wrapper or the network renderer, and the `vispy2_protocol_*.py` examples exercise the newer protocol producer path.
 
 ## Quick Start
 
@@ -8,10 +8,13 @@ Run any example with your preferred backend:
 
 ```bash
 # Using Matplotlib (default)
-GSP_BACKEND=matplotlib python examples/example_name.py
+GSP_RENDERER=matplotlib python examples/example_name.py
 
-# Using DatoViz
-GSP_BACKEND=datoviz python examples/example_name.py
+# Using legacy Datoviz wrapper support
+GSP_RENDERER=datoviz python examples/example_name.py
+
+# Using the network renderer with a Matplotlib remote backend
+GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name.py
 ```
 
 ---
@@ -54,8 +57,8 @@ GSP_BACKEND=datoviz python examples/example_name.py
 | File | Description | Demonstrates |
 |------|-------------|--------------|
 | `animator_example.py` | Creating animations with the Animator | Dynamic animations with keyframes |
-| `session_record_example.py` | Recording visualization sessions | Capturing and exporting visualization data |
-| `session_player_example.py` | Replaying recorded sessions | Playback and analysis of recorded sessions |
+| `session_01_record_example.py` | Recording visualization sessions | Capturing and exporting visualization data |
+| `session_02_player_example.py` | Replaying recorded sessions | Playback and analysis of recorded sessions |
 | `network_client_example.py` | Network communication and remote visualization | Client-server visualization patterns |
 | `pydantic_cycle_example.py` | Data validation with Pydantic | Type-safe data handling in visualizations |
 | `svg_pdf_example.py` | Exporting to vector formats | SVG and PDF export capabilities |
@@ -113,7 +116,7 @@ GSP_BACKEND=datoviz python examples/example_name.py
 ### Single Example
 
 ```bash
-GSP_BACKEND=matplotlib python examples/points_example.py
+GSP_RENDERER=matplotlib python examples/points_example.py
 ```
 
 ### With Arguments
@@ -131,7 +134,7 @@ Create a quick test script:
 ```bash
 for backend in matplotlib datoviz; do
   echo "Testing with $backend..."
-  GSP_BACKEND=$backend python examples/points_example.py
+  GSP_RENDERER=$backend python examples/points_example.py
 done
 ```
 
@@ -139,8 +142,10 @@ done
 
 ## Key Concepts Across Examples
 
-### Backend Independence
-All examples are written to work with both Matplotlib and DatoViz backends. The backend is selected via the `GSP_BACKEND` environment variable at import time.
+### Backend Selection
+Examples that use `ExampleHelper` select their renderer with the `GSP_RENDERER` environment variable at runtime. Valid values are `matplotlib`, `datoviz`, and `network`; network mode also reads `GSP_REMOTE_RENDERER` with `matplotlib` or `datoviz`.
+
+Matplotlib is the default and reference backend for the current conformance slice. The legacy Datoviz wrapper is optional and installed with `pip install -e ".[datoviz-legacy]"`. Datoviz v0.4 protocol adapter work is capability-gated in `gsp_datoviz.protocol_renderer` and is not the same surface as the legacy example helper.
 
 ### Common Pattern
 Most examples follow this pattern:
@@ -182,26 +187,20 @@ When creating a new example, follow these guidelines:
 
 1. **Use descriptive names**: `example_<feature_name>.py` or `<feature>_example.py`
 2. **Add docstrings**: Explain what the example demonstrates
-3. **Test both backends**: Ensure it works with Matplotlib and DatoViz
+3. **State backend coverage**: Verify Matplotlib, then note whether Datoviz or network is supported
 4. **Keep it focused**: Demonstrate one feature clearly
 5. **Add comments**: Explain non-obvious code
 6. **Update this README**: Add the example to the appropriate category
-
-Use the `docs-examples-gsp` skill to help create examples:
-
-```bash
-docs-examples-gsp  # or ask: "Create an example showing..."
-```
 
 ---
 
 ## Troubleshooting
 
 ### Backend Import Errors
-If you get "DatoViz not available", the optional backend may not be installed:
+If you get "DatoViz not available", the optional legacy backend may not be installed:
 
 ```bash
-pip install datoviz
+pip install -e ".[datoviz-legacy]"
 ```
 
 ### Display Issues
@@ -216,5 +215,5 @@ Large examples may be slow depending on your hardware. Use smaller datasets for 
 
 - **Main Documentation**: See `../docs/` for full API documentation
 - **API Reference**: Check docstrings in `../src/gsp/`
-- **Testing**: Run `test-validate-gsp` to validate examples work correctly
+- **Testing**: Run `PYTHONPATH=. uv run pytest` to validate the test suite
 - **Contributing**: See main README for contribution guidelines

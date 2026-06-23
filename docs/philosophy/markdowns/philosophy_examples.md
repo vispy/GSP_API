@@ -13,8 +13,6 @@ GSP_RENDERER=matplotlib python examples/<file>.py
 GSP_RENDERER=datoviz    python examples/<file>.py
 ```
 
-> **Heads-up: `examples/README.md` says `GSP_BACKEND`, but the code reads `GSP_RENDERER`.** The factory in [examples/common/example_helper.py:42](../../examples/common/example_helper.py#L42) is the source of truth — `os.environ.get("GSP_RENDERER", ...)`. Use `GSP_RENDERER` when running examples; the README is stale.
-
 ---
 
 ## 2. The Five Design Principles
@@ -357,7 +355,7 @@ renderer_base.render(viewports, visuals, model_matrices, cameras)
 
 A session can be persisted to JSON, shipped over the wire, or replayed in CI for regression testing.
 
-**Demonstrated in:** [`session_record_example.py`](../../examples/session_record_example.py), [`session_player_example.py`](../../examples/session_player_example.py).
+**Demonstrated in:** [`session_01_record_example.py`](../../examples/session_01_record_example.py), [`session_02_player_example.py`](../../examples/session_02_player_example.py).
 
 ### 4.9 Transforms and serialization
 
@@ -485,7 +483,7 @@ Every claim in this document is grounded in a specific file. To verify:
 
 1. **For a pattern in §4** — open the cited example file, locate the snippet quoted here, and run it under both backends as shown in §1. The output PNGs in `examples/output/` are the proof.
 2. **For an `ExampleHelper` method** — see [examples/common/example_helper.py](../../examples/common/example_helper.py); each method is small enough to read in full.
-3. **For the env-var name** — `grep -rn "GSP_RENDERER\|GSP_BACKEND" examples/ src/`. Only [example_helper.py:42](../../examples/common/example_helper.py#L42) uses `GSP_RENDERER` from code; `GSP_BACKEND` appears only in the (stale) README.
+3. **For the env-var name** — `grep -rn "GSP_RENDERER" examples/ src/`. [example_helper.py:42](../../examples/common/example_helper.py#L42) uses `GSP_RENDERER`; user-facing docs should follow that source of truth.
 4. **For a snippet quoted verbatim** — `grep -n "<snippet>" examples/<file>.py`. Examples cited above:
    - `grep -n "ExampleHelper.create_renderer" examples/*.py`
    - `grep -n "@animator.event_listener" examples/animator_example.py`
