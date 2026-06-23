@@ -84,6 +84,7 @@ DVZ_COORD_VIEW = 0
 DVZ_COORD_DATA = 1
 DVZ_SHAPE_ASPECT_FILLED = 0
 DVZ_SHAPE_ASPECT_OUTLINE = 2
+DVZ_ALPHA_BLENDED = 1
 DVZ_IMAGE_SAMPLING_LINEAR = 0
 DVZ_IMAGE_SAMPLING_NEAREST = 1
 DEFAULT_BACKGROUND_RGBA8 = (255, 255, 255, 255)
@@ -212,6 +213,7 @@ class DatovizV04ProtocolRenderer:
 
         dvz_visual = self.dvz.dvz_point(self.scene, 0)
         _set_filled_point_style(self.dvz, dvz_visual)
+        _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
@@ -231,13 +233,15 @@ class DatovizV04ProtocolRenderer:
         positions = _positions_3d(visual.positions)
         fill_colors = _rgba8(visual.fill_colors)
         diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
-        angles = visual.angle_values()
-        shapes = _marker_shapes(self.dvz, visual.shape_values())
+        shape_values = visual.shape_values()
+        angles = _datoviz_marker_angles(shape_values, visual.angle_values())
+        shapes = _marker_shapes(self.dvz, shape_values)
 
         dvz_visual = self.dvz.dvz_marker(self.scene, 0)
         if dvz_visual is None:
             raise DatovizV04Unsupported("Datoviz marker visual allocation failed")
         _set_marker_style(self.dvz, dvz_visual, visual.stroke_color, visual.stroke_width)
+        _set_alpha_mode_if_translucent(self.dvz, dvz_visual, fill_colors)
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "color", fill_colors)
@@ -640,6 +644,27 @@ def _set_filled_point_style(dvz: Any, visual: Any) -> None:
         raise DatovizV04Unsupported("Datoviz point filled/no-stroke style configuration failed")
 
 
+def _set_alpha_mode_if_translucent(dvz: Any, visual: Any, colors: npt.NDArray[np.uint8]) -> None:
+    if not np.any(colors[:, 3] < 255):
+        return
+    setter = getattr(dvz, "dvz_visual_set_alpha_mode", None)
+    if setter is None:
+        raise DatovizV04Unsupported("Datoviz translucent colors require dvz_visual_set_alpha_mode")
+    result = setter(visual, _alpha_mode_value(dvz, "DVZ_ALPHA_BLENDED", DVZ_ALPHA_BLENDED))
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz alpha blending configuration failed")
+
+
+def _alpha_mode_value(dvz: Any, name: str, fallback: int) -> int:
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, "DvzAlphaMode", None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return fallback
+
+
 def _datoviz_marker_diagnostics(dvz: Any) -> tuple[str, ...]:
     return tuple(f"missing {name}" for name in _REQUIRED_DVZ_MARKER_FUNCTIONS if not hasattr(dvz, name))
 
@@ -693,6 +718,16 @@ def _assign_rgba_field(target: Any, field_name: str, rgba: npt.NDArray[np.uint8]
 
 def _marker_shapes(dvz: Any, shapes: tuple[MarkerShape, ...]) -> npt.NDArray[np.uint32]:
     return np.ascontiguousarray(np.array([_marker_shape_value(dvz, shape) for shape in shapes], dtype=np.uint32))
+
+
+def _datoviz_marker_angles(
+    shapes: tuple[MarkerShape, ...], angles: npt.NDArray[np.float32]
+) -> npt.NDArray[np.float32]:
+    corrected = np.array(angles, dtype=np.float32, copy=True).reshape(-1)
+    for index, shape in enumerate(shapes):
+        if shape == MarkerShape.TRIANGLE:
+            corrected[index] += np.float32(np.pi)
+    return np.ascontiguousarray(corrected)
 
 
 def _marker_shape_value(dvz: Any, shape: MarkerShape) -> int:
