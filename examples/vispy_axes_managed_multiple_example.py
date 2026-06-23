@@ -6,8 +6,11 @@ import numpy as np
 # local imports
 from common.example_helper import ExampleHelper
 from gsp.core import Canvas
-from gsp.types import VisualBase, MarkerShape
+from gsp.types import Buffer, BufferType, VisualBase
 from gsp.constants import Constants
+from gsp.utils.unit_utils import UnitUtils
+from gsp.visuals import Points
+from gsp_extra.bufferx import Bufferx
 import vispy2 as Vispy2
 
 
@@ -54,8 +57,15 @@ def main():
         z_values = np.zeros(point_count, dtype=np.float32)
         positions_numpy = np.vstack((x_values, y_values, z_values)).T.astype(np.float32)
 
-        # Create the Points visual and add it to the viewport
-        points = Vispy2.scatter(positions_numpy)
+        positions_buffer = Bufferx.from_numpy(positions_numpy, BufferType.vec3)
+        sizes_buffer = Bufferx.from_numpy(np.array([10] * point_count, dtype=np.float32), BufferType.float32)
+        face_colors_buffer = Buffer(point_count, BufferType.rgba8)
+        face_colors_buffer.set_data(bytearray([255, 0, 0, 255]) * point_count, 0, point_count)
+        edge_colors_buffer = Buffer(point_count, BufferType.rgba8)
+        edge_colors_buffer.set_data(Constants.Color.blue * point_count, 0, point_count)
+        edge_widths_numpy = np.array([UnitUtils.pixel_to_point(1, canvas.get_dpi())] * point_count, dtype=np.float32)
+        edge_widths_buffer = Bufferx.from_numpy(edge_widths_numpy, BufferType.float32)
+        points = Points(positions_buffer, sizes_buffer, face_colors_buffer, edge_colors_buffer, edge_widths_buffer)
         return points
 
     points = generate_visual_points(100)

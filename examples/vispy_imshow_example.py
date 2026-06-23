@@ -24,6 +24,7 @@ from gsp_extra.misc.texture_utils import TextureUtils
 
 # from vispy_2 import scatter
 import vispy2 as Vispy2
+from vispy2.imshow.imshow import imshow
 
 
 def main():
@@ -49,7 +50,7 @@ def main():
     image_path = pathlib.Path(__file__).parent / "images" / "image.png"
     texture = TextureUtils.load_image(str(image_path))
 
-    imshowImage = Vispy2.imshow(texture, cmap="viridis", origin="upper")
+    imshowImage = imshow(texture, cmap="viridis", origin="upper")
     visualImage = imshowImage.to_visual_image()
 
     axes_managed.add_visual(visualImage)

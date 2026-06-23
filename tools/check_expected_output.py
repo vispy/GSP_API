@@ -129,6 +129,11 @@ def main() -> None:
 
     # remove all but .png and .json files from the list
     expected_basenames = [basename for basename in expected_basenames if basename.endswith(".png") or basename.endswith(".json")]
+    server_dependent_basenames = {
+        # Produced by network_client_example.py, which requires a running gsp_network server.
+        "network_client_example.png",
+    }
+    expected_basenames = [basename for basename in expected_basenames if basename not in server_dependent_basenames]
 
     project_rootpath = os.path.abspath(os.path.join(__dirname__, ".."))
     expected_folder_relpath = os.path.relpath(expected_folder, start=project_rootpath)

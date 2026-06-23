@@ -1,5 +1,5 @@
 {
-  "current_stage": "S019",
+  "current_stage": "S020",
   "stages": [
     {
       "id": "S001",
@@ -112,14 +112,14 @@
     {
       "id": "S019",
       "title": "Packaging, docs, and examples",
-      "state": "in_progress",
-      "progress": 95
+      "state": "completed",
+      "progress": 100
     },
     {
       "id": "S020",
       "title": "Remote data and dynamic extension security pre-design",
-      "state": "planned",
-      "progress": 0
+      "state": "in_progress",
+      "progress": 10
     }
   ],
   "missions": [
@@ -554,6 +554,24 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 48
+    },
+    {
+      "id": "M049",
+      "title": "S019 release checklist and tag policy",
+      "stage": "S019",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 49
+    },
+    {
+      "id": "M050",
+      "title": "S020 security pre-design consultation",
+      "stage": "S020",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 50
     }
   ],
   "review_queue": [],
@@ -574,7 +592,7 @@
     }
   ],
   "recommendations": [
-    "Finalize S019 with an explicit release checklist/tag policy decision, or open S020 for remote data and dynamic extension security pre-design.",
+    "Pause S020 implementation until the P006 ChatGPT Pro security pre-design response is pasted or committed.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

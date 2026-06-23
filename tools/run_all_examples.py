@@ -110,6 +110,8 @@ def main() -> None:
     basenames = [basename for basename in basenames if not basename.startswith("_")]
     # remove basenames that are blacklisted
     blacklisted_basenames = [
+        # Requires a running gsp_network server and is validated separately.
+        "network_client_example.py",
         "session_01_record_example.py",
         "session_02_player_example.py",
     ]

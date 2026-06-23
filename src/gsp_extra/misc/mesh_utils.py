@@ -1,6 +1,7 @@
 # pip imports
+from typing import Any, cast
+
 import numpy as np
-import meshio
 
 # local imports
 from gsp.geometry import MeshGeometry
@@ -229,14 +230,19 @@ class MeshUtils:
                 - faces_uvs (np.ndarray | None): Array of texture coordinates (if available). Shape (N, 2) or None.
                 - faces_normals (np.ndarray | None): Array of normal coordinates (if available). Shape (N, 3) or None.
         """
-        meshio_mesh = meshio.read(file_path)
-        vertices_coords = meshio_mesh.points
+        try:
+            import meshio
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError("parse_obj_file_meshio() requires the optional 'meshio' package") from exc
+
+        meshio_mesh: Any = meshio.read(file_path)
+        vertices_coords = cast(np.ndarray, meshio_mesh.points)
         # only 3d triangular meshes are supported for now
-        faces_indices = meshio_mesh.cells[0].data
+        faces_indices = cast(np.ndarray, meshio_mesh.cells[0].data)
 
         # Optional texture coordinates
-        faces_uvs = meshio_mesh.point_data["obj:vt"] if "obj:vt" in meshio_mesh.point_data else None
+        faces_uvs = cast(np.ndarray, meshio_mesh.point_data["obj:vt"]) if "obj:vt" in meshio_mesh.point_data else None
         # Optional (per-vertex) normals coordinates
-        faces_normals = meshio_mesh.point_data["obj:vn"] if "obj:vn" in meshio_mesh.point_data else None
+        faces_normals = cast(np.ndarray, meshio_mesh.point_data["obj:vn"]) if "obj:vn" in meshio_mesh.point_data else None
 
         return vertices_coords, faces_indices, faces_uvs, faces_normals
