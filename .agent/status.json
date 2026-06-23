@@ -1,5 +1,5 @@
 {
-  "current_stage": "S021",
+  "current_stage": "S022",
   "stages": [
     {
       "id": "S001",
@@ -124,8 +124,14 @@
     {
       "id": "S021",
       "title": "No-network preconfigured-source resolver proof",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S022",
+      "title": "Remote source family selection and consultation",
       "state": "in_progress",
-      "progress": 70
+      "progress": 5
     }
   ],
   "missions": [
@@ -632,6 +638,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 56
+    },
+    {
+      "id": "M057",
+      "title": "S021 closeout and S022 opening",
+      "stage": "S021",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 57
     }
   ],
   "review_queue": [],
@@ -656,10 +671,17 @@
       "requires_human": false,
       "requires_chatgpt_pro": false,
       "state": "closed"
+    },
+    {
+      "id": "Q060-FIRST-REMOTE-SOURCE-FAMILY",
+      "summary": "Open for S022: choose and design the first real remote-source family before any production fetch implementation.",
+      "requires_human": true,
+      "requires_chatgpt_pro": true,
+      "state": "open"
     }
   ],
   "recommendations": [
-    "Next S021 mission: close S021 with a resolver proof checklist and decide whether a future remote-source design packet is needed before any real fetch family is implemented.",
+    "Next S022 mission: prepare a self-contained ChatGPT Pro consultation packet for selecting and designing the first real remote-source family before any production fetch implementation.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }
