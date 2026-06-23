@@ -46,3 +46,15 @@ Datoviz and Matplotlib both support acceptable mappings. Capability-gate anythin
 
 - Stop if marker shape vocabulary becomes broader than verified v0.4/Matplotlib support.
 - Stop if stroke semantics require a new rendering model beyond simple v1 fill/stroke.
+
+## Completion Notes
+
+- Implemented protocol `MarkerVisual` with scalar/per-item shape and angle support.
+- Kept the v1 shape vocabulary bounded to Datoviz/Matplotlib-compatible built-ins.
+- Implemented Matplotlib and Datoviz v0.4 retained marker mappings.
+- Added public producer API `Axes.markers(...)` and `vispy2.markers(...)`.
+- Added marker QA cases for built-in shapes, angle, size, fill, and stroke.
+- Validation passed:
+  - `.venv/bin/python -m pytest tests/ -q`
+  - `.venv/bin/mypy src/ --strict --show-error-codes`
+  - backend import checks for Matplotlib and Datoviz.

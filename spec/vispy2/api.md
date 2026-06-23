@@ -20,6 +20,7 @@ ax.set_xticks([0, 0.5, 1], labels=["zero", "half", "one"])
 ax.grid(True)
 ax.imshow(image)
 ax.scatter(x, y, color=rgba, size=36)
+ax.markers(x, y, shape="triangle", fill_color=rgba, size=36, angle=0.0)
 fig.render_matplotlib()
 fig.savefig("out.png")
 ```
@@ -30,6 +31,7 @@ VisPy2 should target GSP, not Datoviz directly.
 
 - `vp.subplots()` returns a minimal `Figure, Axes` pair.
 - `Axes.scatter()` emits a GSP `PointVisual`.
+- `Axes.markers()` emits a GSP `MarkerVisual`.
 - `Axes.imshow()` emits a GSP `ImageVisual`.
 - `Axes.set_xlim()` and `Axes.set_ylim()` update semantic `View2D`, not backend-local state.
 - `Axes.set_xlabel()`, `set_ylabel()`, `set_title()`, `set_xticks()`, `set_yticks()`, and

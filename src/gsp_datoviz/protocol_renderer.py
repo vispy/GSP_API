@@ -24,6 +24,8 @@ from gsp.protocol import (
     CapabilitySnapshot,
     ImageOrigin,
     ImageVisual,
+    MarkerShape,
+    MarkerVisual,
     PointVisual,
     QueryCoordinateSpace,
     QueryHitPolicy,
@@ -62,6 +64,12 @@ _REQUIRED_DVZ_SAMPLED_FIELD_FUNCTIONS = (
     "dvz_visual_set_field",
 )
 
+_REQUIRED_DVZ_MARKER_FUNCTIONS = (
+    "dvz_marker",
+    "dvz_marker_style",
+    "dvz_marker_set_style",
+)
+
 DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
 DVZ_FIELD_SEMANTIC_COLOR = 4
@@ -74,6 +82,24 @@ DVZ_QUERY_CAPABILITY_ITEM = 0x02
 DVZ_QUERY_CAPABILITY_PIXEL = 0x10
 DVZ_COORD_VIEW = 0
 DVZ_COORD_DATA = 1
+DVZ_SHAPE_ASPECT_FILLED = 0
+DVZ_SHAPE_ASPECT_OUTLINE = 2
+
+_MARKER_SHAPE_FALLBACKS = {
+    MarkerShape.DISC: 0,
+    MarkerShape.SQUARE: 1,
+    MarkerShape.TRIANGLE: 2,
+    MarkerShape.DIAMOND: 3,
+    MarkerShape.CROSS: 4,
+}
+
+_MARKER_SHAPE_NAMES = {
+    MarkerShape.DISC: "DVZ_MARKER_SHAPE_DISC",
+    MarkerShape.SQUARE: "DVZ_MARKER_SHAPE_SQUARE",
+    MarkerShape.TRIANGLE: "DVZ_MARKER_SHAPE_TRIANGLE",
+    MarkerShape.DIAMOND: "DVZ_MARKER_SHAPE_DIAMOND",
+    MarkerShape.CROSS: "DVZ_MARKER_SHAPE_CROSS",
+}
 
 
 class DatovizV04Unavailable(RuntimeError):
@@ -185,6 +211,34 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
         _set_visual_data(self.dvz, dvz_visual, "diameter_px", diameters)
+        self.dvz.dvz_panel_add_visual(self.panel, dvz_visual, _visual_attach_desc(self.dvz, coord_space="data", z_layer=0))
+        self.visuals[visual.id] = dvz_visual
+        return dvz_visual
+
+    def add_marker_visual(self, visual: MarkerVisual) -> Any:
+        """Create and attach a Datoviz marker visual."""
+        if visual.coordinate_space != CoordinateSpace.NDC:
+            raise DatovizV04Unsupported("Datoviz v0.4 slice currently supports NDC marker positions only")
+        marker_diagnostics = _datoviz_marker_diagnostics(self.dvz)
+        if marker_diagnostics:
+            raise DatovizV04Unsupported(f"Datoviz v0.4 marker facade is unavailable: {', '.join(marker_diagnostics)}")
+
+        positions = _positions_3d(visual.positions)
+        fill_colors = _rgba8(visual.fill_colors)
+        diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
+        angles = visual.angle_values()
+        shapes = _marker_shapes(self.dvz, visual.shape_values())
+
+        dvz_visual = self.dvz.dvz_marker(self.scene, 0)
+        if dvz_visual is None:
+            raise DatovizV04Unsupported("Datoviz marker visual allocation failed")
+        _set_marker_style(self.dvz, dvz_visual, visual.stroke_color, visual.stroke_width)
+        _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
+        _set_visual_data(self.dvz, dvz_visual, "position", positions)
+        _set_visual_data(self.dvz, dvz_visual, "color", fill_colors)
+        _set_visual_data(self.dvz, dvz_visual, "diameter_px", diameters)
+        _set_visual_data(self.dvz, dvz_visual, "angle", angles)
+        _set_visual_data(self.dvz, dvz_visual, "shape", shapes)
         self.dvz.dvz_panel_add_visual(self.panel, dvz_visual, _visual_attach_desc(self.dvz, coord_space="data", z_layer=0))
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
@@ -532,6 +586,72 @@ def _set_filled_point_style(dvz: Any, visual: Any) -> None:
     result = style_setter(visual, style)
     if result not in (0, None, True):
         raise DatovizV04Unsupported("Datoviz point filled/no-stroke style configuration failed")
+
+
+def _datoviz_marker_diagnostics(dvz: Any) -> tuple[str, ...]:
+    return tuple(f"missing {name}" for name in _REQUIRED_DVZ_MARKER_FUNCTIONS if not hasattr(dvz, name))
+
+
+def _set_marker_style(dvz: Any, visual: Any, stroke_color: npt.NDArray[Any], stroke_width: float) -> None:
+    style = dvz.dvz_marker_style()
+    _assign_rgba_field(style, "edge_color", _rgba8_scalar(stroke_color))
+    if hasattr(style, "stroke_width_px"):
+        style.stroke_width_px = float(stroke_width)
+    elif hasattr(style, "stroke_width"):
+        style.stroke_width = float(stroke_width)
+    if hasattr(style, "aspect"):
+        if stroke_width > 0.0 and _rgba8_scalar(stroke_color)[3] > 0:
+            style.aspect = int(getattr(dvz, "DVZ_SHAPE_ASPECT_OUTLINE", DVZ_SHAPE_ASPECT_OUTLINE))
+        else:
+            style.aspect = int(getattr(dvz, "DVZ_SHAPE_ASPECT_FILLED", DVZ_SHAPE_ASPECT_FILLED))
+    result = dvz.dvz_marker_set_style(visual, style)
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz marker style configuration failed")
+
+
+def _rgba8_scalar(color: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:
+    rgba = _rgba8(np.asarray(color).reshape(1, 4))[0]
+    return np.ascontiguousarray(rgba)
+
+
+def _assign_rgba_field(target: Any, field_name: str, rgba: npt.NDArray[np.uint8]) -> None:
+    values = [int(value) for value in rgba]
+    field = getattr(target, field_name, None)
+    if field is not None:
+        if all(hasattr(field, channel) for channel in ("r", "g", "b", "a")):
+            field.r = values[0]
+            field.g = values[1]
+            field.b = values[2]
+            field.a = values[3]
+            return
+        try:
+            field[:] = values
+            return
+        except (TypeError, ValueError):
+            pass
+    color_type = getattr(type(target), field_name, None)
+    if color_type is not None:
+        try:
+            setattr(target, field_name, color_type(*values))
+            return
+        except TypeError:
+            pass
+    setattr(target, field_name, values)
+
+
+def _marker_shapes(dvz: Any, shapes: tuple[MarkerShape, ...]) -> npt.NDArray[np.uint32]:
+    return np.ascontiguousarray(np.array([_marker_shape_value(dvz, shape) for shape in shapes], dtype=np.uint32))
+
+
+def _marker_shape_value(dvz: Any, shape: MarkerShape) -> int:
+    name = _MARKER_SHAPE_NAMES[shape]
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, "DvzMarkerShape", None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return _MARKER_SHAPE_FALLBACKS[shape]
 
 
 def _configure_ndc_panel_view2d(dvz: Any, panel: Any) -> None:

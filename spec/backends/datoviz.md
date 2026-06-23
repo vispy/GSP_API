@@ -53,7 +53,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 The first Datoviz v0.4 protocol adapter lives in `src/gsp_datoviz/protocol_renderer.py`.
 It is intentionally separate from the legacy Datoviz renderer path and targets only the
 top-level C-shaped facade (`dvz_scene`, `dvz_figure`, `dvz_panel_full`, `dvz_point`,
-`dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_texture`, and
+`dvz_marker`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_texture`, and
 `dvz_panel_add_visual`).
 
 Current supported surface:
@@ -64,6 +64,7 @@ Current supported surface:
 | Session/figure/panel | `dvz_scene()` + `dvz_figure()` + `dvz_panel_full()` | implemented |
 | Point visual | `dvz_point()` + `position`, `color`, `diameter_px` attributes | implemented for NDC positions |
 | Point size | GSP screen-pixel diameter uploaded to Datoviz `diameter_px` | implemented |
+| Marker visual | `dvz_marker()` + `position`, `color`, `diameter_px`, `angle`, `shape` attributes | implemented when marker facade symbols are exposed |
 | Image visual | `dvz_image()` + `position`, `texcoords`, `dvz_visual_set_texture()` | implemented for uint8 RGB/RGBA, nearest, NDC extents |
 | Image scalar fields | sampled-field path | deferred to `DATOVIZ-V04-IMAGE-FIELD-CONTRACT` |
 | Queries | Datoviz panel query APIs | not advertised; deferred to `DATOVIZ-V04-QUERY-BINDING` |
@@ -71,6 +72,7 @@ Current supported surface:
 The adapter raises explicit unsupported errors for semantics not locked in this slice:
 
 - non-NDC point/image coordinates;
+- missing marker facade functions or non-NDC marker coordinates;
 - non-nearest image interpolation;
 - scalar, grayscale, or floating-point images that should use sampled fields;
 - query/readback support.

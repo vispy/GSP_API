@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from gsp.protocol import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, PointVisual
+from gsp.protocol import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, MarkerShape, MarkerVisual, PointVisual
 from gsp.qa.visual.case_spec import VisualQACase, VisualQAScene
 
 
@@ -36,6 +36,20 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
             family="point",
             required_features=("point", "ndc", "rgba8", "alpha"),
             builder=_point_alpha_overlap_ndc,
+        ),
+        VisualQACase(
+            case_id="marker/shapes_ndc",
+            title="Marker built-in shapes in NDC",
+            family="marker",
+            required_features=("marker", "ndc", "rgba8", "shape", "stroke"),
+            builder=_marker_shapes_ndc,
+        ),
+        VisualQACase(
+            case_id="marker/angle_size_stroke_ndc",
+            title="Marker angle, size, and stroke in NDC",
+            family="marker",
+            required_features=("marker", "ndc", "rgba8", "angle", "pixel-size", "stroke"),
+            builder=_marker_angle_size_stroke_ndc,
         ),
         VisualQACase(
             case_id="image/checker_nearest_ndc",
@@ -168,6 +182,104 @@ def _point_alpha_overlap_ndc() -> VisualQAScene:
         visuals=(visual,),
         arrays={"point_positions": positions, "point_colors": colors, "point_sizes": sizes},
         notes=("Three overlapping semi-transparent points with fixed pixel diameters.",),
+    )
+
+
+def _marker_shapes_ndc() -> VisualQAScene:
+    positions = np.array(
+        [
+            [-0.72, 0.0],
+            [-0.36, 0.0],
+            [0.0, 0.0],
+            [0.36, 0.0],
+            [0.72, 0.0],
+        ],
+        dtype=np.float32,
+    )
+    shapes = (
+        MarkerShape.DISC,
+        MarkerShape.SQUARE,
+        MarkerShape.TRIANGLE,
+        MarkerShape.DIAMOND,
+        MarkerShape.CROSS,
+    )
+    colors = np.array(
+        [
+            [216, 27, 96, 230],
+            [30, 136, 229, 230],
+            [0, 137, 123, 230],
+            [251, 140, 0, 230],
+            [94, 53, 177, 230],
+        ],
+        dtype=np.uint8,
+    )
+    sizes = np.full(positions.shape[0], 42.0, dtype=np.float32)
+    shape_codes = np.arange(len(shapes), dtype=np.uint8)
+    visual = MarkerVisual(
+        id="visual:marker-shapes-ndc",
+        positions=positions,
+        shape=shapes,
+        fill_colors=colors,
+        sizes=sizes,
+        stroke_color=np.array([20, 20, 20, 255], dtype=np.uint8),
+        stroke_width=1.5,
+        coordinate_space=CoordinateSpace.NDC,
+    )
+    return VisualQAScene(
+        case_id="marker/shapes_ndc",
+        visuals=(visual,),
+        arrays={
+            "marker_positions": positions,
+            "marker_shape_codes": shape_codes,
+            "marker_fill_colors": colors,
+            "marker_sizes": sizes,
+        },
+        notes=("Five conservative built-in marker shapes with shared dark stroke.",),
+    )
+
+
+def _marker_angle_size_stroke_ndc() -> VisualQAScene:
+    count = 6
+    positions = np.column_stack(
+        (
+            np.linspace(-0.72, 0.72, count, dtype=np.float32),
+            np.zeros(count, dtype=np.float32),
+        )
+    ).astype(np.float32)
+    sizes = np.array([18.0, 24.0, 30.0, 36.0, 44.0, 54.0], dtype=np.float32)
+    angles = np.linspace(0.0, np.pi * 0.9, count, dtype=np.float32)
+    colors = np.array(
+        [
+            [46, 125, 50, 210],
+            [67, 160, 71, 210],
+            [124, 179, 66, 210],
+            [251, 192, 45, 210],
+            [245, 124, 0, 210],
+            [198, 40, 40, 210],
+        ],
+        dtype=np.uint8,
+    )
+    visual = MarkerVisual(
+        id="visual:marker-angle-size-stroke-ndc",
+        positions=positions,
+        shape=MarkerShape.TRIANGLE,
+        fill_colors=colors,
+        sizes=sizes,
+        angle=angles,
+        stroke_color=np.array([15, 35, 45, 255], dtype=np.uint8),
+        stroke_width=2.0,
+        coordinate_space=CoordinateSpace.NDC,
+    )
+    return VisualQAScene(
+        case_id="marker/angle_size_stroke_ndc",
+        visuals=(visual,),
+        arrays={
+            "marker_positions": positions,
+            "marker_fill_colors": colors,
+            "marker_sizes": sizes,
+            "marker_angles": angles,
+        },
+        notes=("Rotating triangle markers with increasing requested pixel diameters and a visible stroke.",),
     )
 
 

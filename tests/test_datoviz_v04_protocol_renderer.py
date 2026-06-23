@@ -7,7 +7,7 @@ import ctypes
 import numpy as np
 import pytest
 
-from gsp.protocol import ImageOrigin, ImageVisual, PointVisual
+from gsp.protocol import ImageOrigin, ImageVisual, MarkerShape, MarkerVisual, PointVisual
 from gsp.protocol import (
     AxisProviderRequest,
     QueryCoordinateSpace,
@@ -99,6 +99,10 @@ class FakeDatovizV04:
         self.calls.append(("image", scene, flags))
         return "image-visual"
 
+    def dvz_marker(self, scene, flags):
+        self.calls.append(("marker", scene, flags))
+        return "marker-visual"
+
     def dvz_visual_set_data(self, visual, name, data):
         self.calls.append(("set_data", visual, name, np.array(data, copy=True)))
         return 0
@@ -121,6 +125,21 @@ class FakeDatovizV04:
 
     def dvz_point_set_style(self, visual, style):
         self.calls.append(("point_set_style", visual, style))
+        return 0
+
+    class FakeMarkerStyle:
+        stroke_width_px = 0.0
+        aspect = 0
+
+        def __init__(self):
+            self.edge_color = [0, 0, 0, 255]
+
+    def dvz_marker_style(self):
+        self.calls.append(("marker_style",))
+        return self.FakeMarkerStyle()
+
+    def dvz_marker_set_style(self, visual, style):
+        self.calls.append(("marker_set_style", visual, style))
         return 0
 
     class DvzVisualAttachDesc(ctypes.Structure):
@@ -709,6 +728,40 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     assert isinstance(attach_desc, FakeDatovizV04.DvzVisualAttachDesc)
     assert attach_desc.z_layer == 0
     assert attach_desc.coord_space == 1
+
+
+def test_add_marker_visual_uses_dvz_marker_attributes_shape_angle_and_style():
+    fake = FakeDatovizV04WithQueryCapabilities()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
+    visual = MarkerVisual(
+        id="visual:markers",
+        positions=np.array([[-0.5, 0.25], [0.5, -0.25]], dtype=np.float32),
+        shape=(MarkerShape.DISC, MarkerShape.DIAMOND),
+        fill_colors=np.array([[1.0, 0.0, 0.0, 1.0], [0.0, 0.5, 1.0, 0.5]], dtype=np.float32),
+        sizes=np.array([12.0, 24.0], dtype=np.float32),
+        angle=np.array([0.0, 0.5], dtype=np.float32),
+        stroke_color=np.array([0, 0, 0, 255], dtype=np.uint8),
+        stroke_width=2.0,
+    )
+
+    dvz_visual = renderer.add_marker_visual(visual)
+
+    assert dvz_visual == "marker-visual"
+    style_call = _calls(fake, "marker_set_style")[0]
+    assert style_call[1] == "marker-visual"
+    assert style_call[2].stroke_width_px == 2.0
+    assert style_call[2].aspect == 2
+    assert style_call[2].edge_color == [0, 0, 0, 255]
+    set_data = _calls(fake, "set_data")
+    assert [call[2] for call in set_data] == ["position", "color", "diameter_px", "angle", "shape"]
+    np.testing.assert_allclose(set_data[0][3], [[-0.5, 0.25, 0.0], [0.5, -0.25, 0.0]])
+    np.testing.assert_array_equal(set_data[1][3], [[255, 0, 0, 255], [0, 128, 255, 128]])
+    np.testing.assert_allclose(set_data[2][3], [12.0, 24.0], rtol=1e-6)
+    np.testing.assert_allclose(set_data[3][3], [0.0, 0.5], rtol=1e-6)
+    np.testing.assert_array_equal(set_data[4][3], [0, 3])
+    assert _calls(fake, "set_query_capabilities") == [("set_query_capabilities", "marker-visual", 0x02)]
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[:3] == ("add_visual", "panel", "marker-visual")
 
 
 def test_renderer_configures_equal_aspect_ndc_panel_when_available():

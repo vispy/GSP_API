@@ -2,6 +2,6 @@
 
 from . import axes
 from .plot.plot import plot
-from .protocol import Axes, Figure, imshow, scatter, subplots
+from .protocol import Axes, Figure, imshow, markers, scatter, subplots
 
-__all__ = ["Axes", "Figure", "axes", "imshow", "plot", "scatter", "subplots"]
+__all__ = ["Axes", "Figure", "axes", "imshow", "markers", "plot", "scatter", "subplots"]

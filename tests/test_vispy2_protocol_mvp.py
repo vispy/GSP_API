@@ -17,6 +17,8 @@ from gsp.protocol import (
     CoordinateSpace,
     ImageOrigin,
     ImageVisual,
+    MarkerShape,
+    MarkerVisual,
     PanelTextRole,
     PointVisual,
     TickSpecKind,
@@ -55,6 +57,33 @@ def test_subplots_imshow_emits_image_visual():
     assert visual.origin == ImageOrigin.LOWER
     assert visual.extent == (-0.5, 2.5, -0.5, 1.5)
     np.testing.assert_array_equal(visual.image, image)
+
+
+def test_subplots_markers_emits_marker_visual():
+    fig, ax = vp.subplots()
+
+    visual = ax.markers(
+        np.array([-0.5, 0.5], dtype=np.float32),
+        np.array([0.25, -0.25], dtype=np.float32),
+        shape=("square", MarkerShape.TRIANGLE),
+        fill_color=np.array([255, 0, 0, 255], dtype=np.uint8),
+        size=np.array([16.0, 36.0], dtype=np.float32),
+        angle=np.array([0.0, 0.5], dtype=np.float32),
+        stroke_color=np.array([0, 0, 0, 255], dtype=np.uint8),
+        stroke_width=1.5,
+        id="visual:markers",
+    )
+
+    assert isinstance(visual, MarkerVisual)
+    assert visual.coordinate_space == CoordinateSpace.DATA
+    assert fig.visuals() == (visual,)
+    assert visual.shape_values() == (MarkerShape.SQUARE, MarkerShape.TRIANGLE)
+    np.testing.assert_allclose(visual.positions, [[-0.5, 0.25], [0.5, -0.25]])
+    np.testing.assert_array_equal(visual.fill_colors, [[255, 0, 0, 255], [255, 0, 0, 255]])
+    np.testing.assert_allclose(visual.sizes, [16.0, 36.0])
+    np.testing.assert_allclose(visual.angle_values(), [0.0, 0.5])
+    np.testing.assert_array_equal(visual.stroke_color, [0, 0, 0, 255])
+    assert visual.stroke_width == 1.5
 
 
 def test_vispy2_output_renders_through_matplotlib_protocol_backend():
@@ -108,9 +137,11 @@ def test_matplotlib_render_honors_view2d_limits():
 
 def test_top_level_helpers_emit_protocol_visuals():
     point = vp.scatter(np.array([[0.0, 0.0]], dtype=np.float32))
+    marker = vp.markers(np.array([[0.0, 0.0]], dtype=np.float32))
     image = vp.imshow(np.zeros((1, 1), dtype=np.float32))
 
     assert isinstance(point, PointVisual)
+    assert isinstance(marker, MarkerVisual)
     assert isinstance(image, ImageVisual)
 
 

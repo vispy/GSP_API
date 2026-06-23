@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 
-from gsp.protocol import ImageVisual, PointVisual
+from gsp.protocol import ImageVisual, MarkerVisual, PointVisual
 from gsp.qa.visual.artifacts import (
     ensure_run_dirs,
     write_case_note,
@@ -30,7 +30,7 @@ from gsp.qa.visual.cases import S023_SUITE, case_slug, list_cases
 from gsp.qa.visual.contact_sheet import write_contact_sheets
 from gsp.qa.visual.datoviz_probe import DatovizV04ProbeReport, probe_datoviz_v04
 from gsp_datoviz.protocol_renderer import DatovizV04ProtocolRenderer
-from gsp_matplotlib.protocol_renderer import render_image_visual, render_point_visual
+from gsp_matplotlib.protocol_renderer import render_image_visual, render_marker_visual, render_point_visual
 
 
 BackendStatus = Literal["rendered", "unsupported", "error"]
@@ -211,6 +211,8 @@ def _run_datoviz(
 def _render_matplotlib_visual(ax: Axes, visual: ProtocolVisual) -> None:
     if isinstance(visual, PointVisual):
         render_point_visual(ax, visual)
+    elif isinstance(visual, MarkerVisual):
+        render_marker_visual(ax, visual)
     elif isinstance(visual, ImageVisual):
         render_image_visual(ax, visual)
     else:
@@ -220,6 +222,8 @@ def _render_matplotlib_visual(ax: Axes, visual: ProtocolVisual) -> None:
 def _render_datoviz_visual(renderer: DatovizV04ProtocolRenderer, visual: ProtocolVisual) -> None:
     if isinstance(visual, PointVisual):
         renderer.add_point_visual(visual)
+    elif isinstance(visual, MarkerVisual):
+        renderer.add_marker_visual(visual)
     elif isinstance(visual, ImageVisual):
         renderer.add_image_visual(visual)
     else:

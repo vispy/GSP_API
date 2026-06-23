@@ -10,7 +10,7 @@ from typing import Any, Mapping, cast
 
 import numpy as np
 
-from gsp.protocol import ImageVisual, PointVisual
+from gsp.protocol import ImageVisual, MarkerVisual, PointVisual
 from gsp.qa.visual.backend_ids import DATOVIZ_BACKEND_ID
 from gsp.qa.visual.case_spec import ProtocolVisual, VisualQAScene
 from gsp.qa.visual.cases import case_slug
@@ -149,6 +149,24 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "positions": {"shape": list(visual.positions.shape), "dtype": str(visual.positions.dtype)},
             "colors": {"shape": list(visual.colors.shape), "dtype": str(visual.colors.dtype)},
             "sizes": {"shape": size_shape, "dtype": str(sizes.dtype) if isinstance(sizes, np.ndarray) else "float"},
+        }
+    if isinstance(visual, MarkerVisual):
+        sizes = visual.sizes
+        size_shape = list(sizes.shape) if isinstance(sizes, np.ndarray) else []
+        angle = visual.angle
+        angle_shape = list(angle.shape) if isinstance(angle, np.ndarray) else []
+        shape = visual.shape
+        return {
+            "family": "marker",
+            "id": visual.id,
+            "coordinate_space": visual.coordinate_space.value,
+            "positions": {"shape": list(visual.positions.shape), "dtype": str(visual.positions.dtype)},
+            "shape": [value.value for value in shape] if isinstance(shape, tuple) else shape.value,
+            "fill_colors": {"shape": list(visual.fill_colors.shape), "dtype": str(visual.fill_colors.dtype)},
+            "sizes": {"shape": size_shape, "dtype": str(sizes.dtype) if isinstance(sizes, np.ndarray) else "float"},
+            "angle": {"shape": angle_shape, "dtype": str(angle.dtype) if isinstance(angle, np.ndarray) else "float"},
+            "stroke_color": {"shape": list(visual.stroke_color.shape), "dtype": str(visual.stroke_color.dtype)},
+            "stroke_width": visual.stroke_width,
         }
     if isinstance(visual, ImageVisual):
         return {

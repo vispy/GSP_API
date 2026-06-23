@@ -19,6 +19,8 @@ def test_s023_case_registry_lists_initial_cases() -> None:
         "point/basic_ndc",
         "point/diameter_ramp_ndc",
         "point/alpha_overlap_ndc",
+        "marker/shapes_ndc",
+        "marker/angle_size_stroke_ndc",
         "image/checker_nearest_ndc",
         "overlay/point_over_image_ndc",
     ]

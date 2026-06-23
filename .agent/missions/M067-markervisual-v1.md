@@ -6,7 +6,7 @@ S023 - Visual Families v1 and Manual Visual QA Foundation
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -33,3 +33,17 @@ symbol capabilities. Stroke/fill cases produce contact sheets.
 
 Do not add custom marker symbols, SVG/SDF/MSDF marker assets, or Matplotlib-only shapes without
 capability gates.
+
+## Completion Notes
+
+- Added `MarkerVisual` and conservative `MarkerShape` values: `disc`, `square`, `triangle`,
+  `diamond`, and `cross`.
+- Added validation for marker positions, scalar/per-item shape, fill colors, sizes, angle,
+  stroke color, stroke width, and coordinate space.
+- Added VisPy2 `Axes.markers(...)` and top-level `vispy2.markers(...)`.
+- Added Matplotlib reference rendering with protocol pixel-diameter conversion.
+- Added Datoviz v0.4 retained marker rendering with `dvz_marker()`, marker style, and dense
+  uploads for `position`, `color`, `diameter_px`, `angle`, and `shape`.
+- Added S023 visual QA cases `marker/shapes_ndc` and `marker/angle_size_stroke_ndc`.
+- Regenerated `artifacts/visual_qa/s023/latest-local`; both marker cases render in Matplotlib and
+  Datoviz.

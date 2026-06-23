@@ -108,7 +108,7 @@ from .security import (
 )
 from .transports import CommandResult, InProcessGSPServer, InProcessTransport, InitializeResult
 from .ticks import ResolvedTicks, resolve_ticks
-from .visuals import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, PointVisual
+from .visuals import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, MarkerShape, MarkerVisual, PointVisual
 
 __all__ = [
     "AdaptationDecision",
@@ -133,6 +133,8 @@ __all__ = [
     "ImageInterpolation",
     "ImageOrigin",
     "ImageVisual",
+    "MarkerShape",
+    "MarkerVisual",
     "ExtensionKind",
     "ExtensionManifest",
     "ExtensionSupportLevel",

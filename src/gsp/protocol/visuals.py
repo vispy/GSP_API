@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 
 import numpy as np
@@ -32,9 +32,20 @@ class ImageOrigin(str, Enum):
     LOWER = "lower"
 
 
+class MarkerShape(str, Enum):
+    """Conservative v1 marker shape vocabulary."""
+
+    DISC = "disc"
+    SQUARE = "square"
+    TRIANGLE = "triangle"
+    DIAMOND = "diamond"
+    CROSS = "cross"
+
+
 FloatArray = npt.NDArray[np.float32] | npt.NDArray[np.float64]
 ColorArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.float64]
 ImageArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.float64]
+MarkerShapeTuple = tuple[MarkerShape, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -92,6 +103,49 @@ class PointVisual:
 
 
 @dataclass(frozen=True, slots=True)
+class MarkerVisual:
+    """Semantic shaped marker visual model.
+
+    ``sizes`` are rendered screen-pixel diameters. ``angle`` values are radians.
+    """
+
+    id: str
+    positions: FloatArray
+    shape: MarkerShape | MarkerShapeTuple
+    fill_colors: ColorArray
+    sizes: FloatArray | float
+    angle: FloatArray | float = 0.0
+    stroke_color: ColorArray = field(default_factory=lambda: np.array([0, 0, 0, 255], dtype=np.uint8))
+    stroke_width: float = 0.0
+    coordinate_space: CoordinateSpace = CoordinateSpace.NDC
+
+    def __post_init__(self) -> None:
+        validate_id(self.id)
+        point_count = _validate_positions(self.positions)
+        _validate_shapes(self.shape, point_count)
+        _validate_sizes(self.sizes, point_count)
+        _validate_angles(self.angle, point_count)
+        _validate_rgba_array(self.fill_colors, shape=(point_count, 4), field_name="fill_colors")
+        _validate_rgba_array(self.stroke_color, shape=(4,), field_name="stroke_color")
+        if not np.isfinite(self.stroke_width):
+            raise ValueError("stroke_width must be finite")
+        if self.stroke_width < 0:
+            raise ValueError("stroke_width must be non-negative")
+
+    def shape_values(self) -> MarkerShapeTuple:
+        """Return one shape per marker."""
+        if isinstance(self.shape, MarkerShape):
+            return (self.shape,) * int(self.positions.shape[0])
+        return self.shape
+
+    def angle_values(self) -> npt.NDArray[np.float32]:
+        """Return one angle in radians per marker."""
+        if isinstance(self.angle, np.ndarray):
+            return np.ascontiguousarray(np.asarray(self.angle, dtype=np.float32).reshape(-1))
+        return np.full((self.positions.shape[0],), float(self.angle), dtype=np.float32)
+
+
+@dataclass(frozen=True, slots=True)
 class ImageVisual:
     """Semantic image visual model for the protocol reference slice."""
 
@@ -116,3 +170,71 @@ class ImageVisual:
             raise TypeError("image must be uint8, float32, or float64")
         if np.any((self.image < 0.0) | (self.image > 1.0)):
             raise ValueError("floating point image values must be in [0, 1]")
+
+
+def _validate_positions(positions: FloatArray) -> int:
+    if positions.ndim != 2 or positions.shape[1] not in (2, 3):
+        raise ValueError("positions must have shape (N, 2) or (N, 3)")
+    if positions.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
+        raise TypeError("positions must be float32 or float64")
+    if not np.all(np.isfinite(positions)):
+        raise ValueError("positions must be finite")
+    return int(positions.shape[0])
+
+
+def _validate_shapes(shape: MarkerShape | MarkerShapeTuple, count: int) -> None:
+    if isinstance(shape, MarkerShape):
+        return
+    if not shape:
+        raise ValueError("shape tuple must not be empty")
+    if len(shape) != count:
+        raise ValueError("shape length must match positions")
+    if any(not isinstance(value, MarkerShape) for value in shape):
+        raise TypeError("shape entries must be MarkerShape values")
+
+
+def _validate_sizes(sizes: FloatArray | float, count: int) -> None:
+    if isinstance(sizes, np.ndarray):
+        if sizes.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
+            raise TypeError("sizes must be float32 or float64")
+        if sizes.ndim != 1:
+            raise ValueError("sizes must be scalar or shape (N,)")
+        if sizes.shape[0] != count:
+            raise ValueError("sizes length must match positions")
+        if not np.all(np.isfinite(sizes)):
+            raise ValueError("sizes must be finite")
+        if np.any(sizes < 0):
+            raise ValueError("sizes must be non-negative")
+        return
+    if not np.isfinite(sizes):
+        raise ValueError("sizes must be finite")
+    if sizes < 0:
+        raise ValueError("sizes must be non-negative")
+
+
+def _validate_angles(angle: FloatArray | float, count: int) -> None:
+    if isinstance(angle, np.ndarray):
+        if angle.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
+            raise TypeError("angle must be float32 or float64")
+        if angle.ndim != 1:
+            raise ValueError("angle must be scalar or shape (N,)")
+        if angle.shape[0] != count:
+            raise ValueError("angle length must match positions")
+        if not np.all(np.isfinite(angle)):
+            raise ValueError("angle must be finite")
+        return
+    if not np.isfinite(angle):
+        raise ValueError("angle must be finite")
+
+
+def _validate_rgba_array(colors: ColorArray, *, shape: tuple[int, ...], field_name: str) -> None:
+    if colors.shape != shape:
+        raise ValueError(f"{field_name} must have shape {shape}")
+    if colors.dtype == np.dtype(np.uint8):
+        return
+    if colors.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
+        raise TypeError(f"{field_name} must be rgba8, float32, or float64")
+    if not np.all(np.isfinite(colors)):
+        raise ValueError(f"floating point {field_name} must be finite")
+    if np.any((colors < 0.0) | (colors > 1.0)):
+        raise ValueError(f"floating point {field_name} must be in [0, 1]")

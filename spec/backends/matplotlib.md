@@ -17,9 +17,15 @@ The backend should consume formal GSP models, not define protocol semantics.
 `gsp_matplotlib.protocol_renderer` renders the first formal protocol visual models:
 
 - `PointVisual` to `matplotlib.collections.PathCollection`;
+- `MarkerVisual` to shaped `matplotlib.collections.PathCollection` markers;
 - `ImageVisual` to `matplotlib.image.AxesImage`.
 
 This is a narrow conformance slice beside the legacy renderer. The legacy `MatplotlibRenderer` remains available for existing examples.
+
+For `MarkerVisual`, protocol sizes are screen-pixel diameters and are converted to Matplotlib scatter
+area units with the active figure DPI, matching `PointVisual`. The reference path supports the
+conservative v1 shapes `disc`, `square`, `triangle`, `diamond`, and `cross`, plus scalar or
+per-marker angles in radians.
 
 ## M011 tiled-source reference proof
 

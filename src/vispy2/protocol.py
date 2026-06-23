@@ -22,6 +22,8 @@ from gsp.protocol import (
     ImageInterpolation,
     ImageOrigin,
     ImageVisual,
+    MarkerShape,
+    MarkerVisual,
     Panel,
     PanelTextGuide,
     PanelTextRole,
@@ -32,7 +34,7 @@ from gsp.protocol import (
     VisualAttachment,
 )
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
-from gsp_matplotlib.protocol_renderer import render_image_visual, render_point_visual
+from gsp_matplotlib.protocol_renderer import render_image_visual, render_marker_visual, render_point_visual
 
 
 _visual_counter = count(1)
@@ -51,7 +53,7 @@ class Figure:
         self.axes.append(axes)
         return axes
 
-    def visuals(self) -> tuple[PointVisual | ImageVisual, ...]:
+    def visuals(self) -> tuple[PointVisual | MarkerVisual | ImageVisual, ...]:
         """Return protocol visuals in creation order."""
         return tuple(visual for axes in self.axes for visual in axes.visuals)
 
@@ -83,6 +85,8 @@ class Figure:
         for visual in self.visuals():
             if isinstance(visual, ImageVisual):
                 render_image_visual(mpl_axes, visual)
+            elif isinstance(visual, MarkerVisual):
+                render_marker_visual(mpl_axes, visual)
             elif isinstance(visual, PointVisual):
                 render_point_visual(mpl_axes, visual)
             else:
@@ -121,7 +125,7 @@ class Axes:
     """Minimal axes object that produces GSP protocol visuals."""
 
     figure: Figure
-    visuals: list[PointVisual | ImageVisual] = field(default_factory=list)
+    visuals: list[PointVisual | MarkerVisual | ImageVisual] = field(default_factory=list)
     panel: Panel = field(init=False)
     view: View2D = field(init=False)
     attachments: list[VisualAttachment] = field(default_factory=list)
@@ -264,6 +268,40 @@ class Axes:
         self.attachments.append(VisualAttachment(visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id))
         return visual
 
+    def markers(
+        self,
+        x: npt.ArrayLike,
+        y: npt.ArrayLike | None = None,
+        *,
+        shape: str | MarkerShape | tuple[str | MarkerShape, ...] | list[str | MarkerShape] = MarkerShape.DISC,
+        fill_color: npt.ArrayLike | None = None,
+        color: npt.ArrayLike | None = None,
+        s: npt.ArrayLike | float = 36.0,
+        size: npt.ArrayLike | float | None = None,
+        angle: npt.ArrayLike | float = 0.0,
+        stroke_color: npt.ArrayLike | None = None,
+        stroke_width: float = 0.0,
+        id: str | None = None,
+    ) -> MarkerVisual:
+        """Create a protocol marker visual from x/y or an ``(N, 2|3)`` array."""
+        positions = _positions(x, y)
+        fill_colors = _colors(fill_color if fill_color is not None else color, positions.shape[0])
+        sizes = _sizes(size if size is not None else s, positions.shape[0])
+        visual = MarkerVisual(
+            id=id or _visual_id("markers"),
+            positions=positions,
+            shape=_marker_shapes(shape, positions.shape[0]),
+            fill_colors=fill_colors,
+            sizes=sizes,
+            angle=_angles(angle, positions.shape[0]),
+            stroke_color=_stroke_color(stroke_color),
+            stroke_width=float(stroke_width),
+            coordinate_space=CoordinateSpace.DATA,
+        )
+        self.visuals.append(visual)
+        self.attachments.append(VisualAttachment(visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id))
+        return visual
+
     @property
     def _index(self) -> int:
         return int(self.panel.id.rsplit(":", maxsplit=1)[1])
@@ -326,6 +364,12 @@ def scatter(x: npt.ArrayLike, y: npt.ArrayLike | None = None, **kwargs: Any) -> 
     return ax.scatter(x, y, **kwargs)
 
 
+def markers(x: npt.ArrayLike, y: npt.ArrayLike | None = None, **kwargs: Any) -> MarkerVisual:
+    """Create a marker visual in a temporary one-axes figure."""
+    _, ax = subplots()
+    return ax.markers(x, y, **kwargs)
+
+
 def imshow(image: npt.ArrayLike, **kwargs: Any) -> ImageVisual:
     """Create an image visual in a temporary one-axes figure."""
     _, ax = subplots()
@@ -370,6 +414,38 @@ def _sizes(value: npt.ArrayLike | float, count_: int) -> npt.NDArray[np.float32]
     if array.ndim != 1 or array.shape[0] != count_:
         raise ValueError("size must be scalar or shape (N,)")
     return np.ascontiguousarray(array).astype(np.float32, copy=False)
+
+
+def _angles(value: npt.ArrayLike | float, count_: int) -> npt.NDArray[np.float32] | float:
+    if np.isscalar(value):
+        return float(cast(SupportsFloat, value))
+    array = np.asarray(value, dtype=np.float32)
+    if array.ndim != 1 or array.shape[0] != count_:
+        raise ValueError("angle must be scalar or shape (N,)")
+    return np.ascontiguousarray(array).astype(np.float32, copy=False)
+
+
+def _marker_shapes(
+    value: str | MarkerShape | tuple[str | MarkerShape, ...] | list[str | MarkerShape],
+    count_: int,
+) -> MarkerShape | tuple[MarkerShape, ...]:
+    if isinstance(value, (str, MarkerShape)):
+        return _marker_shape(value)
+    shapes = tuple(_marker_shape(item) for item in value)
+    if len(shapes) != count_:
+        raise ValueError("shape must be scalar or shape (N,)")
+    return shapes
+
+
+def _marker_shape(value: str | MarkerShape) -> MarkerShape:
+    if isinstance(value, MarkerShape):
+        return value
+    return MarkerShape(value)
+
+
+def _stroke_color(value: npt.ArrayLike | None) -> npt.NDArray[np.uint8] | npt.NDArray[np.float32]:
+    colors = _colors(value, 1)
+    return np.ascontiguousarray(colors[0])
 
 
 def _origin(value: str | ImageOrigin) -> ImageOrigin:

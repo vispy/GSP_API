@@ -4,17 +4,18 @@ Generated: 2026-06-23
 
 ## Current State
 
-S023 is in progress at 38%.
+S023 is in progress at 50%.
 
 Completed:
 
 - M064 - Datoviz v0.4 API audit and probe.
 - M065 - Visual QA harness foundation.
 - M066 - PointVisual v1 and Datoviz v0.4 retained point path.
+- M067 - MarkerVisual v1.
 
 Next:
 
-- M067 - MarkerVisual v1.
+- M068 - SegmentVisual v1.
 
 Recent commits:
 
@@ -22,6 +23,7 @@ Recent commits:
 - `1b92a8f` - Correct Datoviz v0.4 probe evidence.
 - `ea70c79` - Implement visual QA harness foundation.
 - local working tree - Complete M066 PointVisual v1.
+- local working tree - Complete M067 MarkerVisual v1.
 
 ## Datoviz Environment
 
@@ -95,6 +97,8 @@ Current S023 cases:
 - `point/basic_ndc`
 - `point/diameter_ramp_ndc`
 - `point/alpha_overlap_ndc`
+- `marker/shapes_ndc`
+- `marker/angle_size_stroke_ndc`
 - `image/checker_nearest_ndc`
 - `overlay/point_over_image_ndc`
 
@@ -144,15 +148,17 @@ GSP_BACKEND=matplotlib uv run python -c "import gsp; print('Matplotlib backend O
 GSP_BACKEND=datoviz uv run python -c "import gsp; print('DatoViz backend OK')"
 ```
 
-Observed result:
+Observed result after M067:
 
 - Ruff passed.
-- Pytest: `241 passed, 1 skipped`.
+- Pytest: `251 passed, 2 skipped`.
 - Strict mypy passed.
 - Status JSON and diff whitespace checks passed.
 - Both backend import checks passed.
 
-CLI smoke also rendered all four S023 cases with both Matplotlib and Datoviz in a temporary output directory.
+CLI smoke rendered all S023 cases to `artifacts/visual_qa/s023/latest-local`. Point and marker cases
+rendered in both Matplotlib and Datoviz. Datoviz image cases remain structured unsupported until the
+Datoviz nearest-sampler API is added.
 
 ## M066 Completion
 
@@ -177,8 +183,22 @@ Plain `datoviz` now refers to the Datoviz v0.4 retained/protocol backend. The ol
 explicitly named `datoviz-v03` in legacy example helpers. The former `datoviz-v04` visual-QA backend
 id is accepted as a compatibility alias but should not be used in new commands.
 
-## M067 Review Point
+## M067 Completion
 
-Before implementing M067, keep MarkerVisual distinct from PointVisual. MarkerVisual may add marker
-shape, angle, stroke, and edge styling, but PointVisual must remain the simple high-volume point
-family with position/color/diameter only.
+M067 added markers as a distinct visual family:
+
+- `MarkerVisual` and `MarkerShape` live in `gsp.protocol`.
+- The v1 shape vocabulary is conservative: `disc`, `square`, `triangle`, `diamond`, and `cross`.
+- `Axes.markers(...)` and `vispy2.markers(...)` emit protocol marker visuals.
+- Matplotlib renders marker paths and converts protocol pixel diameters to Matplotlib area units.
+- Datoviz v0.4 renders retained markers with `dvz_marker()`, `dvz_marker_style()`,
+  `dvz_marker_set_style()`, and dense uploads for `position`, `color`, `diameter_px`, `angle`,
+  and `shape`.
+- `marker/shapes_ndc` and `marker/angle_size_stroke_ndc` were added to visual QA and render in both
+  backends in the latest local run.
+
+## M068 Review Point
+
+Before implementing M068, keep SegmentVisual distinct from PathVisual. Segment should cover
+independent line segments with simple width/cap/color semantics and should not expand into arrows,
+dashes, joins, or continuous polyline subpath behavior.
