@@ -11,6 +11,7 @@ from typing import Any, Mapping, cast
 import numpy as np
 
 from gsp.protocol import ImageVisual, PointVisual
+from gsp.qa.visual.backend_ids import DATOVIZ_BACKEND_ID
 from gsp.qa.visual.case_spec import ProtocolVisual, VisualQAScene
 from gsp.qa.visual.cases import case_slug
 from gsp.qa.visual.datoviz_probe import DatovizV04ProbeReport
@@ -21,7 +22,7 @@ def ensure_run_dirs(out_dir: Path) -> None:
     for relative in (
         "scenes",
         "backends/matplotlib",
-        "backends/datoviz-v04",
+        f"backends/{DATOVIZ_BACKEND_ID}",
         "contact_sheets",
         "notes",
     ):
@@ -105,7 +106,7 @@ def write_summary(out_dir: Path, report: Mapping[str, object]) -> Path:
         backends = entry["backends"]
         assert isinstance(backends, dict)
         matplotlib_status = _backend_status(backends, "matplotlib")
-        datoviz_status = _backend_status(backends, "datoviz-v04")
+        datoviz_status = _backend_status(backends, DATOVIZ_BACKEND_ID)
         lines.append(f"| `{entry['case_id']}` | {matplotlib_status} | {datoviz_status} |")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path

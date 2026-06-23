@@ -15,7 +15,7 @@ from gsp_matplotlib.protocol_renderer import render_image_visual, render_point_v
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--backend", choices=("matplotlib", "datoviz-v04"), default="matplotlib")
+    parser.add_argument("--backend", choices=("matplotlib", "datoviz", "datoviz-v04"), default="matplotlib")
     parser.add_argument("--frames", type=int, default=0, help="Datoviz frames to run; 0 means until window close")
     args = parser.parse_args()
 

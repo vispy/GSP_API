@@ -24,6 +24,7 @@ from gsp.qa.visual.artifacts import (
     write_scene_artifacts,
     write_summary,
 )
+from gsp.qa.visual.backend_ids import DATOVIZ_BACKEND_ALIASES, DATOVIZ_BACKEND_ID, MATPLOTLIB_BACKEND_ID
 from gsp.qa.visual.case_spec import ProtocolVisual, VisualQACase
 from gsp.qa.visual.cases import S023_SUITE, case_slug, list_cases
 from gsp.qa.visual.contact_sheet import write_contact_sheets
@@ -39,7 +40,7 @@ def run_visual_qa_suite(
     *,
     suite: str = S023_SUITE,
     out_dir: Path,
-    backends: tuple[str, ...] = ("matplotlib", "datoviz-v04"),
+    backends: tuple[str, ...] = ("matplotlib", DATOVIZ_BACKEND_ID),
     case_ids: tuple[str, ...] = (),
     contact_sheet: bool = True,
     run_id: str | None = None,
@@ -48,6 +49,7 @@ def run_visual_qa_suite(
     """Run the visual QA suite and return its report."""
     if suite != S023_SUITE:
         raise ValueError(f"unknown visual QA suite: {suite}")
+    normalized_backends = _normalize_backends(backends)
     selected_cases = _select_cases(case_ids)
     ensure_run_dirs(out_dir)
     resolved_run_id = run_id or datetime.now(timezone.utc).strftime("s023-%Y%m%dT%H%M%SZ")
@@ -63,7 +65,7 @@ def run_visual_qa_suite(
             "suite": suite,
             "run_id": resolved_run_id,
             "started_at": started_at,
-            "backends": list(backends),
+            "backends": list(normalized_backends),
             "case_ids": [case.case_id for case in selected_cases],
             "resolution": list(resolution),
         },
@@ -77,10 +79,10 @@ def run_visual_qa_suite(
         scene_path, arrays_path = write_scene_artifacts(out_dir, scene)
         write_case_note(out_dir, case.case_id, case.title, scene.notes)
         backend_reports: dict[str, object] = {}
-        if "matplotlib" in backends:
-            backend_reports["matplotlib"] = _run_matplotlib(out_dir, case, scene.visuals, resolution)
-        if "datoviz-v04" in backends:
-            backend_reports["datoviz-v04"] = _run_datoviz(out_dir, case, scene.visuals, resolution, probe_report)
+        if MATPLOTLIB_BACKEND_ID in normalized_backends:
+            backend_reports[MATPLOTLIB_BACKEND_ID] = _run_matplotlib(out_dir, case, scene.visuals, resolution)
+        if DATOVIZ_BACKEND_ID in normalized_backends:
+            backend_reports[DATOVIZ_BACKEND_ID] = _run_datoviz(out_dir, case, scene.visuals, resolution, probe_report)
         case_reports.append(
             {
                 "case_id": case.case_id,
@@ -95,7 +97,7 @@ def run_visual_qa_suite(
         )
 
     if contact_sheet:
-        contact_paths = write_contact_sheets(out_dir, case_reports, backends)
+        contact_paths = write_contact_sheets(out_dir, case_reports, normalized_backends)
     else:
         contact_paths = ()
 
@@ -114,6 +116,17 @@ def run_visual_qa_suite(
     write_json(out_dir / "report.json", report)
     write_summary(out_dir, report)
     return report
+
+
+def _normalize_backends(backends: tuple[str, ...]) -> tuple[str, ...]:
+    normalized: list[str] = []
+    for backend in backends:
+        backend_id = DATOVIZ_BACKEND_ID if backend in DATOVIZ_BACKEND_ALIASES else backend
+        if backend_id not in (MATPLOTLIB_BACKEND_ID, DATOVIZ_BACKEND_ID):
+            raise ValueError(f"unknown visual QA backend: {backend}")
+        if backend_id not in normalized:
+            normalized.append(backend_id)
+    return tuple(normalized)
 
 
 def _select_cases(case_ids: tuple[str, ...]) -> tuple[VisualQACase, ...]:
@@ -162,7 +175,7 @@ def _run_datoviz(
     resolution: tuple[int, int],
     probe_report: DatovizV04ProbeReport,
 ) -> dict[str, object]:
-    backend_dir = out_dir / "backends" / "datoviz-v04"
+    backend_dir = out_dir / "backends" / DATOVIZ_BACKEND_ID
     artifact_path = backend_dir / f"{case_slug(case.case_id)}.png"
     unsupported_path = backend_dir / f"{case_slug(case.case_id)}.unsupported.json"
     log_path = backend_dir / f"{case_slug(case.case_id)}.log.txt"
@@ -182,7 +195,7 @@ def _run_datoviz(
             png = renderer.capture_png_bytes()
         artifact_path.write_bytes(png)
         log_path.write_text("rendered\n", encoding="utf-8")
-        return {"backend_id": "datoviz-v04", "status": "rendered", "artifact_path": str(artifact_path), "log_path": str(log_path)}
+        return {"backend_id": DATOVIZ_BACKEND_ID, "status": "rendered", "artifact_path": str(artifact_path), "log_path": str(log_path)}
     except Exception as exc:  # noqa: BLE001 - local GPU/display/runtime failures are structured unsupported data.
         log_path.write_text(traceback.format_exc(), encoding="utf-8")
         return _write_datoviz_unsupported(
@@ -223,7 +236,7 @@ def _write_datoviz_unsupported(
     payload = {
         "schema_version": 1,
         "schema_kind": "gsp.visual_qa.unsupported",
-        "backend_id": "datoviz-v04",
+        "backend_id": DATOVIZ_BACKEND_ID,
         "case_id": case.case_id,
         "status": "unsupported",
         "reason": reason,
@@ -233,7 +246,7 @@ def _write_datoviz_unsupported(
     if not log_path.exists():
         log_path.write_text(reason + "\n", encoding="utf-8")
     return {
-        "backend_id": "datoviz-v04",
+        "backend_id": DATOVIZ_BACKEND_ID,
         "status": "unsupported",
         "unsupported_path": str(unsupported_path),
         "log_path": str(log_path),

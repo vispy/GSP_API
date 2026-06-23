@@ -20,7 +20,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     run_parser = subparsers.add_parser("run", help="run visual QA cases")
     run_parser.add_argument("--suite", default=S023_SUITE)
-    run_parser.add_argument("--backends", default="matplotlib,datoviz-v04")
+    run_parser.add_argument("--backends", default="matplotlib,datoviz")
     run_parser.add_argument("--out", required=True)
     run_parser.add_argument("--case", action="append", dest="cases", default=[])
     run_parser.add_argument("--contact-sheet", action="store_true")
