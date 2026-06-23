@@ -1,0 +1,144 @@
+{
+  "schema_kind": "gsp.conformance.security-negative",
+  "schema_version": "0.1.0",
+  "metadata": {
+    "fixture_id": "gsp.fixtures.s020.security_negative",
+    "fixture_revision": 1,
+    "title": "S020 no-network security negative fixtures",
+    "stability": "draft-conformance",
+    "deterministic": true,
+    "tags": ["s020", "security", "negative", "no-network"]
+  },
+  "protocol": {
+    "gsp_protocol_version": "0.2-draft",
+    "runtime_transport_required": false,
+    "network_io_allowed": false,
+    "dynamic_loading_allowed": false
+  },
+  "allowed_source_refs": [
+    {
+      "resolver_id": "gsp.test.synthetic-resolver",
+      "source_id": "public-demo-pyramid"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "source:direct-remote-fetch-disabled",
+      "kind": "source-descriptor",
+      "descriptor": {
+        "id": "source:direct",
+        "kind": "tiled-image",
+        "shape": [16, 16, 4],
+        "locality": "direct-remote-fetch",
+        "fetch_descriptor": {
+          "url": "http://169.254.169.254/latest/meta-data"
+        }
+      },
+      "expected_codes": [
+        "GSP_SOURCE_LOCALITY_UNSUPPORTED",
+        "GSP_FETCH_DESCRIPTOR_REJECTED",
+        "GSP_REMOTE_FETCH_DISABLED",
+        "GSP_URL_RESOLVES_PRIVATE"
+      ]
+    },
+    {
+      "case_id": "source:unknown-preconfigured-handle",
+      "kind": "source-descriptor",
+      "descriptor": {
+        "id": "source:unknown",
+        "kind": "tiled-image",
+        "shape": [16, 16, 4],
+        "locality": "preconfigured-source",
+        "source_ref": {
+          "resolver_id": "gsp.test.synthetic-resolver",
+          "source_id": "unknown"
+        }
+      },
+      "expected_codes": ["GSP_SOURCE_HANDLE_UNKNOWN"]
+    },
+    {
+      "case_id": "source:inline-secret-and-local-path",
+      "kind": "source-descriptor",
+      "descriptor": {
+        "id": "source:secret",
+        "kind": "tiled-image",
+        "shape": [16, 16, 4],
+        "credential_policy": "inline",
+        "credential_ref": "fixture-credential-ref",
+        "metadata": {
+          "api_key": "<forbidden:inline-secret>",
+          "local_path": "/private/gsp/source.zarr"
+        }
+      },
+      "expected_codes": [
+        "GSP_CREDENTIAL_POLICY_UNSUPPORTED",
+        "GSP_CREDENTIAL_REF_REJECTED",
+        "GSP_INLINE_SECRET_REJECTED",
+        "GSP_LOCAL_PATH_FORBIDDEN"
+      ]
+    },
+    {
+      "case_id": "manifest:python-import-forbidden",
+      "kind": "extension-manifest",
+      "manifest": {
+        "id": "gsp.bad",
+        "version": "0.1",
+        "kind": "data-source",
+        "title": "Executable manifest",
+        "schema": {
+          "source_kind": "tiled-image",
+          "python_import": "gsp_bad.plugin"
+        }
+      },
+      "expected_codes": ["GSP_MANIFEST_EXECUTION_FORBIDDEN"]
+    },
+    {
+      "case_id": "manifest:runtime-shader-forbidden",
+      "kind": "extension-manifest",
+      "manifest": {
+        "id": "gsp.shader",
+        "version": "0.1",
+        "kind": "visual-family",
+        "title": "Shader manifest",
+        "schema": {
+          "runtime_shader": "fixture-shader-source"
+        }
+      },
+      "expected_codes": ["GSP_MANIFEST_EXECUTION_FORBIDDEN"]
+    },
+    {
+      "case_id": "redaction:credential-url-path-secret",
+      "kind": "redaction",
+      "value": {
+        "credential_ref": "fixture-credential-ref",
+        "url": "https://example.invalid/private?token=fixture",
+        "local_path": "/private/gsp/source.zarr",
+        "nested": {
+          "Authorization": "<forbidden:authorization-header>",
+          "safe": "public"
+        }
+      },
+      "expected_redacted": {
+        "credential_ref": "<redacted:credential-ref>",
+        "url": "<redacted:url>",
+        "local_path": "<redacted:path>",
+        "nested": {
+          "Authorization": "<redacted:secret>",
+          "safe": "public"
+        }
+      }
+    },
+    {
+      "case_id": "capability:conservative-no-network-posture",
+      "kind": "capability-metadata",
+      "expected": {
+        "data_sources.remote_fetch_descriptors.accepted": false,
+        "data_sources.supports_server_side_fetch.accepted": false,
+        "extensions.dynamic_discovery": false,
+        "extensions.executable_hooks": false,
+        "security.redaction_profile": "gsp.s020.no-network",
+        "security.diagnostic_redaction": true
+      }
+    }
+  ]
+}

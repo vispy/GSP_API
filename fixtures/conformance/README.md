@@ -22,6 +22,8 @@ They are Python/in-process fixtures, not JSON fixtures. This is intentional: the
 - Minimal debug-json report over semantic replay results, with array transport omitted.
 - Deterministic `tools/conformance_debug_report.py` diagnostic report output.
 - Minimal authoritative `gsp.conformance.fixture@0.1` JSON fixture for the current semantic slice.
+- S020 no-network security-negative fixture records for remote-fetch, credential, executable
+  manifest, redaction, and conservative capability diagnostics.
 
 ## Reference Backend
 
@@ -36,6 +38,7 @@ Matplotlib is the reference/conformance backend for this baseline. Tests inspect
 - Broad JSON/base64 fixture coverage beyond the minimal v0.1 semantic slice.
 - Full schema validation beyond first-slice array chunk checks.
 - General `data` / `guides` / `all-rendered` query-scope precedence.
+- Real network, object-store, cloud credential, or dynamic extension execution tests.
 
 ## Diagnostic Report
 

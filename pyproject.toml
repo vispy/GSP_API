@@ -39,6 +39,7 @@ packages = [
 ]
 include = [
     {path = "fixtures/conformance/minimal_v0_1.json", format = ["sdist", "wheel"]},
+    {path = "fixtures/conformance/s020_security_negative.json", format = ["sdist", "wheel"]},
 ]
 
 [build-system]

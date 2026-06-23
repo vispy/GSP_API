@@ -119,7 +119,7 @@
       "id": "S020",
       "title": "Remote data and dynamic extension security pre-design",
       "state": "in_progress",
-      "progress": 60
+      "progress": 80
     }
   ],
   "missions": [
@@ -590,6 +590,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 52
+    },
+    {
+      "id": "M053",
+      "title": "S020 security negative fixtures",
+      "stage": "S020",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 53
     }
   ],
   "review_queue": [],
@@ -617,7 +626,7 @@
     }
   ],
   "recommendations": [
-    "Next S020 mission: add JSON conformance negative fixture records for S020 security diagnostics and wire them into the fixture validation/replay tooling without network I/O.",
+    "Next S020 mission: close S020 with a stop-condition checklist and decide whether to open the next implementation stage for a no-network preconfigured-source resolver proof.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

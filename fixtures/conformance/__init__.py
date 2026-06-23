@@ -22,6 +22,12 @@ from .json_fixture import (
 )
 from .matrix import BackendConformanceExpectation, backend_conformance_matrix
 from .replay import InProcessReplayResult, replay_conformance_fixtures
+from .security_fixture import (
+    S020_SECURITY_NEGATIVE_FIXTURE_NAME,
+    SecurityNegativeCaseResult,
+    load_s020_security_negative_fixture,
+    validate_s020_security_negative_fixture,
+)
 
 __all__ = [
     "Base64ArrayChunk",
@@ -30,6 +36,8 @@ __all__ = [
     "GuideConformanceScene",
     "InProcessReplayResult",
     "MINIMAL_JSON_FIXTURE_NAME",
+    "S020_SECURITY_NEGATIVE_FIXTURE_NAME",
+    "SecurityNegativeCaseResult",
     "TiledSourceConformanceScene",
     "backend_conformance_matrix",
     "capability_snapshot_fixture",
@@ -38,6 +46,7 @@ __all__ = [
     "guide_scene",
     "image_visual_fixture",
     "load_minimal_json_fixture",
+    "load_s020_security_negative_fixture",
     "point_over_image_scene",
     "point_visual_fixture",
     "replay_minimal_json_fixture",
@@ -46,4 +55,5 @@ __all__ = [
     "tiled_source_scene",
     "validate_base64_array_chunk",
     "validate_minimal_json_fixture",
+    "validate_s020_security_negative_fixture",
 ]
