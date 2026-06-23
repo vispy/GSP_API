@@ -1,5 +1,5 @@
 {
-  "current_stage": "S020",
+  "current_stage": "S021",
   "stages": [
     {
       "id": "S001",
@@ -118,8 +118,14 @@
     {
       "id": "S020",
       "title": "Remote data and dynamic extension security pre-design",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S021",
+      "title": "No-network preconfigured-source resolver proof",
       "state": "in_progress",
-      "progress": 80
+      "progress": 5
     }
   ],
   "missions": [
@@ -599,6 +605,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 53
+    },
+    {
+      "id": "M054",
+      "title": "S020 closeout and S021 opening",
+      "stage": "S020",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 54
     }
   ],
   "review_queue": [],
@@ -626,7 +641,7 @@
     }
   ],
   "recommendations": [
-    "Next S020 mission: close S020 with a stop-condition checklist and decide whether to open the next implementation stage for a no-network preconfigured-source resolver proof.",
+    "Next S021 mission: implement a no-network preconfigured-source resolver proof with deterministic synthetic/in-memory handles, capability advertisement, and fixture-backed diagnostics.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }
