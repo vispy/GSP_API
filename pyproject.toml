@@ -74,7 +74,9 @@ line-length = 160   # to match the 79 character limit of PEP 8, but allow some e
 # allow-init-docstring = true
 
 [tool.ruff]
+extend-exclude = ["examples", "tmp", "tools"]
 lint.select = ["D"]
+lint.ignore = ["D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
