@@ -53,9 +53,9 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
         ),
         VisualQACase(
             case_id="image/checker_nearest_ndc",
-            title="Nearest checker image in NDC",
+            title="Nearest asymmetric image in NDC",
             family="image",
-            required_features=("image", "ndc", "rgba8", "nearest", "extent"),
+            required_features=("image", "ndc", "rgba8", "nearest", "extent", "orientation"),
             builder=_image_checker_nearest_ndc,
         ),
         VisualQACase(
@@ -102,7 +102,7 @@ def _point_basic_ndc() -> VisualQAScene:
         ],
         dtype=np.uint8,
     )
-    sizes = np.full(positions.shape[0], 18.0, dtype=np.float32)
+    sizes = np.full(positions.shape[0], 28.0, dtype=np.float32)
     visual = PointVisual(
         id="visual:point-basic-ndc",
         positions=positions,
@@ -119,7 +119,7 @@ def _point_basic_ndc() -> VisualQAScene:
 
 
 def _point_diameter_ramp_ndc() -> VisualQAScene:
-    diameters = np.array([4.0, 8.0, 12.0, 18.0, 26.0, 36.0], dtype=np.float32)
+    diameters = np.array([8.0, 14.0, 22.0, 32.0, 44.0, 58.0], dtype=np.float32)
     positions = np.column_stack(
         (
             np.linspace(-0.75, 0.75, diameters.shape[0], dtype=np.float32),
@@ -188,11 +188,11 @@ def _point_alpha_overlap_ndc() -> VisualQAScene:
 def _marker_shapes_ndc() -> VisualQAScene:
     positions = np.array(
         [
-            [-0.72, 0.0],
-            [-0.36, 0.0],
-            [0.0, 0.0],
-            [0.36, 0.0],
-            [0.72, 0.0],
+            [-0.72, -0.34],
+            [-0.36, 0.30],
+            [0.0, 0.08],
+            [0.36, -0.22],
+            [0.72, 0.42],
         ],
         dtype=np.float32,
     )
@@ -213,7 +213,7 @@ def _marker_shapes_ndc() -> VisualQAScene:
         ],
         dtype=np.uint8,
     )
-    sizes = np.full(positions.shape[0], 42.0, dtype=np.float32)
+    sizes = np.full(positions.shape[0], 60.0, dtype=np.float32)
     shape_codes = np.arange(len(shapes), dtype=np.uint8)
     visual = MarkerVisual(
         id="visual:marker-shapes-ndc",
@@ -234,20 +234,24 @@ def _marker_shapes_ndc() -> VisualQAScene:
             "marker_fill_colors": colors,
             "marker_sizes": sizes,
         },
-        notes=("Five conservative built-in marker shapes with shared dark pixel-width stroke.",),
+        notes=("Five conservative built-in marker shapes at asymmetric Y positions with shared dark pixel-width stroke.",),
     )
 
 
 def _marker_angle_size_stroke_ndc() -> VisualQAScene:
-    count = 6
-    positions = np.column_stack(
-        (
-            np.linspace(-0.72, 0.72, count, dtype=np.float32),
-            np.zeros(count, dtype=np.float32),
-        )
-    ).astype(np.float32)
-    sizes = np.array([18.0, 24.0, 30.0, 36.0, 44.0, 54.0], dtype=np.float32)
-    angles = np.linspace(0.0, np.pi * 0.9, count, dtype=np.float32)
+    positions = np.array(
+        [
+            [-0.72, -0.36],
+            [-0.42, 0.30],
+            [-0.12, -0.10],
+            [0.20, 0.42],
+            [0.50, -0.26],
+            [0.76, 0.14],
+        ],
+        dtype=np.float32,
+    )
+    sizes = np.array([34.0, 42.0, 50.0, 60.0, 72.0, 84.0], dtype=np.float32)
+    angles = np.array([0.0, np.pi / 2.0, np.pi, np.pi * 1.5, np.pi / 4.0, -np.pi / 4.0], dtype=np.float32)
     colors = np.array(
         [
             [46, 125, 50, 255],
@@ -279,12 +283,12 @@ def _marker_angle_size_stroke_ndc() -> VisualQAScene:
             "marker_sizes": sizes,
             "marker_angles": angles,
         },
-        notes=("Rotating triangle markers with increasing requested pixel diameters and a visible stroke.",),
+        notes=("Compass-like triangle rotations at asymmetric Y positions with increasing requested pixel diameters and a visible stroke.",),
     )
 
 
 def _image_checker_nearest_ndc() -> VisualQAScene:
-    image = _checker_image(8)
+    image = _orientation_image(8)
     visual = ImageVisual(
         id="visual:image-checker-nearest-ndc",
         image=image,
@@ -296,13 +300,13 @@ def _image_checker_nearest_ndc() -> VisualQAScene:
     return VisualQAScene(
         case_id="image/checker_nearest_ndc",
         visuals=(visual,),
-        arrays={"checker_rgba": image},
-        notes=("Small RGBA checkerboard with nearest interpolation and explicit NDC extent.",),
+        arrays={"orientation_rgba": image},
+        notes=("Small asymmetric RGBA orientation image with nearest interpolation and explicit NDC extent.",),
     )
 
 
 def _overlay_point_over_image_ndc() -> VisualQAScene:
-    image = _checker_image(10)
+    image = _orientation_image(10)
     image_visual = ImageVisual(
         id="visual:overlay-checker-image-ndc",
         image=image,
@@ -311,9 +315,12 @@ def _overlay_point_over_image_ndc() -> VisualQAScene:
         interpolation=ImageInterpolation.NEAREST,
         origin=ImageOrigin.UPPER,
     )
-    positions = np.array([[-0.45, -0.25], [0.0, 0.0], [0.45, 0.25]], dtype=np.float32)
-    colors = np.array([[255, 255, 255, 240], [230, 57, 70, 255], [29, 53, 87, 240]], dtype=np.uint8)
-    sizes = np.array([18.0, 28.0, 18.0], dtype=np.float32)
+    positions = np.array([[-0.60, 0.42], [0.58, 0.40], [-0.58, -0.40], [0.55, -0.42]], dtype=np.float32)
+    colors = np.array(
+        [[255, 255, 255, 255], [20, 20, 20, 255], [255, 255, 255, 255], [20, 20, 20, 255]],
+        dtype=np.uint8,
+    )
+    sizes = np.full(positions.shape[0], 36.0, dtype=np.float32)
     point_visual = PointVisual(
         id="visual:overlay-points-ndc",
         positions=positions,
@@ -325,18 +332,23 @@ def _overlay_point_over_image_ndc() -> VisualQAScene:
         case_id="overlay/point_over_image_ndc",
         visuals=(image_visual, point_visual),
         arrays={
-            "checker_rgba": image,
+            "orientation_rgba": image,
             "point_positions": positions,
             "point_colors": colors,
             "point_sizes": sizes,
         },
-        notes=("Checker image with three points rendered over the image.",),
+        notes=("Asymmetric orientation image with four high-contrast points anchored over distinct colored quadrants.",),
     )
 
 
-def _checker_image(size: int) -> np.ndarray:
-    grid = np.indices((size, size)).sum(axis=0) % 2
-    image = np.zeros((size, size, 4), dtype=np.uint8)
-    image[grid == 0] = np.array([245, 245, 245, 255], dtype=np.uint8)
-    image[grid == 1] = np.array([35, 40, 45, 255], dtype=np.uint8)
+def _orientation_image(size: int) -> np.ndarray:
+    image = np.full((size, size, 4), np.array([245, 245, 245, 255], dtype=np.uint8), dtype=np.uint8)
+    image[0, :] = np.array([35, 40, 45, 255], dtype=np.uint8)
+    image[:, 0] = np.array([35, 40, 45, 255], dtype=np.uint8)
+    image[:3, :3] = np.array([230, 57, 70, 255], dtype=np.uint8)
+    image[:2, -3:] = np.array([42, 157, 143, 255], dtype=np.uint8)
+    image[-3:, :2] = np.array([69, 123, 157, 255], dtype=np.uint8)
+    image[-2:, -3:] = np.array([251, 191, 36, 255], dtype=np.uint8)
+    image[3:-1, 4] = np.array([35, 40, 45, 255], dtype=np.uint8)
+    image[3, 4:-2] = np.array([35, 40, 45, 255], dtype=np.uint8)
     return image
