@@ -95,6 +95,7 @@ from .security import (
     redact_security_value,
     s020_security_capability_metadata,
     validate_no_network_source_descriptor,
+    validate_s022_http_array_source_descriptor,
     validate_static_manifest_security,
 )
 from .transports import CommandResult, InProcessGSPServer, InProcessTransport, InitializeResult
@@ -204,6 +205,7 @@ __all__ = [
     "validate_extension_manifest",
     "validate_id",
     "validate_no_network_source_descriptor",
+    "validate_s022_http_array_source_descriptor",
     "validate_static_manifest_security",
     "validate_tiled_image_source_manifest_link",
 ]

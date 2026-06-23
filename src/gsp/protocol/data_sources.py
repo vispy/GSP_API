@@ -17,6 +17,7 @@ from .ids import validate_id
 class DataSourceKind(str, Enum):
     """Known v0.1 data-source kinds."""
 
+    ARRAY = "array"
     EAGER_IMAGE = "eager-image"
     TILED_IMAGE = "tiled-image"
     VIRTUAL_IMAGE = "virtual-image"

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping, TypeAlias
 
-from .data_sources import CredentialPolicy, DataLocality, DataSourceDescriptor
+from .data_sources import CredentialPolicy, DataLocality, DataSourceDescriptor, DataSourceKind, MaterializationPolicy
 from .extensions import ExtensionManifest
 
 
@@ -43,6 +43,16 @@ class SecurityDiagnosticCode(str, Enum):
     QUERY_SCOPE_VIOLATION = "GSP_QUERY_SCOPE_VIOLATION"
     QUERY_RESULT_LIMIT_EXCEEDED = "GSP_QUERY_RESULT_LIMIT_EXCEEDED"
     REPLAY_REDACTION_REQUIRED = "GSP_REPLAY_REDACTION_REQUIRED"
+    SOURCE_CONTRACT_UNSUPPORTED = "GSP_SOURCE_CONTRACT_UNSUPPORTED"
+    DECODER_UNSUPPORTED = "GSP_DECODER_UNSUPPORTED"
+    CONTENT_TYPE_UNSUPPORTED = "GSP_CONTENT_TYPE_UNSUPPORTED"
+    CONTENT_ENCODING_UNSUPPORTED = "GSP_CONTENT_ENCODING_UNSUPPORTED"
+    HTTP_STATUS_REJECTED = "GSP_HTTP_STATUS_REJECTED"
+    URL_FRAGMENT_FORBIDDEN = "GSP_URL_FRAGMENT_FORBIDDEN"
+    URL_QUERY_FORBIDDEN = "GSP_URL_QUERY_FORBIDDEN"
+    URL_DNS_REBINDING_REJECTED = "GSP_URL_DNS_REBINDING_REJECTED"
+    HTTP_TLS_VALIDATION_FAILED = "GSP_HTTP_TLS_VALIDATION_FAILED"
+    HTTP_TIMEOUT = "GSP_HTTP_TIMEOUT"
 
 
 @dataclass(frozen=True, slots=True)
@@ -146,6 +156,90 @@ _EXECUTABLE_MANIFEST_KEYS = (
     "cloudpickle",
     "dill",
 )
+S022_HTTP_ARRAY_FORMAT = "npy"
+S022_HTTP_ARRAY_DECODER_ID = "gsp.decoder.npy.v1"
+S022_HTTP_ARRAY_MATERIALIZATION_TARGET = "array-resource"
+S022_HTTP_ARRAY_COORDINATE_SYSTEM = "array-index"
+S022_HTTP_ARRAY_CACHE_MODES = ("none", "session-memory")
+S022_HTTP_ARRAY_ALLOWED_DTYPES = ("uint8", "uint16", "float32")
+_S022_FORBIDDEN_METADATA_KEYS = (
+    "fetch_descriptor",
+    "url",
+    "uri",
+    "href",
+    "endpoint",
+    "host",
+    "port",
+    "path",
+    "bucket",
+    "object_key",
+    "signed_url",
+    "query",
+    "headers",
+    "cookies",
+    "authorization",
+    "credential_ref",
+    "credentials",
+    "secret",
+    "token",
+    "api_key",
+    "decoder_config",
+    "decoder_module",
+    "decoder_import",
+    "python_import",
+    "entry_point",
+    "package",
+    "pip",
+    "callback",
+    "hook",
+    "plugin",
+    "shader",
+    "shader_source",
+    "runtime_shader",
+    "cache_key",
+    "resolved_url",
+    "dns_result",
+    "ip_address",
+    "etag_from_resolver",
+    "private_digest",
+)
+_S022_SECRET_METADATA_KEYS = (
+    "headers",
+    "cookies",
+    "authorization",
+    "credential_ref",
+    "credentials",
+    "secret",
+    "token",
+    "api_key",
+)
+_S022_URL_METADATA_KEYS = (
+    "fetch_descriptor",
+    "url",
+    "uri",
+    "href",
+    "endpoint",
+    "host",
+    "port",
+    "bucket",
+    "object_key",
+    "signed_url",
+    "query",
+    "resolved_url",
+)
+_S022_PATH_METADATA_KEYS = ("path",)
+_S022_DECODER_PLUGIN_METADATA_KEYS = (
+    "decoder_config",
+    "decoder_module",
+    "decoder_import",
+    "python_import",
+    "entry_point",
+    "package",
+    "pip",
+    "callback",
+    "hook",
+    "plugin",
+)
 
 
 def validate_no_network_source_descriptor(
@@ -204,6 +298,110 @@ def validate_no_network_source_descriptor(
     _scan_mapping(descriptor.fetch_descriptor or {}, diagnostics)
     _scan_mapping(descriptor.cache_policy or {}, diagnostics)
     _scan_mapping(descriptor.metadata or {}, diagnostics)
+    return SecurityValidationResult(accepted=not diagnostics, diagnostics=tuple(diagnostics))
+
+
+def validate_s022_http_array_source_descriptor(
+    descriptor: DataSourceDescriptor,
+    *,
+    allowed_source_refs: tuple[Mapping[str, str], ...] | None = None,
+) -> SecurityValidationResult:
+    """Validate the S022 no-network HTTP single-resource array descriptor shape.
+
+    This validates only scene-visible descriptor metadata. It does not fetch, parse URLs, resolve
+    hosts, inspect files, look up credentials, execute decoders, or load plugins.
+    """
+    diagnostics: list[SecurityDiagnostic] = list(
+        validate_no_network_source_descriptor(descriptor, allowed_source_refs=allowed_source_refs).diagnostics
+    )
+    if descriptor.kind != DataSourceKind.ARRAY:
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.SOURCE_CONTRACT_UNSUPPORTED,
+                "S022 HTTP single-resource proof requires source_kind='array'",
+            )
+        )
+    if descriptor.locality != DataLocality.PRECONFIGURED_SOURCE:
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.SOURCE_LOCALITY_UNSUPPORTED,
+                "S022 HTTP array descriptors require locality='preconfigured-source'",
+            )
+        )
+    if descriptor.credential_policy != CredentialPolicy.NONE:
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.CREDENTIAL_POLICY_UNSUPPORTED,
+                "S022 HTTP array descriptors require credential_policy='none'",
+            )
+        )
+    if descriptor.dtype not in S022_HTTP_ARRAY_ALLOWED_DTYPES:
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.CHUNK_METADATA_INVALID,
+                f"S022 HTTP array dtype {descriptor.dtype!r} is not allowed",
+            )
+        )
+    if len(descriptor.shape) not in (2, 3):
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.CHUNK_METADATA_INVALID,
+                "S022 HTTP array shape must have rank 2 or 3",
+            )
+        )
+    if len(descriptor.shape) == 2 and descriptor.channels != 1:
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.CHUNK_METADATA_INVALID,
+                "S022 rank-2 arrays require channels=1",
+            )
+        )
+    if descriptor.coordinate_system != S022_HTTP_ARRAY_COORDINATE_SYSTEM:
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.CHUNK_METADATA_INVALID,
+                "S022 HTTP array descriptors require coordinate_system='array-index'",
+            )
+        )
+    if descriptor.materialization_policy != MaterializationPolicy.FULL:
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.CHUNK_METADATA_INVALID,
+                "S022 HTTP array descriptors require materialization_policy='full'",
+            )
+        )
+    metadata = descriptor.metadata or {}
+    format_value = metadata.get("format")
+    decoder_id = metadata.get("decoder_id")
+    materialization_target = metadata.get("materialization_target")
+    if format_value != S022_HTTP_ARRAY_FORMAT:
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.CHUNK_METADATA_INVALID,
+                "S022 HTTP array descriptors require metadata.format='npy'",
+            )
+        )
+    if decoder_id != S022_HTTP_ARRAY_DECODER_ID:
+        code = (
+            SecurityDiagnosticCode.DECODER_PLUGIN_DISABLED
+            if _looks_executable_decoder_id(decoder_id)
+            else SecurityDiagnosticCode.DECODER_UNSUPPORTED
+        )
+        diagnostics.append(
+            SecurityDiagnostic(
+                code,
+                "S022 HTTP array descriptors require metadata.decoder_id='gsp.decoder.npy.v1'",
+            )
+        )
+    if materialization_target != S022_HTTP_ARRAY_MATERIALIZATION_TARGET:
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.CHUNK_METADATA_INVALID,
+                "S022 HTTP array descriptors require metadata.materialization_target='array-resource'",
+            )
+        )
+    _validate_s022_cache_policy(descriptor.cache_policy or {}, diagnostics)
+    _scan_s022_forbidden_mapping(metadata, diagnostics, allowed_keys=("format", "decoder_id", "materialization_target"))
     return SecurityValidationResult(accepted=not diagnostics, diagnostics=tuple(diagnostics))
 
 
@@ -281,6 +479,66 @@ def _scan_mapping(value: Mapping[str, object], diagnostics: list[SecurityDiagnos
         if any(part in key for part in _PATH_KEY_PARTS):
             diagnostics.append(SecurityDiagnostic(SecurityDiagnosticCode.LOCAL_PATH_FORBIDDEN, f"field {raw_key!r} is path-like"))
         _scan_value(item, diagnostics)
+
+
+def _validate_s022_cache_policy(value: Mapping[str, object], diagnostics: list[SecurityDiagnostic]) -> None:
+    mode = value.get("mode", "none")
+    if mode not in S022_HTTP_ARRAY_CACHE_MODES:
+        diagnostics.append(
+            SecurityDiagnostic(
+                SecurityDiagnosticCode.CACHE_POLICY_UNSUPPORTED,
+                f"S022 HTTP array cache mode {mode!r} is not supported",
+            )
+        )
+    _scan_s022_forbidden_mapping(value, diagnostics, allowed_keys=("mode",))
+
+
+def _scan_s022_forbidden_mapping(
+    value: Mapping[str, object],
+    diagnostics: list[SecurityDiagnostic],
+    *,
+    allowed_keys: tuple[str, ...],
+) -> None:
+    for raw_key, item in value.items():
+        key = str(raw_key).lower()
+        if key.startswith("x-"):
+            _scan_value(item, diagnostics)
+            continue
+        forbidden = key in _S022_FORBIDDEN_METADATA_KEYS
+        if key in _S022_SECRET_METADATA_KEYS or any(part in key for part in _SENSITIVE_KEY_PARTS):
+            diagnostics.append(
+                SecurityDiagnostic(SecurityDiagnosticCode.INLINE_SECRET_REJECTED, f"field {raw_key!r} is forbidden in S022 descriptors")
+            )
+        if key in _S022_URL_METADATA_KEYS or any(part in key for part in _URL_KEY_PARTS):
+            diagnostics.append(SecurityDiagnostic(SecurityDiagnosticCode.REMOTE_FETCH_DISABLED, f"field {raw_key!r} is URL-like"))
+        if key in _S022_PATH_METADATA_KEYS or any(part in key for part in _PATH_KEY_PARTS):
+            diagnostics.append(SecurityDiagnostic(SecurityDiagnosticCode.LOCAL_PATH_FORBIDDEN, f"field {raw_key!r} is path-like"))
+        if key in _S022_DECODER_PLUGIN_METADATA_KEYS:
+            diagnostics.append(
+                SecurityDiagnostic(SecurityDiagnosticCode.DECODER_PLUGIN_DISABLED, f"field {raw_key!r} implies decoder plugin behavior")
+            )
+        if key not in allowed_keys and not forbidden:
+            diagnostics.append(
+                SecurityDiagnostic(SecurityDiagnosticCode.MANIFEST_SCHEMA_INVALID, f"field {raw_key!r} is not allowed in S022 descriptors")
+            )
+        if (
+            forbidden
+            and key not in _S022_SECRET_METADATA_KEYS
+            and key not in _S022_URL_METADATA_KEYS
+            and key not in _S022_PATH_METADATA_KEYS
+            and key not in _S022_DECODER_PLUGIN_METADATA_KEYS
+        ):
+            diagnostics.append(
+                SecurityDiagnostic(SecurityDiagnosticCode.MANIFEST_SCHEMA_INVALID, f"field {raw_key!r} is forbidden in S022 descriptors")
+            )
+        _scan_value(item, diagnostics)
+
+
+def _looks_executable_decoder_id(value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    lowered = value.lower()
+    return any(marker in lowered for marker in ("python", "import", "entry_point", "plugin", "callback", "hook", ":", "/"))
 
 
 def _scan_value(value: object, diagnostics: list[SecurityDiagnostic]) -> None:

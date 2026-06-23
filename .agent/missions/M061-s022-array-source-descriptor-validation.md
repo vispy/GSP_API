@@ -6,7 +6,7 @@ S022 - Remote source family selection and consultation
 
 ## Status
 
-Pending.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -26,3 +26,10 @@ ADR-0009.
 
 Do not implement HTTP fetch, URL parsing, DNS, credentials, decoder execution, network I/O, dynamic
 loading, real resolver access, or production remote-source behavior.
+
+## Result
+
+Completed. Added `DataSourceKind.ARRAY`, stable S022 diagnostic codes, and
+`validate_s022_http_array_source_descriptor()` for no-network descriptor validation. Added tests for
+accepted descriptors and rejection of wrong source contract, direct remote fetch, credentials,
+headers, decoder plugin attempts, bad contract details, and unsupported cache modes.
