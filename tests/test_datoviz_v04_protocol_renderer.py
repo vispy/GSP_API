@@ -698,7 +698,7 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     assert style_call[2].stroke_width == 0.0
     assert style_call[2].aspect == 0
     set_data = _calls(fake, "set_data")
-    assert [call[2] for call in set_data] == ["position", "color", "diameter"]
+    assert [call[2] for call in set_data] == ["position", "color", "diameter_px"]
     np.testing.assert_allclose(set_data[0][3], [[-0.5, 0.25, 0.0], [0.5, -0.25, 0.0]])
     np.testing.assert_array_equal(set_data[1][3], [[255, 0, 0, 255], [0, 128, 255, 128]])
     np.testing.assert_allclose(set_data[2][3], [2.0, 4.0], rtol=1e-6)

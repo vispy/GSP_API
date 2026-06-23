@@ -166,7 +166,7 @@ Completed M066 work:
 
 - Point spec now defines `sizes` as rendered screen-pixel diameters.
 - Matplotlib converts protocol diameters to `scatter(..., s=...)` area units using figure DPI.
-- Datoviz maps protocol diameters directly to the retained point visual `"diameter"` upload.
+- Datoviz maps protocol diameters directly to the retained point visual `"diameter_px"` upload.
 - Datoviz point/image visual attachment now uses an explicit `DvzVisualAttachDesc`.
 - `point/alpha_overlap_ndc` was added to the S023 visual QA suite.
 - Local M066 QA rendered all point cases in both Matplotlib and Datoviz.

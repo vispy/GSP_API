@@ -182,9 +182,9 @@ class DatovizV04ProtocolRenderer:
         dvz_visual = self.dvz.dvz_point(self.scene, 0)
         _set_filled_point_style(self.dvz, dvz_visual)
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
-        self.dvz.dvz_visual_set_data(dvz_visual, "position", positions)
-        self.dvz.dvz_visual_set_data(dvz_visual, "color", colors)
-        self.dvz.dvz_visual_set_data(dvz_visual, "diameter", diameters)
+        _set_visual_data(self.dvz, dvz_visual, "position", positions)
+        _set_visual_data(self.dvz, dvz_visual, "color", colors)
+        _set_visual_data(self.dvz, dvz_visual, "diameter_px", diameters)
         self.dvz.dvz_panel_add_visual(self.panel, dvz_visual, _visual_attach_desc(self.dvz, coord_space="data", z_layer=0))
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
@@ -206,8 +206,8 @@ class DatovizV04ProtocolRenderer:
 
         dvz_visual = self.dvz.dvz_image(self.scene, 0)
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM | DVZ_QUERY_CAPABILITY_PIXEL)
-        self.dvz.dvz_visual_set_data(dvz_visual, "position", positions)
-        self.dvz.dvz_visual_set_data(dvz_visual, "texcoords", texcoords)
+        _set_visual_data(self.dvz, dvz_visual, "position", positions)
+        _set_visual_data(self.dvz, dvz_visual, "texcoords", texcoords)
         if datoviz_v04_sampled_field_ready(self.dvz):
             sampled_field = self._create_rgba8_sampled_field(pixels, width, height)
             if not _set_visual_field(self.dvz, dvz_visual, "field", sampled_field):
@@ -510,6 +510,12 @@ def _set_query_capabilities(dvz: Any, visual: Any, capabilities: int) -> None:
     if setter is None:
         return
     setter(visual, capabilities)
+
+
+def _set_visual_data(dvz: Any, visual: Any, attr_name: str, data: npt.NDArray[Any]) -> None:
+    result = dvz.dvz_visual_set_data(visual, attr_name, data)
+    if result != 0:
+        raise DatovizV04Unsupported(f"Datoviz visual attribute {attr_name!r} upload failed")
 
 
 def _set_filled_point_style(dvz: Any, visual: Any) -> None:

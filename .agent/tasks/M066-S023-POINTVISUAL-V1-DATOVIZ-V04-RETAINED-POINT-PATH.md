@@ -28,7 +28,7 @@ Matplotlib reference rendering, Datoviz v0.4 retained-scene adapter, tests, and 
   - `PointVisual.sizes -> float32 diameter array`
   - `PointVisual.positions -> float32 vec3 positions`
   - create with `dvz_point(scene, flags)`
-  - upload `"position"`, `"color"`, `"diameter"`
+  - upload `"position"`, `"color"`, `"diameter_px"`
   - add to panel with explicit attach descriptor and z layer.
 
 ## Deliverables

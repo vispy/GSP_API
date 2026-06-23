@@ -485,8 +485,8 @@ def _probe_minimal_point_scene(facade: Any | None, matrix: Mapping[str, Capabili
         calls.append("dvz_visual_set_data.position")
         facade.dvz_visual_set_data(visual, "color", np.array([[255, 255, 255, 255]], dtype=np.uint8))
         calls.append("dvz_visual_set_data.color")
-        facade.dvz_visual_set_data(visual, "diameter", np.array([4.0], dtype=np.float32))
-        calls.append("dvz_visual_set_data.diameter")
+        facade.dvz_visual_set_data(visual, "diameter_px", np.array([4.0], dtype=np.float32))
+        calls.append("dvz_visual_set_data.diameter_px")
         facade.dvz_panel_add_visual(panel, visual, None)
         calls.append("dvz_panel_add_visual")
     except Exception as exc:  # noqa: BLE001 - construction failures are probe data.

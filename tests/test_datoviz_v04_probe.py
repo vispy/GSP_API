@@ -124,6 +124,7 @@ def test_probe_successful_fake_facade_is_json_safe(tmp_path: Path) -> None:
     assert payload["capability_matrix"]["attach.coord_space.DVZ_COORD_DATA"]["supported"] is True
     assert payload["minimal_point_scene"]["supported"] is True
     assert payload["minimal_point_scene"]["attempted"] is True
+    assert "dvz_visual_set_data.diameter_px" in payload["minimal_point_scene"]["calls_completed"]
     assert payload["source_symbol_matrix"]["dvz_scene"] == [{"path": "README.md", "line": 1}]
     json.dumps(payload)
     assert ("dvz_panel_add_visual", "panel", "point", None) in facade.calls

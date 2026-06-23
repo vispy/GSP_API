@@ -34,7 +34,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 | Session/server | `dvz_scene()` plus app/view lifecycle | feasible |
 | Figure/canvas | `dvz_figure(scene, width, height, flags)` | feasible |
 | Panel/viewport | `dvz_panel()` or `dvz_panel_full()` | feasible; convert GSP pixel viewports to normalized panel desc |
-| Point visual | `dvz_point()` plus `dvz_visual_set_data()` for `position`, `color`, `diameter` | feasible after point-size semantic alignment |
+| Point visual | `dvz_point()` plus `dvz_visual_set_data()` for `position`, `color`, `diameter_px` | feasible after point-size semantic alignment |
 | Image visual | `dvz_image()` plus `position`, `texcoords`, sampled field or texture binding | feasible after image origin/interpolation confirmation |
 | Capabilities | `dvz_capability_snapshot()` | feasible |
 | Queries | `dvz_panel_query()` / `dvz_scene_poll_query()` | conceptually aligned; local `../datoviz` headers define `DvzQueryResult`, but the current GSP env imports Datoviz 0.3.5 |
@@ -62,8 +62,8 @@ Current supported surface:
 |---|---|---|
 | Capability snapshot | static GSP `CapabilitySnapshot` | implemented for first slice |
 | Session/figure/panel | `dvz_scene()` + `dvz_figure()` + `dvz_panel_full()` | implemented |
-| Point visual | `dvz_point()` + `position`, `color`, `diameter` attributes | implemented for NDC positions |
-| Point size | GSP screen-pixel diameter uploaded to Datoviz `diameter` | implemented |
+| Point visual | `dvz_point()` + `position`, `color`, `diameter_px` attributes | implemented for NDC positions |
+| Point size | GSP screen-pixel diameter uploaded to Datoviz `diameter_px` | implemented |
 | Image visual | `dvz_image()` + `position`, `texcoords`, `dvz_visual_set_texture()` | implemented for uint8 RGB/RGBA, nearest, NDC extents |
 | Image scalar fields | sampled-field path | deferred to `DATOVIZ-V04-IMAGE-FIELD-CONTRACT` |
 | Queries | Datoviz panel query APIs | not advertised; deferred to `DATOVIZ-V04-QUERY-BINDING` |

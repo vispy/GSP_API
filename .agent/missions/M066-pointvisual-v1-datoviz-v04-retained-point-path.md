@@ -16,7 +16,7 @@ Freeze PointVisual v1 semantics and prove the simplest Datoviz v0.4 retained-sce
 
 - Point visual spec and size-unit decision.
 - Matplotlib reference mapping with protocol `sizes` as screen-pixel diameters.
-- Datoviz v0.4 adapter for `dvz_point` plus `"position"`, `"color"`, and `"diameter"`.
+- Datoviz v0.4 adapter for `dvz_point` plus `"position"`, `"color"`, and `"diameter_px"`.
 - Explicit Datoviz attach descriptor handling.
 - QA cases integrated into M065 harness.
 
@@ -32,7 +32,7 @@ Completed in the local main Codex session on 2026-06-23.
 - `PointVisual.sizes` is frozen as rendered screen-pixel diameter.
 - ADR-0010 records the size-unit and first Datoviz attach decision.
 - Matplotlib converts protocol diameters to `scatter(s=...)` area units using figure DPI.
-- Datoviz v0.4 uploads `position`, `color`, and direct `diameter` arrays to `dvz_point`.
+- Datoviz v0.4 uploads `position`, `color`, and direct `diameter_px` arrays to `dvz_point`.
 - Datoviz v0.4 attaches point/image visuals with an explicit `DvzVisualAttachDesc`.
 - S023 visual QA includes `point/alpha_overlap_ndc` alongside the basic and diameter-ramp cases.
 - Validation passed: Ruff, full pytest, strict mypy, backend imports, focused renderer tests, and
