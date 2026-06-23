@@ -69,3 +69,22 @@ The next ChatGPT Pro consultation should not ask for a broad remote-data archite
 - what descriptor fields, capability fields, diagnostics, cache keys, and fixtures are needed;
 - how to support trusted pluggable decoders without protocol-level executable code;
 - what stop conditions should halt implementation before production network I/O.
+
+## P007 decision
+
+ChatGPT Pro consultation `P007` selected HTTP single-resource as the first architecture test and
+selected `.npy` typed array as the first proof target. The accepted direction is recorded in
+ADR-0009.
+
+The first proof remains no-network/mock:
+
+- scene-visible source contract: `source_kind="array"`;
+- access mechanism: configured/mock HTTP via opaque `preconfigured-source` handle;
+- decoder: trusted built-in `gsp.decoder.npy.v1`;
+- fetcher id for first proof: `gsp.fetcher.http.mock.v1`;
+- materialization target: `array-resource`;
+- credential policy: `none`;
+- network I/O: disabled.
+
+Implementation remains gated. Real HTTP I/O, URL parsing, credentials, redirects, JPEG/PNG, Zarr,
+OME-Zarr, tile pyramids, persistent/shared cache, and dynamic decoder plugins require later review.

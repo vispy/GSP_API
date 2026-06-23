@@ -390,3 +390,78 @@ the underlying URL, path, bucket, credential, resolver output, or restricted dat
 
 Security diagnostics in these fixtures are stable expected results. Unsupported security behavior
 must reject fatally rather than simplify or silently deactivate.
+
+## S022 HTTP single-resource `.npy` fixture strategy
+
+S022 conformance starts with no-network/mock fetch. A fixture may advertise HTTP as the configured
+access mechanism only when:
+
+```text
+fetcher_id = "gsp.fetcher.http.mock.v1"
+access.mechanism = "http"
+network_io = false
+source_kind = "array"
+format = "npy"
+decoder_id = "gsp.decoder.npy.v1"
+materialization_target = "array-resource"
+```
+
+Fixtures must not serialize raw URLs, hostnames, paths, query strings, headers, cookies,
+authorization values, credential references, DNS results, IP addresses, cache keys, private digests,
+raw response bodies, resolver private config, or authorization bindings.
+
+Positive first-proof fixtures should cover:
+
+- known opaque handle resolves through mock HTTP access to deterministic tiny `.npy` bytes;
+- materialized array resource has exact shape, dtype, and values;
+- optional Matplotlib rank-2 array reference rendering;
+- bounded array value query/readback for a valid index;
+- capability metadata advertises configured-only HTTP access with `network_io=false`, no
+  scene-supplied URLs, `.npy` decoder policy, `credential_policy="none"`, and redaction enabled;
+- optional session-memory cache hit remains isolated to the same session/source/decoder/policy.
+
+Negative first-proof fixtures should cover:
+
+- client-supplied `fetch_descriptor`;
+- `locality="direct-remote-fetch"`;
+- `source_kind="http"`;
+- unknown or unauthorized resolver handle, reported publicly as `GSP_SOURCE_HANDLE_UNKNOWN`;
+- any `credential_ref`, inline secret, header, cookie, or token;
+- URL-like or path-like metadata;
+- decoder id that looks like an import path or dynamic plugin;
+- `decoder_config` containing executable-looking fields;
+- mock response content type outside the allowlist;
+- content encoding other than `identity`;
+- response byte count over the configured cap;
+- invalid `.npy` magic/header/version;
+- `.npy` object, structured, string, unicode, void, Fortran-order, shape-mismatched, or oversized
+  payloads;
+- decoded byte count over the configured cap;
+- query outside declared array bounds;
+- query result over the configured limit.
+
+Redaction fixtures must assert that debug/replay output uses stable placeholders and omits private
+resolver data. Existing placeholders remain valid:
+
+- `<redacted:credential-ref>`;
+- `<redacted:source-ref>`;
+- `<redacted:url>`;
+- `<redacted:path>`;
+- `<redacted:secret>`.
+
+S022 reserves additional placeholders:
+
+- `<redacted:cache-key>`;
+- `<redacted:dns-result>`;
+- `<redacted:http-header>`;
+- `<redacted:digest>`.
+
+Cache fixtures should verify that same-session cache hits are possible only for the same
+resolver/source/decoder/policy/generation and that different sessions, tenants, decoder policy, or
+source generation miss. Failed validation must not populate cache, and replay output must never
+expose private cache keys.
+
+Optional real network smoke fixtures are not part of the first proof. They require a later gate
+showing that no-network fixtures pass, SSRF and DNS-rebinding policy exists, TLS verification exists,
+redirects reject, byte/time/retry limits exist, redaction passes, admin config is supplied out of
+band, no raw URL is committed to fixtures or replay, and credential policy remains `none`.

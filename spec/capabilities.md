@@ -169,3 +169,138 @@ Recommended S020 diagnostic codes:
 - `GSP_REPLAY_REDACTION_REQUIRED`.
 
 These diagnostics reject fatally when they protect a security boundary.
+
+## S022 HTTP single-resource `.npy` capabilities
+
+ADR-0009 defines the first remote-access architecture target as a configured/mock HTTP access
+mechanism that materializes a `.npy` typed array. Capability snapshots for this proof must keep
+private resolver configuration out of the public surface.
+
+Reserved S022 data-source capability fields:
+
+- `data_sources.supported_source_contracts`;
+- `data_sources.remote_access.scene_supplied_urls`;
+- `data_sources.remote_access.configured_access_only`;
+- `data_sources.remote_access.access_mechanisms`;
+- `data_sources.decoders`;
+- `data_sources.supported_materialization_targets`;
+- `data_sources.supported_formats`;
+- `data_sources.query_contracts`;
+- `data_sources.preconfigured_resolvers[].access_mechanisms`;
+- `data_sources.preconfigured_resolvers[].decoder_ids`;
+- `data_sources.preconfigured_resolvers[].network_io`;
+- `security.raw_urls_in_protocol`;
+- `security.raw_credentials_in_protocol`;
+- `security.resolver_outputs_in_replay`.
+
+The first no-network/mock S022 capability posture is:
+
+```json
+{
+  "data_sources": {
+    "supported_source_localities": ["synthetic", "in-memory", "preconfigured-source"],
+    "supported_source_contracts": [
+      {
+        "source_kind": "array",
+        "contract_id": "gsp.source.array.v1",
+        "formats": ["npy"],
+        "decoder_ids": ["gsp.decoder.npy.v1"],
+        "materialization_targets": ["array-resource"],
+        "query_contracts": ["gsp.query.array-value.v1"],
+        "max_rank": 3,
+        "max_elements": 1048576,
+        "max_decoded_bytes": 4194304
+      }
+    ],
+    "supported_credential_policies": ["none"],
+    "remote_fetch_descriptors": {"accepted": false},
+    "supports_server_side_fetch": {"accepted": false, "reason": "s022-mock-fetch-only"},
+    "remote_access": {
+      "scene_supplied_urls": false,
+      "configured_access_only": true,
+      "access_mechanisms": [
+        {
+          "id": "http",
+          "fetcher_ids": ["gsp.fetcher.http.mock.v1"],
+          "network_io": false,
+          "schemes": ["https"],
+          "methods": ["GET"],
+          "url_in_protocol": false,
+          "host_policy": "admin-allowlist-private-address-reject",
+          "redirect_policy": {"mode": "reject", "max_redirects": 0},
+          "timeout_ms_max": 2000,
+          "retries_max": 0,
+          "response_bytes_max": 1048576,
+          "content_encoding": ["identity"],
+          "request_headers": "admin-fixed-safe-only",
+          "cookies": false,
+          "userinfo_allowed": false,
+          "fragments_allowed": false,
+          "query_strings_allowed": false,
+          "dns_rebinding_protection": true
+        }
+      ]
+    },
+    "decoders": [
+      {
+        "decoder_id": "gsp.decoder.npy.v1",
+        "format": "npy",
+        "content_types": ["application/x-npy", "application/octet-stream"],
+        "allow_pickle": false,
+        "allow_object_dtype": false,
+        "allow_structured_dtype": false,
+        "allow_string_dtype": false,
+        "allow_fortran_order": false,
+        "allowed_dtypes": ["uint8", "uint16", "float32"],
+        "allowed_npy_versions": ["1.0", "2.0"],
+        "max_header_bytes": 4096,
+        "max_rank": 3,
+        "max_elements": 1048576,
+        "max_decoded_bytes": 4194304
+      }
+    ],
+    "preconfigured_resolvers": [
+      {
+        "resolver_id": "gsp.demo.http-resource-resolver",
+        "source_kinds": ["array"],
+        "source_ids": ["demo-http-npy-array"],
+        "access_mechanisms": ["http"],
+        "decoder_ids": ["gsp.decoder.npy.v1"],
+        "credential_policies": ["none"],
+        "network_io": false
+      }
+    ],
+    "cache_modes": ["none", "session-memory"]
+  },
+  "security": {
+    "redaction_profile": "gsp.s022.http-single-resource.mock",
+    "diagnostic_redaction": true,
+    "fixture_remote_sources_allowed": false,
+    "raw_urls_in_protocol": false,
+    "raw_credentials_in_protocol": false,
+    "resolver_outputs_in_replay": false
+  }
+}
+```
+
+A future live HTTP capability may set `supports_server_side_fetch.accepted=true` and
+`network_io=true` only after a separate review gate. Even then, it must keep
+`scene_supplied_urls=false`, `configured_access_only=true`, `url_in_protocol=false`,
+`redirect_policy.mode="reject"`, and `credential_policy="none"` until a later credential review.
+
+S022 adds these recommended diagnostic codes:
+
+- `GSP_SOURCE_CONTRACT_UNSUPPORTED`;
+- `GSP_DECODER_UNSUPPORTED`;
+- `GSP_CONTENT_TYPE_UNSUPPORTED`;
+- `GSP_CONTENT_ENCODING_UNSUPPORTED`;
+- `GSP_HTTP_STATUS_REJECTED`;
+- `GSP_URL_FRAGMENT_FORBIDDEN`;
+- `GSP_URL_QUERY_FORBIDDEN`;
+- `GSP_URL_DNS_REBINDING_REJECTED`;
+- `GSP_HTTP_TLS_VALIDATION_FAILED`;
+- `GSP_HTTP_TIMEOUT`.
+
+Existing S020 diagnostics remain preferred where they already express the violation. The new codes
+cover source-contract selection, stable decoder ids, HTTP response policy, and URL validation gaps
+that were not specific in S020.

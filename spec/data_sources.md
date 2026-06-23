@@ -225,3 +225,128 @@ The built-in proof handle is:
 resolver_id = "gsp.test.synthetic-resolver"
 source_id = "public-demo-pyramid"
 ```
+
+## S022 HTTP single-resource `.npy` array architecture
+
+ADR-0009 accepts HTTP single-resource as the first remote access architecture test, with `.npy`
+typed array as the first source contract. This is a protocol and conformance baseline, not a
+runtime network feature.
+
+HTTP is an access mechanism, not a source kind. Scenes must not use `source_kind="http"`, and HTTP
+details never belong in scene payloads. The first S022 source descriptor uses:
+
+- `source_kind="array"`;
+- `format="npy"`;
+- `decoder_id="gsp.decoder.npy.v1"`;
+- `locality="preconfigured-source"`;
+- `credential_policy="none"`;
+- opaque `source_ref.resolver_id` and `source_ref.source_id`;
+- bounded `shape`, `dtype`, `channels`, and `coordinate_system="array-index"`;
+- `materialization_policy="full"`;
+- `materialization_target="array-resource"`;
+- optional `cache_policy.mode` limited to `none` or `session-memory`;
+- optional `extent` and `origin` only when a rank-2 array is adapted for image-like reference
+  rendering.
+
+The first executable proof must use a mock/configured HTTP access contract with `network_io=false`.
+The stable mock identifiers are:
+
+```text
+access.mechanism = "http"
+fetcher_id = "gsp.fetcher.http.mock.v1"
+decoder_id = "gsp.decoder.npy.v1"
+source_kind = "array"
+materialization_target = "array-resource"
+```
+
+The private resolver/admin configuration, not the scene, owns:
+
+- URL and host allowlist for any later real HTTP source;
+- fetcher id and access mechanism;
+- method, redirect policy, TLS policy, timeout, retry, content-type, content-encoding, and byte
+  limits;
+- decoder policy such as allowed dtypes, `.npy` versions, header size, rank, element count,
+  decoded byte limit, and `allow_pickle=false`;
+- credential policy, which is `none` for the first proof;
+- cache mode, private cache-key material, authorization generation, source generation, and optional
+  integrity digest;
+- tenant/session/user authorization bindings.
+
+These private resolver fields must not appear in scene payloads, manifests, diagnostics, fixtures,
+debug JSON, replay artifacts, or public capability snapshots as raw values.
+
+### First-proof descriptor rules
+
+The first S022 descriptor accepts only the following scene-visible remote-array fields:
+
+- `id`;
+- `source_kind`;
+- `extension_id`;
+- `extension_version`;
+- `shape`;
+- `dtype`;
+- `channels`;
+- `coordinate_system`;
+- `extent`;
+- `origin`;
+- `locality`;
+- `credential_policy`;
+- `source_ref.resolver_id`;
+- `source_ref.source_id`;
+- `format`;
+- `decoder_id`;
+- `cache_policy.mode`;
+- `materialization_policy`;
+- `materialization_target`;
+- non-sensitive `metadata` under documented `x-` keys.
+
+The following fields or field shapes are forbidden in scenes, manifests, fixtures, replay, and
+client-supplied descriptors:
+
+- `fetch_descriptor`;
+- raw URL-like fields such as `url`, `uri`, `href`, `endpoint`, `host`, `port`, `path`, `bucket`,
+  `object_key`, `signed_url`, or `query`;
+- request metadata such as `headers`, `cookies`, or `authorization`;
+- credentials such as `credential_ref`, `credentials`, `secret`, `token`, or `api_key`;
+- decoder execution fields such as `decoder_config`, `decoder_module`, `decoder_import`,
+  `python_import`, `entry_point`, `package`, `pip`, `callback`, `hook`, or `plugin`;
+- shader or executable fields such as `shader`, `shader_source`, or `runtime_shader`;
+- resolver-private fields such as `cache_key`, `resolved_url`, `dns_result`, `ip_address`,
+  `etag_from_resolver`, or `private_digest`.
+
+Unknown descriptor fields reject unless a future spec defines them or they live under an explicitly
+non-executable `x-` namespace and still pass the sensitive-key, URL-like, path-like, credential, and
+executable-field validators.
+
+### `.npy` decoder policy
+
+`gsp.decoder.npy.v1` is a trusted built-in decoder policy, not an import path or plugin. The first
+proof must reject:
+
+- pickle and object dtype;
+- structured dtype;
+- string, unicode, and void dtype;
+- Fortran-order arrays;
+- unknown or excessive rank;
+- shape mismatch between scene, resolver config, and `.npy` header;
+- decoded byte counts above the configured limit;
+- header size above the configured limit;
+- invalid magic, unsupported `.npy` version, unexpected header keys, trailing bytes, or
+  non-executable-parser failures.
+
+First-proof allowed dtypes are `uint8`, `uint16`, and `float32`. First-proof rank should be 2 or 3,
+with the first fixture using rank 2.
+
+### Cache and query policy
+
+The default cache mode is `none`. `session-memory` may be used only when entries are isolated by
+tenant/session, resolver id, source id, authorization generation, source contract, declared
+shape/dtype/channels, access mechanism, fetcher id, credential policy, decoder id, decoder policy,
+format, materialization target, byte/decode limit policy, and content generation or verified digest.
+
+Cache keys and private cache hashes must not be serialized in diagnostics, fixtures, debug JSON, or
+replay. Failed fetch/decode/materialization results are not cached in the first proof.
+
+Array query/readback, when implemented, is bounded by declared shape and result-size limits. Query
+payloads may report source id, array index coordinate, dtype, and value, but must not expose
+resolver URLs, cache keys, digests, fetch metadata, hostnames, credentials, or private config.
