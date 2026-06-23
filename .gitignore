@@ -214,3 +214,7 @@ __marimo__/
 .agent/worktrees/
 .agent/logs/*.log
 .agent/logs/*.jsonl
+
+# Local visual QA render runs are generated artifacts; committed probes live
+# under artifacts/visual_qa/s023/datoviz_v04_probe/.
+artifacts/visual_qa/s023/*-local/
