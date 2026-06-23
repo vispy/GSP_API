@@ -91,6 +91,18 @@ class FakeDatovizV04:
         self.calls.append(("set_view2d", panel, view))
         return 0
 
+    class DvzColor(ctypes.Structure):
+        _fields_ = (
+            ("r", ctypes.c_uint8),
+            ("g", ctypes.c_uint8),
+            ("b", ctypes.c_uint8),
+            ("a", ctypes.c_uint8),
+        )
+
+    def dvz_panel_set_background_color(self, panel, color):
+        self.calls.append(("set_background_color", panel, (color.r, color.g, color.b, color.a)))
+        return None
+
     def dvz_point(self, scene, flags):
         self.calls.append(("point", scene, flags))
         return "point-visual"
@@ -768,6 +780,7 @@ def test_renderer_configures_equal_aspect_ndc_panel_when_available():
     fake = FakeDatovizV04()
     DatovizV04ProtocolRenderer(dvz=fake)
 
+    assert _calls(fake, "set_background_color") == [("set_background_color", "panel", (255, 255, 255, 255))]
     view_call = _calls(fake, "set_view2d")[0]
     assert view_call[1] == "panel"
     assert view_call[2].aspect == 1

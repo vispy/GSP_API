@@ -84,6 +84,7 @@ DVZ_COORD_VIEW = 0
 DVZ_COORD_DATA = 1
 DVZ_SHAPE_ASPECT_FILLED = 0
 DVZ_SHAPE_ASPECT_OUTLINE = 2
+DEFAULT_BACKGROUND_RGBA8 = (255, 255, 255, 255)
 
 _MARKER_SHAPE_FALLBACKS = {
     MarkerShape.DISC: 0,
@@ -150,6 +151,7 @@ class DatovizV04ProtocolRenderer:
     dvz: Any = None
     width: int = 800
     height: int = 600
+    background_rgba8: tuple[int, int, int, int] = DEFAULT_BACKGROUND_RGBA8
     scene: Any = field(init=False)
     figure: Any = field(init=False)
     panel: Any = field(init=False)
@@ -172,6 +174,7 @@ class DatovizV04ProtocolRenderer:
         self.scene = self.dvz.dvz_scene()
         self.figure = self.dvz.dvz_figure(self.scene, self.width, self.height, 0)
         self.panel = self.dvz.dvz_panel_full(self.figure)
+        _set_panel_background_color(self.dvz, self.panel, self.background_rgba8)
         _configure_ndc_panel_view2d(self.dvz, self.panel)
 
     def capabilities(self) -> CapabilitySnapshot:
@@ -564,6 +567,27 @@ def _set_query_capabilities(dvz: Any, visual: Any, capabilities: int) -> None:
     if setter is None:
         return
     setter(visual, capabilities)
+
+
+def _set_panel_background_color(dvz: Any, panel: Any, rgba: tuple[int, int, int, int]) -> None:
+    setter = getattr(dvz, "dvz_panel_set_background_color", None)
+    if setter is None:
+        return
+    color = _dvz_color(dvz, rgba)
+    setter(panel, color)
+
+
+def _dvz_color(dvz: Any, rgba: tuple[int, int, int, int]) -> Any:
+    color_type = getattr(dvz, "DvzColor", None)
+    if color_type is None:
+        return rgba
+    try:
+        return color_type(*rgba)
+    except TypeError:
+        color = color_type()
+        for channel, value in zip(("r", "g", "b", "a"), rgba, strict=True):
+            setattr(color, channel, int(value))
+        return color
 
 
 def _set_visual_data(dvz: Any, visual: Any, attr_name: str, data: npt.NDArray[Any]) -> None:
