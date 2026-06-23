@@ -20,7 +20,7 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     argParser.add_argument("--viewport-count", "--vc", type=int, default=1, help="Number of viewports to create")
-    argParser.add_argument("--renderer-name", "--r", type=str, choices=["matplotlib", "datoviz", "network"], default="matplotlib", help="Renderer to use")
+    argParser.add_argument("--renderer-name", "--r", type=str, choices=["matplotlib", "datoviz-v03", "network"], default="matplotlib", help="Renderer to use")
     argParser.add_argument(
         "--matplotlib-image-format",
         "--mif",
@@ -55,7 +55,7 @@ def main():
 
     # type casting for all command line args
     args.viewport_count = typing.cast(int, args.viewport_count)
-    args.renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], args.renderer_name)
+    args.renderer_name = typing.cast(Literal["matplotlib", "datoviz-v03", "network"], args.renderer_name)
     args.matplotlib_image_format = typing.cast(Literal["png", "svg", "pdf"], args.matplotlib_image_format)
     args.image_path = typing.cast(str | None, args.image_path)
     args.pydantic_serialize_cycle = typing.cast(bool, args.pydantic_serialize_cycle)

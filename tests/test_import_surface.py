@@ -35,6 +35,26 @@ def test_datoviz_protocol_modules_import_without_datoviz() -> None:
         assert hasattr(query, "datoviz_v04_query_binding_ready")
         with pytest.raises(ModuleNotFoundError):
             datoviz_backend.register_renderer_datoviz()
+        with pytest.raises(ModuleNotFoundError):
+            datoviz_backend.register_renderer_datoviz_v03()
+
+
+def test_legacy_datoviz_registers_as_v03_when_available() -> None:
+    try:
+        datoviz_backend = importlib.import_module("gsp_datoviz")
+        importlib.import_module("gsp_datoviz.renderer_registration")
+    except ModuleNotFoundError as exc:
+        if exc.name == "datoviz" or (exc.name is not None and exc.name.startswith("datoviz.")):
+            pytest.skip("legacy Datoviz wrapper is unavailable")
+        raise
+
+    from gsp.utils.renderer_registery import RendererRegistry
+
+    datoviz_backend.register_renderer_datoviz_v03()
+
+    assert RendererRegistry._get_item_by_name("datoviz-v03").renderer_name == "datoviz-v03"
+    with pytest.raises(ValueError, match="Renderer 'datoviz' not found"):
+        RendererRegistry._get_item_by_name("datoviz")
 
 
 def test_minimal_json_fixture_is_package_resource() -> None:

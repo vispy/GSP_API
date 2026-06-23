@@ -31,7 +31,7 @@ from gsp_pydantic.types.pydantic_dict import PydanticDict
 class NetworkPayload(TypedDict):
     """Type definition for the network payload sent to the server."""
 
-    renderer_name: Literal["matplotlib", "datoviz"]
+    renderer_name: Literal["matplotlib", "datoviz-v03"]
     data: PydanticDict
 
 
@@ -41,17 +41,17 @@ class NetworkRenderer(RendererBase):
     **IMPORTANT**: it DOES NOT depend on GSP matplotlib renderer, it only uses pip matplotlib to display the remotely rendered images.
     """
 
-    def __init__(self, canvas: Canvas, server_base_url: str, remote_renderer_name: Literal["matplotlib", "datoviz"] = "matplotlib") -> None:
+    def __init__(self, canvas: Canvas, server_base_url: str, remote_renderer_name: Literal["matplotlib", "datoviz-v03"] = "matplotlib") -> None:
         """Initialize the NetworkRenderer.
 
         Args:
             canvas (Canvas): _description_
             server_base_url (str): _description_
-            remote_renderer_name (Literal["matplotlib", "datoviz"], optional): _description_. Defaults to "matplotlib".
+            remote_renderer_name (Literal["matplotlib", "datoviz-v03"], optional): _description_. Defaults to "matplotlib".
         """
         self._canvas = canvas
         self._server_base_url = server_base_url
-        self._remote_renderer_name: Literal["matplotlib", "datoviz"] = remote_renderer_name
+        self._remote_renderer_name: Literal["matplotlib", "datoviz-v03"] = remote_renderer_name
 
         # Create a figure
         figure_width = self._canvas.get_width() / self._canvas.get_dpi()
@@ -85,11 +85,11 @@ class NetworkRenderer(RendererBase):
         matplotlib.pyplot.close(self._figure)
         self._figure = None  # type: ignore
 
-    def get_remote_renderer_name(self) -> Literal["matplotlib", "datoviz"]:
+    def get_remote_renderer_name(self) -> Literal["matplotlib", "datoviz-v03"]:
         """Get the name of the remote renderer being used.
 
         Returns:
-            Literal["matplotlib", "datoviz"]: The name of the remote renderer.
+            Literal["matplotlib", "datoviz-v03"]: The name of the remote renderer.
         """
         return self._remote_renderer_name
 

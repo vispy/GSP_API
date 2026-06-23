@@ -32,32 +32,32 @@ from gsp_network.viewport_events.viewport_events_network import ViewportEventsNe
 class ExampleHelper:
     """Helper class for examples to create renderers and animators based on environment variables."""
 
-    default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "matplotlib"
-    # default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "datoviz"
-    # default_renderer_name: Literal["matplotlib", "datoviz", "network"] = "network"
+    default_renderer_name: Literal["matplotlib", "datoviz-v03", "network"] = "matplotlib"
+    # default_renderer_name: Literal["matplotlib", "datoviz-v03", "network"] = "datoviz-v03"
+    # default_renderer_name: Literal["matplotlib", "datoviz-v03", "network"] = "network"
 
     @staticmethod
-    def get_renderer_name() -> Literal["matplotlib", "datoviz", "network"]:
+    def get_renderer_name() -> Literal["matplotlib", "datoviz-v03", "network"]:
         """Get the renderer name from environment variable GSP_RENDERER."""
-        renderer_name = typing.cast(Literal["matplotlib", "datoviz", "network"], os.environ.get("GSP_RENDERER", ExampleHelper.default_renderer_name))
+        renderer_name = typing.cast(Literal["matplotlib", "datoviz-v03", "network"], os.environ.get("GSP_RENDERER", ExampleHelper.default_renderer_name))
         # sanity check - ensure renderer_name is one of the expected valueszx
-        assert renderer_name in ["matplotlib", "datoviz", "network"], f"Invalid renderer name: {renderer_name}"
-        return typing.cast(Literal["matplotlib", "datoviz", "network"], renderer_name)
+        assert renderer_name in ["matplotlib", "datoviz-v03", "network"], f"Invalid renderer name: {renderer_name}"
+        return typing.cast(Literal["matplotlib", "datoviz-v03", "network"], renderer_name)
 
     @staticmethod
-    def get_remote_renderer_name() -> Literal["matplotlib", "datoviz"]:
+    def get_remote_renderer_name() -> Literal["matplotlib", "datoviz-v03"]:
         """Get the remote renderer name from environment variable GSP_REMOTE_RENDERER. Valid iif renderer is 'network'."""
-        remote_renderer_name = typing.cast(Literal["matplotlib", "datoviz"], os.environ.get("GSP_REMOTE_RENDERER", "matplotlib"))
+        remote_renderer_name = typing.cast(Literal["matplotlib", "datoviz-v03"], os.environ.get("GSP_REMOTE_RENDERER", "matplotlib"))
         # sanity check - ensure renderer_name is one of the expected values
-        assert remote_renderer_name in ["matplotlib", "datoviz"], f"Invalid remote renderer name: {remote_renderer_name}"
-        return typing.cast(Literal["matplotlib", "datoviz"], remote_renderer_name)
+        assert remote_renderer_name in ["matplotlib", "datoviz-v03"], f"Invalid remote renderer name: {remote_renderer_name}"
+        return typing.cast(Literal["matplotlib", "datoviz-v03"], remote_renderer_name)
 
     @staticmethod
-    def create_renderer(renderer_name: Literal["matplotlib", "datoviz", "network"], canvas: Canvas) -> RendererBase:
+    def create_renderer(renderer_name: Literal["matplotlib", "datoviz-v03", "network"], canvas: Canvas) -> RendererBase:
         """Create a renderer based on the given renderer name.
 
         Args:
-            renderer_name (Literal["matplotlib", "datoviz", "network"]): Name of the renderer to create.
+            renderer_name (Literal["matplotlib", "datoviz-v03", "network"]): Name of the renderer to create.
             canvas (Canvas): The canvas to associate with the renderer.
 
         Returns:
@@ -65,7 +65,7 @@ class ExampleHelper:
         """
         if renderer_name == "matplotlib":
             return MatplotlibRenderer(canvas)
-        elif renderer_name == "datoviz":
+        elif renderer_name == "datoviz-v03":
             return DatovizRenderer(canvas)
         elif renderer_name == "network":
             remote_renderer_name = ExampleHelper.get_remote_renderer_name()

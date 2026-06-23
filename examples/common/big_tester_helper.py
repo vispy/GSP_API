@@ -205,16 +205,16 @@ class BigTesterCamera:
 
 class BigTesterRenderer:
     @staticmethod
-    def create_renderer(canvas: Canvas, renderer_name: Literal["matplotlib", "datoviz", "network"]) -> RendererBase:
+    def create_renderer(canvas: Canvas, renderer_name: Literal["matplotlib", "datoviz-v03", "network"]) -> RendererBase:
         if renderer_name == "matplotlib":
             renderer = MatplotlibRenderer(canvas)
             return renderer
-        elif renderer_name == "datoviz":
+        elif renderer_name == "datoviz-v03":
             renderer = DatovizRenderer(canvas)
             return renderer
         elif renderer_name == "network":
             server_base_url = "http://localhost:5000"
-            renderer = NetworkRenderer(canvas, server_base_url, remote_renderer_name="datoviz")
+            renderer = NetworkRenderer(canvas, server_base_url, remote_renderer_name="datoviz-v03")
             return renderer
         else:
             raise ValueError(f"Unknown renderer name: {renderer_name}")
@@ -287,19 +287,18 @@ class BigTesterRunner:
     @staticmethod
     def run(
         viewport_count: int,
-        renderer_name: Literal["matplotlib", "datoviz", "network"],
+        renderer_name: Literal["matplotlib", "datoviz-v03", "network"],
         matplotlib_image_format: Literal["png", "svg", "pdf"],
         image_path: str | None,
         pydantic_serialize_cycle: bool,
         scenes: list[Literal["random_points", "random_pixels", "random_segments", "spiral_pixels"]],
     ) -> None:
-        """
-        Run the big tester example.
+        """Run the big tester example.
 
         :param viewport_count: Number of viewports to create
         :type viewport_count: int
         :param renderer_name: Name of the renderer to use
-        :type renderer_name: Literal["matplotlib", "datoviz", "network"]
+        :type renderer_name: Literal["matplotlib", "datoviz-v03", "network"]
         :param matplotlib_image_format: Format of the matplotlib image. Used only if renderer_name is "matplotlib"
         :type matplotlib_image_format: Literal["png", "svg", "pdf"]
         :param image_path: Path to save the rendered image

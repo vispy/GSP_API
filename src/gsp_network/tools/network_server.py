@@ -77,8 +77,10 @@ def render_scene_json() -> Response:
     renderer: Any
     if renderer_name == "matplotlib":
         renderer = MatplotlibRenderer(parsed_canvas)
-    else:
+    elif renderer_name == "datoviz-v03":
         renderer = DatovizRenderer(parsed_canvas, offscreen=True)
+    else:
+        raise ValueError(f"Unknown network renderer name: {renderer_name}")
     image_png_data = renderer.render(parsed_viewports, parsed_visuals, parsed_model_matrices, parsed_cameras, return_image=True)
 
     print(f"Rendered image size: {text_cyan(str(len(image_png_data)))} bytes")
