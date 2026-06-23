@@ -77,7 +77,7 @@ Visual QA entry points:
 
 ```bash
 python -m gsp.qa.visual list --suite s023
-python -m gsp.qa.visual run --suite s023 --backends matplotlib,datoviz-v04 --out artifacts/visual_qa/s023/dev --contact-sheet
+python -m gsp.qa.visual run --suite s023 --backends matplotlib,datoviz --out artifacts/visual_qa/s023/dev --contact-sheet
 ```
 
 New harness files:
@@ -110,7 +110,7 @@ artifacts/visual_qa/s023/<run_id>/
   scenes/*.scene.json
   scenes/*.arrays.npz
   backends/matplotlib/*.png
-  backends/datoviz-v04/*.png or *.unsupported.json
+  backends/datoviz/*.png or *.unsupported.json
   contact_sheets/*.png
   notes/*.md
 ```
@@ -170,6 +170,12 @@ Completed M066 work:
 - Datoviz point/image visual attachment now uses an explicit `DvzVisualAttachDesc`.
 - `point/alpha_overlap_ndc` was added to the S023 visual QA suite.
 - Local M066 QA rendered all point cases in both Matplotlib and Datoviz.
+
+## Backend Naming
+
+Plain `datoviz` now refers to the Datoviz v0.4 retained/protocol backend. The old renderer path is
+explicitly named `datoviz-v03` in legacy example helpers. The former `datoviz-v04` visual-QA backend
+id is accepted as a compatibility alias but should not be used in new commands.
 
 ## M067 Review Point
 

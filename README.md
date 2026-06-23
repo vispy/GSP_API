@@ -36,8 +36,8 @@ Select a renderer with the `GSP_RENDERER` environment variable:
 # Matplotlib (default)
 GSP_RENDERER=matplotlib python examples/buffer_example.py
 
-# Datoviz
-GSP_RENDERER=datoviz python examples/buffer_example.py
+# Legacy Datoviz v0.3 renderer examples
+GSP_RENDERER=datoviz-v03 python examples/buffer_example.py
 ```
 
 ---
@@ -63,13 +63,13 @@ A. Create a virtual environment, activate it, and run `pip install -e .` from th
 A. After installation, run any script under `examples/`, e.g. `python examples/buffer_example.py`. See the [Running](#running) section.
 
 ### Q. How do I switch renderers?
-A. Set the `GSP_RENDERER` environment variable to `matplotlib`, `datoviz`, or `network` before running examples that use `examples/common/example_helper.py`:
+A. Set the `GSP_RENDERER` environment variable to `matplotlib`, `datoviz-v03`, or `network` before running legacy examples that use `examples/common/example_helper.py`:
 
 ```bash
-GSP_RENDERER=datoviz python your_script.py
+GSP_RENDERER=datoviz-v03 python your_script.py
 ```
 
-Datoviz legacy renderer support is optional. Install it with `pip install -e ".[datoviz-legacy]"` when using examples that require the older Datoviz Python wrapper. Datoviz v0.4 protocol work is capability-gated separately and is not a default install dependency.
+Plain `datoviz` is reserved for the Datoviz v0.4 protocol backend. Datoviz legacy renderer support is optional. Install it with `pip install -e ".[datoviz-legacy]"` when using examples that require the older Datoviz Python wrapper.
 
 ### Q. How do I run the tests?
 A. Tests live under `tests/` and run with pytest:
@@ -110,7 +110,7 @@ Common targets:
 A. Set the datoviz log level via the `DVZ_LOG_LEVEL` environment variable. See the [datoviz docs](https://datoviz.org/discussions/CONTRIBUTING/#console-logging).
 
 ```bash
-DVZ_LOG_LEVEL=4 GSP_RENDERER=datoviz python your_script.py
+DVZ_LOG_LEVEL=4 GSP_RENDERER=datoviz-v03 python your_script.py
 ```
 
 ### Q. Where is the documentation?

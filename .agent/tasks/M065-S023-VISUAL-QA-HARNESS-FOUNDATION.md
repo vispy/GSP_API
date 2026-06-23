@@ -21,7 +21,7 @@ Implement a practical subset first:
 
 ```bash
 python -m gsp.qa.visual list --suite s023
-python -m gsp.qa.visual run --suite s023 --backends matplotlib,datoviz-v04 --out artifacts/visual_qa/s023/dev --contact-sheet
+python -m gsp.qa.visual run --suite s023 --backends matplotlib,datoviz --out artifacts/visual_qa/s023/dev --contact-sheet
 ```
 
 Optional flags from P008 can be deferred unless simple:
@@ -29,7 +29,7 @@ Optional flags from P008 can be deferred unless simple:
 ```text
 --case
 --strict
---allow-unsupported datoviz-v04
+--allow-unsupported datoviz
 --resolution 800x600
 --seed 1234
 --write-scene-json
@@ -54,7 +54,7 @@ artifacts/visual_qa/s023/<run_id>/
     matplotlib/
       point_basic_ndc.png
       point_basic_ndc.log.txt
-    datoviz-v04/
+    datoviz/
       point_basic_ndc.png
       point_basic_ndc.unsupported.json
       point_basic_ndc.log.txt

@@ -10,8 +10,8 @@ Run any example with your preferred backend:
 # Using Matplotlib (default)
 GSP_RENDERER=matplotlib python examples/example_name.py
 
-# Using legacy Datoviz wrapper support
-GSP_RENDERER=datoviz python examples/example_name.py
+# Using legacy Datoviz v0.3 wrapper support
+GSP_RENDERER=datoviz-v03 python examples/example_name.py
 
 # Using the network renderer with a Matplotlib remote backend
 GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name.py
@@ -150,7 +150,7 @@ Matplotlib is the default release-readiness path. If the optional legacy Datoviz
 you can smoke-test an example against both local renderer names:
 
 ```bash
-for backend in matplotlib datoviz; do
+for backend in matplotlib datoviz-v03; do
   echo "Testing with $backend..."
   GSP_RENDERER=$backend python examples/points_example.py
 done
@@ -161,9 +161,9 @@ done
 ## Key Concepts Across Examples
 
 ### Backend Selection
-Examples that use `ExampleHelper` select their renderer with the `GSP_RENDERER` environment variable at runtime. Valid values are `matplotlib`, `datoviz`, and `network`; network mode also reads `GSP_REMOTE_RENDERER` with `matplotlib` or `datoviz`.
+Examples that use `ExampleHelper` select their renderer with the `GSP_RENDERER` environment variable at runtime. Valid values are `matplotlib`, `datoviz-v03`, and `network`; network mode also reads `GSP_REMOTE_RENDERER` with `matplotlib` or `datoviz-v03`.
 
-Matplotlib is the default and reference backend for the current conformance slice. The legacy Datoviz wrapper is optional and installed with `pip install -e ".[datoviz-legacy]"`. Datoviz v0.4 protocol adapter work is capability-gated in `gsp_datoviz.protocol_renderer` and is not the same surface as the legacy example helper.
+Matplotlib is the default and reference backend for the current legacy example helper. The legacy Datoviz wrapper is optional and installed with `pip install -e ".[datoviz-legacy]"`. Plain `datoviz` names the Datoviz v0.4 protocol backend used by the S023 visual QA and protocol demos, not the legacy renderer helper.
 
 ### Common Pattern
 Most examples follow this pattern:

@@ -263,7 +263,7 @@ Endpoint: `POST /render`. Request body:
 
 ```python
 class NetworkPayload(TypedDict):
-    renderer_name: Literal["matplotlib", "datoviz"]
+    renderer_name: Literal["matplotlib", "datoviz-v03"]
     data: PydanticDict
 ```
 
