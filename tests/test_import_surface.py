@@ -45,6 +45,18 @@ def test_minimal_json_fixture_is_package_resource() -> None:
     assert fixture["schema_version"] == "0.1.0"
 
 
+def test_gsp_extra_import_surface() -> None:
+    object3d = importlib.import_module("gsp_extra.object3d")
+    awsd_controls = importlib.import_module("gsp_extra.camera_controls.object_controls_awsd")
+    trackball_controls = importlib.import_module("gsp_extra.camera_controls.object_controls_trackball")
+    glm = importlib.import_module("gsp_extra.mpl3d.glm")
+
+    assert hasattr(object3d, "Object3D")
+    assert hasattr(awsd_controls, "ObjectControlAwsd")
+    assert hasattr(trackball_controls, "ObjectControlsTrackball")
+    assert hasattr(glm, "translate")
+
+
 class _BlockDatovizFinder(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname: str, path: object | None, target: object | None = None) -> None:
         if fullname == "datoviz" or fullname.startswith("datoviz."):

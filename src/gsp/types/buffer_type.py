@@ -132,7 +132,7 @@ class BufferType(Enum):
             raise ValueError(f"Cannot convert numpy dtype to BufferType")
 
     @staticmethod
-    def to_numpy_shape(buffer_type: "BufferType") -> tuple:
+    def to_numpy_shape(buffer_type: "BufferType") -> tuple[int, ...]:
         """Get the numpy shape for a given BufferType.
 
         Args:

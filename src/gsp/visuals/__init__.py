@@ -7,3 +7,5 @@ from .paths import Paths
 from .segments import Segments
 from .markers import Markers
 from .texts import Texts
+
+__all__ = ["Image", "Markers", "Paths", "Pixels", "Points", "Segments", "Texts"]

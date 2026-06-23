@@ -100,7 +100,7 @@ def datoviz_v04_sampled_field_diagnostics(module: ModuleType | Any) -> tuple[str
 def import_datoviz_v04() -> ModuleType:
     """Import Datoviz and validate the C-shaped v0.4 facade."""
     try:
-        import datoviz as dvz  # type: ignore[import-untyped]
+        import datoviz as dvz
     except ModuleNotFoundError as exc:
         raise DatovizV04Unavailable("Datoviz is not importable") from exc
 

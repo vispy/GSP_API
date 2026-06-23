@@ -16,7 +16,7 @@ class Event(Generic[Callback]):
     The generic type `Callback` allows the event to be type-hinted with the
     specific signature of the functions it will dispatch to, ensuring type safety.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the Event with an empty list of callbacks."""
         # A list to store the subscribed callback functions.
         self._callbacks: list[Callback] = []

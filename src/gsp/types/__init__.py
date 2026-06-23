@@ -12,6 +12,19 @@ from .text_align import TextAlign
 from .transbuf import TransBuf
 from .visual_base import VisualBase
 
+__all__ = [
+    "Buffer",
+    "BufferType",
+    "CapStyle",
+    "Color",
+    "Groups",
+    "ImageInterpolation",
+    "JoinStyle",
+    "MarkerShape",
+    "TextAlign",
+    "TransBuf",
+    "VisualBase",
+]
 
 # FIXME those 2 are creating a circular import
 # from .renderer_base import RendererBase

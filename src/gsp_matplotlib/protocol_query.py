@@ -129,7 +129,12 @@ def _query_point_visual(request: QueryRequest, visual: PointVisual) -> QueryResu
         item_id=best_index,
         visual_coordinate=(float(point[0]), float(point[1])),
         data_coordinate=(float(point[0]), float(point[1])),
-        displayed_rgba=tuple(float(x) for x in colors[best_index]),
+        displayed_rgba=(
+            float(colors[best_index][0]),
+            float(colors[best_index][1]),
+            float(colors[best_index][2]),
+            float(colors[best_index][3]),
+        ),
     )
 
 

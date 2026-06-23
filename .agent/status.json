@@ -541,9 +541,9 @@
       "id": "M047",
       "title": "Strict mypy type-surface hardening",
       "stage": "S019",
-      "state": "planned",
-      "agent": null,
-      "progress": 0,
+      "state": "in_progress",
+      "agent": "local-main-codex",
+      "progress": 55,
       "priority": 47
     }
   ],
@@ -565,7 +565,7 @@
     }
   ],
   "recommendations": [
-    "Continue S019 with M047 strict mypy type-surface hardening.",
+    "Continue M047 by closing strict mypy debt in focused batches: TransBuf typing, annotations, numpy returns, vendored helpers, then renderer/network surfaces.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

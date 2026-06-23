@@ -4,6 +4,6 @@
 class Material:
     """A simple material class to hold material properties."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Base material class. Currently empty, but can be extended in the future to include common properties or methods for all materials."""
         pass

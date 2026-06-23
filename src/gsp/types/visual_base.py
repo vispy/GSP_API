@@ -22,7 +22,7 @@ class VisualBase:
 
     __slots__ = ["_uuid", "userData"]
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize a new VisualBase instance.
 
         Creates a new visual object with a unique identifier and an empty

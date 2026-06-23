@@ -7,8 +7,11 @@ remain importable even when those legacy wrapper modules are absent.
 
 from __future__ import annotations
 
+from typing import Callable
+
 
 _LEGACY_IMPORT_ERROR: ModuleNotFoundError | None = None
+register_renderer_datoviz: Callable[[], None]
 
 try:
     from .renderer_registration import register_renderer_datoviz
@@ -18,6 +21,7 @@ except ModuleNotFoundError as exc:
 
         def register_renderer_datoviz() -> None:
             """Report why the legacy Datoviz renderer cannot be registered."""
+            assert _LEGACY_IMPORT_ERROR is not None
             raise _LEGACY_IMPORT_ERROR
 
     else:

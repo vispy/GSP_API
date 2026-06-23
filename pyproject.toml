@@ -51,6 +51,7 @@ dev = [
     "pytest (>=8.4.2,<9.0.0)",
     "ruff (>=0.14.9,<0.15.0)",
     "pyright (>=1.1.407,<2.0.0)",
+    "types-colorama (>=0.4.15,<0.5.0)",
     "scikit-image (>=0.25.2,<0.26.0)",
     "mkdocs (>=1.6.1,<2.0.0)",
     "mkdocs-material (>=9.7.0,<10.0.0)",
@@ -74,3 +75,7 @@ lint.select = ["D"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[[tool.mypy.overrides]]
+module = ["datoviz", "datoviz.*"]
+ignore_missing_imports = true

@@ -5,3 +5,5 @@ from .viewport import Viewport
 from .camera import Camera
 from .texture import Texture
 from .event import Event
+
+__all__ = ["Camera", "Canvas", "Event", "Texture", "Viewport"]

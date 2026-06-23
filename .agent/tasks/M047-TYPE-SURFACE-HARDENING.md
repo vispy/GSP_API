@@ -26,3 +26,13 @@ ignores across unrelated packages.
 ## Source
 
 M045 validation note and M046 follow-up planning.
+
+## Progress
+
+In progress. The original uncontrolled import-surface failures are resolved: Datoviz untyped imports
+are quarantined with a narrow mypy override, `types-colorama` is a dev dependency, and `gsp_extra`
+has explicit package markers and import smoke coverage. Strict mypy now reaches the wider tree and
+reports 539 legacy typing errors across 85 files; these are inventoried in
+`docs/mypy_strict_debt_inventory.md`. Do not mark this mission complete until the strict command
+passes or remaining failures are narrowed to documented optional/vendored boundaries without broad
+package-level ignores.
