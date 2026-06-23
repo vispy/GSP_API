@@ -1,0 +1,197 @@
+{
+  "DVZ_BLEND_ALPHA": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_BLEND_ALPHA"
+  },
+  "DVZ_COORD_DATA": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_COORD_DATA"
+  },
+  "DVZ_COORD_PANEL": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_COORD_PANEL"
+  },
+  "DVZ_COORD_VIEW": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_COORD_VIEW"
+  },
+  "DVZ_MARKER_SHAPE_CIRCLE": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_MARKER_SHAPE_CIRCLE"
+  },
+  "DVZ_MARKER_SHAPE_DISC": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_MARKER_SHAPE_DISC"
+  },
+  "DVZ_MARKER_SHAPE_SQUARE": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_MARKER_SHAPE_SQUARE"
+  },
+  "DVZ_PATH_JOIN_BEVEL": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_PATH_JOIN_BEVEL"
+  },
+  "DVZ_PATH_JOIN_MITER": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_PATH_JOIN_MITER"
+  },
+  "DVZ_PATH_JOIN_ROUND": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_PATH_JOIN_ROUND"
+  },
+  "DVZ_SEGMENT_CAP_BUTT": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_SEGMENT_CAP_BUTT"
+  },
+  "DVZ_SEGMENT_CAP_ROUND": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_SEGMENT_CAP_ROUND"
+  },
+  "DVZ_SEGMENT_CAP_SQUARE": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DVZ_SEGMENT_CAP_SQUARE"
+  },
+  "DvzDimMaskFlag": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DvzDimMaskFlag"
+  },
+  "DvzVisualAttachDesc": {
+    "available": false,
+    "source": "facade",
+    "symbol": "DvzVisualAttachDesc"
+  },
+  "capture": {
+    "available": false,
+    "source": "facade",
+    "symbol": "capture"
+  },
+  "dvz_figure": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_figure"
+  },
+  "dvz_image": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_image"
+  },
+  "dvz_marker": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_marker"
+  },
+  "dvz_marker_set_style": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_marker_set_style"
+  },
+  "dvz_marker_style": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_marker_style"
+  },
+  "dvz_panel_add_visual": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_panel_add_visual"
+  },
+  "dvz_panel_full": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_panel_full"
+  },
+  "dvz_path": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_path"
+  },
+  "dvz_path_set_caps": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_path_set_caps"
+  },
+  "dvz_path_set_join": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_path_set_join"
+  },
+  "dvz_path_set_subpaths": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_path_set_subpaths"
+  },
+  "dvz_point": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_point"
+  },
+  "dvz_point_set_style": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_point_set_style"
+  },
+  "dvz_point_style_desc": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_point_style_desc"
+  },
+  "dvz_sampled_field": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_sampled_field"
+  },
+  "dvz_sampled_field_set_data": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_sampled_field_set_data"
+  },
+  "dvz_scene": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_scene"
+  },
+  "dvz_segment": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_segment"
+  },
+  "dvz_segment_set_caps": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_segment_set_caps"
+  },
+  "dvz_visual_set_data": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_visual_set_data"
+  },
+  "dvz_visual_set_data_many": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_visual_set_data_many"
+  },
+  "dvz_visual_set_data_range": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_visual_set_data_range"
+  },
+  "dvz_visual_set_field": {
+    "available": false,
+    "source": "facade",
+    "symbol": "dvz_visual_set_field"
+  }
+}

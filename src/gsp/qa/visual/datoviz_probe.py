@@ -1,0 +1,546 @@
+"""Datoviz v0.4 API audit probe for visual QA."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from importlib import import_module
+import importlib.util
+from pathlib import Path
+import subprocess
+import traceback
+from types import ModuleType
+from typing import Any, Iterable, Mapping, Sequence
+
+import numpy as np
+
+
+REQUIRED_CAPABILITIES: Mapping[str, tuple[str, str]] = {
+    "scene.create.dvz_scene": ("facade", "dvz_scene"),
+    "scene.figure.dvz_figure": ("facade", "dvz_figure"),
+    "scene.panel.dvz_panel_full": ("facade", "dvz_panel_full"),
+    "panel.add_visual.dvz_panel_add_visual": ("facade", "dvz_panel_add_visual"),
+    "visual.data.dvz_visual_set_data": ("facade", "dvz_visual_set_data"),
+    "visual.data_many.dvz_visual_set_data_many": ("facade", "dvz_visual_set_data_many"),
+    "visual.data_range.dvz_visual_set_data_range": ("facade", "dvz_visual_set_data_range"),
+    "visual.point.constructor.dvz_point": ("facade", "dvz_point"),
+    "visual.marker.constructor.dvz_marker": ("facade", "dvz_marker"),
+    "visual.segment.constructor.dvz_segment": ("facade", "dvz_segment"),
+    "visual.path.constructor.dvz_path": ("facade", "dvz_path"),
+    "visual.image.constructor.dvz_image": ("facade", "dvz_image"),
+    "visual.path.style.dvz_path_set_subpaths": ("facade", "dvz_path_set_subpaths"),
+    "visual.path.style.dvz_path_set_caps": ("facade", "dvz_path_set_caps"),
+    "visual.path.style.dvz_path_set_join": ("facade", "dvz_path_set_join"),
+    "visual.image.field.dvz_sampled_field": ("facade", "dvz_sampled_field"),
+    "visual.image.field.dvz_sampled_field_set_data": ("facade", "dvz_sampled_field_set_data"),
+    "visual.image.field.dvz_visual_set_field": ("facade", "dvz_visual_set_field"),
+    "capture.top_level.datoviz_capture": ("facade", "capture"),
+    "attach.desc.DvzVisualAttachDesc": ("facade", "DvzVisualAttachDesc"),
+    "attach.coord_space.DVZ_COORD_VIEW": ("raw", "DVZ_COORD_VIEW"),
+    "attach.coord_space.DVZ_COORD_DATA": ("raw", "DVZ_COORD_DATA"),
+    "attach.coord_space.DVZ_COORD_PANEL": ("raw", "DVZ_COORD_PANEL"),
+}
+
+RAW_MIRROR_SYMBOLS: tuple[str, ...] = tuple(
+    sorted({symbol for _, symbol in REQUIRED_CAPABILITIES.values() if symbol.startswith("dvz_") or symbol.startswith("Dvz") or symbol.startswith("DVZ_")})
+)
+
+ENUM_AND_STYLE_SYMBOLS: tuple[str, ...] = (
+    "DvzDimMaskFlag",
+    "DvzVisualAttachDesc",
+    "DVZ_COORD_DATA",
+    "DVZ_COORD_PANEL",
+    "DVZ_COORD_VIEW",
+    "DVZ_PATH_JOIN_BEVEL",
+    "DVZ_PATH_JOIN_MITER",
+    "DVZ_PATH_JOIN_ROUND",
+    "DVZ_SEGMENT_CAP_BUTT",
+    "DVZ_SEGMENT_CAP_ROUND",
+    "DVZ_SEGMENT_CAP_SQUARE",
+    "DVZ_MARKER_SHAPE_CIRCLE",
+    "DVZ_MARKER_SHAPE_DISC",
+    "DVZ_MARKER_SHAPE_SQUARE",
+    "DVZ_BLEND_ALPHA",
+    "dvz_marker_set_style",
+    "dvz_marker_style",
+    "dvz_point_set_style",
+    "dvz_point_style_desc",
+    "dvz_segment_set_caps",
+)
+
+BANNED_V03_SYMBOLS: tuple[str, ...] = (
+    "dvz_path_alloc",
+    "dvz_point_alloc",
+    "dvz_marker_alloc",
+    "dvz_segment_alloc",
+    "dvz_image_alloc",
+    "dvz_point_position",
+    "dvz_marker_color",
+    "dvz_segment_linewidth",
+)
+
+
+@dataclass(frozen=True)
+class ImportProbe:
+    """JSON-safe import result."""
+
+    module: str
+    imported: bool
+    path: str | None
+    error_type: str | None
+    error_message: str | None
+    traceback: str | None
+
+    def to_json(self) -> dict[str, object]:
+        """Return a JSON-safe representation."""
+        return {
+            "module": self.module,
+            "imported": self.imported,
+            "path": self.path,
+            "error_type": self.error_type,
+            "error_message": self.error_message,
+            "traceback": self.traceback,
+        }
+
+
+@dataclass(frozen=True)
+class SymbolProbe:
+    """JSON-safe symbol availability result."""
+
+    symbol: str
+    available: bool
+    source: str
+
+    def to_json(self) -> dict[str, object]:
+        """Return a JSON-safe representation."""
+        return {"symbol": self.symbol, "available": self.available, "source": self.source}
+
+
+@dataclass(frozen=True)
+class CapabilityProbe:
+    """JSON-safe capability result."""
+
+    capability: str
+    source: str
+    symbol: str
+    supported: bool
+    reason: str | None = None
+
+    def to_json(self) -> dict[str, object]:
+        """Return a JSON-safe representation."""
+        return {
+            "capability": self.capability,
+            "source": self.source,
+            "symbol": self.symbol,
+            "supported": self.supported,
+            "reason": self.reason,
+        }
+
+
+@dataclass(frozen=True)
+class SourceSymbolHit:
+    """A text hit in the sibling Datoviz source checkout."""
+
+    path: str
+    line: int
+
+    def to_json(self) -> dict[str, object]:
+        """Return a JSON-safe representation."""
+        return {"path": self.path, "line": self.line}
+
+
+@dataclass(frozen=True)
+class BannedSymbolHit:
+    """A banned v0.3-style symbol occurrence."""
+
+    symbol: str
+    path: str
+    line: int
+    allowed_context: bool
+
+    def to_json(self) -> dict[str, object]:
+        """Return a JSON-safe representation."""
+        return {
+            "symbol": self.symbol,
+            "path": self.path,
+            "line": self.line,
+            "allowed_context": self.allowed_context,
+        }
+
+
+@dataclass(frozen=True)
+class MinimalPointProbe:
+    """Result of a non-rendering retained point scene construction attempt."""
+
+    attempted: bool
+    supported: bool
+    reason: str | None
+    calls_completed: tuple[str, ...]
+
+    def to_json(self) -> dict[str, object]:
+        """Return a JSON-safe representation."""
+        return {
+            "attempted": self.attempted,
+            "supported": self.supported,
+            "reason": self.reason,
+            "calls_completed": list(self.calls_completed),
+        }
+
+
+@dataclass(frozen=True)
+class DatovizV04ProbeReport:
+    """JSON-safe Datoviz v0.4 API probe report."""
+
+    installed_package: dict[str, object]
+    sibling_source: dict[str, object]
+    imports: dict[str, ImportProbe]
+    generated_files: dict[str, bool | None]
+    facade_symbols: dict[str, SymbolProbe]
+    raw_symbols: dict[str, SymbolProbe]
+    capability_matrix: dict[str, CapabilityProbe]
+    enum_style_symbols: dict[str, SymbolProbe]
+    source_symbol_matrix: dict[str, list[SourceSymbolHit]]
+    minimal_point_scene: MinimalPointProbe
+    capture: dict[str, object]
+    banned_symbol_check: dict[str, object]
+
+    def to_json(self) -> dict[str, object]:
+        """Return a JSON-safe representation."""
+        return {
+            "installed_package": self.installed_package,
+            "sibling_source": self.sibling_source,
+            "imports": {name: result.to_json() for name, result in self.imports.items()},
+            "generated_files": dict(self.generated_files),
+            "facade_symbols": {name: result.to_json() for name, result in self.facade_symbols.items()},
+            "raw_symbols": {name: result.to_json() for name, result in self.raw_symbols.items()},
+            "capability_matrix": {name: result.to_json() for name, result in self.capability_matrix.items()},
+            "enum_style_symbols": {name: result.to_json() for name, result in self.enum_style_symbols.items()},
+            "source_symbol_matrix": {
+                name: [hit.to_json() for hit in hits] for name, hits in self.source_symbol_matrix.items()
+            },
+            "minimal_point_scene": self.minimal_point_scene.to_json(),
+            "capture": dict(self.capture),
+            "banned_symbol_check": dict(self.banned_symbol_check),
+        }
+
+
+def probe_datoviz_v04(
+    *,
+    source_path: Path | str = Path("../datoviz"),
+    banned_scan_paths: Sequence[Path | str] | None = None,
+    facade_module: Any | None = None,
+    raw_module: Any | None = None,
+) -> DatovizV04ProbeReport:
+    """Probe the installed Datoviz package and local v0.4 checkout."""
+    source = Path(source_path)
+    facade_import = _import_probe("datoviz", injected_module=facade_module)
+    raw_import = _import_probe("datoviz.raw", injected_module=raw_module)
+    facade = facade_module if facade_module is not None else _imported_module_or_none("datoviz")
+    raw = raw_module if raw_module is not None else _imported_module_or_none("datoviz.raw")
+
+    installed_path = facade_import.path
+    generated_files = _generated_files(installed_path)
+    facade_symbols = _probe_symbols(facade, _facade_symbol_names(), "facade")
+    raw_symbols = _probe_symbols(raw, RAW_MIRROR_SYMBOLS + ENUM_AND_STYLE_SYMBOLS, "raw")
+    capability_matrix = _capability_matrix(facade_symbols, raw_symbols, facade_import, raw_import)
+    enum_style_symbols = _enum_style_matrix(facade, raw)
+    source_symbol_matrix = _source_symbol_matrix(source, tuple(sorted(set(_facade_symbol_names()) | set(RAW_MIRROR_SYMBOLS) | set(ENUM_AND_STYLE_SYMBOLS))))
+    minimal_point_scene = _probe_minimal_point_scene(facade, capability_matrix)
+    banned_paths = tuple(Path(path) for path in banned_scan_paths) if banned_scan_paths is not None else _default_banned_scan_paths()
+    banned_hits = scan_banned_symbols(banned_paths)
+
+    return DatovizV04ProbeReport(
+        installed_package={
+            "path": installed_path,
+            "imported": facade_import.imported,
+            "version": _string_attr(facade, "__version__"),
+        },
+        sibling_source={
+            "path": str(source),
+            "exists": source.exists(),
+            "revision": _git_revision(source),
+        },
+        imports={"datoviz": facade_import, "datoviz.raw": raw_import},
+        generated_files=generated_files,
+        facade_symbols=facade_symbols,
+        raw_symbols=raw_symbols,
+        capability_matrix=capability_matrix,
+        enum_style_symbols=enum_style_symbols,
+        source_symbol_matrix=source_symbol_matrix,
+        minimal_point_scene=minimal_point_scene,
+        capture={
+            "top_level_capture_available": _has_symbol(facade, "capture"),
+            "offscreen_symbols_available": all(_has_symbol(facade, name) or _has_symbol(raw, name) for name in ("dvz_app", "dvz_view_offscreen", "dvz_view_capture_png")),
+            "run_symbols_available": any(_has_symbol(facade, name) or _has_symbol(raw, name) for name in ("dvz_view_render_once", "dvz_app_render_once", "dvz_app_run")),
+        },
+        banned_symbol_check={
+            "symbols": list(BANNED_V03_SYMBOLS),
+            "paths": [str(path) for path in banned_paths],
+            "hits": [hit.to_json() for hit in banned_hits],
+            "unexpected_hits": [hit.to_json() for hit in banned_hits if not hit.allowed_context],
+        },
+    )
+
+
+def scan_banned_symbols(paths: Sequence[Path | str], *, banned_symbols: Sequence[str] = BANNED_V03_SYMBOLS) -> tuple[BannedSymbolHit, ...]:
+    """Scan files for banned Datoviz v0.3 visual API symbols."""
+    hits: list[BannedSymbolHit] = []
+    for root in paths:
+        path = Path(root)
+        files = _iter_scan_files(path)
+        for file_path in files:
+            try:
+                text = file_path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            for line_number, line in enumerate(text.splitlines(), start=1):
+                for symbol in banned_symbols:
+                    if symbol in line:
+                        hits.append(
+                            BannedSymbolHit(
+                                symbol=symbol,
+                                path=str(file_path),
+                                line=line_number,
+                                allowed_context=_is_allowed_banned_context(file_path),
+                            )
+                        )
+    return tuple(hits)
+
+
+def _import_probe(module_name: str, *, injected_module: Any | None = None) -> ImportProbe:
+    if injected_module is not None:
+        return ImportProbe(module=module_name, imported=True, path=_module_path(injected_module), error_type=None, error_message=None, traceback=None)
+    try:
+        module = import_module(module_name)
+    except Exception as exc:  # noqa: BLE001 - this is an audit probe.
+        return ImportProbe(
+            module=module_name,
+            imported=False,
+            path=_spec_origin(module_name),
+            error_type=type(exc).__name__,
+            error_message=str(exc),
+            traceback=traceback.format_exc(),
+        )
+    return ImportProbe(module=module_name, imported=True, path=_module_path(module), error_type=None, error_message=None, traceback=None)
+
+
+def _imported_module_or_none(module_name: str) -> ModuleType | None:
+    try:
+        module = import_module(module_name)
+    except Exception:  # noqa: BLE001 - import status is already captured separately.
+        return None
+    return module
+
+
+def _spec_origin(module_name: str) -> str | None:
+    spec = importlib.util.find_spec(module_name)
+    if spec is None:
+        return None
+    return spec.origin
+
+
+def _module_path(module: Any) -> str | None:
+    path = getattr(module, "__file__", None)
+    if isinstance(path, str):
+        return path
+    return None
+
+
+def _generated_files(installed_path: str | None) -> dict[str, bool | None]:
+    if installed_path is None:
+        return {"_array_facade.py": None, "_ctypes.py": None}
+    package_dir = Path(installed_path).parent
+    return {
+        "_array_facade.py": (package_dir / "_array_facade.py").exists(),
+        "_ctypes.py": (package_dir / "_ctypes.py").exists(),
+    }
+
+
+def _facade_symbol_names() -> tuple[str, ...]:
+    return tuple(sorted({symbol for source, symbol in REQUIRED_CAPABILITIES.values() if source == "facade"} | set(ENUM_AND_STYLE_SYMBOLS)))
+
+
+def _probe_symbols(module: Any | None, symbols: Iterable[str], source: str) -> dict[str, SymbolProbe]:
+    return {
+        symbol: SymbolProbe(symbol=symbol, available=_has_symbol(module, symbol), source=source)
+        for symbol in sorted(set(symbols))
+    }
+
+
+def _has_symbol(module: Any | None, symbol: str) -> bool:
+    if module is None:
+        return False
+    try:
+        getattr(module, symbol)
+    except Exception:  # noqa: BLE001 - getattr on Datoviz can trigger generated binding import.
+        return False
+    return True
+
+
+def _capability_matrix(
+    facade_symbols: Mapping[str, SymbolProbe],
+    raw_symbols: Mapping[str, SymbolProbe],
+    facade_import: ImportProbe,
+    raw_import: ImportProbe,
+) -> dict[str, CapabilityProbe]:
+    matrix: dict[str, CapabilityProbe] = {
+        "datoviz.facade.import": CapabilityProbe(
+            capability="datoviz.facade.import",
+            source="facade",
+            symbol="datoviz",
+            supported=facade_import.imported,
+            reason=None if facade_import.imported else facade_import.error_message,
+        ),
+        "datoviz.raw.import": CapabilityProbe(
+            capability="datoviz.raw.import",
+            source="raw",
+            symbol="datoviz.raw",
+            supported=raw_import.imported,
+            reason=None if raw_import.imported else raw_import.error_message,
+        ),
+    }
+    for capability, (source, symbol) in REQUIRED_CAPABILITIES.items():
+        symbols = facade_symbols if source == "facade" else raw_symbols
+        available = symbols.get(symbol, SymbolProbe(symbol=symbol, available=False, source=source)).available
+        matrix[capability] = CapabilityProbe(
+            capability=capability,
+            source=source,
+            symbol=symbol,
+            supported=available,
+            reason=None if available else f"missing {source} symbol {symbol}",
+        )
+    return dict(sorted(matrix.items()))
+
+
+def _enum_style_matrix(facade: Any | None, raw: Any | None) -> dict[str, SymbolProbe]:
+    matrix: dict[str, SymbolProbe] = {}
+    for symbol in ENUM_AND_STYLE_SYMBOLS:
+        facade_available = _has_symbol(facade, symbol)
+        raw_available = _has_symbol(raw, symbol)
+        source = "facade" if facade_available else "raw"
+        matrix[symbol] = SymbolProbe(symbol=symbol, available=facade_available or raw_available, source=source)
+    return dict(sorted(matrix.items()))
+
+
+def _source_symbol_matrix(source: Path, symbols: Sequence[str]) -> dict[str, list[SourceSymbolHit]]:
+    matrix: dict[str, list[SourceSymbolHit]] = {symbol: [] for symbol in symbols}
+    if not source.exists():
+        return matrix
+    source_files = _datoviz_source_files(source)
+    for file_path in source_files:
+        try:
+            text = file_path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        relative = str(file_path.relative_to(source))
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            for symbol in symbols:
+                if symbol in line:
+                    matrix[symbol].append(SourceSymbolHit(path=relative, line=line_number))
+    return matrix
+
+
+def _datoviz_source_files(source: Path) -> tuple[Path, ...]:
+    candidates: list[Path] = []
+    for relative in ("README.md", "datoviz/__init__.py", "datoviz/raw.py"):
+        path = source / relative
+        if path.exists():
+            candidates.append(path)
+    examples = source / "examples" / "c" / "visuals"
+    if examples.exists():
+        candidates.extend(sorted(examples.glob("*.c")))
+    include_dir = source / "include" / "datoviz"
+    if include_dir.exists():
+        candidates.extend(sorted(include_dir.rglob("*.h")))
+    return tuple(dict.fromkeys(candidates))
+
+
+def _probe_minimal_point_scene(facade: Any | None, matrix: Mapping[str, CapabilityProbe]) -> MinimalPointProbe:
+    required = (
+        "scene.create.dvz_scene",
+        "scene.figure.dvz_figure",
+        "scene.panel.dvz_panel_full",
+        "visual.point.constructor.dvz_point",
+        "visual.data.dvz_visual_set_data",
+        "panel.add_visual.dvz_panel_add_visual",
+    )
+    missing = tuple(name for name in required if not matrix[name].supported)
+    if facade is None or missing:
+        return MinimalPointProbe(attempted=False, supported=False, reason=f"missing capabilities: {missing}", calls_completed=())
+
+    calls: list[str] = []
+    try:
+        scene = facade.dvz_scene()
+        calls.append("dvz_scene")
+        figure = facade.dvz_figure(scene, 64, 64, 0)
+        calls.append("dvz_figure")
+        panel = facade.dvz_panel_full(figure)
+        calls.append("dvz_panel_full")
+        visual = facade.dvz_point(scene, 0)
+        calls.append("dvz_point")
+        facade.dvz_visual_set_data(visual, "position", np.array([[0.0, 0.0, 0.0]], dtype=np.float32))
+        calls.append("dvz_visual_set_data.position")
+        facade.dvz_visual_set_data(visual, "color", np.array([[255, 255, 255, 255]], dtype=np.uint8))
+        calls.append("dvz_visual_set_data.color")
+        facade.dvz_visual_set_data(visual, "diameter", np.array([4.0], dtype=np.float32))
+        calls.append("dvz_visual_set_data.diameter")
+        facade.dvz_panel_add_visual(panel, visual, None)
+        calls.append("dvz_panel_add_visual")
+    except Exception as exc:  # noqa: BLE001 - construction failures are probe data.
+        return MinimalPointProbe(attempted=True, supported=False, reason=f"{type(exc).__name__}: {exc}", calls_completed=tuple(calls))
+    return MinimalPointProbe(attempted=True, supported=True, reason=None, calls_completed=tuple(calls))
+
+
+def _git_revision(path: Path) -> str | None:
+    if not path.exists():
+        return None
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(path), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return result.stdout.strip() or None
+
+
+def _string_attr(module: Any | None, name: str) -> str | None:
+    if module is None:
+        return None
+    value = getattr(module, name, None)
+    return value if isinstance(value, str) else None
+
+
+def _default_banned_scan_paths() -> tuple[Path, ...]:
+    return (
+        Path("src/gsp/qa/visual"),
+        Path("src/gsp_datoviz/protocol_renderer.py"),
+        Path("src/gsp_datoviz/capabilities.py"),
+        Path(".agent/missions"),
+        Path(".agent/tasks"),
+        Path("spec"),
+    )
+
+
+def _iter_scan_files(path: Path) -> tuple[Path, ...]:
+    if not path.exists():
+        return ()
+    if path.is_file():
+        return (path,)
+    suffixes = {".md", ".py", ".rst", ".txt"}
+    return tuple(sorted(file_path for file_path in path.rglob("*") if file_path.is_file() and file_path.suffix in suffixes))
+
+
+def _is_allowed_banned_context(path: Path) -> bool:
+    normalized = path.as_posix()
+    if normalized.endswith("src/gsp/qa/visual/datoviz_probe.py") or normalized.endswith("gsp/qa/visual/datoviz_probe.py"):
+        return True
+    if normalized.startswith("tests/"):
+        return True
+    if normalized.startswith(".agent/consultations/"):
+        return True
+    if normalized.startswith(".agent/missions/") or normalized.startswith(".agent/tasks/"):
+        return True
+    return False

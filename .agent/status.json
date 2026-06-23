@@ -137,7 +137,7 @@
       "id": "S023",
       "title": "Visual Families v1 and Manual Visual QA Foundation",
       "state": "in_progress",
-      "progress": 0
+      "progress": 10
     }
   ],
   "missions": [
@@ -712,9 +712,9 @@
       "id": "M064",
       "title": "Datoviz v0.4 API audit and probe",
       "stage": "S023",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 64
     },
     {
@@ -822,7 +822,8 @@
     }
   ],
   "recommendations": [
-    "Next mission: M064 should audit the actual Datoviz v0.4 API surface from the installed package and `../datoviz/` before any new visual-family implementation.",
+    "M064 completed the actual Datoviz v0.4 API audit/probe and recorded local evidence under `artifacts/visual_qa/s023/datoviz_v04_probe/`.",
+    "Next mission: M065 should build the Visual QA harness foundation on top of the reusable Datoviz v0.4 probe report.",
     "S023 should proceed visual family by visual family: Point, Marker, Segment, Path, then Image hardening. Legacy GSP/Datoviz code is reference material only.",
     "Do not implement against v0.3-style Datoviz APIs such as `dvz_*_alloc`; use retained scene constructors plus `dvz_visual_set_data*` uploads and explicit attach descriptors."
   ]
