@@ -130,8 +130,8 @@
     {
       "id": "S022",
       "title": "Remote source family selection and consultation",
-      "state": "in_progress",
-      "progress": 82
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -697,9 +697,9 @@
       "id": "M063",
       "title": "S022 mock HTTP array fixtures",
       "stage": "S022",
-      "state": "pending",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 63
     }
   ],
@@ -735,7 +735,7 @@
     }
   ],
   "recommendations": [
-    "Next S022 mission: M063 should add mock HTTP array fixtures using configured no-network access and the S022 `.npy` decoder policy; real network I/O remains gated behind later review.",
+    "S022 is complete through the no-network mock HTTP `.npy` array fixture proof. Real network I/O remains gated behind later review.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

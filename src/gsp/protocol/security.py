@@ -95,6 +95,8 @@ REDACTED_SOURCE_REF = "<redacted:source-ref>"
 REDACTED_URL = "<redacted:url>"
 REDACTED_PATH = "<redacted:path>"
 REDACTED_SECRET = "<redacted:secret>"
+REDACTED_CACHE_KEY = "<redacted:cache-key>"
+REDACTED_DNS_RESULT = "<redacted:dns-result>"
 
 _URL_SCHEMES = (
     "http://",
@@ -589,10 +591,18 @@ def _redacted_placeholder_for_key(key: str) -> str | None:
     lowered = key.lower()
     if lowered in ("credential_policy", "credential_policies", "supported_credential_policies"):
         return None
+    if "cache_key" in lowered:
+        return REDACTED_CACHE_KEY
+    if "dns_result" in lowered:
+        return REDACTED_DNS_RESULT
     if "credential_ref" in lowered:
         return REDACTED_CREDENTIAL_REF
+    if lowered in ("host", "hostname"):
+        return REDACTED_URL
     if "source_ref" in lowered:
         return REDACTED_SOURCE_REF
+    if "digest" in lowered or "raw_body" in lowered or "private_config" in lowered:
+        return REDACTED_SECRET
     if any(part in lowered for part in _SENSITIVE_KEY_PARTS):
         return REDACTED_SECRET
     if any(part in lowered for part in _URL_KEY_PARTS):

@@ -34,6 +34,13 @@ from .security_fixture import (
     load_s020_security_negative_fixture,
     validate_s020_security_negative_fixture,
 )
+from .s022_http_mock_array import (
+    S022_HTTP_MOCK_ARRAY_FIXTURE_NAME,
+    S022HttpMockArrayCaseResult,
+    load_s022_http_mock_array_fixture,
+    s022_http_mock_array_capability_metadata,
+    validate_s022_http_mock_array_fixture,
+)
 
 __all__ = [
     "Base64ArrayChunk",
@@ -45,6 +52,8 @@ __all__ = [
     "PreconfiguredSourceCaseResult",
     "S020_SECURITY_NEGATIVE_FIXTURE_NAME",
     "S021_PRECONFIGURED_SOURCE_FIXTURE_NAME",
+    "S022HttpMockArrayCaseResult",
+    "S022_HTTP_MOCK_ARRAY_FIXTURE_NAME",
     "SecurityNegativeCaseResult",
     "TiledSourceConformanceScene",
     "backend_conformance_matrix",
@@ -56,14 +65,17 @@ __all__ = [
     "load_minimal_json_fixture",
     "load_s021_preconfigured_source_fixture",
     "load_s020_security_negative_fixture",
+    "load_s022_http_mock_array_fixture",
     "point_over_image_scene",
     "point_visual_fixture",
     "replay_minimal_json_fixture",
     "replay_conformance_fixtures",
+    "s022_http_mock_array_capability_metadata",
     "tiled_image_source_fixture",
     "tiled_source_scene",
     "validate_base64_array_chunk",
     "validate_minimal_json_fixture",
     "validate_s021_preconfigured_source_fixture",
     "validate_s020_security_negative_fixture",
+    "validate_s022_http_mock_array_fixture",
 ]

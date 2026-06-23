@@ -89,6 +89,8 @@ from .query import (
 from .resources import AttributeSource, BufferResource, ResourceLocality, ResourceMutability, ResourceUsage
 from .security import (
     REDACTED_CREDENTIAL_REF,
+    REDACTED_CACHE_KEY,
+    REDACTED_DNS_RESULT,
     REDACTED_PATH,
     REDACTED_SECRET,
     REDACTED_SOURCE_REF,
@@ -165,6 +167,8 @@ __all__ = [
     "QueryTargetCapability",
     "QueryTargetKind",
     "REDACTED_CREDENTIAL_REF",
+    "REDACTED_CACHE_KEY",
+    "REDACTED_DNS_RESULT",
     "REDACTED_PATH",
     "REDACTED_SECRET",
     "REDACTED_SOURCE_REF",

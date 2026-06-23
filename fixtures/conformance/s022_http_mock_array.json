@@ -1,0 +1,547 @@
+{
+  "schema_kind": "gsp.conformance.s022-http-mock-array",
+  "schema_version": "0.1.0",
+  "metadata": {
+    "fixture_id": "gsp.fixtures.s022.http_mock_array",
+    "fixture_revision": 1,
+    "title": "S022 no-network mock HTTP npy array proof",
+    "stability": "draft-conformance",
+    "deterministic": true,
+    "tags": ["s022", "http", "mock-fetch", "npy", "array", "no-network"]
+  },
+  "protocol": {
+    "gsp_protocol_version": "0.2-draft",
+    "runtime_transport_required": false,
+    "network_io_allowed": false,
+    "dynamic_loading_allowed": false
+  },
+  "mock_access": {
+    "mechanism": "http",
+    "fetcher_id": "gsp.fetcher.http.mock.v1",
+    "network_io": false,
+    "configured_access_only": true,
+    "scene_supplied_urls": false
+  },
+  "cases": [
+    {
+      "case_id": "s022:http-mock-npy-array-success",
+      "kind": "mock-array-success",
+      "descriptor": {
+        "id": "source:s022-array",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource",
+          "x-purpose": "s022-http-single-resource-proof"
+        }
+      },
+      "mock_response": {
+        "content_type": "application/x-npy",
+        "content_encoding": "identity",
+        "response_bytes_max": 1048576,
+        "body_kind": "deterministic-npy-array",
+        "shape": [4, 4],
+        "dtype": "float32"
+      },
+      "decoder_policy": {
+        "max_header_bytes": 4096,
+        "max_rank": 3,
+        "max_elements": 1048576,
+        "max_decoded_bytes": 4194304
+      },
+      "expected_array": {
+        "shape": [4, 4],
+        "dtype": "float32",
+        "values": [
+          [0.0, 1.0, 2.0, 3.0],
+          [4.0, 5.0, 6.0, 7.0],
+          [8.0, 9.0, 10.0, 11.0],
+          [12.0, 13.0, 14.0, 15.0]
+        ]
+      },
+      "query": {
+        "query_contract": "gsp.query.array-value.v1",
+        "index": [2, 3],
+        "expected_value": 11.0
+      }
+    },
+    {
+      "case_id": "s022:descriptor-fetch-descriptor-rejected",
+      "kind": "descriptor-negative",
+      "descriptor": {
+        "id": "source:s022-fetch",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "fetch_descriptor": {
+          "url": "<redacted:url>"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource"
+        }
+      },
+      "expected_codes": ["GSP_FETCH_DESCRIPTOR_REJECTED", "GSP_REMOTE_FETCH_DISABLED"]
+    },
+    {
+      "case_id": "s022:descriptor-unknown-handle",
+      "kind": "descriptor-negative",
+      "descriptor": {
+        "id": "source:s022-unknown",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "unknown-source"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource"
+        }
+      },
+      "expected_codes": ["GSP_SOURCE_HANDLE_UNKNOWN"]
+    },
+    {
+      "case_id": "s022:descriptor-direct-remote-fetch-rejected",
+      "kind": "descriptor-negative",
+      "descriptor": {
+        "id": "source:s022-direct-remote",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "direct-remote-fetch",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource"
+        }
+      },
+      "expected_codes": ["GSP_SOURCE_LOCALITY_UNSUPPORTED"]
+    },
+    {
+      "case_id": "s022:descriptor-unsupported-contract",
+      "kind": "descriptor-negative",
+      "descriptor": {
+        "id": "source:s022-http-kind",
+        "kind": "opaque",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource"
+        }
+      },
+      "expected_codes": ["GSP_SOURCE_CONTRACT_UNSUPPORTED"]
+    },
+    {
+      "case_id": "s022:descriptor-credentials-rejected",
+      "kind": "descriptor-negative",
+      "descriptor": {
+        "id": "source:s022-credential",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "preconfigured-ref",
+        "credential_ref": "<redacted:credential-ref>",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource",
+          "headers": {"authorization": "<redacted:secret>"}
+        }
+      },
+      "expected_codes": [
+        "GSP_CREDENTIAL_POLICY_UNSUPPORTED",
+        "GSP_CREDENTIAL_REF_REJECTED",
+        "GSP_INLINE_SECRET_REJECTED"
+      ]
+    },
+    {
+      "case_id": "s022:descriptor-decoder-plugin-rejected",
+      "kind": "descriptor-negative",
+      "descriptor": {
+        "id": "source:s022-decoder-plugin",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "python.import:decoder",
+          "materialization_target": "array-resource",
+          "decoder_config": {"python_import": "decoder.module"}
+        }
+      },
+      "expected_codes": ["GSP_DECODER_PLUGIN_DISABLED"]
+    },
+    {
+      "case_id": "s022:response-content-type-rejected",
+      "kind": "mock-response-negative",
+      "descriptor": {
+        "id": "source:s022-bad-content-type",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource"
+        }
+      },
+      "mock_response": {
+        "content_type": "text/plain",
+        "content_encoding": "identity",
+        "response_bytes_max": 1048576,
+        "body_kind": "deterministic-npy-array",
+        "shape": [4, 4],
+        "dtype": "float32"
+      },
+      "decoder_policy": {
+        "max_header_bytes": 4096,
+        "max_rank": 3,
+        "max_elements": 1048576,
+        "max_decoded_bytes": 4194304
+      },
+      "expected_codes": ["GSP_CONTENT_TYPE_UNSUPPORTED"]
+    },
+    {
+      "case_id": "s022:response-content-encoding-rejected",
+      "kind": "mock-response-negative",
+      "descriptor": {
+        "id": "source:s022-bad-encoding",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource"
+        }
+      },
+      "mock_response": {
+        "content_type": "application/x-npy",
+        "content_encoding": "gzip",
+        "response_bytes_max": 1048576,
+        "body_kind": "deterministic-npy-array",
+        "shape": [4, 4],
+        "dtype": "float32"
+      },
+      "decoder_policy": {
+        "max_header_bytes": 4096,
+        "max_rank": 3,
+        "max_elements": 1048576,
+        "max_decoded_bytes": 4194304
+      },
+      "expected_codes": ["GSP_CONTENT_ENCODING_UNSUPPORTED"]
+    },
+    {
+      "case_id": "s022:response-invalid-npy-rejected",
+      "kind": "mock-response-negative",
+      "descriptor": {
+        "id": "source:s022-invalid-npy",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource"
+        }
+      },
+      "mock_response": {
+        "content_type": "application/x-npy",
+        "content_encoding": "identity",
+        "response_bytes_max": 1048576,
+        "body_kind": "invalid-npy-magic"
+      },
+      "decoder_policy": {
+        "max_header_bytes": 4096,
+        "max_rank": 3,
+        "max_elements": 1048576,
+        "max_decoded_bytes": 4194304
+      },
+      "expected_codes": ["GSP_CHUNK_METADATA_INVALID"]
+    },
+    {
+      "case_id": "s022:response-oversized-rejected",
+      "kind": "mock-response-negative",
+      "descriptor": {
+        "id": "source:s022-oversized",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource"
+        }
+      },
+      "mock_response": {
+        "content_type": "application/x-npy",
+        "content_encoding": "identity",
+        "response_bytes_max": 32,
+        "body_kind": "oversized-npy-array",
+        "shape": [4, 4],
+        "dtype": "float32"
+      },
+      "decoder_policy": {
+        "max_header_bytes": 4096,
+        "max_rank": 3,
+        "max_elements": 4,
+        "max_decoded_bytes": 16
+      },
+      "expected_codes": [
+        "GSP_CHUNK_LIMIT_EXCEEDED",
+        "GSP_DECOMPRESSION_LIMIT_EXCEEDED"
+      ]
+    },
+    {
+      "case_id": "s022:query-out-of-bounds",
+      "kind": "query-negative",
+      "descriptor": {
+        "id": "source:s022-query-oob",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource"
+        }
+      },
+      "query": {
+        "query_contract": "gsp.query.array-value.v1",
+        "index": [4, 0],
+        "max_result_values": 1
+      },
+      "expected_codes": ["GSP_QUERY_SCOPE_VIOLATION"]
+    },
+    {
+      "case_id": "s022:query-result-limit",
+      "kind": "query-negative",
+      "descriptor": {
+        "id": "source:s022-query-limit",
+        "kind": "array",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "channels": 1,
+        "coordinate_system": "array-index",
+        "locality": "preconfigured-source",
+        "credential_policy": "none",
+        "source_ref": {
+          "resolver_id": "gsp.demo.http-resource-resolver",
+          "source_id": "demo-http-npy-array"
+        },
+        "materialization_policy": "full",
+        "cache_policy": {"mode": "none"},
+        "metadata": {
+          "format": "npy",
+          "decoder_id": "gsp.decoder.npy.v1",
+          "materialization_target": "array-resource"
+        }
+      },
+      "query": {
+        "query_contract": "gsp.query.array-value.v1",
+        "index": [1, 1],
+        "max_result_values": 0
+      },
+      "expected_codes": ["GSP_QUERY_RESULT_LIMIT_EXCEEDED"]
+    },
+    {
+      "case_id": "s022:capability-http-mock-no-network",
+      "kind": "capability-metadata",
+      "expected": {
+        "data_sources.remote_fetch_descriptors.accepted": false,
+        "data_sources.supports_server_side_fetch.accepted": false,
+        "data_sources.remote_access.scene_supplied_urls": false,
+        "data_sources.remote_access.configured_access_only": true,
+        "data_sources.remote_access.access_mechanisms.0.network_io": false,
+        "data_sources.remote_access.access_mechanisms.0.fetcher_ids": ["gsp.fetcher.http.mock.v1"],
+        "data_sources.decoders.0.decoder_id": "gsp.decoder.npy.v1",
+        "data_sources.decoders.0.allow_pickle": false,
+        "data_sources.preconfigured_resolvers.0.network_io": false,
+        "security.raw_urls_in_protocol": false,
+        "security.raw_credentials_in_protocol": false,
+        "security.resolver_outputs_in_replay": false
+      }
+    },
+    {
+      "case_id": "s022:redaction-private-resolver-output",
+      "kind": "redaction",
+      "value": {
+        "url": "<redacted:url>",
+        "host": "<redacted:url>",
+        "headers": {"Authorization": "<redacted:secret>"},
+        "credential_ref": "<redacted:credential-ref>",
+        "cache_key": "<redacted:cache-key>",
+        "dns_result": "<redacted:dns-result>",
+        "private_digest": "<redacted:secret>",
+        "raw_body": "<forbidden:raw-body>",
+        "resolver_private_config": {
+          "signed_url": "<redacted:url>",
+          "secret": "<redacted:secret>"
+        }
+      },
+      "expected_redacted": {
+        "url": "<redacted:url>",
+        "host": "<redacted:url>",
+        "headers": {"Authorization": "<redacted:secret>"},
+        "credential_ref": "<redacted:credential-ref>",
+        "cache_key": "<redacted:cache-key>",
+        "dns_result": "<redacted:dns-result>",
+        "private_digest": "<redacted:secret>",
+        "raw_body": "<redacted:secret>",
+        "resolver_private_config": "<redacted:secret>"
+      }
+    },
+    {
+      "case_id": "s022:cache-session-isolation",
+      "kind": "cache-isolation",
+      "left": {
+        "tenant_id": "tenant-a",
+        "session_id": "session-a",
+        "resolver_id": "gsp.demo.http-resource-resolver",
+        "source_id": "demo-http-npy-array",
+        "authorization_generation": "authz-1",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "decoder_id": "gsp.decoder.npy.v1",
+        "decoder_policy_revision": "policy-1",
+        "source_generation": "source-1"
+      },
+      "right": {
+        "tenant_id": "tenant-a",
+        "session_id": "session-b",
+        "resolver_id": "gsp.demo.http-resource-resolver",
+        "source_id": "demo-http-npy-array",
+        "authorization_generation": "authz-1",
+        "shape": [4, 4],
+        "dtype": "float32",
+        "decoder_id": "gsp.decoder.npy.v1",
+        "decoder_policy_revision": "policy-1",
+        "source_generation": "source-1"
+      },
+      "expected_public_cache_fields": []
+    }
+  ]
+}

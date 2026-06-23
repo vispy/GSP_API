@@ -23,3 +23,11 @@ Create no-network conformance fixtures for the configured/mock HTTP `.npy` array
 
 Stop if fixtures require live network I/O, raw URLs in tracked fixtures, credentials, URL parsing,
 DNS, redirects, TLS, persistent/shared cache, dynamic loading, or Datoviz remote-data behavior.
+
+## Result
+
+Completed. Added a packaged S022 mock HTTP array fixture and validator. The committed fixture
+contains no raw response bodies, raw URLs, credentials, DNS results, cache keys, digests, or resolver
+private config; deterministic `.npy` payloads are generated in memory during replay. Tests cover the
+positive materialization/query case, descriptor and response rejection cases, capability metadata,
+redaction placeholders, and cache-session isolation.
