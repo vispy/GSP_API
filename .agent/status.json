@@ -131,7 +131,7 @@
       "id": "S022",
       "title": "Remote source family selection and consultation",
       "state": "in_progress",
-      "progress": 15
+      "progress": 30
     }
   ],
   "missions": [
@@ -656,6 +656,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 58
+    },
+    {
+      "id": "M059",
+      "title": "S022 HTTP access and decoder consultation packet",
+      "stage": "S022",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 59
     }
   ],
   "review_queue": [],
@@ -690,7 +699,7 @@
     }
   ],
   "recommendations": [
-    "Next S022 mission: prepare a self-contained ChatGPT Pro consultation packet for selecting and designing the first real remote-source family before any production fetch implementation.",
+    "Implementation is paused until the P007 ChatGPT Pro response is pasted or committed; then convert the decision into ADR/spec updates before any HTTP fetch, decoder, URL parsing, credentials, network I/O, or dynamic loading.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }
