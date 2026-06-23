@@ -1,37 +1,37 @@
 {
   "attach.coord_space.DVZ_COORD_DATA": {
     "capability": "attach.coord_space.DVZ_COORD_DATA",
-    "reason": "missing raw symbol DVZ_COORD_DATA",
+    "reason": null,
     "source": "raw",
-    "supported": false,
+    "supported": true,
     "symbol": "DVZ_COORD_DATA"
   },
   "attach.coord_space.DVZ_COORD_PANEL": {
     "capability": "attach.coord_space.DVZ_COORD_PANEL",
-    "reason": "missing raw symbol DVZ_COORD_PANEL",
+    "reason": null,
     "source": "raw",
-    "supported": false,
+    "supported": true,
     "symbol": "DVZ_COORD_PANEL"
   },
   "attach.coord_space.DVZ_COORD_VIEW": {
     "capability": "attach.coord_space.DVZ_COORD_VIEW",
-    "reason": "missing raw symbol DVZ_COORD_VIEW",
+    "reason": null,
     "source": "raw",
-    "supported": false,
+    "supported": true,
     "symbol": "DVZ_COORD_VIEW"
   },
   "attach.desc.DvzVisualAttachDesc": {
     "capability": "attach.desc.DvzVisualAttachDesc",
-    "reason": "missing facade symbol DvzVisualAttachDesc",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "DvzVisualAttachDesc"
   },
   "capture.top_level.datoviz_capture": {
     "capability": "capture.top_level.datoviz_capture",
-    "reason": "missing facade symbol capture",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "capture"
   },
   "datoviz.facade.import": {
@@ -43,135 +43,135 @@
   },
   "datoviz.raw.import": {
     "capability": "datoviz.raw.import",
-    "reason": "No module named 'datoviz.raw'",
+    "reason": null,
     "source": "raw",
-    "supported": false,
+    "supported": true,
     "symbol": "datoviz.raw"
   },
   "panel.add_visual.dvz_panel_add_visual": {
     "capability": "panel.add_visual.dvz_panel_add_visual",
-    "reason": "missing facade symbol dvz_panel_add_visual",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_panel_add_visual"
   },
   "scene.create.dvz_scene": {
     "capability": "scene.create.dvz_scene",
-    "reason": "missing facade symbol dvz_scene",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_scene"
   },
   "scene.figure.dvz_figure": {
     "capability": "scene.figure.dvz_figure",
-    "reason": "missing facade symbol dvz_figure",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_figure"
   },
   "scene.panel.dvz_panel_full": {
     "capability": "scene.panel.dvz_panel_full",
-    "reason": "missing facade symbol dvz_panel_full",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_panel_full"
   },
   "visual.data.dvz_visual_set_data": {
     "capability": "visual.data.dvz_visual_set_data",
-    "reason": "missing facade symbol dvz_visual_set_data",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_visual_set_data"
   },
   "visual.data_many.dvz_visual_set_data_many": {
     "capability": "visual.data_many.dvz_visual_set_data_many",
-    "reason": "missing facade symbol dvz_visual_set_data_many",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_visual_set_data_many"
   },
   "visual.data_range.dvz_visual_set_data_range": {
     "capability": "visual.data_range.dvz_visual_set_data_range",
-    "reason": "missing facade symbol dvz_visual_set_data_range",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_visual_set_data_range"
   },
   "visual.image.constructor.dvz_image": {
     "capability": "visual.image.constructor.dvz_image",
-    "reason": "missing facade symbol dvz_image",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_image"
   },
   "visual.image.field.dvz_sampled_field": {
     "capability": "visual.image.field.dvz_sampled_field",
-    "reason": "missing facade symbol dvz_sampled_field",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_sampled_field"
   },
   "visual.image.field.dvz_sampled_field_set_data": {
     "capability": "visual.image.field.dvz_sampled_field_set_data",
-    "reason": "missing facade symbol dvz_sampled_field_set_data",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_sampled_field_set_data"
   },
   "visual.image.field.dvz_visual_set_field": {
     "capability": "visual.image.field.dvz_visual_set_field",
-    "reason": "missing facade symbol dvz_visual_set_field",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_visual_set_field"
   },
   "visual.marker.constructor.dvz_marker": {
     "capability": "visual.marker.constructor.dvz_marker",
-    "reason": "missing facade symbol dvz_marker",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_marker"
   },
   "visual.path.constructor.dvz_path": {
     "capability": "visual.path.constructor.dvz_path",
-    "reason": "missing facade symbol dvz_path",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_path"
   },
   "visual.path.style.dvz_path_set_caps": {
     "capability": "visual.path.style.dvz_path_set_caps",
-    "reason": "missing facade symbol dvz_path_set_caps",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_path_set_caps"
   },
   "visual.path.style.dvz_path_set_join": {
     "capability": "visual.path.style.dvz_path_set_join",
-    "reason": "missing facade symbol dvz_path_set_join",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_path_set_join"
   },
   "visual.path.style.dvz_path_set_subpaths": {
     "capability": "visual.path.style.dvz_path_set_subpaths",
-    "reason": "missing facade symbol dvz_path_set_subpaths",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_path_set_subpaths"
   },
   "visual.point.constructor.dvz_point": {
     "capability": "visual.point.constructor.dvz_point",
-    "reason": "missing facade symbol dvz_point",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_point"
   },
   "visual.segment.constructor.dvz_segment": {
     "capability": "visual.segment.constructor.dvz_segment",
-    "reason": "missing facade symbol dvz_segment",
+    "reason": null,
     "source": "facade",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_segment"
   }
 }

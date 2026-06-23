@@ -372,8 +372,12 @@ def _has_symbol(module: Any | None, symbol: str) -> bool:
     try:
         getattr(module, symbol)
     except Exception:  # noqa: BLE001 - getattr on Datoviz can trigger generated binding import.
+        if symbol.startswith("DVZ_COORD_"):
+            coord_space = getattr(module, "DvzVisualCoordSpace", None)
+            return coord_space is not None and hasattr(coord_space, symbol)
         return False
-    return True
+    else:
+        return True
 
 
 def _capability_matrix(

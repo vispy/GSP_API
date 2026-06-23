@@ -5,17 +5,17 @@
     "symbol": "DVZ_BLEND_ALPHA"
   },
   "DVZ_COORD_DATA": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "DVZ_COORD_DATA"
   },
   "DVZ_COORD_PANEL": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "DVZ_COORD_PANEL"
   },
   "DVZ_COORD_VIEW": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "DVZ_COORD_VIEW"
   },
@@ -65,127 +65,127 @@
     "symbol": "DVZ_SEGMENT_CAP_SQUARE"
   },
   "DvzDimMaskFlag": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "DvzDimMaskFlag"
   },
   "DvzVisualAttachDesc": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "DvzVisualAttachDesc"
   },
   "dvz_figure": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_figure"
   },
   "dvz_image": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_image"
   },
   "dvz_marker": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_marker"
   },
   "dvz_marker_set_style": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_marker_set_style"
   },
   "dvz_marker_style": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_marker_style"
   },
   "dvz_panel_add_visual": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_panel_add_visual"
   },
   "dvz_panel_full": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_panel_full"
   },
   "dvz_path": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_path"
   },
   "dvz_path_set_caps": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_path_set_caps"
   },
   "dvz_path_set_join": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_path_set_join"
   },
   "dvz_path_set_subpaths": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_path_set_subpaths"
   },
   "dvz_point": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_point"
   },
   "dvz_point_set_style": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_point_set_style"
   },
   "dvz_point_style_desc": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_point_style_desc"
   },
   "dvz_sampled_field": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_sampled_field"
   },
   "dvz_sampled_field_set_data": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_sampled_field_set_data"
   },
   "dvz_scene": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_scene"
   },
   "dvz_segment": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_segment"
   },
   "dvz_segment_set_caps": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_segment_set_caps"
   },
   "dvz_visual_set_data": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_visual_set_data"
   },
   "dvz_visual_set_data_many": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_visual_set_data_many"
   },
   "dvz_visual_set_data_range": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_visual_set_data_range"
   },
   "dvz_visual_set_field": {
-    "available": false,
+    "available": true,
     "source": "raw",
     "symbol": "dvz_visual_set_field"
   }
