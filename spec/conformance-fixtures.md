@@ -339,3 +339,54 @@ array.
 `fixtures.conformance.json_fixture.replay_minimal_json_fixture()` validates the fixture and replays
 it through the existing Matplotlib reference adapter. The Python/in-process fixtures remain the local
 fast path.
+
+## S020 security and redaction fixtures
+
+S020 conformance adds a no-network security validation profile. Fixtures in this profile validate
+that unsafe source descriptors, credentials, manifests, cache policies, and query/readback payloads
+are rejected or redacted without performing network I/O.
+
+Fixtures, replay logs, diagnostics, and debug JSON must never serialize:
+
+- raw passwords, API keys, bearer tokens, SSH keys, cloud keys, certificates, cookies, auth headers,
+  or session tokens;
+- signed URLs, presigned S3/GCS URLs, SAS URLs, query-string credentials, or temporary credentials;
+- credential resolver output;
+- unredacted credential references that reveal provider, account, project, bucket, or user identity;
+- absolute local paths, home directories, UNC paths, symlink-resolved paths, or server-internal mount
+  paths;
+- internal hostnames, private IPs, metadata endpoint addresses, DNS results, or network topology;
+- cross-tenant cache keys or cache contents;
+- restricted external chunks unless the fixture is explicitly sanitized and public;
+- query/readback payloads outside declared fixture scope;
+- manifest fields that imply executable code.
+
+Stable redaction placeholders are:
+
+- `<redacted:credential-ref>`;
+- `<redacted:source-ref>`;
+- `<redacted:url>`;
+- `<redacted:path>`.
+
+Minimum S020 negative fixture groups:
+
+- static manifest with Python import path, entry point, executable hook, shader loading directive,
+  decoder callback, or executable-looking unknown field;
+- `preconfigured-source` with an unknown handle;
+- `direct-remote-fetch`, `server-resolved-remote`, or `local-file-sandboxed` when not advertised;
+- descriptors containing raw URL, object-store URI, local path, request headers, cookies, signed URL,
+  inline secret, unsupported credential policy, or oversized logical/chunk metadata;
+- SSRF-like fixture strings such as loopback, localhost, metadata-service, `file://`, `gopher://`,
+  `data:`, URL userinfo, fragments, encoded private IP variants, and redirect-to-private targets;
+- cache keys that cross tenant, credential, source, resolver, extension version, or generation
+  boundaries;
+- oversized decoded chunk, tile count, materialization, prefetch, retry, concurrency, or query result
+  requests;
+- query/readback outside declared source bounds or with extension payload schema mismatch.
+
+A sanitized `preconfigured-source` fixture may carry only a resolver id, source id, source kind,
+credential policy, no-network flag, and public deterministic test metadata. It must not serialize
+the underlying URL, path, bucket, credential, resolver output, or restricted data.
+
+Security diagnostics in these fixtures are stable expected results. Unsupported security behavior
+must reject fatally rather than simplify or silently deactivate.

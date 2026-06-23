@@ -104,3 +104,100 @@ fixture locks:
 - typed `TiledImageQueryPayload` coordinates and value.
 
 The fixture remains Python/in-process. JSON/base64 replay encoding is deferred to S018.
+
+## S020 remote data security pre-design
+
+Future remote-capable data sources are modeled as data-only descriptors. The descriptor vocabulary is
+reserved before production fetch exists so validation, diagnostics, and conformance can reject unsafe
+inputs deterministically.
+
+Reserved `DataSourceDescriptor` fields:
+
+- `id`;
+- `kind`;
+- `extension_id`;
+- `schema_version`;
+- `logical_shape`;
+- `logical_dtype`;
+- `coordinate_space`;
+- `bounds`;
+- `chunk_scheme`;
+- `lod_scheme`;
+- `source_locality`;
+- `source_ref`;
+- `fetch_descriptor`;
+- `credential_policy`;
+- `credential_ref`;
+- `materialization_policy`;
+- `cache_policy`;
+- `query_contract`;
+- `integrity_policy`;
+- `resource_hints`;
+- `diagnostics_policy`.
+
+Executable localities for the current safe line are:
+
+- `synthetic`;
+- `in-memory`;
+- optional `preconfigured-source`, where the client supplies only an opaque server-known handle.
+
+Reserved or future localities are:
+
+- `local-file-sandboxed`;
+- `client-materialized`;
+- `server-resolved-remote`;
+- `direct-remote-fetch`;
+- `browser-origin-fetch`.
+
+The v0.2 default is to reject `fetch_descriptor` and every direct remote/local fetch shape,
+including URL-like fields, object-store URIs, request headers, cookies, signed URLs, local paths, and
+client-controlled retry or redirect policy.
+
+`preconfigured-source` means:
+
+- `source_ref` is opaque and resolver-scoped;
+- unknown handles reject fatally;
+- administrator or test configuration owns any underlying URL, path, bucket, or credential;
+- the scene never serializes the underlying location or secret material;
+- a no-network mock resolver is the preferred first proof.
+
+Credential policies are:
+
+- `none`: no credential is used;
+- `preconfigured`: credentials, if any, are resolver-owned and absent from protocol payloads.
+
+`preconfigured-ref`, `delegated`, and `inline` are not executable v0.2 policies. `inline` is always
+invalid. `credential_ref`, if ever enabled, is an opaque selector, not a secret, and must be
+resolver-, tenant-, and session-authorized.
+
+Cache policies reserve:
+
+- `mode`: `none`, `session-memory`, `private-persistent`, or `shared-readonly`;
+- `scope`: `session`, `user`, `tenant`, or `public-immutable`;
+- `max_bytes`;
+- `max_items`;
+- `ttl_seconds`;
+- `immutable`;
+- `key_fields`;
+- `poisoning_policy`;
+- `eviction_policy`.
+
+The current safe cache modes are `none` and optionally `session-memory`. Shared or persistent cache
+entries must not be used for mutable or credentialed data unless future validation binds keys to
+tenant/session, resolver, source identity, credential identity/version marker, extension
+id/version, decoder version, LOD, chunk coordinates, materialization parameters, and content
+generation or digest.
+
+Resource validation must reject non-finite or excessive logical shapes, tile sizes, LOD counts,
+chunk counts, decompressed chunk sizes, per-frame tile counts, total materialized bytes, prefetch
+concurrency, retry counts, and query result sizes before materialization.
+
+Query/readback is scoped by `query_contract`. Results must be typed, bounded, and limited to
+declared source bounds, viewport/panel selection, and extension payload schemas. Query results must
+not expose server paths, URLs, credentials, resolver configuration, internal hostnames, tenant ids,
+or cache internals.
+
+Security-sensitive unsupported behavior rejects fatally. It must not silently clip, downgrade, or
+simplify remote fetch, credentials, local paths, resource-limit violations, cache isolation failures,
+or query-scope violations unless a query contract explicitly allows a clipped result with a
+diagnostic.

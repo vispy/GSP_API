@@ -119,7 +119,7 @@
       "id": "S020",
       "title": "Remote data and dynamic extension security pre-design",
       "state": "in_progress",
-      "progress": 10
+      "progress": 35
     }
   ],
   "missions": [
@@ -572,6 +572,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 50
+    },
+    {
+      "id": "M051",
+      "title": "S020 ADR/spec security baseline",
+      "stage": "S020",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 51
     }
   ],
   "review_queue": [],
@@ -589,10 +598,17 @@
       "requires_human": false,
       "requires_chatgpt_pro": false,
       "state": "closed"
+    },
+    {
+      "id": "Q050-REMOTE-DATA-DYNAMIC-EXTENSION-SECURITY",
+      "summary": "Resolved by P006 response: S020 is ADR/spec/negative-conformance first; arbitrary fetch and dynamic extension loading are reserved but rejected by default.",
+      "requires_human": false,
+      "requires_chatgpt_pro": false,
+      "state": "closed"
     }
   ],
   "recommendations": [
-    "Pause S020 implementation until the P006 ChatGPT Pro security pre-design response is pasted or committed.",
+    "Next S020 mission: implement no-network security validation scaffolding and negative tests for unsafe source descriptors, credentials, manifests, redaction, and conservative capabilities.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

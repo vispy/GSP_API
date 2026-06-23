@@ -61,3 +61,51 @@ Extension manifests are validated as static protocol metadata:
 Capability snapshots may adapt a manifest directly. A backend accepts a manifest only when it
 advertises both static manifest support and the manifest capability string. This does not discover,
 load, or execute extension code.
+
+## S020 dynamic extension security policy
+
+Dynamic extension loading is deferred. Manifests remain untrusted, data-only protocol metadata used
+for validation, capability advertisement, diagnostics, fixtures, and query payload contracts.
+
+Allowed S020/v0.2 behavior:
+
+- bundled static manifests;
+- static test manifests;
+- explicitly provided manifest files for validation only;
+- offline manifest linting;
+- capability advertisement for already-installed trusted server code.
+
+Forbidden manifest behavior:
+
+- Python package imports or module/class paths;
+- Python entry-point discovery;
+- runtime package installation or dependency solving;
+- executable callbacks, hooks, transforms, or draw-call injection;
+- manifest-declared decoders;
+- runtime shader loading or shader source;
+- shell commands;
+- URLs used to load code;
+- binary executable blobs;
+- pickle, cloudpickle, dill, or object-representation payloads;
+- auto-discovery from `site-packages`.
+
+Static discovery sources are limited to:
+
+- `builtin`;
+- `configured-manifest-dir` for local development or test validation;
+- `test-fixture`.
+
+For every source, `manifests_are_data_only=true`, `imports_allowed=false`,
+`executable_hooks_allowed=false`, and `package_resolution_allowed=false`.
+
+Manifest validation must be strict. Unknown fields are rejected unless they live under a documented
+`x-` extension namespace that is explicitly non-executable. Implementation declarations describe
+already-built server capabilities; they are not instructions for loading code. A manifest can require
+capabilities, but it cannot create capabilities.
+
+Extension query payload contracts must be explicit, versioned, and bounded. Extension payloads must
+not serialize arbitrary Python objects, callback references, import paths, pickle-like bytes, or
+class reprs.
+
+Security diagnostics for dynamic loading, executable fields, decoder plugins, runtime shaders, and
+manifest schema violations are fatal rejects.

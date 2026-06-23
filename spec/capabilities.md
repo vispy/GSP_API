@@ -77,3 +77,95 @@ silently accepting unadvertised extension contracts.
 M035 final S017 review note: the Matplotlib reference capability surface and the v0.1 conformance
 capability fixture both advertise `gsp.tiled-image@0.1`, static manifest support, virtual
 data-source support, local tiled-image sources, synthetic locality, and bounded tile/mosaic limits.
+
+## S020 remote-data and extension security capabilities
+
+Capability snapshots must make dangerous behavior visibly absent. A renderer must not accept a
+remote source, credential policy, cache mode, dynamic extension behavior, or query/readback payload
+unless the capability snapshot advertises it and validation accepts the concrete request.
+
+Reserved data-source capability fields:
+
+- `data_sources.supported_kinds`;
+- `data_sources.supported_source_localities`;
+- `data_sources.supported_credential_policies`;
+- `data_sources.preconfigured_resolvers`;
+- `data_sources.remote_fetch_descriptors`;
+- `data_sources.allowed_fetch_schemes`;
+- `data_sources.allowed_fetch_methods`;
+- `data_sources.redirect_policy`;
+- `data_sources.network_egress_policy`;
+- `data_sources.max_source_count`;
+- `data_sources.max_tile_count_per_frame`;
+- `data_sources.max_chunk_bytes`;
+- `data_sources.max_decompressed_chunk_bytes`;
+- `data_sources.max_total_materialized_bytes`;
+- `data_sources.max_query_result_bytes`;
+- `data_sources.max_prefetch_concurrency`;
+- `data_sources.max_retries`;
+- `data_sources.default_timeout_ms`;
+- `data_sources.max_timeout_ms`;
+- `data_sources.cache_modes`;
+- `data_sources.cache_scopes`;
+- `data_sources.supports_progressive_refinement`;
+- `data_sources.supports_server_side_fetch`.
+
+Reserved extension and security capability fields:
+
+- `extensions.static_manifest_validation`;
+- `extensions.dynamic_discovery`;
+- `extensions.package_entry_points`;
+- `extensions.executable_hooks`;
+- `extensions.custom_decoders`;
+- `extensions.runtime_shaders`;
+- `extensions.allowed_extension_ids`;
+- `extensions.manifest_schema_versions`;
+- `security.redaction_profile`;
+- `security.fixture_remote_sources_allowed`;
+- `security.diagnostic_redaction`.
+
+Conservative v0.2 posture:
+
+- `data_sources.remote_fetch_descriptors.accepted=false`;
+- `data_sources.supports_server_side_fetch.accepted=false`;
+- `data_sources.supported_source_localities=["synthetic", "in-memory", "preconfigured-source"]`;
+- `data_sources.supported_credential_policies=["none", "preconfigured"]`;
+- `data_sources.cache_modes=["none", "session-memory"]`;
+- `extensions.static_manifest_validation=true`;
+- `extensions.dynamic_discovery=false`;
+- `extensions.package_entry_points=false`;
+- `extensions.executable_hooks=false`;
+- `extensions.custom_decoders=false`;
+- `extensions.runtime_shaders=false`.
+
+Recommended S020 diagnostic codes:
+
+- `GSP_SOURCE_LOCALITY_UNSUPPORTED`;
+- `GSP_SOURCE_HANDLE_UNKNOWN`;
+- `GSP_REMOTE_FETCH_DISABLED`;
+- `GSP_SERVER_SIDE_FETCH_DISABLED`;
+- `GSP_FETCH_DESCRIPTOR_REJECTED`;
+- `GSP_URL_SCHEME_FORBIDDEN`;
+- `GSP_URL_USERINFO_FORBIDDEN`;
+- `GSP_URL_HOST_NOT_ALLOWED`;
+- `GSP_URL_RESOLVES_PRIVATE`;
+- `GSP_URL_REDIRECT_REJECTED`;
+- `GSP_LOCAL_PATH_FORBIDDEN`;
+- `GSP_LOCAL_PATH_TRAVERSAL`;
+- `GSP_CREDENTIAL_POLICY_UNSUPPORTED`;
+- `GSP_CREDENTIAL_REF_REJECTED`;
+- `GSP_INLINE_SECRET_REJECTED`;
+- `GSP_MANIFEST_SCHEMA_INVALID`;
+- `GSP_MANIFEST_EXECUTION_FORBIDDEN`;
+- `GSP_EXTENSION_DYNAMIC_LOADING_DISABLED`;
+- `GSP_DECODER_PLUGIN_DISABLED`;
+- `GSP_SHADER_EXTENSION_DISABLED`;
+- `GSP_CHUNK_METADATA_INVALID`;
+- `GSP_CHUNK_LIMIT_EXCEEDED`;
+- `GSP_DECOMPRESSION_LIMIT_EXCEEDED`;
+- `GSP_CACHE_POLICY_UNSUPPORTED`;
+- `GSP_QUERY_SCOPE_VIOLATION`;
+- `GSP_QUERY_RESULT_LIMIT_EXCEEDED`;
+- `GSP_REPLAY_REDACTION_REQUIRED`.
+
+These diagnostics reject fatally when they protect a security boundary.
