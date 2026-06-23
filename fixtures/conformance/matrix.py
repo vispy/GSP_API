@@ -43,7 +43,7 @@ def backend_conformance_matrix() -> tuple[BackendConformanceExpectation, ...]:
 
 def _datoviz_skip_reason() -> str:
     try:
-        import datoviz as dvz  # type: ignore[import-untyped]
+        import datoviz as dvz
     except ModuleNotFoundError:
         return "Datoviz is not importable; runtime conformance replay is deferred."
 

@@ -1,0 +1,88 @@
+{
+  "schema_kind": "gsp.conformance.preconfigured-source",
+  "schema_version": "0.1.0",
+  "metadata": {
+    "fixture_id": "gsp.fixtures.s021.preconfigured_source",
+    "fixture_revision": 1,
+    "title": "S021 no-network preconfigured-source resolver proof",
+    "stability": "draft-conformance",
+    "deterministic": true,
+    "tags": ["s021", "preconfigured-source", "no-network", "resolver"]
+  },
+  "protocol": {
+    "gsp_protocol_version": "0.2-draft",
+    "runtime_transport_required": false,
+    "network_io_allowed": false,
+    "dynamic_loading_allowed": false
+  },
+  "resolver": {
+    "resolver_id": "gsp.test.synthetic-resolver",
+    "source_id": "public-demo-pyramid",
+    "expected_capability": {
+      "resolver_id": "gsp.test.synthetic-resolver",
+      "source_kinds": ["tiled-image"],
+      "credential_policies": ["none"],
+      "network_io": false,
+      "source_ids": ["public-demo-pyramid"]
+    }
+  },
+  "cases": [
+    {
+      "case_id": "resolver:known-handle-tile",
+      "kind": "resolve-tile",
+      "descriptor": {
+        "id": "source:preconfigured-public-demo-pyramid",
+        "kind": "tiled-image",
+        "shape": [16, 16, 4],
+        "locality": "preconfigured-source",
+        "source_ref": {
+          "resolver_id": "gsp.test.synthetic-resolver",
+          "source_id": "public-demo-pyramid"
+        }
+      },
+      "tile_request": {
+        "level": 0,
+        "x": 1,
+        "y": 1
+      },
+      "expected_tile": {
+        "shape": [4, 4, 4],
+        "first_rgba": [4, 4, 0, 255],
+        "last_rgba": [7, 7, 0, 255]
+      }
+    },
+    {
+      "case_id": "resolver:unknown-handle",
+      "kind": "reject-descriptor",
+      "descriptor": {
+        "id": "source:unknown",
+        "kind": "tiled-image",
+        "shape": [16, 16, 4],
+        "locality": "preconfigured-source",
+        "source_ref": {
+          "resolver_id": "gsp.test.synthetic-resolver",
+          "source_id": "unknown"
+        }
+      },
+      "expected_diagnostic": "GSP_SOURCE_HANDLE_UNKNOWN: preconfigured-source source_ref is not advertised by the no-network resolver"
+    },
+    {
+      "case_id": "resolver:fetch-descriptor-rejected",
+      "kind": "reject-descriptor",
+      "descriptor": {
+        "id": "source:fetch",
+        "kind": "tiled-image",
+        "shape": [16, 16, 4],
+        "locality": "preconfigured-source",
+        "source_ref": {
+          "resolver_id": "gsp.test.synthetic-resolver",
+          "source_id": "public-demo-pyramid"
+        },
+        "fetch_descriptor": {
+          "url": "https://example.invalid/tiles/{z}/{x}/{y}.png"
+        }
+      },
+      "expected_diagnostic": "GSP_FETCH_DESCRIPTOR_REJECTED: fetch_descriptor is reserved and rejected in S020 no-network mode"
+    }
+  ]
+}

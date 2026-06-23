@@ -24,6 +24,8 @@ They are Python/in-process fixtures, not JSON fixtures. This is intentional: the
 - Minimal authoritative `gsp.conformance.fixture@0.1` JSON fixture for the current semantic slice.
 - S020 no-network security-negative fixture records for remote-fetch, credential, executable
   manifest, redaction, and conservative capability diagnostics.
+- S021 no-network preconfigured-source resolver fixture records for known-handle materialization,
+  unknown-handle rejection, fetch-descriptor rejection, and resolver capability metadata.
 
 ## Reference Backend
 
