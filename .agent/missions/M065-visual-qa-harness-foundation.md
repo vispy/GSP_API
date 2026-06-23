@@ -6,7 +6,7 @@ S023 - Visual Families v1 and Manual Visual QA Foundation
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 

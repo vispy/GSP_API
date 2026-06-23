@@ -247,7 +247,7 @@ class DatovizV04ProtocolRenderer:
         try:
             with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as file:
                 path = Path(file.name)
-            result = self.dvz.dvz_view_capture_png(view, str(path))
+            result = self.dvz.dvz_view_capture_png(view, str(path).encode())
             if result != 0:
                 raise DatovizV04Unsupported("Datoviz offscreen PNG capture failed")
             return path.read_bytes()

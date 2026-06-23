@@ -740,7 +740,7 @@ def test_capture_png_bytes_uses_offscreen_view_and_returns_png_bytes():
     assert _calls(fake, "render_once") == [("render_once", "app")]
     capture_calls = _calls(fake, "capture_png")
     assert capture_calls[0][1] == "offscreen-view"
-    assert capture_calls[0][2].endswith(".png")
+    assert capture_calls[0][2].endswith(b".png")
 
 
 def test_capture_png_bytes_rejects_missing_capture_binding():
