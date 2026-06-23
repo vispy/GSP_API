@@ -1,12 +1,11 @@
 # Strict Mypy Debt Inventory
 
-Status: M047 discovery after import-surface hardening.
+Status: M047 closed.
 
-After resolving the original M045 blockers, `uv run mypy src/ --strict --show-error-codes` reaches
-the wider source tree. After the TransBuf/export/network batch, it reports 191 errors across 48
-files.
+`PYTHONPATH=. uv run mypy src/ --strict --show-error-codes` now passes with no errors across 186
+source files.
 
-## Resolved In M047 So Far
+## Resolved In M047
 
 - Datoviz untyped imports are quarantined with a narrow `datoviz` / `datoviz.*` mypy override.
 - `types-colorama` is a dev dependency, so `colorama` is no longer an uncontrolled missing-stub
@@ -22,53 +21,19 @@ files.
   passes.
 - `types-requests` is a dev dependency, `http_constants` is quarantined with a narrow missing-import
   override, and network renderer/server annotation issues in the focused slice are fixed.
+- Full strict mypy passes after typed fixes for legacy annotations, numpy helper boundaries,
+  Matplotlib renderer stubs, VisPy2 axes helpers, pydantic serialization, optional Datoviz callbacks,
+  OBJ parser accumulators, and renderer registration helpers.
 
-## Remaining Debt Groups
+## Documented Boundaries
 
-### Legacy Visual And `TransBuf` Typing
-
-The broad `TransBuf` alias issue is resolved for the focused visual/VisPy2/network slice. Remaining
-`TransBuf`-adjacent errors, if any, should be treated as local module typing problems rather than a
-bad alias/export.
-
-Next action: keep `TransBuf` imported from `gsp.types.transbuf` or `gsp.types` after the explicit
-`TypeAlias`; do not reintroduce runtime `isinstance(..., TransBuf)` checks because union type aliases
-are not runtime classes.
-
-### Annotation Debt
-
-Strict mypy reports missing return annotations in legacy modules, including event/control callbacks,
-renderer registration helpers, axes pan/zoom handlers, and object hierarchy helpers.
-
-Next action: add return annotations where behavior is clear, prioritizing public helpers and callback
-methods that are exercised by tests.
-
-### Numpy Return And Container Shapes
-
-Several math, tick, and axes helpers return values mypy sees as `Any` or as list shapes where tuple
-shapes are declared. This includes `gsp.protocol.ticks`, `vispy2.axes.axis_tick_locator`,
-`gsp.utils.math_utils*`, `gsp_extra.mpl3d.glm`, Matplotlib renderer utilities, and axes display
-helpers.
-
-Next action: use `np.asarray`/`typing.cast` at narrow boundaries and align declared container types
-with runtime values.
-
-### Vendored And Optional Helpers
-
-The vendored `gsp_extra.mpl3d.trackball` module is largely untyped. `gsp_extra.misc.mesh_utils`
-imports optional `meshio` and has shape/type mismatches around optional arrays.
-
-Next action: either type the vendored helper boundary explicitly or quarantine it with a focused
-module override, and make `meshio` optional typing explicit.
-
-### Legacy Renderer And Network Surface
-
-The Matplotlib, Datoviz legacy wrapper, and network packages still have callback, registration, and
-remote-renderer typing issues. These are not Datoviz v0.4 protocol adapter semantics and should be
-handled without changing runtime behavior.
-
-Next action: annotate registration helpers, add explicit renderer package exports, and fix local
-variable typing in network server code.
+- `datoviz` / `datoviz.*`: optional legacy backend with no typed Python surface in the local
+  environment.
+- `meshio` / `meshio.*`: optional helper import without installed stubs.
+- `http_constants` / `http_constants.*`: runtime dependency without installed stubs.
+- `gsp_extra.mpl3d.*`: vendored helper boundary quarantined with a focused override.
+- `src/gsp/utils/math_utils copy*.py`, `math_utils_new.py`, and `math_utils_original.py`: stale
+  backup artifacts excluded from the strict source walk.
 
 ## Guardrail
 

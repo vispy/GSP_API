@@ -35,13 +35,11 @@ class ViewportEventsBase(ABC):
     """Event triggered on mouse move"""
     mouse_scroll_event: Event[MouseEventCallback]
     """Event triggered on mouse scroll"""
-    mouse_scroll_event: Event[MouseEventCallback]
-    """Event triggered on mouse scroll"""
     canvas_resize_event: Event[CanvasResizeEventCallback]
     """Event triggered on canvas resize"""
 
     @abstractmethod
-    def __init__(self, renderer_base: "RendererBase", inner_viewport: "Viewport"):
+    def __init__(self, renderer_base: "RendererBase", inner_viewport: "Viewport") -> None:
         """Initialize the renderer with the given canvas.
 
         Args:

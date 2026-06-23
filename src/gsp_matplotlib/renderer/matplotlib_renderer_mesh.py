@@ -200,9 +200,9 @@ class RendererMesh:
         # =============================================================================
 
         # update the PolyCollection with the new patches
-        mpl_poly_collection.set_verts(typing.cast(list, faces_vertices_2d))
-        mpl_poly_collection.set_facecolor(typing.cast(list, face_colors_numpy))
-        mpl_poly_collection.set_edgecolor(typing.cast(list, material_edge_colors_numpy))
-        mpl_poly_collection.set_linewidth(typing.cast(list, material_edge_widths_numpy))
+        mpl_poly_collection.set_verts(typing.cast(list[typing.Any], faces_vertices_2d))
+        mpl_poly_collection.set_facecolor(typing.cast(list[typing.Any], face_colors_numpy))
+        mpl_poly_collection.set_edgecolor(typing.cast(list[typing.Any], material_edge_colors_numpy))
+        mpl_poly_collection.set_linewidth(typing.cast(list[typing.Any], material_edge_widths_numpy))
 
         return [mpl_poly_collection]

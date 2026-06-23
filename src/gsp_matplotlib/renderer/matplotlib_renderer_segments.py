@@ -110,9 +110,9 @@ class RendererSegments:
         # Update artists
         # =============================================================================
 
-        mpl_line_collection.set_paths(typing.cast(list, positions_numpy))
-        mpl_line_collection.set_color(typing.cast(list, colors_numpy))
-        mpl_line_collection.set_linewidth(typing.cast(list, line_widths_numpy))
+        mpl_line_collection.set_paths(typing.cast(list[typing.Any], positions_numpy))
+        mpl_line_collection.set_color(typing.cast(list[typing.Any], colors_numpy))
+        mpl_line_collection.set_linewidth(typing.cast(list[typing.Any], line_widths_numpy))
         mpl_line_collection.set_capstyle(ConverterUtils.cap_style_gsp_to_mpl(segments.get_cap_style()))
 
         # Return the list of artists created/updated

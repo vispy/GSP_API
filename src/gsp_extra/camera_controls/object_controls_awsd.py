@@ -16,7 +16,7 @@ from ..bufferx import Bufferx
 class ObjectControlAwsd:
     """Implements camera controls using AWSD keys for movement and mouse for orientation."""
 
-    def __init__(self, model_matrix_buffer: Buffer, viewport_events: ViewportEventsBase):
+    def __init__(self, model_matrix_buffer: Buffer, viewport_events: ViewportEventsBase) -> None:
         """Initialize the ObjectControlAwsd.
 
         Args:
@@ -38,12 +38,12 @@ class ObjectControlAwsd:
         self._viewport_events.key_press_event.subscribe(self._on_key_event)
         self._viewport_events.key_release_event.subscribe(self._on_key_event)
 
-    def close(self):
+    def close(self) -> None:
         """Unsubscribe from events."""
         self._viewport_events.key_press_event.unsubscribe(self._on_key_event)
         self._viewport_events.key_release_event.unsubscribe(self._on_key_event)
 
-    def _on_key_event(self, key_event: KeyEvent):
+    def _on_key_event(self, key_event: KeyEvent) -> None:
         print(f"ObjectControlAwsd: key_event: {key_event}")
         if key_event.event_type == EventType.KEY_PRESS:
             translate_vector = np.array([0, 0, 0], dtype=np.float32)

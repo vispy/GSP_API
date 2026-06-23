@@ -46,8 +46,8 @@ class ViewportEventsDatoviz(ViewportEventsBase):
         # =============================================================================
         # Connect keyboard in dvz_app
         # =============================================================================
-        @dvz_app.connect(dvz_figure)
-        def on_keyboard(dvz_keyboard_event: dvz.KeyboardEvent):
+        @dvz_app.connect(dvz_figure)  # type: ignore[misc]
+        def on_keyboard(dvz_keyboard_event: dvz.KeyboardEvent) -> None:
             # if this viewport is closed, ignore events (datoviz doesnt allow to disconnect events)
             if self._is_closed:
                 return
@@ -84,8 +84,8 @@ class ViewportEventsDatoviz(ViewportEventsBase):
         # =============================================================================
         # Connect mouse in dvz_app
         # =============================================================================
-        @dvz_app.connect(dvz_figure)
-        def on_mouse(dvz_mouse_event: dvz.MouseEvent):
+        @dvz_app.connect(dvz_figure)  # type: ignore[misc]
+        def on_mouse(dvz_mouse_event: dvz.MouseEvent) -> None:
             # if this viewport is closed, ignore events (datoviz doesnt allow to disconnect events)
             if self._is_closed:
                 return
@@ -167,8 +167,8 @@ class ViewportEventsDatoviz(ViewportEventsBase):
         # =============================================================================
         # Connect resize in dvz_app
         # =============================================================================
-        @dvz_app.connect(dvz_figure)
-        def on_resize(dvz_resize_event: dvz.WindowEvent):
+        @dvz_app.connect(dvz_figure)  # type: ignore[misc]
+        def on_resize(dvz_resize_event: dvz.WindowEvent) -> None:
             canvas_width_px = dvz_resize_event.screen_width()  # TODO may be a good idea to rename .screen_width() to .canvas_width() or similar in datoviz
             canvas_height_px = dvz_resize_event.screen_height()
             # dispatch canvas resize event
@@ -180,7 +180,7 @@ class ViewportEventsDatoviz(ViewportEventsBase):
             )
             self.canvas_resize_event.dispatch(canvas_resize_event)
 
-    def close(self):
+    def close(self) -> None:
         """Close the event handler and release resources."""
         # no more dispatch events (datoviz doesnt allow to disconnect events)
         self._is_closed = True

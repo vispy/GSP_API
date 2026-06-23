@@ -50,10 +50,10 @@ class AxisTickLocator:
 
         for nice in self.nice_fractions:
             if fraction <= nice:
-                return nice * base
+                return float(nice * base)
 
         # Fallback (should rarely happen)
-        return self.nice_fractions[-1] * base
+        return float(self.nice_fractions[-1] * base)
 
     def compute_location_dunit(self, min_dunit: float, max_dunit: float) -> Tuple[List[float], float]:
         """Generate tick positions in data units and the step size for an interval.
@@ -83,7 +83,7 @@ class AxisTickLocator:
         if value == 0:
             return 1.0
         exponent = math.floor(math.log10(abs(value)))
-        return 10**exponent
+        return float(10**exponent)
 
     def _round_tick(self, tick_value: float, tick_step: float) -> float:
         decimals = max(0, -math.floor(math.log10(tick_step)))

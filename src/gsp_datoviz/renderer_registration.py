@@ -7,7 +7,7 @@ from .renderer import DatovizRenderer
 from gsp.utils.renderer_registery import RendererRegistry
 
 
-def register_renderer_datoviz():
+def register_renderer_datoviz() -> None:
     """Register the Datoviz renderer and its associated components into the RendererRegistry."""
     RendererRegistry.register_renderer(
         renderer_name="datoviz",

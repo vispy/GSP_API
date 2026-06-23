@@ -132,14 +132,14 @@ class AxesPanZoom:
     # =============================================================================
     #
     # =============================================================================
-    def _on_button_press(self, mouse_event: MouseEvent):
+    def _on_button_press(self, mouse_event: MouseEvent) -> None:
         # Store pixel coordinates instead of data coordinates
         self._button_press_x_ndc = mouse_event.x_ndc
         self._button_press_y_ndc = mouse_event.y_ndc
 
         self._x_min_dunit, self._x_max_dunit, self._y_min_dunit, self._y_max_dunit = self._axes_display.get_limits_dunit()
 
-    def _on_button_release(self, mouse_event: MouseEvent):
+    def _on_button_release(self, mouse_event: MouseEvent) -> None:
         self._button_press_x_ndc = None
         self._button_press_y_ndc = None
         self._x_min_dunit = None
@@ -147,7 +147,7 @@ class AxesPanZoom:
         self._y_min_dunit = None
         self._y_max_dunit = None
 
-    def _on_mouse_move(self, mouse_event: MouseEvent):
+    def _on_mouse_move(self, mouse_event: MouseEvent) -> None:
         # sanity check
         if self._button_press_x_ndc is None or self._button_press_y_ndc is None:
             return
@@ -169,7 +169,7 @@ class AxesPanZoom:
         # =============================================================================
         self._set_axes_limits_dunit(new_x_min_dunit, new_x_max_dunit, new_y_min_dunit, new_y_max_dunit)
 
-    def _on_mouse_scroll(self, mouse_event: MouseEvent):
+    def _on_mouse_scroll(self, mouse_event: MouseEvent) -> None:
         scale_factor: float = 1 / self._base_scale if mouse_event.scroll_steps >= 0 else self._base_scale
 
         # Get current limits in data unit
@@ -217,60 +217,60 @@ class AxesPanZoom:
 
         # Enforce minimum zoom range if set for x
         if self._zoom_x_min_range_dunit is not None:
-            zoom_x_range_dunit: float = x_max_dunit - x_min_dunit
-            if zoom_x_range_dunit < self._zoom_x_min_range_dunit:
+            zoom_x_min_range_dunit: float = x_max_dunit - x_min_dunit
+            if zoom_x_min_range_dunit < self._zoom_x_min_range_dunit:
                 # Clamp the zoom range
-                center_x_dunit: float = (x_min_dunit + x_max_dunit) / 2.0
-                x_min_dunit = center_x_dunit - self._zoom_x_min_range_dunit / 2.0
-                x_max_dunit = center_x_dunit + self._zoom_x_min_range_dunit / 2.0
+                center_x_min_dunit: float = (x_min_dunit + x_max_dunit) / 2.0
+                x_min_dunit = center_x_min_dunit - self._zoom_x_min_range_dunit / 2.0
+                x_max_dunit = center_x_min_dunit + self._zoom_x_min_range_dunit / 2.0
         # Enforce minimum zoom range if set for y
         if self._zoom_y_min_range_dunit is not None:
-            zoom_y_range_dunit: float = y_max_dunit - y_min_dunit
-            if zoom_y_range_dunit < self._zoom_y_min_range_dunit:
+            zoom_y_min_range_dunit: float = y_max_dunit - y_min_dunit
+            if zoom_y_min_range_dunit < self._zoom_y_min_range_dunit:
                 # Clamp the zoom range
-                center_y_dunit: float = (y_min_dunit + y_max_dunit) / 2.0
-                y_min_dunit = center_y_dunit - self._zoom_y_min_range_dunit / 2.0
-                y_max_dunit = center_y_dunit + self._zoom_y_min_range_dunit / 2.0
+                center_y_min_dunit: float = (y_min_dunit + y_max_dunit) / 2.0
+                y_min_dunit = center_y_min_dunit - self._zoom_y_min_range_dunit / 2.0
+                y_max_dunit = center_y_min_dunit + self._zoom_y_min_range_dunit / 2.0
         # Enforce maximum zoom range if set for x
         if self._zoom_x_max_range_dunit is not None:
-            zoom_x_range_dunit: float = x_max_dunit - x_min_dunit
-            if zoom_x_range_dunit > self._zoom_x_max_range_dunit:
+            zoom_x_max_range_dunit: float = x_max_dunit - x_min_dunit
+            if zoom_x_max_range_dunit > self._zoom_x_max_range_dunit:
                 # Clamp the zoom range
-                center_x_dunit: float = (x_min_dunit + x_max_dunit) / 2.0
-                x_min_dunit = center_x_dunit - self._zoom_x_max_range_dunit / 2.0
-                x_max_dunit = center_x_dunit + self._zoom_x_max_range_dunit / 2.0
+                center_x_max_dunit: float = (x_min_dunit + x_max_dunit) / 2.0
+                x_min_dunit = center_x_max_dunit - self._zoom_x_max_range_dunit / 2.0
+                x_max_dunit = center_x_max_dunit + self._zoom_x_max_range_dunit / 2.0
         # Enforce maximum zoom range if set for y
         if self._zoom_y_max_range_dunit is not None:
-            zoom_y_range_dunit: float = y_max_dunit - y_min_dunit
-            if zoom_y_range_dunit > self._zoom_y_max_range_dunit:
+            zoom_y_max_range_dunit: float = y_max_dunit - y_min_dunit
+            if zoom_y_max_range_dunit > self._zoom_y_max_range_dunit:
                 # Clamp the zoom range
-                center_y_dunit: float = (y_min_dunit + y_max_dunit) / 2.0
-                y_min_dunit = center_y_dunit - self._zoom_y_max_range_dunit / 2.0
-                y_max_dunit = center_y_dunit + self._zoom_y_max_range_dunit / 2.0
+                center_y_max_dunit: float = (y_min_dunit + y_max_dunit) / 2.0
+                y_min_dunit = center_y_max_dunit - self._zoom_y_max_range_dunit / 2.0
+                y_max_dunit = center_y_max_dunit + self._zoom_y_max_range_dunit / 2.0
 
         # =============================================================================
         # Enforce pan limit
         # =============================================================================
         if self._pan_x_min_dunit is not None:
             if x_min_dunit <= self._pan_x_min_dunit:
-                shift_dunit: float = self._pan_x_min_dunit - x_min_dunit
-                x_min_dunit += shift_dunit
-                x_max_dunit += shift_dunit
+                shift_x_min_dunit: float = self._pan_x_min_dunit - x_min_dunit
+                x_min_dunit += shift_x_min_dunit
+                x_max_dunit += shift_x_min_dunit
         if self._pan_x_max_dunit is not None:
             if x_max_dunit >= self._pan_x_max_dunit:
-                shift_dunit: float = x_max_dunit - self._pan_x_max_dunit
-                x_min_dunit -= shift_dunit
-                x_max_dunit -= shift_dunit
+                shift_x_max_dunit: float = x_max_dunit - self._pan_x_max_dunit
+                x_min_dunit -= shift_x_max_dunit
+                x_max_dunit -= shift_x_max_dunit
         if self._pan_y_min_dunit is not None:
             if y_min_dunit <= self._pan_y_min_dunit:
-                shift_dunit: float = self._pan_y_min_dunit - y_min_dunit
-                y_min_dunit += shift_dunit
-                y_max_dunit += shift_dunit
+                shift_y_min_dunit: float = self._pan_y_min_dunit - y_min_dunit
+                y_min_dunit += shift_y_min_dunit
+                y_max_dunit += shift_y_min_dunit
         if self._pan_y_max_dunit is not None:
             if y_max_dunit >= self._pan_y_max_dunit:
-                shift_dunit: float = y_max_dunit - self._pan_y_max_dunit
-                y_min_dunit -= shift_dunit
-                y_max_dunit -= shift_dunit
+                shift_y_max_dunit: float = y_max_dunit - self._pan_y_max_dunit
+                y_min_dunit -= shift_y_max_dunit
+                y_max_dunit -= shift_y_max_dunit
 
         # handle edge case where pan limits are smaller goes beyond min/max limits by epsilon
         # - sometimes floating point errors can cause this issue e.g. self._pan_x_min_dunit = -2.0 but x_min_dunit = -2.00000001

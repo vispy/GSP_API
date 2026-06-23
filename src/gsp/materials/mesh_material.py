@@ -13,7 +13,7 @@ class MeshMaterial(Material):
 
     def __init__(
         self,
-    ):
+    ) -> None:
         """Initialize a MeshMaterial instance."""
         super().__init__()
 

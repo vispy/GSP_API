@@ -15,7 +15,7 @@ from ..mpl3d.trackball import Trackball
 class ObjectControlsTrackball:
     """Implements camera controls using AWSD keys for movement and mouse for orientation."""
 
-    def __init__(self, model_matrix_buffer: Buffer, viewport_events: ViewportEventsBase):
+    def __init__(self, model_matrix_buffer: Buffer, viewport_events: ViewportEventsBase) -> None:
         """Initialize the ObjectControlsTrackball.
 
         Args:
@@ -41,21 +41,21 @@ class ObjectControlsTrackball:
         self._viewport_events.button_release_event.subscribe(self._on_button_release)
         self._viewport_events.mouse_move_event.subscribe(self._on_mouse_move)
 
-    def close(self):
+    def close(self) -> None:
         """Unsubscribe from events."""
         self._viewport_events.button_press_event.unsubscribe(self._on_button_press)
         self._viewport_events.button_release_event.unsubscribe(self._on_button_release)
         self._viewport_events.mouse_move_event.unsubscribe(self._on_mouse_move)
 
-    def _on_button_press(self, mouse_event: MouseEvent):
+    def _on_button_press(self, mouse_event: MouseEvent) -> None:
         self._button_pressed = True
         self._start_x = mouse_event.x_ndc
         self._start_y = mouse_event.y_ndc
 
-    def _on_button_release(self, mouse_event: MouseEvent):
+    def _on_button_release(self, mouse_event: MouseEvent) -> None:
         self._button_pressed = False
 
-    def _on_mouse_move(self, mouse_event: MouseEvent):
+    def _on_mouse_move(self, mouse_event: MouseEvent) -> None:
         # ignore if no button is pressed
         if self._button_pressed is False:
             return

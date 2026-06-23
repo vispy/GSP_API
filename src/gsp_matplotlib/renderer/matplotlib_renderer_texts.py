@@ -1,6 +1,7 @@
 """Renderer for Texts using Matplotlib."""
 
 # pip imports
+from typing import Literal
 import typing
 import matplotlib.text
 import matplotlib.artist
@@ -142,14 +143,14 @@ class RendererTexts:
             textAlign = textAligns[text_index]
             vertical_index = textAlign.value // 10
             horizontal_index = textAlign.value % 10
-            ha_label = "center" if horizontal_index == 1 else "right" if horizontal_index == 2 else "left"
-            va_label = "center" if vertical_index == 1 else "top" if vertical_index == 2 else "bottom"
+            ha_label: Literal["left", "center", "right"] = "center" if horizontal_index == 1 else "right" if horizontal_index == 2 else "left"
+            va_label: Literal["bottom", "center", "top"] = "center" if vertical_index == 1 else "top" if vertical_index == 2 else "bottom"
             mpl_text.set_horizontalalignment(ha_label)
             mpl_text.set_verticalalignment(va_label)
 
             mpl_text.set_fontfamily(texts.get_font_name())
             mpl_text.set_fontsize(font_sizes_numpy[text_index])
-            mpl_text.set_color(typing.cast(tuple, colors_numpy[text_index]))
+            mpl_text.set_color(typing.cast(tuple[typing.Any, ...], colors_numpy[text_index]))
 
             # Return the list of artists created/updated
             changed_artists.append(mpl_text)

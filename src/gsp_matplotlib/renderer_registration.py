@@ -7,7 +7,7 @@ from .renderer import MatplotlibRenderer
 from gsp.utils.renderer_registery import RendererRegistry
 
 
-def register_renderer_matplotlib():
+def register_renderer_matplotlib() -> None:
     """Register the Matplotlib renderer and its associated components into the RendererRegistry."""
     RendererRegistry.register_renderer(
         renderer_name="matplotlib",

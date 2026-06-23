@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 from itertools import count
 from pathlib import Path
-from typing import Any
+from typing import Any, SupportsFloat, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -365,11 +365,11 @@ def _colors(value: npt.ArrayLike | None, count_: int) -> npt.NDArray[np.uint8] |
 
 def _sizes(value: npt.ArrayLike | float, count_: int) -> npt.NDArray[np.float32] | float:
     if np.isscalar(value):
-        return float(value)
+        return float(cast(SupportsFloat, value))
     array = np.asarray(value, dtype=np.float32)
     if array.ndim != 1 or array.shape[0] != count_:
         raise ValueError("size must be scalar or shape (N,)")
-    return np.ascontiguousarray(array)
+    return np.ascontiguousarray(array).astype(np.float32, copy=False)
 
 
 def _origin(value: str | ImageOrigin) -> ImageOrigin:

@@ -113,10 +113,10 @@ class RendererPoints:
         # =============================================================================
 
         mpl_path_collection.set_offsets(offsets=vertices_2d)
-        mpl_path_collection.set_sizes(typing.cast(list, sizes_numpy))
-        mpl_path_collection.set_facecolor(typing.cast(list, face_colors_numpy))
-        mpl_path_collection.set_edgecolor(typing.cast(list, edge_colors_numpy))
-        mpl_path_collection.set_linewidth(typing.cast(list, edge_widths_numpy))
+        mpl_path_collection.set_sizes(typing.cast(list[typing.Any], sizes_numpy))
+        mpl_path_collection.set_facecolor(typing.cast(list[typing.Any], face_colors_numpy))
+        mpl_path_collection.set_edgecolor(typing.cast(list[typing.Any], edge_colors_numpy))
+        mpl_path_collection.set_linewidth(typing.cast(list[typing.Any], edge_widths_numpy))
 
         # Return the list of artists created/updated
         changed_artists: list[matplotlib.artist.Artist] = []

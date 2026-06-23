@@ -81,15 +81,15 @@ def _nice_step(start: float, end: float, target_count: int) -> float:
     fraction = raw_step / base
     for nice in (1.0, 2.0, 2.5, 5.0, 10.0):
         if fraction <= nice:
-            return nice * base
-    return 10.0 * base
+            return float(nice * base)
+    return float(10.0 * base)
 
 
 def _fallback_step(value: float) -> float:
     if value == 0:
         return 1.0
     exponent = math.floor(math.log10(abs(value)))
-    return 10**exponent
+    return float(10**exponent)
 
 
 def _round_tick(value: float, step: float) -> float:

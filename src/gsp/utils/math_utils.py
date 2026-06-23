@@ -7,6 +7,7 @@ used throughout the GSP library, including:
 
 # pip imports
 import numpy as np
+import typing
 
 # local imports
 from ..types.buffer import Buffer
@@ -49,7 +50,7 @@ class MathUtils:
         vertices_mvp_transformed = (mvp_matrix @ vertices_homogeneous.T).T  # shape (N, 4)
 
         # return the transformed vertices
-        return vertices_mvp_transformed
+        return typing.cast(np.ndarray, vertices_mvp_transformed)
 
     @staticmethod
     def apply_mvp_to_vertices(vertices: np.ndarray, model_matrix: np.ndarray, view_matrix: np.ndarray, projection_matrix: np.ndarray) -> np.ndarray:
@@ -75,7 +76,7 @@ class MathUtils:
         pass
 
         # return the transformed vertices
-        return vertices_3d_transformed
+        return typing.cast(np.ndarray, vertices_3d_transformed)
 
     # =============================================================================
     # New version... TODO remove the old asap
@@ -107,7 +108,7 @@ class MathUtils:
         # Compute the Model-View-Projection (MVP) matrix
         mvp_matrix = projection_matrix @ view_matrix @ model_matrix  # shape (4, 4)
 
-        return mvp_matrix
+        return typing.cast(np.ndarray, mvp_matrix)
 
     @staticmethod
     def apply_transform_matrix(vertices: np.ndarray, transform_matrix: np.ndarray) -> tuple[np.ndarray, np.ndarray]:

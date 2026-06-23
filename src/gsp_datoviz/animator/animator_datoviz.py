@@ -1,11 +1,12 @@
 """Animator for GSP scenes using a matplotlib renderer."""
 
 # stdlib imports
-from logging import warning
+from typing import Any
 import os
 import __main__
 from typing import Sequence
 import time
+import warnings
 
 # local imports
 from gsp.types.transbuf import TransBuf
@@ -30,7 +31,7 @@ class AnimatorDatoviz(AnimatorBase):
         fps: int = 50,
         video_duration: float | None = None,
         video_path: str | None = None,
-    ):
+    ) -> None:
         """Initialize the animator.
 
         Args:
@@ -52,6 +53,7 @@ class AnimatorDatoviz(AnimatorBase):
         self._visuals: Sequence[VisualBase] | None = None
         self._model_matrices: Sequence[TransBuf] | None = None
         self._cameras: Sequence[Camera] | None = None
+        self._time_last_update: float | None = None
 
         self.on_video_saved = Event[VideoSavedCalledback]()
         """Event triggered when the video is saved."""
@@ -153,8 +155,8 @@ class AnimatorDatoviz(AnimatorBase):
 
         dvz_app = self._datoviz_renderer.get_dvz_app()
 
-        @dvz_app.timer(period=1.0 / self._fps)
-        def on_timer(event):
+        @dvz_app.timer(period=1.0 / self._fps)  # type: ignore[misc]
+        def on_timer(event: Any) -> None:
             self._dvz_animate()
 
         # =============================================================================
@@ -166,13 +168,13 @@ class AnimatorDatoviz(AnimatorBase):
     # =============================================================================
     # .stop()
     # =============================================================================
-    def stop(self):
+    def stop(self) -> None:
         """Stop the animation."""
         self._canvas = None
         self._viewports = None
         self._time_last_update = None
 
-        warning.warn("GspAnimatorDatoviz.stop() is not fully implemented yet.")
+        warnings.warn("GspAnimatorDatoviz.stop() is not fully implemented yet.", stacklevel=2)
 
     def _dvz_animate(self) -> None:
         # sanity checks

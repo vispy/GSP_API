@@ -90,7 +90,7 @@ def datoviz_v04_capability_snapshot(dvz: ModuleType | Any | None = None) -> Capa
 
     if dvz is None:
         try:
-            import datoviz as imported_dvz  # type: ignore[import-untyped]
+            import datoviz as imported_dvz
         except ModuleNotFoundError:
             diagnostics = ("Datoviz is not importable; using conservative static GSP slice capabilities",)
         else:

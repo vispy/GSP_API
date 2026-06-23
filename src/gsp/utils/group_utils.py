@@ -37,14 +37,14 @@ class GroupUtils:
         """
         groups_format = GroupUtils._groups_format(groups)
         if groups_format == GroupUtils.FORMAT_INT:
-            groups_typed = typing.cast(int, groups)
-            group_count = vertex_count // groups_typed
+            groups_int = typing.cast(int, groups)
+            group_count = vertex_count // groups_int
         elif groups_format == GroupUtils.FORMAT_LIST_INT:
-            groups_typed = typing.cast(list[int], groups)
-            group_count = len(groups_typed)
+            groups_list_int = typing.cast(list[int], groups)
+            group_count = len(groups_list_int)
         elif groups_format == GroupUtils.FORMAT_LIST_LIST_INT:
-            groups_typed = typing.cast(list[list[int]], groups)
-            group_count = len(groups_typed)
+            groups_list_list_int = typing.cast(list[list[int]], groups)
+            group_count = len(groups_list_list_int)
         else:
             raise NotImplementedError(f"Group buffer shape not supported: {type(groups)}")
 
@@ -85,9 +85,9 @@ class GroupUtils:
     # ._groups_format()
     # =============================================================================
 
-    FORMAT_INT = "format_int"
-    FORMAT_LIST_INT = "format_list_int"
-    FORMAT_LIST_LIST_INT = "format_list_list_int"
+    FORMAT_INT: Literal["format_int"] = "format_int"
+    FORMAT_LIST_INT: Literal["format_list_int"] = "format_list_int"
+    FORMAT_LIST_LIST_INT: Literal["format_list_list_int"] = "format_list_list_int"
 
     @staticmethod
     def _groups_format(groups: Groups) -> Literal["format_int", "format_list_int", "format_list_list_int"]:
@@ -198,14 +198,14 @@ class GroupUtils:
 
         groups_format = GroupUtils._groups_format(groups)
         if groups_format == GroupUtils.FORMAT_INT:
-            groups_typed = typing.cast(int, groups)
-            indices_per_group = GroupUtils._compute_indices_per_group_int(vertex_count, groups_typed)
+            groups_int = typing.cast(int, groups)
+            indices_per_group = GroupUtils._compute_indices_per_group_int(vertex_count, groups_int)
         elif groups_format == GroupUtils.FORMAT_LIST_INT:
-            groups_typed = typing.cast(list[int], groups)
-            indices_per_group = GroupUtils._compute_indices_per_group_list_int(vertex_count, groups_typed)
+            groups_list_int = typing.cast(list[int], groups)
+            indices_per_group = GroupUtils._compute_indices_per_group_list_int(vertex_count, groups_list_int)
         elif groups_format == GroupUtils.FORMAT_LIST_LIST_INT:
-            groups_typed = typing.cast(list[list[int]], groups)
-            indices_per_group = GroupUtils._compute_indices_per_group_list_list_int(vertex_count, groups_typed)
+            groups_list_list_int = typing.cast(list[list[int]], groups)
+            indices_per_group = GroupUtils._compute_indices_per_group_list_list_int(vertex_count, groups_list_list_int)
         else:
             raise NotImplementedError(f"Group buffer shape not supported: {type(groups)}")
 

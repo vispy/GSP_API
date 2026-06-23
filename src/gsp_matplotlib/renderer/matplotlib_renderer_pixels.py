@@ -128,7 +128,7 @@ class RendererPixels:
             # =============================================================================
 
             mpl_path_collection.set_offsets(offsets=vertices_2d[indices_per_group[group_index]])
-            mpl_path_collection.set_facecolor(typing.cast(list, colors_numpy[group_index]))
+            mpl_path_collection.set_facecolor(typing.cast(list[typing.Any], colors_numpy[group_index]))
 
         # Return the list of artists created/updated
         return changed_artists
@@ -180,14 +180,3 @@ class RendererPixels:
 
             # axes.collections.remove(mpl_path_collection)
             # axes.collections.remove(axes.collections.index(mpl_path_collection))
-
-            ax = axes
-            artist = mpl_path_collection
-
-            print("Artist:", artist)
-            print("In ax.artists?", artist in ax.artists)
-            print("In ax.patches?", artist in ax.patches)
-            print("In ax.lines?", artist in ax.lines)
-            print("In ax.collections?", artist in ax.collections)
-            print("In ax.texts?", artist in ax.texts)
-            print("Figure art?", artist in getattr(ax.figure, "artists", []))

@@ -6,7 +6,6 @@ to Buffer objects, handling both direct Buffer instances and TransformChain obje
 
 # stdlib imports
 import numpy as np
-import typing
 
 # local imports
 from ..types.transbuf import TransBuf
@@ -37,11 +36,8 @@ class TransBufUtils:
             ValueError: If the trans_buf is neither a Buffer nor a TransformChain.
         """
         if isinstance(trans_buf, Buffer):
-            buffer = typing.cast(Buffer, trans_buf)
-            return buffer
+            return trans_buf
         elif isinstance(trans_buf, TransformChain):
-            transform_chain = typing.cast(TransformChain, trans_buf)
-            buffer = transform_chain.run()
-            return buffer
+            return trans_buf.run()
         else:
             raise ValueError(f"Unsupported type for transbuf_to_buffer {type(trans_buf)}")

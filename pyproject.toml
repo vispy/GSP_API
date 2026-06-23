@@ -77,6 +77,12 @@ lint.select = ["D"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
+[tool.mypy]
+exclude = [
+    "src/gsp/utils/math_utils copy.*\\.py$",
+    "src/gsp/utils/math_utils_(new|original)\\.py$",
+]
+
 [[tool.mypy.overrides]]
 module = ["datoviz", "datoviz.*"]
 ignore_missing_imports = true
@@ -84,3 +90,11 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = ["http_constants", "http_constants.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["meshio", "meshio.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["gsp_extra.mpl3d.*"]
+ignore_errors = true

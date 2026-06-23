@@ -2,7 +2,7 @@
 
 # stdlib imports
 import math
-from typing import Protocol, Tuple
+from typing import Protocol, Tuple, cast
 
 # pip imports
 import numpy as np
@@ -137,7 +137,7 @@ class AxesDisplay:
         # Combine translation and scale to get the final transform matrix
         axes_transform_numpy = scale_matrix @ translation_matrix
         # Return the transform matrix
-        return axes_transform_numpy
+        return cast(np.ndarray, axes_transform_numpy)
 
     def get_inner_viewport(self) -> Viewport:
         """Get the inner viewport."""
@@ -357,7 +357,7 @@ class AxesDisplay:
         tick_labels = [tick_formatter.format(tick_position, tick_step) for tick_position in tick_positions_dunit]
 
         # Create positions for ticks from -num_ticks/2 to +num_ticks/2
-        tick_positions = []
+        tick_positions: list[tuple[float, float, float]] = []
         for tick_x_inner_dunit in tick_positions_dunit:
             # compute tick_x_outter_ndc
             tick_x_inner_ndc = (tick_x_inner_dunit - x_min_dunit) / (x_max_dunit - x_min_dunit) * 2.0 - 1.0
@@ -365,7 +365,7 @@ class AxesDisplay:
             tick_x_outter_delta_ndc, _ = outter_viewport_unit.delta_pixel_to_ndc(tick_x_outter_delta_pixel, 0.0)
             tick_x_outter_ndc = tick_x_outter_delta_ndc - 1.0
 
-            tick_positions.append([tick_x_outter_ndc, tick_y_outter_ndc, 0.0])
+            tick_positions.append((tick_x_outter_ndc, tick_y_outter_ndc, 0.0))
 
         # =============================================================================
         # Return coord_array and tick_labels
@@ -395,7 +395,7 @@ class AxesDisplay:
         tick_labels = [tick_formatter.format(tick_position, tick_step) for tick_position in tick_positions_dunit]
 
         # Create positions for ticks from -num_ticks/2 to +num_ticks/2
-        tick_positions = []
+        tick_positions: list[tuple[float, float, float]] = []
         # for tick_y_inner_dunit in range(math.ceil(y_min_dunit), math.ceil(y_max_dunit) + 1):
         for tick_y_inner_dunit in tick_positions_dunit:
             # compute tick_y_outter_ndc
@@ -404,7 +404,7 @@ class AxesDisplay:
             _, tick_y_outter_delta_ndc = outter_viewport_unit.delta_pixel_to_ndc(0.0, tick_y_outter_delta_pixel)
             tick_y_outter_ndc = tick_y_outter_delta_ndc - 1.0
 
-            tick_positions.append([tick_x_outter_ndc, tick_y_outter_ndc, 0.0])
+            tick_positions.append((tick_x_outter_ndc, tick_y_outter_ndc, 0.0))
 
         return tick_positions, tick_labels
 

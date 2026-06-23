@@ -60,15 +60,15 @@ class ViewportEventsMatplotlib(ViewportEventsBase):
 
         # event connections
         mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
-        self._mpl_key_press_cid = mpl_canvas.mpl_connect("key_press_event", typing.cast(Any, self._on_key_press))
-        self._mpl_key_release_cid = mpl_canvas.mpl_connect("key_release_event", typing.cast(Any, self._on_key_release))
-        self._mpl_button_press_cid = mpl_canvas.mpl_connect("button_press_event", typing.cast(Any, self._on_button_press))
-        self._mpl_button_release_cid = mpl_canvas.mpl_connect("button_release_event", typing.cast(Any, self._on_button_release))
-        self._mpl_mouse_move_cid = mpl_canvas.mpl_connect("motion_notify_event", typing.cast(Any, self._on_mouse_move))
-        self._mpl_scroll_event_cid = mpl_canvas.mpl_connect("scroll_event", typing.cast(Any, self._on_mouse_scroll))
-        self._mpl_resize_event_cid = mpl_canvas.mpl_connect("resize_event", typing.cast(Any, self._on_canvas_resize))
+        self._mpl_key_press_cid: int | None = mpl_canvas.mpl_connect("key_press_event", typing.cast(Any, self._on_key_press))
+        self._mpl_key_release_cid: int | None = mpl_canvas.mpl_connect("key_release_event", typing.cast(Any, self._on_key_release))
+        self._mpl_button_press_cid: int | None = mpl_canvas.mpl_connect("button_press_event", typing.cast(Any, self._on_button_press))
+        self._mpl_button_release_cid: int | None = mpl_canvas.mpl_connect("button_release_event", typing.cast(Any, self._on_button_release))
+        self._mpl_mouse_move_cid: int | None = mpl_canvas.mpl_connect("motion_notify_event", typing.cast(Any, self._on_mouse_move))
+        self._mpl_scroll_event_cid: int | None = mpl_canvas.mpl_connect("scroll_event", typing.cast(Any, self._on_mouse_scroll))
+        self._mpl_resize_event_cid: int | None = mpl_canvas.mpl_connect("resize_event", typing.cast(Any, self._on_canvas_resize))
 
-    def close(self):
+    def close(self) -> None:
         """Close the event handler and release resources."""
         mpl_canvas: matplotlib.backend_bases.FigureCanvasBase = self._renderer.get_mpl_figure().canvas
         if self._mpl_key_press_cid is not None:

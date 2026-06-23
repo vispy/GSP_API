@@ -199,7 +199,7 @@ class MatplotlibRenderer(RendererBase):
 
         return image_png_data
 
-    def _render_visual(self, viewport: Viewport, visual: VisualBase, model_matrix: TransBuf, camera: Camera):
+    def _render_visual(self, viewport: Viewport, visual: VisualBase, model_matrix: TransBuf, camera: Camera) -> None:
         """Render a single visual in a given viewport using the specified camera."""
         if isinstance(visual, Image):
             from gsp_matplotlib.renderer.matplotlib_renderer_image import RendererImage

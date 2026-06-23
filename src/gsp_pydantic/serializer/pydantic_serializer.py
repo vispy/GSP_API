@@ -135,100 +135,93 @@ class PydanticSerializer(SerializerBase):
         pydantic_visuals: list[PydanticVisual] = []
         for visual in visuals:
             if isinstance(visual, Image):
-                image = typing.cast(Image, visual)
                 pydantic_visual = PydanticVisual(
                     type="image",
                     visual=PydanticImage(
-                        uuid=image.get_uuid(),
-                        texture=PydanticSerializer._texture_to_pydantic(image.get_texture()),
-                        position=PydanticSerializer._transbuf_to_pydantic(image.get_position()),
-                        image_extent=image.get_image_extent(),
-                        interpolation=image.get_interpolation().name,
+                        uuid=visual.get_uuid(),
+                        texture=PydanticSerializer._texture_to_pydantic(visual.get_texture()),
+                        position=PydanticSerializer._transbuf_to_pydantic(visual.get_position()),
+                        image_extent=visual.get_image_extent(),
+                        interpolation=visual.get_interpolation().name,
                     ),
                 )
                 pydantic_visuals.append(pydantic_visual)
             elif isinstance(visual, Markers):
-                markers = typing.cast(Markers, visual)
                 pydantic_visual = PydanticVisual(
                     type="markers",
                     visual=PydanticMarkers(
-                        uuid=markers.get_uuid(),
-                        marker_shape=markers.get_marker_shape().name,
-                        positions=PydanticSerializer._transbuf_to_pydantic(markers.get_positions()),
-                        sizes=PydanticSerializer._transbuf_to_pydantic(markers.get_sizes()),
-                        face_colors=PydanticSerializer._transbuf_to_pydantic(markers.get_face_colors()),
-                        edge_colors=PydanticSerializer._transbuf_to_pydantic(markers.get_edge_colors()),
-                        edge_widths=PydanticSerializer._transbuf_to_pydantic(markers.get_edge_widths()),
+                        uuid=visual.get_uuid(),
+                        marker_shape=visual.get_marker_shape().name,
+                        positions=PydanticSerializer._transbuf_to_pydantic(visual.get_positions()),
+                        sizes=PydanticSerializer._transbuf_to_pydantic(visual.get_sizes()),
+                        face_colors=PydanticSerializer._transbuf_to_pydantic(visual.get_face_colors()),
+                        edge_colors=PydanticSerializer._transbuf_to_pydantic(visual.get_edge_colors()),
+                        edge_widths=PydanticSerializer._transbuf_to_pydantic(visual.get_edge_widths()),
                     ),
                 )
                 pydantic_visuals.append(pydantic_visual)
             elif isinstance(visual, Paths):
-                paths = typing.cast(Paths, visual)
                 pydantic_visual = PydanticVisual(
                     type="paths",
                     visual=PydanticPaths(
-                        uuid=paths.get_uuid(),
-                        positions=PydanticSerializer._transbuf_to_pydantic(paths.get_positions()),
-                        path_sizes=PydanticSerializer._transbuf_to_pydantic(paths.get_path_sizes()),
-                        colors=PydanticSerializer._transbuf_to_pydantic(paths.get_colors()),
-                        line_widths=PydanticSerializer._transbuf_to_pydantic(paths.get_line_widths()),
-                        cap_style=paths.get_cap_style().name,
-                        join_style=paths.get_join_style().name,
+                        uuid=visual.get_uuid(),
+                        positions=PydanticSerializer._transbuf_to_pydantic(visual.get_positions()),
+                        path_sizes=PydanticSerializer._transbuf_to_pydantic(visual.get_path_sizes()),
+                        colors=PydanticSerializer._transbuf_to_pydantic(visual.get_colors()),
+                        line_widths=PydanticSerializer._transbuf_to_pydantic(visual.get_line_widths()),
+                        cap_style=visual.get_cap_style().name,
+                        join_style=visual.get_join_style().name,
                     ),
                 )
                 pydantic_visuals.append(pydantic_visual)
             elif isinstance(visual, Pixels):
-                pixels = typing.cast(Pixels, visual)
                 pydantic_visual = PydanticVisual(
                     type="pixels",
                     visual=PydanticPixels(
-                        uuid=pixels.get_uuid(),
-                        positions=PydanticSerializer._transbuf_to_pydantic(pixels.get_positions()),
-                        colors=PydanticSerializer._transbuf_to_pydantic(pixels.get_colors()),
-                        groups=pixels.get_groups(),
+                        uuid=visual.get_uuid(),
+                        positions=PydanticSerializer._transbuf_to_pydantic(visual.get_positions()),
+                        colors=PydanticSerializer._transbuf_to_pydantic(visual.get_colors()),
+                        groups=visual.get_groups(),
                     ),
                 )
                 pydantic_visuals.append(pydantic_visual)
             elif isinstance(visual, Points):
-                points = typing.cast(Points, visual)
                 pydantic_visual = PydanticVisual(
                     type="points",
                     visual=PydanticPoints(
-                        uuid=points.get_uuid(),
-                        positions=PydanticSerializer._transbuf_to_pydantic(points.get_positions()),
-                        sizes=PydanticSerializer._transbuf_to_pydantic(points.get_sizes()),
-                        face_colors=PydanticSerializer._transbuf_to_pydantic(points.get_face_colors()),
-                        edge_colors=PydanticSerializer._transbuf_to_pydantic(points.get_edge_colors()),
-                        edge_widths=PydanticSerializer._transbuf_to_pydantic(points.get_edge_widths()),
+                        uuid=visual.get_uuid(),
+                        positions=PydanticSerializer._transbuf_to_pydantic(visual.get_positions()),
+                        sizes=PydanticSerializer._transbuf_to_pydantic(visual.get_sizes()),
+                        face_colors=PydanticSerializer._transbuf_to_pydantic(visual.get_face_colors()),
+                        edge_colors=PydanticSerializer._transbuf_to_pydantic(visual.get_edge_colors()),
+                        edge_widths=PydanticSerializer._transbuf_to_pydantic(visual.get_edge_widths()),
                     ),
                 )
                 pydantic_visuals.append(pydantic_visual)
             elif isinstance(visual, Segments):
-                segments = typing.cast(Segments, visual)
                 pydantic_visual = PydanticVisual(
                     type="segments",
                     visual=PydanticSegments(
-                        uuid=segments.get_uuid(),
-                        positions=PydanticSerializer._transbuf_to_pydantic(segments.get_positions()),
-                        line_widths=PydanticSerializer._transbuf_to_pydantic(segments.get_line_widths()),
-                        cap_style=segments.get_cap_style().name,
-                        colors=PydanticSerializer._transbuf_to_pydantic(segments.get_colors()),
+                        uuid=visual.get_uuid(),
+                        positions=PydanticSerializer._transbuf_to_pydantic(visual.get_positions()),
+                        line_widths=PydanticSerializer._transbuf_to_pydantic(visual.get_line_widths()),
+                        cap_style=visual.get_cap_style().name,
+                        colors=PydanticSerializer._transbuf_to_pydantic(visual.get_colors()),
                     ),
                 )
                 pydantic_visuals.append(pydantic_visual)
             elif isinstance(visual, Texts):
-                texts = typing.cast(Texts, visual)
                 pydantic_visual = PydanticVisual(
                     type="texts",
                     visual=PydanticTexts(
-                        uuid=texts.get_uuid(),
-                        positions=PydanticSerializer._transbuf_to_pydantic(texts.get_positions()),
-                        texts=texts.get_strings(),
-                        colors=PydanticSerializer._transbuf_to_pydantic(texts.get_colors()),
-                        font_sizes=PydanticSerializer._transbuf_to_pydantic(texts.get_font_sizes()),
-                        textAligns=typing.cast(list[int], texts.get_textAligns()),
-                        angles=PydanticSerializer._transbuf_to_pydantic(texts.get_angles()),
-                        font_name=texts.get_font_name(),
+                        uuid=visual.get_uuid(),
+                        positions=PydanticSerializer._transbuf_to_pydantic(visual.get_positions()),
+                        texts=visual.get_strings(),
+                        colors=PydanticSerializer._transbuf_to_pydantic(visual.get_colors()),
+                        font_sizes=PydanticSerializer._transbuf_to_pydantic(visual.get_font_sizes()),
+                        textAligns=typing.cast(list[int], visual.get_textAligns()),
+                        angles=PydanticSerializer._transbuf_to_pydantic(visual.get_angles()),
+                        font_name=visual.get_font_name(),
                     ),
                 )
                 pydantic_visuals.append(pydantic_visual)
@@ -241,22 +234,20 @@ class PydanticSerializer(SerializerBase):
     @staticmethod
     def _transbuf_to_pydantic(transbuf: TransBuf) -> PydanticTransBuf:
         if isinstance(transbuf, Buffer):
-            buffer = typing.cast(Buffer, transbuf)
             pydantic_transbuf = PydanticTransBuf(
                 type="buffer",
                 transBuf=PydanticBuffer(
-                    count=buffer.get_count(),
-                    buffer_type=buffer.get_type().name,
-                    data_base64=base64.b64encode(buffer.to_bytearray()).decode("utf-8"),
+                    count=transbuf.get_count(),
+                    buffer_type=transbuf.get_type().name,
+                    data_base64=base64.b64encode(transbuf.to_bytearray()).decode("utf-8"),
                 ),
             )
             return pydantic_transbuf
         elif isinstance(transbuf, TransformChain):
-            transform_chain = typing.cast(TransformChain, transbuf)
             pydantic_transbuf = PydanticTransBuf(
                 type="transform_chain",
                 transBuf=PydanticTransformChain(
-                    transform_chain=transform_chain.serialize(),
+                    transform_chain=transbuf.serialize(),
                 ),
             )
             return pydantic_transbuf

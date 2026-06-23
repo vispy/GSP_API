@@ -1,7 +1,7 @@
 """Per-material attribute computation for MeshPhongMaterial."""
 
 # pip imports
-from typing import Sequence
+from typing import Sequence, cast
 
 import numpy as np
 
@@ -180,4 +180,4 @@ class RendererMeshPhong:
         position_buffer = TransBufUtils.to_buffer(position_transbuf)
         position_numpy = Bufferx.to_numpy(position_buffer).reshape(-1, 3)  # (1, 3)
         world_xyz, _ = MathUtils.apply_transform_matrix(position_numpy, model_matrix_numpy)
-        return world_xyz[0]  # (3,)
+        return cast(np.ndarray, world_xyz[0])  # (3,)

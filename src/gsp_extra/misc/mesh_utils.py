@@ -151,7 +151,12 @@ class MeshUtils:
                 - faces_uv_indices (np.ndarray): Array of face texture coordinate indices. Shape (M, 3).
                 - faces_normal_indices (np.ndarray): Array of face normal coordinate indices. Shape (M, 3).
         """
-        vertices_coords, uvs_coords, normals_coords, faces_vertex_indices, faces_uv_indices, faces_normal_indices = [], [], [], [], [], []
+        vertices_coords: list[list[float]] = []
+        uvs_coords: list[list[float]] = []
+        normals_coords: list[list[float]] = []
+        faces_vertex_indices: list[list[str]] = []
+        faces_uv_indices: list[list[str]] = []
+        faces_normal_indices: list[list[str]] = []
         with open(filename) as f:
             for line in f.readlines():
                 line = line.strip()
@@ -188,21 +193,21 @@ class MeshUtils:
         assert len(vertices_coords) > 0, "No vertices found in the .obj file"
 
         # convert to numpy arrays or None
-        vertices_coords = np.array(vertices_coords, dtype=np.float32)
-        uvs_coords = np.array(uvs_coords, dtype=np.float32) if len(uvs_coords) > 0 else None
-        normals_coords = np.array(normals_coords, dtype=np.float32) if len(normals_coords) > 0 else None
-        faces_vertex_indices = np.array(faces_vertex_indices, dtype=np.int32) - 1
-        faces_uv_indices = (np.array(faces_uv_indices, dtype=np.int32) - 1) if len(faces_uv_indices) > 0 else None
-        faces_normal_indices = (np.array(faces_normal_indices, dtype=np.int32) - 1) if len(faces_normal_indices) > 0 else None
+        vertices_coords_array = np.array(vertices_coords, dtype=np.float32)
+        uvs_coords_array = np.array(uvs_coords, dtype=np.float32) if len(uvs_coords) > 0 else None
+        normals_coords_array = np.array(normals_coords, dtype=np.float32) if len(normals_coords) > 0 else None
+        faces_vertex_indices_array = np.array(faces_vertex_indices, dtype=np.int32) - 1
+        faces_uv_indices_array = (np.array(faces_uv_indices, dtype=np.int32) - 1) if len(faces_uv_indices) > 0 else None
+        faces_normal_indices_array = (np.array(faces_normal_indices, dtype=np.int32) - 1) if len(faces_normal_indices) > 0 else None
 
-        assert np.max(faces_vertex_indices) <= len(vertices_coords), "Face vertex index out of range"
-        if faces_uv_indices is not None and uvs_coords is not None:
-            assert np.max(faces_uv_indices) <= len(uvs_coords), "Face uv index out of range"
-        if faces_normal_indices is not None and normals_coords is not None:
-            assert np.max(faces_normal_indices) <= len(normals_coords), "Face normal index out of range"
+        assert np.max(faces_vertex_indices_array) <= len(vertices_coords_array), "Face vertex index out of range"
+        if faces_uv_indices_array is not None and uvs_coords_array is not None:
+            assert np.max(faces_uv_indices_array) <= len(uvs_coords_array), "Face uv index out of range"
+        if faces_normal_indices_array is not None and normals_coords_array is not None:
+            assert np.max(faces_normal_indices_array) <= len(normals_coords_array), "Face normal index out of range"
 
         # return the values
-        return vertices_coords, uvs_coords, normals_coords, faces_vertex_indices, faces_uv_indices, faces_normal_indices
+        return vertices_coords_array, uvs_coords_array, normals_coords_array, faces_vertex_indices_array, faces_uv_indices_array, faces_normal_indices_array
 
     # =============================================================================
     #

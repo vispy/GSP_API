@@ -1,11 +1,10 @@
 # Strict Mypy Type-Surface Plan
 
-Status: M047 in progress. The original import-surface blockers and the first TransBuf/export/network
-slice are resolved, but full strict mypy still exposes broader legacy typing debt. See
+Status: M047 complete. The original import-surface blockers and the broader legacy typing debt are
+resolved or explicitly quarantined at narrow optional/vendored boundaries. See
 `docs/mypy_strict_debt_inventory.md`.
 
-`uv run mypy src/ --strict --show-error-codes` currently fails on type-surface problems that are
-separate from the M045 packaging cleanup.
+`PYTHONPATH=. uv run mypy src/ --strict --show-error-codes` passes.
 
 ## Failure Groups
 
@@ -44,7 +43,8 @@ Next steps:
   untyped import.
 - Prefer stubs for stable third-party packages and targeted ignores for unstable optional backends.
 
-## Proposed Mission
+## Result
 
-M047 should keep the original import-surface failures resolved and continue strict typing work
-without broad package-level ignores. The remaining debt is inventoried for follow-up closure.
+M047 closed the type-surface hardening without broad package-level ignores. The remaining config
+boundaries are limited to optional dependencies, vendored helpers, and stale backup artifacts that
+are not part of the intended package surface.

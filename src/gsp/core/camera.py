@@ -11,7 +11,7 @@ class Camera:
     """Camera class representing a view and projection matrix for 3D rendering."""
     __slots__ = ["_uuid", "_view_matrix", "_projection_matrix", "userData"]
 
-    def __init__(self, view_matrix: TransBuf, projection_matrix: TransBuf):
+    def __init__(self, view_matrix: TransBuf, projection_matrix: TransBuf) -> None:
         """Initialize a Camera instance. Just a container for view and projection matrices.
 
         Args:
@@ -36,7 +36,7 @@ class Camera:
         """
         return self._uuid
 
-    def set_view_matrix(self, view_matrix: TransBuf):
+    def set_view_matrix(self, view_matrix: TransBuf) -> None:
         """Set the view matrix of the Camera.
 
         Args:
@@ -52,7 +52,7 @@ class Camera:
         """
         return self._view_matrix
 
-    def set_projection_matrix(self, projection_matrix: TransBuf):
+    def set_projection_matrix(self, projection_matrix: TransBuf) -> None:
         """Set the projection matrix of the Camera.
 
         Args:

@@ -85,7 +85,7 @@ class AxesManaged:
         max_delta_time_between_renders: float = 1.0 / 60.0  # seconds
 
         # Define the event handler for new limits for the axes display
-        def on_new_limits():
+        def on_new_limits() -> None:
             """Event handle to update points model matrices on axes limits change."""
             nonlocal needs_render
             needs_render = True

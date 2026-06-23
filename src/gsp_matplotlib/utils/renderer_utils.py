@@ -3,6 +3,7 @@
 # pip imports
 import matplotlib.artist
 import numpy as np
+import typing
 
 # local imports
 from gsp.constants import Constants
@@ -38,7 +39,7 @@ class RendererUtils:
             raise ValueError(f"Unknown face culling mode: {face_culling}")
 
         # print(f"faces_visible: {faces_visible.sum()}/{len(faces_visible)}")
-        return faces_visible
+        return typing.cast(np.ndarray, faces_visible)
 
     @staticmethod
     def to_per_face(array: np.ndarray, face_count: int, vertex_count: int, geometry_indices: np.ndarray) -> np.ndarray:
@@ -56,7 +57,7 @@ class RendererUtils:
         if array.shape[0] == face_count:
             return array
         if array.shape[0] == vertex_count:
-            return array[geometry_indices[:, 0]]
+            return typing.cast(np.ndarray, array[geometry_indices[:, 0]])
         if array.shape[0] == 1:
             return np.broadcast_to(array, (face_count,) + array.shape[1:]).copy()
         raise ValueError(f"unexpected attribute length {array.shape[0]}; expected 1, face_count={face_count}, or vertex_count={vertex_count}")
@@ -74,7 +75,7 @@ class RendererUtils:
         norms = np.linalg.norm(face_normals, axis=1, keepdims=True)
         # avoid division by zero on degenerate faces; they'll be culled separately
         norms = np.where(norms == 0.0, 1.0, norms)
-        return face_normals / norms
+        return typing.cast(np.ndarray, face_normals / norms)
 
     @staticmethod
     def compute_face_normals_view(vertices_view: np.ndarray, geometry_indices: np.ndarray) -> np.ndarray:
@@ -112,4 +113,4 @@ class RendererUtils:
         Returns:
             np.ndarray: Mean NDC z per face, shape (face_count,).
         """
-        return faces_vertices_ndc[:, :, 2].mean(axis=1)
+        return typing.cast(np.ndarray, faces_vertices_ndc[:, :, 2].mean(axis=1))

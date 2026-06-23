@@ -6,7 +6,7 @@
 
 # stdlib imports
 import os
-from typing import Sequence
+from typing import Any, Sequence
 import pathlib
 import warnings
 
@@ -92,8 +92,8 @@ class DatovizRenderer(RendererBase):
             return
 
         # listen to keyboard events - if 'q' is pressed, stop the app
-        @self._dvz_app.connect(self._dvz_figure)
-        def on_keyboard(event):
+        @self._dvz_app.connect(self._dvz_figure)  # type: ignore[misc]
+        def on_keyboard(event: Any) -> None:
             # print(f"{event.key_event()} key {event.key()} ({event.key_name()})")
             if event.key_event() == "press" and event.key_name() == "q":
                 self._dvz_app.stop()
