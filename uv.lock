@@ -278,19 +278,19 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "colorama" },
-    { name = "datoviz" },
     { name = "flask" },
     { name = "http-constants" },
     { name = "imageio" },
     { name = "loguru" },
     { name = "matplotlib" },
-    { name = "mpl3d" },
-    { name = "mypy" },
     { name = "numpy" },
     { name = "pydantic" },
-    { name = "pytest" },
     { name = "requests-file" },
-    { name = "ruff" },
+]
+
+[package.optional-dependencies]
+datoviz-legacy = [
+    { name = "datoviz" },
 ]
 
 [package.dev-dependencies]
@@ -299,27 +299,28 @@ dev = [
     { name = "mkdocs-material" },
     { name = "mkdocstrings" },
     { name = "mkdocstrings-python" },
+    { name = "mypy" },
     { name = "pydoclint" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "ruff" },
     { name = "scikit-image" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "colorama", specifier = ">=0.4.6,<0.5.0" },
-    { name = "datoviz", specifier = ">=0.3.2,<0.4.0" },
+    { name = "datoviz", marker = "extra == 'datoviz-legacy'", specifier = ">=0.3.2,<0.4.0" },
     { name = "flask", specifier = ">=3.1.2,<4.0.0" },
     { name = "http-constants", specifier = ">=0.5.0,<0.6.0" },
     { name = "imageio", specifier = ">=2.37.2,<3.0.0" },
     { name = "loguru", specifier = ">=0.7.3,<0.8.0" },
     { name = "matplotlib", specifier = ">=3.10.7,<4.0.0" },
-    { name = "mpl3d", git = "https://github.com/rougier/matplotlib-3d" },
-    { name = "mypy", specifier = ">=1.18.2,<2.0.0" },
     { name = "numpy", specifier = ">=2.3.4,<3.0.0" },
     { name = "pydantic", specifier = ">=2.12.4,<3.0.0" },
-    { name = "pytest", specifier = ">=8.4.2,<9.0.0" },
     { name = "requests-file", specifier = ">=3.0.1,<4.0.0" },
-    { name = "ruff", specifier = ">=0.14.9,<0.15.0" },
 ]
+provides-extras = ["datoviz-legacy"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -327,7 +328,11 @@ dev = [
     { name = "mkdocs-material", specifier = ">=9.7.0,<10.0.0" },
     { name = "mkdocstrings", specifier = ">=1.0.0,<2.0.0" },
     { name = "mkdocstrings-python", specifier = ">=2.0.1,<3.0.0" },
+    { name = "mypy", specifier = ">=1.18.2,<2.0.0" },
     { name = "pydoclint", specifier = ">=0.8.3,<0.9.0" },
+    { name = "pyright", specifier = ">=1.1.407,<2.0.0" },
+    { name = "pytest", specifier = ">=8.4.2,<9.0.0" },
+    { name = "ruff", specifier = ">=0.14.9,<0.15.0" },
     { name = "scikit-image", specifier = ">=0.25.2,<0.26.0" },
 ]
 
@@ -705,15 +710,6 @@ wheels = [
 ]
 
 [[package]]
-name = "mpl3d"
-version = "0.0.1"
-source = { git = "https://github.com/rougier/matplotlib-3d#5e79358cf1d3baec17674a0651de0a8571df5831" }
-dependencies = [
-    { name = "matplotlib" },
-    { name = "numpy" },
-]
-
-[[package]]
 name = "mypy"
 version = "1.18.2"
 source = { registry = "https://pypi.org/simple" }
@@ -755,6 +751,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/6a/51/63fe664f3908c97be9d2e4f1158eb633317598cfa6e1fc14af5383f17512/networkx-3.6.1.tar.gz", hash = "sha256:26b7c357accc0c8cde558ad486283728b65b6a95d85ee1cd66bafab4c8168509", size = 2517025, upload-time = "2025-12-08T17:02:39.908Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9e/c9/b2622292ea83fbb4ec318f5b9ab867d0a28ab43c5717bb85b0a5f6b3b0a4/networkx-3.6.1-py3-none-any.whl", hash = "sha256:d47fbf302e7d9cbbb9e2555a0d267983d2aa476bac30e90dfbe5669bd57f3762", size = 2068504, upload-time = "2025-12-08T17:02:38.159Z" },
+]
+
+[[package]]
+name = "nodeenv"
+version = "1.10.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/24/bf/d1bda4f6168e0b2e9e5958945e01910052158313224ada5ce1fb2e1113b8/nodeenv-1.10.0.tar.gz", hash = "sha256:996c191ad80897d076bdfba80a41994c2b47c68e224c542b48feba42ba00f8bb", size = 55611, upload-time = "2025-12-20T14:08:54.006Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/88/b2/d0896bdcdc8d28a7fc5717c305f1a861c26e18c05047949fb371034d98bd/nodeenv-1.10.0-py2.py3-none-any.whl", hash = "sha256:5bb13e3eed2923615535339b3c620e76779af4cb4c6a90deccc9e36b274d3827", size = 23438, upload-time = "2025-12-20T14:08:52.782Z" },
 ]
 
 [[package]]
@@ -1022,6 +1027,19 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f2/a5/181488fc2b9d093e3972d2a472855aae8a03f000592dbfce716a512b3359/pyparsing-3.2.5.tar.gz", hash = "sha256:2df8d5b7b2802ef88e8d016a2eb9c7aeaa923529cd251ed0fe4608275d4105b6", size = 1099274, upload-time = "2025-09-21T04:11:06.277Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/10/5e/1aa9a93198c6b64513c9d7752de7422c06402de6600a8767da1524f9570b/pyparsing-3.2.5-py3-none-any.whl", hash = "sha256:e38a4f02064cf41fe6593d328d0512495ad1f3d8a91c4f73fc401b3079a59a5e", size = 113890, upload-time = "2025-09-21T04:11:04.117Z" },
+]
+
+[[package]]
+name = "pyright"
+version = "1.1.410"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "nodeenv" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/10/53/e4d8ea1391bd4355231be6f91bf239479aa0014260ed3fb5526eeb12a1f2/pyright-1.1.410.tar.gz", hash = "sha256:07a073b8ba6749826773c1269773efa11b93440d9a6aa60419d9a3172d6dc488", size = 4062013, upload-time = "2026-06-01T17:35:48.894Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d7/33/288b5868fa00846dacf249633719d747893e54aebd196b9968ac1878a5d3/pyright-1.1.410-py3-none-any.whl", hash = "sha256:5e961bed37cacf96b3f7cd7b1da39b350a9239aa2e69138d0e88f728cfaf296c", size = 6082448, upload-time = "2026-06-01T17:35:46.387Z" },
 ]
 
 [[package]]

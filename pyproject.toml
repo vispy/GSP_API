@@ -1,7 +1,7 @@
 [project]
 name = "gsp"
 version = "0.1.0"
-description = ""
+description = "Backend-agnostic scene and protocol tools for scientific visualization."
 authors = [
     {name = "Jerome Etienne",email = "jerome.etienne@gmail.com"}
 ]
@@ -12,16 +12,33 @@ dependencies = [
     "matplotlib (>=3.10.7,<4.0.0)",
     "pydantic (>=2.12.4,<3.0.0)",
     "imageio (>=2.37.2,<3.0.0)",
-    "mypy (>=1.18.2,<2.0.0)",
     "colorama (>=0.4.6,<0.5.0)",
-    "pytest (>=8.4.2,<9.0.0)",
-    "mpl3d @ git+https://github.com/rougier/matplotlib-3d",
-    "datoviz (>=0.3.2,<0.4.0)",
     "http-constants (>=0.5.0,<0.6.0)",
     "flask (>=3.1.2,<4.0.0)",
     "requests-file (>=3.0.1,<4.0.0)",
-    "ruff (>=0.14.9,<0.15.0)",
     "loguru (>=0.7.3,<0.8.0)",
+]
+
+[project.optional-dependencies]
+# Legacy Datoviz wrapper support is optional. Datoviz v0.4-dev is validated by
+# local smoke tests and is not declared here until a compatible wheel exists.
+datoviz-legacy = [
+    "datoviz (>=0.3.2,<0.4.0)",
+]
+
+[tool.poetry]
+packages = [
+    {include = "gsp", from = "src"},
+    {include = "gsp_datoviz", from = "src"},
+    {include = "gsp_extra", from = "src"},
+    {include = "gsp_matplotlib", from = "src"},
+    {include = "gsp_network", from = "src"},
+    {include = "gsp_pydantic", from = "src"},
+    {include = "vispy2", from = "src"},
+    {include = "fixtures"},
+]
+include = [
+    {path = "fixtures/conformance/minimal_v0_1.json", format = ["sdist", "wheel"]},
 ]
 
 [build-system]
@@ -30,6 +47,10 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
+    "mypy (>=1.18.2,<2.0.0)",
+    "pytest (>=8.4.2,<9.0.0)",
+    "ruff (>=0.14.9,<0.15.0)",
+    "pyright (>=1.1.407,<2.0.0)",
     "scikit-image (>=0.25.2,<0.26.0)",
     "mkdocs (>=1.6.1,<2.0.0)",
     "mkdocs-material (>=9.7.0,<10.0.0)",

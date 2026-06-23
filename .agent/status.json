@@ -113,7 +113,7 @@
       "id": "S019",
       "title": "Packaging, docs, and examples",
       "state": "in_progress",
-      "progress": 20
+      "progress": 55
     },
     {
       "id": "S020",
@@ -523,9 +523,9 @@
       "id": "M045",
       "title": "Packaging/import-surface cleanup",
       "stage": "S019",
-      "state": "planned",
-      "agent": null,
-      "progress": 0,
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
       "priority": 45
     },
     {
@@ -556,7 +556,7 @@
     }
   ],
   "recommendations": [
-    "Continue S019 with M045 packaging/import-surface cleanup, then M046 README/docs/examples consistency cleanup.",
+    "Continue S019 with M046 README/docs/examples consistency cleanup.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

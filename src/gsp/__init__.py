@@ -1,4 +1,4 @@
-"""GSP (Graphic Scene Protocol) - A protocol for describing 2D/3D graphics scenes."""
+"""GSP (Graphics Server Protocol) - A protocol for describing 2D/3D graphics scenes."""
 
 from . import core
 from . import protocol
