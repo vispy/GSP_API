@@ -34,8 +34,7 @@ def _marker_areas_from_pixel_diameters(
     sizes: np.ndarray | float,
 ) -> npt.NDArray[np.float32] | float:
     """Convert protocol pixel diameters to Matplotlib scatter area units."""
-    dpi = float(axes.figure.dpi)
-    pixel_to_point = 72.0 / dpi
+    pixel_to_point = _pixel_to_point(axes)
     if isinstance(sizes, np.ndarray):
         diameters = sizes.reshape(-1).astype(np.float32, copy=False)
         areas: npt.NDArray[np.float32] = diameters * np.float32(pixel_to_point)
@@ -75,7 +74,7 @@ def render_marker_visual(axes: matplotlib.axes.Axes, visual: MarkerVisual) -> tu
             marker=_marker_path(shape, float(angle)),
             facecolors=[fill_colors[index]],
             edgecolors=[stroke_color],
-            linewidths=float(visual.stroke_width),
+            linewidths=_linewidth_from_pixel_width(axes, visual.stroke_width),
         )
         collection.set_gid(visual.id)
         collections.append(collection)
@@ -104,6 +103,15 @@ def _marker_area_values(
     if isinstance(areas, np.ndarray):
         return np.ascontiguousarray(areas.astype(np.float32, copy=False).reshape(-1))
     return np.full((count,), float(areas), dtype=np.float32)
+
+
+def _linewidth_from_pixel_width(axes: matplotlib.axes.Axes, width: float) -> float:
+    """Convert protocol pixel stroke width to Matplotlib point linewidth."""
+    return float(width * _pixel_to_point(axes))
+
+
+def _pixel_to_point(axes: matplotlib.axes.Axes) -> float:
+    return 72.0 / float(axes.figure.dpi)
 
 
 def _marker_path(shape: MarkerShape, angle: float) -> matplotlib.path.Path:

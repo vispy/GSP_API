@@ -23,9 +23,10 @@ The backend should consume formal GSP models, not define protocol semantics.
 This is a narrow conformance slice beside the legacy renderer. The legacy `MatplotlibRenderer` remains available for existing examples.
 
 For `MarkerVisual`, protocol sizes are screen-pixel diameters and are converted to Matplotlib scatter
-area units with the active figure DPI, matching `PointVisual`. The reference path supports the
-conservative v1 shapes `disc`, `square`, `triangle`, `diamond`, and `cross`, plus scalar or
-per-marker angles in radians.
+area units with the active figure DPI, matching `PointVisual`. Marker `stroke_width` is also a
+protocol pixel width and is converted to Matplotlib point linewidth using the active figure DPI. The
+reference path supports the conservative v1 shapes `disc`, `square`, `triangle`, `diamond`, and
+`cross`, plus scalar or per-marker angles in radians.
 
 ## M011 tiled-source reference proof
 

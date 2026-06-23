@@ -105,7 +105,7 @@ def test_render_marker_visual_creates_marker_collections():
         np.testing.assert_allclose(artists[1].get_sizes(), np.array([_marker_areas_from_pixel_diameters(ax, visual.sizes)[1]]))
         np.testing.assert_allclose(artists[0].get_facecolors()[0], np.array([1.0, 0.0, 0.0, 1.0]))
         np.testing.assert_allclose(artists[0].get_edgecolors()[0], np.array([0.0, 0.0, 0.0, 1.0]))
-        np.testing.assert_allclose(artists[0].get_linewidths(), np.array([1.5]))
+        np.testing.assert_allclose(artists[0].get_linewidths(), np.array([1.08]))
     finally:
         plt.close(fig)
 

@@ -155,9 +155,9 @@ def _point_diameter_ramp_ndc() -> VisualQAScene:
 def _point_alpha_overlap_ndc() -> VisualQAScene:
     positions = np.array(
         [
-            [-0.18, 0.0],
+            [-0.11, 0.0],
             [0.0, 0.0],
-            [0.18, 0.0],
+            [0.11, 0.0],
         ],
         dtype=np.float32,
     )
@@ -169,7 +169,7 @@ def _point_alpha_overlap_ndc() -> VisualQAScene:
         ],
         dtype=np.uint8,
     )
-    sizes = np.full(positions.shape[0], 56.0, dtype=np.float32)
+    sizes = np.full(positions.shape[0], 86.0, dtype=np.float32)
     visual = PointVisual(
         id="visual:point-alpha-overlap-ndc",
         positions=positions,
@@ -181,7 +181,7 @@ def _point_alpha_overlap_ndc() -> VisualQAScene:
         case_id="point/alpha_overlap_ndc",
         visuals=(visual,),
         arrays={"point_positions": positions, "point_colors": colors, "point_sizes": sizes},
-        notes=("Three overlapping semi-transparent points with fixed pixel diameters.",),
+        notes=("Three strongly overlapping semi-transparent points with fixed pixel diameters.",),
     )
 
 
@@ -205,11 +205,11 @@ def _marker_shapes_ndc() -> VisualQAScene:
     )
     colors = np.array(
         [
-            [216, 27, 96, 230],
-            [30, 136, 229, 230],
-            [0, 137, 123, 230],
-            [251, 140, 0, 230],
-            [94, 53, 177, 230],
+            [216, 27, 96, 255],
+            [30, 136, 229, 255],
+            [0, 137, 123, 255],
+            [251, 140, 0, 255],
+            [94, 53, 177, 255],
         ],
         dtype=np.uint8,
     )
@@ -221,8 +221,8 @@ def _marker_shapes_ndc() -> VisualQAScene:
         shape=shapes,
         fill_colors=colors,
         sizes=sizes,
-        stroke_color=np.array([20, 20, 20, 255], dtype=np.uint8),
-        stroke_width=1.5,
+        stroke_color=np.array([16, 16, 16, 255], dtype=np.uint8),
+        stroke_width=4.0,
         coordinate_space=CoordinateSpace.NDC,
     )
     return VisualQAScene(
@@ -234,7 +234,7 @@ def _marker_shapes_ndc() -> VisualQAScene:
             "marker_fill_colors": colors,
             "marker_sizes": sizes,
         },
-        notes=("Five conservative built-in marker shapes with shared dark stroke.",),
+        notes=("Five conservative built-in marker shapes with shared dark pixel-width stroke.",),
     )
 
 
@@ -250,12 +250,12 @@ def _marker_angle_size_stroke_ndc() -> VisualQAScene:
     angles = np.linspace(0.0, np.pi * 0.9, count, dtype=np.float32)
     colors = np.array(
         [
-            [46, 125, 50, 210],
-            [67, 160, 71, 210],
-            [124, 179, 66, 210],
-            [251, 192, 45, 210],
-            [245, 124, 0, 210],
-            [198, 40, 40, 210],
+            [46, 125, 50, 255],
+            [67, 160, 71, 255],
+            [124, 179, 66, 255],
+            [251, 192, 45, 255],
+            [245, 124, 0, 255],
+            [198, 40, 40, 255],
         ],
         dtype=np.uint8,
     )
@@ -266,8 +266,8 @@ def _marker_angle_size_stroke_ndc() -> VisualQAScene:
         fill_colors=colors,
         sizes=sizes,
         angle=angles,
-        stroke_color=np.array([15, 35, 45, 255], dtype=np.uint8),
-        stroke_width=2.0,
+        stroke_color=np.array([16, 16, 16, 255], dtype=np.uint8),
+        stroke_width=4.0,
         coordinate_space=CoordinateSpace.NDC,
     )
     return VisualQAScene(
