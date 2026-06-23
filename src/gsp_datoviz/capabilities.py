@@ -129,9 +129,8 @@ def gsp_capability_snapshot_from_datoviz(
         "datoviz_api": "v0.4 dvz_* facade",
         "datoviz_capability_source": source,
         "image_path": (
-            "RGBA8 image path is guarded: current Datoviz v0.4 facade lacks a public "
-            "nearest-sampler setter, so the adapter refuses nearest images instead of "
-            "silently rendering with linear sampling"
+            "RGBA8 NDC image path uses dvz_image_set_sampling() for nearest/linear "
+            "sampling when the Datoviz facade exposes the v0.4 image sampling API"
         ),
         "query_support": "deferred until DvzQueryResult is decodable from Python",
         "capture_support": "PNG capture is advertised only when offscreen view capture bindings are available",

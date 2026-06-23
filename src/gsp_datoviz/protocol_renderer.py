@@ -84,6 +84,8 @@ DVZ_COORD_VIEW = 0
 DVZ_COORD_DATA = 1
 DVZ_SHAPE_ASPECT_FILLED = 0
 DVZ_SHAPE_ASPECT_OUTLINE = 2
+DVZ_IMAGE_SAMPLING_LINEAR = 0
+DVZ_IMAGE_SAMPLING_NEAREST = 1
 DEFAULT_BACKGROUND_RGBA8 = (255, 255, 255, 255)
 
 _MARKER_SHAPE_FALLBACKS = {
@@ -251,17 +253,12 @@ class DatovizV04ProtocolRenderer:
         if visual.coordinate_space != CoordinateSpace.NDC:
             raise DatovizV04Unsupported("Datoviz v0.4 slice currently supports NDC image extents only")
         pixels = _rgba8_image(visual.image)
-        if visual.interpolation == ImageInterpolation.NEAREST:
-            raise DatovizV04Unsupported(
-                "Datoviz v0.4 image facade does not expose a public nearest-sampler setter; "
-                "rendering would silently use linear sampling"
-            )
-        raise DatovizV04Unsupported("Datoviz v0.4 image interpolation mapping is not locked")
         positions = _image_positions(visual.extent)
         texcoords = _image_texcoords(visual.origin)
         height, width = pixels.shape[:2]
 
         dvz_visual = self.dvz.dvz_image(self.scene, 0)
+        _set_image_sampling(self.dvz, dvz_visual, visual.interpolation)
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM | DVZ_QUERY_CAPABILITY_PIXEL)
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "texcoords", texcoords)
@@ -560,6 +557,37 @@ def _set_visual_field(dvz: Any, visual: Any, slot_name: str, sampled_field: Any)
         return bool(dvz.dvz_visual_set_field(visual, slot_name, sampled_field))
     except (ctypes.ArgumentError, TypeError):
         return bool(dvz.dvz_visual_set_field(visual, slot_name.encode("utf-8"), sampled_field))
+
+
+def _image_sampling_value(dvz: Any, interpolation: ImageInterpolation) -> int:
+    if interpolation == ImageInterpolation.NEAREST:
+        name = "DVZ_IMAGE_SAMPLING_NEAREST"
+        fallback = DVZ_IMAGE_SAMPLING_NEAREST
+    elif interpolation == ImageInterpolation.LINEAR:
+        name = "DVZ_IMAGE_SAMPLING_LINEAR"
+        fallback = DVZ_IMAGE_SAMPLING_LINEAR
+    else:
+        raise DatovizV04Unsupported(f"unsupported Datoviz image interpolation: {interpolation}")
+
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, "DvzImageSampling", None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return fallback
+
+
+def _set_image_sampling(dvz: Any, visual: Any, interpolation: ImageInterpolation) -> None:
+    setter = getattr(dvz, "dvz_image_set_sampling", None)
+    if setter is None:
+        raise DatovizV04Unsupported(
+            "Datoviz v0.4 image facade is missing dvz_image_set_sampling; "
+            "nearest image rendering would silently use linear sampling"
+        )
+    result = setter(visual, _image_sampling_value(dvz, interpolation))
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz image sampling configuration failed")
 
 
 def _set_query_capabilities(dvz: Any, visual: Any, capabilities: int) -> None:

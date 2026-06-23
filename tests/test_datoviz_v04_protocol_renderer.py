@@ -343,6 +343,20 @@ class FakeDatovizV04WithQueryCapabilities(FakeDatovizV04):
         return None
 
 
+class FakeDatovizV04WithImageSampling(FakeDatovizV04WithQueryCapabilities):
+    class DvzImageSampling:
+        DVZ_IMAGE_SAMPLING_LINEAR = 0
+        DVZ_IMAGE_SAMPLING_NEAREST = 1
+
+    def dvz_image_set_sampling(self, visual, sampling):
+        self.calls.append(("image_set_sampling", visual, sampling))
+        return 0
+
+
+class FakeDatovizV04WithSampledFieldsAndImageSampling(FakeDatovizV04WithSampledFields, FakeDatovizV04WithImageSampling):
+    pass
+
+
 class FakeDvzQueryResult:
     _fields_ = (("request_id", object), ("status", object), ("hit", object))
 
@@ -791,7 +805,56 @@ def test_renderer_configures_equal_aspect_ndc_panel_when_available():
     assert view_call[2].data_y.max == 1.0
 
 
-def test_add_image_visual_rejects_nearest_until_datoviz_exposes_sampler_api():
+def test_add_image_visual_uses_sampling_api_and_texture_upload():
+    fake = FakeDatovizV04WithImageSampling()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    image = np.array(
+        [
+            [[255, 0, 0], [0, 255, 0]],
+            [[0, 0, 255], [255, 255, 255]],
+        ],
+        dtype=np.uint8,
+    )
+    visual = ImageVisual(
+        id="visual:image",
+        image=image,
+        extent=(-1.0, 1.0, -0.5, 0.5),
+        origin=ImageOrigin.UPPER,
+    )
+
+    dvz_visual = renderer.add_image_visual(visual)
+
+    assert dvz_visual == "image-visual"
+    assert _calls(fake, "image_set_sampling") == [("image_set_sampling", "image-visual", 1)]
+    assert [call[2] for call in _calls(fake, "set_data")] == ["position", "texcoords"]
+    texture_call = _calls(fake, "set_texture")[0]
+    assert texture_call[1] == "image-visual"
+    np.testing.assert_array_equal(texture_call[2][..., :3], image)
+    np.testing.assert_array_equal(texture_call[2][..., 3], np.full((2, 2), 255, dtype=np.uint8))
+    assert texture_call[3:] == (2, 2)
+    assert _calls(fake, "set_query_capabilities") == [
+        ("set_query_capabilities", "image-visual", 0x12)
+    ]
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[:3] == ("add_visual", "panel", "image-visual")
+
+
+def test_add_image_visual_maps_linear_sampling():
+    fake = FakeDatovizV04WithImageSampling()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    visual = ImageVisual(
+        id="visual:image-linear",
+        image=np.zeros((2, 2, 4), dtype=np.uint8),
+        extent=(-1.0, 1.0, -0.5, 0.5),
+        interpolation=ImageInterpolation.LINEAR,
+    )
+
+    renderer.add_image_visual(visual)
+
+    assert _calls(fake, "image_set_sampling") == [("image_set_sampling", "image-visual", 0)]
+
+
+def test_add_image_visual_rejects_nearest_without_datoviz_sampler_api():
     fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     image = np.array(
@@ -808,15 +871,15 @@ def test_add_image_visual_rejects_nearest_until_datoviz_exposes_sampler_api():
         origin=ImageOrigin.UPPER,
     )
 
-    with pytest.raises(DatovizV04Unsupported, match="nearest-sampler"):
+    with pytest.raises(DatovizV04Unsupported, match="dvz_image_set_sampling"):
         renderer.add_image_visual(visual)
 
-    assert _calls(fake, "image") == []
+    assert _calls(fake, "image") == [("image", "scene", 0)]
     assert _calls(fake, "set_texture") == []
 
 
-def test_add_image_visual_rejects_sampled_field_path_until_sampler_api_is_available():
-    fake = FakeDatovizV04WithSampledFields()
+def test_add_image_visual_uses_sampled_field_path_with_sampling_api():
+    fake = FakeDatovizV04WithSampledFieldsAndImageSampling()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     image = np.array(
         [
@@ -832,13 +895,15 @@ def test_add_image_visual_rejects_sampled_field_path_until_sampler_api_is_availa
         origin=ImageOrigin.UPPER,
     )
 
-    with pytest.raises(DatovizV04Unsupported, match="nearest-sampler"):
-        renderer.add_image_visual(visual)
+    dvz_visual = renderer.add_image_visual(visual)
 
+    assert dvz_visual == "image-visual"
     assert datoviz_v04_sampled_field_ready(fake)
-    assert _calls(fake, "sampled_field") == []
-    assert _calls(fake, "set_field") == []
-    assert renderer.sampled_fields == {}
+    assert _calls(fake, "image_set_sampling") == [("image_set_sampling", "image-visual", 1)]
+    assert _calls(fake, "sampled_field")
+    assert _calls(fake, "set_field") == [("set_field", "image-visual", "field", "sampled-field")]
+    assert _calls(fake, "set_texture") == []
+    assert renderer.sampled_fields == {"visual:image": "sampled-field"}
 
 
 def test_sampled_field_readiness_reports_missing_symbols():
@@ -891,13 +956,13 @@ def test_image_slice_rejects_unlocked_semantics():
             )
         )
 
-    with pytest.raises(DatovizV04Unsupported, match="interpolation"):
+    with pytest.raises(DatovizV04Unsupported, match="NDC image"):
         renderer.add_image_visual(
             ImageVisual(
-                id="visual:linear-image",
+                id="visual:data-image",
                 image=np.zeros((2, 2, 4), dtype=np.uint8),
                 extent=(0.0, 1.0, 0.0, 1.0),
-                interpolation=ImageInterpolation.LINEAR,
+                coordinate_space=CoordinateSpace.DATA,
             )
         )
 
