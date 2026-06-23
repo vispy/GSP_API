@@ -1,5 +1,5 @@
 {
-  "current_stage": "S022",
+  "current_stage": "S023",
   "stages": [
     {
       "id": "S001",
@@ -132,6 +132,12 @@
       "title": "Remote source family selection and consultation",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S023",
+      "title": "Visual Families v1 and Manual Visual QA Foundation",
+      "state": "in_progress",
+      "progress": 0
     }
   ],
   "missions": [
@@ -701,6 +707,87 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 63
+    },
+    {
+      "id": "M064",
+      "title": "Datoviz v0.4 API audit and probe",
+      "stage": "S023",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 64
+    },
+    {
+      "id": "M065",
+      "title": "Visual QA harness foundation",
+      "stage": "S023",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 65
+    },
+    {
+      "id": "M066",
+      "title": "PointVisual v1 and Datoviz v0.4 retained point path",
+      "stage": "S023",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 66
+    },
+    {
+      "id": "M067",
+      "title": "MarkerVisual v1",
+      "stage": "S023",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 67
+    },
+    {
+      "id": "M068",
+      "title": "SegmentVisual v1",
+      "stage": "S023",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 68
+    },
+    {
+      "id": "M069",
+      "title": "PathVisual v1",
+      "stage": "S023",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 69
+    },
+    {
+      "id": "M070",
+      "title": "ImageVisual v1 hardening",
+      "stage": "S023",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 70
+    },
+    {
+      "id": "M071",
+      "title": "S023 gallery and manual review pack",
+      "stage": "S023",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 71
+    },
+    {
+      "id": "M072",
+      "title": "S023 closure docs and spec index",
+      "stage": "S023",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 72
     }
   ],
   "review_queue": [],
@@ -735,7 +822,8 @@
     }
   ],
   "recommendations": [
-    "S022 is complete through the no-network mock HTTP `.npy` array fixture proof. Real network I/O remains gated behind later review.",
-    "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
+    "Next mission: M064 should audit the actual Datoviz v0.4 API surface from the installed package and `../datoviz/` before any new visual-family implementation.",
+    "S023 should proceed visual family by visual family: Point, Marker, Segment, Path, then Image hardening. Legacy GSP/Datoviz code is reference material only.",
+    "Do not implement against v0.3-style Datoviz APIs such as `dvz_*_alloc`; use retained scene constructors plus `dvz_visual_set_data*` uploads and explicit attach descriptors."
   ]
 }
