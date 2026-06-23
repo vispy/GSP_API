@@ -10,6 +10,7 @@ from __future__ import annotations
 import ctypes
 from dataclasses import dataclass, field
 from dataclasses import replace
+import os
 from pathlib import Path
 import tempfile
 from types import ModuleType
@@ -128,6 +129,7 @@ class DatovizV04ProtocolRenderer:
     panel: Any = field(init=False)
     app: Any | None = field(default=None, init=False)
     offscreen_view: Any | None = field(default=None, init=False)
+    live_view: Any | None = field(default=None, init=False)
     visuals: dict[str, Any] = field(default_factory=dict, init=False)
     sampled_fields: dict[str, Any] = field(default_factory=dict, init=False)
     _closed: bool = field(default=False, init=False)
@@ -212,6 +214,22 @@ class DatovizV04ProtocolRenderer:
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
 
+    def show(self, *, frame_count: int = 0) -> None:
+        """Open an interactive Datoviz window and run the app.
+
+        A ``frame_count`` of 0 follows Datoviz convention and runs until the user
+        closes the window. Tests may set ``GSP_TEST=True`` to avoid blocking.
+        """
+        if os.environ.get("GSP_TEST") == "True":
+            return
+        if frame_count < 0:
+            raise ValueError("frame_count must be non-negative")
+        self._ensure_live_view()
+        app_run = getattr(self.dvz, "dvz_app_run", None)
+        if app_run is None:
+            raise DatovizV04Unavailable("Datoviz interactive app run is unavailable: missing dvz_app_run")
+        app_run(self.app, frame_count)
+
     def _create_rgba8_sampled_field(self, pixels: npt.NDArray[np.uint8], width: int, height: int) -> Any:
         """Create and upload a scene-owned RGBA8 sampled field."""
         desc = self.dvz.dvz_sampled_field_desc()
@@ -261,13 +279,37 @@ class DatovizV04ProtocolRenderer:
         if self.offscreen_view is not None:
             return self.offscreen_view
 
-        self.app = self.dvz.dvz_app(self.scene)
-        if self.app is None:
-            raise DatovizV04Unavailable("Datoviz offscreen app creation failed")
+        self._ensure_app("offscreen")
         self.offscreen_view = self.dvz.dvz_view_offscreen(self.app, self.figure, self.width, self.height)
         if self.offscreen_view is None:
             raise DatovizV04Unavailable("Datoviz offscreen view creation failed")
         return self.offscreen_view
+
+    def _ensure_live_view(self) -> Any:
+        """Create the lazy interactive app/view pair used by show()."""
+        if self.live_view is not None:
+            return self.live_view
+
+        self._ensure_app("interactive")
+        view = getattr(self.dvz, "dvz_view", None)
+        if view is None:
+            raise DatovizV04Unavailable("Datoviz interactive view is unavailable: missing dvz_view")
+        self.live_view = view(self.app, self.figure, None)
+        if self.live_view is None:
+            raise DatovizV04Unavailable("Datoviz interactive view creation failed")
+        return self.live_view
+
+    def _ensure_app(self, purpose: str) -> Any:
+        """Create the lazy Datoviz app shared by live and offscreen views."""
+        if self.app is not None:
+            return self.app
+        app = getattr(self.dvz, "dvz_app", None)
+        if app is None:
+            raise DatovizV04Unavailable(f"Datoviz {purpose} app creation is unavailable: missing dvz_app")
+        self.app = app(self.scene)
+        if self.app is None:
+            raise DatovizV04Unavailable(f"Datoviz {purpose} app creation failed")
+        return self.app
 
     def _render_offscreen_frame(self) -> None:
         view_render_once = getattr(self.dvz, "dvz_view_render_once", None)

@@ -263,6 +263,16 @@ class FakeDatovizV04WithCapture(FakeDatovizV04):
         self.app_destroyed = True
 
 
+class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
+    def dvz_view(self, app, figure, desc):
+        self.calls.append(("view", app, figure, desc))
+        return "live-view"
+
+    def dvz_app_run(self, app, frame_count):
+        self.calls.append(("app_run", app, frame_count))
+        return None
+
+
 class FakeDatovizV04WithQueryCapabilities(FakeDatovizV04):
     def dvz_visual_set_query_capabilities(self, visual, capabilities):
         self.calls.append(("set_query_capabilities", visual, capabilities))
@@ -837,6 +847,28 @@ def test_renderer_close_destroys_lazy_capture_app_when_available():
     assert fake.app_destroyed is True
     assert _calls(fake, "app_destroy") == [("app_destroy", "app")]
     assert _calls(fake, "destroy") == [("destroy", "scene")]
+
+
+def test_renderer_show_creates_live_view_and_runs_app():
+    fake = FakeDatovizV04WithInteractive()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    renderer.show(frame_count=1)
+
+    assert _calls(fake, "app") == [("app", "scene")]
+    assert _calls(fake, "view") == [("view", "app", "figure", None)]
+    assert _calls(fake, "app_run") == [("app_run", "app", 1)]
+
+
+def test_renderer_show_returns_in_test_mode(monkeypatch):
+    fake = FakeDatovizV04WithInteractive()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    monkeypatch.setenv("GSP_TEST", "True")
+    renderer.show()
+
+    assert _calls(fake, "app") == []
+    assert _calls(fake, "app_run") == []
 
 
 def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
