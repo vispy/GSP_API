@@ -811,7 +811,7 @@ def test_add_marker_visual_rotates_datoviz_triangle_to_protocol_orientation():
     renderer.add_marker_visual(visual)
 
     set_data = _calls(fake, "set_data")
-    np.testing.assert_allclose(set_data[3][3], [0.25 + np.pi, 0.5], rtol=1e-6)
+    np.testing.assert_allclose(set_data[3][3], [np.pi - 0.25, 0.5], rtol=1e-6)
 
 
 def test_renderer_configures_equal_aspect_ndc_panel_when_available():

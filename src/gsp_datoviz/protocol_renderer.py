@@ -726,7 +726,7 @@ def _datoviz_marker_angles(
     corrected = np.array(angles, dtype=np.float32, copy=True).reshape(-1)
     for index, shape in enumerate(shapes):
         if shape == MarkerShape.TRIANGLE:
-            corrected[index] += np.float32(np.pi)
+            corrected[index] = np.float32(np.pi) - corrected[index]
     return np.ascontiguousarray(corrected)
 
 
