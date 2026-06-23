@@ -1,6 +1,6 @@
 # GSP API Reference
 
-The Graphic Server Protocol (GSP) API provides a unified interface for creating and rendering graphics across different backends.
+The Graphics Server Protocol (GSP) API provides a unified interface for creating and rendering graphics across different backends.
 
 ## Core Module
 

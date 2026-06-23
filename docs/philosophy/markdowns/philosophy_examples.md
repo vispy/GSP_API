@@ -6,7 +6,7 @@ The `examples/` directory contains 50+ scripts. They are not a random grab-bag �
 
 **Audience.** Someone reading examples to learn GSP_API, or writing a new one to demonstrate a feature.
 
-**How to use this document.** Each section names a pattern, shows the canonical snippet, and points to the example files that demonstrate it. To verify a claim, open the cited file. To run a pattern under both backends:
+**How to use this document.** Each section names a pattern, shows the canonical snippet, and points to the example files that demonstrate it. To run a pattern under the Matplotlib reference backend and, when installed, the optional legacy Datoviz backend:
 
 ```bash
 GSP_RENDERER=matplotlib python examples/<file>.py
@@ -452,7 +452,7 @@ The "now you do it" section. Each box mirrors a step in the canonical skeleton o
 - [ ] **Reproducible randomness.** `np.random.seed(0)` at the top of `main()` if you generate data — keeps output diffs sane.
 - [ ] **Prefer `ExampleHelper.create_renderer`.** Instantiate `MatplotlibRenderer` / `DatovizRenderer` / `NetworkRenderer` directly only when the example is demonstrating a backend-specific feature (as `svg_pdf_example.py`, `network_client_example.py`, `viewport_inch_matplotlib.py`, and `dynamic_groups_example.py` do).
 - [ ] **Both save and show.** End with `ExampleHelper.save_output_image(rendered_image, f"{pathlib.Path(__file__).stem}_{renderer_name}.png")` followed by `renderer_base.show()`.
-- [ ] **Verify under both backends:**
+- [ ] **Verify under configured backends:**
   ```bash
   GSP_RENDERER=matplotlib python examples/<your_example>.py
   GSP_RENDERER=datoviz    python examples/<your_example>.py
@@ -481,7 +481,7 @@ The "now you do it" section. Each box mirrors a step in the canonical skeleton o
 
 Every claim in this document is grounded in a specific file. To verify:
 
-1. **For a pattern in §4** — open the cited example file, locate the snippet quoted here, and run it under both backends as shown in §1. The output PNGs in `examples/output/` are the proof.
+1. **For a pattern in §4** — open the cited example file, locate the snippet quoted here, and run it under the configured backend names shown in §1. The output files in `examples/output/` are the proof.
 2. **For an `ExampleHelper` method** — see [examples/common/example_helper.py](../../examples/common/example_helper.py); each method is small enough to read in full.
 3. **For the env-var name** — `grep -rn "GSP_RENDERER" examples/ src/`. [example_helper.py:42](../../examples/common/example_helper.py#L42) uses `GSP_RENDERER`; user-facing docs should follow that source of truth.
 4. **For a snippet quoted verbatim** — `grep -n "<snippet>" examples/<file>.py`. Examples cited above:

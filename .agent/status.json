@@ -113,7 +113,7 @@
       "id": "S019",
       "title": "Packaging, docs, and examples",
       "state": "in_progress",
-      "progress": 90
+      "progress": 95
     },
     {
       "id": "S020",
@@ -545,6 +545,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 47
+    },
+    {
+      "id": "M048",
+      "title": "Release-readiness docs polish",
+      "stage": "S019",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 48
     }
   ],
   "review_queue": [],
@@ -565,7 +574,7 @@
     }
   ],
   "recommendations": [
-    "Continue S019 with packaging/docs/examples release-readiness cleanup after strict mypy closure.",
+    "Finalize S019 with an explicit release checklist/tag policy decision, or open S020 for remote data and dynamic extension security pre-design.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

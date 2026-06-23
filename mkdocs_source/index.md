@@ -1,8 +1,8 @@
 # GSP Documentation
 
-Graphic Server Protocol — a backend-agnostic scene-description API for 2D/3D scientific visualization in Python.
+Graphics Server Protocol — a backend-agnostic scene-description API for 2D/3D scientific visualization in Python.
 
-GSP provides a unified, declarative interface for describing scientific visualizations across multiple rendering backends. Whether you're building interactive plots with Matplotlib, high-performance 3D scenes with Datoviz, or remote visualization systems over the network, GSP abstracts away backend-specific details. This documentation covers the core protocol, available renderers, and the architectural principles that make GSP flexible and extensible.
+GSP provides a unified, declarative interface for describing scientific visualizations across multiple rendering backends. Whether you're building plots with Matplotlib, optional Datoviz-backed scenes, or remote visualization systems over the network, GSP abstracts away backend-specific details. This documentation covers the core protocol, available renderers, and the architectural principles that make GSP flexible and extensible.
 
 ## Philosophy
 
@@ -24,7 +24,6 @@ GSP is organized into seven core packages, each serving a specific role in the v
 - [GSP Network](api/gsp_network.md) — Network-based rendering for remote visualization and client-server architectures
 - [GSP Pydantic](api/gsp_pydantic.md) — Serialization and validation of GSP objects using Pydantic models
 - [GSP Matplotlib](api/gsp_matplotlib.md) — Matplotlib rendering backend
-- [GSP Datoviz](api/gsp_datoviz.md) — High-performance Datoviz rendering backend
+- [GSP Datoviz](api/gsp_datoviz.md) — Optional legacy Datoviz support and capability-gated v0.4 adapter work
 - [GSP Extra](api/gsp_extra.md) — Additional utilities, animation helpers, and high-level 3D components
 - [VisPy 2](api/vispy_2.md) — Interactive axes display and pan/zoom built on top of GSP
-

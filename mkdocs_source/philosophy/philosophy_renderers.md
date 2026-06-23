@@ -224,7 +224,7 @@ State lives on the *main* renderer, not on the per-visual class. Matplotlib stor
 
 ### 5.3 Lazy create, mutate-update
 
-The first `render()` call for a given `(viewport, visual)` pair creates the underlying artist or GPU object; subsequent calls mutate it in place. This is what makes the animator efficient — return only the changed visuals from your `@animator.event_listener` callback and the renderer does no rebuild work for the rest. The pattern hinges on the same `f"{viewport_uuid}_{visual_uuid}"` cache key in both backends, so a per-visual renderer can ask "have I seen this pair before?" with one dict lookup.
+The first `render()` call for a given `(viewport, visual)` pair creates the underlying artist or backend object; subsequent calls mutate it in place. This is what makes the animator efficient — return only the changed visuals from your `@animator.event_listener` callback and the renderer does no rebuild work for the rest. The pattern hinges on the same `f"{viewport_uuid}_{visual_uuid}"` cache key in configured renderers, so a per-visual renderer can ask "have I seen this pair before?" with one dict lookup.
 
 ---
 
@@ -318,7 +318,7 @@ Every claim above is grounded in a file. The shell commands below confirm the st
    grep -n "RendererRegistry.register_renderer" src/gsp_*/renderer_registration.py
    ```
 
-4. **Same isinstance dispatch chain in both local backends (§5.1)**:
+4. **Same isinstance dispatch chain in configured local backends (§5.1)**:
    ```bash
    grep -n "isinstance(visual," src/gsp_matplotlib/renderer/matplotlib_renderer.py src/gsp_datoviz/renderer/datoviz_renderer.py
    ```

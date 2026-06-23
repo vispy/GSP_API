@@ -1,5 +1,5 @@
-site_name: Graphic Server Protocol
-site_description: "⚡ GSP: A high-performance graphics server protocol for efficient rendering and visualization."
+site_name: Graphics Server Protocol
+site_description: "GSP: A high-performance graphics server protocol for efficient rendering and visualization."
 site_author: GSP Team
 site_dir: mkdocs_build
 

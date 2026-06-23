@@ -39,8 +39,12 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | `segments_example.py` | Drawing line segments and connections | Creating line-based visualizations |
 | `paths_example.py` | Rendering arbitrary paths and curves | Drawing complex geometric paths |
 | `image_example.py` | Displaying images and raster data | Image rendering and texture mapping |
+| `jupiter_image_function.py` | Function-style image generation | Building an image visual from generated data |
 | `texts_example.py` | Text rendering and typography | Adding and styling text in visualizations |
 | `texts_animated_example.py` | Animated text elements | Text animation and dynamic updates |
+| `vispy2_protocol_scatter.py` | VisPy2 protocol scatter producer | High-level scatter API rendered through the protocol backend |
+| `vispy2_protocol_imshow.py` | VisPy2 protocol image producer | High-level image API rendered through the protocol backend |
+| `vispy2_protocol_point_over_image.py` | VisPy2 protocol overlay producer | Point/image composition through the protocol backend |
 | `vispy2_protocol_guides.py` | VisPy2 protocol guide API | Scatter, image, limits, labels, title, ticks, and grid intent |
 
 ### 3D and Camera Examples
@@ -48,9 +52,21 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | File | Description | Demonstrates |
 |------|-------------|--------------|
 | `object3d_example.py` | Rendering 3D objects and models | 3D object visualization and manipulation |
+| `object3d_obj_example.py` | Loading and rendering OBJ models | OBJ mesh loading through the object hierarchy |
 | `camera_control_example.py` | Interactive camera control and navigation | Camera manipulation and viewport control |
 | `transform_visual_example.py` | Visual transforms and coordinate systems | Coordinate transformation visualization |
 | `transform_serialization_example.py` | Saving and loading transform state | Transform persistence and serialization |
+
+### Mesh Examples
+
+| File | Description | Demonstrates |
+|------|-------------|--------------|
+| `mesh_example.py` | Mesh rendering with selectable material modes | Geometry, material, camera, and light setup |
+| `mesh_basic_example.py` | Basic mesh material rendering | Solid face color and wireframe edges |
+| `mesh_normal_example.py` | Normal-based mesh material rendering | Face colors derived from view-space normals |
+| `mesh_depth_example.py` | Depth-based mesh material rendering | Face colors derived from view-space depth |
+| `mesh_phong_example.py` | Phong-shaded mesh rendering | Directional and ambient lighting |
+| `mesh_textured_example.py` | Textured mesh rendering | Texture loading and mesh UV attributes |
 
 ### Advanced Examples
 
@@ -99,6 +115,7 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | File | Description | Demonstrates |
 |------|-------------|--------------|
 | `vispy_basic_example.py` | Basic vispy canvas setup | Getting started with vispy |
+| `vispy_imshow_example.py` | VisPy-style image display | Image display through the VisPy-inspired API |
 | `_big_tester_example.py` | Large-scale performance testing | Stress testing with many elements |
 | `_big_tester_cmdline.py` | Command-line performance testing | CLI-based testing framework |
 
@@ -127,9 +144,10 @@ Many examples support command-line arguments. Check the script for details:
 python examples/example_name.py --help
 ```
 
-### Testing Both Backends
+### Testing Optional Backends
 
-Create a quick test script:
+Matplotlib is the default release-readiness path. If the optional legacy Datoviz wrapper is installed,
+you can smoke-test an example against both local renderer names:
 
 ```bash
 for backend in matplotlib datoviz; do
@@ -151,23 +169,32 @@ Matplotlib is the default and reference backend for the current conformance slic
 Most examples follow this pattern:
 
 ```python
-from gsp.core import Canvas, Viewport
-from gsp.visuals import Points
 import numpy as np
 
-# Create canvas and viewport
-canvas = Canvas()
-viewport = Viewport()
+from common.example_helper import ExampleHelper
+from gsp.constants import Constants
+from gsp.core import Camera, Canvas, Viewport
+from gsp.types import BufferType
+from gsp.visuals import Points
+from gsp_extra.bufferx import Bufferx
 
-# Create data
-data = np.random.randn(1000, 2)
+canvas = Canvas(width=256, height=256, dpi=127.5, background_color=Constants.Color.white)
+viewport = Viewport(0, 0, canvas.get_width(), canvas.get_height(), Constants.Color.transparent)
 
-# Create visual
-points = Points(data)
-viewport.add_visual(points)
+positions = Bufferx.from_numpy(np.array([[0.0, 0.0, 0.0]], dtype=np.float32), BufferType.vec3)
+sizes = Bufferx.from_numpy(np.array([32.0], dtype=np.float32), BufferType.float32)
+face_colors = Bufferx.from_numpy(np.array([[255, 0, 0, 255]], dtype=np.uint8), BufferType.rgba8)
+edge_colors = Bufferx.from_numpy(np.array([[0, 0, 0, 255]], dtype=np.uint8), BufferType.rgba8)
+edge_widths = Bufferx.from_numpy(np.array([1.0], dtype=np.float32), BufferType.float32)
 
-# Show result
-canvas.show()
+points = Points(positions, sizes, face_colors, edge_colors, edge_widths)
+model_matrix = Bufferx.mat4_identity()
+camera = Camera(Bufferx.mat4_identity(), Bufferx.mat4_identity())
+
+renderer_name = ExampleHelper.get_renderer_name()
+renderer = ExampleHelper.create_renderer(renderer_name, canvas)
+image = renderer.render([viewport], [points], [model_matrix], [camera])
+ExampleHelper.save_output_image(image, f"minimal_points_{renderer_name}.png")
 ```
 
 ### Data Handling

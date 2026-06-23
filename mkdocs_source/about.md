@@ -2,7 +2,7 @@
 
 ## What is GSP?
 
-GSP (Graphic Server Protocol) is a backend-agnostic Python library for describing and rendering 2D and 3D scientific visualizations. It defines a single declarative scene model — canvas, viewports, cameras, visuals, transforms, geometry, materials — and dispatches that scene to one of several interchangeable rendering backends at runtime. The same visualization code runs against a CPU-bound Matplotlib renderer, a GPU-accelerated Datoviz/Vulkan renderer, or a Flask-based network renderer without modification. Backend selection is a one-line change; the scene description is invariant.
+GSP (Graphics Server Protocol) is a backend-agnostic Python library for describing and rendering 2D and 3D scientific visualizations. It defines a single declarative scene model — canvas, viewports, cameras, visuals, transforms, geometry, materials — and dispatches that scene to one of several interchangeable rendering backends at runtime. The same scene description can run against the Matplotlib reference renderer, the network renderer, and optional Datoviz surfaces when the matching legacy wrapper or v0.4 capability-gated adapter is available. Backend selection is a one-line change; the scene description is invariant.
 
 ## Motivation
 
@@ -11,7 +11,7 @@ Scientific visualization in Python has historically coupled the scene API to the
 ## Key Features
 
 - Unified declarative scene model across all backends (Canvas, Viewport, Camera, eight visual primitives, TransformChain)
-- Three first-party renderer backends: Matplotlib, Datoviz, and a network renderer
+- Three first-party renderer surfaces: Matplotlib, optional Datoviz support, and a network renderer
 - Runtime backend selection — `RendererRegistry.create_renderer("matplotlib"|"datoviz"|"network", canvas)` — no code changes required to switch
 - Pydantic v2 serialization layer (`gsp_pydantic`) for JSON export and base64-encoded buffer transport
 - Network rendering over Flask: client serializes the scene, server renders and returns a PNG
@@ -22,12 +22,12 @@ Scientific visualization in Python has historically coupled the scene API to the
 | Backend | Type | Package | Use case |
 |---|---|---|---|
 | Matplotlib | CPU rasterization | `gsp_matplotlib` | Publication figures, portable environments |
-| Datoviz | GPU (Vulkan) | `gsp_datoviz` | Large datasets, interactive high-performance rendering |
+| Datoviz | GPU (Vulkan) | `gsp_datoviz` | Optional legacy wrapper support and capability-gated v0.4 adapter work |
 | Network | Remote / Flask | `gsp_network` | Headless servers, HPC clusters, cloud notebooks |
 
 ## Project Status
 
-GSP is a research prototype at version 0.1.0. It has known bugs, an active TODO list, and no published PyPI release. The architecture is stable enough to run all examples in the [Gallery](gallery.md) against both local backends, but the API may change before a stable release. It is not recommended for production use at this stage.
+GSP is a research prototype at version 0.1.0. It has known bugs, an active TODO list, and no published PyPI release. The Matplotlib reference path and protocol examples are the current release-readiness baseline; optional Datoviz and network paths have narrower setup requirements. The API may change before a stable release and is not recommended for production use at this stage.
 
 ## Author & Organization
 
