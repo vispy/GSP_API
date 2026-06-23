@@ -131,7 +131,7 @@
       "id": "S022",
       "title": "Remote source family selection and consultation",
       "state": "in_progress",
-      "progress": 30
+      "progress": 40
     }
   ],
   "missions": [
@@ -665,6 +665,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 59
+    },
+    {
+      "id": "M060",
+      "title": "S022 P007 ADR/spec baseline",
+      "stage": "S022",
+      "state": "pending",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 60
     }
   ],
   "review_queue": [],
@@ -692,14 +701,15 @@
     },
     {
       "id": "Q060-FIRST-REMOTE-SOURCE-FAMILY",
-      "summary": "Open for S022: choose and design the first real remote-source family before any production fetch implementation.",
-      "requires_human": true,
-      "requires_chatgpt_pro": true,
-      "state": "open"
+      "summary": "Resolved by P007 response: start with HTTP single-resource as access mechanism and use a preconfigured `.npy` typed array proof before tile pyramids/Zarr/OME-Zarr or JPEG/PNG.",
+      "requires_human": false,
+      "requires_chatgpt_pro": false,
+      "state": "closed"
     }
   ],
   "recommendations": [
-    "Implementation is paused until the P007 ChatGPT Pro response is pasted or committed; then convert the decision into ADR/spec updates before any HTTP fetch, decoder, URL parsing, credentials, network I/O, or dynamic loading.",
+    "Next S022 mission: M060 should convert the P007 response into ADR/spec updates for HTTP single-resource `.npy` array proof; implementation remains paused until that baseline is committed.",
+    "After M060, begin only no-network/mock validation work for configured HTTP access and `.npy` decoder policy; real network I/O remains gated behind later review.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

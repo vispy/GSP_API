@@ -1,6 +1,6 @@
 # P007 - HTTP access and decoder architecture
 
-Status: pending ChatGPT Pro response.
+Status: response received in `.agent/consultations/P007-response.md`.
 
 This needs ChatGPT Pro consultation.
 
