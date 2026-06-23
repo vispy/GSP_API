@@ -146,6 +146,7 @@ class DatovizV04ProtocolRenderer:
         self.scene = self.dvz.dvz_scene()
         self.figure = self.dvz.dvz_figure(self.scene, self.width, self.height, 0)
         self.panel = self.dvz.dvz_panel_full(self.figure)
+        _configure_ndc_panel_view2d(self.dvz, self.panel)
 
     def capabilities(self) -> CapabilitySnapshot:
         """Return the capability snapshot for this adapter slice."""
@@ -179,6 +180,7 @@ class DatovizV04ProtocolRenderer:
         diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
 
         dvz_visual = self.dvz.dvz_point(self.scene, 0)
+        _set_filled_point_style(self.dvz, dvz_visual)
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
         self.dvz.dvz_visual_set_data(dvz_visual, "position", positions)
         self.dvz.dvz_visual_set_data(dvz_visual, "color", colors)
@@ -191,10 +193,13 @@ class DatovizV04ProtocolRenderer:
         """Create and attach a Datoviz image visual for RGBA/RGB uint8 images."""
         if visual.coordinate_space != CoordinateSpace.NDC:
             raise DatovizV04Unsupported("Datoviz v0.4 slice currently supports NDC image extents only")
-        if visual.interpolation != ImageInterpolation.NEAREST:
-            raise DatovizV04Unsupported("Datoviz v0.4 texture convenience path has no locked interpolation mapping")
-
         pixels = _rgba8_image(visual.image)
+        if visual.interpolation == ImageInterpolation.NEAREST:
+            raise DatovizV04Unsupported(
+                "Datoviz v0.4 image facade does not expose a public nearest-sampler setter; "
+                "rendering would silently use linear sampling"
+            )
+        raise DatovizV04Unsupported("Datoviz v0.4 image interpolation mapping is not locked")
         positions = _image_positions(visual.extent)
         texcoords = _image_texcoords(visual.origin)
         height, width = pixels.shape[:2]
@@ -505,6 +510,46 @@ def _set_query_capabilities(dvz: Any, visual: Any, capabilities: int) -> None:
     if setter is None:
         return
     setter(visual, capabilities)
+
+
+def _set_filled_point_style(dvz: Any, visual: Any) -> None:
+    """Force the documented filled/no-stroke point style when the facade exposes it."""
+    style_factory = getattr(dvz, "dvz_point_style_desc", None)
+    style_setter = getattr(dvz, "dvz_point_set_style", None)
+    if style_factory is None or style_setter is None:
+        return
+    style = style_factory()
+    if hasattr(style, "stroke_width"):
+        style.stroke_width = 0.0
+    if hasattr(style, "aspect"):
+        style.aspect = int(getattr(dvz, "DVZ_SHAPE_ASPECT_FILLED", 0))
+    result = style_setter(visual, style)
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz point filled/no-stroke style configuration failed")
+
+
+def _configure_ndc_panel_view2d(dvz: Any, panel: Any) -> None:
+    """Configure the panel so NDC data keeps equal X/Y screen scale when possible."""
+    view_factory = getattr(dvz, "dvz_panel_view2d", None)
+    view_setter = getattr(dvz, "dvz_panel_set_view2d", None)
+    if view_factory is None or view_setter is None:
+        return
+    view = view_factory()
+    if hasattr(view, "aspect"):
+        view.aspect = int(getattr(dvz, "DVZ_PANEL_VIEW2D_ASPECT_EQUAL", 1))
+    if hasattr(view, "padding"):
+        view.padding = 0.0
+    for field_name in ("data_x", "data_y"):
+        domain = getattr(view, field_name, None)
+        if domain is None:
+            continue
+        if hasattr(domain, "min"):
+            domain.min = -1.0
+        if hasattr(domain, "max"):
+            domain.max = 1.0
+    result = view_setter(panel, view)
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz NDC equal-aspect panel setup failed")
 
 
 def _query_frame_resolution_ready(dvz: Any) -> bool:

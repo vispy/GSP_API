@@ -146,13 +146,14 @@ def _run_matplotlib(out_dir: Path, case: VisualQACase, visuals: tuple[ProtocolVi
     width, height = resolution
     fig, ax = plt.subplots(figsize=(width / 100.0, height / 100.0), dpi=100)
     try:
+        ax.set_position((0.0, 0.0, 1.0, 1.0))
         ax.set_xlim(-1.0, 1.0)
         ax.set_ylim(-1.0, 1.0)
         ax.set_aspect("equal", adjustable="box")
         ax.set_axis_off()
         for visual in visuals:
             _render_matplotlib_visual(ax, visual)
-        fig.savefig(artifact_path, dpi=100, bbox_inches="tight", pad_inches=0)
+        fig.savefig(artifact_path, dpi=100)
         log_path.write_text("rendered\n", encoding="utf-8")
         return {"backend_id": "matplotlib", "status": "rendered", "artifact_path": str(artifact_path), "log_path": str(log_path)}
     except Exception as exc:  # noqa: BLE001 - report renderer failures as artifacts.

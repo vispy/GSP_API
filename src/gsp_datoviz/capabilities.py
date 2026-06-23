@@ -128,7 +128,11 @@ def gsp_capability_snapshot_from_datoviz(
     metadata: dict[str, object] = {
         "datoviz_api": "v0.4 dvz_* facade",
         "datoviz_capability_source": source,
-        "image_path": "dvz_visual_set_texture RGBA8 convenience path",
+        "image_path": (
+            "RGBA8 image path is guarded: current Datoviz v0.4 facade lacks a public "
+            "nearest-sampler setter, so the adapter refuses nearest images instead of "
+            "silently rendering with linear sampling"
+        ),
         "query_support": "deferred until DvzQueryResult is decodable from Python",
         "capture_support": "PNG capture is advertised only when offscreen view capture bindings are available",
         "axis_provider": "datoviz.v04.panel_axis.wip when v0.4-dev Python symbols are exposed",

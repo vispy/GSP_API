@@ -34,6 +34,7 @@ from gsp_datoviz.protocol_renderer import (
     datoviz_v04_sampled_field_diagnostics,
     datoviz_v04_sampled_field_ready,
     is_datoviz_v04_facade,
+    _image_texcoords,
 )
 from gsp_datoviz.query import (
     DVZ_QUERY_STATUS_DECODE_FAILED,
@@ -70,6 +71,26 @@ class FakeDatovizV04:
         self.calls.append(("panel_full", figure))
         return "panel"
 
+    class FakeDataDomain:
+        min = 0.0
+        max = 0.0
+
+    class FakePanelView2D:
+        aspect = 0
+        padding = 1.0
+
+        def __init__(self):
+            self.data_x = FakeDatovizV04.FakeDataDomain()
+            self.data_y = FakeDatovizV04.FakeDataDomain()
+
+    def dvz_panel_view2d(self):
+        self.calls.append(("panel_view2d",))
+        return self.FakePanelView2D()
+
+    def dvz_panel_set_view2d(self, panel, view):
+        self.calls.append(("set_view2d", panel, view))
+        return 0
+
     def dvz_point(self, scene, flags):
         self.calls.append(("point", scene, flags))
         return "point-visual"
@@ -88,6 +109,18 @@ class FakeDatovizV04:
 
     def dvz_panel_add_visual(self, panel, visual, attach_desc):
         self.calls.append(("add_visual", panel, visual, attach_desc))
+        return 0
+
+    class FakePointStyle:
+        stroke_width = 1.0
+        aspect = 2
+
+    def dvz_point_style_desc(self):
+        self.calls.append(("point_style_desc",))
+        return self.FakePointStyle()
+
+    def dvz_point_set_style(self, visual, style):
+        self.calls.append(("point_set_style", visual, style))
         return 0
 
     class DvzVisualAttachDesc(ctypes.Structure):
@@ -660,6 +693,10 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     dvz_visual = renderer.add_point_visual(visual)
 
     assert dvz_visual == "point-visual"
+    style_call = _calls(fake, "point_set_style")[0]
+    assert style_call[1] == "point-visual"
+    assert style_call[2].stroke_width == 0.0
+    assert style_call[2].aspect == 0
     set_data = _calls(fake, "set_data")
     assert [call[2] for call in set_data] == ["position", "color", "diameter"]
     np.testing.assert_allclose(set_data[0][3], [[-0.5, 0.25, 0.0], [0.5, -0.25, 0.0]])
@@ -674,7 +711,21 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     assert attach_desc.coord_space == 1
 
 
-def test_add_image_visual_uses_texture_convenience_path_and_origin_texcoords():
+def test_renderer_configures_equal_aspect_ndc_panel_when_available():
+    fake = FakeDatovizV04()
+    DatovizV04ProtocolRenderer(dvz=fake)
+
+    view_call = _calls(fake, "set_view2d")[0]
+    assert view_call[1] == "panel"
+    assert view_call[2].aspect == 1
+    assert view_call[2].padding == 0.0
+    assert view_call[2].data_x.min == -1.0
+    assert view_call[2].data_x.max == 1.0
+    assert view_call[2].data_y.min == -1.0
+    assert view_call[2].data_y.max == 1.0
+
+
+def test_add_image_visual_rejects_nearest_until_datoviz_exposes_sampler_api():
     fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     image = np.array(
@@ -691,25 +742,14 @@ def test_add_image_visual_uses_texture_convenience_path_and_origin_texcoords():
         origin=ImageOrigin.UPPER,
     )
 
-    dvz_visual = renderer.add_image_visual(visual)
+    with pytest.raises(DatovizV04Unsupported, match="nearest-sampler"):
+        renderer.add_image_visual(visual)
 
-    assert dvz_visual == "image-visual"
-    set_data = _calls(fake, "set_data")
-    assert [call[2] for call in set_data] == ["position", "texcoords"]
-    np.testing.assert_allclose(
-        set_data[0][3],
-        [[-1.0, -0.5, 0.0], [-1.0, 0.5, 0.0], [1.0, -0.5, 0.0], [1.0, 0.5, 0.0]],
-    )
-    np.testing.assert_allclose(set_data[1][3], [[0.0, 1.0], [0.0, 0.0], [1.0, 1.0], [1.0, 0.0]])
-
-    texture_call = _calls(fake, "set_texture")[0]
-    assert texture_call[3:] == (2, 2)
-    assert texture_call[2].shape == (2, 2, 4)
-    np.testing.assert_array_equal(texture_call[2][:, :, 3], 255)
-    assert _calls(fake, "set_query_capabilities") == [("set_query_capabilities", "image-visual", 0x12)]
+    assert _calls(fake, "image") == []
+    assert _calls(fake, "set_texture") == []
 
 
-def test_add_image_visual_uses_sampled_field_path_when_available():
+def test_add_image_visual_rejects_sampled_field_path_until_sampler_api_is_available():
     fake = FakeDatovizV04WithSampledFields()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     image = np.array(
@@ -726,23 +766,13 @@ def test_add_image_visual_uses_sampled_field_path_when_available():
         origin=ImageOrigin.UPPER,
     )
 
-    renderer.add_image_visual(visual)
+    with pytest.raises(DatovizV04Unsupported, match="nearest-sampler"):
+        renderer.add_image_visual(visual)
 
     assert datoviz_v04_sampled_field_ready(fake)
-    assert _calls(fake, "set_texture") == []
-    sampled_call = _calls(fake, "sampled_field")[0]
-    desc = sampled_call[2]
-    assert desc.dim == 0
-    assert desc.format == 22
-    assert desc.semantic == 4
-    assert desc.color_role == 1
-    assert (desc.width, desc.height, desc.depth) == (2, 2, 1)
-    upload_view = _calls(fake, "sampled_field_set_data")[0][2]
-    assert upload_view.bytes_per_row == 8
-    assert upload_view.rows_per_image == 2
-    assert upload_view.data.shape == (2, 2, 4)
-    assert _calls(fake, "set_field") == [("set_field", "image-visual", "field", "sampled-field")]
-    assert renderer.sampled_fields["visual:image"] == "sampled-field"
+    assert _calls(fake, "sampled_field") == []
+    assert _calls(fake, "set_field") == []
+    assert renderer.sampled_fields == {}
 
 
 def test_sampled_field_readiness_reports_missing_symbols():
@@ -778,18 +808,7 @@ def test_capture_png_bytes_rejects_missing_capture_binding():
 
 
 def test_lower_origin_texcoords_are_not_flipped():
-    fake = FakeDatovizV04()
-    renderer = DatovizV04ProtocolRenderer(dvz=fake)
-    visual = ImageVisual(
-        id="visual:image",
-        image=np.zeros((1, 1, 4), dtype=np.uint8),
-        extent=(0.0, 1.0, 0.0, 1.0),
-        origin=ImageOrigin.LOWER,
-    )
-
-    renderer.add_image_visual(visual)
-
-    texcoords = _calls(fake, "set_data")[1][3]
+    texcoords = _image_texcoords(ImageOrigin.LOWER)
     np.testing.assert_allclose(texcoords, [[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]])
 
 
@@ -881,7 +900,7 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
         ("set_domain", "panel", 0, -1.0, 2.0),
         ("set_domain", "panel", 1, -3.0, 4.0),
     ]
-    assert _calls(fake, "set_view2d") == [("set_view2d", "panel", "view2d")]
+    assert _calls(fake, "set_view2d")[-1] == ("set_view2d", "panel", "view2d")
     assert _calls(fake, "panel_axis") == [("panel_axis", "panel", 0), ("panel_axis", "panel", 1)]
     assert _calls(fake, "set_tick_policy") == [("set_tick_policy", "axis:0", "tick-policy"), ("set_tick_policy", "axis:1", "tick-policy")]
     assert _calls(fake, "set_grid") == [("set_grid", "axis:0", True), ("set_grid", "axis:1", True)]

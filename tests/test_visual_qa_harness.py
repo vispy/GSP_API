@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import matplotlib.image as mpimg
+
 from gsp.qa.visual.cases import list_cases
 from gsp.qa.visual.runner import run_visual_qa_suite
 
@@ -48,7 +50,10 @@ def test_visual_qa_run_writes_matplotlib_artifacts_and_report(tmp_path: Path) ->
         assert arrays_path.exists()
         backend = case["backends"]["matplotlib"]
         assert backend["status"] == "rendered"
-        assert Path(str(backend["artifact_path"])).stat().st_size > 0
+        artifact_path = Path(str(backend["artifact_path"]))
+        assert artifact_path.stat().st_size > 0
+        image = mpimg.imread(artifact_path)
+        assert image.shape[:2] == (240, 320)
 
     payload = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
     assert payload["run_id"] == "test-run"
