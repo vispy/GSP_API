@@ -131,7 +131,7 @@
       "id": "S022",
       "title": "Remote source family selection and consultation",
       "state": "in_progress",
-      "progress": 70
+      "progress": 82
     }
   ],
   "missions": [
@@ -688,9 +688,9 @@
       "id": "M062",
       "title": "S022 .npy decoder policy validation",
       "stage": "S022",
-      "state": "pending",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 62
     },
     {
@@ -735,8 +735,7 @@
     }
   ],
   "recommendations": [
-    "Next S022 mission: M062 should add bounded in-memory `.npy` decoder policy validation without HTTP fetch, URL parsing, DNS, credentials, dynamic decoder plugins, or network I/O.",
-    "Then run M063 for mock HTTP array fixtures; real network I/O remains gated behind later review.",
+    "Next S022 mission: M063 should add mock HTTP array fixtures using configured no-network access and the S022 `.npy` decoder policy; real network I/O remains gated behind later review.",
     "Keep Datoviz live query identity payload investigation deferred until the v0.4 runtime can fill visual_family/item_id/texel/value fields."
   ]
 }

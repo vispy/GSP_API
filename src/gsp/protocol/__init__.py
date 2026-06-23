@@ -42,6 +42,12 @@ from .data_sources import (
     demo_no_network_preconfigured_source_resolver,
     validate_tiled_image_source_manifest_link,
 )
+from .decoders import (
+    S022NpyDecoderPolicy,
+    S022NpyDecoderValidationResult,
+    S022NpyHeader,
+    validate_s022_npy_decoder_payload,
+)
 from .extensions import (
     ExtensionKind,
     ExtensionManifest,
@@ -172,6 +178,9 @@ __all__ = [
     "SecurityDiagnostic",
     "SecurityDiagnosticCode",
     "SecurityValidationResult",
+    "S022NpyDecoderPolicy",
+    "S022NpyDecoderValidationResult",
+    "S022NpyHeader",
     "TILED_IMAGE_EXTENSION_CAPABILITY",
     "TILED_IMAGE_EXTENSION_ID",
     "TILED_IMAGE_EXTENSION_VERSION",
@@ -205,6 +214,7 @@ __all__ = [
     "validate_extension_manifest",
     "validate_id",
     "validate_no_network_source_descriptor",
+    "validate_s022_npy_decoder_payload",
     "validate_s022_http_array_source_descriptor",
     "validate_static_manifest_security",
     "validate_tiled_image_source_manifest_link",

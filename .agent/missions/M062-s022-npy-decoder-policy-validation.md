@@ -6,7 +6,7 @@ S022 - Remote source family selection and consultation
 
 ## Status
 
-Pending.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -24,3 +24,11 @@ Implement bounded no-network `.npy` decoder policy validation for trusted `gsp.d
 
 Do not implement HTTP fetch, URL parsing, DNS, credentials, network I/O, dynamic decoder plugins, or
 production remote-source behavior.
+
+## Result
+
+Completed. Added no-network in-memory validation for trusted `gsp.decoder.npy.v1` policy. The
+validator parses `.npy` header metadata without materializing arrays and rejects invalid magic,
+unsupported versions, oversized headers, object/pickle payloads, structured/string/void dtypes,
+Fortran order, big-endian dtype, shape/dtype mismatch, trailing bytes, excessive elements, and
+decoded-byte limit violations.
