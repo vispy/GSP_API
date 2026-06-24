@@ -50,3 +50,7 @@ S025 accepts `MeshVisual` as a narrow inline indexed triangular-mesh protocol. S
 2D filled triangles in NDC/DATA with flat uniform or per-face RGBA. Public geometry resources,
 materials/lights, textures/UVs, instancing, mesh-local transforms, surface/volume visuals, scalar
 colormaps/colorbars, and broad 3D camera conformance are deferred.
+
+The Matplotlib/reference path implements strict 2D rendering and face-level query/readback for
+uniform and per-face RGBA meshes. Vertex-colored readback, edge/vertex picking, and 3D mesh query
+remain capability-gated.

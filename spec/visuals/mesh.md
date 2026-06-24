@@ -88,7 +88,9 @@ diagnostics.
 
 ## Query payload
 
-Mesh query/readback is face-level and capability-gated. A supported mesh hit should include:
+Mesh query/readback is face-level and capability-gated. The strict Matplotlib/reference path supports
+2D uniform and per-face RGBA face hits through `gsp.mesh-query@0.1`. A supported mesh hit should
+include:
 
 - `family="mesh"`;
 - `visual_id`;

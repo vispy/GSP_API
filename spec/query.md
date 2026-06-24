@@ -162,3 +162,23 @@ Text query/readback is item-level and capability-gated. A text hit payload uses 
 `visual_id`, and `item_index`, and may include `text`, original `position`, `coordinate_space`,
 resolved anchors, `bounds_px`, `distance_px`, and `z_order`. Glyph-level hit testing is deferred.
 Guide labels and titles remain guide-query payloads, not public `TextVisual` hits.
+
+## S025 MeshVisual query payload
+
+Mesh query/readback is face-level for the strict 2D reference subset. The Matplotlib/reference path
+supports `MeshVisual` face hits for 2D uniform and per-face RGBA meshes. A mesh hit reports
+`visual_family="mesh"`, uses `item_id` as the face index, and carries extension payload kind
+`gsp.mesh-query@0.1`.
+
+The typed `MeshQueryPayload` reports:
+
+- `visual_id`;
+- `hit_kind="face"`;
+- `face_index`;
+- `vertex_indices` copied from `faces[face_index]`;
+- `panel_xy`;
+- `coordinate_space`;
+- `displayed_rgba`.
+
+Vertex-colored mesh readback, edge/vertex picking, 3D mesh query, barycentric coordinates,
+front-facing state, normals, depth, and interpolated RGBA remain capability-gated/deferred.

@@ -58,6 +58,7 @@ class VisualFamily(str, Enum):
     POINT = "point"
     IMAGE = "image"
     TEXT = "text"
+    MESH = "mesh"
 
 
 class QueryContributionKind(str, Enum):
@@ -69,6 +70,7 @@ class QueryContributionKind(str, Enum):
 
 GUIDE_QUERY_PAYLOAD_KIND = "gsp.guide-query@0.1"
 TEXT_QUERY_PAYLOAD_KIND = "gsp.text-query@0.1"
+MESH_QUERY_PAYLOAD_KIND = "gsp.mesh-query@0.1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -85,6 +87,30 @@ class GuideQueryPayload:
         validate_id(self.guide_id)
         if not self.role:
             raise ValueError("guide query role must not be empty")
+
+
+@dataclass(frozen=True, slots=True)
+class MeshQueryPayload:
+    """Mesh-specific payload for bounded face-level reference queries."""
+
+    visual_id: str
+    hit_kind: str
+    face_index: int
+    vertex_indices: tuple[int, int, int]
+    panel_xy: tuple[float, float]
+    coordinate_space: str
+    displayed_rgba: tuple[float, float, float, float]
+
+    def __post_init__(self) -> None:
+        validate_id(self.visual_id)
+        if self.hit_kind != "face":
+            raise ValueError("mesh query hit_kind must be 'face'")
+        if self.face_index < 0:
+            raise ValueError("face_index must be non-negative")
+        if len(self.vertex_indices) != 3 or any(
+            index < 0 for index in self.vertex_indices
+        ):
+            raise ValueError("vertex_indices must contain three non-negative indices")
 
 
 @dataclass(frozen=True, slots=True)

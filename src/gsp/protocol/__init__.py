@@ -74,8 +74,10 @@ from .ids import ObjectRef, new_id, validate_id
 from .panels import AspectPolicy, Panel, View2D, VisualAttachment, VisualCoordinateSpace
 from .query import (
     GUIDE_QUERY_PAYLOAD_KIND,
+    MESH_QUERY_PAYLOAD_KIND,
     TEXT_QUERY_PAYLOAD_KIND,
     GuideQueryPayload,
+    MeshQueryPayload,
     QueryContributionKind,
     QueryCoordinateSpace,
     QueryHit,
@@ -193,6 +195,8 @@ __all__ = [
     "InProcessGSPServer",
     "InProcessTransport",
     "MaterializationPolicy",
+    "MESH_QUERY_PAYLOAD_KIND",
+    "MeshQueryPayload",
     "NoNetworkPreconfiguredSourceResolver",
     "ObjectRef",
     "Panel",

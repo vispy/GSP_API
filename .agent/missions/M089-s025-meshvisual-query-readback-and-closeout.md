@@ -6,7 +6,7 @@ S025 - Mesh and 3D Geometry Visuals v1
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -27,3 +27,13 @@ Add accepted mesh query/readback semantics and close S025 with docs, QA notes, a
 ## Stop Condition
 
 Stop if query semantics require new transform/material decisions not covered by M083.
+
+## Completion Notes
+
+- Added face-level `MeshVisual` query/readback for the accepted strict 2D reference subset.
+- Added a typed mesh query extension payload carrying face index, vertex indices, panel coordinate,
+  coordinate space, and displayed RGBA.
+- Documented deferred vertex/edge/3D/barycentric/depth/normal/interpolated-color semantics.
+- Closed S025 and recommended opening the next stage around color mapping/colorbars.
+- Validation passed: 99 focused pytest cases, `ruff check`, `ruff format --check`, and
+  `git diff --check`.

@@ -9,21 +9,30 @@ from typing import Iterable
 import numpy as np
 
 from gsp.protocol.query import (
+    MESH_QUERY_PAYLOAD_KIND,
     TEXT_QUERY_PAYLOAD_KIND,
+    MeshQueryPayload,
     QueryHitPolicy,
     QueryRequest,
     QueryResult,
     QueryStatus,
     VisualFamily,
 )
-from gsp.protocol.visuals import ImageOrigin, ImageVisual, PointVisual, TextVisual
+from gsp.protocol.visuals import (
+    ImageOrigin,
+    ImageVisual,
+    MeshColorMode,
+    MeshVisual,
+    PointVisual,
+    TextVisual,
+)
 
 
 @dataclass(frozen=True, slots=True)
 class QueryVisualEntry:
     """Visual plus z-order for reference query evaluation."""
 
-    visual: PointVisual | ImageVisual | TextVisual
+    visual: PointVisual | ImageVisual | TextVisual | MeshVisual
     z_order: int = 0
 
 
@@ -56,6 +65,8 @@ def query_visuals(
             hit = _query_image_visual(request, visual)
         elif isinstance(visual, TextVisual):
             hit = _query_text_visual(request, visual)
+        elif isinstance(visual, MeshVisual):
+            hit = _query_mesh_visual(request, visual)
         else:
             hit = None
         if hit is not None:
@@ -243,6 +254,94 @@ def _query_text_visual(request: QueryRequest, visual: TextVisual) -> QueryResult
             "coordinate_space": visual.coordinate_space.value,
         },
     )
+
+
+def _query_mesh_visual(request: QueryRequest, visual: MeshVisual) -> QueryResult | None:
+    if visual.positions.shape[1] != 2:
+        return None
+    color_mode = visual.resolved_color_mode()
+    if color_mode is MeshColorMode.VERTEX:
+        return None
+
+    query = np.array(request.coordinate, dtype=np.float64)
+    positions = visual.positions[:, :2].astype(np.float64)
+    best_face_index: int | None = None
+    best_order = float("-inf")
+    for face_index, vertex_indices in enumerate(visual.faces):
+        triangle = positions[vertex_indices]
+        if _point_in_triangle(query, triangle):
+            order = float(visual.order)
+            if order >= best_order:
+                best_face_index = face_index
+                best_order = order
+
+    if best_face_index is None:
+        return None
+
+    vertex_indices_tuple = tuple(int(index) for index in visual.faces[best_face_index])
+    rgba = _mesh_face_rgba(visual, best_face_index)
+    payload = MeshQueryPayload(
+        visual_id=visual.id,
+        hit_kind="face",
+        face_index=best_face_index,
+        vertex_indices=vertex_indices_tuple,
+        panel_xy=request.coordinate,
+        coordinate_space=visual.coordinate_space.value,
+        displayed_rgba=rgba,
+    )
+    return QueryResult(
+        request_id=request.id,
+        status=QueryStatus.HIT,
+        hit=True,
+        panel_coordinate=request.coordinate,
+        visual_id=visual.id,
+        visual_family=VisualFamily.MESH,
+        item_id=best_face_index,
+        visual_coordinate=request.coordinate,
+        data_coordinate=request.coordinate,
+        displayed_rgba=rgba,
+        value={
+            "hit_kind": "face",
+            "face_index": best_face_index,
+            "vertex_indices": vertex_indices_tuple,
+        },
+        extension_payload_kind=MESH_QUERY_PAYLOAD_KIND,
+        extension_payload=payload,
+    )
+
+
+def _point_in_triangle(point: np.ndarray, triangle: np.ndarray) -> bool:
+    a, b, c = triangle
+    v0 = c - a
+    v1 = b - a
+    v2 = point - a
+    dot00 = float(np.dot(v0, v0))
+    dot01 = float(np.dot(v0, v1))
+    dot02 = float(np.dot(v0, v2))
+    dot11 = float(np.dot(v1, v1))
+    dot12 = float(np.dot(v1, v2))
+    denominator = dot00 * dot11 - dot01 * dot01
+    if denominator == 0.0:
+        return False
+    inv_denominator = 1.0 / denominator
+    u = (dot11 * dot02 - dot01 * dot12) * inv_denominator
+    v = (dot00 * dot12 - dot01 * dot02) * inv_denominator
+    epsilon = 1e-12
+    return u >= -epsilon and v >= -epsilon and (u + v) <= 1.0 + epsilon
+
+
+def _mesh_face_rgba(
+    visual: MeshVisual, face_index: int
+) -> tuple[float, float, float, float]:
+    color_mode = visual.resolved_color_mode()
+    colors = _rgba01(visual.color)
+    if color_mode is MeshColorMode.UNIFORM:
+        color = colors.reshape(1, 4)[0]
+    elif color_mode is MeshColorMode.FACE:
+        color = colors[face_index]
+    else:
+        raise ValueError("vertex mesh colors are not supported by face query")
+    return (float(color[0]), float(color[1]), float(color[2]), float(color[3]))
 
 
 def _rgba01(colors: np.ndarray) -> np.ndarray:

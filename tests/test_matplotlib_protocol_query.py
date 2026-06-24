@@ -8,9 +8,14 @@ from gsp.protocol import (
     CoordinateSpace,
     ImageOrigin,
     ImageVisual,
+    MESH_QUERY_PAYLOAD_KIND,
+    MeshColorMode,
+    MeshQueryPayload,
+    MeshVisual,
     PointVisual,
     QueryContributionKind,
     QueryHit,
+    QueryHitPolicy,
     QueryRequest,
     QueryResult,
     QueryScope,
@@ -130,6 +135,102 @@ def test_query_returns_text_item_payload_without_glyph_fields():
     }
     assert "glyph" not in result.extension_payload
     assert result.displayed_rgba == (0.0, 0.0, 1.0, 128 / 255.0)
+
+
+def test_query_returns_mesh_face_payload():
+    """MeshVisual query is face-level and reports public topology identity."""
+    mesh = MeshVisual(
+        id="visual:mesh",
+        positions=np.array(
+            [[-1.0, -1.0], [1.0, -1.0], [1.0, 1.0], [-1.0, 1.0]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([[255, 0, 0, 255], [0, 0, 255, 128]], dtype=np.uint8),
+        color_mode=MeshColorMode.FACE,
+    )
+
+    result = query_visuals(
+        QueryRequest(id="query:mesh", panel_id="panel:main", coordinate=(-0.5, 0.5)),
+        [QueryVisualEntry(mesh)],
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.visual_family == VisualFamily.MESH
+    assert result.visual_id == "visual:mesh"
+    assert result.item_id == 1
+    assert result.displayed_rgba == (0.0, 0.0, 1.0, 128 / 255.0)
+    assert result.value == {
+        "hit_kind": "face",
+        "face_index": 1,
+        "vertex_indices": (0, 2, 3),
+    }
+    assert result.extension_payload_kind == MESH_QUERY_PAYLOAD_KIND
+    assert result.extension_payload == MeshQueryPayload(
+        visual_id="visual:mesh",
+        hit_kind="face",
+        face_index=1,
+        vertex_indices=(0, 2, 3),
+        panel_xy=(-0.5, 0.5),
+        coordinate_space="data",
+        displayed_rgba=(0.0, 0.0, 1.0, 128 / 255.0),
+    )
+
+
+def test_query_returns_uniform_mesh_color_and_frontmost_order():
+    mesh = MeshVisual(
+        id="visual:mesh",
+        positions=np.array([[-1.0, -1.0], [1.0, -1.0], [0.0, 1.0]], dtype=np.float32),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([0, 255, 0, 255], dtype=np.uint8),
+    )
+    points = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+        sizes=np.array([4.0], dtype=np.float32),
+    )
+
+    result = query_visuals(
+        QueryRequest(
+            id="query:mesh-all",
+            panel_id="panel:main",
+            coordinate=(0.0, 0.0),
+            hit_policy=QueryHitPolicy.ALL,
+        ),
+        [QueryVisualEntry(mesh, z_order=0), QueryVisualEntry(points, z_order=2)],
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert [hit.visual_family for hit in result.hits] == [
+        VisualFamily.POINT,
+        VisualFamily.MESH,
+    ]
+    assert result.hits[1].displayed_rgba == (0.0, 1.0, 0.0, 1.0)
+
+
+def test_query_defers_vertex_colored_mesh_readback():
+    mesh = MeshVisual(
+        id="visual:mesh",
+        positions=np.array([[-1.0, -1.0], [1.0, -1.0], [0.0, 1.0]], dtype=np.float32),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array(
+            [[255, 0, 0, 255], [0, 255, 0, 255], [0, 0, 255, 255]], dtype=np.uint8
+        ),
+        color_mode=MeshColorMode.VERTEX,
+    )
+
+    result = query_visuals(
+        QueryRequest(
+            id="query:mesh-vertex", panel_id="panel:main", coordinate=(0.0, 0.0)
+        ),
+        [QueryVisualEntry(mesh)],
+    )
+
+    assert result.status == QueryStatus.MISS
 
 
 def test_query_returns_frontmost_text_over_point():

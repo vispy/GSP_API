@@ -1,6 +1,6 @@
 # VisPy2 Visual API - Accepted S023 Baseline
 
-Status: accepted for S023; S024 TextVisual implemented; S025 MeshVisual producer API pending implementation.
+Status: accepted for S023; S024 TextVisual implemented; S025 MeshVisual producer API implemented.
 
 The `vispy2` package is the high-level protocol producer used by S023 examples. It emits formal GSP
 protocol visuals and does not call backend implementation APIs directly.
@@ -13,7 +13,7 @@ Accepted producer methods:
 - `Axes.path(...)` and `Axes.plot(...)` -> `PathVisual`;
 - `Axes.imshow(...)` -> `ImageVisual`;
 - text/label producer -> `TextVisual`;
-- S025 planned: simple mesh producer -> `MeshVisual`;
+- `Axes.mesh(...)` -> `MeshVisual`;
 - semantic guide methods (`set_xlim`, `set_ylim`, labels, title, ticks, grid) update view/guide
   protocol objects.
 
@@ -29,7 +29,7 @@ Out of scope:
 
 ## S025 Mesh producer note
 
-The first mesh producer should emit accepted `MeshVisual` objects with explicit `positions`, `faces`,
-`coordinate_space`, `color`, and `color_mode`. Convenience unindexed triangles may be accepted by the
-producer only if it creates explicit faces before producing protocol. Textures, OBJ loading, public
-materials/lights, surface grids, and instancing remain out of the v1 producer API.
+The mesh producer emits accepted `MeshVisual` objects with explicit `positions`, `faces`,
+`coordinate_space`, `color`, optional `color_mode`, and visual `order`. Textures, OBJ loading, public
+materials/lights, surface grids, instancing, normals, shading, culling, and depth controls remain out
+of the v1 producer API.
