@@ -1,5 +1,5 @@
 {
-  "current_stage": "S024",
+  "current_stage": "S025",
   "stages": [
     {
       "id": "S001",
@@ -144,6 +144,12 @@
       "title": "Text/Glyph Visuals v1",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S025",
+      "title": "Mesh and 3D Geometry Visuals v1",
+      "state": "in_progress",
+      "progress": 0
     }
   ],
   "missions": [
@@ -875,6 +881,78 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 81
+    },
+    {
+      "id": "M082",
+      "title": "S025 Mesh/3D scoping and consultation",
+      "stage": "S025",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 82
+    },
+    {
+      "id": "M083",
+      "title": "S025 MeshVisual ADR/spec baseline",
+      "stage": "S025",
+      "state": "blocked",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 83
+    },
+    {
+      "id": "M084",
+      "title": "S025 MeshVisual protocol dataclass and validation",
+      "stage": "S025",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 84
+    },
+    {
+      "id": "M085",
+      "title": "S025 Matplotlib MeshVisual reference renderer and QA smoke",
+      "stage": "S025",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 85
+    },
+    {
+      "id": "M086",
+      "title": "S025 Datoviz v0.4 mesh capability probe",
+      "stage": "S025",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 86
+    },
+    {
+      "id": "M087",
+      "title": "S025 Datoviz MeshVisual renderer or unsupported report",
+      "stage": "S025",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 87
+    },
+    {
+      "id": "M088",
+      "title": "S025 VisPy2 mesh producer API and examples",
+      "stage": "S025",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 88
+    },
+    {
+      "id": "M089",
+      "title": "S025 MeshVisual query/readback and closeout",
+      "stage": "S025",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 89
     }
   ],
   "review_queue": [],
@@ -916,9 +994,9 @@
     }
   ],
   "recommendations": [
-    "S024 Text/Glyph Visuals v1 is complete through M081: TextVisual protocol, Matplotlib renderer, QA fixtures, Datoviz unsupported diagnostics, VisPy2 producer API, and item-level query/readback are implemented.",
-    "Datoviz TextVisual rendering remains intentionally unsupported until the v0.4-dev text placement/anchor/font-size/rotation/font-role semantics are exposed and verified by a follow-up mission.",
-    "No next missions are currently listed; ask Mission Control to propose the next stage when ready."
+    "S025 Mesh and 3D Geometry Visuals v1 is now the next stage after completed S024 Text/Glyph.",
+    "Run M082 first to create a self-contained P010 ChatGPT Pro consultation packet before freezing MeshVisual/material/query semantics.",
+    "Keep M083-M089 blocked or draft until P010 is accepted into ADR/spec updates; do not implement mesh semantics directly from legacy code."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -928,6 +1006,7 @@
     "M079 kept Datoviz TextVisual as structured unsupported because placement, anchors, font-size, rotation, and font-role semantics are not verified; QA routes TextVisual through adapter diagnostics.",
     "M080 added a minimal VisPy2 text producer API that emits TextVisual without exposing glyphs, atlases, arbitrary font names, rich text, or backend calls.",
     "M081 added item-level TextVisual query/readback payloads for the Matplotlib reference path; glyph-level query remains deferred.",
-    "S024 closeout: all S024 missions M073-M081 are complete; stage marked completed at 100%."
+    "S024 closeout: all S024 missions M073-M081 are complete; stage marked completed at 100%.",
+    "S025 opened with mission batch M082-M089; M082 is ready, M083 is blocked pending P010, and implementation missions remain draft."
   ]
 }
