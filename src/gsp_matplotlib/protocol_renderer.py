@@ -8,11 +8,14 @@ import matplotlib.image
 import matplotlib.markers
 import matplotlib.path
 import matplotlib.patches
+import matplotlib.text
 import matplotlib.transforms
 import numpy as np
 import numpy.typing as npt
 
 from gsp.protocol.visuals import (
+    CoordinateSpace,
+    FontRole,
     ImageInterpolation,
     ImageVisual,
     MarkerShape,
@@ -22,6 +25,9 @@ from gsp.protocol.visuals import (
     SegmentVisual,
     StrokeCap,
     StrokeJoin,
+    TextAnchorX,
+    TextAnchorY,
+    TextVisual,
 )
 
 
@@ -48,6 +54,26 @@ _STROKE_JOINS_MPL = {
     StrokeJoin.MITER: "miter",
     StrokeJoin.ROUND: "round",
     StrokeJoin.BEVEL: "bevel",
+}
+
+
+_FONT_FAMILIES_MPL = {
+    FontRole.SANS: "sans-serif",
+    FontRole.SERIF: "serif",
+    FontRole.MONOSPACE: "monospace",
+}
+
+_TEXT_ANCHOR_X_MPL = {
+    TextAnchorX.LEFT: "left",
+    TextAnchorX.CENTER: "center",
+    TextAnchorX.RIGHT: "right",
+}
+
+_TEXT_ANCHOR_Y_MPL = {
+    TextAnchorY.BASELINE: "baseline",
+    TextAnchorY.TOP: "top",
+    TextAnchorY.CENTER: "center",
+    TextAnchorY.BOTTOM: "bottom",
 }
 
 
@@ -173,6 +199,41 @@ def render_path_visual(
     return tuple(patches)
 
 
+def render_text_visual(
+    axes: matplotlib.axes.Axes, visual: TextVisual
+) -> tuple[matplotlib.text.Text, ...]:
+    """Render protocol text labels into a Matplotlib axes."""
+    positions = visual.positions[:, :2]
+    colors = _rgba_for_matplotlib(visual.rgba_values())
+    font_sizes = visual.font_size_values() * np.float32(_pixel_to_point(axes))
+    anchor_x_values = visual.anchor_x_values()
+    anchor_y_values = visual.anchor_y_values()
+    rotations = np.rad2deg(visual.rotation_values())
+    transform = _text_transform(axes, visual.coordinate_space)
+    font_family = _FONT_FAMILIES_MPL.get(visual.font_role)
+
+    artists: list[matplotlib.text.Text] = []
+    for index, text in enumerate(visual.texts):
+        artist = axes.text(
+            float(positions[index, 0]),
+            float(positions[index, 1]),
+            text,
+            color=_rgba_tuple(colors[index]),
+            fontsize=float(font_sizes[index]),
+            fontfamily=font_family,
+            horizontalalignment=_TEXT_ANCHOR_X_MPL[anchor_x_values[index]],
+            verticalalignment=_TEXT_ANCHOR_Y_MPL[anchor_y_values[index]],
+            rotation=float(rotations[index]),
+            rotation_mode="anchor",
+            transform=transform,
+            zorder=visual.z_order,
+        )
+        artist.set_gid(visual.id)
+        artist.set_url(f"{visual.id}#{index}")
+        artists.append(artist)
+    return tuple(artists)
+
+
 def render_image_visual(
     axes: matplotlib.axes.Axes, visual: ImageVisual
 ) -> matplotlib.image.AxesImage:
@@ -194,6 +255,19 @@ def render_image_visual(
         image.set_clim(*visual.clim)
     image.set_gid(visual.id)
     return image
+
+
+def _text_transform(
+    axes: matplotlib.axes.Axes, coordinate_space: CoordinateSpace
+) -> matplotlib.transforms.Transform:
+    if coordinate_space == CoordinateSpace.DATA:
+        return axes.transData
+    if coordinate_space == CoordinateSpace.NDC:
+        return (
+            matplotlib.transforms.Affine2D().scale(0.5).translate(0.5, 0.5)
+            + axes.transAxes
+        )
+    raise ValueError(f"unsupported coordinate_space: {coordinate_space!r}")
 
 
 def _path_subpath_arrays(visual: PathVisual) -> tuple[npt.NDArray[np.float32], ...]:

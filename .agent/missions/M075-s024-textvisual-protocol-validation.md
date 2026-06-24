@@ -6,7 +6,7 @@ S024 - Text/Glyph Visuals v1
 
 ## Status
 
-Ready.
+completed
 
 ## Summary
 

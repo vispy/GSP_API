@@ -817,18 +817,18 @@
       "id": "M075",
       "title": "S024 TextVisual protocol dataclass and validation",
       "stage": "S024",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 75
     },
     {
       "id": "M076",
       "title": "S024 Matplotlib TextVisual reference renderer",
       "stage": "S024",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 76
     },
     {
@@ -921,5 +921,9 @@
     "Next mission is M075: implement TextVisual protocol dataclass/enums/validation only; no renderer or Datoviz assumptions yet.",
     "After M075, proceed through Matplotlib reference rendering, visual QA fixtures, Datoviz capability probe, Datoviz renderer/unsupported diagnostics, VisPy2 producer API, and text query integration.",
     "Manual S023 visual QA notes remain useful for release signoff, but they do not block S024 implementation."
+  ],
+  "notes": [
+    "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
+    "M076 implemented Matplotlib TextVisual reference rendering and focused tests."
   ]
 }

@@ -33,6 +33,7 @@ from gsp_matplotlib.protocol_renderer import (
     render_path_visual,
     render_point_visual,
     render_segment_visual,
+    render_text_visual,
 )
 
 
@@ -258,6 +259,73 @@ def test_marker_diamond_path_uses_bbox_diameter_semantics():
     np.testing.assert_allclose(
         [bbox.x0, bbox.x1, bbox.y0, bbox.y1], [-0.5, 0.5, -0.5, 0.5]
     )
+
+
+def test_render_text_visual_maps_protocol_fields_to_text_artists():
+    """TextVisual renders as Matplotlib Text with accepted S024 mappings."""
+    from gsp.protocol import CoordinateSpace
+
+    fig, ax = plt.subplots(dpi=144)
+    try:
+        visual = TextVisual(
+            "visual:text",
+            ("left", "right\nline"),
+            np.array([[-1.0, -1.0], [1.0, 1.0]], dtype=np.float32),
+            CoordinateSpace.NDC,
+            rgba=np.array([[255, 0, 0, 128], [0, 0, 255, 255]], dtype=np.uint8),
+            font_size_px=np.array([20.0, 30.0], dtype=np.float32),
+            font_role=FontRole.MONOSPACE,
+            anchor_x=(TextAnchorX.LEFT, TextAnchorX.RIGHT),
+            anchor_y=(TextAnchorY.BASELINE, TextAnchorY.TOP),
+            rotation_rad=np.array([0.0, np.pi / 2.0], dtype=np.float32),
+            z_order=7,
+        )
+
+        artists = render_text_visual(ax, visual)
+
+        assert len(artists) == 2
+        assert artists[0].get_text() == "left"
+        assert artists[1].get_text() == "right\nline"
+        assert artists[0].get_gid() == "visual:text"
+        assert artists[1].get_url() == "visual:text#1"
+        np.testing.assert_allclose(artists[0].get_color(), (1.0, 0.0, 0.0, 128 / 255))
+        np.testing.assert_allclose(artists[1].get_color(), (0.0, 0.0, 1.0, 1.0))
+        np.testing.assert_allclose([a.get_fontsize() for a in artists], [10.0, 15.0])
+        assert artists[0].get_fontfamily() == ["monospace"]
+        assert artists[0].get_ha() == "left"
+        assert artists[1].get_ha() == "right"
+        assert artists[0].get_va() == "baseline"
+        assert artists[1].get_va() == "top"
+        np.testing.assert_allclose(artists[1].get_rotation(), 90.0)
+        assert artists[0].get_rotation_mode() == "anchor"
+        assert artists[0].get_zorder() == 7
+        np.testing.assert_allclose(
+            artists[0].get_transform().transform((-1.0, -1.0)),
+            ax.transAxes.transform((0.0, 0.0)),
+        )
+    finally:
+        plt.close(fig)
+
+
+def test_render_text_visual_uses_data_transform_for_data_coordinates():
+    """DATA text positions use Matplotlib data coordinates directly."""
+    from gsp.protocol import CoordinateSpace
+
+    fig, ax = plt.subplots()
+    try:
+        visual = TextVisual(
+            "visual:data-text",
+            ("data",),
+            np.array([[2.0, 3.0]], dtype=np.float32),
+            CoordinateSpace.DATA,
+        )
+
+        (artist,) = render_text_visual(ax, visual)
+
+        assert artist.get_transform() is ax.transData
+        assert artist.get_position() == (2.0, 3.0)
+    finally:
+        plt.close(fig)
 
 
 def test_protocol_visual_validation_rejects_shape_mismatch():
