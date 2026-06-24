@@ -6,7 +6,7 @@ S023 - Visual Families v1 and Manual Visual QA Foundation
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -20,6 +20,15 @@ sampled-field path.
 - Matplotlib reference mapping.
 - Datoviz v0.4 sampled-field or texture adapter with origin via texcoords.
 - QA cases for checker/origin/scalar/RGBA and interpolation capability gates.
+
+## Completed
+
+- Added bounded `ImageColormap.GRAY` and scalar-image `clim` semantics to `ImageVisual`.
+- Hardened ImageVisual validation for scalar/RGB/RGBA shapes, finite extents, scalar clim, and float ranges.
+- Updated Matplotlib mapping for scalar gray colormap/clim.
+- Updated Datoviz mapping to render scalar gray images and float RGB/RGBA through RGBA8 sampled-field/texture paths.
+- Added S023 QA cases for lower origin, scalar gray/clim, and RGBA alpha.
+- Updated image/backend/VisPy2 specs.
 
 ## Acceptance
 

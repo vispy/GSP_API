@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 
 from gsp.protocol import (
+    ImageColormap,
     ImageOrigin,
     ImageVisual,
     MarkerShape,
@@ -102,6 +103,27 @@ def test_render_image_visual_creates_axes_image():
         assert artist.get_interpolation() == "nearest"
         assert artist.origin == "upper"
         assert artist.get_gid() == "visual:image"
+    finally:
+        plt.close(fig)
+
+
+def test_render_scalar_image_visual_applies_gray_colormap_and_clim():
+    """Scalar images render with explicit scalar colormap/clim semantics."""
+    fig, ax = plt.subplots()
+    try:
+        image_data = np.array([[0.0, 1.0], [2.0, 3.0]], dtype=np.float32)
+        visual = ImageVisual(
+            id="visual:scalar-image",
+            image=image_data,
+            extent=(-1.0, 1.0, -0.5, 0.5),
+            colormap=ImageColormap.GRAY,
+            clim=(0.5, 2.5),
+        )
+
+        artist = render_image_visual(ax, visual)
+
+        assert artist.get_cmap().name == "gray"
+        assert artist.get_clim() == (0.5, 2.5)
     finally:
         plt.close(fig)
 
@@ -391,4 +413,32 @@ def test_protocol_visual_validation_rejects_non_finite_point_fields():
             finite_positions,
             np.array([[0.0, np.nan, 0.0, 1.0]], dtype=np.float32),
             1.0,
+        )
+
+
+def test_image_visual_validation_covers_scalar_colormap_and_clim_rules():
+    """ImageVisual validates v1 scalar/RGB/RGBA image constraints."""
+    scalar = np.array([[0.0, 2.0], [np.nan, 4.0]], dtype=np.float32)
+    rgb = np.zeros((2, 2, 3), dtype=np.float32)
+
+    with pytest.raises(ValueError, match="finite"):
+        ImageVisual("visual:bad-scalar", scalar, (-1.0, 1.0, -1.0, 1.0))
+
+    with pytest.raises(ValueError, match="RGB/RGBA"):
+        ImageVisual("visual:bad-rgb-range", rgb + 2.0, (-1.0, 1.0, -1.0, 1.0))
+
+    with pytest.raises(ValueError, match="scalar images only"):
+        ImageVisual(
+            "visual:bad-colormap",
+            np.zeros((2, 2, 4), dtype=np.uint8),
+            (-1.0, 1.0, -1.0, 1.0),
+            colormap=ImageColormap.GRAY,
+        )
+
+    with pytest.raises(ValueError, match="clim minimum"):
+        ImageVisual(
+            "visual:bad-clim",
+            rgb[..., 0],
+            (-1.0, 1.0, -1.0, 1.0),
+            clim=(1.0, 1.0),
         )

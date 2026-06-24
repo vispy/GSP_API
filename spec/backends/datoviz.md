@@ -67,7 +67,7 @@ Current supported surface:
 | Point size | GSP screen-pixel diameter uploaded to Datoviz `diameter_px` | implemented |
 | Marker visual | `dvz_marker()` + `position`, `color`, `diameter_px`, `angle`, `shape` attributes | implemented when marker facade symbols are exposed |
 | Path visual | `dvz_path()` + `position`, `color`, `stroke_width_px`, subpaths, caps, joins | implemented when path facade symbols are exposed |
-| Image visual | `dvz_image()` + `position`, `texcoords`, `dvz_visual_set_texture()` | implemented for uint8 RGB/RGBA, nearest, NDC extents |
+| Image visual | `dvz_image()` + `position`, `texcoords`, sampled field or texture fallback | implemented for scalar gray and RGB/RGBA NDC images |
 | Image scalar fields | sampled-field path | deferred to `DATOVIZ-V04-IMAGE-FIELD-CONTRACT` |
 | Queries | Datoviz panel query APIs | not advertised; deferred to `DATOVIZ-V04-QUERY-BINDING` |
 
@@ -76,8 +76,7 @@ The adapter raises explicit unsupported errors for semantics not locked in this 
 - non-NDC point/image coordinates;
 - missing marker facade functions or non-NDC marker coordinates;
 - missing path facade functions or non-NDC path coordinates;
-- non-nearest image interpolation;
-- scalar, grayscale, or floating-point images that should use sampled fields;
+- missing image sampling controls for requested interpolation;
 - query/readback support.
 
 ## M066 PointVisual retained path
@@ -173,7 +172,7 @@ visual's `"field"` slot. If sampled-field symbols are unavailable, the existing 
 `dvz_visual_set_texture()` RGBA8 path remains as fallback.
 
 Scalar float sampled fields and color-scale semantics remain deferred. They require explicit scale
-and colormap binding decisions before GSP can claim scalar image parity.
+The M070 scalar path supports conservative CPU grayscale/clim normalization before upload; broader backend-native colormap bindings remain deferred.
 
 ## M028 capture/offscreen parity slice
 
@@ -291,17 +290,17 @@ inspect the physically correct Datoviz mode.
 
 The current GSP Datoviz adapter is still a slice, not parity:
 
-- implemented: point visual, RGBA/RGB uint8 image via texture fallback or sampled field, Datoviz
+- implemented: point visual, scalar gray and RGB/RGBA images via texture fallback or sampled field, Datoviz
   capability translation, query decoding and binding gate, bounded point/image query execution
   wrapper, bounded offscreen PNG capture, color-pipeline selection, v0.4-dev wheel-stage smoke
   harness;
-- not implemented: scalar sampled-field images, live GPU/headless query execution validation,
+- not implemented: backend-native colormap registries, live GPU/headless query execution validation,
   guide/all-rendered query scopes, scientific readback, tiled-source support.
 
 Recommended next mission: establish the Datoviz v0.4 Python facade/raw binding import path, then
 implement Datoviz query/capability parity. Scope implementation to translating
 `dvz_capability_snapshot()` and decoding `DvzQueryResult` into GSP `CapabilitySnapshot` and
-`QueryResult`, with skip-clean runtime tests. Keep sampled-field scalar images, capture, and tiled
+`QueryResult`, with skip-clean runtime tests. Keep backend-native colormap expansion, capture, and tiled
 data-source Datoviz support as explicit follow-ups unless required for the query proof.
 
 ## P002 axis provider update

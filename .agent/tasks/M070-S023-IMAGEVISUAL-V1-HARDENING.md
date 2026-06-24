@@ -43,3 +43,16 @@ out of scope despite S020-S022 groundwork.
 
 - Stop if implementation requires remote data, persistent caches, tiles, volumes, or colorbars.
 - Stop if image work starts designing Text/Glyph or Mesh dependencies.
+
+## Completion Notes
+
+- Implemented bounded ImageVisual v1 hardening: scalar gray colormap, optional scalar clim, finite extent validation, scalar float finite values, and RGB/RGBA float `[0, 1]` validation.
+- Kept broader colormap registries, normalization systems, colorbars, tiled/remote images, and volumes out of scope.
+- Added visual QA cases:
+  - `image/origin_lower_ndc`
+  - `image/scalar_gray_clim_ndc`
+  - `image/rgba_alpha_ndc`
+- Regenerated `artifacts/visual_qa/s023/latest-local/contact_sheets/s023_all_cases.png`; all Matplotlib and Datoviz cases rendered.
+- Validation passed:
+  - `uv run pytest tests -q`
+  - `uv run mypy src/ --strict --show-error-codes`

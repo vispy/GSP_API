@@ -25,6 +25,9 @@ def test_s023_case_registry_lists_initial_cases() -> None:
         "segment/alpha_order_ndc",
         "path/subpaths_width_join_ndc",
         "image/checker_nearest_ndc",
+        "image/origin_lower_ndc",
+        "image/scalar_gray_clim_ndc",
+        "image/rgba_alpha_ndc",
         "overlay/point_over_image_ndc",
     ]
 

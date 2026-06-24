@@ -121,6 +121,7 @@ from .transports import (
 from .ticks import ResolvedTicks, resolve_ticks
 from .visuals import (
     CoordinateSpace,
+    ImageColormap,
     ImageInterpolation,
     ImageOrigin,
     ImageVisual,
@@ -153,6 +154,7 @@ __all__ = [
     "DataLocality",
     "DataSourceDescriptor",
     "DataSourceKind",
+    "ImageColormap",
     "ImageInterpolation",
     "ImageOrigin",
     "ImageVisual",

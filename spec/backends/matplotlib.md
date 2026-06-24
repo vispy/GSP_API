@@ -23,6 +23,8 @@ The backend should consume formal GSP models, not define protocol semantics.
 
 This is a narrow conformance slice beside the legacy renderer. The legacy `MatplotlibRenderer` remains available for existing examples.
 
+For `ImageVisual`, scalar images use the bounded v1 scalar mapping: gray colormap by default, optional explicit `clim`, explicit `origin`, and explicit `extent`. RGB/RGBA images bypass scalar colormap/clim.
+
 For `MarkerVisual`, protocol sizes are screen-pixel diameters and are converted to Matplotlib scatter
 area units with the active figure DPI, matching `PointVisual`. Marker `stroke_width` is also a
 protocol pixel width and is converted to Matplotlib point linewidth using the active figure DPI. The

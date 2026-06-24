@@ -32,6 +32,12 @@ class ImageOrigin(str, Enum):
     LOWER = "lower"
 
 
+class ImageColormap(str, Enum):
+    """Conservative v1 scalar-image colormap vocabulary."""
+
+    GRAY = "gray"
+
+
 class MarkerShape(str, Enum):
     """Conservative v1 marker shape vocabulary."""
 
@@ -257,6 +263,8 @@ class ImageVisual:
     coordinate_space: CoordinateSpace = CoordinateSpace.NDC
     interpolation: ImageInterpolation = ImageInterpolation.NEAREST
     origin: ImageOrigin = ImageOrigin.UPPER
+    colormap: ImageColormap | None = None
+    clim: tuple[float, float] | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
@@ -266,12 +274,30 @@ class ImageVisual:
             raise ValueError("image channel dimension must be 3 or 4")
         if self.image.shape[0] <= 0 or self.image.shape[1] <= 0:
             raise ValueError("image dimensions must be positive")
+        if len(self.extent) != 4 or not all(
+            np.isfinite(value) for value in self.extent
+        ):
+            raise ValueError("extent must contain four finite values")
+        if self.extent[0] == self.extent[1] or self.extent[2] == self.extent[3]:
+            raise ValueError("extent width and height must be non-zero")
+        if self.image.ndim != 2 and (
+            self.colormap is not None or self.clim is not None
+        ):
+            raise ValueError("colormap and clim apply to scalar images only")
+        if self.clim is not None:
+            vmin, vmax = self.clim
+            if not np.isfinite(vmin) or not np.isfinite(vmax):
+                raise ValueError("clim values must be finite")
+            if vmin >= vmax:
+                raise ValueError("clim minimum must be less than maximum")
         if self.image.dtype == np.dtype(np.uint8):
             return
         if self.image.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
             raise TypeError("image must be uint8, float32, or float64")
-        if np.any((self.image < 0.0) | (self.image > 1.0)):
-            raise ValueError("floating point image values must be in [0, 1]")
+        if not np.all(np.isfinite(self.image)):
+            raise ValueError("floating point image values must be finite")
+        if self.image.ndim == 3 and np.any((self.image < 0.0) | (self.image > 1.0)):
+            raise ValueError("floating point RGB/RGBA image values must be in [0, 1]")
 
 
 def _validate_positions(positions: FloatArray) -> int:

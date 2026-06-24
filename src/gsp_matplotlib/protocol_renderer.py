@@ -180,12 +180,18 @@ def render_image_visual(
     interpolation = (
         "nearest" if visual.interpolation == ImageInterpolation.NEAREST else "bilinear"
     )
+    cmap = visual.colormap.value if visual.colormap is not None else None
+    if cmap is None and visual.image.ndim == 2:
+        cmap = "gray"
     image = axes.imshow(
         visual.image,
         extent=visual.extent,
         interpolation=interpolation,
         origin=visual.origin.value,
+        cmap=cmap,
     )
+    if visual.clim is not None:
+        image.set_clim(*visual.clim)
     image.set_gid(visual.id)
     return image
 

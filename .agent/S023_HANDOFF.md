@@ -272,3 +272,13 @@ segment contract added in M068.
   `dvz_path_set_join` when exposed, expanding per-subpath colors/widths to per-vertex arrays.
 - Visual QA case `path/subpaths_width_join_ndc` was added and Matplotlib smoke-generated under
   `artifacts/visual_qa/s023/m069_path_smoke`.
+
+
+## M070 ImageVisual v1 update
+
+- Added bounded scalar image semantics: `ImageColormap.GRAY` and optional scalar `clim`.
+- Float scalar images may contain any finite values; float RGB/RGBA images remain constrained to `[0, 1]`.
+- Matplotlib renders scalar images with gray colormap and explicit clim.
+- Datoviz converts scalar gray and RGB/RGBA images to RGBA8 and uses sampled-field or texture paths.
+- Added QA cases for lower origin, scalar gray/clim, and RGBA alpha.
+- Latest visual QA run rendered all Matplotlib and Datoviz cases under `artifacts/visual_qa/s023/latest-local/`.

@@ -18,7 +18,7 @@ ax.set_ylabel("y")
 ax.set_title("Demo")
 ax.set_xticks([0, 0.5, 1], labels=["zero", "half", "one"])
 ax.grid(True)
-ax.imshow(image)
+ax.imshow(image, colormap="gray", clim=(0.0, 1.0))
 ax.scatter(x, y, color=rgba, size=36)
 ax.markers(x, y, shape="triangle", fill_color=rgba, size=36, angle=0.0)
 ax.path(vertices, path_lengths=(len(vertices),), color=rgba, width=4, join="round")
@@ -35,7 +35,7 @@ VisPy2 should target GSP, not Datoviz directly.
 - `Axes.scatter()` emits a GSP `PointVisual`.
 - `Axes.markers()` emits a GSP `MarkerVisual`.
 - `Axes.path()` and `Axes.plot()` emit a GSP `PathVisual`.
-- `Axes.imshow()` emits a GSP `ImageVisual`.
+- `Axes.imshow()` emits a GSP `ImageVisual`, including bounded scalar `colormap`/`clim` options.
 - `Axes.set_xlim()` and `Axes.set_ylim()` update semantic `View2D`, not backend-local state.
 - `Axes.set_xlabel()`, `set_ylabel()`, `set_title()`, `set_xticks()`, `set_yticks()`, and
   `grid()` update semantic guide intent.

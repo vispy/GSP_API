@@ -467,7 +467,7 @@ class DatovizV04ProtocolRenderer:
             raise DatovizV04Unsupported(
                 "Datoviz v0.4 slice currently supports NDC image extents only"
             )
-        pixels = _rgba8_image(visual.image)
+        pixels = _rgba8_image_visual(visual)
         positions = _image_positions(visual.extent)
         texcoords = _image_texcoords(visual.origin)
         height, width = pixels.shape[:2]
@@ -791,11 +791,16 @@ def _coord_space_value(dvz: Any, name: str, fallback: int) -> int:
     return fallback
 
 
+def _rgba8_image_visual(visual: ImageVisual) -> npt.NDArray[np.uint8]:
+    image = visual.image
+    if image.ndim == 2:
+        return _rgba8_scalar_image(image, visual.clim)
+    return _rgba8_image(image)
+
+
 def _rgba8_image(image: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:
     if image.dtype != np.dtype(np.uint8):
-        raise DatovizV04Unsupported(
-            "Datoviz v0.4 slice only supports uint8 RGB/RGBA images"
-        )
+        image = np.rint(np.asarray(image) * 255.0).clip(0, 255).astype(np.uint8)
     if image.ndim != 3 or image.shape[2] not in (3, 4):
         raise DatovizV04Unsupported(
             "Datoviz v0.4 slice only supports uint8 RGB/RGBA images"
@@ -804,6 +809,23 @@ def _rgba8_image(image: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:
         return np.ascontiguousarray(image)
     alpha = np.full((*image.shape[:2], 1), 255, dtype=np.uint8)
     return np.ascontiguousarray(np.concatenate([image, alpha], axis=2))
+
+
+def _rgba8_scalar_image(
+    image: npt.NDArray[Any], clim: tuple[float, float] | None
+) -> npt.NDArray[np.uint8]:
+    values = np.asarray(image, dtype=np.float32)
+    if clim is None:
+        vmin = float(np.min(values))
+        vmax = float(np.max(values))
+        if vmin == vmax:
+            vmax = vmin + 1.0
+    else:
+        vmin, vmax = clim
+    normalized = ((values - vmin) / (vmax - vmin)).clip(0.0, 1.0)
+    gray = np.rint(normalized * 255.0).astype(np.uint8)
+    alpha = np.full(gray.shape, 255, dtype=np.uint8)
+    return np.ascontiguousarray(np.stack([gray, gray, gray, alpha], axis=2))
 
 
 def _set_data_view_payload(view: Any, pixels: npt.NDArray[np.uint8]) -> None:

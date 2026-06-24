@@ -19,6 +19,7 @@ from gsp.protocol import (
     AxisGuide,
     AxisSide,
     CoordinateSpace,
+    ImageColormap,
     ImageInterpolation,
     ImageOrigin,
     ImageVisual,
@@ -464,6 +465,8 @@ class Axes:
         extent: tuple[float, float, float, float] | None = None,
         origin: str | ImageOrigin = ImageOrigin.UPPER,
         interpolation: str | ImageInterpolation = ImageInterpolation.NEAREST,
+        colormap: str | ImageColormap | None = None,
+        clim: tuple[float, float] | None = None,
         id: str | None = None,
     ) -> ImageVisual:
         """Create a protocol image visual."""
@@ -483,6 +486,8 @@ class Axes:
             coordinate_space=CoordinateSpace.DATA,
             origin=_origin(origin),
             interpolation=_interpolation(interpolation),
+            colormap=_colormap(colormap),
+            clim=clim,
         )
         self.visuals.append(visual)
         self.attachments.append(
@@ -655,6 +660,14 @@ def _interpolation(value: str | ImageInterpolation) -> ImageInterpolation:
     if isinstance(value, ImageInterpolation):
         return value
     return ImageInterpolation(value)
+
+
+def _colormap(value: str | ImageColormap | None) -> ImageColormap | None:
+    if value is None:
+        return None
+    if isinstance(value, ImageColormap):
+        return value
+    return ImageColormap(value)
 
 
 def _tick_values(values: npt.ArrayLike) -> tuple[float, ...]:

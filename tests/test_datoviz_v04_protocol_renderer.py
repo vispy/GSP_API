@@ -1174,6 +1174,28 @@ def test_add_image_visual_uses_sampled_field_path_with_sampling_api():
     assert renderer.sampled_fields == {"visual:image": "sampled-field"}
 
 
+def test_add_image_visual_converts_scalar_image_to_rgba8_texture():
+    fake = FakeDatovizV04WithImageSampling()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    visual = ImageVisual(
+        id="visual:scalar-image",
+        image=np.array([[0.0, 0.5], [1.0, 2.0]], dtype=np.float32),
+        extent=(-1.0, 1.0, -0.5, 0.5),
+        clim=(0.0, 1.0),
+    )
+
+    renderer.add_image_visual(visual)
+
+    texture_call = _calls(fake, "set_texture")[0]
+    np.testing.assert_array_equal(
+        texture_call[2],
+        [
+            [[0, 0, 0, 255], [128, 128, 128, 255]],
+            [[255, 255, 255, 255], [255, 255, 255, 255]],
+        ],
+    )
+
+
 def test_sampled_field_readiness_reports_missing_symbols():
     fake = FakeDatovizV04()
 
@@ -1220,15 +1242,6 @@ def test_lower_origin_texcoords_are_not_flipped():
 def test_image_slice_rejects_unlocked_semantics():
     fake = FakeDatovizV04()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
-
-    with pytest.raises(DatovizV04Unsupported, match="uint8 RGB/RGBA"):
-        renderer.add_image_visual(
-            ImageVisual(
-                id="visual:float-image",
-                image=np.zeros((2, 2), dtype=np.float32),
-                extent=(0.0, 1.0, 0.0, 1.0),
-            )
-        )
 
     with pytest.raises(DatovizV04Unsupported, match="NDC image"):
         renderer.add_image_visual(

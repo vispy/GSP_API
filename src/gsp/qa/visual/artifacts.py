@@ -280,5 +280,7 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "extent": list(visual.extent),
             "interpolation": visual.interpolation.value,
             "origin": visual.origin.value,
+            "colormap": visual.colormap.value if visual.colormap is not None else None,
+            "clim": list(visual.clim) if visual.clim is not None else None,
         }
     raise TypeError(f"unsupported visual type: {type(visual).__name__}")

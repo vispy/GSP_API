@@ -6,6 +6,7 @@ import numpy as np
 
 from gsp.protocol import (
     CoordinateSpace,
+    ImageColormap,
     ImageInterpolation,
     ImageOrigin,
     ImageVisual,
@@ -112,6 +113,27 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
                 "orientation",
             ),
             builder=_image_checker_nearest_ndc,
+        ),
+        VisualQACase(
+            case_id="image/origin_lower_ndc",
+            title="Lower-origin asymmetric image in NDC",
+            family="image",
+            required_features=("image", "ndc", "rgba8", "origin-lower", "extent"),
+            builder=_image_origin_lower_ndc,
+        ),
+        VisualQACase(
+            case_id="image/scalar_gray_clim_ndc",
+            title="Scalar grayscale image with clim in NDC",
+            family="image",
+            required_features=("image", "ndc", "scalar", "gray", "clim"),
+            builder=_image_scalar_gray_clim_ndc,
+        ),
+        VisualQACase(
+            case_id="image/rgba_alpha_ndc",
+            title="RGBA image alpha gradient in NDC",
+            family="image",
+            required_features=("image", "ndc", "rgba8", "alpha"),
+            builder=_image_rgba_alpha_ndc,
         ),
         VisualQACase(
             case_id="overlay/point_over_image_ndc",
@@ -558,6 +580,71 @@ def _image_checker_nearest_ndc() -> VisualQAScene:
         notes=(
             "Small asymmetric RGBA orientation image with nearest interpolation and explicit NDC extent.",
         ),
+    )
+
+
+def _image_origin_lower_ndc() -> VisualQAScene:
+    image = _orientation_image(8)
+    visual = ImageVisual(
+        id="visual:image-origin-lower-ndc",
+        image=image,
+        extent=(-0.75, 0.75, -0.55, 0.55),
+        coordinate_space=CoordinateSpace.NDC,
+        interpolation=ImageInterpolation.NEAREST,
+        origin=ImageOrigin.LOWER,
+    )
+    return VisualQAScene(
+        case_id="image/origin_lower_ndc",
+        visuals=(visual,),
+        arrays={"orientation_rgba": image},
+        notes=(
+            "Same asymmetric RGBA image as the checker case, rendered with lower row origin.",
+        ),
+    )
+
+
+def _image_scalar_gray_clim_ndc() -> VisualQAScene:
+    y, x = np.mgrid[0:12, 0:16].astype(np.float32)
+    image = (x - 4.0) / 8.0 + (y - 6.0) / 12.0
+    visual = ImageVisual(
+        id="visual:image-scalar-gray-clim-ndc",
+        image=np.ascontiguousarray(image.astype(np.float32)),
+        extent=(-0.78, 0.78, -0.58, 0.58),
+        coordinate_space=CoordinateSpace.NDC,
+        interpolation=ImageInterpolation.NEAREST,
+        origin=ImageOrigin.UPPER,
+        colormap=ImageColormap.GRAY,
+        clim=(-0.5, 1.25),
+    )
+    return VisualQAScene(
+        case_id="image/scalar_gray_clim_ndc",
+        visuals=(visual,),
+        arrays={"scalar_field": visual.image},
+        notes=(
+            "Float scalar image uses the bounded S023 gray colormap and explicit clim.",
+        ),
+    )
+
+
+def _image_rgba_alpha_ndc() -> VisualQAScene:
+    image = np.zeros((10, 14, 4), dtype=np.uint8)
+    image[..., 0] = 216
+    image[..., 1] = np.linspace(40, 180, image.shape[1], dtype=np.uint8)[None, :]
+    image[..., 2] = 96
+    image[..., 3] = np.linspace(40, 255, image.shape[0], dtype=np.uint8)[:, None]
+    visual = ImageVisual(
+        id="visual:image-rgba-alpha-ndc",
+        image=image,
+        extent=(-0.80, 0.80, -0.50, 0.50),
+        coordinate_space=CoordinateSpace.NDC,
+        interpolation=ImageInterpolation.NEAREST,
+        origin=ImageOrigin.UPPER,
+    )
+    return VisualQAScene(
+        case_id="image/rgba_alpha_ndc",
+        visuals=(visual,),
+        arrays={"rgba_alpha": image},
+        notes=("RGBA image with horizontal color variation and vertical alpha ramp.",),
     )
 
 
