@@ -206,6 +206,7 @@ def test_probe_successful_fake_facade_is_json_safe(tmp_path: Path) -> None:
     assert payload["source_symbol_matrix"]["dvz_text_placement"] == [
         {"path": "README.md", "line": 5}
     ]
+    assert "color_mapping_capability_matrix" in payload
     json.dumps(payload)
     assert ("dvz_panel_add_visual", "panel", "point", None) in facade.calls
 
@@ -245,3 +246,89 @@ def test_banned_symbol_detection_marks_source_hits_unexpected(tmp_path: Path) ->
     assert len(hits) == 1
     assert hits[0].symbol == "dvz_point_alloc"
     assert hits[0].allowed_context is False
+
+
+def test_probe_reports_color_mapping_capabilities(tmp_path: Path) -> None:
+    """The v0.4 probe records S026 color mapping evidence separately."""
+    from types import SimpleNamespace
+
+    source = tmp_path / "datoviz"
+    include = source / "include" / "datoviz"
+    include.mkdir(parents=True)
+    (include / "scene.h").write_text(
+        "DVZ_EXPORT DvzScale* dvz_scale(DvzScene* scene, const DvzScaleDesc* desc);\n"
+        "DVZ_EXPORT void dvz_scale_set_domain(DvzScale* scale, double min, double max);\n"
+        "DVZ_EXPORT DvzColorbar* dvz_colorbar(DvzPanel* panel, DvzScale* scale, const DvzColorbarDesc* desc);\n",
+        encoding="utf-8",
+    )
+    fake = SimpleNamespace(
+        __version__="0.4-test",
+        DvzColorbarDesc=object,
+        DvzScaleDesc=object,
+        DVZ_BUILTIN_COLORMAP_CIVIDIS=1,
+        DVZ_BUILTIN_COLORMAP_GRAY=2,
+        DVZ_BUILTIN_COLORMAP_INFERNO=3,
+        DVZ_BUILTIN_COLORMAP_MAGMA=4,
+        DVZ_BUILTIN_COLORMAP_PLASMA=5,
+        DVZ_BUILTIN_COLORMAP_VIRIDIS=6,
+        DVZ_COLORBAR_ORIENTATION_HORIZONTAL=7,
+        DVZ_COLORBAR_ORIENTATION_VERTICAL=8,
+        DVZ_FIELD_DIM_2D=9,
+        DVZ_FIELD_FORMAT_R32_FLOAT=10,
+        DVZ_FIELD_SEMANTIC_SCALAR=11,
+        DVZ_SCALE_CONTINUOUS=12,
+        dvz_colorbar=lambda *args: None,
+        dvz_colormap_builtin=lambda *args: None,
+        dvz_colormap_custom=lambda *args: None,
+        dvz_colormap_set_stops=lambda *args: None,
+        dvz_panel_query=lambda *args: None,
+        dvz_panel_query_now=lambda *args: None,
+        dvz_point=lambda *args: None,
+        dvz_sampled_field=lambda *args: None,
+        dvz_sampled_field_set_data=lambda *args: None,
+        dvz_scene_poll_query=lambda *args: None,
+        dvz_scale=lambda *args: None,
+        dvz_scale_set_colormap=lambda *args: None,
+        dvz_scale_set_domain=lambda *args: None,
+        dvz_visual_set_data=lambda *args: None,
+        dvz_visual_set_field=lambda *args: None,
+        dvz_visual_set_scale=lambda *args: None,
+    )
+
+    report = probe_datoviz_v04(source_path=source, facade_module=fake, raw_module=fake)
+    payload = report.to_json()
+
+    assert payload["color_mapping_symbols"]["dvz_scale"]["available"] is True
+    assert (
+        payload["color_mapping_capability_matrix"]["color.scale.continuous"][
+            "supported"
+        ]
+        is True
+    )
+    assert (
+        payload["color_mapping_capability_matrix"]["color.image.scalar_field"][
+            "supported"
+        ]
+        is True
+    )
+    assert (
+        payload["color_mapping_capability_matrix"]["color.colorbar.semantic"][
+            "supported"
+        ]
+        is True
+    )
+    assert (
+        payload["color_mapping_capability_matrix"]["color.marker.scalar_fill"][
+            "supported"
+        ]
+        is False
+    )
+    assert (
+        "MarkerVisual scalar fill"
+        in payload["color_mapping_capability_matrix"]["color.marker.scalar_fill"][
+            "reason"
+        ]
+    )
+    assert payload["source_symbol_matrix"]["dvz_colorbar"] == [
+        {"path": "include/datoviz/scene.h", "line": 3}
+    ]

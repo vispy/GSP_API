@@ -6,7 +6,7 @@ S026 - Color Mapping, Colorbars, and Scalar Data Semantics
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -14,8 +14,17 @@ Gather Datoviz v0.4 evidence for accepted S026 color mapping/colorbar/scalar rea
 
 ## Planned Deliverables
 
-- Capability probe updates.
-- Structured unsupported diagnostics or implementation recommendations.
+- Completed: Capability probe updates.
+- Completed: Structured unsupported diagnostics or implementation recommendations.
+
+## Outcome
+
+The Datoviz v0.4 probe now records S026 color mapping symbols and capability
+gates. Local sibling source contains evidence for scales, colormaps, scalar
+sampled fields, visual scale binding, colorbars, and query APIs, but the Python
+facade/raw runtime is not importable in this environment. Keep S026 Datoviz
+color mapping paths structured unsupported until bindings expose and verify the
+recorded retained-scene semantics.
 
 ## Acceptance
 

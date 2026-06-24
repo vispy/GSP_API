@@ -1,0 +1,65 @@
+{
+  "color.colorbar.semantic": {
+    "capability": "color.colorbar.semantic",
+    "reason": "missing symbols: ('dvz_colorbar', 'DvzColorbarDesc', 'DVZ_COLORBAR_ORIENTATION_VERTICAL', 'DVZ_COLORBAR_ORIENTATION_HORIZONTAL')",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_colorbar,DvzColorbarDesc,DVZ_COLORBAR_ORIENTATION_VERTICAL,DVZ_COLORBAR_ORIENTATION_HORIZONTAL"
+  },
+  "color.colormap.accepted_named": {
+    "capability": "color.colormap.accepted_named",
+    "reason": "missing symbols: ('dvz_colormap_builtin', 'DVZ_BUILTIN_COLORMAP_GRAY', 'DVZ_BUILTIN_COLORMAP_VIRIDIS', 'DVZ_BUILTIN_COLORMAP_MAGMA', 'DVZ_BUILTIN_COLORMAP_PLASMA', 'DVZ_BUILTIN_COLORMAP_INFERNO', 'DVZ_BUILTIN_COLORMAP_CIVIDIS')",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_colormap_builtin,DVZ_BUILTIN_COLORMAP_GRAY,DVZ_BUILTIN_COLORMAP_VIRIDIS,DVZ_BUILTIN_COLORMAP_MAGMA,DVZ_BUILTIN_COLORMAP_PLASMA,DVZ_BUILTIN_COLORMAP_INFERNO,DVZ_BUILTIN_COLORMAP_CIVIDIS"
+  },
+  "color.colormap.custom_lut": {
+    "capability": "color.colormap.custom_lut",
+    "reason": "missing symbols: ('dvz_colormap_custom', 'dvz_colormap_set_stops')",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_colormap_custom,dvz_colormap_set_stops"
+  },
+  "color.image.scalar_field": {
+    "capability": "color.image.scalar_field",
+    "reason": "missing symbols: ('dvz_sampled_field', 'dvz_sampled_field_set_data', 'dvz_visual_set_field', 'dvz_visual_set_scale', 'DVZ_FIELD_DIM_2D', 'DVZ_FIELD_FORMAT_R32_FLOAT', 'DVZ_FIELD_SEMANTIC_SCALAR')",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_sampled_field,dvz_sampled_field_set_data,dvz_visual_set_field,dvz_visual_set_scale,DVZ_FIELD_DIM_2D,DVZ_FIELD_FORMAT_R32_FLOAT,DVZ_FIELD_SEMANTIC_SCALAR"
+  },
+  "color.marker.scalar_fill": {
+    "capability": "color.marker.scalar_fill",
+    "reason": "No retained-scene symbol or source contract was found for MarkerVisual scalar fill colors; S026 should keep this Datoviz path unsupported or CPU-map to RGBA until verified.",
+    "source": "semantic_probe",
+    "supported": false,
+    "symbol": ""
+  },
+  "color.mesh.face_scalar": {
+    "capability": "color.mesh.face_scalar",
+    "reason": "S026 marks MeshVisual face scalar color as capability-gated and this probe does not verify a Datoviz face-scalar readback/rendering contract.",
+    "source": "semantic_probe",
+    "supported": false,
+    "symbol": ""
+  },
+  "color.point.scalar_attribute": {
+    "capability": "color.point.scalar_attribute",
+    "reason": "missing symbols: ('dvz_point', 'dvz_visual_set_data', 'dvz_visual_set_scale', 'dvz_scale')",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_point,dvz_visual_set_data,dvz_visual_set_scale,dvz_scale"
+  },
+  "color.query.scalar_readback": {
+    "capability": "color.query.scalar_readback",
+    "reason": "missing symbols: ('DvzQueryResult', 'dvz_panel_query', 'dvz_panel_query_now', 'dvz_scene_poll_query')",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "DvzQueryResult,dvz_panel_query,dvz_panel_query_now,dvz_scene_poll_query"
+  },
+  "color.scale.continuous": {
+    "capability": "color.scale.continuous",
+    "reason": "missing symbols: ('dvz_scale', 'dvz_scale_set_domain', 'DVZ_SCALE_CONTINUOUS')",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_scale,dvz_scale_set_domain,DVZ_SCALE_CONTINUOUS"
+  }
+}

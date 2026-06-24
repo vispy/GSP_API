@@ -155,7 +155,7 @@
       "id": "S026",
       "title": "Color Mapping, Colorbars, and Scalar Data Semantics",
       "state": "in_progress",
-      "progress": 71
+      "progress": 85
     }
   ],
   "missions": [
@@ -1009,16 +1009,16 @@
       "id": "M095",
       "title": "S026 Datoviz color mapping capability probe",
       "stage": "S026",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 95
     },
     {
       "id": "M096",
       "title": "S026 VisPy2 color mapping producer API",
       "stage": "S026",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 96
@@ -1077,9 +1077,9 @@
     }
   ],
   "recommendations": [
-    "M094 is complete: S026 visual QA cases, Matplotlib artifacts, and protocol color mapping example are implemented.",
-    "Run M095 next to probe Datoviz v0.4 color mapping/colorbar/scalar readback capabilities.",
-    "Keep Datoviz work capability-gated and emit structured unsupported diagnostics where semantics are not verified."
+    "M095 is complete: Datoviz color mapping probe evidence and S026 artifacts are recorded.",
+    "Run M096 next to add bounded VisPy2 producer APIs for accepted S026 color mapping semantics.",
+    "Keep Datoviz S026 rendering/query paths structured unsupported until runtime bindings expose and verify the recorded source APIs."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1103,6 +1103,7 @@
     "M091 completed: converted P011 into ADR-0018, `spec/color_mapping.md`, S026 decision records, and adjacent spec updates; M092 is ready.",
     "M092 completed: added S026 color mapping protocol dataclasses/enums, optional scalar visual encodings, and focused validation tests; M093 is ready.",
     "M093 completed: added Matplotlib reference scalar color rendering/query behavior, semantic colorbar guide rendering, and focused tests; M094 is ready.",
-    "M094 completed: added S026 visual QA suite cases, Matplotlib review artifacts, protocol color mapping example, and examples docs; M095 is ready."
+    "M094 completed: added S026 visual QA suite cases, Matplotlib review artifacts, protocol color mapping example, and examples docs; M095 is ready.",
+    "M095 completed: added Datoviz S026 color mapping symbol/capability probes and artifacts; runtime bindings are unavailable locally, while sibling source shows implementation candidates; M096 is ready."
   ]
 }

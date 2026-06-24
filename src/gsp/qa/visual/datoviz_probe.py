@@ -178,6 +178,118 @@ MESH_RENDERER_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
 }
 
 
+COLOR_MAPPING_SYMBOLS: tuple[str, ...] = (
+    "DvzColorbar",
+    "DvzColorbarDesc",
+    "DvzColorbarOrientation",
+    "DvzColormap",
+    "DvzColormapDesc",
+    "DvzColormapStop",
+    "DvzFieldDataView",
+    "DvzQueryResult",
+    "DvzSampledField",
+    "DvzSampledFieldDesc",
+    "DvzScale",
+    "DvzScaleDesc",
+    "DVZ_BUILTIN_COLORMAP_CIVIDIS",
+    "DVZ_BUILTIN_COLORMAP_GRAY",
+    "DVZ_BUILTIN_COLORMAP_INFERNO",
+    "DVZ_BUILTIN_COLORMAP_MAGMA",
+    "DVZ_BUILTIN_COLORMAP_PLASMA",
+    "DVZ_BUILTIN_COLORMAP_VIRIDIS",
+    "DVZ_COLOR_ROLE_DATA",
+    "DVZ_COLORBAR_ORIENTATION_HORIZONTAL",
+    "DVZ_COLORBAR_ORIENTATION_VERTICAL",
+    "DVZ_FIELD_DIM_2D",
+    "DVZ_FIELD_FORMAT_R32_FLOAT",
+    "DVZ_FIELD_SEMANTIC_SCALAR",
+    "DVZ_SCALE_CONTINUOUS",
+    "dvz_colorbar",
+    "dvz_colorbar_desc",
+    "dvz_colorbar_set_format",
+    "dvz_colorbar_set_layout",
+    "dvz_colorbar_set_orientation",
+    "dvz_colorbar_set_title",
+    "dvz_colormap",
+    "dvz_colormap_builtin",
+    "dvz_colormap_custom",
+    "dvz_colormap_sample",
+    "dvz_colormap_set_stops",
+    "dvz_panel_query",
+    "dvz_panel_query_now",
+    "dvz_sampled_field",
+    "dvz_sampled_field_desc",
+    "dvz_sampled_field_set_data",
+    "dvz_scene_poll_query",
+    "dvz_scale",
+    "dvz_scale_desc",
+    "dvz_scale_set_colormap",
+    "dvz_scale_set_domain",
+    "dvz_scale_set_view_range",
+    "dvz_visual_set_field",
+    "dvz_visual_set_scale",
+)
+
+COLOR_MAPPING_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
+    "color.scale.continuous": (
+        "dvz_scale",
+        "dvz_scale_set_domain",
+        "DVZ_SCALE_CONTINUOUS",
+    ),
+    "color.colormap.accepted_named": (
+        "dvz_colormap_builtin",
+        "DVZ_BUILTIN_COLORMAP_GRAY",
+        "DVZ_BUILTIN_COLORMAP_VIRIDIS",
+        "DVZ_BUILTIN_COLORMAP_MAGMA",
+        "DVZ_BUILTIN_COLORMAP_PLASMA",
+        "DVZ_BUILTIN_COLORMAP_INFERNO",
+        "DVZ_BUILTIN_COLORMAP_CIVIDIS",
+    ),
+    "color.colormap.custom_lut": (
+        "dvz_colormap_custom",
+        "dvz_colormap_set_stops",
+    ),
+    "color.image.scalar_field": (
+        "dvz_sampled_field",
+        "dvz_sampled_field_set_data",
+        "dvz_visual_set_field",
+        "dvz_visual_set_scale",
+        "DVZ_FIELD_DIM_2D",
+        "DVZ_FIELD_FORMAT_R32_FLOAT",
+        "DVZ_FIELD_SEMANTIC_SCALAR",
+    ),
+    "color.point.scalar_attribute": (
+        "dvz_point",
+        "dvz_visual_set_data",
+        "dvz_visual_set_scale",
+        "dvz_scale",
+    ),
+    "color.colorbar.semantic": (
+        "dvz_colorbar",
+        "DvzColorbarDesc",
+        "DVZ_COLORBAR_ORIENTATION_VERTICAL",
+        "DVZ_COLORBAR_ORIENTATION_HORIZONTAL",
+    ),
+    "color.query.scalar_readback": (
+        "DvzQueryResult",
+        "dvz_panel_query",
+        "dvz_panel_query_now",
+        "dvz_scene_poll_query",
+    ),
+}
+
+COLOR_MAPPING_UNVERIFIED_CAPABILITY_REASONS: Mapping[str, str] = {
+    "color.marker.scalar_fill": (
+        "No retained-scene symbol or source contract was found for MarkerVisual scalar fill "
+        "colors; S026 should keep this Datoviz path unsupported or CPU-map to RGBA until verified."
+    ),
+    "color.mesh.face_scalar": (
+        "S026 marks MeshVisual face scalar color as capability-gated and this probe does not "
+        "verify a Datoviz face-scalar readback/rendering contract."
+    ),
+}
+
+
 @dataclass(frozen=True)
 class ImportProbe:
     """JSON-safe import result."""
@@ -305,6 +417,8 @@ class DatovizV04ProbeReport:
     text_capability_matrix: dict[str, CapabilityProbe]
     mesh_symbols: dict[str, SymbolProbe]
     mesh_capability_matrix: dict[str, CapabilityProbe]
+    color_mapping_symbols: dict[str, SymbolProbe]
+    color_mapping_capability_matrix: dict[str, CapabilityProbe]
     source_symbol_matrix: dict[str, list[SourceSymbolHit]]
     minimal_point_scene: MinimalPointProbe
     capture: dict[str, object]
@@ -347,6 +461,14 @@ class DatovizV04ProbeReport:
                 name: result.to_json()
                 for name, result in self.mesh_capability_matrix.items()
             },
+            "color_mapping_symbols": {
+                name: result.to_json()
+                for name, result in self.color_mapping_symbols.items()
+            },
+            "color_mapping_capability_matrix": {
+                name: result.to_json()
+                for name, result in self.color_mapping_capability_matrix.items()
+            },
             "source_symbol_matrix": {
                 name: [hit.to_json() for hit in hits]
                 for name, hits in self.source_symbol_matrix.items()
@@ -383,7 +505,13 @@ def probe_datoviz_v04(
     generated_files = _generated_files(installed_path)
     facade_symbols = _probe_symbols(facade, _facade_symbol_names(), "facade")
     raw_symbols = _probe_symbols(
-        raw, RAW_MIRROR_SYMBOLS + ENUM_AND_STYLE_SYMBOLS + TEXT_SYMBOLS + MESH_SYMBOLS, "raw"
+        raw,
+        RAW_MIRROR_SYMBOLS
+        + ENUM_AND_STYLE_SYMBOLS
+        + TEXT_SYMBOLS
+        + MESH_SYMBOLS
+        + COLOR_MAPPING_SYMBOLS,
+        "raw",
     )
     capability_matrix = _capability_matrix(
         facade_symbols, raw_symbols, facade_import, raw_import
@@ -393,6 +521,10 @@ def probe_datoviz_v04(
     text_capability_matrix = _text_capability_matrix(text_symbols)
     mesh_symbols = _mesh_symbol_matrix(facade, raw)
     mesh_capability_matrix = _mesh_capability_matrix(mesh_symbols)
+    color_mapping_symbols = _color_mapping_symbol_matrix(facade, raw)
+    color_mapping_capability_matrix = _color_mapping_capability_matrix(
+        color_mapping_symbols, facade_symbols, raw_symbols
+    )
     source_symbol_matrix = _source_symbol_matrix(
         source,
         tuple(
@@ -402,6 +534,7 @@ def probe_datoviz_v04(
                 | set(ENUM_AND_STYLE_SYMBOLS)
                 | set(TEXT_SYMBOLS)
                 | set(MESH_SYMBOLS)
+                | set(COLOR_MAPPING_SYMBOLS)
                 | set(BANNED_TEXT_SYMBOLS)
             )
         ),
@@ -437,6 +570,8 @@ def probe_datoviz_v04(
         text_capability_matrix=text_capability_matrix,
         mesh_symbols=mesh_symbols,
         mesh_capability_matrix=mesh_capability_matrix,
+        color_mapping_symbols=color_mapping_symbols,
+        color_mapping_capability_matrix=color_mapping_capability_matrix,
         source_symbol_matrix=source_symbol_matrix,
         minimal_point_scene=minimal_point_scene,
         capture={
@@ -716,6 +851,57 @@ def _mesh_capability_matrix(
     return dict(sorted(matrix.items()))
 
 
+def _color_mapping_symbol_matrix(
+    facade: Any | None, raw: Any | None
+) -> dict[str, SymbolProbe]:
+    matrix: dict[str, SymbolProbe] = {}
+    for symbol in COLOR_MAPPING_SYMBOLS:
+        facade_available = _has_symbol(facade, symbol)
+        raw_available = _has_symbol(raw, symbol)
+        source = "facade" if facade_available else "raw"
+        matrix[symbol] = SymbolProbe(
+            symbol=symbol, available=facade_available or raw_available, source=source
+        )
+    return dict(sorted(matrix.items()))
+
+
+def _color_mapping_capability_matrix(
+    color_symbols: Mapping[str, SymbolProbe],
+    facade_symbols: Mapping[str, SymbolProbe],
+    raw_symbols: Mapping[str, SymbolProbe],
+) -> dict[str, CapabilityProbe]:
+    matrix: dict[str, CapabilityProbe] = {}
+    all_symbols: dict[str, SymbolProbe] = {
+        **dict(raw_symbols),
+        **dict(facade_symbols),
+        **dict(color_symbols),
+    }
+    for capability, symbols in COLOR_MAPPING_CAPABILITIES.items():
+        missing = tuple(
+            symbol
+            for symbol in symbols
+            if not all_symbols.get(
+                symbol, SymbolProbe(symbol=symbol, available=False, source="facade")
+            ).available
+        )
+        matrix[capability] = CapabilityProbe(
+            capability=capability,
+            source="facade_or_raw",
+            symbol=",".join(symbols),
+            supported=not missing,
+            reason=None if not missing else f"missing symbols: {missing}",
+        )
+    for capability, reason in COLOR_MAPPING_UNVERIFIED_CAPABILITY_REASONS.items():
+        matrix[capability] = CapabilityProbe(
+            capability=capability,
+            source="semantic_probe",
+            symbol="",
+            supported=False,
+            reason=reason,
+        )
+    return dict(sorted(matrix.items()))
+
+
 def _source_symbol_matrix(
     source: Path, symbols: Sequence[str]
 ) -> dict[str, list[SourceSymbolHit]]:
@@ -744,7 +930,10 @@ def _datoviz_source_files(source: Path) -> tuple[Path, ...]:
         path = source / relative
         if path.exists():
             candidates.append(path)
-    for examples in (source / "examples" / "c" / "visuals", source / "examples" / "c" / "features"):
+    for examples in (
+        source / "examples" / "c" / "visuals",
+        source / "examples" / "c" / "features",
+    ):
         if examples.exists():
             candidates.extend(sorted(examples.glob("*.c")))
     include_dir = source / "include" / "datoviz"

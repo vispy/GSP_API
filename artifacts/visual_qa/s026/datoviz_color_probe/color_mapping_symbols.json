@@ -1,0 +1,247 @@
+{
+  "DVZ_BUILTIN_COLORMAP_CIVIDIS": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_BUILTIN_COLORMAP_CIVIDIS"
+  },
+  "DVZ_BUILTIN_COLORMAP_GRAY": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_BUILTIN_COLORMAP_GRAY"
+  },
+  "DVZ_BUILTIN_COLORMAP_INFERNO": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_BUILTIN_COLORMAP_INFERNO"
+  },
+  "DVZ_BUILTIN_COLORMAP_MAGMA": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_BUILTIN_COLORMAP_MAGMA"
+  },
+  "DVZ_BUILTIN_COLORMAP_PLASMA": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_BUILTIN_COLORMAP_PLASMA"
+  },
+  "DVZ_BUILTIN_COLORMAP_VIRIDIS": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_BUILTIN_COLORMAP_VIRIDIS"
+  },
+  "DVZ_COLORBAR_ORIENTATION_HORIZONTAL": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_COLORBAR_ORIENTATION_HORIZONTAL"
+  },
+  "DVZ_COLORBAR_ORIENTATION_VERTICAL": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_COLORBAR_ORIENTATION_VERTICAL"
+  },
+  "DVZ_COLOR_ROLE_DATA": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_COLOR_ROLE_DATA"
+  },
+  "DVZ_FIELD_DIM_2D": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_FIELD_DIM_2D"
+  },
+  "DVZ_FIELD_FORMAT_R32_FLOAT": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_FIELD_FORMAT_R32_FLOAT"
+  },
+  "DVZ_FIELD_SEMANTIC_SCALAR": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_FIELD_SEMANTIC_SCALAR"
+  },
+  "DVZ_SCALE_CONTINUOUS": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_SCALE_CONTINUOUS"
+  },
+  "DvzColorbar": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzColorbar"
+  },
+  "DvzColorbarDesc": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzColorbarDesc"
+  },
+  "DvzColorbarOrientation": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzColorbarOrientation"
+  },
+  "DvzColormap": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzColormap"
+  },
+  "DvzColormapDesc": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzColormapDesc"
+  },
+  "DvzColormapStop": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzColormapStop"
+  },
+  "DvzFieldDataView": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzFieldDataView"
+  },
+  "DvzQueryResult": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzQueryResult"
+  },
+  "DvzSampledField": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzSampledField"
+  },
+  "DvzSampledFieldDesc": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzSampledFieldDesc"
+  },
+  "DvzScale": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzScale"
+  },
+  "DvzScaleDesc": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzScaleDesc"
+  },
+  "dvz_colorbar": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colorbar"
+  },
+  "dvz_colorbar_desc": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colorbar_desc"
+  },
+  "dvz_colorbar_set_format": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colorbar_set_format"
+  },
+  "dvz_colorbar_set_layout": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colorbar_set_layout"
+  },
+  "dvz_colorbar_set_orientation": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colorbar_set_orientation"
+  },
+  "dvz_colorbar_set_title": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colorbar_set_title"
+  },
+  "dvz_colormap": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colormap"
+  },
+  "dvz_colormap_builtin": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colormap_builtin"
+  },
+  "dvz_colormap_custom": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colormap_custom"
+  },
+  "dvz_colormap_sample": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colormap_sample"
+  },
+  "dvz_colormap_set_stops": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_colormap_set_stops"
+  },
+  "dvz_panel_query": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_panel_query"
+  },
+  "dvz_panel_query_now": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_panel_query_now"
+  },
+  "dvz_sampled_field": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_sampled_field"
+  },
+  "dvz_sampled_field_desc": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_sampled_field_desc"
+  },
+  "dvz_sampled_field_set_data": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_sampled_field_set_data"
+  },
+  "dvz_scale": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_scale"
+  },
+  "dvz_scale_desc": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_scale_desc"
+  },
+  "dvz_scale_set_colormap": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_scale_set_colormap"
+  },
+  "dvz_scale_set_domain": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_scale_set_domain"
+  },
+  "dvz_scale_set_view_range": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_scale_set_view_range"
+  },
+  "dvz_scene_poll_query": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_scene_poll_query"
+  },
+  "dvz_visual_set_field": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_visual_set_field"
+  },
+  "dvz_visual_set_scale": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_visual_set_scale"
+  }
+}

@@ -1,0 +1,9232 @@
+{
+  "DVZ_BLEND_ALPHA": [],
+  "DVZ_BUILTIN_COLORMAP_CIVIDIS": [
+    {
+      "line": 546,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_BUILTIN_COLORMAP_GRAY": [
+    {
+      "line": 548,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_BUILTIN_COLORMAP_INFERNO": [
+    {
+      "line": 545,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_BUILTIN_COLORMAP_MAGMA": [
+    {
+      "line": 543,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_BUILTIN_COLORMAP_PLASMA": [
+    {
+      "line": 544,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_BUILTIN_COLORMAP_VIRIDIS": [
+    {
+      "line": 542,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_COLORBAR_ORIENTATION_HORIZONTAL": [
+    {
+      "line": 556,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_COLORBAR_ORIENTATION_VERTICAL": [
+    {
+      "line": 287,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 555,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_COLOR_ROLE_DATA": [
+    {
+      "line": 94,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 3521,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "DVZ_COORD_DATA": [
+    {
+      "line": 136,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 75,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 136,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 147,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 879,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "DVZ_COORD_PANEL": [
+    {
+      "line": 148,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_COORD_VIEW": [
+    {
+      "line": 187,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 232,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 165,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 120,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 115,
+      "path": "examples/c/features/guide_spans.c"
+    },
+    {
+      "line": 259,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 521,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 98,
+      "path": "examples/c/features/panel_background.c"
+    },
+    {
+      "line": 132,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 135,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 191,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 135,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 286,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 280,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 441,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 101,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 102,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 146,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_FIELD_DIM_2D": [
+    {
+      "line": 228,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 186,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 209,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 235,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 109,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 232,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 162,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 32,
+      "path": "include/datoviz/scene/field.h"
+    }
+  ],
+  "DVZ_FIELD_FORMAT_R32_FLOAT": [
+    {
+      "line": 229,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 210,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 236,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 51,
+      "path": "include/datoviz/scene/field.h"
+    }
+  ],
+  "DVZ_FIELD_SEMANTIC_SCALAR": [
+    {
+      "line": 230,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 392,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 211,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 237,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 164,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 186,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 118,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 79,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 3521,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "DVZ_MARKER_SHAPE_CIRCLE": [],
+  "DVZ_MARKER_SHAPE_DISC": [
+    {
+      "line": 49,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 106,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 271,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 297,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_MARKER_SHAPE_SQUARE": [
+    {
+      "line": 49,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 96,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 272,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 298,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_PATH_JOIN_BEVEL": [
+    {
+      "line": 322,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 257,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_PATH_JOIN_MITER": [
+    {
+      "line": 320,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 255,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 3111,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "DVZ_PATH_JOIN_ROUND": [
+    {
+      "line": 155,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 129,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 93,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 107,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 186,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 88,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 321,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 256,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_SCALE_CONTINUOUS": [
+    {
+      "line": 162,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 206,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 140,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 78,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 573,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 102,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 114,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 143,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 525,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_SCENE_VISUAL_FAMILY_LABELS": [
+    {
+      "line": 429,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_SCENE_VISUAL_FAMILY_MESH": [
+    {
+      "line": 201,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 268,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 288,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 423,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_SCENE_VISUAL_FAMILY_TEXT": [
+    {
+      "line": 428,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_SEGMENT_CAP_BUTT": [
+    {
+      "line": 215,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 176,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 241,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_SEGMENT_CAP_ROUND": [
+    {
+      "line": 153,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 223,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 245,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 320,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 144,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 105,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 115,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 516,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 86,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 276,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 237,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_SEGMENT_CAP_SQUARE": [
+    {
+      "line": 219,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 240,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_TEXT_ANCHOR_CENTER": [],
+  "DVZ_TEXT_ANCHOR_LEFT": [],
+  "DVZ_TEXT_ANCHOR_RIGHT": [],
+  "DVZ_TEXT_BASELINE_ALPHABETIC": [],
+  "DVZ_TEXT_RENDERER_BITMAP": [
+    {
+      "line": 642,
+      "path": "include/datoviz/scene/enums.h"
+    }
+  ],
+  "DVZ_TEXT_RENDERER_SDF": [],
+  "DVZ_WASM_VISUAL_GLYPH": [],
+  "DvzColorbar": [
+    {
+      "line": 284,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 286,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 557,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 564,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 435,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 446,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 447,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 456,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 464,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 474,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 484,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 497,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 511,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 520,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 82,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1160,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1164,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1165,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1178,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzColorbarDesc": [
+    {
+      "line": 286,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 435,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 447,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 511,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 1160,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1178,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzColorbarOrientation": [
+    {
+      "line": 557,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 484,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 1165,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzColormap": [
+    {
+      "line": 167,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 171,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 211,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 215,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 152,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 71,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 582,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 107,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 111,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 123,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 148,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 151,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 535,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 256,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 321,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 330,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 338,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 348,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 364,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 376,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 396,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 411,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 422,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 81,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1140,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1145,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1148,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1152,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1157,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzColormapDesc": [
+    {
+      "line": 321,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 338,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 1148,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1157,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzColormapStop": [
+    {
+      "line": 171,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 215,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 111,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 123,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 151,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 411,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 1140,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1145,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzDimMaskFlag": [
+    {
+      "line": 88,
+      "path": "README.md"
+    },
+    {
+      "line": 163,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzFieldDataView": [
+    {
+      "line": 238,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 239,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 196,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 197,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 397,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 398,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 219,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 245,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 118,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 242,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 243,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 171,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 193,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 123,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 124,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 146,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 154,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 183,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 229,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 249,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 264,
+      "path": "include/datoviz/scene/field.h"
+    }
+  ],
+  "DvzGeometry": [
+    {
+      "line": 64,
+      "path": "examples/c/visuals/mesh.c"
+    },
+    {
+      "line": 86,
+      "path": "examples/c/visuals/mesh.c"
+    },
+    {
+      "line": 53,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 78,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 93,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 61,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 89,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 149,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 150,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 158,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 159,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 167,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 168,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 178,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 179,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 187,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 188,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 60,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 88,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 116,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 164,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 171,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 172,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 181,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 182,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 191,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 192,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 201,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 202,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 212,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 213,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 50,
+      "path": "examples/c/features/controller_arcball.c"
+    },
+    {
+      "line": 67,
+      "path": "examples/c/features/controller_arcball.c"
+    },
+    {
+      "line": 58,
+      "path": "examples/c/features/controller_fly.c"
+    },
+    {
+      "line": 75,
+      "path": "examples/c/features/controller_fly.c"
+    },
+    {
+      "line": 61,
+      "path": "examples/c/features/controller_orbit_camera.c"
+    },
+    {
+      "line": 78,
+      "path": "examples/c/features/controller_orbit_camera.c"
+    },
+    {
+      "line": 62,
+      "path": "examples/c/features/controller_turntable.c"
+    },
+    {
+      "line": 79,
+      "path": "examples/c/features/controller_turntable.c"
+    },
+    {
+      "line": 134,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 171,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 172,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 207,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 208,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 63,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 108,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 134,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 152,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 240,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 247,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 257,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 51,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 78,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 55,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 138,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 140,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 141,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 97,
+      "path": "examples/c/features/obj_loading.c"
+    },
+    {
+      "line": 98,
+      "path": "examples/c/features/obj_loading.c"
+    },
+    {
+      "line": 99,
+      "path": "examples/c/features/obj_loading.c"
+    },
+    {
+      "line": 50,
+      "path": "examples/c/features/orientation_gizmo.c"
+    },
+    {
+      "line": 67,
+      "path": "examples/c/features/orientation_gizmo.c"
+    },
+    {
+      "line": 50,
+      "path": "examples/c/features/reference_grid.c"
+    },
+    {
+      "line": 108,
+      "path": "examples/c/features/technique_transparency.c"
+    },
+    {
+      "line": 109,
+      "path": "examples/c/features/technique_transparency.c"
+    },
+    {
+      "line": 101,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 110,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 119,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 128,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 137,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 146,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 155,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 164,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 173,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 182,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 191,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 200,
+      "path": "include/datoviz/ffi.h"
+    },
+    {
+      "line": 41,
+      "path": "include/datoviz/geom/enums.h"
+    },
+    {
+      "line": 52,
+      "path": "include/datoviz/geom/enums.h"
+    },
+    {
+      "line": 71,
+      "path": "include/datoviz/geom/enums.h"
+    },
+    {
+      "line": 30,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 31,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 32,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 33,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 34,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 35,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 36,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 37,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 38,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 39,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 40,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 41,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 42,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 43,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 44,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 50,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 51,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 52,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 53,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 61,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 63,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 64,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 90,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 97,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 110,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 123,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 136,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 157,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 169,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 183,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 195,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 208,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 221,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 234,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 248,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 263,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 318,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 326,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 331,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 334,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 339,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 351,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 354,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 46,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 55,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 64,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 74,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 84,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 95,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 106,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 107,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 117,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 126,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 140,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 141,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 151,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 160,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 169,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 178,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 187,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 196,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 205,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 214,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 223,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 236,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 244,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 253,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 261,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 270,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 278,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 287,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 295,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 304,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 312,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 321,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 329,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 338,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 346,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 355,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 363,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 372,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 380,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 393,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 428,
+      "path": "include/datoviz/geom.h"
+    },
+    {
+      "line": 2463,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "DvzIndex": [
+    {
+      "line": 171,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 175,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 176,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 217,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 85,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 320,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 321,
+      "path": "include/datoviz/geom/types.h"
+    },
+    {
+      "line": 190,
+      "path": "include/datoviz/math/types.h"
+    },
+    {
+      "line": 1771,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1949,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "DvzLabelDesc": [
+    {
+      "line": 179,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/lighting.c"
+    },
+    {
+      "line": 110,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 43,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 80,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 1294,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1303,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzMaterial": [
+    {
+      "line": 146,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 92,
+      "path": "examples/c/features/lighting.c"
+    },
+    {
+      "line": 78,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 173,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 179,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 185,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 190,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/technique_depth_cue.c"
+    },
+    {
+      "line": 101,
+      "path": "examples/c/features/technique_msaa.c"
+    },
+    {
+      "line": 233,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 124,
+      "path": "examples/c/features/technique_transparency.c"
+    },
+    {
+      "line": 217,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 772,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 776,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 784,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1984,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1995,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2007,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2021,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "DvzQueryResult": [
+    {
+      "line": 600,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 627,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 653,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 727,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 69,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 138,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 204,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 488,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 507,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 582,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 78,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 195,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 260,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 74,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 202,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 267,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 71,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 147,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 218,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 232,
+      "path": "include/datoviz/scene/interaction.h"
+    },
+    {
+      "line": 316,
+      "path": "include/datoviz/scene/interaction.h"
+    },
+    {
+      "line": 402,
+      "path": "include/datoviz/scene/interaction.h"
+    },
+    {
+      "line": 418,
+      "path": "include/datoviz/scene/interaction.h"
+    },
+    {
+      "line": 448,
+      "path": "include/datoviz/scene/interaction.h"
+    },
+    {
+      "line": 1051,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1105,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1112,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzSampledField": [
+    {
+      "line": 225,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 226,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 227,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 183,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 185,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 389,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 390,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 391,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 207,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 208,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 233,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 234,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 104,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 107,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 108,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 138,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 210,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 229,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 230,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 231,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 160,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 161,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 182,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 183,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 113,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 115,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 116,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 226,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 314,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 103,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 115,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 167,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 193,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 194,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 203,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 214,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 229,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 248,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 264,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 275,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 287,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 309,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 149,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 70,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzSampledFieldDesc": [
+    {
+      "line": 226,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 227,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 185,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 390,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 391,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 208,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 234,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 108,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 230,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 231,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 161,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 183,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 116,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 103,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 115,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 167,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 194,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 287,
+      "path": "include/datoviz/scene/field.h"
+    }
+  ],
+  "DvzScale": [
+    {
+      "line": 156,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 160,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 162,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 195,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 296,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 135,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 136,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 137,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 152,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 176,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 291,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 197,
+      "path": "examples/c/visuals/pixel.c"
+    },
+    {
+      "line": 201,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 204,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 206,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 134,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 138,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 139,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 171,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 276,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 61,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 76,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 77,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 197,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 567,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 571,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 572,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 815,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 84,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 89,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 90,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 98,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 180,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 228,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 159,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 164,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 165,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 179,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 203,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 651,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 98,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 100,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 101,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 135,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 217,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 112,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 113,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 124,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 145,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 126,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 141,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 143,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 54,
+      "path": "include/datoviz/input/router.h"
+    },
+    {
+      "line": 212,
+      "path": "include/datoviz/input/router.h"
+    },
+    {
+      "line": 220,
+      "path": "include/datoviz/input/router.h"
+    },
+    {
+      "line": 51,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 91,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 97,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 103,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 113,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 123,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 133,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 145,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 151,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 527,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 663,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 671,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 194,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 204,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 213,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 221,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 233,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 245,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 256,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 267,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 282,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 297,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 311,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 447,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 545,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 638,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 80,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 91,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1103,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1117,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1121,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1126,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1129,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1137,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1306,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1312,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1313,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1331,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzScaleDesc": [
+    {
+      "line": 162,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 136,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 137,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 206,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 139,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 77,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 572,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 90,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 164,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 165,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 101,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 113,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 143,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 194,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 204,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 1117,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1126,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzText": [
+    {
+      "line": 172,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 203,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 242,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 286,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 297,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 332,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 71,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 76,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 86,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 161,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 260,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 264,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 274,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 430,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 435,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 443,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 137,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 138,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 69,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 74,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 84,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 634,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 645,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 61,
+      "path": "include/datoviz/scene/overlay.h"
+    },
+    {
+      "line": 38,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 45,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 50,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 78,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 88,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 100,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 113,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 127,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 128,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 137,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 149,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 159,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 160,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 173,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 182,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 190,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 199,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 209,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 218,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 228,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 87,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 88,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 190,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 198,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 528,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1174,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1194,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1201,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1207,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1214,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1217,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1219,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1224,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1227,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1229,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1230,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1231,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1245,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1248,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1262,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1265,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1269,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1278,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1287,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1288,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1299,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1300,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1314,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1315,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 3310,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "DvzTextAtlas": [
+    {
+      "line": 172,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 203,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 242,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 286,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 297,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 332,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 78,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 88,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 100,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 113,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 127,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 128,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 137,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 149,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 159,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 160,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 88,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 190,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 198,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1217,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1219,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1224,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1227,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1229,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1230,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1231,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1245,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1248,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1262,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 3310,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "DvzTextAtlasGlyph": [
+    {
+      "line": 203,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 159,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 1248,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1262,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzTextAtlasInfo": [
+    {
+      "line": 184,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 137,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 1227,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1245,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzTextAtlasSpec": [
+    {
+      "line": 297,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 78,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 88,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 100,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 113,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 128,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 1217,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1224,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1229,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzTextPlacement": [
+    {
+      "line": 86,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 161,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 274,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 443,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 84,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 634,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 45,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 50,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 218,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 1265,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1269,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1278,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1288,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1300,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1315,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzTextPlacementMode": [
+    {
+      "line": 634,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 1269,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzTextRenderer": [
+    {
+      "line": 645,
+      "path": "include/datoviz/scene/enums.h"
+    },
+    {
+      "line": 61,
+      "path": "include/datoviz/scene/overlay.h"
+    },
+    {
+      "line": 78,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 228,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 528,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1174,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1194,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1207,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzTextStyle": [
+    {
+      "line": 76,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 264,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 435,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 137,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 138,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 74,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 38,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 209,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 1201,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1214,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1287,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1299,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 1314,
+      "path": "include/datoviz/scene/types.h"
+    }
+  ],
+  "DvzVisualAttachDesc": [
+    {
+      "line": 266,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 135,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 186,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 74,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 231,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 164,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 114,
+      "path": "examples/c/features/guide_spans.c"
+    },
+    {
+      "line": 258,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 520,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 93,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 97,
+      "path": "examples/c/features/panel_background.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 134,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 190,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 90,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 134,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 285,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 279,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 440,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 100,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 101,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 135,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 245,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 250,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 902,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 910,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 847,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 883,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 898,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "capture": [
+    {
+      "line": 4,
+      "path": "datoviz/__init__.py"
+    },
+    {
+      "line": 33,
+      "path": "datoviz/__init__.py"
+    },
+    {
+      "line": 40,
+      "path": "datoviz/__init__.py"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 12,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/mesh.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/pixel.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/primitive.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/sphere.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/splat.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/alpha_blending.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/axis_labels.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/bars_bands.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/bounds_overlay.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/controller_arcball.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/controller_fly.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/controller_orbit_camera.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/controller_turntable.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 311,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/guide_spans.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/json_export.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/lighting.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/obj_loading.c"
+    },
+    {
+      "line": 7,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 9,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 12,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 13,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 55,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 101,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 103,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/orientation_gizmo.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/panel_background.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 139,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/reference_grid.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/technique_depth_cue.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/technique_msaa.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/technique_transparency.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 7,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 250,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 251,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 10,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 119,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 425,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 602,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 603,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 610,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 614,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 616,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 617,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 619,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 621,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 625,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 632,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 633,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 635,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 639,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 641,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 642,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 643,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 646,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 649,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 654,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 656,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 657,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 661,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 664,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 668,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 670,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 676,
+      "path": "include/datoviz/app.h"
+    },
+    {
+      "line": 262,
+      "path": "include/datoviz/canvas.h"
+    },
+    {
+      "line": 282,
+      "path": "include/datoviz/canvas.h"
+    },
+    {
+      "line": 290,
+      "path": "include/datoviz/canvas.h"
+    },
+    {
+      "line": 297,
+      "path": "include/datoviz/canvas.h"
+    },
+    {
+      "line": 61,
+      "path": "include/datoviz/video.h"
+    },
+    {
+      "line": 71,
+      "path": "include/datoviz/video.h"
+    },
+    {
+      "line": 109,
+      "path": "include/datoviz/video.h"
+    },
+    {
+      "line": 110,
+      "path": "include/datoviz/video.h"
+    },
+    {
+      "line": 112,
+      "path": "include/datoviz/video.h"
+    },
+    {
+      "line": 129,
+      "path": "include/datoviz/video.h"
+    }
+  ],
+  "dvz_colorbar": [
+    {
+      "line": 284,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 298,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 435,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 446,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 456,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 464,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 473,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 483,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 497,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 511,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 520,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_colorbar_desc": [
+    {
+      "line": 435,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_colorbar_set_format": [
+    {
+      "line": 298,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 473,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_colorbar_set_layout": [
+    {
+      "line": 511,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_colorbar_set_orientation": [
+    {
+      "line": 483,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_colorbar_set_title": [
+    {
+      "line": 520,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_colormap": [
+    {
+      "line": 167,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 179,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 211,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 225,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 72,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 107,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 118,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 130,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 148,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 157,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 321,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 330,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 338,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 348,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 364,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 376,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 387,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 396,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 410,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 422,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_colormap_builtin": [
+    {
+      "line": 348,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 387,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_colormap_custom": [
+    {
+      "line": 72,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 364,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_colormap_sample": [
+    {
+      "line": 376,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_colormap_set_stops": [
+    {
+      "line": 179,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 225,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 118,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 130,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 157,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 410,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_figure": [
+    {
+      "line": 84,
+      "path": "README.md"
+    },
+    {
+      "line": 323,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 287,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 282,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 267,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 116,
+      "path": "examples/c/visuals/mesh.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/visuals/mesh.c"
+    },
+    {
+      "line": 190,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 180,
+      "path": "examples/c/visuals/pixel.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 193,
+      "path": "examples/c/visuals/primitive.c"
+    },
+    {
+      "line": 204,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/visuals/sphere.c"
+    },
+    {
+      "line": 154,
+      "path": "examples/c/visuals/sphere.c"
+    },
+    {
+      "line": 150,
+      "path": "examples/c/visuals/splat.c"
+    },
+    {
+      "line": 158,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 302,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 375,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 376,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 147,
+      "path": "examples/c/features/alpha_blending.c"
+    },
+    {
+      "line": 240,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 212,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 54,
+      "path": "examples/c/features/app_glfw.c"
+    },
+    {
+      "line": 159,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 69,
+      "path": "examples/c/features/axis_labels.c"
+    },
+    {
+      "line": 180,
+      "path": "examples/c/features/bars_bands.c"
+    },
+    {
+      "line": 76,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 214,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 207,
+      "path": "examples/c/features/bounds_overlay.c"
+    },
+    {
+      "line": 135,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 147,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 260,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 116,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 208,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 231,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 108,
+      "path": "examples/c/features/controller_arcball.c"
+    },
+    {
+      "line": 116,
+      "path": "examples/c/features/controller_fly.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/controller_orbit_camera.c"
+    },
+    {
+      "line": 120,
+      "path": "examples/c/features/controller_turntable.c"
+    },
+    {
+      "line": 384,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 137,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 144,
+      "path": "examples/c/features/gui_cimgui.c"
+    },
+    {
+      "line": 229,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 130,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 132,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 212,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 207,
+      "path": "examples/c/features/guide_spans.c"
+    },
+    {
+      "line": 801,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 561,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 637,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 215,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 141,
+      "path": "examples/c/features/json_export.c"
+    },
+    {
+      "line": 219,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 182,
+      "path": "examples/c/features/lighting.c"
+    },
+    {
+      "line": 186,
+      "path": "examples/c/features/lighting.c"
+    },
+    {
+      "line": 476,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 152,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 156,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 198,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 106,
+      "path": "examples/c/features/obj_loading.c"
+    },
+    {
+      "line": 60,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 113,
+      "path": "examples/c/features/orientation_gizmo.c"
+    },
+    {
+      "line": 175,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 122,
+      "path": "examples/c/features/panel_background.c"
+    },
+    {
+      "line": 122,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 126,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 156,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 160,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 215,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 81,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 149,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 159,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 310,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 315,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 637,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 57,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 128,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 79,
+      "path": "examples/c/features/reference_grid.c"
+    },
+    {
+      "line": 208,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 170,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 168,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 169,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 371,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 379,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 330,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 177,
+      "path": "examples/c/features/technique_depth_cue.c"
+    },
+    {
+      "line": 181,
+      "path": "examples/c/features/technique_depth_cue.c"
+    },
+    {
+      "line": 179,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 183,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 251,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 255,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 181,
+      "path": "examples/c/features/technique_msaa.c"
+    },
+    {
+      "line": 185,
+      "path": "examples/c/features/technique_msaa.c"
+    },
+    {
+      "line": 344,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 348,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 229,
+      "path": "examples/c/features/technique_transparency.c"
+    },
+    {
+      "line": 233,
+      "path": "examples/c/features/technique_transparency.c"
+    },
+    {
+      "line": 152,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 148,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 144,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 154,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 245,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 140,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 138,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 175,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 179,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 291,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 295,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 144,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 154,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 163,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 173,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 184,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 196,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 205,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 219,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 325,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 433,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 526,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1908,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1918,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_font": [
+    {
+      "line": 290,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 293,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 298,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 300,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 67,
+      "path": "include/datoviz/font.h"
+    },
+    {
+      "line": 78,
+      "path": "include/datoviz/font.h"
+    },
+    {
+      "line": 60,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 68,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 88,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 100,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 112,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 128,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 79,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 88,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_font_atlas": [
+    {
+      "line": 298,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 300,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 88,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 100,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 112,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 128,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_font_atlas_ensure_string": [
+    {
+      "line": 298,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 100,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 112,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_font_atlas_ensure_strings": [
+    {
+      "line": 112,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_font_desc": [
+    {
+      "line": 290,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 67,
+      "path": "include/datoviz/font.h"
+    }
+  ],
+  "dvz_glyph": [
+    {
+      "line": 257,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 270,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 3297,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3310,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_glyph_set_atlas": [
+    {
+      "line": 270,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 3310,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_image": [
+    {
+      "line": 215,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 197,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 223,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 150,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 3152,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3165,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 60,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 62,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 66,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 71,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 75,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 83,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 85,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 89,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 94,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 98,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 103,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 105,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 113,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 124,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 136,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 146,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 156,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 166,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 176,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 186,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 196,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 206,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 214,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 219,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 230,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 240,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 250,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 258,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 262,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 278,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 290,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 292,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 297,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 307,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 317,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 328,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 339,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 347,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 353,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 364,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 374,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 386,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 399,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 411,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 424,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 434,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 444,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 456,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 469,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 478,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 483,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 487,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 496,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 505,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 510,
+      "path": "include/datoviz/vklite/images.h"
+    },
+    {
+      "line": 514,
+      "path": "include/datoviz/vklite/images.h"
+    }
+  ],
+  "dvz_label_desc": [
+    {
+      "line": 146,
+      "path": "examples/c/features/lighting.c"
+    },
+    {
+      "line": 110,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 43,
+      "path": "include/datoviz/scene/annotation.h"
+    }
+  ],
+  "dvz_labels": [
+    {
+      "line": 206,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 222,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 224,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 226,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 252,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 265,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 267,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 269,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 3180,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3190,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3200,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3210,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3219,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3231,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3244,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3254,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3264,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3274,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3283,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_marker": [
+    {
+      "line": 172,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 179,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 183,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 124,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 128,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 368,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 371,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 374,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 379,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 324,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 329,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 334,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 421,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 154,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 158,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 162,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 2198,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2211,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2223,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2237,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2304,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_marker_set_style": [
+    {
+      "line": 183,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 379,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 334,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 162,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 2237,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_marker_style": [
+    {
+      "line": 179,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 128,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 374,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 329,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 158,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 2223,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_mesh": [
+    {
+      "line": 85,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 104,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 68,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 76,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 67,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 74,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 139,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 114,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 152,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 139,
+      "path": "examples/c/features/obj_loading.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/obj_loading.c"
+    },
+    {
+      "line": 219,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 118,
+      "path": "examples/c/features/technique_transparency.c"
+    },
+    {
+      "line": 2450,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2463,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_mesh_set_geometry": [
+    {
+      "line": 104,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 76,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 74,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/obj_loading.c"
+    },
+    {
+      "line": 2463,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_panel_add_visual": [
+    {
+      "line": 94,
+      "path": "README.md"
+    },
+    {
+      "line": 276,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 251,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 235,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 244,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 79,
+      "path": "examples/c/visuals/mesh.c"
+    },
+    {
+      "line": 161,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 218,
+      "path": "examples/c/visuals/pixel.c"
+    },
+    {
+      "line": 227,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 113,
+      "path": "examples/c/visuals/primitive.c"
+    },
+    {
+      "line": 175,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/visuals/sphere.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/visuals/splat.c"
+    },
+    {
+      "line": 212,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 264,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 324,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 413,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 414,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 124,
+      "path": "examples/c/features/alpha_blending.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 80,
+      "path": "examples/c/features/app_glfw.c"
+    },
+    {
+      "line": 188,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 104,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 95,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 191,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 149,
+      "path": "examples/c/features/bounds_overlay.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/features/bounds_overlay.c"
+    },
+    {
+      "line": 77,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 75,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 233,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 161,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 180,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 79,
+      "path": "examples/c/features/controller_arcball.c"
+    },
+    {
+      "line": 87,
+      "path": "examples/c/features/controller_fly.c"
+    },
+    {
+      "line": 90,
+      "path": "examples/c/features/controller_orbit_camera.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/controller_turntable.c"
+    },
+    {
+      "line": 154,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 166,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 173,
+      "path": "examples/c/features/gui_cimgui.c"
+    },
+    {
+      "line": 275,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 165,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 121,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 116,
+      "path": "examples/c/features/guide_spans.c"
+    },
+    {
+      "line": 260,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 522,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 551,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 542,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 121,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 178,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 85,
+      "path": "examples/c/features/json_export.c"
+    },
+    {
+      "line": 168,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 130,
+      "path": "examples/c/features/lighting.c"
+    },
+    {
+      "line": 412,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 165,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 147,
+      "path": "examples/c/features/obj_loading.c"
+    },
+    {
+      "line": 86,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 84,
+      "path": "examples/c/features/orientation_gizmo.c"
+    },
+    {
+      "line": 95,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 114,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 99,
+      "path": "examples/c/features/panel_background.c"
+    },
+    {
+      "line": 99,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 136,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 192,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 123,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 92,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 136,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 287,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 416,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 281,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 442,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 471,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 83,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 180,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 210,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 102,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 103,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 433,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 434,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 391,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/technique_depth_cue.c"
+    },
+    {
+      "line": 113,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 222,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 112,
+      "path": "examples/c/features/technique_msaa.c"
+    },
+    {
+      "line": 241,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 280,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 139,
+      "path": "examples/c/features/technique_transparency.c"
+    },
+    {
+      "line": 171,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 168,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 178,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 137,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 198,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 164,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 108,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 152,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 243,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 248,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 896,
+      "path": "include/datoviz/scene/types.h"
+    },
+    {
+      "line": 882,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 890,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_panel_full": [
+    {
+      "line": 85,
+      "path": "README.md"
+    },
+    {
+      "line": 327,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 291,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 286,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 271,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/visuals/mesh.c"
+    },
+    {
+      "line": 120,
+      "path": "examples/c/visuals/mesh.c"
+    },
+    {
+      "line": 194,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/visuals/pixel.c"
+    },
+    {
+      "line": 188,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 197,
+      "path": "examples/c/visuals/primitive.c"
+    },
+    {
+      "line": 208,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 156,
+      "path": "examples/c/visuals/sphere.c"
+    },
+    {
+      "line": 157,
+      "path": "examples/c/visuals/sphere.c"
+    },
+    {
+      "line": 154,
+      "path": "examples/c/visuals/splat.c"
+    },
+    {
+      "line": 162,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 306,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 378,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 379,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 151,
+      "path": "examples/c/features/alpha_blending.c"
+    },
+    {
+      "line": 244,
+      "path": "examples/c/features/animation_tracks.c"
+    },
+    {
+      "line": 216,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 55,
+      "path": "examples/c/features/app_glfw.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 73,
+      "path": "examples/c/features/axis_labels.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/features/bars_bands.c"
+    },
+    {
+      "line": 80,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 218,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 138,
+      "path": "examples/c/features/builtin_shapes_2d.c"
+    },
+    {
+      "line": 150,
+      "path": "examples/c/features/builtin_shapes_3d.c"
+    },
+    {
+      "line": 264,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 120,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 235,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 112,
+      "path": "examples/c/features/controller_arcball.c"
+    },
+    {
+      "line": 120,
+      "path": "examples/c/features/controller_fly.c"
+    },
+    {
+      "line": 123,
+      "path": "examples/c/features/controller_orbit_camera.c"
+    },
+    {
+      "line": 124,
+      "path": "examples/c/features/controller_turntable.c"
+    },
+    {
+      "line": 388,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 141,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 145,
+      "path": "examples/c/features/gui_cimgui.c"
+    },
+    {
+      "line": 230,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 134,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 135,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 136,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 216,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 211,
+      "path": "examples/c/features/guide_spans.c"
+    },
+    {
+      "line": 805,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 562,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 638,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 219,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 145,
+      "path": "examples/c/features/json_export.c"
+    },
+    {
+      "line": 223,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 480,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 202,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 112,
+      "path": "examples/c/features/obj_loading.c"
+    },
+    {
+      "line": 61,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/orientation_gizmo.c"
+    },
+    {
+      "line": 179,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 126,
+      "path": "examples/c/features/panel_background.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 314,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 319,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 641,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 58,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 83,
+      "path": "examples/c/features/reference_grid.c"
+    },
+    {
+      "line": 212,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 174,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 172,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 173,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 375,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 383,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 334,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 156,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 152,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 148,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 158,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 249,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 144,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 142,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 581,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_panel_query": [
+    {
+      "line": 533,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 535,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 391,
+      "path": "include/datoviz/scene/interaction.h"
+    },
+    {
+      "line": 416,
+      "path": "include/datoviz/scene/interaction.h"
+    }
+  ],
+  "dvz_panel_query_now": [
+    {
+      "line": 416,
+      "path": "include/datoviz/scene/interaction.h"
+    }
+  ],
+  "dvz_path": [
+    {
+      "line": 140,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 151,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 155,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 129,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 178,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 81,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 93,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 105,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 107,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 158,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 104,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 115,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 81,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 115,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 174,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 186,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 76,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 86,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 88,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 263,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 274,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 276,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 278,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 89,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 121,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 3090,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3105,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3120,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3134,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_path_set_caps": [
+    {
+      "line": 153,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 105,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 115,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 184,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 86,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 276,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 3105,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_path_set_join": [
+    {
+      "line": 155,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 129,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 93,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 107,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 186,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 88,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 278,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 3120,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_path_set_subpaths": [
+    {
+      "line": 151,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 274,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 3134,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_point": [
+    {
+      "line": 90,
+      "path": "README.md"
+    },
+    {
+      "line": 193,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 212,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 215,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 115,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 130,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 56,
+      "path": "examples/c/features/app_glfw.c"
+    },
+    {
+      "line": 85,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 97,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 100,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 181,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/bounds_overlay.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 150,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 173,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 176,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/gui_cimgui.c"
+    },
+    {
+      "line": 231,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 269,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 272,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 140,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 141,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 101,
+      "path": "examples/c/features/guide_spans.c"
+    },
+    {
+      "line": 531,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 544,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 547,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 517,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 75,
+      "path": "examples/c/features/json_export.c"
+    },
+    {
+      "line": 62,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 102,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 79,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 116,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 130,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 102,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 114,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 114,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 126,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 129,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 451,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 464,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 467,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 59,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 88,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 103,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 108,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 204,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 215,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 220,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 157,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 164,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 167,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 159,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 162,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 169,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 172,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 149,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 157,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 160,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 87,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 99,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 102,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 75,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 78,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 128,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 105,
+      "path": "include/datoviz/input/pointer.h"
+    },
+    {
+      "line": 119,
+      "path": "include/datoviz/input/pointer.h"
+    },
+    {
+      "line": 129,
+      "path": "include/datoviz/input/pointer.h"
+    },
+    {
+      "line": 142,
+      "path": "include/datoviz/input/pointer.h"
+    },
+    {
+      "line": 149,
+      "path": "include/datoviz/input/pointer.h"
+    },
+    {
+      "line": 2056,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2070,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2250,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2257,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_point_set_style": [
+    {
+      "line": 215,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 130,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 100,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 176,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 272,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 547,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 130,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 129,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 467,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 108,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 220,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 167,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 162,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 172,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 160,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 102,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 78,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 2070,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2250,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_point_style_desc": [
+    {
+      "line": 212,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 97,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 150,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 173,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 269,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 544,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 114,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 126,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 464,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 103,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 215,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 164,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 159,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 169,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 157,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 99,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 75,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 2056,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_sampled_field": [
+    {
+      "line": 225,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 237,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 183,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 195,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 389,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 394,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 396,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 400,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 207,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 218,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 233,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 244,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 107,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 229,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 241,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 160,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 170,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 182,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 192,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 115,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 122,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 167,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 193,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 203,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 214,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 228,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 247,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 263,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 274,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 287,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 3503,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3523,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_sampled_field_desc": [
+    {
+      "line": 167,
+      "path": "include/datoviz/scene/field.h"
+    }
+  ],
+  "dvz_sampled_field_set_data": [
+    {
+      "line": 237,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 195,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 396,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 400,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 218,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 244,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 241,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 170,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 192,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 122,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 228,
+      "path": "include/datoviz/scene/field.h"
+    }
+  ],
+  "dvz_scale": [
+    {
+      "line": 160,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 165,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 180,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 135,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 161,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 204,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 209,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 226,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 138,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 149,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 150,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 155,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 76,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 84,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 85,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 571,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 579,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 580,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 585,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 89,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 107,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 188,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 100,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 105,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 112,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 145,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 141,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 158,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 51,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 103,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 113,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 123,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 133,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 139,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 145,
+      "path": "include/datoviz/scene/annotation.h"
+    },
+    {
+      "line": 194,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 204,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 213,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 221,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 233,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 245,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 256,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 267,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 281,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 296,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 310,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_scale_desc": [
+    {
+      "line": 194,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_scale_set_colormap": [
+    {
+      "line": 180,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 226,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 155,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 85,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 585,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 158,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 256,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_scale_set_domain": [
+    {
+      "line": 165,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 209,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 149,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 84,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 579,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 105,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 233,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_scale_set_view_range": [
+    {
+      "line": 150,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 580,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 245,
+      "path": "include/datoviz/scene/scale.h"
+    }
+  ],
+  "dvz_scene": [
+    {
+      "line": 83,
+      "path": "README.md"
+    },
+    {
+      "line": 30,
+      "path": "datoviz/__init__.py"
+    },
+    {
+      "line": 42,
+      "path": "datoviz/__init__.py"
+    },
+    {
+      "line": 51,
+      "path": "examples/c/features/app_glfw.c"
+    },
+    {
+      "line": 52,
+      "path": "examples/c/features/app_glfw.c"
+    },
+    {
+      "line": 96,
+      "path": "examples/c/features/app_glfw.c"
+    },
+    {
+      "line": 113,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 120,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 183,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 196,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 199,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 202,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 205,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 141,
+      "path": "examples/c/features/gui_cimgui.c"
+    },
+    {
+      "line": 142,
+      "path": "examples/c/features/gui_cimgui.c"
+    },
+    {
+      "line": 192,
+      "path": "examples/c/features/gui_cimgui.c"
+    },
+    {
+      "line": 226,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 227,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 294,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 127,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 128,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 201,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 728,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 558,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 559,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 615,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 634,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 635,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 665,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 100,
+      "path": "examples/c/features/json_export.c"
+    },
+    {
+      "line": 113,
+      "path": "examples/c/features/json_export.c"
+    },
+    {
+      "line": 117,
+      "path": "examples/c/features/json_export.c"
+    },
+    {
+      "line": 57,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 58,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 110,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 206,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 583,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 109,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 110,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 150,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 262,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 269,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 220,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 173,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 178,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 181,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 258,
+      "path": "include/datoviz/scene/animation.h"
+    },
+    {
+      "line": 268,
+      "path": "include/datoviz/scene/animation.h"
+    },
+    {
+      "line": 278,
+      "path": "include/datoviz/scene/animation.h"
+    },
+    {
+      "line": 288,
+      "path": "include/datoviz/scene/animation.h"
+    },
+    {
+      "line": 297,
+      "path": "include/datoviz/scene/animation.h"
+    },
+    {
+      "line": 402,
+      "path": "include/datoviz/scene/interaction.h"
+    },
+    {
+      "line": 432,
+      "path": "include/datoviz/scene/interaction.h"
+    },
+    {
+      "line": 56,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 69,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 81,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 90,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 99,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 107,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 114,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 119,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 123,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 127,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 443,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 452,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 463,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 476,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 486,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 496,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 513,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1063,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1778,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1786,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1794,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1809,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1818,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1834,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1848,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1856,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1864,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1877,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1894,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1940,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_scene_poll_query": [
+    {
+      "line": 728,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 206,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 583,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 262,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 269,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 220,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 402,
+      "path": "include/datoviz/scene/interaction.h"
+    }
+  ],
+  "dvz_segment": [
+    {
+      "line": 161,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 173,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 309,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 320,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 133,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 144,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 505,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 516,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 165,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 176,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 2347,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2362,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_segment_set_caps": [
+    {
+      "line": 173,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 320,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 144,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 516,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 176,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 2362,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_text": [
+    {
+      "line": 184,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 203,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 297,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 71,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 76,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 83,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 86,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 96,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 97,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 161,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 260,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 264,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 271,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 274,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 285,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 286,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 430,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 440,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 443,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 451,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 452,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 69,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 74,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 81,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 84,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 93,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 38,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 50,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 78,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 137,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 149,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 160,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 173,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 182,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 190,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 199,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 209,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 218,
+      "path": "include/datoviz/scene/text.h"
+    },
+    {
+      "line": 228,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_text_atlas_field": [
+    {
+      "line": 149,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_text_atlas_glyph": [
+    {
+      "line": 203,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 160,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_text_atlas_info": [
+    {
+      "line": 184,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 137,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_text_atlas_spec": [
+    {
+      "line": 297,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 78,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_text_destroy": [
+    {
+      "line": 190,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_text_id": [
+    {
+      "line": 182,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_text_placement": [
+    {
+      "line": 86,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 161,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 274,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 443,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 84,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 50,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_text_set_string": [
+    {
+      "line": 97,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 286,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 452,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 199,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_text_style": [
+    {
+      "line": 76,
+      "path": "examples/c/visuals/text.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 264,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 74,
+      "path": "examples/c/features/text_block.c"
+    },
+    {
+      "line": 38,
+      "path": "include/datoviz/scene/text.h"
+    }
+  ],
+  "dvz_visual_set_data": [
+    {
+      "line": 91,
+      "path": "README.md"
+    },
+    {
+      "line": 92,
+      "path": "README.md"
+    },
+    {
+      "line": 93,
+      "path": "README.md"
+    },
+    {
+      "line": 268,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 218,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 220,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 216,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 240,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 149,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 210,
+      "path": "examples/c/visuals/pixel.c"
+    },
+    {
+      "line": 132,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 85,
+      "path": "examples/c/visuals/primitive.c"
+    },
+    {
+      "line": 171,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/visuals/sphere.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/visuals/splat.c"
+    },
+    {
+      "line": 207,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 255,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 318,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/alpha_blending.c"
+    },
+    {
+      "line": 124,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 79,
+      "path": "examples/c/features/app_glfw.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 89,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 142,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 189,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 147,
+      "path": "examples/c/features/bounds_overlay.c"
+    },
+    {
+      "line": 182,
+      "path": "examples/c/features/bounds_overlay.c"
+    },
+    {
+      "line": 200,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 202,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 168,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 170,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 103,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 78,
+      "path": "examples/c/features/gui_cimgui.c"
+    },
+    {
+      "line": 171,
+      "path": "examples/c/features/gui_cimgui.c"
+    },
+    {
+      "line": 105,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 266,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 78,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 113,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 110,
+      "path": "examples/c/features/guide_spans.c"
+    },
+    {
+      "line": 226,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 228,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 439,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 446,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 514,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 542,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 540,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 174,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 83,
+      "path": "examples/c/features/json_export.c"
+    },
+    {
+      "line": 164,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 128,
+      "path": "examples/c/features/lighting.c"
+    },
+    {
+      "line": 408,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 85,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 89,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 110,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 92,
+      "path": "examples/c/features/panel_background.c"
+    },
+    {
+      "line": 88,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 123,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 124,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 182,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 111,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 84,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 123,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 272,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 414,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 259,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 372,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 373,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 436,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 462,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 81,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 153,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 155,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 96,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 97,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 431,
+      "path": "examples/c/features/selection_mesh_instances.c"
+    },
+    {
+      "line": 430,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 389,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/technique_depth_cue.c"
+    },
+    {
+      "line": 100,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 213,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 228,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 278,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 89,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 98,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 128,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 129,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 194,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 83,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 96,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 72,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 1581,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1642,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1649,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1739,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1747,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 1761,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_visual_set_data_many": [
+    {
+      "line": 268,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 216,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 240,
+      "path": "examples/c/visuals/marker.c"
+    },
+    {
+      "line": 149,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 210,
+      "path": "examples/c/visuals/pixel.c"
+    },
+    {
+      "line": 132,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 85,
+      "path": "examples/c/visuals/primitive.c"
+    },
+    {
+      "line": 171,
+      "path": "examples/c/visuals/segment.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/visuals/sphere.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/visuals/splat.c"
+    },
+    {
+      "line": 207,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 255,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 318,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 119,
+      "path": "examples/c/features/alpha_blending.c"
+    },
+    {
+      "line": 124,
+      "path": "examples/c/features/annotation_readout.c"
+    },
+    {
+      "line": 79,
+      "path": "examples/c/features/app_glfw.c"
+    },
+    {
+      "line": 125,
+      "path": "examples/c/features/axes_2d.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 89,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 142,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 189,
+      "path": "examples/c/features/bezier_curve_path.c"
+    },
+    {
+      "line": 147,
+      "path": "examples/c/features/bounds_overlay.c"
+    },
+    {
+      "line": 182,
+      "path": "examples/c/features/bounds_overlay.c"
+    },
+    {
+      "line": 146,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 103,
+      "path": "examples/c/features/datetime_axis.c"
+    },
+    {
+      "line": 171,
+      "path": "examples/c/features/gui_cimgui.c"
+    },
+    {
+      "line": 105,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 266,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/gui_viewport.c"
+    },
+    {
+      "line": 113,
+      "path": "examples/c/features/guide_lines.c"
+    },
+    {
+      "line": 110,
+      "path": "examples/c/features/guide_spans.c"
+    },
+    {
+      "line": 439,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 514,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 542,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 540,
+      "path": "examples/c/features/input_events.c"
+    },
+    {
+      "line": 174,
+      "path": "examples/c/features/isolines.c"
+    },
+    {
+      "line": 83,
+      "path": "examples/c/features/json_export.c"
+    },
+    {
+      "line": 164,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 128,
+      "path": "examples/c/features/lighting.c"
+    },
+    {
+      "line": 408,
+      "path": "examples/c/features/marker_symbols.c"
+    },
+    {
+      "line": 85,
+      "path": "examples/c/features/offscreen_capture.c"
+    },
+    {
+      "line": 89,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 110,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 92,
+      "path": "examples/c/features/panel_background.c"
+    },
+    {
+      "line": 88,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 123,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 124,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 182,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 111,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 84,
+      "path": "examples/c/features/panel_view2d.c"
+    },
+    {
+      "line": 123,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 272,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 414,
+      "path": "examples/c/features/picking.c"
+    },
+    {
+      "line": 259,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 436,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 462,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 81,
+      "path": "examples/c/features/record_replay.c"
+    },
+    {
+      "line": 96,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 97,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 430,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 389,
+      "path": "examples/c/features/selection_sphere.c"
+    },
+    {
+      "line": 91,
+      "path": "examples/c/features/technique_depth_cue.c"
+    },
+    {
+      "line": 100,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 213,
+      "path": "examples/c/features/technique_edl.c"
+    },
+    {
+      "line": 228,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 278,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 89,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 98,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 128,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 129,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 194,
+      "path": "examples/c/features/user_scale.c"
+    },
+    {
+      "line": 83,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 96,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 72,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 1739,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_visual_set_data_range": [
+    {
+      "line": 119,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 1761,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_visual_set_depth": [
+    {
+      "line": 272,
+      "path": "examples/c/visuals/glyph.c"
+    },
+    {
+      "line": 249,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 231,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 159,
+      "path": "examples/c/visuals/path.c"
+    },
+    {
+      "line": 214,
+      "path": "examples/c/visuals/pixel.c"
+    },
+    {
+      "line": 219,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 209,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 261,
+      "path": "examples/c/visuals/vector.c"
+    },
+    {
+      "line": 102,
+      "path": "examples/c/features/basic_scene.c"
+    },
+    {
+      "line": 229,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 157,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 178,
+      "path": "examples/c/features/compute_buffer_animation.c"
+    },
+    {
+      "line": 274,
+      "path": "examples/c/features/gui_controls.c"
+    },
+    {
+      "line": 112,
+      "path": "examples/c/features/guide_spans.c"
+    },
+    {
+      "line": 255,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 518,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 549,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 166,
+      "path": "examples/c/features/legend_categorical.c"
+    },
+    {
+      "line": 112,
+      "path": "examples/c/features/overlay_card.c"
+    },
+    {
+      "line": 94,
+      "path": "examples/c/features/panel_background.c"
+    },
+    {
+      "line": 96,
+      "path": "examples/c/features/panel_grid.c"
+    },
+    {
+      "line": 129,
+      "path": "examples/c/features/panel_linked.c"
+    },
+    {
+      "line": 132,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 188,
+      "path": "examples/c/features/panel_multi.c"
+    },
+    {
+      "line": 120,
+      "path": "examples/c/features/panel_single.c"
+    },
+    {
+      "line": 131,
+      "path": "examples/c/features/panzoom.c"
+    },
+    {
+      "line": 282,
+      "path": "examples/c/features/path_join.c"
+    },
+    {
+      "line": 274,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 438,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 469,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 178,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 98,
+      "path": "examples/c/features/scalebar.c"
+    },
+    {
+      "line": 99,
+      "path": "examples/c/features/scalebar_units.c"
+    },
+    {
+      "line": 432,
+      "path": "examples/c/features/selection_pixel.c"
+    },
+    {
+      "line": 116,
+      "path": "examples/c/features/technique_depth_cue.c"
+    },
+    {
+      "line": 110,
+      "path": "examples/c/features/technique_depth_test.c"
+    },
+    {
+      "line": 169,
+      "path": "examples/c/features/timer_animation.c"
+    },
+    {
+      "line": 165,
+      "path": "examples/c/features/update_partial.c"
+    },
+    {
+      "line": 175,
+      "path": "examples/c/features/update_visual_data.c"
+    },
+    {
+      "line": 162,
+      "path": "examples/c/features/video_export.c"
+    },
+    {
+      "line": 104,
+      "path": "examples/c/features/visibility.c"
+    },
+    {
+      "line": 80,
+      "path": "examples/c/features/visual_transform.c"
+    },
+    {
+      "line": 1385,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 2044,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_visual_set_field": [
+    {
+      "line": 247,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 218,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 406,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 407,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 227,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 253,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 163,
+      "path": "examples/c/features/mesh_texture.c"
+    },
+    {
+      "line": 261,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 176,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 202,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 232,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 234,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 308,
+      "path": "include/datoviz/scene/field.h"
+    },
+    {
+      "line": 3145,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3173,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3317,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3503,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3523,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_visual_set_index_data": [
+    {
+      "line": 1949,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_visual_set_material": [
+    {
+      "line": 152,
+      "path": "examples/c/features/coordinate_system.c"
+    },
+    {
+      "line": 120,
+      "path": "examples/c/features/lighting.c"
+    },
+    {
+      "line": 92,
+      "path": "examples/c/features/material_mesh.c"
+    },
+    {
+      "line": 101,
+      "path": "examples/c/features/technique_depth_cue.c"
+    },
+    {
+      "line": 105,
+      "path": "examples/c/features/technique_msaa.c"
+    },
+    {
+      "line": 238,
+      "path": "examples/c/features/technique_ssao.c"
+    },
+    {
+      "line": 129,
+      "path": "examples/c/features/technique_transparency.c"
+    },
+    {
+      "line": 2021,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_visual_set_scale": [
+    {
+      "line": 222,
+      "path": "examples/c/visuals/image.c"
+    },
+    {
+      "line": 220,
+      "path": "examples/c/visuals/labels.c"
+    },
+    {
+      "line": 201,
+      "path": "examples/c/visuals/pixel.c"
+    },
+    {
+      "line": 205,
+      "path": "examples/c/visuals/point.c"
+    },
+    {
+      "line": 236,
+      "path": "examples/c/visuals/volume.c"
+    },
+    {
+      "line": 204,
+      "path": "examples/c/features/colorbar.c"
+    },
+    {
+      "line": 137,
+      "path": "examples/c/features/colormap_scale.c"
+    },
+    {
+      "line": 230,
+      "path": "examples/c/features/image_probe.c"
+    },
+    {
+      "line": 263,
+      "path": "examples/c/features/probe_labels.c"
+    },
+    {
+      "line": 157,
+      "path": "examples/c/features/sampled_field_2d.c"
+    },
+    {
+      "line": 142,
+      "path": "examples/c/features/sampled_field_3d.c"
+    },
+    {
+      "line": 168,
+      "path": "examples/c/features/volume_occlusion.c"
+    },
+    {
+      "line": 638,
+      "path": "include/datoviz/scene/scale.h"
+    },
+    {
+      "line": 3174,
+      "path": "include/datoviz/scene.h"
+    }
+  ],
+  "dvz_visual_set_texture": [
+    {
+      "line": 3512,
+      "path": "include/datoviz/scene.h"
+    },
+    {
+      "line": 3531,
+      "path": "include/datoviz/scene.h"
+    }
+  ]
+}
