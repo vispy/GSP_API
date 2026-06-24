@@ -110,6 +110,30 @@ def test_render_marker_visual_creates_marker_collections():
         plt.close(fig)
 
 
+def test_render_marker_visual_does_not_renormalize_rotated_marker_paths():
+    """Rotated marker paths keep the requested marker-space scale."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MarkerVisual(
+            id="visual:rotated-markers",
+            positions=np.array([[0.0, 0.0], [1.0, 0.0]], dtype=np.float32),
+            shape=MarkerShape.TRIANGLE,
+            fill_colors=np.array([[255, 0, 0, 255], [0, 0, 255, 255]], dtype=np.uint8),
+            sizes=np.array([40.0, 40.0], dtype=np.float32),
+            angle=np.array([0.0, np.pi / 4.0], dtype=np.float32),
+        )
+
+        artists = render_marker_visual(ax, visual)
+
+        np.testing.assert_allclose(artists[0].get_sizes(), artists[1].get_sizes())
+        unrotated_bbox = artists[0].get_paths()[0].get_extents()
+        rotated_bbox = artists[1].get_paths()[0].get_extents()
+        assert rotated_bbox.width > unrotated_bbox.width
+        assert rotated_bbox.height > unrotated_bbox.height
+    finally:
+        plt.close(fig)
+
+
 def test_protocol_visual_validation_rejects_shape_mismatch():
     """Formal visual models reject mismatched first-slice attributes."""
     positions = np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float32)

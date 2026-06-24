@@ -67,15 +67,17 @@ def render_marker_visual(axes: matplotlib.axes.Axes, visual: MarkerVisual) -> tu
 
     collections: list[matplotlib.collections.PathCollection] = []
     for index, (shape, angle) in enumerate(zip(shapes, angles, strict=True)):
-        collection = axes.scatter(
-            [offsets[index, 0]],
-            [offsets[index, 1]],
-            s=[areas[index]],
-            marker=_marker_path(shape, float(angle)),
+        collection = matplotlib.collections.PathCollection(
+            [_marker_path(shape, float(angle))],
+            sizes=[areas[index]],
+            offsets=np.array([[offsets[index, 0], offsets[index, 1]]], dtype=np.float32),
+            offset_transform=axes.transData,
             facecolors=[fill_colors[index]],
             edgecolors=[stroke_color],
             linewidths=_linewidth_from_pixel_width(axes, visual.stroke_width),
         )
+        collection.set_transform(matplotlib.transforms.IdentityTransform())
+        axes.add_collection(collection)
         collection.set_gid(visual.id)
         collections.append(collection)
     return tuple(collections)
