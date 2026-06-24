@@ -1,5 +1,5 @@
 {
-  "current_stage": "S025",
+  "current_stage": "S026",
   "stages": [
     {
       "id": "S001",
@@ -150,6 +150,12 @@
       "title": "Mesh and 3D Geometry Visuals v1",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S026",
+      "title": "Color Mapping, Colorbars, and Scalar Data Semantics",
+      "state": "in_progress",
+      "progress": 14
     }
   ],
   "missions": [
@@ -953,6 +959,69 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 89
+    },
+    {
+      "id": "M090",
+      "title": "S026 color mapping and colorbars scoping consultation",
+      "stage": "S026",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 90
+    },
+    {
+      "id": "M091",
+      "title": "S026 P011 ADR/spec baseline",
+      "stage": "S026",
+      "state": "blocked",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 91
+    },
+    {
+      "id": "M092",
+      "title": "S026 color mapping protocol dataclasses and validation",
+      "stage": "S026",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 92
+    },
+    {
+      "id": "M093",
+      "title": "S026 Matplotlib color mapping reference behavior",
+      "stage": "S026",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 93
+    },
+    {
+      "id": "M094",
+      "title": "S026 color mapping visual QA and examples",
+      "stage": "S026",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 94
+    },
+    {
+      "id": "M095",
+      "title": "S026 Datoviz color mapping capability probe",
+      "stage": "S026",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 95
+    },
+    {
+      "id": "M096",
+      "title": "S026 VisPy2 color mapping producer API",
+      "stage": "S026",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 96
     }
   ],
   "review_queue": [],
@@ -998,12 +1067,19 @@
       "requires_human": false,
       "requires_chatgpt_pro": true,
       "state": "closed"
+    },
+    {
+      "id": "Q090-COLOR-MAPPING-COLORBARS-SCALAR-SEMANTICS",
+      "summary": "Awaiting P011 ChatGPT Pro response to define S026 color mapping, colorbars, normalization, scalar visual integration, and query/readback semantics before ADR/spec implementation.",
+      "requires_human": true,
+      "requires_chatgpt_pro": true,
+      "state": "open"
     }
   ],
   "recommendations": [
-    "S025 is complete: MeshVisual now has protocol validation, Matplotlib rendering, Datoviz structured unsupported diagnostics, VisPy2 producer coverage, and face-level reference query/readback.",
-    "Open the next stage with a consultation/scoping mission for color mapping, colorbars, and advanced scalar/image data semantics.",
-    "Keep Datoviz strict mesh rendering deferred until flat RGBA, topology/face identity, 2D mapping, and query semantics are verified."
+    "This needs ChatGPT Pro consultation: paste `.agent/consultations/P011-color-mapping-colorbars-scalar-semantics.md` into ChatGPT Pro and commit or paste the response.",
+    "M091 is blocked until the P011 response is available and converted into ADR/spec baselines.",
+    "Do not implement public colormap, normalization, scalar-color, colorbar, or color-scale semantics before P011 is accepted."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1022,6 +1098,7 @@
     "M086 completed: extended Datoviz probe with mesh symbols/capabilities and source evidence; M087 is ready.",
     "M087 completed: added Datoviz MeshVisual unsupported gates/adapter entry point and focused tests; M088 is ready.",
     "M088 completed: added bounded VisPy2 MeshVisual producer APIs, strict 2D mesh example, API docs, and focused tests; M089 is ready for query/readback and S025 closeout.",
-    "M089 completed: added typed MeshVisual face-query/readback payloads for the strict 2D Matplotlib reference path, documented deferred mesh query semantics, and closed S025."
+    "M089 completed: added typed MeshVisual face-query/readback payloads for the strict 2D Matplotlib reference path, documented deferred mesh query semantics, and closed S025.",
+    "M090 completed: opened S026 for color mapping/colorbars/scalar data semantics, created P011 ChatGPT Pro consultation packet, and blocked M091 pending response."
   ]
 }
