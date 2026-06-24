@@ -1,5 +1,5 @@
 {
-  "current_stage": "S023",
+  "current_stage": "S024",
   "stages": [
     {
       "id": "S001",
@@ -138,6 +138,12 @@
       "title": "Visual Families v1 and Manual Visual QA Foundation",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S024",
+      "title": "Text/Glyph Visuals v1",
+      "state": "in_progress",
+      "progress": 10
     }
   ],
   "missions": [
@@ -788,6 +794,24 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 72
+    },
+    {
+      "id": "M073",
+      "title": "S024 Text/Glyph scoping and consultation",
+      "stage": "S024",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 73
+    },
+    {
+      "id": "M074",
+      "title": "S024 Text/Glyph ADR/spec baseline",
+      "stage": "S024",
+      "state": "blocked",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 74
     }
   ],
   "review_queue": [],
@@ -819,12 +843,16 @@
       "requires_human": false,
       "requires_chatgpt_pro": false,
       "state": "closed"
+    },
+    {
+      "id": "Q070-TEXT-GLYPH-PROTOCOL-SEMANTICS",
+      "summary": "Resolve Text/Glyph v1 protocol semantics before implementation: TextVisual vs GlyphVisual, font policy, units, anchors, rotation, glyph atlas visibility, Unicode/shaping, guide relation, query payloads, and QA cases. Packet: .agent/consultations/P009-text-glyph-protocol-semantics.md",
+      "requires_human": true,
+      "requires_chatgpt_pro": true,
+      "state": "open"
     }
   ],
   "recommendations": [
-    "M064 completed the actual Datoviz v0.4 API audit/probe and recorded local evidence under `artifacts/visual_qa/s023/datoviz_v04_probe/`.",
-    "M065 completed the Visual QA harness foundation with CLI list/run commands, four S023 starter cases, Matplotlib and Datoviz runners, reports, contact sheets, and manual review templates.",
-    "M066 completed PointVisual v1 semantics, Matplotlib pixel-diameter conversion, Datoviz v0.4 retained point upload/attach handling, and point visual QA coverage.",
     "M067 completed MarkerVisual v1 semantics, Matplotlib and Datoviz marker renderers, VisPy2 `Axes.markers()`, and marker visual QA coverage.",
     "M068 completed SegmentVisual v1 semantics, Matplotlib and Datoviz segment renderers, VisPy2 `Axes.segments()`, and segment visual QA coverage.",
     "M069 completed PathVisual v1 semantics, Matplotlib/Datoviz render paths, VisPy2 producers, and visual QA coverage.",
@@ -833,6 +861,9 @@
     "Do not implement against v0.3-style Datoviz APIs such as `dvz_*_alloc`; use retained scene constructors plus `dvz_visual_set_data*` uploads and explicit attach descriptors.",
     "M071 completed the S023 gallery examples, visual QA docs, final contact sheets, and manual review pack.",
     "M072 completed S023 closure docs, ADRs, spec index updates, legacy mapping, and S024 scoping.",
-    "Next stage should choose Text/Glyph or Mesh explicitly; do not infer either from legacy code."
+    "M073 completed S024 Text/Glyph scoping and created P009 ChatGPT Pro consultation packet.",
+    "M074 is blocked until the P009 response is pasted or committed; do not freeze TextVisual/GlyphVisual fields from legacy code.",
+    "Manual S023 visual QA notes remain useful for release signoff, but they do not block Text/Glyph scoping.",
+    "Next user action: paste the P009 prompt into ChatGPT Pro and add the response as .agent/consultations/P009-response.md, then run M074."
   ]
 }

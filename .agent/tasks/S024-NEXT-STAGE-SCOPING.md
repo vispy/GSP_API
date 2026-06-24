@@ -2,14 +2,14 @@
 
 ## Status
 
-Draft follow-up created by M072.
+Active S024 direction selected by M073: Text/Glyph first, with implementation gated on P009 ChatGPT Pro consultation.
 
 ## Context
 
 S023 closed point, marker, segment, path, and image visual-family v1 contracts. Legacy source still
 contains text and mesh functionality, but those are not accepted protocol semantics.
 
-## Candidate A: Text/Glyph stage
+## Selected direction: Text/Glyph stage
 
 Potential deliverables:
 
@@ -19,8 +19,7 @@ Potential deliverables:
 - Datoviz v0.4 text/glyph API evidence and capability gates;
 - visual QA cases for labels, anchors, rotation, alpha, and DPI/size.
 
-Use ChatGPT Pro consultation before committing public text/glyph semantics if font/glyph atlas
-architecture is uncertain.
+ChatGPT Pro consultation is required before committing public text/glyph semantics. Packet: `.agent/consultations/P009-text-glyph-protocol-semantics.md`.
 
 ## Candidate B: Mesh stage
 
@@ -38,6 +37,11 @@ Use ChatGPT Pro consultation before committing transform/resource/material seman
 
 ## Recommendation
 
-Prefer Text/Glyph first if the next goal is plot annotation and axes polish. Prefer Mesh first if the
-next goal is 3D/scientific geometry parity. Do not implement either by copying legacy behavior without
-an accepted protocol contract and QA plan.
+Proceed with Text/Glyph first because the requested goal is plot annotation, labels, titles, axes polish, and publication-style output. Mesh remains deferred for a later 3D/scientific geometry stage. Do not implement Text/Glyph by copying legacy behavior without the P009 response, accepted protocol contract, and QA plan.
+
+## Immediate next missions
+
+| Mission | State | Purpose |
+|---|---|---|
+| M073 | completed | Create S024 Text/Glyph scoping and P009 ChatGPT Pro consultation packet. |
+| M074 | blocked | Convert P009 response into ADR/spec baseline before implementation. |
