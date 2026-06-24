@@ -219,3 +219,11 @@ __marimo__/
 # under artifacts/visual_qa/s023/datoviz_v04_probe/.
 artifacts/visual_qa/s023/*-local/
 artifacts/visual_qa/s023/report.json
+artifacts/visual_qa/s023/backends/
+artifacts/visual_qa/s023/contact_sheets/
+artifacts/visual_qa/s023/environment.json
+artifacts/visual_qa/s023/manual_notes.yaml
+artifacts/visual_qa/s023/notes/
+artifacts/visual_qa/s023/run_manifest.json
+artifacts/visual_qa/s023/scenes/
+artifacts/visual_qa/s023/summary.md
