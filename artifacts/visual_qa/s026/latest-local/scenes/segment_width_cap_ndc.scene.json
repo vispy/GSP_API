@@ -1,0 +1,145 @@
+{
+  "arrays": {
+    "segment_colors": {
+      "dtype": "uint8",
+      "key": "segment_colors",
+      "path": "segment_width_cap_ndc.arrays.npz",
+      "shape": [
+        4,
+        4
+      ]
+    },
+    "segment_end_positions": {
+      "dtype": "float32",
+      "key": "segment_end_positions",
+      "path": "segment_width_cap_ndc.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "segment_start_positions": {
+      "dtype": "float32",
+      "key": "segment_start_positions",
+      "path": "segment_width_cap_ndc.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "segment_widths": {
+      "dtype": "float32",
+      "key": "segment_widths",
+      "path": "segment_width_cap_ndc.arrays.npz",
+      "shape": [
+        4
+      ]
+    }
+  },
+  "case_id": "segment/width_cap_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "visuals": [
+    {
+      "cap": "butt",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          4,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "end_positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "family": "segment",
+      "id": "visual:segment-butt-ndc",
+      "start_positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "widths": {
+        "dtype": "float32",
+        "shape": [
+          4
+        ]
+      }
+    },
+    {
+      "cap": "round",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          4,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "end_positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "family": "segment",
+      "id": "visual:segment-round-ndc",
+      "start_positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "widths": {
+        "dtype": "float32",
+        "shape": [
+          4
+        ]
+      }
+    },
+    {
+      "cap": "square",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          4,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "end_positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "family": "segment",
+      "id": "visual:segment-square-ndc",
+      "start_positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "widths": {
+        "dtype": "float32",
+        "shape": [
+          4
+        ]
+      }
+    }
+  ]
+}

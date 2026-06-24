@@ -10,13 +10,19 @@ Add visual QA cases and examples for accepted S026 color mapping/colorbar behavi
 
 ## Status
 
-Draft.
+Completed.
 
 ## Deliverables
 
-- Deterministic visual QA cases for accepted S026 strict cases.
-- Example scripts that emit formal GSP protocol scenes.
-- Manual review notes where appropriate.
+- Completed: Deterministic visual QA cases for accepted S026 strict cases.
+- Completed: Example script that emits formal GSP protocol scenes.
+- Completed: Manual review notes generated with the S026 visual QA pack.
+
+## Notes
+
+- Added S026 visual QA suite cases for scalar image/colorbar, point scalar clipping, and marker scalar fill alpha.
+- Added `examples/protocol_color_mapping.py`.
+- Generated Matplotlib reference artifacts under `artifacts/visual_qa/s026/latest-local/`.
 
 ## Acceptance
 

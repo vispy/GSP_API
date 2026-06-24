@@ -7,7 +7,7 @@ from pathlib import Path
 
 import matplotlib.image as mpimg
 
-from gsp.qa.visual.cases import S024_SUITE, list_cases
+from gsp.qa.visual.cases import S024_SUITE, S026_SUITE, list_cases
 from gsp.qa.visual.runner import run_visual_qa_suite
 
 
@@ -219,7 +219,10 @@ def test_s025_mesh_visual_qa_run_writes_matplotlib_artifacts(tmp_path: Path) -> 
         suite=S025_SUITE,
         out_dir=tmp_path,
         backends=("matplotlib",),
-        case_ids=("mesh/single_triangle_uniform_ndc_2d", "mesh/indexed_square_per_face_ndc_2d"),
+        case_ids=(
+            "mesh/single_triangle_uniform_ndc_2d",
+            "mesh/indexed_square_per_face_ndc_2d",
+        ),
         run_id="test-s025-mesh",
         resolution=(320, 240),
     )
@@ -227,12 +230,51 @@ def test_s025_mesh_visual_qa_run_writes_matplotlib_artifacts(tmp_path: Path) -> 
     assert report["stage"] == "S025"
     assert (tmp_path / "contact_sheets" / "s025_all_cases.png").stat().st_size > 0
     scene = json.loads(
-        (tmp_path / "scenes" / "mesh_single_triangle_uniform_ndc_2d.scene.json").read_text(
-            encoding="utf-8"
-        )
+        (
+            tmp_path / "scenes" / "mesh_single_triangle_uniform_ndc_2d.scene.json"
+        ).read_text(encoding="utf-8")
     )
     assert scene["visuals"][0]["family"] == "mesh"
     assert scene["visuals"][0]["color_mode"] == "uniform"
+    for case in report["cases"]:
+        assert case["backends"]["matplotlib"]["status"] == "rendered"
+
+
+def test_s026_case_registry_extends_s025_with_color_cases() -> None:
+    """S026 adds deterministic color mapping cases after the mesh suite."""
+    case_ids = [case.case_id for case in list_cases(suite=S026_SUITE)]
+
+    assert case_ids[-3:] == [
+        "color/scalar_image_viridis_colorbar",
+        "color/point_scalar_gray_range",
+        "color/marker_scalar_fill_alpha",
+    ]
+
+
+def test_s026_color_visual_qa_run_writes_matplotlib_artifacts(tmp_path: Path) -> None:
+    """S026 color cases render and serialize color scale resources."""
+    report = run_visual_qa_suite(
+        suite=S026_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=(
+            "color/scalar_image_viridis_colorbar",
+            "color/point_scalar_gray_range",
+        ),
+        run_id="test-s026-color",
+        resolution=(360, 240),
+    )
+
+    assert report["stage"] == "S026"
+    assert (tmp_path / "contact_sheets" / "s026_all_cases.png").stat().st_size > 0
+    scene = json.loads(
+        (
+            tmp_path / "scenes" / "color_scalar_image_viridis_colorbar.scene.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert scene["color_scales"][0]["colormap"]["id"] == "viridis"
+    assert scene["colorbar_guides"][0]["color_scale_id"] == "scale:viridis"
+    assert scene["visuals"][0]["color_scale_id"] == "scale:viridis"
     for case in report["cases"]:
         assert case["backends"]["matplotlib"]["status"] == "rendered"
 
@@ -268,6 +310,9 @@ def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
 
     assert payload["mesh_symbols"]["dvz_mesh"]["available"] is True
     assert payload["mesh_symbols"]["dvz_mesh_set_geometry"]["available"] is True
-    assert payload["mesh_capability_matrix"]["mesh.visual.constructor"]["supported"] is True
+    assert (
+        payload["mesh_capability_matrix"]["mesh.visual.constructor"]["supported"]
+        is True
+    )
     assert payload["mesh_capability_matrix"]["mesh.index.upload"]["supported"] is True
     assert payload["source_symbol_matrix"]["dvz_mesh"]

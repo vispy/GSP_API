@@ -8,6 +8,8 @@ from typing import Callable, TypeAlias
 import numpy as np
 
 from gsp.protocol import (
+    ColorScale,
+    ColorbarGuide,
     ImageVisual,
     MeshVisual,
     MarkerVisual,
@@ -19,7 +21,13 @@ from gsp.protocol import (
 
 
 ProtocolVisual: TypeAlias = (
-    PointVisual | MarkerVisual | SegmentVisual | PathVisual | ImageVisual | TextVisual | MeshVisual
+    PointVisual
+    | MarkerVisual
+    | SegmentVisual
+    | PathVisual
+    | ImageVisual
+    | TextVisual
+    | MeshVisual
 )
 
 
@@ -30,6 +38,8 @@ class VisualQAScene:
     case_id: str
     visuals: tuple[ProtocolVisual, ...]
     arrays: dict[str, np.ndarray]
+    color_scales: tuple[ColorScale, ...] = ()
+    colorbar_guides: tuple[ColorbarGuide, ...] = ()
     notes: tuple[str, ...] = ()
 
 

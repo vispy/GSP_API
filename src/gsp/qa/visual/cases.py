@@ -5,6 +5,10 @@ from __future__ import annotations
 import numpy as np
 
 from gsp.protocol import (
+    ColorMapId,
+    ColorMapRef,
+    ColorScale,
+    ColorbarGuide,
     CoordinateSpace,
     FontRole,
     ImageColormap,
@@ -17,6 +21,9 @@ from gsp.protocol import (
     MarkerVisual,
     PathVisual,
     PointVisual,
+    LinearNormalize,
+    ScalarColorEncoding,
+    ScalarColorSlot,
     SegmentVisual,
     StrokeCap,
     StrokeJoin,
@@ -30,6 +37,7 @@ from gsp.qa.visual.case_spec import VisualQACase, VisualQAScene
 S023_SUITE = "s023"
 S024_SUITE = "s024"
 S025_SUITE = "s025"
+S026_SUITE = "s026"
 
 
 def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
@@ -40,6 +48,13 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
         return _s023_cases() + _s024_text_cases()
     if suite == S025_SUITE:
         return _s023_cases() + _s024_text_cases() + _s025_mesh_cases()
+    if suite == S026_SUITE:
+        return (
+            _s023_cases()
+            + _s024_text_cases()
+            + _s025_mesh_cases()
+            + _s026_color_cases()
+        )
     raise ValueError(f"unknown visual QA suite: {suite}")
 
 
@@ -201,7 +216,6 @@ def _s024_text_cases() -> tuple[VisualQACase, ...]:
     )
 
 
-
 def _s025_mesh_cases() -> tuple[VisualQACase, ...]:
     return (
         VisualQACase(
@@ -224,6 +238,32 @@ def _s025_mesh_cases() -> tuple[VisualQACase, ...]:
             family="mesh",
             required_features=("mesh", "ndc", "rgba8", "per-face", "2d"),
             builder=_mesh_indexed_square_per_face_ndc_2d,
+        ),
+    )
+
+
+def _s026_color_cases() -> tuple[VisualQACase, ...]:
+    return (
+        VisualQACase(
+            case_id="color/scalar_image_viridis_colorbar",
+            title="Scalar image with viridis color scale and colorbar",
+            family="color",
+            required_features=("image", "scalar", "colormap", "colorbar", "viridis"),
+            builder=_color_scalar_image_viridis_colorbar,
+        ),
+        VisualQACase(
+            case_id="color/point_scalar_gray_range",
+            title="Point scalar colors with under and over clipping",
+            family="color",
+            required_features=("point", "scalar", "colormap", "range-clipping"),
+            builder=_color_point_scalar_gray_range,
+        ),
+        VisualQACase(
+            case_id="color/marker_scalar_fill_alpha",
+            title="Marker scalar fill colors with alpha",
+            family="color",
+            required_features=("marker", "scalar", "fill", "alpha"),
+            builder=_color_marker_scalar_fill_alpha,
         ),
     )
 
@@ -945,6 +985,131 @@ def _text_multiline_unicode_smoke() -> VisualQAScene:
     )
 
 
+def _color_scalar_image_viridis_colorbar() -> VisualQAScene:
+    y, x = np.mgrid[0:18, 0:28].astype(np.float32)
+    field = np.sin(x / 4.0) * 0.45 + np.cos(y / 5.0) * 0.35 + (x / 28.0) * 0.40
+    field = np.ascontiguousarray(field.astype(np.float32))
+    scale = _color_scale("scale:viridis", ColorMapId.VIRIDIS, -0.75, 1.25)
+    image = ImageVisual(
+        id="visual:color-scalar-image",
+        image=field,
+        extent=(-0.82, 0.58, -0.62, 0.62),
+        coordinate_space=CoordinateSpace.NDC,
+        interpolation=ImageInterpolation.NEAREST,
+        origin=ImageOrigin.UPPER,
+        color_scale_id=scale.id,
+    )
+    guide = ColorbarGuide(
+        id="guide:viridis",
+        panel_id="panel:visual-qa",
+        color_scale_id=scale.id,
+        linked_visual_ids=(image.id,),
+        label="value",
+        ticks=(-0.75, 0.25, 1.25),
+        tick_labels=("low", "mid", "high"),
+    )
+    return VisualQAScene(
+        case_id="color/scalar_image_viridis_colorbar",
+        visuals=(image,),
+        color_scales=(scale,),
+        colorbar_guides=(guide,),
+        arrays={"scalar_field": field},
+        notes=(
+            "Float scalar image renders through the canonical viridis ColorScale and a semantic ColorbarGuide.",
+        ),
+    )
+
+
+def _color_point_scalar_gray_range() -> VisualQAScene:
+    values = np.array([-0.5, 0.0, 0.2, 0.5, 0.8, 1.0, 1.5], dtype=np.float32)
+    positions = np.column_stack(
+        (
+            np.linspace(-0.78, 0.78, values.shape[0], dtype=np.float32),
+            np.zeros(values.shape[0], dtype=np.float32),
+        )
+    ).astype(np.float32)
+    sizes = np.array([34.0, 42.0, 50.0, 58.0, 50.0, 42.0, 34.0], dtype=np.float32)
+    scale = _color_scale("scale:gray", ColorMapId.GRAY, 0.0, 1.0)
+    visual = PointVisual(
+        id="visual:color-point-scalar",
+        positions=positions,
+        sizes=sizes,
+        coordinate_space=CoordinateSpace.NDC,
+        color_encoding=ScalarColorEncoding(
+            slot=ScalarColorSlot.COLOR,
+            values=values,
+            color_scale_id=scale.id,
+        ),
+    )
+    return VisualQAScene(
+        case_id="color/point_scalar_gray_range",
+        visuals=(visual,),
+        color_scales=(scale,),
+        arrays={
+            "point_positions": positions,
+            "point_sizes": sizes,
+            "point_scalar_values": values,
+        },
+        notes=(
+            "Point scalar values include under-range and over-range entries that clip to the gray ColorScale endpoints.",
+        ),
+    )
+
+
+def _color_marker_scalar_fill_alpha() -> VisualQAScene:
+    values = np.array([0.0, 0.2, 0.45, 0.7, 1.0], dtype=np.float32)
+    positions = np.array(
+        [[-0.70, -0.28], [-0.35, 0.24], [0.0, -0.08], [0.35, 0.30], [0.70, -0.18]],
+        dtype=np.float32,
+    )
+    sizes = np.array([64.0, 72.0, 80.0, 72.0, 64.0], dtype=np.float32)
+    scale = _color_scale("scale:magma", ColorMapId.MAGMA, 0.0, 1.0)
+    visual = MarkerVisual(
+        id="visual:color-marker-scalar-fill",
+        positions=positions,
+        shape=(
+            MarkerShape.DISC,
+            MarkerShape.SQUARE,
+            MarkerShape.TRIANGLE,
+            MarkerShape.DIAMOND,
+            MarkerShape.CROSS,
+        ),
+        sizes=sizes,
+        coordinate_space=CoordinateSpace.NDC,
+        stroke_color=np.array([20, 20, 20, 255], dtype=np.uint8),
+        stroke_width=3.0,
+        fill_color_encoding=ScalarColorEncoding(
+            slot=ScalarColorSlot.FILL,
+            values=values,
+            color_scale_id=scale.id,
+            alpha=0.72,
+        ),
+    )
+    return VisualQAScene(
+        case_id="color/marker_scalar_fill_alpha",
+        visuals=(visual,),
+        color_scales=(scale,),
+        arrays={
+            "marker_positions": positions,
+            "marker_sizes": sizes,
+            "marker_scalar_values": values,
+        },
+        notes=(
+            "Marker fill colors use scalar magma mapping with alpha and a constant stroke.",
+        ),
+    )
+
+
+def _color_scale(
+    scale_id: str, colormap_id: ColorMapId, vmin: float, vmax: float
+) -> ColorScale:
+    return ColorScale(
+        id=scale_id,
+        colormap=ColorMapRef(colormap_id),
+        normalize=LinearNormalize(vmin=vmin, vmax=vmax),
+    )
+
+
 def _orientation_image(size: int) -> np.ndarray:
     image = np.full(
         (size, size, 4), np.array([245, 245, 245, 255], dtype=np.uint8), dtype=np.uint8
@@ -961,7 +1126,9 @@ def _orientation_image(size: int) -> np.ndarray:
 
 
 def _mesh_single_triangle_uniform_ndc_2d() -> VisualQAScene:
-    positions = np.array([[-0.72, -0.55], [0.72, -0.45], [-0.1, 0.65]], dtype=np.float32)
+    positions = np.array(
+        [[-0.72, -0.55], [0.72, -0.45], [-0.1, 0.65]], dtype=np.float32
+    )
     faces = np.array([[0, 1, 2]], dtype=np.uint32)
     color = np.array([230, 57, 70, 255], dtype=np.uint8)
     visual = MeshVisual(
@@ -1021,6 +1188,12 @@ def _mesh_indexed_square_per_face_ndc_2d() -> VisualQAScene:
     return VisualQAScene(
         case_id="mesh/indexed_square_per_face_ndc_2d",
         visuals=(visual,),
-        arrays={"mesh_positions": positions, "mesh_faces": faces, "mesh_colors": colors},
-        notes=("Two indexed triangles with distinct per-face colors and a visible diagonal.",),
+        arrays={
+            "mesh_positions": positions,
+            "mesh_faces": faces,
+            "mesh_colors": colors,
+        },
+        notes=(
+            "Two indexed triangles with distinct per-face colors and a visible diagonal.",
+        ),
     )

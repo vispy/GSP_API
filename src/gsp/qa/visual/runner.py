@@ -14,6 +14,8 @@ from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 
 from gsp.protocol import (
+    ColorScale,
+    ColorbarGuide,
     ImageVisual,
     MeshVisual,
     MarkerVisual,
@@ -38,7 +40,14 @@ from gsp.qa.visual.backend_ids import (
     MATPLOTLIB_BACKEND_ID,
 )
 from gsp.qa.visual.case_spec import ProtocolVisual, VisualQACase
-from gsp.qa.visual.cases import S023_SUITE, S024_SUITE, S025_SUITE, case_slug, list_cases
+from gsp.qa.visual.cases import (
+    S023_SUITE,
+    S024_SUITE,
+    S025_SUITE,
+    S026_SUITE,
+    case_slug,
+    list_cases,
+)
 from gsp.qa.visual.contact_sheet import write_contact_sheets
 from gsp.qa.visual.datoviz_probe import DatovizV04ProbeReport, probe_datoviz_v04
 from gsp_datoviz.protocol_renderer import (
@@ -47,6 +56,7 @@ from gsp_datoviz.protocol_renderer import (
     DatovizV04Unsupported,
 )
 from gsp_matplotlib.protocol_renderer import (
+    render_colorbar_guide,
     render_image_visual,
     render_marker_visual,
     render_mesh_visual,
@@ -72,7 +82,7 @@ def run_visual_qa_suite(
     datoviz_color_pipeline: DatovizColorPipeline = "legacy_srgb_blend",
 ) -> dict[str, object]:
     """Run the visual QA suite and return its report."""
-    if suite not in (S023_SUITE, S024_SUITE, S025_SUITE):
+    if suite not in (S023_SUITE, S024_SUITE, S025_SUITE, S026_SUITE):
         raise ValueError(f"unknown visual QA suite: {suite}")
     normalized_backends = _normalize_backends(backends)
     selected_cases = _select_cases(case_ids, suite=suite)
@@ -109,7 +119,12 @@ def run_visual_qa_suite(
         backend_reports: dict[str, object] = {}
         if MATPLOTLIB_BACKEND_ID in normalized_backends:
             backend_reports[MATPLOTLIB_BACKEND_ID] = _run_matplotlib(
-                out_dir, case, scene.visuals, resolution
+                out_dir,
+                case,
+                scene.visuals,
+                resolution,
+                color_scales={scale.id: scale for scale in scene.color_scales},
+                colorbar_guides=scene.colorbar_guides,
             )
         if DATOVIZ_BACKEND_ID in normalized_backends:
             backend_reports[DATOVIZ_BACKEND_ID] = _run_datoviz(
@@ -187,6 +202,9 @@ def _run_matplotlib(
     case: VisualQACase,
     visuals: tuple[ProtocolVisual, ...],
     resolution: tuple[int, int],
+    *,
+    color_scales: dict[str, ColorScale],
+    colorbar_guides: tuple[ColorbarGuide, ...],
 ) -> dict[str, object]:
     artifact_path = (
         out_dir / "backends" / "matplotlib" / f"{case_slug(case.case_id)}.png"
@@ -205,7 +223,9 @@ def _run_matplotlib(
         ax.set_aspect("equal", adjustable="box")
         ax.set_axis_off()
         for visual in visuals:
-            _render_matplotlib_visual(ax, visual)
+            _render_matplotlib_visual(ax, visual, color_scales=color_scales)
+        for guide in colorbar_guides:
+            render_colorbar_guide(ax, guide, color_scales=color_scales)
         fig.savefig(artifact_path, dpi=100, facecolor=fig.get_facecolor())
         log_path.write_text("rendered\n", encoding="utf-8")
         return {
@@ -277,17 +297,19 @@ def _run_datoviz(
         )
 
 
-def _render_matplotlib_visual(ax: Axes, visual: ProtocolVisual) -> None:
+def _render_matplotlib_visual(
+    ax: Axes, visual: ProtocolVisual, *, color_scales: dict[str, ColorScale]
+) -> None:
     if isinstance(visual, PointVisual):
-        render_point_visual(ax, visual)
+        render_point_visual(ax, visual, color_scales=color_scales)
     elif isinstance(visual, MarkerVisual):
-        render_marker_visual(ax, visual)
+        render_marker_visual(ax, visual, color_scales=color_scales)
     elif isinstance(visual, SegmentVisual):
         render_segment_visual(ax, visual)
     elif isinstance(visual, PathVisual):
         render_path_visual(ax, visual)
     elif isinstance(visual, ImageVisual):
-        render_image_visual(ax, visual)
+        render_image_visual(ax, visual, color_scales=color_scales)
     elif isinstance(visual, TextVisual):
         render_text_visual(ax, visual)
     elif isinstance(visual, MeshVisual):

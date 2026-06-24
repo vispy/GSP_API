@@ -11,11 +11,14 @@ from typing import Any, Mapping, cast
 import numpy as np
 
 from gsp.protocol import (
+    ColorScale,
+    ColorbarGuide,
     ImageVisual,
     MeshVisual,
     MarkerVisual,
     PathVisual,
     PointVisual,
+    ScalarColorEncoding,
     SegmentVisual,
     TextVisual,
 )
@@ -146,6 +149,10 @@ def _scene_json(scene: VisualQAScene) -> dict[str, object]:
         "schema_version": 1,
         "schema_kind": "gsp.visual_qa.scene",
         "case_id": scene.case_id,
+        "color_scales": [_color_scale_json(scale) for scale in scene.color_scales],
+        "colorbar_guides": [
+            _colorbar_guide_json(guide) for guide in scene.colorbar_guides
+        ],
         "visuals": [_visual_json(visual) for visual in scene.visuals],
         "arrays": {
             name: {
@@ -165,7 +172,7 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
         size_shape: list[int] = (
             list(sizes.shape) if isinstance(sizes, np.ndarray) else []
         )
-        return {
+        payload: dict[str, Any] = {
             "family": "point",
             "id": visual.id,
             "coordinate_space": visual.coordinate_space.value,
@@ -173,22 +180,28 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
                 "shape": list(visual.positions.shape),
                 "dtype": str(visual.positions.dtype),
             },
-            "colors": {
-                "shape": list(visual.colors.shape),
-                "dtype": str(visual.colors.dtype),
-            },
             "sizes": {
                 "shape": size_shape,
                 "dtype": str(sizes.dtype) if isinstance(sizes, np.ndarray) else "float",
             },
         }
+        if visual.colors is not None:
+            payload["colors"] = {
+                "shape": list(visual.colors.shape),
+                "dtype": str(visual.colors.dtype),
+            }
+        if visual.color_encoding is not None:
+            payload["color_encoding"] = _scalar_color_encoding_json(
+                visual.color_encoding
+            )
+        return payload
     if isinstance(visual, MarkerVisual):
         sizes = visual.sizes
         size_shape = list(sizes.shape) if isinstance(sizes, np.ndarray) else []
         angle = visual.angle
         angle_shape = list(angle.shape) if isinstance(angle, np.ndarray) else []
         shape = visual.shape
-        return {
+        payload = {
             "family": "marker",
             "id": visual.id,
             "coordinate_space": visual.coordinate_space.value,
@@ -199,10 +212,6 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "shape": [value.value for value in shape]
             if isinstance(shape, tuple)
             else shape.value,
-            "fill_colors": {
-                "shape": list(visual.fill_colors.shape),
-                "dtype": str(visual.fill_colors.dtype),
-            },
             "sizes": {
                 "shape": size_shape,
                 "dtype": str(sizes.dtype) if isinstance(sizes, np.ndarray) else "float",
@@ -217,6 +226,16 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             },
             "stroke_width": visual.stroke_width,
         }
+        if visual.fill_colors is not None:
+            payload["fill_colors"] = {
+                "shape": list(visual.fill_colors.shape),
+                "dtype": str(visual.fill_colors.dtype),
+            }
+        if visual.fill_color_encoding is not None:
+            payload["fill_color_encoding"] = _scalar_color_encoding_json(
+                visual.fill_color_encoding
+            )
+        return payload
     if isinstance(visual, SegmentVisual):
         widths = visual.widths
         width_shape = list(widths.shape) if isinstance(widths, np.ndarray) else []
@@ -315,7 +334,7 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "z_order": visual.z_order,
         }
     if isinstance(visual, MeshVisual):
-        return {
+        payload = {
             "family": "mesh",
             "id": visual.id,
             "coordinate_space": visual.coordinate_space.value,
@@ -327,10 +346,6 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
                 "shape": list(visual.faces.shape),
                 "dtype": str(visual.faces.dtype),
             },
-            "color": {
-                "shape": list(visual.color.shape),
-                "dtype": str(visual.color.dtype),
-            },
             "color_mode": visual.resolved_color_mode().value,
             "normal_mode": visual.resolved_normal_mode().value,
             "normal_generation": visual.normal_generation.value,
@@ -341,6 +356,16 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "order": visual.order,
             "opacity_policy": visual.opacity_policy.value,
         }
+        if visual.color is not None:
+            payload["color"] = {
+                "shape": list(visual.color.shape),
+                "dtype": str(visual.color.dtype),
+            }
+        if visual.face_color_encoding is not None:
+            payload["face_color_encoding"] = _scalar_color_encoding_json(
+                visual.face_color_encoding
+            )
+        return payload
 
     if isinstance(visual, ImageVisual):
         return {
@@ -356,5 +381,54 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "origin": visual.origin.value,
             "colormap": visual.colormap.value if visual.colormap is not None else None,
             "clim": list(visual.clim) if visual.clim is not None else None,
+            "color_scale_id": visual.color_scale_id,
         }
     raise TypeError(f"unsupported visual type: {type(visual).__name__}")
+
+
+def _color_scale_json(scale: ColorScale) -> dict[str, object]:
+    return {
+        "id": scale.id,
+        "colormap": {
+            "id": scale.colormap.id.value,
+            "kind": scale.colormap.kind.value,
+        },
+        "normalize": {
+            "kind": scale.normalize.kind.value,
+            "vmin": scale.normalize.vmin,
+            "vmax": scale.normalize.vmax,
+            "clip": scale.normalize.clip,
+        },
+        "description": scale.description,
+    }
+
+
+def _colorbar_guide_json(guide: ColorbarGuide) -> dict[str, object]:
+    return {
+        "id": guide.id,
+        "panel_id": guide.panel_id,
+        "color_scale_id": guide.color_scale_id,
+        "linked_visual_ids": list(guide.linked_visual_ids),
+        "orientation": guide.orientation.value,
+        "placement": guide.placement.value if guide.placement is not None else None,
+        "label": guide.label,
+        "ticks": list(guide.ticks),
+        "tick_labels": list(guide.tick_labels)
+        if guide.tick_labels is not None
+        else None,
+    }
+
+
+def _scalar_color_encoding_json(
+    encoding: ScalarColorEncoding,
+) -> dict[str, object]:
+    return {
+        "slot": encoding.slot.value,
+        "values": {
+            "shape": list(encoding.values.shape),
+            "dtype": str(encoding.values.dtype),
+        },
+        "color_scale_id": encoding.color_scale_id,
+        "alpha": encoding.alpha,
+        "domain": encoding.domain.value if encoding.domain is not None else None,
+    }

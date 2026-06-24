@@ -1,0 +1,62 @@
+{
+  "arrays": {
+    "point_colors": {
+      "dtype": "uint8",
+      "key": "point_colors",
+      "path": "point_diameter_ramp_ndc.arrays.npz",
+      "shape": [
+        6,
+        4
+      ]
+    },
+    "point_diameters": {
+      "dtype": "float32",
+      "key": "point_diameters",
+      "path": "point_diameter_ramp_ndc.arrays.npz",
+      "shape": [
+        6
+      ]
+    },
+    "point_positions": {
+      "dtype": "float32",
+      "key": "point_positions",
+      "path": "point_diameter_ramp_ndc.arrays.npz",
+      "shape": [
+        6,
+        2
+      ]
+    }
+  },
+  "case_id": "point/diameter_ramp_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "visuals": [
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          6,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "family": "point",
+      "id": "visual:point-diameter-ramp-ndc",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          6,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          6
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "arrays": {
+    "text_positions": {
+      "dtype": "float32",
+      "key": "text_positions",
+      "path": "text_basic_ndc.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "text_rgba": {
+      "dtype": "uint8",
+      "key": "text_rgba",
+      "path": "text_basic_ndc.arrays.npz",
+      "shape": [
+        4,
+        4
+      ]
+    },
+    "text_sizes": {
+      "dtype": "float32",
+      "key": "text_sizes",
+      "path": "text_basic_ndc.arrays.npz",
+      "shape": [
+        4
+      ]
+    }
+  },
+  "case_id": "text/basic_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "visuals": [
+    {
+      "anchor_x": "left",
+      "anchor_y": "baseline",
+      "coordinate_space": "ndc",
+      "family": "text",
+      "font_role": "sans",
+      "font_size_px": {
+        "dtype": "float32",
+        "shape": [
+          4
+        ]
+      },
+      "id": "visual:text-basic-ndc",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "rgba": {
+        "dtype": "uint8",
+        "shape": [
+          4,
+          4
+        ]
+      },
+      "rotation_rad": {
+        "dtype": "float",
+        "shape": []
+      },
+      "texts": [
+        "Alpha",
+        "Beta",
+        "Gamma",
+        "Delta"
+      ],
+      "z_order": 0
+    }
+  ]
+}

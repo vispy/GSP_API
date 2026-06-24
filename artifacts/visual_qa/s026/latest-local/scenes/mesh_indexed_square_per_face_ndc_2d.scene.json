@@ -1,0 +1,73 @@
+{
+  "arrays": {
+    "mesh_colors": {
+      "dtype": "uint8",
+      "key": "mesh_colors",
+      "path": "mesh_indexed_square_per_face_ndc_2d.arrays.npz",
+      "shape": [
+        2,
+        4
+      ]
+    },
+    "mesh_faces": {
+      "dtype": "uint32",
+      "key": "mesh_faces",
+      "path": "mesh_indexed_square_per_face_ndc_2d.arrays.npz",
+      "shape": [
+        2,
+        3
+      ]
+    },
+    "mesh_positions": {
+      "dtype": "float32",
+      "key": "mesh_positions",
+      "path": "mesh_indexed_square_per_face_ndc_2d.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    }
+  },
+  "case_id": "mesh/indexed_square_per_face_ndc_2d",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "visuals": [
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      "color_mode": "face",
+      "coordinate_space": "ndc",
+      "depth_test": "auto",
+      "depth_write": "auto",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "visual:mesh-per-face-square",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "shading": "flat"
+    }
+  ]
+}

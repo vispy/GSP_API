@@ -47,6 +47,7 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | `vispy2_protocol_segment.py` | VisPy2 protocol segment producer | Independent stroked segments with width and cap semantics |
 | `vispy2_protocol_path.py` | VisPy2 protocol path producer | Open multi-subpath polylines with cap/join semantics |
 | `vispy2_protocol_image_scalar.py` | VisPy2 protocol scalar image producer | Scalar gray image with explicit clim through ImageVisual v1 |
+| `protocol_color_mapping.py` | Protocol color mapping reference example | ColorScale, scalar visual encodings, and ColorbarGuide rendered through Matplotlib |
 | `vispy2_protocol_imshow.py` | VisPy2 protocol image producer | High-level image API rendered through the protocol backend |
 | `vispy2_protocol_point_over_image.py` | VisPy2 protocol overlay producer | Point/image composition through the protocol backend |
 | `vispy2_protocol_guides.py` | VisPy2 protocol guide API | Scatter, image, limits, labels, title, ticks, and grid intent |
@@ -166,6 +167,22 @@ uv run python -m gsp.qa.visual run \
 ```
 
 Inspect `artifacts/visual_qa/s023/latest-local/contact_sheets/s023_all_cases.png` and record decisions in `artifacts/visual_qa/s023/latest-local/manual_notes.yaml`. If Datoviz v0.4 is not active, use `--backends matplotlib` for a reference-only run.
+
+### S026 Color Mapping Visual QA Pack
+
+The S026 suite extends the protocol visual QA cases with scalar color mapping and colorbar scenes:
+
+```bash
+uv run python -m gsp.qa.visual run \
+  --suite s026 \
+  --backends matplotlib \
+  --out artifacts/visual_qa/s026/latest-local \
+  --run-id latest-local \
+  --contact-sheet \
+  --resolution 800x600
+```
+
+Inspect `artifacts/visual_qa/s026/latest-local/contact_sheets/s026_all_cases.png` for the Matplotlib reference output. Datoviz scalar color mapping remains capability-gated until the S026 Datoviz probe mission.
 
 ### Testing Optional Backends
 

@@ -1,0 +1,99 @@
+{
+  "arrays": {
+    "marker_positions": {
+      "dtype": "float32",
+      "key": "marker_positions",
+      "path": "color_marker_scalar_fill_alpha.arrays.npz",
+      "shape": [
+        5,
+        2
+      ]
+    },
+    "marker_scalar_values": {
+      "dtype": "float32",
+      "key": "marker_scalar_values",
+      "path": "color_marker_scalar_fill_alpha.arrays.npz",
+      "shape": [
+        5
+      ]
+    },
+    "marker_sizes": {
+      "dtype": "float32",
+      "key": "marker_sizes",
+      "path": "color_marker_scalar_fill_alpha.arrays.npz",
+      "shape": [
+        5
+      ]
+    }
+  },
+  "case_id": "color/marker_scalar_fill_alpha",
+  "color_scales": [
+    {
+      "colormap": {
+        "id": "magma",
+        "kind": "named"
+      },
+      "description": null,
+      "id": "scale:magma",
+      "normalize": {
+        "clip": true,
+        "kind": "linear",
+        "vmax": 1.0,
+        "vmin": 0.0
+      }
+    }
+  ],
+  "colorbar_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "visuals": [
+    {
+      "angle": {
+        "dtype": "float",
+        "shape": []
+      },
+      "coordinate_space": "ndc",
+      "family": "marker",
+      "fill_color_encoding": {
+        "alpha": 0.72,
+        "color_scale_id": "scale:magma",
+        "domain": null,
+        "slot": "fill",
+        "values": {
+          "dtype": "float32",
+          "shape": [
+            5
+          ]
+        }
+      },
+      "id": "visual:color-marker-scalar-fill",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          5,
+          2
+        ]
+      },
+      "shape": [
+        "disc",
+        "square",
+        "triangle",
+        "diamond",
+        "cross"
+      ],
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          5
+        ]
+      },
+      "stroke_color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "stroke_width": 3.0
+    }
+  ]
+}
