@@ -18,9 +18,12 @@ _MARKER_SHAPES_MPL = {
     MarkerShape.DISC: "o",
     MarkerShape.SQUARE: "s",
     MarkerShape.TRIANGLE: "^",
-    MarkerShape.DIAMOND: "D",
     MarkerShape.CROSS: "+",
 }
+
+_DIAMOND_PATH = matplotlib.path.Path(
+    np.array([[0.0, 0.5], [0.5, 0.0], [0.0, -0.5], [-0.5, 0.0], [0.0, 0.5]], dtype=np.float32)
+)
 
 
 def _rgba_for_matplotlib(colors: np.ndarray) -> np.ndarray:
@@ -117,8 +120,11 @@ def _pixel_to_point(axes: matplotlib.axes.Axes) -> float:
 
 
 def _marker_path(shape: MarkerShape, angle: float) -> matplotlib.path.Path:
-    marker = matplotlib.markers.MarkerStyle(_MARKER_SHAPES_MPL[shape])
-    path = marker.get_path().transformed(marker.get_transform())
+    if shape == MarkerShape.DIAMOND:
+        path = _DIAMOND_PATH
+    else:
+        marker = matplotlib.markers.MarkerStyle(_MARKER_SHAPES_MPL[shape])
+        path = marker.get_path().transformed(marker.get_transform())
     if angle == 0.0:
         return path
     return path.transformed(matplotlib.transforms.Affine2D().rotate(angle))

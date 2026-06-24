@@ -10,7 +10,7 @@ import pytest
 
 from gsp.protocol import ImageOrigin, ImageVisual, MarkerShape, MarkerVisual, PointVisual
 from gsp.protocol.visuals import ImageInterpolation
-from gsp_matplotlib.protocol_renderer import _marker_areas_from_pixel_diameters, render_image_visual, render_marker_visual, render_point_visual
+from gsp_matplotlib.protocol_renderer import _marker_areas_from_pixel_diameters, _marker_path, render_image_visual, render_marker_visual, render_point_visual
 
 
 def test_render_point_visual_creates_path_collection():
@@ -132,6 +132,14 @@ def test_render_marker_visual_does_not_renormalize_rotated_marker_paths():
         assert rotated_bbox.height > unrotated_bbox.height
     finally:
         plt.close(fig)
+
+
+def test_marker_diamond_path_uses_bbox_diameter_semantics():
+    """Protocol diamonds use bbox diameter, not Matplotlib's larger rotated-square marker."""
+    path = _marker_path(MarkerShape.DIAMOND, 0.0)
+    bbox = path.get_extents()
+
+    np.testing.assert_allclose([bbox.x0, bbox.x1, bbox.y0, bbox.y1], [-0.5, 0.5, -0.5, 0.5])
 
 
 def test_protocol_visual_validation_rejects_shape_mismatch():
