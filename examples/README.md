@@ -48,6 +48,7 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | `vispy2_protocol_path.py` | VisPy2 protocol path producer | Open multi-subpath polylines with cap/join semantics |
 | `vispy2_protocol_image_scalar.py` | VisPy2 protocol scalar image producer | Scalar gray image with explicit clim through ImageVisual v1 |
 | `protocol_color_mapping.py` | Protocol color mapping reference example | ColorScale, scalar visual encodings, and ColorbarGuide rendered through Matplotlib |
+| `vispy2_protocol_color_mapping.py` | VisPy2 scalar color mapping producer | ColorScale, scalar image/point encodings, and ColorbarGuide through VisPy2 |
 | `vispy2_protocol_imshow.py` | VisPy2 protocol image producer | High-level image API rendered through the protocol backend |
 | `vispy2_protocol_point_over_image.py` | VisPy2 protocol overlay producer | Point/image composition through the protocol backend |
 | `vispy2_protocol_guides.py` | VisPy2 protocol guide API | Scatter, image, limits, labels, title, ticks, and grid intent |

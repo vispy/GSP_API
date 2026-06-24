@@ -6,7 +6,7 @@ S026 - Color Mapping, Colorbars, and Scalar Data Semantics
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -14,8 +14,18 @@ Expose accepted S026 color mapping/colorbar/scalar behavior through VisPy2 produ
 
 ## Planned Deliverables
 
-- Producer APIs.
-- Examples and focused tests.
+- Completed: Producer APIs.
+- Completed: Examples and focused tests.
+
+## Outcome
+
+VisPy2 now exposes bounded S026 producer APIs for semantic `ColorScale`
+resources, scalar image color-scale linkage, point color scalar encodings,
+marker fill scalar encodings, and `ColorbarGuide` intent. The API emits formal
+GSP protocol objects and keeps Datoviz shader/slot details and Matplotlib
+mappable objects out of the public surface. Scalar color creation requires
+explicit `clim` or an existing `ColorScale`, preserving the accepted no-auto
+normalization constraint.
 
 ## Acceptance
 

@@ -154,8 +154,8 @@
     {
       "id": "S026",
       "title": "Color Mapping, Colorbars, and Scalar Data Semantics",
-      "state": "in_progress",
-      "progress": 85
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -1018,9 +1018,9 @@
       "id": "M096",
       "title": "S026 VisPy2 color mapping producer API",
       "stage": "S026",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 96
     }
   ],
@@ -1077,8 +1077,8 @@
     }
   ],
   "recommendations": [
-    "M095 is complete: Datoviz color mapping probe evidence and S026 artifacts are recorded, including automatic sibling checkout import.",
-    "Run M096 next to add bounded VisPy2 producer APIs for accepted S026 color mapping semantics.",
+    "M096 is complete: VisPy2 now emits accepted S026 ColorScale, scalar image/point/marker encodings, and ColorbarGuide protocol objects.",
+    "S026 is complete; ask Mission Control for the next stage proposal or release/review action.",
     "Datoviz runtime exposes S026 image/point/colorbar/query implementation candidates; keep marker scalar fill and mesh face scalar capability-gated until verified."
   ],
   "notes": [
@@ -1104,6 +1104,7 @@
     "M092 completed: added S026 color mapping protocol dataclasses/enums, optional scalar visual encodings, and focused validation tests; M093 is ready.",
     "M093 completed: added Matplotlib reference scalar color rendering/query behavior, semantic colorbar guide rendering, and focused tests; M094 is ready.",
     "M094 completed: added S026 visual QA suite cases, Matplotlib review artifacts, protocol color mapping example, and examples docs; M095 is ready.",
-    "M095 completed: added Datoviz S026 color mapping symbol/capability probes and artifacts; sibling checkout import works locally and runtime bindings expose image/point/colorbar/query candidates, with marker scalar fill and mesh face scalar still capability-gated; M096 is ready."
+    "M095 completed: added Datoviz S026 color mapping symbol/capability probes and artifacts; sibling checkout import works locally and runtime bindings expose image/point/colorbar/query candidates, with marker scalar fill and mesh face scalar still capability-gated; M096 is ready.",
+    "M096 completed: added bounded VisPy2 S026 color scale, scalar image/point/marker encoding, and colorbar guide producer APIs with examples and focused tests; S026 is closed."
   ]
 }

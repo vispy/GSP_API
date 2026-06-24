@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import os
 import traceback
 from pathlib import Path
 from typing import Literal
@@ -68,6 +69,7 @@ from gsp_matplotlib.protocol_renderer import (
 
 
 BackendStatus = Literal["rendered", "unsupported", "error"]
+DATOVIZ_QA_OFFSCREEN_ENV = "GSP_DATOVIZ_QA_ENABLE_OFFSCREEN"
 
 
 def run_visual_qa_suite(
@@ -266,6 +268,19 @@ def _run_datoviz(
             case,
             reason="Datoviz v0.4 retained-scene point probe is unsupported",
             diagnostics=probe_report.minimal_point_scene.to_json(),
+            datoviz_color_pipeline=datoviz_color_pipeline,
+        )
+    if os.environ.get(DATOVIZ_QA_OFFSCREEN_ENV) != "1":
+        return _write_datoviz_unsupported(
+            unsupported_path,
+            log_path,
+            case,
+            reason=(
+                "Datoviz in-process offscreen QA is disabled by default because "
+                f"native offscreen view creation can abort the Python process; set "
+                f"{DATOVIZ_QA_OFFSCREEN_ENV}=1 to opt in."
+            ),
+            diagnostics={"env_var": DATOVIZ_QA_OFFSCREEN_ENV, "required_value": "1"},
             datoviz_color_pipeline=datoviz_color_pipeline,
         )
     width, height = resolution

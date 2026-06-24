@@ -14,6 +14,8 @@ import pytest
 import vispy2 as vp
 from gsp.protocol import (
     AxisDimension,
+    ColorMapId,
+    ColorbarOrientation,
     CoordinateSpace,
     FontRole,
     ImageOrigin,
@@ -25,6 +27,7 @@ from gsp.protocol import (
     PanelTextRole,
     PathVisual,
     PointVisual,
+    ScalarColorSlot,
     SegmentVisual,
     StrokeCap,
     StrokeJoin,
@@ -69,6 +72,25 @@ def test_subplots_imshow_emits_image_visual():
     np.testing.assert_array_equal(visual.image, image)
 
 
+def test_vispy2_scalar_image_uses_explicit_color_scale():
+    fig, ax = vp.subplots()
+
+    visual = ax.imshow(
+        np.array([[0.0, 0.5], [1.0, 1.5]], dtype=np.float32),
+        cmap="viridis",
+        clim=(0.0, 1.0),
+        id="visual:image",
+    )
+
+    scale = fig.color_scales()[0]
+    assert scale.colormap.id == ColorMapId.VIRIDIS
+    assert scale.normalize.vmin == 0.0
+    assert scale.normalize.vmax == 1.0
+    assert visual.color_scale_id == scale.id
+    assert visual.colormap is None
+    assert visual.clim is None
+
+
 def test_subplots_markers_emits_marker_visual():
     fig, ax = vp.subplots()
 
@@ -96,6 +118,89 @@ def test_subplots_markers_emits_marker_visual():
     np.testing.assert_allclose(visual.angle_values(), [0.0, 0.5])
     np.testing.assert_array_equal(visual.stroke_color, [0, 0, 0, 255])
     assert visual.stroke_width == 1.5
+
+
+def test_vispy2_point_and_marker_scalar_colors_emit_protocol_encodings():
+    fig, ax = vp.subplots()
+    scale = ax.color_scale(cmap="magma", clim=(0.0, 10.0), id="scale:magma")
+
+    points = ax.scatter(
+        [0.0, 1.0],
+        [0.0, 1.0],
+        c=[0.0, 10.0],
+        color_scale=scale,
+        alpha=0.5,
+        id="visual:points",
+    )
+    markers = ax.markers(
+        [0.0, 1.0],
+        [1.0, 0.0],
+        fill_color=[2.5, 7.5],
+        color_scale="scale:magma",
+        id="visual:markers",
+    )
+
+    assert fig.color_scales() == (scale,)
+    assert points.colors is None
+    assert points.color_encoding is not None
+    assert points.color_encoding.slot == ScalarColorSlot.COLOR
+    assert points.color_encoding.color_scale_id == "scale:magma"
+    assert points.color_encoding.alpha == 0.5
+    np.testing.assert_allclose(points.color_encoding.values, [0.0, 10.0])
+    assert markers.fill_colors is None
+    assert markers.fill_color_encoding is not None
+    assert markers.fill_color_encoding.slot == ScalarColorSlot.FILL
+    assert markers.fill_color_encoding.color_scale_id == "scale:magma"
+    np.testing.assert_allclose(markers.fill_color_encoding.values, [2.5, 7.5])
+
+
+def test_vispy2_colorbar_emits_semantic_guide_and_renders():
+    fig, ax = vp.subplots()
+    scale = ax.color_scale(cmap="cividis", clim=(-1.0, 1.0), id="scale:cividis")
+    guide = ax.colorbar(
+        scale,
+        label="Value",
+        orientation="horizontal",
+        ticks=[-1.0, 0.0, 1.0],
+        tick_labels=["low", "zero", "high"],
+        linked_visual_ids=["visual:image"],
+        id="guide:colorbar",
+    )
+
+    assert fig.colorbar_guides() == (guide,)
+    assert guide.color_scale_id == "scale:cividis"
+    assert guide.orientation == ColorbarOrientation.HORIZONTAL
+    assert guide.linked_visual_ids == ("visual:image",)
+
+    ax.imshow(
+        np.array([[0.0, 1.0]], dtype=np.float32),
+        color_scale=scale,
+        id="visual:image",
+    )
+    mpl_fig, _ = fig.render_matplotlib()
+    try:
+        colorbar_axes = [
+            axes for axes in mpl_fig.axes if axes.get_gid() == "guide:colorbar"
+        ]
+        assert len(colorbar_axes) == 1
+        assert colorbar_axes[0].get_xlabel() == "Value"
+        assert [label.get_text() for label in colorbar_axes[0].get_xticklabels()] == [
+            "low",
+            "zero",
+            "high",
+        ]
+    finally:
+        plt.close(mpl_fig)
+
+
+def test_vispy2_scalar_color_requires_explicit_normalization():
+    _, ax = vp.subplots()
+
+    with pytest.raises(ValueError, match="cmap and clim"):
+        ax.scatter([0.0, 1.0], [0.0, 1.0], c=[0.0, 1.0], cmap="viridis")
+
+    with pytest.raises(ValueError, match="clim is required"):
+        ax.imshow(np.zeros((2, 2), dtype=np.float32), cmap="viridis")
 
 
 def test_subplots_segments_emits_segment_visual():

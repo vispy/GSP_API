@@ -5,6 +5,8 @@ from .plot.plot import plot
 from .protocol import (
     Axes,
     Figure,
+    color_scale,
+    colorbar,
     imshow,
     markers,
     mesh,
@@ -19,6 +21,8 @@ __all__ = [
     "Axes",
     "Figure",
     "axes",
+    "color_scale",
+    "colorbar",
     "imshow",
     "markers",
     "mesh",

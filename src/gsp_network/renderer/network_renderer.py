@@ -5,10 +5,10 @@ import io
 import os
 from typing import Sequence, TypedDict, Literal, cast
 import json
+from http import HTTPStatus
 
 # pip imports
-import requests
-from http_constants.status import HttpStatus
+import requests  # type: ignore[import-untyped]
 import numpy as np
 import matplotlib.pyplot
 import matplotlib.image
@@ -41,7 +41,12 @@ class NetworkRenderer(RendererBase):
     **IMPORTANT**: it DOES NOT depend on GSP matplotlib renderer, it only uses pip matplotlib to display the remotely rendered images.
     """
 
-    def __init__(self, canvas: Canvas, server_base_url: str, remote_renderer_name: Literal["matplotlib", "datoviz-v03"] = "matplotlib") -> None:
+    def __init__(
+        self,
+        canvas: Canvas,
+        server_base_url: str,
+        remote_renderer_name: Literal["matplotlib", "datoviz-v03"] = "matplotlib",
+    ) -> None:
         """Initialize the NetworkRenderer.
 
         Args:
@@ -51,14 +56,22 @@ class NetworkRenderer(RendererBase):
         """
         self._canvas = canvas
         self._server_base_url = server_base_url
-        self._remote_renderer_name: Literal["matplotlib", "datoviz-v03"] = remote_renderer_name
+        self._remote_renderer_name: Literal["matplotlib", "datoviz-v03"] = (
+            remote_renderer_name
+        )
 
         # Create a figure
         figure_width = self._canvas.get_width() / self._canvas.get_dpi()
         figure_height = self._canvas.get_height() / self._canvas.get_dpi()
-        self._figure: matplotlib.figure.Figure = matplotlib.pyplot.figure(figsize=(figure_width, figure_height), dpi=self._canvas.get_dpi())
-        assert self._figure.canvas.manager is not None, "matplotlib figure canvas manager is None"
-        self._figure.canvas.manager.set_window_title(f"Network ({self._remote_renderer_name})")
+        self._figure: matplotlib.figure.Figure = matplotlib.pyplot.figure(
+            figsize=(figure_width, figure_height), dpi=self._canvas.get_dpi()
+        )
+        assert self._figure.canvas.manager is not None, (
+            "matplotlib figure canvas manager is None"
+        )
+        self._figure.canvas.manager.set_window_title(
+            f"Network ({self._remote_renderer_name})"
+        )
 
         # get the only axes in the figure
         self._mpl_axes = self._figure.add_axes((0, 0, 1, 1))
@@ -66,7 +79,9 @@ class NetworkRenderer(RendererBase):
         self._mpl_axes.axis("off")
 
         # create an np.array to hold the image
-        image_data_np = np.zeros((self._canvas.get_height(), self._canvas.get_width(), 3), dtype=np.uint8)
+        image_data_np = np.zeros(
+            (self._canvas.get_height(), self._canvas.get_width(), 3), dtype=np.uint8
+        )
         self._axes_image = self._mpl_axes.imshow(image_data_np, aspect="auto")
 
     def get_canvas(self) -> Canvas:
@@ -139,7 +154,7 @@ class NetworkRenderer(RendererBase):
         response = requests.post(call_url, data=json.dumps(payload), headers=headers)
 
         # Check the response status
-        if response.status_code != HttpStatus.OK:
+        if response.status_code != HTTPStatus.OK:
             raise Exception(f"Request failed with status code {response.status_code}")
         image_png_data = response.content
 
@@ -149,7 +164,9 @@ class NetworkRenderer(RendererBase):
         assert self._axes_image is not None, "PANIC self._axes_image is None"
 
         # decode the new RGBA image (float32 [0, 1])
-        image_data_np = matplotlib.image.imread(io.BytesIO(image_png_data), format="png")
+        image_data_np = matplotlib.image.imread(
+            io.BytesIO(image_png_data), format="png"
+        )
 
         overload_enabled = True
         if overload_enabled is False:
@@ -160,7 +177,9 @@ class NetworkRenderer(RendererBase):
             image_src_rgb = image_data_np[..., :3]
             image_src_alpha = image_data_np[..., 3:4]
             image_dst_rgb = self._axes_image.get_array().astype(np.float32) / 255.0  # type: ignore
-            image_blended = image_src_rgb * image_src_alpha + image_dst_rgb * (1.0 - image_src_alpha)
+            image_blended = image_src_rgb * image_src_alpha + image_dst_rgb * (
+                1.0 - image_src_alpha
+            )
             self._axes_image.set_data((image_blended * 255.0).astype(np.uint8))
 
         # return png data as bytes

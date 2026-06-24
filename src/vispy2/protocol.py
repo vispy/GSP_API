@@ -18,12 +18,19 @@ from gsp.protocol import (
     AxisDimension,
     AxisGuide,
     AxisSide,
+    ColorMapId,
+    ColorMapRef,
+    ColorScale,
+    ColorbarGuide,
+    ColorbarOrientation,
+    ColorbarPlacement,
     CoordinateSpace,
     FontRole,
     ImageColormap,
     ImageInterpolation,
     ImageOrigin,
     ImageVisual,
+    LinearNormalize,
     MeshColorMode,
     MeshVisual,
     MarkerShape,
@@ -33,12 +40,15 @@ from gsp.protocol import (
     PanelTextRole,
     PathVisual,
     PointVisual,
+    ScalarColorDomain,
+    ScalarColorEncoding,
+    ScalarColorSlot,
     SegmentVisual,
+    StrokeCap,
+    StrokeJoin,
     TextAnchorX,
     TextAnchorY,
     TextVisual,
-    StrokeCap,
-    StrokeJoin,
     TickSpec,
     TickSpecKind,
     View2D,
@@ -46,6 +56,7 @@ from gsp.protocol import (
 )
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.protocol_renderer import (
+    render_colorbar_guide,
     render_image_visual,
     render_mesh_visual,
     render_marker_visual,
@@ -57,6 +68,7 @@ from gsp_matplotlib.protocol_renderer import (
 
 
 _visual_counter = count(1)
+_scale_counter = count(1)
 
 
 @dataclass(slots=True)
@@ -65,6 +77,7 @@ class Figure:
 
     axes: list["Axes"] = field(default_factory=list)
     id: str = "figure:main"
+    color_scale_resources: list[ColorScale] = field(default_factory=list)
 
     def add_axes(self) -> "Axes":
         """Add one protocol-producing axes to the figure."""
@@ -109,16 +122,25 @@ class Figure:
         """Return semantic panel text guide intent without expanding guide visuals."""
         return tuple(guide for axes in self.axes for guide in axes.panel_text_guides)
 
+    def color_scales(self) -> tuple[ColorScale, ...]:
+        """Return semantic scalar color scale resources."""
+        return tuple(self.color_scale_resources)
+
+    def colorbar_guides(self) -> tuple[ColorbarGuide, ...]:
+        """Return semantic colorbar guide intent."""
+        return tuple(guide for axes in self.axes for guide in axes.colorbar_guides)
+
     def render_matplotlib(self) -> tuple[Any, Any]:
         """Render the protocol scene through the Matplotlib reference backend."""
         import matplotlib.pyplot as plt
 
         fig, mpl_axes = plt.subplots()
+        color_scales = {scale.id: scale for scale in self.color_scale_resources}
         for visual in self.visuals():
             if isinstance(visual, ImageVisual):
-                render_image_visual(mpl_axes, visual)
+                render_image_visual(mpl_axes, visual, color_scales=color_scales)
             elif isinstance(visual, MarkerVisual):
-                render_marker_visual(mpl_axes, visual)
+                render_marker_visual(mpl_axes, visual, color_scales=color_scales)
             elif isinstance(visual, SegmentVisual):
                 render_segment_visual(mpl_axes, visual)
             elif isinstance(visual, PathVisual):
@@ -126,7 +148,7 @@ class Figure:
             elif isinstance(visual, MeshVisual):
                 render_mesh_visual(mpl_axes, visual)
             elif isinstance(visual, PointVisual):
-                render_point_visual(mpl_axes, visual)
+                render_point_visual(mpl_axes, visual, color_scales=color_scales)
             elif isinstance(visual, TextVisual):
                 render_text_visual(mpl_axes, visual)
             else:
@@ -141,6 +163,8 @@ class Figure:
             )
             render_axis_guides(mpl_axes, view, tuple(axes_model.axis_guides))
             render_panel_text_guides(mpl_axes, tuple(axes_model.panel_text_guides))
+            for guide in axes_model.colorbar_guides:
+                render_colorbar_guide(mpl_axes, guide, color_scales=color_scales)
         return fig, mpl_axes
 
     def savefig(self, path: str | Path, **kwargs: Any) -> None:
@@ -181,6 +205,7 @@ class Axes:
     attachments: list[VisualAttachment] = field(default_factory=list)
     axis_guides: list[AxisGuide] = field(default_factory=list)
     panel_text_guides: list[PanelTextGuide] = field(default_factory=list)
+    colorbar_guides: list[ColorbarGuide] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         index = len(self.figure.axes) + 1
@@ -314,6 +339,52 @@ class Axes:
         for dimension in dimensions:
             self._set_axis_guide(dimension, grid_visible=bool(visible))
 
+    def color_scale(
+        self,
+        *,
+        cmap: str | ColorMapId = ColorMapId.VIRIDIS,
+        clim: tuple[float, float],
+        id: str | None = None,
+        description: str | None = None,
+    ) -> ColorScale:
+        """Create or register a semantic scalar color scale."""
+        colormap_id = _colormap_id(cmap)
+        scale = ColorScale(
+            id=id or _scale_id(colormap_id.value),
+            colormap=ColorMapRef(id=colormap_id),
+            normalize=LinearNormalize(vmin=float(clim[0]), vmax=float(clim[1])),
+            description=description,
+        )
+        self._register_color_scale(scale)
+        return scale
+
+    def colorbar(
+        self,
+        color_scale: str | ColorScale,
+        *,
+        label: str = "",
+        orientation: str | ColorbarOrientation = ColorbarOrientation.VERTICAL,
+        placement: str | ColorbarPlacement | None = None,
+        ticks: npt.ArrayLike | None = None,
+        tick_labels: tuple[str, ...] | list[str] | None = None,
+        linked_visual_ids: tuple[str, ...] | list[str] = (),
+        id: str | None = None,
+    ) -> ColorbarGuide:
+        """Create semantic colorbar guide intent for a color scale."""
+        guide = ColorbarGuide(
+            id=id or f"guide:colorbar-{self._index}-{len(self.colorbar_guides) + 1}",
+            panel_id=self.panel.id,
+            color_scale_id=self._color_scale_id(color_scale),
+            linked_visual_ids=tuple(linked_visual_ids),
+            orientation=_colorbar_orientation(orientation),
+            placement=_colorbar_placement(placement),
+            label=label,
+            ticks=_tick_values(ticks) if ticks is not None else (),
+            tick_labels=tuple(tick_labels) if tick_labels is not None else None,
+        )
+        self.colorbar_guides.append(guide)
+        return guide
+
     def scatter(
         self,
         x: npt.ArrayLike,
@@ -321,13 +392,30 @@ class Axes:
         *,
         c: npt.ArrayLike | None = None,
         color: npt.ArrayLike | None = None,
+        color_scale: str | ColorScale | None = None,
+        cmap: str | ColorMapId | None = None,
+        clim: tuple[float, float] | None = None,
+        alpha: float = 1.0,
         s: npt.ArrayLike | float = 36.0,
         size: npt.ArrayLike | float | None = None,
         id: str | None = None,
     ) -> PointVisual:
         """Create a protocol point visual from x/y or an ``(N, 2|3)`` array."""
         positions = _positions(x, y)
-        colors = _colors(c if c is not None else color, positions.shape[0])
+        color_value = c if c is not None else color
+        encoding = self._scalar_encoding(
+            color_value,
+            positions.shape[0],
+            slot=ScalarColorSlot.COLOR,
+            domain=ScalarColorDomain.ITEM,
+            color_scale=color_scale,
+            cmap=cmap,
+            clim=clim,
+            alpha=alpha,
+        )
+        colors = (
+            None if encoding is not None else _colors(color_value, positions.shape[0])
+        )
         sizes = _sizes(size if size is not None else s, positions.shape[0])
         visual = PointVisual(
             id=id or _visual_id("points"),
@@ -335,6 +423,7 @@ class Axes:
             colors=colors,
             sizes=sizes,
             coordinate_space=CoordinateSpace.DATA,
+            color_encoding=encoding,
         )
         self.visuals.append(visual)
         self.attachments.append(
@@ -355,6 +444,10 @@ class Axes:
         | list[str | MarkerShape] = MarkerShape.DISC,
         fill_color: npt.ArrayLike | None = None,
         color: npt.ArrayLike | None = None,
+        color_scale: str | ColorScale | None = None,
+        cmap: str | ColorMapId | None = None,
+        clim: tuple[float, float] | None = None,
+        alpha: float = 1.0,
         s: npt.ArrayLike | float = 36.0,
         size: npt.ArrayLike | float | None = None,
         angle: npt.ArrayLike | float = 0.0,
@@ -364,8 +457,19 @@ class Axes:
     ) -> MarkerVisual:
         """Create a protocol marker visual from x/y or an ``(N, 2|3)`` array."""
         positions = _positions(x, y)
-        fill_colors = _colors(
-            fill_color if fill_color is not None else color, positions.shape[0]
+        color_value = fill_color if fill_color is not None else color
+        encoding = self._scalar_encoding(
+            color_value,
+            positions.shape[0],
+            slot=ScalarColorSlot.FILL,
+            domain=ScalarColorDomain.ITEM,
+            color_scale=color_scale,
+            cmap=cmap,
+            clim=clim,
+            alpha=alpha,
+        )
+        fill_colors = (
+            None if encoding is not None else _colors(color_value, positions.shape[0])
         )
         sizes = _sizes(size if size is not None else s, positions.shape[0])
         visual = MarkerVisual(
@@ -378,6 +482,7 @@ class Axes:
             stroke_color=_stroke_color(stroke_color),
             stroke_width=float(stroke_width),
             coordinate_space=CoordinateSpace.DATA,
+            fill_color_encoding=encoding,
         )
         self.visuals.append(visual)
         self.attachments.append(
@@ -568,8 +673,10 @@ class Axes:
         extent: tuple[float, float, float, float] | None = None,
         origin: str | ImageOrigin = ImageOrigin.UPPER,
         interpolation: str | ImageInterpolation = ImageInterpolation.NEAREST,
-        colormap: str | ImageColormap | None = None,
+        colormap: str | ImageColormap | ColorMapId | None = None,
+        cmap: str | ColorMapId | None = None,
         clim: tuple[float, float] | None = None,
+        color_scale: str | ColorScale | None = None,
         id: str | None = None,
     ) -> ImageVisual:
         """Create a protocol image visual."""
@@ -582,6 +689,13 @@ class Axes:
                 extent = (-0.5, width - 0.5, height - 0.5, -0.5)
             else:
                 extent = (-0.5, width - 0.5, -0.5, height - 0.5)
+        color_scale_id = self._image_color_scale_id(
+            image_array,
+            colormap=colormap,
+            cmap=cmap,
+            clim=clim,
+            color_scale=color_scale,
+        )
         visual = ImageVisual(
             id=id or _visual_id("image"),
             image=image_array,
@@ -589,8 +703,9 @@ class Axes:
             coordinate_space=CoordinateSpace.DATA,
             origin=_origin(origin),
             interpolation=_interpolation(interpolation),
-            colormap=_colormap(colormap),
-            clim=clim,
+            colormap=None if color_scale_id is not None else _colormap(colormap),
+            clim=None if color_scale_id is not None else clim,
+            color_scale_id=color_scale_id,
         )
         self.visuals.append(visual)
         self.attachments.append(
@@ -599,6 +714,91 @@ class Axes:
             )
         )
         return visual
+
+    def _register_color_scale(self, scale: ColorScale) -> None:
+        for existing in self.figure.color_scale_resources:
+            if existing.id == scale.id:
+                if existing == scale:
+                    return
+                raise ValueError(f"color scale id already exists: {scale.id}")
+        self.figure.color_scale_resources.append(scale)
+
+    def _color_scale_id(self, color_scale: str | ColorScale) -> str:
+        if isinstance(color_scale, ColorScale):
+            self._register_color_scale(color_scale)
+            return color_scale.id
+        for existing in self.figure.color_scale_resources:
+            if existing.id == color_scale:
+                return color_scale
+        raise ValueError(f"unknown color scale id: {color_scale}")
+
+    def _scalar_encoding(
+        self,
+        values: npt.ArrayLike | None,
+        count_: int,
+        *,
+        slot: ScalarColorSlot,
+        domain: ScalarColorDomain,
+        color_scale: str | ColorScale | None,
+        cmap: str | ColorMapId | None,
+        clim: tuple[float, float] | None,
+        alpha: float,
+    ) -> ScalarColorEncoding | None:
+        if color_scale is None and cmap is None:
+            return None
+        if values is None:
+            raise ValueError("scalar color encoding requires scalar values")
+        scale_id = self._scalar_color_scale_id(color_scale, cmap=cmap, clim=clim)
+        return ScalarColorEncoding(
+            slot=slot,
+            values=_scalar_values(values, shape=(count_,)),
+            color_scale_id=scale_id,
+            alpha=float(alpha),
+            domain=domain,
+        )
+
+    def _scalar_color_scale_id(
+        self,
+        color_scale: str | ColorScale | None,
+        *,
+        cmap: str | ColorMapId | None,
+        clim: tuple[float, float] | None,
+    ) -> str:
+        if color_scale is not None:
+            if cmap is not None or clim is not None:
+                raise ValueError("color_scale is mutually exclusive with cmap/clim")
+            return self._color_scale_id(color_scale)
+        if cmap is None or clim is None:
+            raise ValueError("cmap and clim are required for scalar color encoding")
+        scale = self.color_scale(cmap=cmap, clim=clim)
+        return scale.id
+
+    def _image_color_scale_id(
+        self,
+        image: np.ndarray,
+        *,
+        colormap: str | ImageColormap | ColorMapId | None,
+        cmap: str | ColorMapId | None,
+        clim: tuple[float, float] | None,
+        color_scale: str | ColorScale | None,
+    ) -> str | None:
+        if image.ndim != 2:
+            if color_scale is not None or cmap is not None:
+                raise ValueError("color_scale and cmap apply to scalar images only")
+            return None
+        if color_scale is not None:
+            if cmap is not None or _is_s026_colormap(colormap):
+                raise ValueError("color_scale is mutually exclusive with cmap")
+            return self._color_scale_id(color_scale)
+        resolved_cmap = cmap
+        if resolved_cmap is None and _is_s026_colormap(colormap):
+            resolved_cmap = cast(str | ColorMapId, colormap)
+        if resolved_cmap is None:
+            return None
+        if clim is None:
+            raise ValueError("clim is required when using a scalar color scale")
+        scale = self.color_scale(cmap=resolved_cmap, clim=clim)
+        return scale.id
 
 
 def subplots() -> tuple[Figure, Axes]:
@@ -665,14 +865,71 @@ def imshow(image: npt.ArrayLike, **kwargs: Any) -> ImageVisual:
     return ax.imshow(image, **kwargs)
 
 
+def color_scale(**kwargs: Any) -> ColorScale:
+    """Create a color scale in a temporary one-axes figure."""
+    _, ax = subplots()
+    return ax.color_scale(**kwargs)
+
+
+def colorbar(color_scale: str | ColorScale, **kwargs: Any) -> ColorbarGuide:
+    """Create a colorbar guide in a temporary one-axes figure."""
+    _, ax = subplots()
+    return ax.colorbar(color_scale, **kwargs)
+
+
 def _visual_id(prefix: str) -> str:
     return f"visual:{prefix}-{next(_visual_counter)}"
+
+
+def _scale_id(prefix: str) -> str:
+    return f"scale:{prefix}-{next(_scale_counter)}"
 
 
 def _coordinate_space(value: str | CoordinateSpace) -> CoordinateSpace:
     if isinstance(value, CoordinateSpace):
         return value
     return CoordinateSpace(value)
+
+
+def _colormap_id(value: str | ColorMapId) -> ColorMapId:
+    if isinstance(value, ColorMapId):
+        return value
+    return ColorMapId(value)
+
+
+def _is_s026_colormap(
+    value: str | ImageColormap | ColorMapId | None,
+) -> bool:
+    if value is None or isinstance(value, ImageColormap):
+        return False
+    try:
+        _colormap_id(value)
+    except ValueError:
+        return False
+    return True
+
+
+def _scalar_values(
+    value: npt.ArrayLike, *, shape: tuple[int, ...]
+) -> npt.NDArray[np.float32]:
+    array = np.asarray(value, dtype=np.float32)
+    if array.shape != shape:
+        raise ValueError(f"scalar color values must have shape {shape}")
+    return np.ascontiguousarray(array)
+
+
+def _colorbar_orientation(value: str | ColorbarOrientation) -> ColorbarOrientation:
+    if isinstance(value, ColorbarOrientation):
+        return value
+    return ColorbarOrientation(value)
+
+
+def _colorbar_placement(
+    value: str | ColorbarPlacement | None,
+) -> ColorbarPlacement | None:
+    if value is None or isinstance(value, ColorbarPlacement):
+        return value
+    return ColorbarPlacement(value)
 
 
 def _positions(x: npt.ArrayLike, y: npt.ArrayLike | None) -> npt.NDArray[np.float32]:

@@ -10,13 +10,21 @@ Add VisPy2 producer APIs for accepted S026 color mapping/colorbar/scalar behavio
 
 ## Status
 
-Draft.
+Completed.
 
 ## Deliverables
 
-- High-level VisPy2 API additions matching M091.
-- Examples that emit formal GSP protocol scenes.
-- Focused producer tests.
+- Completed: High-level VisPy2 API additions matching M091.
+- Completed: Example that emits formal GSP protocol scenes.
+- Completed: Focused producer tests.
+
+## Notes
+
+- Added VisPy2 producer methods for `color_scale()` and `colorbar()`.
+- `imshow()` can link scalar images to an explicit S026 color scale through `color_scale` or `cmap` plus `clim`.
+- `scatter()` and `markers()` can emit point color and marker fill `ScalarColorEncoding` payloads.
+- `Figure` now exposes `color_scales()` and `colorbar_guides()` and passes color scales to the Matplotlib reference renderer.
+- Added `examples/vispy2_protocol_color_mapping.py` and focused tests in `tests/test_vispy2_protocol_mvp.py`.
 
 ## Acceptance
 

@@ -30,9 +30,9 @@ documents.
 | Mission | State | Purpose |
 |---|---|---|
 | M090 | completed | Opened S026 scoping and created P011 ChatGPT Pro consultation packet. |
-| M091 | blocked | Convert P011 response into ADR/spec baseline before implementation. |
-| M092 | draft | Implement accepted protocol dataclasses/enums/validation after M091. |
-| M093 | draft | Add Matplotlib reference rendering/query behavior after M091/M092. |
-| M094 | draft | Add visual QA cases and example coverage. |
-| M095 | draft | Probe Datoviz v0.4 color mapping/colorbar capabilities. |
-| M096 | draft | Add VisPy2 producer API updates after accepted semantics. |
+| M091 | completed | Converted P011 response into ADR/spec baseline before implementation. |
+| M092 | completed | Implemented accepted protocol dataclasses/enums/validation after M091. |
+| M093 | completed | Added Matplotlib reference rendering/query behavior after M091/M092. |
+| M094 | completed | Added visual QA cases and example coverage. |
+| M095 | completed | Probed Datoviz v0.4 color mapping/colorbar capabilities. |
+| M096 | completed | Added VisPy2 producer API updates after accepted semantics. |
