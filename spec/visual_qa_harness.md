@@ -1,6 +1,7 @@
 # Visual QA Harness - Accepted S023 Baseline
 
-Status: accepted for S023; S024 text QA accepted; S025 mesh QA plan accepted.
+Status: accepted for S023; S024 text QA accepted; S025 mesh QA plan accepted; S026 scalar color QA
+plan accepted.
 
 The S023 visual QA harness lives under `gsp.qa.visual` and provides deterministic scene generation,
 backend rendering, contact-sheet generation, reports, and manual review templates.
@@ -80,3 +81,22 @@ Optional/capability-gated cases include per-vertex color interpolation, 3D cube 
 overlap, normals/flat shading, optional Lambert demonstration, 3D face query, and wireframe only if
 later accepted. Manual review checks geometry placement, face colors, draw order, diagnostics, and
 face-query payloads rather than pixel-perfect antialiasing.
+
+## S026 scalar color QA plan
+
+Strict scalar color QA covers deterministic color mapping and colorbar cases with Matplotlib
+reference output:
+
+- `scalar_image_gray_clim`;
+- `scalar_image_viridis_lut`;
+- `point_scalar_colors`;
+- `marker_fill_scalar_colors`;
+- `shared_color_scale_with_colorbar`;
+- `colorbar_explicit_ticks`;
+- `scalar_color_validation_failures`;
+- `scalar_color_query_payloads`.
+
+Optional/capability-gated cases include Datoviz canonical LUT upload, Datoviz GPU normalization,
+CPU pre-map diagnostics, colorbar unsupported diagnostics, strict 2D `MeshVisual` per-face scalar
+colors, and mesh face scalar query. Manual review checks canonical color placement, endpoint
+clipping, explicit colorbar ticks/labels, diagnostics, and scalar query payloads.

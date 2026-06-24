@@ -47,3 +47,11 @@ uniform or per-face RGBA. Exact 2D-to-3D `z=0` adaptation is allowed when docume
 material defaults, topology changes, or color association changes must not alter strict semantics
 without structured diagnostics. Textures, instancing, public materials/lights, and 3D query parity are
 deferred or capability-gated.
+
+## S026 color mapping boundary
+
+GSP public protocol exposes canonical color scales, scalar encodings, and semantic colorbar guides.
+Datoviz colormap registries, shader APIs, slot names, texture handles, material structs, and draw
+calls remain backend-private implementation details. Datoviz scalar color support must be
+capability-gated and report structured diagnostics for LUT upload, GPU normalization, CPU pre-map,
+unsupported scalar slots, colorbar rendering, and scalar/colorbar query limitations.

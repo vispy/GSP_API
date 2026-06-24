@@ -1,6 +1,6 @@
 # Backend Visual Capabilities - Accepted S023 Baseline
 
-Status: accepted for S023; S024 text and S025 mesh capability gates accepted.
+Status: accepted for S023; S024 text, S025 mesh, and S026 scalar color capability gates accepted.
 
 S023 validates two backend paths:
 
@@ -64,3 +64,25 @@ Structured diagnostics include `MESH_UNSUPPORTED`, `MESH_API_UNVERIFIED`,
 `MESH_SHADING_UNSUPPORTED`, `MESH_DEPTH_UNSUPPORTED`, `MESH_CULLING_UNSUPPORTED`,
 `MESH_ALPHA_LIMITED`, `MESH_QUERY_UNSUPPORTED`, `MESH_3D_VIEW_UNSUPPORTED`,
 `MESH_TEXTURE_DEFERRED`, and `MESH_INSTANCING_DEFERRED`.
+
+## S026 scalar color capability gates
+
+A backend may claim strict scalar color support only when it can reproduce GSP canonical LUT mapping,
+explicit linear normalization, endpoint clipping, and required scalar query fields for the supported
+visual slots. Optional capabilities include Datoviz GPU normalization, canonical LUT upload,
+non-Matplotlib colorbar rendering, colorbar ramp query, and strict 2D mesh per-face scalar color.
+
+Recommended capability names include `gsp.scalar-color@0.1`, `gsp.colormap.named.<id>@0.1`,
+`gsp.colormap.lut-upload@0.1`, `gsp.normalize.linear.gpu@0.1`,
+`gsp.scalar-image.color-scale@0.1`, `gsp.point.scalar-color@0.1`,
+`gsp.marker.scalar-fill@0.1`, `gsp.mesh.face-scalar-color@0.1`,
+`gsp.colorbar-guide.render@0.1`, `gsp.scalar-query.source-value@0.1`,
+`gsp.scalar-query.normalized-value@0.1`, `gsp.scalar-query.displayed-rgba@0.1`, and
+`gsp.colorbar-query@0.1`.
+
+Structured diagnostics include `unsupported_colormap_id`, `colormap_approximated`,
+`lut_upload_unsupported`, `gpu_linear_normalize_unsupported`, `cpu_premap_scalar_to_rgba`,
+`cpu_premap_not_allowed_for_virtual_data`, `scalar_visual_family_unsupported`,
+`colorbar_render_unsupported`, `scalar_query_source_unavailable`,
+`scalar_query_normalized_unavailable`, `colorbar_query_unsupported`, `nonfinite_scalar_rejected`,
+and `invalid_color_scale_domain`.

@@ -182,3 +182,25 @@ The typed `MeshQueryPayload` reports:
 
 Vertex-colored mesh readback, edge/vertex picking, 3D mesh query, barycentric coordinates,
 front-facing state, normals, depth, and interpolated RGBA remain capability-gated/deferred.
+
+## S026 scalar color query payload
+
+Scalar/color-mapped visual hits use extension payload kind `gsp.scalar-color-query@0.1`. The payload
+reports the semantic scalar source and displayed color:
+
+- `visual_id`;
+- `item_kind`: `texel`, `point`, `marker`, or capability-gated `face`;
+- item identity such as texel coordinates, point index, marker index, or face index;
+- `color_slot`: `image`, `color`, `fill`, or capability-gated `face_color`;
+- `color_scale_id`;
+- `colormap_id`;
+- `source_value`;
+- `normalized_value_raw`;
+- `normalized_value_clipped`;
+- `range_class`: `under`, `in_range`, or `over`;
+- `lut_index`;
+- `displayed_rgba`.
+
+Colorbar ramp query uses extension payload kind `gsp.colorbar-query@0.1` when guide-query capability
+supports it. Framebuffer readback is not the authority for scalar semantics; exact results may be
+computed from protocol scene data.

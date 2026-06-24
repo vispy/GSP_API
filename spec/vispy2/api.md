@@ -107,3 +107,12 @@ The bounded S025 mesh API exposes accepted `MeshVisual` protocol semantics:
 The VisPy2 producer does not expose materials, lights, textures, normals, shading, culling, depth
 state, mesh-local transforms, Datoviz slots, or backend draw calls. Those remain protocol- or
 backend-capability work, not high-level producer API.
+
+## S026 color mapping direction
+
+S026 accepts shared `ColorScale` resources, canonical named colormaps, explicit linear normalization,
+slot-specific scalar color encodings, and semantic `ColorbarGuide` objects. VisPy2 may expose
+producer conveniences such as scalar `imshow(..., cmap=..., clim=...)`, point/marker scalar color
+values, and `colorbar(...)`, but it must emit explicit GSP color scales and must not expose
+Matplotlib `ScalarMappable` objects, Datoviz shader controls, backend colormap registries, or auto
+normalization as protocol semantics.

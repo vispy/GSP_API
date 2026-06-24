@@ -73,3 +73,13 @@ remain visual/protocol concerns.
 The Matplotlib tiled-source helper materializes a viewport mosaic and renders it through the
 existing eager image reference path. Future work may add an explicit `data_source_ref` to image
 visuals, but M011 does not broaden `ImageVisual`.
+
+## S026 color mapping compatibility
+
+S026 accepts shared `ColorScale` resources, canonical named colormaps, explicit linear
+normalization, and semantic colorbars. Existing scalar `ImageVisual(gray, clim)` behavior is a
+compatibility path that maps to `ColorScale(gray, LinearNormalize(vmin, vmax))`.
+
+New S026 scalar image scenes should use explicit color scales. RGB/RGBA image semantics remain
+unchanged. NaN/masked/bad values, custom under/over colors, auto clim as protocol behavior,
+non-linear norms, and broad backend colormap registries remain deferred.

@@ -18,6 +18,7 @@ This file tells agents where to find authoritative design information.
 | Marker visual | spec/visuals/marker.md |
 | Path visual | spec/visuals/path.md |
 | Image visual | spec/visuals/image.md |
+| Color mapping and colorbars | spec/color_mapping.md |
 | Matplotlib backend | spec/backends/matplotlib.md |
 | Datoviz backend | spec/backends/datoviz.md |
 | VisPy2 API | spec/vispy2/api.md |
@@ -38,6 +39,8 @@ This file tells agents where to find authoritative design information.
 | Image scalar gray/clim ADR | adr/ADR-0015-imagevisual-scalar-gray-clim.md |
 | TextVisual v1 ADR | adr/ADR-0016-textvisual-v1-no-public-glyphvisual.md |
 | MeshVisual v1 ADR | adr/ADR-0017-meshvisual-v1-triangle-mesh.md |
+| Color mapping/colorbars v1 ADR | adr/ADR-0018-color-mapping-colorbars-v1.md |
+| S026 color mapping decision | .agent/decisions/S026_color_mapping_contracts.md |
 | S025 MeshVisual decision | .agent/decisions/S025_meshvisual_contracts.md |
 | S024 TextVisual decision | .agent/decisions/S024_textvisual_contracts.md |
 | Existing repo reuse | LEGACY_MAP.md |

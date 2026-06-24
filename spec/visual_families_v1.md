@@ -54,3 +54,11 @@ colormaps/colorbars, and broad 3D camera conformance are deferred.
 The Matplotlib/reference path implements strict 2D rendering and face-level query/readback for
 uniform and per-face RGBA meshes. Vertex-colored readback, edge/vertex picking, and 3D mesh query
 remain capability-gated.
+
+## S026 color mapping addition
+
+S026 adds shared scalar color semantics rather than a new visual family. Strict v1 defines
+`ColorScale`, canonical named colormaps, explicit linear normalization, slot-specific
+`ScalarColorEncoding`, and semantic `ColorbarGuide` objects. Strict scalar slots are scalar
+`ImageVisual` texels, `PointVisual.color`, and `MarkerVisual.fill`; `MeshVisual.face_color` scalar
+encoding is capability-gated.

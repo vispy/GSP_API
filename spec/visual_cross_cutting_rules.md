@@ -1,6 +1,7 @@
 # Visual Cross-Cutting Rules - Accepted S023 Baseline
 
-Status: accepted for S023; extended by S024 TextVisual and S025 MeshVisual baselines.
+Status: accepted for S023; extended by S024 TextVisual, S025 MeshVisual, and S026 color mapping
+baselines.
 
 These rules apply across S023 visual families unless an individual family spec says otherwise.
 
@@ -37,3 +38,6 @@ S024 defines public `TextVisual` without public glyph resources. S025 defines pu
 without public geometry resources, materials, lights, textures, instancing, surface/volume visuals,
 legend, colorbar, tiled-source, remote-source, rich text, layout engines, or interactive editing
 semantics.
+
+S026 defines shared color mapping resources and colorbar guides. Scalar color encodings are
+slot-specific alternatives to RGBA, not backend mappables or draw-call parameters.
