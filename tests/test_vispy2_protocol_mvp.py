@@ -18,6 +18,8 @@ from gsp.protocol import (
     FontRole,
     ImageOrigin,
     ImageVisual,
+    MeshColorMode,
+    MeshVisual,
     MarkerShape,
     MarkerVisual,
     PanelTextRole,
@@ -178,6 +180,34 @@ def test_subplots_text_emits_text_visual():
     assert visual.z_order == 3
 
 
+def test_subplots_mesh_emits_mesh_visual():
+    fig, ax = vp.subplots()
+
+    visual = ax.mesh(
+        np.array(
+            [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]],
+            dtype=np.float32,
+        ),
+        np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32),
+        color=np.array([[255, 0, 0, 255], [0, 0, 255, 255]], dtype=np.uint8),
+        color_mode="face",
+        order=2.0,
+        id="visual:mesh",
+    )
+
+    assert isinstance(visual, MeshVisual)
+    assert visual.coordinate_space == CoordinateSpace.DATA
+    assert visual.resolved_color_mode() == MeshColorMode.FACE
+    assert fig.visuals() == (visual,)
+    assert fig.attachments()[0].visual_id == "visual:mesh"
+    np.testing.assert_allclose(
+        visual.positions, [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]]
+    )
+    np.testing.assert_array_equal(visual.faces, [[0, 1, 2], [0, 2, 3]])
+    np.testing.assert_array_equal(visual.color, [[255, 0, 0, 255], [0, 0, 255, 255]])
+    assert visual.order == 2.0
+
+
 def test_text_rejects_deferred_font_and_mismatched_texts():
     _, ax = vp.subplots()
 
@@ -203,6 +233,23 @@ def test_vispy2_text_renders_through_matplotlib_protocol_backend():
         assert mpl_axes.texts[0].get_text() == "center"
         assert mpl_axes.texts[0].get_gid() == "visual:text"
         assert mpl_axes.texts[0].get_ha() == "center"
+    finally:
+        plt.close(mpl_fig)
+
+
+def test_vispy2_mesh_renders_through_matplotlib_protocol_backend():
+    fig, ax = vp.subplots()
+    ax.mesh(
+        [[-0.5, -0.5], [0.5, -0.5], [0.0, 0.5]],
+        [[0, 1, 2]],
+        color=[255, 0, 0, 255],
+        id="visual:mesh",
+    )
+
+    mpl_fig, mpl_axes = fig.render_matplotlib()
+    try:
+        assert len(mpl_axes.collections) == 1
+        assert mpl_axes.collections[0].get_gid() == "visual:mesh"
     finally:
         plt.close(mpl_fig)
 
@@ -278,6 +325,11 @@ def test_top_level_helpers_emit_protocol_visuals():
     path = vp.path(np.array([[0.0, 0.0], [1.0, 0.0]], dtype=np.float32))
     image = vp.imshow(np.zeros((1, 1), dtype=np.float32))
     label = vp.text([0.0], [0.0], "label")
+    mesh = vp.mesh(
+        [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+        [[0, 1, 2]],
+        color=[255, 0, 0, 255],
+    )
 
     assert isinstance(point, PointVisual)
     assert isinstance(marker, MarkerVisual)
@@ -285,6 +337,7 @@ def test_top_level_helpers_emit_protocol_visuals():
     assert isinstance(path, PathVisual)
     assert isinstance(image, ImageVisual)
     assert isinstance(label, TextVisual)
+    assert isinstance(mesh, MeshVisual)
 
 
 def test_vispy2_guide_apis_emit_semantic_protocol_guides():
@@ -390,6 +443,7 @@ def test_vispy2_guide_example_covers_public_guide_surface():
         "examples/vispy2_protocol_imshow.py",
         "examples/vispy2_protocol_point_over_image.py",
         "examples/vispy2_protocol_guides.py",
+        "examples/vispy2_protocol_mesh.py",
     ],
 )
 def test_vispy2_protocol_examples_are_runnable(example):

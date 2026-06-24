@@ -10,7 +10,7 @@ Add accepted mesh query/readback semantics and close S025 with docs, QA notes, a
 
 ## Status
 
-Draft.
+Ready.
 
 ## Deliverables
 

@@ -24,6 +24,8 @@ from gsp.protocol import (
     ImageInterpolation,
     ImageOrigin,
     ImageVisual,
+    MeshColorMode,
+    MeshVisual,
     MarkerShape,
     MarkerVisual,
     Panel,
@@ -45,6 +47,7 @@ from gsp.protocol import (
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.protocol_renderer import (
     render_image_visual,
+    render_mesh_visual,
     render_marker_visual,
     render_path_visual,
     render_point_visual,
@@ -76,6 +79,7 @@ class Figure:
         | MarkerVisual
         | SegmentVisual
         | PathVisual
+        | MeshVisual
         | ImageVisual
         | TextVisual,
         ...,
@@ -119,6 +123,8 @@ class Figure:
                 render_segment_visual(mpl_axes, visual)
             elif isinstance(visual, PathVisual):
                 render_path_visual(mpl_axes, visual)
+            elif isinstance(visual, MeshVisual):
+                render_mesh_visual(mpl_axes, visual)
             elif isinstance(visual, PointVisual):
                 render_point_visual(mpl_axes, visual)
             elif isinstance(visual, TextVisual):
@@ -166,6 +172,7 @@ class Axes:
         | MarkerVisual
         | SegmentVisual
         | PathVisual
+        | MeshVisual
         | ImageVisual
         | TextVisual
     ] = field(default_factory=list)
@@ -506,6 +513,37 @@ class Axes:
         )
         return visual
 
+    def mesh(
+        self,
+        positions: npt.ArrayLike,
+        faces: npt.ArrayLike,
+        *,
+        color: npt.ArrayLike,
+        color_mode: str | MeshColorMode | None = None,
+        coordinate_space: str | CoordinateSpace = CoordinateSpace.DATA,
+        order: float = 0.0,
+        id: str | None = None,
+    ) -> MeshVisual:
+        """Create a protocol MeshVisual for accepted inline triangle meshes."""
+        position_array = _positions(positions, None)
+        face_array = _faces(faces)
+        visual = MeshVisual(
+            id=id or _visual_id("mesh"),
+            positions=position_array,
+            faces=face_array,
+            coordinate_space=_coordinate_space(coordinate_space),
+            color=_mesh_color(color),
+            color_mode=_mesh_color_mode(color_mode),
+            order=float(order),
+        )
+        self.visuals.append(visual)
+        self.attachments.append(
+            VisualAttachment(
+                visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id
+            )
+        )
+        return visual
+
     @property
     def _index(self) -> int:
         return int(self.panel.id.rsplit(":", maxsplit=1)[1])
@@ -615,6 +653,12 @@ def text(
     return ax.text(x, y, texts, **kwargs)
 
 
+def mesh(positions: npt.ArrayLike, faces: npt.ArrayLike, **kwargs: Any) -> MeshVisual:
+    """Create a mesh visual in a temporary one-axes figure."""
+    _, ax = subplots()
+    return ax.mesh(positions, faces, **kwargs)
+
+
 def imshow(image: npt.ArrayLike, **kwargs: Any) -> ImageVisual:
     """Create an image visual in a temporary one-axes figure."""
     _, ax = subplots()
@@ -623,6 +667,12 @@ def imshow(image: npt.ArrayLike, **kwargs: Any) -> ImageVisual:
 
 def _visual_id(prefix: str) -> str:
     return f"visual:{prefix}-{next(_visual_counter)}"
+
+
+def _coordinate_space(value: str | CoordinateSpace) -> CoordinateSpace:
+    if isinstance(value, CoordinateSpace):
+        return value
+    return CoordinateSpace(value)
 
 
 def _positions(x: npt.ArrayLike, y: npt.ArrayLike | None) -> npt.NDArray[np.float32]:
@@ -639,6 +689,15 @@ def _positions(x: npt.ArrayLike, y: npt.ArrayLike | None) -> npt.NDArray[np.floa
     return np.ascontiguousarray(np.column_stack([x_array, y_array]).astype(np.float32))
 
 
+def _faces(value: npt.ArrayLike) -> npt.NDArray[np.uint32]:
+    array = np.asarray(value)
+    if array.ndim != 2 or array.shape[1] != 3:
+        raise ValueError("faces must have shape (M, 3)")
+    if not np.issubdtype(array.dtype, np.integer):
+        raise ValueError("faces must use an integer dtype")
+    return np.ascontiguousarray(array.astype(np.uint32, copy=False))
+
+
 def _colors(
     value: npt.ArrayLike | None, count_: int
 ) -> npt.NDArray[np.uint8] | npt.NDArray[np.float32]:
@@ -649,6 +708,35 @@ def _colors(
         array = np.tile(array.reshape(1, 4), (count_, 1))
     if array.ndim != 2 or array.shape != (count_, 4):
         raise ValueError("color must be RGBA with shape (4,) or (N, 4)")
+    if array.dtype == np.dtype(np.uint8):
+        return np.ascontiguousarray(array)
+    if np.issubdtype(array.dtype, np.integer):
+        return np.ascontiguousarray(array.astype(np.uint8))
+    return np.ascontiguousarray(array.astype(np.float32))
+
+
+def _mesh_color_mode(value: str | MeshColorMode | None) -> MeshColorMode | None:
+    if value is None or isinstance(value, MeshColorMode):
+        return value
+    return MeshColorMode(value)
+
+
+def _mesh_color(
+    value: npt.ArrayLike,
+) -> npt.NDArray[np.uint8] | npt.NDArray[np.float32]:
+    array = np.asarray(value)
+    if array.ndim == 1:
+        if array.shape[0] != 4:
+            raise ValueError(
+                "mesh color must be RGBA with shape (4,), (M, 4), or (N, 4)"
+            )
+    elif array.ndim == 2:
+        if array.shape[1] != 4:
+            raise ValueError(
+                "mesh color must be RGBA with shape (4,), (M, 4), or (N, 4)"
+            )
+    else:
+        raise ValueError("mesh color must be RGBA with shape (4,), (M, 4), or (N, 4)")
     if array.dtype == np.dtype(np.uint8):
         return np.ascontiguousarray(array)
     if np.issubdtype(array.dtype, np.integer):

@@ -23,6 +23,7 @@ ax.scatter(x, y, color=rgba, size=36)
 ax.markers(x, y, shape="triangle", fill_color=rgba, size=36, angle=0.0)
 ax.path(vertices, path_lengths=(len(vertices),), color=rgba, width=4, join="round")
 ax.plot(x, y, color=rgba, width=4)
+ax.mesh(positions, faces, color=rgba, color_mode="face")
 fig.render_matplotlib()
 fig.savefig("out.png")
 ```
@@ -35,6 +36,7 @@ VisPy2 should target GSP, not Datoviz directly.
 - `Axes.scatter()` emits a GSP `PointVisual`.
 - `Axes.markers()` emits a GSP `MarkerVisual`.
 - `Axes.path()` and `Axes.plot()` emit a GSP `PathVisual`.
+- `Axes.mesh()` emits a GSP `MeshVisual` for inline indexed triangles.
 - `Axes.imshow()` emits a GSP `ImageVisual`, including bounded scalar `colormap`/`clim` options.
 - `Axes.set_xlim()` and `Axes.set_ylim()` update semantic `View2D`, not backend-local state.
 - `Axes.set_xlabel()`, `set_ylabel()`, `set_title()`, `set_xticks()`, `set_yticks()`, and
@@ -50,6 +52,7 @@ Out of scope:
 - Datoviz-specific behavior;
 - broad Matplotlib API compatibility;
 - legends, styling systems, or layout engines;
+- public mesh material, light, texture, transform, or backend draw-call surfaces;
 - generated axes in `Figure.visuals()`.
 
 ## Axis direction
@@ -87,3 +90,20 @@ These methods do not expose backend-provider details and do not append generated
 The reference Matplotlib path has bounded guide-query support for semantic axis tick/spine
 contributions. Guide-specific fields are carried in `GuideQueryPayload`. The broader query-scope
 model for `data`, `guides`, and `all-rendered` remains consultation-gated.
+
+## Mesh producer API
+
+The bounded S025 mesh API exposes accepted `MeshVisual` protocol semantics:
+
+- `Axes.mesh(positions, faces, color=..., color_mode=None, coordinate_space="data", order=0.0)`
+  creates inline indexed triangular mesh geometry.
+- `positions` accepts `(N,2)` or `(N,3)` float arrays. The strict reference path is 2D.
+- `faces` accepts integer `(M,3)` triangle indices.
+- `color` accepts uniform `(4,)`, per-face `(M,4)`, or explicit per-vertex `(N,4)` RGBA.
+- `color_mode` may be `"uniform"`, `"face"`, or `"vertex"` when inference is ambiguous or when the
+  caller wants explicit association.
+- `coordinate_space` accepts existing GSP coordinate spaces, defaulting to `DATA`.
+
+The VisPy2 producer does not expose materials, lights, textures, normals, shading, culling, depth
+state, mesh-local transforms, Datoviz slots, or backend draw calls. Those remain protocol- or
+backend-capability work, not high-level producer API.

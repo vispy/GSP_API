@@ -6,7 +6,7 @@ S025 - Mesh and 3D Geometry Visuals v1
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -27,3 +27,14 @@ Expose a minimal VisPy2 producer for accepted mesh scenes without backend-specif
 ## Stop Condition
 
 Stop if the API starts exposing Datoviz draw calls or private renderer knobs.
+
+## Completion Notes
+
+- Added bounded VisPy2 mesh producer APIs that emit protocol `MeshVisual` objects without exposing
+  Datoviz calls, private renderer knobs, materials, lights, textures, transforms, normals, culling, or
+  depth state.
+- Added a strict 2D protocol mesh example and API documentation.
+- Added focused tests covering object emission, attachments, top-level helper behavior, example
+  execution, and Matplotlib protocol rendering.
+- Validation passed: 54 focused pytest cases, `ruff check`, `ruff format --check`, and
+  `git diff --check`.

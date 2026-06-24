@@ -6,7 +6,7 @@ S025 - Mesh and 3D Geometry Visuals v1
 
 ## Status
 
-Draft.
+Ready.
 
 ## Summary
 

@@ -149,7 +149,7 @@
       "id": "S025",
       "title": "Mesh and 3D Geometry Visuals v1",
       "state": "in_progress",
-      "progress": 78
+      "progress": 89
     }
   ],
   "missions": [
@@ -940,16 +940,16 @@
       "id": "M088",
       "title": "S025 VisPy2 mesh producer API and examples",
       "stage": "S025",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 88
     },
     {
       "id": "M089",
       "title": "S025 MeshVisual query/readback and closeout",
       "stage": "S025",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 89
@@ -1001,8 +1001,8 @@
     }
   ],
   "recommendations": [
-    "M087 is complete: Datoviz MeshVisual now has adapter-level structured unsupported diagnostics rather than ad-hoc rejection.",
-    "Run M088 next to add the VisPy2 mesh producer API and examples for accepted strict MeshVisual semantics.",
+    "M088 is complete: VisPy2 now emits bounded MeshVisual protocol scenes and examples for accepted strict mesh semantics.",
+    "Run M089 next to add MeshVisual query/readback semantics and close S025.",
     "Datoviz strict mesh rendering remains deferred until flat RGBA, topology/face identity, 2D mapping, and query semantics are verified."
   ],
   "notes": [
@@ -1020,6 +1020,7 @@
     "M084 completed: added MeshVisual protocol/enums/validation and 9 focused tests; M085 is ready for Matplotlib renderer/QA smoke.",
     "M085 completed: added Matplotlib MeshVisual renderer, S025 QA suite/cases, and focused tests; M086 is ready for Datoviz mesh probe.",
     "M086 completed: extended Datoviz probe with mesh symbols/capabilities and source evidence; M087 is ready.",
-    "M087 completed: added Datoviz MeshVisual unsupported gates/adapter entry point and focused tests; M088 is ready."
+    "M087 completed: added Datoviz MeshVisual unsupported gates/adapter entry point and focused tests; M088 is ready.",
+    "M088 completed: added bounded VisPy2 MeshVisual producer APIs, strict 2D mesh example, API docs, and focused tests; M089 is ready for query/readback and S025 closeout."
   ]
 }
