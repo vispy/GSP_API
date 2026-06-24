@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -64,10 +65,38 @@ class StrokeJoin(str, Enum):
     BEVEL = "bevel"
 
 
+class FontRole(str, Enum):
+    """Generic backend-resolved text font role."""
+
+    DEFAULT = "default"
+    SANS = "sans"
+    SERIF = "serif"
+    MONOSPACE = "monospace"
+
+
+class TextAnchorX(str, Enum):
+    """Horizontal text layout-box anchor."""
+
+    LEFT = "left"
+    CENTER = "center"
+    RIGHT = "right"
+
+
+class TextAnchorY(str, Enum):
+    """Vertical text layout-box anchor."""
+
+    BASELINE = "baseline"
+    TOP = "top"
+    CENTER = "center"
+    BOTTOM = "bottom"
+
+
 FloatArray = npt.NDArray[np.float32] | npt.NDArray[np.float64]
 ColorArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.float64]
 ImageArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.float64]
 MarkerShapeTuple = tuple[MarkerShape, ...]
+TextAnchorXTuple = tuple[TextAnchorX, ...]
+TextAnchorYTuple = tuple[TextAnchorY, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -300,6 +329,88 @@ class ImageVisual:
             raise ValueError("floating point RGB/RGBA image values must be in [0, 1]")
 
 
+@dataclass(frozen=True, slots=True)
+class TextVisual:
+    """Semantic user-authored text label visual model.
+
+    ``font_size_px`` values are logical screen pixels. ``rotation_rad`` values are
+    display-plane radians around the resolved anchor.
+    """
+
+    id: str
+    texts: Sequence[str]
+    positions: FloatArray
+    coordinate_space: CoordinateSpace
+    rgba: ColorArray = field(
+        default_factory=lambda: np.array([0, 0, 0, 255], dtype=np.uint8)
+    )
+    font_size_px: FloatArray | float = 13.0
+    font_role: FontRole = FontRole.DEFAULT
+    anchor_x: TextAnchorX | TextAnchorXTuple = TextAnchorX.LEFT
+    anchor_y: TextAnchorY | TextAnchorYTuple = TextAnchorY.BASELINE
+    rotation_rad: FloatArray | float = 0.0
+    z_order: int = 0
+
+    def __post_init__(self) -> None:
+        validate_id(self.id)
+        text_count = _validate_texts(self.texts)
+        if _validate_positions(self.positions) != text_count:
+            raise ValueError("positions length must match texts")
+        if not isinstance(self.coordinate_space, CoordinateSpace):
+            raise TypeError("coordinate_space must be a CoordinateSpace")
+        _validate_rgba_values(self.rgba, text_count, field_name="rgba")
+        _validate_positive_values(
+            self.font_size_px, text_count, field_name="font_size_px"
+        )
+        if not isinstance(self.font_role, FontRole):
+            raise TypeError("font_role must be a FontRole")
+        _validate_enum_values(
+            self.anchor_x, TextAnchorX, text_count, field_name="anchor_x"
+        )
+        _validate_enum_values(
+            self.anchor_y, TextAnchorY, text_count, field_name="anchor_y"
+        )
+        _validate_angles(self.rotation_rad, text_count, field_name="rotation_rad")
+        if isinstance(self.z_order, bool) or not isinstance(self.z_order, int):
+            raise TypeError("z_order must be an integer")
+
+    def rgba_values(self) -> ColorArray:
+        """Return one RGBA value per text item."""
+        if self.rgba.shape == (4,):
+            return np.ascontiguousarray(
+                np.repeat(self.rgba[np.newaxis, :], len(self.texts), axis=0)
+            )
+        return np.ascontiguousarray(self.rgba)
+
+    def font_size_values(self) -> npt.NDArray[np.float32]:
+        """Return one font size in logical pixels per text item."""
+        if isinstance(self.font_size_px, np.ndarray):
+            return np.ascontiguousarray(
+                np.asarray(self.font_size_px, dtype=np.float32).reshape(-1)
+            )
+        return np.full((len(self.texts),), float(self.font_size_px), dtype=np.float32)
+
+    def anchor_x_values(self) -> TextAnchorXTuple:
+        """Return one horizontal anchor per text item."""
+        if isinstance(self.anchor_x, TextAnchorX):
+            return (self.anchor_x,) * len(self.texts)
+        return self.anchor_x
+
+    def anchor_y_values(self) -> TextAnchorYTuple:
+        """Return one vertical anchor per text item."""
+        if isinstance(self.anchor_y, TextAnchorY):
+            return (self.anchor_y,) * len(self.texts)
+        return self.anchor_y
+
+    def rotation_values(self) -> npt.NDArray[np.float32]:
+        """Return one rotation in radians per text item."""
+        if isinstance(self.rotation_rad, np.ndarray):
+            return np.ascontiguousarray(
+                np.asarray(self.rotation_rad, dtype=np.float32).reshape(-1)
+            )
+        return np.full((len(self.texts),), float(self.rotation_rad), dtype=np.float32)
+
+
 def _validate_positions(positions: FloatArray) -> int:
     if positions.ndim != 2 or positions.shape[1] not in (2, 3):
         raise ValueError("positions must have shape (N, 2) or (N, 3)")
@@ -342,19 +453,71 @@ def _validate_sizes(
         raise ValueError(f"{field_name} must be non-negative")
 
 
-def _validate_angles(angle: FloatArray | float, count: int) -> None:
+def _validate_angles(
+    angle: FloatArray | float, count: int, *, field_name: str = "angle"
+) -> None:
     if isinstance(angle, np.ndarray):
         if angle.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
-            raise TypeError("angle must be float32 or float64")
+            raise TypeError(f"{field_name} must be float32 or float64")
         if angle.ndim != 1:
-            raise ValueError("angle must be scalar or shape (N,)")
+            raise ValueError(f"{field_name} must be scalar or shape (N,)")
         if angle.shape[0] != count:
-            raise ValueError("angle length must match positions")
+            raise ValueError(f"{field_name} length must match positions")
         if not np.all(np.isfinite(angle)):
-            raise ValueError("angle must be finite")
+            raise ValueError(f"{field_name} must be finite")
         return
     if not np.isfinite(angle):
-        raise ValueError("angle must be finite")
+        raise ValueError(f"{field_name} must be finite")
+
+
+def _validate_texts(texts: Sequence[str]) -> int:
+    if isinstance(texts, str) or not isinstance(texts, Sequence):
+        raise TypeError("texts must be a sequence of strings")
+    for text in texts:
+        if not isinstance(text, str):
+            raise TypeError("texts entries must be strings")
+        try:
+            text.encode("utf-8")
+        except UnicodeEncodeError as exc:
+            raise ValueError("texts entries must be UTF-8 serializable") from exc
+        for char in text:
+            if char == "\n":
+                continue
+            if ord(char) < 32 or ord(char) == 127:
+                raise ValueError("texts entries must not contain control characters")
+    return len(texts)
+
+
+def _validate_positive_values(
+    values: FloatArray | float, count: int, *, field_name: str
+) -> None:
+    _validate_sizes(values, count, field_name=field_name)
+    if isinstance(values, np.ndarray):
+        if np.any(values <= 0):
+            raise ValueError(f"{field_name} must be positive")
+        return
+    if values <= 0:
+        raise ValueError(f"{field_name} must be positive")
+
+
+def _validate_rgba_values(colors: ColorArray, count: int, *, field_name: str) -> None:
+    if colors.shape == (4,):
+        _validate_rgba_array(colors, shape=(4,), field_name=field_name)
+        return
+    _validate_rgba_array(colors, shape=(count, 4), field_name=field_name)
+
+
+def _validate_enum_values(
+    values: object, enum_type: type[Enum], count: int, *, field_name: str
+) -> None:
+    if isinstance(values, enum_type):
+        return
+    if not isinstance(values, tuple):
+        raise TypeError(f"{field_name} must be a {enum_type.__name__} or tuple")
+    if len(values) != count:
+        raise ValueError(f"{field_name} length must match texts")
+    if any(not isinstance(value, enum_type) for value in values):
+        raise TypeError(f"{field_name} entries must be {enum_type.__name__} values")
 
 
 def _validate_rgba_array(

@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 
 from gsp.protocol import (
+    FontRole,
     ImageColormap,
     ImageOrigin,
     ImageVisual,
@@ -19,6 +20,9 @@ from gsp.protocol import (
     SegmentVisual,
     StrokeCap,
     StrokeJoin,
+    TextAnchorX,
+    TextAnchorY,
+    TextVisual,
 )
 from gsp.protocol.visuals import ImageInterpolation
 from gsp_matplotlib.protocol_renderer import (
@@ -384,6 +388,110 @@ def test_path_visual_validation_covers_path_lengths_widths_and_colors():
 
     with pytest.raises(ValueError, match="miter_limit must be non-negative"):
         PathVisual("visual:bad-miter", positions, (2, 2), colors, 2.0, miter_limit=-1.0)
+
+
+def test_text_visual_validation_and_value_expansion():
+    """TextVisual validates S024 scalar/per-item protocol attributes."""
+    from gsp.protocol import CoordinateSpace
+
+    positions = np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float32)
+    rgba = np.array([1.0, 0.5, 0.0, 1.0], dtype=np.float32)
+
+    visual = TextVisual(
+        "visual:text",
+        ("hello", "multi\nline"),
+        positions,
+        CoordinateSpace.NDC,
+        rgba=rgba,
+        font_size_px=np.array([12.0, 18.0], dtype=np.float32),
+        font_role=FontRole.MONOSPACE,
+        anchor_x=(TextAnchorX.LEFT, TextAnchorX.RIGHT),
+        anchor_y=TextAnchorY.CENTER,
+        rotation_rad=np.array([0.0, 0.5], dtype=np.float32),
+        z_order=2,
+    )
+
+    np.testing.assert_allclose(
+        visual.rgba_values(),
+        np.array([[1.0, 0.5, 0.0, 1.0], [1.0, 0.5, 0.0, 1.0]], dtype=np.float32),
+    )
+    np.testing.assert_allclose(
+        visual.font_size_values(), np.array([12.0, 18.0], dtype=np.float32)
+    )
+    assert visual.anchor_x_values() == (TextAnchorX.LEFT, TextAnchorX.RIGHT)
+    assert visual.anchor_y_values() == (TextAnchorY.CENTER, TextAnchorY.CENTER)
+    np.testing.assert_allclose(
+        visual.rotation_values(), np.array([0.0, 0.5], dtype=np.float32)
+    )
+
+
+def test_text_visual_validation_rejects_invalid_inputs():
+    """TextVisual rejects fields outside the accepted S024 baseline."""
+    from gsp.protocol import CoordinateSpace
+
+    positions = np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float32)
+
+    with pytest.raises(ValueError, match="positions length"):
+        TextVisual("visual:bad-positions", ("one",), positions, CoordinateSpace.NDC)
+
+    with pytest.raises(ValueError, match="control characters"):
+        TextVisual(
+            "visual:bad-text", ("bad\ttext",), positions[:1], CoordinateSpace.NDC
+        )
+
+    with pytest.raises(ValueError, match="rgba"):
+        TextVisual(
+            "visual:bad-rgba",
+            ("one", "two"),
+            positions,
+            CoordinateSpace.NDC,
+            rgba=np.zeros((1, 4), dtype=np.uint8),
+        )
+
+    with pytest.raises(ValueError, match="font_size_px must be positive"):
+        TextVisual(
+            "visual:bad-size",
+            ("one",),
+            positions[:1],
+            CoordinateSpace.NDC,
+            font_size_px=0.0,
+        )
+
+    with pytest.raises(ValueError, match="anchor_x length"):
+        TextVisual(
+            "visual:bad-anchor",
+            ("one", "two"),
+            positions,
+            CoordinateSpace.NDC,
+            anchor_x=(TextAnchorX.LEFT,),
+        )
+
+    with pytest.raises(ValueError, match="rotation_rad must be finite"):
+        TextVisual(
+            "visual:bad-rotation",
+            ("one",),
+            positions[:1],
+            CoordinateSpace.NDC,
+            rotation_rad=np.nan,
+        )
+
+    with pytest.raises(TypeError, match="font_role"):
+        TextVisual(
+            "visual:bad-font-role",
+            ("one",),
+            positions[:1],
+            CoordinateSpace.NDC,
+            font_role="monospace",
+        )
+
+    with pytest.raises(TypeError, match="z_order"):
+        TextVisual(
+            "visual:bad-z",
+            ("one",),
+            positions[:1],
+            CoordinateSpace.NDC,
+            z_order=1.5,
+        )
 
 
 def test_protocol_visual_validation_rejects_non_finite_point_fields():

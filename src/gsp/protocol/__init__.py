@@ -121,6 +121,7 @@ from .transports import (
 from .ticks import ResolvedTicks, resolve_ticks
 from .visuals import (
     CoordinateSpace,
+    FontRole,
     ImageColormap,
     ImageInterpolation,
     ImageOrigin,
@@ -132,6 +133,9 @@ from .visuals import (
     SegmentVisual,
     StrokeCap,
     StrokeJoin,
+    TextAnchorX,
+    TextAnchorY,
+    TextVisual,
 )
 
 __all__ = [
@@ -154,6 +158,7 @@ __all__ = [
     "DataLocality",
     "DataSourceDescriptor",
     "DataSourceKind",
+    "FontRole",
     "ImageColormap",
     "ImageInterpolation",
     "ImageOrigin",
@@ -217,6 +222,9 @@ __all__ = [
     "TILED_IMAGE_EXTENSION_CAPABILITY",
     "TILED_IMAGE_EXTENSION_ID",
     "TILED_IMAGE_EXTENSION_VERSION",
+    "TextAnchorX",
+    "TextAnchorY",
+    "TextVisual",
     "TILED_IMAGE_QUERY_PAYLOAD_KIND",
     "TileAvailability",
     "TileEncoding",
