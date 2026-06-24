@@ -844,9 +844,9 @@
       "id": "M078",
       "title": "S024 Datoviz v0.4 text capability probe",
       "stage": "S024",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 78
     },
     {
@@ -925,6 +925,7 @@
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
     "M076 implemented Matplotlib TextVisual reference rendering and focused tests.",
-    "M077 added S024 TextVisual QA cases, Matplotlib artifact generation, and Datoviz structured unsupported reporting for text pending M078/M079."
+    "M077 added S024 TextVisual QA cases, Matplotlib artifact generation, and Datoviz structured unsupported reporting for text pending M078/M079.",
+    "M078 added Datoviz text/glyph/font capability evidence artifacts; uv environment lacks importable Datoviz text symbols, while sibling source contains retained text/glyph APIs, so M079 should keep unsupported unless runtime bindings are activated and semantics verified."
   ]
 }

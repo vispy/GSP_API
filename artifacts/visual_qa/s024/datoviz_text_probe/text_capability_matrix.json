@@ -1,0 +1,51 @@
+{
+  "text.font.atlas": {
+    "capability": "text.font.atlas",
+    "reason": "missing symbols: ('dvz_text_atlas_spec', 'dvz_font_atlas_ensure_strings', 'dvz_font_atlas', 'dvz_text_atlas_field')",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_text_atlas_spec,dvz_font_atlas_ensure_strings,dvz_font_atlas,dvz_text_atlas_field"
+  },
+  "text.font.create": {
+    "capability": "text.font.create",
+    "reason": "missing symbols: ('dvz_font', 'dvz_font_desc')",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_font,dvz_font_desc"
+  },
+  "text.glyph.visual": {
+    "capability": "text.glyph.visual",
+    "reason": "missing symbols: ('dvz_glyph', 'dvz_glyph_set_atlas')",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_glyph,dvz_glyph_set_atlas"
+  },
+  "text.placement": {
+    "capability": "text.placement",
+    "reason": "missing symbols: ('dvz_text_placement',)",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_text_placement"
+  },
+  "text.style": {
+    "capability": "text.style",
+    "reason": "missing symbols: ('dvz_text_style',)",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_text_style"
+  },
+  "text.visual.constructor": {
+    "capability": "text.visual.constructor",
+    "reason": "missing symbols: ('dvz_text',)",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_text"
+  },
+  "text.visual.string": {
+    "capability": "text.visual.string",
+    "reason": "missing symbols: ('dvz_text_set_string',)",
+    "source": "facade_or_raw",
+    "supported": false,
+    "symbol": "dvz_text_set_string"
+  }
+}

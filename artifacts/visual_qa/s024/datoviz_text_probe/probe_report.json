@@ -1,0 +1,3900 @@
+{
+  "banned_symbol_check": {
+    "hits": [
+      {
+        "allowed_context": true,
+        "line": 85,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "dvz_path_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 86,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "dvz_point_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 87,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "dvz_marker_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 88,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "dvz_segment_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 89,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "dvz_image_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 90,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "dvz_point_position"
+      },
+      {
+        "allowed_context": true,
+        "line": 91,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "dvz_marker_color"
+      },
+      {
+        "allowed_context": true,
+        "line": 92,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "dvz_segment_linewidth"
+      },
+      {
+        "allowed_context": true,
+        "line": 150,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "dvz_label_desc"
+      },
+      {
+        "allowed_context": true,
+        "line": 151,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "DvzLabelDesc"
+      },
+      {
+        "allowed_context": true,
+        "line": 152,
+        "path": "src/gsp/qa/visual/datoviz_probe.py",
+        "symbol": "DVZ_WASM_VISUAL_GLYPH"
+      },
+      {
+        "allowed_context": true,
+        "line": 50,
+        "path": ".agent/missions/M064-datoviz-v04-api-audit-and-probe.md",
+        "symbol": "dvz_path_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 51,
+        "path": ".agent/missions/M064-datoviz-v04-api-audit-and-probe.md",
+        "symbol": "dvz_point_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 51,
+        "path": ".agent/missions/M064-datoviz-v04-api-audit-and-probe.md",
+        "symbol": "dvz_point_position"
+      },
+      {
+        "allowed_context": true,
+        "line": 51,
+        "path": ".agent/missions/M064-datoviz-v04-api-audit-and-probe.md",
+        "symbol": "dvz_marker_color"
+      },
+      {
+        "allowed_context": true,
+        "line": 51,
+        "path": ".agent/missions/M064-datoviz-v04-api-audit-and-probe.md",
+        "symbol": "dvz_segment_linewidth"
+      },
+      {
+        "allowed_context": true,
+        "line": 82,
+        "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+        "symbol": "dvz_path_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 83,
+        "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+        "symbol": "dvz_point_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 84,
+        "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+        "symbol": "dvz_marker_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 85,
+        "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+        "symbol": "dvz_segment_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 86,
+        "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+        "symbol": "dvz_image_alloc"
+      },
+      {
+        "allowed_context": true,
+        "line": 87,
+        "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+        "symbol": "dvz_point_position"
+      },
+      {
+        "allowed_context": true,
+        "line": 88,
+        "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+        "symbol": "dvz_marker_color"
+      },
+      {
+        "allowed_context": true,
+        "line": 89,
+        "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+        "symbol": "dvz_segment_linewidth"
+      }
+    ],
+    "paths": [
+      "src/gsp/qa/visual",
+      "src/gsp_datoviz/protocol_renderer.py",
+      "src/gsp_datoviz/capabilities.py",
+      ".agent/missions",
+      ".agent/tasks",
+      "spec"
+    ],
+    "symbols": [
+      "dvz_path_alloc",
+      "dvz_point_alloc",
+      "dvz_marker_alloc",
+      "dvz_segment_alloc",
+      "dvz_image_alloc",
+      "dvz_point_position",
+      "dvz_marker_color",
+      "dvz_segment_linewidth"
+    ],
+    "text_symbols": [
+      "dvz_label_desc",
+      "DvzLabelDesc",
+      "DVZ_WASM_VISUAL_GLYPH"
+    ],
+    "unexpected_hits": []
+  },
+  "capability_matrix": {
+    "attach.coord_space.DVZ_COORD_DATA": {
+      "capability": "attach.coord_space.DVZ_COORD_DATA",
+      "reason": "missing raw symbol DVZ_COORD_DATA",
+      "source": "raw",
+      "supported": false,
+      "symbol": "DVZ_COORD_DATA"
+    },
+    "attach.coord_space.DVZ_COORD_PANEL": {
+      "capability": "attach.coord_space.DVZ_COORD_PANEL",
+      "reason": "missing raw symbol DVZ_COORD_PANEL",
+      "source": "raw",
+      "supported": false,
+      "symbol": "DVZ_COORD_PANEL"
+    },
+    "attach.coord_space.DVZ_COORD_VIEW": {
+      "capability": "attach.coord_space.DVZ_COORD_VIEW",
+      "reason": "missing raw symbol DVZ_COORD_VIEW",
+      "source": "raw",
+      "supported": false,
+      "symbol": "DVZ_COORD_VIEW"
+    },
+    "attach.desc.DvzVisualAttachDesc": {
+      "capability": "attach.desc.DvzVisualAttachDesc",
+      "reason": "missing facade symbol DvzVisualAttachDesc",
+      "source": "facade",
+      "supported": false,
+      "symbol": "DvzVisualAttachDesc"
+    },
+    "capture.top_level.datoviz_capture": {
+      "capability": "capture.top_level.datoviz_capture",
+      "reason": "missing facade symbol capture",
+      "source": "facade",
+      "supported": false,
+      "symbol": "capture"
+    },
+    "datoviz.facade.import": {
+      "capability": "datoviz.facade.import",
+      "reason": "No module named 'datoviz'",
+      "source": "facade",
+      "supported": false,
+      "symbol": "datoviz"
+    },
+    "datoviz.raw.import": {
+      "capability": "datoviz.raw.import",
+      "reason": "No module named 'datoviz'",
+      "source": "raw",
+      "supported": false,
+      "symbol": "datoviz.raw"
+    },
+    "panel.add_visual.dvz_panel_add_visual": {
+      "capability": "panel.add_visual.dvz_panel_add_visual",
+      "reason": "missing facade symbol dvz_panel_add_visual",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_panel_add_visual"
+    },
+    "scene.create.dvz_scene": {
+      "capability": "scene.create.dvz_scene",
+      "reason": "missing facade symbol dvz_scene",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_scene"
+    },
+    "scene.figure.dvz_figure": {
+      "capability": "scene.figure.dvz_figure",
+      "reason": "missing facade symbol dvz_figure",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_figure"
+    },
+    "scene.panel.dvz_panel_full": {
+      "capability": "scene.panel.dvz_panel_full",
+      "reason": "missing facade symbol dvz_panel_full",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_panel_full"
+    },
+    "visual.data.dvz_visual_set_data": {
+      "capability": "visual.data.dvz_visual_set_data",
+      "reason": "missing facade symbol dvz_visual_set_data",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_visual_set_data"
+    },
+    "visual.data_many.dvz_visual_set_data_many": {
+      "capability": "visual.data_many.dvz_visual_set_data_many",
+      "reason": "missing facade symbol dvz_visual_set_data_many",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_visual_set_data_many"
+    },
+    "visual.data_range.dvz_visual_set_data_range": {
+      "capability": "visual.data_range.dvz_visual_set_data_range",
+      "reason": "missing facade symbol dvz_visual_set_data_range",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_visual_set_data_range"
+    },
+    "visual.image.constructor.dvz_image": {
+      "capability": "visual.image.constructor.dvz_image",
+      "reason": "missing facade symbol dvz_image",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_image"
+    },
+    "visual.image.field.dvz_sampled_field": {
+      "capability": "visual.image.field.dvz_sampled_field",
+      "reason": "missing facade symbol dvz_sampled_field",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_sampled_field"
+    },
+    "visual.image.field.dvz_sampled_field_set_data": {
+      "capability": "visual.image.field.dvz_sampled_field_set_data",
+      "reason": "missing facade symbol dvz_sampled_field_set_data",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_sampled_field_set_data"
+    },
+    "visual.image.field.dvz_visual_set_field": {
+      "capability": "visual.image.field.dvz_visual_set_field",
+      "reason": "missing facade symbol dvz_visual_set_field",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_visual_set_field"
+    },
+    "visual.marker.constructor.dvz_marker": {
+      "capability": "visual.marker.constructor.dvz_marker",
+      "reason": "missing facade symbol dvz_marker",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_marker"
+    },
+    "visual.path.constructor.dvz_path": {
+      "capability": "visual.path.constructor.dvz_path",
+      "reason": "missing facade symbol dvz_path",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_path"
+    },
+    "visual.path.style.dvz_path_set_caps": {
+      "capability": "visual.path.style.dvz_path_set_caps",
+      "reason": "missing facade symbol dvz_path_set_caps",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_path_set_caps"
+    },
+    "visual.path.style.dvz_path_set_join": {
+      "capability": "visual.path.style.dvz_path_set_join",
+      "reason": "missing facade symbol dvz_path_set_join",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_path_set_join"
+    },
+    "visual.path.style.dvz_path_set_subpaths": {
+      "capability": "visual.path.style.dvz_path_set_subpaths",
+      "reason": "missing facade symbol dvz_path_set_subpaths",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_path_set_subpaths"
+    },
+    "visual.point.constructor.dvz_point": {
+      "capability": "visual.point.constructor.dvz_point",
+      "reason": "missing facade symbol dvz_point",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_point"
+    },
+    "visual.segment.constructor.dvz_segment": {
+      "capability": "visual.segment.constructor.dvz_segment",
+      "reason": "missing facade symbol dvz_segment",
+      "source": "facade",
+      "supported": false,
+      "symbol": "dvz_segment"
+    }
+  },
+  "capture": {
+    "offscreen_symbols_available": false,
+    "run_symbols_available": false,
+    "top_level_capture_available": false
+  },
+  "enum_style_symbols": {
+    "DVZ_BLEND_ALPHA": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_BLEND_ALPHA"
+    },
+    "DVZ_COORD_DATA": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_COORD_DATA"
+    },
+    "DVZ_COORD_PANEL": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_COORD_PANEL"
+    },
+    "DVZ_COORD_VIEW": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_COORD_VIEW"
+    },
+    "DVZ_MARKER_SHAPE_CIRCLE": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_MARKER_SHAPE_CIRCLE"
+    },
+    "DVZ_MARKER_SHAPE_DISC": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_MARKER_SHAPE_DISC"
+    },
+    "DVZ_MARKER_SHAPE_SQUARE": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_MARKER_SHAPE_SQUARE"
+    },
+    "DVZ_PATH_JOIN_BEVEL": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_PATH_JOIN_BEVEL"
+    },
+    "DVZ_PATH_JOIN_MITER": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_PATH_JOIN_MITER"
+    },
+    "DVZ_PATH_JOIN_ROUND": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_PATH_JOIN_ROUND"
+    },
+    "DVZ_SEGMENT_CAP_BUTT": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_SEGMENT_CAP_BUTT"
+    },
+    "DVZ_SEGMENT_CAP_ROUND": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_SEGMENT_CAP_ROUND"
+    },
+    "DVZ_SEGMENT_CAP_SQUARE": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_SEGMENT_CAP_SQUARE"
+    },
+    "DvzDimMaskFlag": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzDimMaskFlag"
+    },
+    "DvzVisualAttachDesc": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzVisualAttachDesc"
+    },
+    "dvz_marker_set_style": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_marker_set_style"
+    },
+    "dvz_marker_style": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_marker_style"
+    },
+    "dvz_point_set_style": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_point_set_style"
+    },
+    "dvz_point_style_desc": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_point_style_desc"
+    },
+    "dvz_segment_set_caps": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_segment_set_caps"
+    }
+  },
+  "facade_symbols": {
+    "DVZ_BLEND_ALPHA": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_BLEND_ALPHA"
+    },
+    "DVZ_COORD_DATA": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_COORD_DATA"
+    },
+    "DVZ_COORD_PANEL": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_COORD_PANEL"
+    },
+    "DVZ_COORD_VIEW": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_COORD_VIEW"
+    },
+    "DVZ_MARKER_SHAPE_CIRCLE": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_MARKER_SHAPE_CIRCLE"
+    },
+    "DVZ_MARKER_SHAPE_DISC": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_MARKER_SHAPE_DISC"
+    },
+    "DVZ_MARKER_SHAPE_SQUARE": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_MARKER_SHAPE_SQUARE"
+    },
+    "DVZ_PATH_JOIN_BEVEL": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_PATH_JOIN_BEVEL"
+    },
+    "DVZ_PATH_JOIN_MITER": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_PATH_JOIN_MITER"
+    },
+    "DVZ_PATH_JOIN_ROUND": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_PATH_JOIN_ROUND"
+    },
+    "DVZ_SEGMENT_CAP_BUTT": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_SEGMENT_CAP_BUTT"
+    },
+    "DVZ_SEGMENT_CAP_ROUND": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_SEGMENT_CAP_ROUND"
+    },
+    "DVZ_SEGMENT_CAP_SQUARE": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DVZ_SEGMENT_CAP_SQUARE"
+    },
+    "DvzDimMaskFlag": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DvzDimMaskFlag"
+    },
+    "DvzVisualAttachDesc": {
+      "available": false,
+      "source": "facade",
+      "symbol": "DvzVisualAttachDesc"
+    },
+    "capture": {
+      "available": false,
+      "source": "facade",
+      "symbol": "capture"
+    },
+    "dvz_figure": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_figure"
+    },
+    "dvz_image": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_image"
+    },
+    "dvz_marker": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_marker"
+    },
+    "dvz_marker_set_style": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_marker_set_style"
+    },
+    "dvz_marker_style": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_marker_style"
+    },
+    "dvz_panel_add_visual": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_panel_add_visual"
+    },
+    "dvz_panel_full": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_panel_full"
+    },
+    "dvz_path": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_path"
+    },
+    "dvz_path_set_caps": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_path_set_caps"
+    },
+    "dvz_path_set_join": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_path_set_join"
+    },
+    "dvz_path_set_subpaths": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_path_set_subpaths"
+    },
+    "dvz_point": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_point"
+    },
+    "dvz_point_set_style": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_point_set_style"
+    },
+    "dvz_point_style_desc": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_point_style_desc"
+    },
+    "dvz_sampled_field": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_sampled_field"
+    },
+    "dvz_sampled_field_set_data": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_sampled_field_set_data"
+    },
+    "dvz_scene": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_scene"
+    },
+    "dvz_segment": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_segment"
+    },
+    "dvz_segment_set_caps": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_segment_set_caps"
+    },
+    "dvz_visual_set_data": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_visual_set_data"
+    },
+    "dvz_visual_set_data_many": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_visual_set_data_many"
+    },
+    "dvz_visual_set_data_range": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_visual_set_data_range"
+    },
+    "dvz_visual_set_field": {
+      "available": false,
+      "source": "facade",
+      "symbol": "dvz_visual_set_field"
+    }
+  },
+  "generated_files": {
+    "_array_facade.py": null,
+    "_ctypes.py": null
+  },
+  "imports": {
+    "datoviz": {
+      "error_message": "No module named 'datoviz'",
+      "error_type": "ModuleNotFoundError",
+      "imported": false,
+      "module": "datoviz",
+      "path": null,
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/datoviz_probe.py\", line 470, in _import_probe\n    module = import_module(module_name)\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py\", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1406, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1371, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1335, in _find_and_load_unlocked\nModuleNotFoundError: No module named 'datoviz'\n"
+    },
+    "datoviz.raw": {
+      "error_message": "No module named 'datoviz'",
+      "error_type": "ModuleNotFoundError",
+      "imported": false,
+      "module": "datoviz.raw",
+      "path": null,
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/datoviz_probe.py\", line 470, in _import_probe\n    module = import_module(module_name)\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py\", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1406, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1371, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1314, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 491, in _call_with_frames_removed\n  File \"<frozen importlib._bootstrap>\", line 1406, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1371, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1335, in _find_and_load_unlocked\nModuleNotFoundError: No module named 'datoviz'\n"
+    }
+  },
+  "installed_package": {
+    "imported": false,
+    "path": null,
+    "version": null
+  },
+  "minimal_point_scene": {
+    "attempted": false,
+    "calls_completed": [],
+    "reason": "missing capabilities: ('scene.create.dvz_scene', 'scene.figure.dvz_figure', 'scene.panel.dvz_panel_full', 'visual.point.constructor.dvz_point', 'visual.data.dvz_visual_set_data', 'panel.add_visual.dvz_panel_add_visual')",
+    "supported": false
+  },
+  "raw_symbols": {
+    "DVZ_BLEND_ALPHA": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_BLEND_ALPHA"
+    },
+    "DVZ_COORD_DATA": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_COORD_DATA"
+    },
+    "DVZ_COORD_PANEL": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_COORD_PANEL"
+    },
+    "DVZ_COORD_VIEW": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_COORD_VIEW"
+    },
+    "DVZ_MARKER_SHAPE_CIRCLE": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_MARKER_SHAPE_CIRCLE"
+    },
+    "DVZ_MARKER_SHAPE_DISC": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_MARKER_SHAPE_DISC"
+    },
+    "DVZ_MARKER_SHAPE_SQUARE": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_MARKER_SHAPE_SQUARE"
+    },
+    "DVZ_PATH_JOIN_BEVEL": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_PATH_JOIN_BEVEL"
+    },
+    "DVZ_PATH_JOIN_MITER": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_PATH_JOIN_MITER"
+    },
+    "DVZ_PATH_JOIN_ROUND": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_PATH_JOIN_ROUND"
+    },
+    "DVZ_SCENE_VISUAL_FAMILY_LABELS": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_SCENE_VISUAL_FAMILY_LABELS"
+    },
+    "DVZ_SCENE_VISUAL_FAMILY_TEXT": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_SCENE_VISUAL_FAMILY_TEXT"
+    },
+    "DVZ_SEGMENT_CAP_BUTT": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_SEGMENT_CAP_BUTT"
+    },
+    "DVZ_SEGMENT_CAP_ROUND": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_SEGMENT_CAP_ROUND"
+    },
+    "DVZ_SEGMENT_CAP_SQUARE": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_SEGMENT_CAP_SQUARE"
+    },
+    "DVZ_TEXT_ANCHOR_CENTER": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_ANCHOR_CENTER"
+    },
+    "DVZ_TEXT_ANCHOR_LEFT": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_ANCHOR_LEFT"
+    },
+    "DVZ_TEXT_ANCHOR_RIGHT": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_ANCHOR_RIGHT"
+    },
+    "DVZ_TEXT_BASELINE_ALPHABETIC": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_BASELINE_ALPHABETIC"
+    },
+    "DVZ_TEXT_RENDERER_BITMAP": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_RENDERER_BITMAP"
+    },
+    "DVZ_TEXT_RENDERER_SDF": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_RENDERER_SDF"
+    },
+    "DvzDimMaskFlag": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzDimMaskFlag"
+    },
+    "DvzText": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzText"
+    },
+    "DvzTextAtlas": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextAtlas"
+    },
+    "DvzTextAtlasGlyph": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextAtlasGlyph"
+    },
+    "DvzTextAtlasInfo": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextAtlasInfo"
+    },
+    "DvzTextAtlasSpec": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextAtlasSpec"
+    },
+    "DvzTextPlacement": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextPlacement"
+    },
+    "DvzTextPlacementMode": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextPlacementMode"
+    },
+    "DvzTextRenderer": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextRenderer"
+    },
+    "DvzTextStyle": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextStyle"
+    },
+    "DvzVisualAttachDesc": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzVisualAttachDesc"
+    },
+    "dvz_figure": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_figure"
+    },
+    "dvz_font": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_font"
+    },
+    "dvz_font_atlas": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_font_atlas"
+    },
+    "dvz_font_atlas_ensure_string": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_font_atlas_ensure_string"
+    },
+    "dvz_font_atlas_ensure_strings": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_font_atlas_ensure_strings"
+    },
+    "dvz_font_desc": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_font_desc"
+    },
+    "dvz_glyph": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_glyph"
+    },
+    "dvz_glyph_set_atlas": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_glyph_set_atlas"
+    },
+    "dvz_image": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_image"
+    },
+    "dvz_labels": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_labels"
+    },
+    "dvz_marker": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_marker"
+    },
+    "dvz_marker_set_style": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_marker_set_style"
+    },
+    "dvz_marker_style": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_marker_style"
+    },
+    "dvz_panel_add_visual": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_panel_add_visual"
+    },
+    "dvz_panel_full": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_panel_full"
+    },
+    "dvz_path": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_path"
+    },
+    "dvz_path_set_caps": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_path_set_caps"
+    },
+    "dvz_path_set_join": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_path_set_join"
+    },
+    "dvz_path_set_subpaths": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_path_set_subpaths"
+    },
+    "dvz_point": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_point"
+    },
+    "dvz_point_set_style": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_point_set_style"
+    },
+    "dvz_point_style_desc": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_point_style_desc"
+    },
+    "dvz_sampled_field": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_sampled_field"
+    },
+    "dvz_sampled_field_set_data": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_sampled_field_set_data"
+    },
+    "dvz_scene": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_scene"
+    },
+    "dvz_segment": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_segment"
+    },
+    "dvz_segment_set_caps": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_segment_set_caps"
+    },
+    "dvz_text": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text"
+    },
+    "dvz_text_atlas_field": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_atlas_field"
+    },
+    "dvz_text_atlas_glyph": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_atlas_glyph"
+    },
+    "dvz_text_atlas_info": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_atlas_info"
+    },
+    "dvz_text_atlas_spec": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_atlas_spec"
+    },
+    "dvz_text_destroy": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_destroy"
+    },
+    "dvz_text_id": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_id"
+    },
+    "dvz_text_placement": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_placement"
+    },
+    "dvz_text_set_string": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_set_string"
+    },
+    "dvz_text_style": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_style"
+    },
+    "dvz_visual_set_data": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_visual_set_data"
+    },
+    "dvz_visual_set_data_many": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_visual_set_data_many"
+    },
+    "dvz_visual_set_data_range": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_visual_set_data_range"
+    },
+    "dvz_visual_set_field": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_visual_set_field"
+    }
+  },
+  "sibling_source": {
+    "exists": true,
+    "path": "../datoviz",
+    "revision": "7b607090db124d233e9453ef08d20a5f060f94ac"
+  },
+  "source_symbol_matrix": {
+    "DVZ_BLEND_ALPHA": [],
+    "DVZ_COORD_DATA": [
+      {
+        "line": 147,
+        "path": "include/datoviz/scene/enums.h"
+      },
+      {
+        "line": 879,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "DVZ_COORD_PANEL": [
+      {
+        "line": 148,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_COORD_VIEW": [
+      {
+        "line": 146,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_MARKER_SHAPE_CIRCLE": [],
+    "DVZ_MARKER_SHAPE_DISC": [
+      {
+        "line": 271,
+        "path": "include/datoviz/scene/enums.h"
+      },
+      {
+        "line": 297,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_MARKER_SHAPE_SQUARE": [
+      {
+        "line": 272,
+        "path": "include/datoviz/scene/enums.h"
+      },
+      {
+        "line": 298,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_PATH_JOIN_BEVEL": [
+      {
+        "line": 257,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_PATH_JOIN_MITER": [
+      {
+        "line": 255,
+        "path": "include/datoviz/scene/enums.h"
+      },
+      {
+        "line": 3111,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "DVZ_PATH_JOIN_ROUND": [
+      {
+        "line": 155,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 256,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_SCENE_VISUAL_FAMILY_LABELS": [
+      {
+        "line": 429,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_SCENE_VISUAL_FAMILY_TEXT": [
+      {
+        "line": 428,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_SEGMENT_CAP_BUTT": [
+      {
+        "line": 215,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 241,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_SEGMENT_CAP_ROUND": [
+      {
+        "line": 153,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 223,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 245,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 320,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 237,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_SEGMENT_CAP_SQUARE": [
+      {
+        "line": 219,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 240,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_TEXT_ANCHOR_CENTER": [],
+    "DVZ_TEXT_ANCHOR_LEFT": [],
+    "DVZ_TEXT_ANCHOR_RIGHT": [],
+    "DVZ_TEXT_BASELINE_ALPHABETIC": [],
+    "DVZ_TEXT_RENDERER_BITMAP": [
+      {
+        "line": 642,
+        "path": "include/datoviz/scene/enums.h"
+      }
+    ],
+    "DVZ_TEXT_RENDERER_SDF": [],
+    "DVZ_WASM_VISUAL_GLYPH": [],
+    "DvzDimMaskFlag": [
+      {
+        "line": 88,
+        "path": "README.md"
+      },
+      {
+        "line": 163,
+        "path": "include/datoviz/scene/types.h"
+      }
+    ],
+    "DvzLabelDesc": [
+      {
+        "line": 43,
+        "path": "include/datoviz/scene/annotation.h"
+      },
+      {
+        "line": 80,
+        "path": "include/datoviz/scene/annotation.h"
+      },
+      {
+        "line": 1294,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1303,
+        "path": "include/datoviz/scene/types.h"
+      }
+    ],
+    "DvzText": [
+      {
+        "line": 172,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 184,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 203,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 242,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 286,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 297,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 332,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 71,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 76,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 86,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 634,
+        "path": "include/datoviz/scene/enums.h"
+      },
+      {
+        "line": 645,
+        "path": "include/datoviz/scene/enums.h"
+      },
+      {
+        "line": 61,
+        "path": "include/datoviz/scene/overlay.h"
+      },
+      {
+        "line": 38,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 45,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 50,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 78,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 88,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 100,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 113,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 127,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 128,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 137,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 149,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 159,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 160,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 173,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 182,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 190,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 199,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 209,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 218,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 228,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 87,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 88,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 190,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 198,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 528,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1174,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1194,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1201,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1207,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1214,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1217,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1219,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1224,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1227,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1229,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1230,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1231,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1245,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1248,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1262,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1265,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1269,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1278,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1287,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1288,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1299,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1300,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1314,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1315,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 3310,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "DvzTextAtlas": [
+      {
+        "line": 172,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 184,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 203,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 242,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 286,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 297,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 332,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 78,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 88,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 100,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 113,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 127,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 128,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 137,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 149,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 159,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 160,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 88,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 190,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 198,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1217,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1219,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1224,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1227,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1229,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1230,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1231,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1245,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1248,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1262,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 3310,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "DvzTextAtlasGlyph": [
+      {
+        "line": 203,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 159,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 1248,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1262,
+        "path": "include/datoviz/scene/types.h"
+      }
+    ],
+    "DvzTextAtlasInfo": [
+      {
+        "line": 184,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 137,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 1227,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1245,
+        "path": "include/datoviz/scene/types.h"
+      }
+    ],
+    "DvzTextAtlasSpec": [
+      {
+        "line": 297,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 78,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 88,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 100,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 113,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 128,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 1217,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1224,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1229,
+        "path": "include/datoviz/scene/types.h"
+      }
+    ],
+    "DvzTextPlacement": [
+      {
+        "line": 86,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 634,
+        "path": "include/datoviz/scene/enums.h"
+      },
+      {
+        "line": 45,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 50,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 218,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 1265,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1269,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1278,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1288,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1300,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1315,
+        "path": "include/datoviz/scene/types.h"
+      }
+    ],
+    "DvzTextPlacementMode": [
+      {
+        "line": 634,
+        "path": "include/datoviz/scene/enums.h"
+      },
+      {
+        "line": 1269,
+        "path": "include/datoviz/scene/types.h"
+      }
+    ],
+    "DvzTextRenderer": [
+      {
+        "line": 645,
+        "path": "include/datoviz/scene/enums.h"
+      },
+      {
+        "line": 61,
+        "path": "include/datoviz/scene/overlay.h"
+      },
+      {
+        "line": 78,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 228,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 528,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1174,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1194,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1207,
+        "path": "include/datoviz/scene/types.h"
+      }
+    ],
+    "DvzTextStyle": [
+      {
+        "line": 76,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 38,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 209,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 1201,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1214,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1287,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1299,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 1314,
+        "path": "include/datoviz/scene/types.h"
+      }
+    ],
+    "DvzVisualAttachDesc": [
+      {
+        "line": 266,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 902,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 910,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 847,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 883,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 898,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "capture": [
+      {
+        "line": 4,
+        "path": "datoviz/__init__.py"
+      },
+      {
+        "line": 33,
+        "path": "datoviz/__init__.py"
+      },
+      {
+        "line": 40,
+        "path": "datoviz/__init__.py"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 12,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/mesh.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/pixel.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/primitive.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/sphere.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/splat.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 10,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 119,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 425,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 602,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 603,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 610,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 614,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 616,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 617,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 619,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 621,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 625,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 632,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 633,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 635,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 639,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 641,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 642,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 643,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 646,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 649,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 654,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 656,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 657,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 661,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 664,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 668,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 670,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 676,
+        "path": "include/datoviz/app.h"
+      },
+      {
+        "line": 262,
+        "path": "include/datoviz/canvas.h"
+      },
+      {
+        "line": 282,
+        "path": "include/datoviz/canvas.h"
+      },
+      {
+        "line": 290,
+        "path": "include/datoviz/canvas.h"
+      },
+      {
+        "line": 297,
+        "path": "include/datoviz/canvas.h"
+      },
+      {
+        "line": 61,
+        "path": "include/datoviz/video.h"
+      },
+      {
+        "line": 71,
+        "path": "include/datoviz/video.h"
+      },
+      {
+        "line": 109,
+        "path": "include/datoviz/video.h"
+      },
+      {
+        "line": 110,
+        "path": "include/datoviz/video.h"
+      },
+      {
+        "line": 112,
+        "path": "include/datoviz/video.h"
+      },
+      {
+        "line": 129,
+        "path": "include/datoviz/video.h"
+      }
+    ],
+    "dvz_figure": [
+      {
+        "line": 84,
+        "path": "README.md"
+      },
+      {
+        "line": 323,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 287,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 282,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 267,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 116,
+        "path": "examples/c/visuals/mesh.c"
+      },
+      {
+        "line": 117,
+        "path": "examples/c/visuals/mesh.c"
+      },
+      {
+        "line": 190,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 180,
+        "path": "examples/c/visuals/pixel.c"
+      },
+      {
+        "line": 184,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 193,
+        "path": "examples/c/visuals/primitive.c"
+      },
+      {
+        "line": 204,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 153,
+        "path": "examples/c/visuals/sphere.c"
+      },
+      {
+        "line": 154,
+        "path": "examples/c/visuals/sphere.c"
+      },
+      {
+        "line": 150,
+        "path": "examples/c/visuals/splat.c"
+      },
+      {
+        "line": 158,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 302,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 375,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 376,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 144,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 154,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 163,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 173,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 184,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 196,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 205,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 219,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 325,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 433,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 526,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1908,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1918,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_font": [
+      {
+        "line": 290,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 293,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 298,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 300,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 67,
+        "path": "include/datoviz/font.h"
+      },
+      {
+        "line": 78,
+        "path": "include/datoviz/font.h"
+      },
+      {
+        "line": 60,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 68,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 88,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 100,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 112,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 128,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 79,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 88,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_font_atlas": [
+      {
+        "line": 298,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 300,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 88,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 100,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 112,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 128,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_font_atlas_ensure_string": [
+      {
+        "line": 298,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 100,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 112,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_font_atlas_ensure_strings": [
+      {
+        "line": 112,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_font_desc": [
+      {
+        "line": 290,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 67,
+        "path": "include/datoviz/font.h"
+      }
+    ],
+    "dvz_glyph": [
+      {
+        "line": 257,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 270,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 3297,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3310,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_glyph_set_atlas": [
+      {
+        "line": 270,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 3310,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_image": [
+      {
+        "line": 215,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 3152,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3165,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 60,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 62,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 66,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 71,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 75,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 83,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 85,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 89,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 94,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 98,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 103,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 105,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 113,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 124,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 136,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 146,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 156,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 166,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 176,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 186,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 196,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 206,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 214,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 219,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 230,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 240,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 250,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 258,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 262,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 278,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 290,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 292,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 297,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 307,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 317,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 328,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 339,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 347,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 353,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 364,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 374,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 386,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 399,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 411,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 424,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 434,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 444,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 456,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 469,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 478,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 483,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 487,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 496,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 505,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 510,
+        "path": "include/datoviz/vklite/images.h"
+      },
+      {
+        "line": 514,
+        "path": "include/datoviz/vklite/images.h"
+      }
+    ],
+    "dvz_label_desc": [
+      {
+        "line": 43,
+        "path": "include/datoviz/scene/annotation.h"
+      }
+    ],
+    "dvz_labels": [
+      {
+        "line": 206,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 222,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 224,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 226,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 3180,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3190,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3200,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3210,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3219,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3231,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3244,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3254,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3264,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3274,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3283,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_marker": [
+      {
+        "line": 172,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 179,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 183,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 2198,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 2211,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 2223,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 2237,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 2304,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_marker_set_style": [
+      {
+        "line": 183,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 2237,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_marker_style": [
+      {
+        "line": 179,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 2223,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_panel_add_visual": [
+      {
+        "line": 94,
+        "path": "README.md"
+      },
+      {
+        "line": 276,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 251,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 235,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 244,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 79,
+        "path": "examples/c/visuals/mesh.c"
+      },
+      {
+        "line": 161,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 218,
+        "path": "examples/c/visuals/pixel.c"
+      },
+      {
+        "line": 227,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 113,
+        "path": "examples/c/visuals/primitive.c"
+      },
+      {
+        "line": 175,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 133,
+        "path": "examples/c/visuals/sphere.c"
+      },
+      {
+        "line": 127,
+        "path": "examples/c/visuals/splat.c"
+      },
+      {
+        "line": 212,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 264,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 324,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 413,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 414,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 896,
+        "path": "include/datoviz/scene/types.h"
+      },
+      {
+        "line": 882,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 890,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_panel_full": [
+      {
+        "line": 85,
+        "path": "README.md"
+      },
+      {
+        "line": 327,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 291,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 286,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 271,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 119,
+        "path": "examples/c/visuals/mesh.c"
+      },
+      {
+        "line": 120,
+        "path": "examples/c/visuals/mesh.c"
+      },
+      {
+        "line": 194,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 184,
+        "path": "examples/c/visuals/pixel.c"
+      },
+      {
+        "line": 188,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 197,
+        "path": "examples/c/visuals/primitive.c"
+      },
+      {
+        "line": 208,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 156,
+        "path": "examples/c/visuals/sphere.c"
+      },
+      {
+        "line": 157,
+        "path": "examples/c/visuals/sphere.c"
+      },
+      {
+        "line": 154,
+        "path": "examples/c/visuals/splat.c"
+      },
+      {
+        "line": 162,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 306,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 378,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 379,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 581,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_path": [
+      {
+        "line": 140,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 151,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 153,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 155,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 3090,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3105,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3120,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3134,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_path_set_caps": [
+      {
+        "line": 153,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 3105,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_path_set_join": [
+      {
+        "line": 155,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 3120,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_path_set_subpaths": [
+      {
+        "line": 151,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 3134,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_point": [
+      {
+        "line": 90,
+        "path": "README.md"
+      },
+      {
+        "line": 193,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 212,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 215,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 105,
+        "path": "include/datoviz/input/pointer.h"
+      },
+      {
+        "line": 119,
+        "path": "include/datoviz/input/pointer.h"
+      },
+      {
+        "line": 129,
+        "path": "include/datoviz/input/pointer.h"
+      },
+      {
+        "line": 142,
+        "path": "include/datoviz/input/pointer.h"
+      },
+      {
+        "line": 149,
+        "path": "include/datoviz/input/pointer.h"
+      },
+      {
+        "line": 2056,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 2070,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 2250,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 2257,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_point_set_style": [
+      {
+        "line": 215,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 2070,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 2250,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_point_style_desc": [
+      {
+        "line": 212,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 2056,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_sampled_field": [
+      {
+        "line": 225,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 237,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 183,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 195,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 389,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 394,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 396,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 400,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 167,
+        "path": "include/datoviz/scene/field.h"
+      },
+      {
+        "line": 193,
+        "path": "include/datoviz/scene/field.h"
+      },
+      {
+        "line": 203,
+        "path": "include/datoviz/scene/field.h"
+      },
+      {
+        "line": 214,
+        "path": "include/datoviz/scene/field.h"
+      },
+      {
+        "line": 228,
+        "path": "include/datoviz/scene/field.h"
+      },
+      {
+        "line": 247,
+        "path": "include/datoviz/scene/field.h"
+      },
+      {
+        "line": 263,
+        "path": "include/datoviz/scene/field.h"
+      },
+      {
+        "line": 274,
+        "path": "include/datoviz/scene/field.h"
+      },
+      {
+        "line": 287,
+        "path": "include/datoviz/scene/field.h"
+      },
+      {
+        "line": 3503,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3523,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_sampled_field_set_data": [
+      {
+        "line": 237,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 195,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 396,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 400,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 228,
+        "path": "include/datoviz/scene/field.h"
+      }
+    ],
+    "dvz_scene": [
+      {
+        "line": 83,
+        "path": "README.md"
+      },
+      {
+        "line": 30,
+        "path": "datoviz/__init__.py"
+      },
+      {
+        "line": 42,
+        "path": "datoviz/__init__.py"
+      },
+      {
+        "line": 258,
+        "path": "include/datoviz/scene/animation.h"
+      },
+      {
+        "line": 268,
+        "path": "include/datoviz/scene/animation.h"
+      },
+      {
+        "line": 278,
+        "path": "include/datoviz/scene/animation.h"
+      },
+      {
+        "line": 288,
+        "path": "include/datoviz/scene/animation.h"
+      },
+      {
+        "line": 297,
+        "path": "include/datoviz/scene/animation.h"
+      },
+      {
+        "line": 402,
+        "path": "include/datoviz/scene/interaction.h"
+      },
+      {
+        "line": 432,
+        "path": "include/datoviz/scene/interaction.h"
+      },
+      {
+        "line": 56,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 69,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 81,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 90,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 99,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 107,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 114,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 119,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 123,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 127,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 443,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 452,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 463,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 476,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 486,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 496,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 513,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1063,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1778,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1786,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1794,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1809,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1818,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1834,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1848,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1856,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1864,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1877,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1894,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1940,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_segment": [
+      {
+        "line": 161,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 173,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 309,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 320,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 2347,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 2362,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_segment_set_caps": [
+      {
+        "line": 173,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 320,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 2362,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_text": [
+      {
+        "line": 184,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 203,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 297,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 71,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 76,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 83,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 86,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 96,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 97,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 38,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 50,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 78,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 137,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 149,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 160,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 173,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 182,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 190,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 199,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 209,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 218,
+        "path": "include/datoviz/scene/text.h"
+      },
+      {
+        "line": 228,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_text_atlas_field": [
+      {
+        "line": 149,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_text_atlas_glyph": [
+      {
+        "line": 203,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 160,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_text_atlas_info": [
+      {
+        "line": 184,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 137,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_text_atlas_spec": [
+      {
+        "line": 297,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 78,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_text_destroy": [
+      {
+        "line": 190,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_text_id": [
+      {
+        "line": 182,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_text_placement": [
+      {
+        "line": 86,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 50,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_text_set_string": [
+      {
+        "line": 97,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 199,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_text_style": [
+      {
+        "line": 76,
+        "path": "examples/c/visuals/text.c"
+      },
+      {
+        "line": 38,
+        "path": "include/datoviz/scene/text.h"
+      }
+    ],
+    "dvz_visual_set_data": [
+      {
+        "line": 91,
+        "path": "README.md"
+      },
+      {
+        "line": 92,
+        "path": "README.md"
+      },
+      {
+        "line": 93,
+        "path": "README.md"
+      },
+      {
+        "line": 268,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 218,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 220,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 216,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 240,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 149,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 210,
+        "path": "examples/c/visuals/pixel.c"
+      },
+      {
+        "line": 132,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 85,
+        "path": "examples/c/visuals/primitive.c"
+      },
+      {
+        "line": 171,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 131,
+        "path": "examples/c/visuals/sphere.c"
+      },
+      {
+        "line": 125,
+        "path": "examples/c/visuals/splat.c"
+      },
+      {
+        "line": 207,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 255,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 318,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 1581,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1642,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1649,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1739,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1747,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 1761,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_visual_set_data_many": [
+      {
+        "line": 268,
+        "path": "examples/c/visuals/glyph.c"
+      },
+      {
+        "line": 216,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 240,
+        "path": "examples/c/visuals/marker.c"
+      },
+      {
+        "line": 149,
+        "path": "examples/c/visuals/path.c"
+      },
+      {
+        "line": 210,
+        "path": "examples/c/visuals/pixel.c"
+      },
+      {
+        "line": 132,
+        "path": "examples/c/visuals/point.c"
+      },
+      {
+        "line": 85,
+        "path": "examples/c/visuals/primitive.c"
+      },
+      {
+        "line": 171,
+        "path": "examples/c/visuals/segment.c"
+      },
+      {
+        "line": 131,
+        "path": "examples/c/visuals/sphere.c"
+      },
+      {
+        "line": 125,
+        "path": "examples/c/visuals/splat.c"
+      },
+      {
+        "line": 207,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 255,
+        "path": "examples/c/visuals/vector.c"
+      },
+      {
+        "line": 318,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 1739,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_visual_set_data_range": [
+      {
+        "line": 1761,
+        "path": "include/datoviz/scene.h"
+      }
+    ],
+    "dvz_visual_set_field": [
+      {
+        "line": 247,
+        "path": "examples/c/visuals/image.c"
+      },
+      {
+        "line": 218,
+        "path": "examples/c/visuals/labels.c"
+      },
+      {
+        "line": 406,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 407,
+        "path": "examples/c/visuals/volume.c"
+      },
+      {
+        "line": 308,
+        "path": "include/datoviz/scene/field.h"
+      },
+      {
+        "line": 3145,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3173,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3317,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3503,
+        "path": "include/datoviz/scene.h"
+      },
+      {
+        "line": 3523,
+        "path": "include/datoviz/scene.h"
+      }
+    ]
+  },
+  "text_capability_matrix": {
+    "text.font.atlas": {
+      "capability": "text.font.atlas",
+      "reason": "missing symbols: ('dvz_text_atlas_spec', 'dvz_font_atlas_ensure_strings', 'dvz_font_atlas', 'dvz_text_atlas_field')",
+      "source": "facade_or_raw",
+      "supported": false,
+      "symbol": "dvz_text_atlas_spec,dvz_font_atlas_ensure_strings,dvz_font_atlas,dvz_text_atlas_field"
+    },
+    "text.font.create": {
+      "capability": "text.font.create",
+      "reason": "missing symbols: ('dvz_font', 'dvz_font_desc')",
+      "source": "facade_or_raw",
+      "supported": false,
+      "symbol": "dvz_font,dvz_font_desc"
+    },
+    "text.glyph.visual": {
+      "capability": "text.glyph.visual",
+      "reason": "missing symbols: ('dvz_glyph', 'dvz_glyph_set_atlas')",
+      "source": "facade_or_raw",
+      "supported": false,
+      "symbol": "dvz_glyph,dvz_glyph_set_atlas"
+    },
+    "text.placement": {
+      "capability": "text.placement",
+      "reason": "missing symbols: ('dvz_text_placement',)",
+      "source": "facade_or_raw",
+      "supported": false,
+      "symbol": "dvz_text_placement"
+    },
+    "text.style": {
+      "capability": "text.style",
+      "reason": "missing symbols: ('dvz_text_style',)",
+      "source": "facade_or_raw",
+      "supported": false,
+      "symbol": "dvz_text_style"
+    },
+    "text.visual.constructor": {
+      "capability": "text.visual.constructor",
+      "reason": "missing symbols: ('dvz_text',)",
+      "source": "facade_or_raw",
+      "supported": false,
+      "symbol": "dvz_text"
+    },
+    "text.visual.string": {
+      "capability": "text.visual.string",
+      "reason": "missing symbols: ('dvz_text_set_string',)",
+      "source": "facade_or_raw",
+      "supported": false,
+      "symbol": "dvz_text_set_string"
+    }
+  },
+  "text_symbols": {
+    "DVZ_SCENE_VISUAL_FAMILY_LABELS": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_SCENE_VISUAL_FAMILY_LABELS"
+    },
+    "DVZ_SCENE_VISUAL_FAMILY_TEXT": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_SCENE_VISUAL_FAMILY_TEXT"
+    },
+    "DVZ_TEXT_ANCHOR_CENTER": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_ANCHOR_CENTER"
+    },
+    "DVZ_TEXT_ANCHOR_LEFT": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_ANCHOR_LEFT"
+    },
+    "DVZ_TEXT_ANCHOR_RIGHT": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_ANCHOR_RIGHT"
+    },
+    "DVZ_TEXT_BASELINE_ALPHABETIC": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_BASELINE_ALPHABETIC"
+    },
+    "DVZ_TEXT_RENDERER_BITMAP": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_RENDERER_BITMAP"
+    },
+    "DVZ_TEXT_RENDERER_SDF": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DVZ_TEXT_RENDERER_SDF"
+    },
+    "DvzText": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzText"
+    },
+    "DvzTextAtlas": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextAtlas"
+    },
+    "DvzTextAtlasGlyph": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextAtlasGlyph"
+    },
+    "DvzTextAtlasInfo": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextAtlasInfo"
+    },
+    "DvzTextAtlasSpec": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextAtlasSpec"
+    },
+    "DvzTextPlacement": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextPlacement"
+    },
+    "DvzTextPlacementMode": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextPlacementMode"
+    },
+    "DvzTextRenderer": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextRenderer"
+    },
+    "DvzTextStyle": {
+      "available": false,
+      "source": "raw",
+      "symbol": "DvzTextStyle"
+    },
+    "dvz_font": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_font"
+    },
+    "dvz_font_atlas": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_font_atlas"
+    },
+    "dvz_font_atlas_ensure_string": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_font_atlas_ensure_string"
+    },
+    "dvz_font_atlas_ensure_strings": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_font_atlas_ensure_strings"
+    },
+    "dvz_font_desc": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_font_desc"
+    },
+    "dvz_glyph": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_glyph"
+    },
+    "dvz_glyph_set_atlas": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_glyph_set_atlas"
+    },
+    "dvz_labels": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_labels"
+    },
+    "dvz_text": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text"
+    },
+    "dvz_text_atlas_field": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_atlas_field"
+    },
+    "dvz_text_atlas_glyph": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_atlas_glyph"
+    },
+    "dvz_text_atlas_info": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_atlas_info"
+    },
+    "dvz_text_atlas_spec": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_atlas_spec"
+    },
+    "dvz_text_destroy": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_destroy"
+    },
+    "dvz_text_id": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_id"
+    },
+    "dvz_text_placement": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_placement"
+    },
+    "dvz_text_set_string": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_set_string"
+    },
+    "dvz_text_style": {
+      "available": false,
+      "source": "raw",
+      "symbol": "dvz_text_style"
+    }
+  }
+}

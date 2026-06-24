@@ -29,7 +29,9 @@ class FakeDatovizFacade:
         self.calls.append(("dvz_panel_full", figure))
         return "panel"
 
-    def dvz_panel_add_visual(self, panel: object, visual: object, attach_desc: object | None) -> int:
+    def dvz_panel_add_visual(
+        self, panel: object, visual: object, attach_desc: object | None
+    ) -> int:
         self.calls.append(("dvz_panel_add_visual", panel, visual, attach_desc))
         return 0
 
@@ -37,11 +39,15 @@ class FakeDatovizFacade:
         self.calls.append(("dvz_visual_set_data", visual, name, data))
         return 0
 
-    def dvz_visual_set_data_many(self, visual: object, updates: object, count: int) -> int:
+    def dvz_visual_set_data_many(
+        self, visual: object, updates: object, count: int
+    ) -> int:
         self.calls.append(("dvz_visual_set_data_many", visual, updates, count))
         return 0
 
-    def dvz_visual_set_data_range(self, visual: object, name: str, offset: int, data: object) -> int:
+    def dvz_visual_set_data_range(
+        self, visual: object, name: str, offset: int, data: object
+    ) -> int:
         self.calls.append(("dvz_visual_set_data_range", visual, name, offset, data))
         return 0
 
@@ -89,7 +95,14 @@ class FakeDatovizFacade:
         self.calls.append(("dvz_visual_set_field", visual, name, field))
         return True
 
-    def capture(self, scene: object, figure: object, path: str = "output.png", width: int = 800, height: int = 600) -> None:
+    def capture(
+        self,
+        scene: object,
+        figure: object,
+        path: str = "output.png",
+        width: int = 800,
+        height: int = 600,
+    ) -> None:
         self.calls.append(("capture", scene, figure, path, width, height))
 
     class DvzVisualAttachDesc:
@@ -101,47 +114,124 @@ class FakeRaw:
 
     __file__ = "/fake/datoviz/raw.py"
     DvzVisualAttachDesc = object
+    DvzText = object
+    DvzTextStyle = object
+    DvzTextAtlas = object
+    DvzTextAtlasSpec = object
+    DvzTextRenderer = object
     DVZ_COORD_VIEW = 1
     DVZ_COORD_DATA = 2
     DVZ_COORD_PANEL = 3
     DVZ_PATH_JOIN_ROUND = 10
     DVZ_SEGMENT_CAP_ROUND = 11
     DVZ_BLEND_ALPHA = 12
+    DVZ_SCENE_VISUAL_FAMILY_TEXT = 13
+
+    def dvz_text(self, panel: object, flags: int) -> str:
+        return "text"
+
+    def dvz_text_set_string(self, text: object, string: bytes) -> None:
+        return None
+
+    def dvz_text_style(self) -> object:
+        return object()
+
+    def dvz_font(self, scene: object, desc: object) -> str:
+        return "font"
+
+    def dvz_font_desc(self) -> object:
+        return object()
+
+    def dvz_text_atlas_spec(self, renderer: object, size_px: float) -> object:
+        return object()
+
+    def dvz_font_atlas_ensure_strings(
+        self, font: object, spec: object, strings: object, count: int
+    ) -> bool:
+        return True
+
+    def dvz_font_atlas(self, font: object, spec: object) -> str:
+        return "atlas"
+
+    def dvz_text_atlas_field(self, atlas: object) -> str:
+        return "field"
+
+    def dvz_glyph(self, scene: object, flags: int) -> str:
+        return "glyph"
+
+    def dvz_glyph_set_atlas(self, visual: object, atlas: object) -> int:
+        return 0
 
 
 def test_probe_successful_fake_facade_is_json_safe(tmp_path: Path) -> None:
     source = tmp_path / "datoviz"
     source.mkdir()
-    (source / "README.md").write_text("dvz_scene\nDvzVisualAttachDesc\nDVZ_COORD_DATA\n", encoding="utf-8")
+    (source / "README.md").write_text(
+        "dvz_scene\nDvzVisualAttachDesc\nDVZ_COORD_DATA\ndvz_text\ndvz_text_placement\n",
+        encoding="utf-8",
+    )
     facade = FakeDatovizFacade()
 
-    report = probe_datoviz_v04(source_path=source, banned_scan_paths=(), facade_module=facade, raw_module=FakeRaw())
+    report = probe_datoviz_v04(
+        source_path=source,
+        banned_scan_paths=(),
+        facade_module=facade,
+        raw_module=FakeRaw(),
+    )
     payload = report.to_json()
 
     assert payload["installed_package"]["imported"] is True
     assert payload["sibling_source"]["exists"] is True
     assert payload["capability_matrix"]["scene.create.dvz_scene"]["supported"] is True
-    assert payload["capability_matrix"]["attach.coord_space.DVZ_COORD_DATA"]["supported"] is True
+    assert (
+        payload["capability_matrix"]["attach.coord_space.DVZ_COORD_DATA"]["supported"]
+        is True
+    )
     assert payload["minimal_point_scene"]["supported"] is True
     assert payload["minimal_point_scene"]["attempted"] is True
-    assert "dvz_visual_set_data.diameter_px" in payload["minimal_point_scene"]["calls_completed"]
-    assert payload["source_symbol_matrix"]["dvz_scene"] == [{"path": "README.md", "line": 1}]
+    assert (
+        "dvz_visual_set_data.diameter_px"
+        in payload["minimal_point_scene"]["calls_completed"]
+    )
+    assert payload["source_symbol_matrix"]["dvz_scene"] == [
+        {"path": "README.md", "line": 1}
+    ]
+    assert payload["text_symbols"]["dvz_text"]["available"] is True
+    assert payload["text_symbols"]["dvz_text_placement"]["available"] is False
+    assert (
+        payload["text_capability_matrix"]["text.visual.constructor"]["supported"]
+        is True
+    )
+    assert payload["text_capability_matrix"]["text.placement"]["supported"] is False
+    assert payload["source_symbol_matrix"]["dvz_text_placement"] == [
+        {"path": "README.md", "line": 5}
+    ]
     json.dumps(payload)
     assert ("dvz_panel_add_visual", "panel", "point", None) in facade.calls
 
 
-def test_probe_reports_missing_symbols_without_constructing_point(tmp_path: Path) -> None:
+def test_probe_reports_missing_symbols_without_constructing_point(
+    tmp_path: Path,
+) -> None:
     class MinimalFacade:
         __file__ = "/fake/datoviz/__init__.py"
 
         def dvz_scene(self) -> str:
             return "scene"
 
-    report = probe_datoviz_v04(source_path=tmp_path / "missing", banned_scan_paths=(), facade_module=MinimalFacade(), raw_module=None)
+    report = probe_datoviz_v04(
+        source_path=tmp_path / "missing",
+        banned_scan_paths=(),
+        facade_module=MinimalFacade(),
+        raw_module=None,
+    )
     payload = report.to_json()
 
     assert payload["capability_matrix"]["scene.create.dvz_scene"]["supported"] is True
-    assert payload["capability_matrix"]["visual.point.constructor.dvz_point"]["supported"] is False
+    assert (
+        payload["capability_matrix"]["visual.point.constructor.dvz_point"]["supported"]
+        is False
+    )
     assert payload["minimal_point_scene"]["attempted"] is False
     assert "missing capabilities" in str(payload["minimal_point_scene"]["reason"])
 

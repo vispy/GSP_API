@@ -1,0 +1,172 @@
+{
+  "hits": [
+    {
+      "allowed_context": true,
+      "line": 85,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "dvz_path_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 86,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "dvz_point_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 87,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "dvz_marker_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 88,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "dvz_segment_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 89,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "dvz_image_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 90,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "dvz_point_position"
+    },
+    {
+      "allowed_context": true,
+      "line": 91,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "dvz_marker_color"
+    },
+    {
+      "allowed_context": true,
+      "line": 92,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "dvz_segment_linewidth"
+    },
+    {
+      "allowed_context": true,
+      "line": 150,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "dvz_label_desc"
+    },
+    {
+      "allowed_context": true,
+      "line": 151,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "DvzLabelDesc"
+    },
+    {
+      "allowed_context": true,
+      "line": 152,
+      "path": "src/gsp/qa/visual/datoviz_probe.py",
+      "symbol": "DVZ_WASM_VISUAL_GLYPH"
+    },
+    {
+      "allowed_context": true,
+      "line": 50,
+      "path": ".agent/missions/M064-datoviz-v04-api-audit-and-probe.md",
+      "symbol": "dvz_path_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 51,
+      "path": ".agent/missions/M064-datoviz-v04-api-audit-and-probe.md",
+      "symbol": "dvz_point_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 51,
+      "path": ".agent/missions/M064-datoviz-v04-api-audit-and-probe.md",
+      "symbol": "dvz_point_position"
+    },
+    {
+      "allowed_context": true,
+      "line": 51,
+      "path": ".agent/missions/M064-datoviz-v04-api-audit-and-probe.md",
+      "symbol": "dvz_marker_color"
+    },
+    {
+      "allowed_context": true,
+      "line": 51,
+      "path": ".agent/missions/M064-datoviz-v04-api-audit-and-probe.md",
+      "symbol": "dvz_segment_linewidth"
+    },
+    {
+      "allowed_context": true,
+      "line": 82,
+      "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+      "symbol": "dvz_path_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 83,
+      "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+      "symbol": "dvz_point_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 84,
+      "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+      "symbol": "dvz_marker_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 85,
+      "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+      "symbol": "dvz_segment_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 86,
+      "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+      "symbol": "dvz_image_alloc"
+    },
+    {
+      "allowed_context": true,
+      "line": 87,
+      "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+      "symbol": "dvz_point_position"
+    },
+    {
+      "allowed_context": true,
+      "line": 88,
+      "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+      "symbol": "dvz_marker_color"
+    },
+    {
+      "allowed_context": true,
+      "line": 89,
+      "path": ".agent/tasks/M064-S023-DATOVIZ-V04-API-AUDIT-AND-PROBE.md",
+      "symbol": "dvz_segment_linewidth"
+    }
+  ],
+  "paths": [
+    "src/gsp/qa/visual",
+    "src/gsp_datoviz/protocol_renderer.py",
+    "src/gsp_datoviz/capabilities.py",
+    ".agent/missions",
+    ".agent/tasks",
+    "spec"
+  ],
+  "symbols": [
+    "dvz_path_alloc",
+    "dvz_point_alloc",
+    "dvz_marker_alloc",
+    "dvz_segment_alloc",
+    "dvz_image_alloc",
+    "dvz_point_position",
+    "dvz_marker_color",
+    "dvz_segment_linewidth"
+  ],
+  "text_symbols": [
+    "dvz_label_desc",
+    "DvzLabelDesc",
+    "DVZ_WASM_VISUAL_GLYPH"
+  ],
+  "unexpected_hits": []
+}

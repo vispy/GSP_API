@@ -1,0 +1,177 @@
+{
+  "DVZ_SCENE_VISUAL_FAMILY_LABELS": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_SCENE_VISUAL_FAMILY_LABELS"
+  },
+  "DVZ_SCENE_VISUAL_FAMILY_TEXT": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_SCENE_VISUAL_FAMILY_TEXT"
+  },
+  "DVZ_TEXT_ANCHOR_CENTER": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_TEXT_ANCHOR_CENTER"
+  },
+  "DVZ_TEXT_ANCHOR_LEFT": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_TEXT_ANCHOR_LEFT"
+  },
+  "DVZ_TEXT_ANCHOR_RIGHT": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_TEXT_ANCHOR_RIGHT"
+  },
+  "DVZ_TEXT_BASELINE_ALPHABETIC": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_TEXT_BASELINE_ALPHABETIC"
+  },
+  "DVZ_TEXT_RENDERER_BITMAP": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_TEXT_RENDERER_BITMAP"
+  },
+  "DVZ_TEXT_RENDERER_SDF": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DVZ_TEXT_RENDERER_SDF"
+  },
+  "DvzText": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzText"
+  },
+  "DvzTextAtlas": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzTextAtlas"
+  },
+  "DvzTextAtlasGlyph": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzTextAtlasGlyph"
+  },
+  "DvzTextAtlasInfo": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzTextAtlasInfo"
+  },
+  "DvzTextAtlasSpec": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzTextAtlasSpec"
+  },
+  "DvzTextPlacement": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzTextPlacement"
+  },
+  "DvzTextPlacementMode": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzTextPlacementMode"
+  },
+  "DvzTextRenderer": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzTextRenderer"
+  },
+  "DvzTextStyle": {
+    "available": false,
+    "source": "raw",
+    "symbol": "DvzTextStyle"
+  },
+  "dvz_font": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_font"
+  },
+  "dvz_font_atlas": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_font_atlas"
+  },
+  "dvz_font_atlas_ensure_string": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_font_atlas_ensure_string"
+  },
+  "dvz_font_atlas_ensure_strings": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_font_atlas_ensure_strings"
+  },
+  "dvz_font_desc": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_font_desc"
+  },
+  "dvz_glyph": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_glyph"
+  },
+  "dvz_glyph_set_atlas": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_glyph_set_atlas"
+  },
+  "dvz_labels": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_labels"
+  },
+  "dvz_text": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_text"
+  },
+  "dvz_text_atlas_field": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_text_atlas_field"
+  },
+  "dvz_text_atlas_glyph": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_text_atlas_glyph"
+  },
+  "dvz_text_atlas_info": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_text_atlas_info"
+  },
+  "dvz_text_atlas_spec": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_text_atlas_spec"
+  },
+  "dvz_text_destroy": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_text_destroy"
+  },
+  "dvz_text_id": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_text_id"
+  },
+  "dvz_text_placement": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_text_placement"
+  },
+  "dvz_text_set_string": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_text_set_string"
+  },
+  "dvz_text_style": {
+    "available": false,
+    "source": "raw",
+    "symbol": "dvz_text_style"
+  }
+}
