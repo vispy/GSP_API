@@ -10,7 +10,7 @@ Add the Matplotlib reference slice and first visual QA smoke cases for MeshVisua
 
 ## Status
 
-Draft.
+Completed.
 
 ## Deliverables
 
@@ -27,3 +27,12 @@ Draft.
 ## Stop Conditions
 
 - Stop if Matplotlib cannot represent a required accepted baseline without an explicit diagnostic.
+
+
+## Completed
+
+- Added `render_mesh_visual()` for the strict 2D Matplotlib reference subset.
+- Added S025 visual QA suite and three strict MeshVisual smoke cases.
+- Added MeshVisual scene-artifact serialization and QA runner dispatch.
+- Kept Datoviz MeshVisual structured unsupported until M086/M087.
+- Validation: `uv run pytest tests/test_mesh_visual_protocol.py tests/test_matplotlib_protocol_slice.py tests/test_visual_qa_harness.py`; `python3 -m compileall -q src/gsp_matplotlib src/gsp/qa/visual`; `git diff --check`.

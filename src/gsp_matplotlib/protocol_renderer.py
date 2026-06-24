@@ -18,6 +18,8 @@ from gsp.protocol.visuals import (
     FontRole,
     ImageInterpolation,
     ImageVisual,
+    MeshColorMode,
+    MeshVisual,
     MarkerShape,
     MarkerVisual,
     PathVisual,
@@ -197,6 +199,37 @@ def render_path_visual(
         axes.add_patch(patch)
         patches.append(patch)
     return tuple(patches)
+
+
+def render_mesh_visual(
+    axes: matplotlib.axes.Axes, visual: MeshVisual
+) -> matplotlib.collections.PolyCollection:
+    """Render the strict 2D MeshVisual subset into a Matplotlib axes."""
+    if visual.positions.shape[1] != 2:
+        raise NotImplementedError("Matplotlib MeshVisual reference supports 2D positions only")
+    color_mode = visual.resolved_color_mode()
+    if color_mode is MeshColorMode.VERTEX:
+        raise NotImplementedError("Matplotlib MeshVisual vertex colors are capability-gated")
+
+    triangles = visual.positions[visual.faces][:, :, :2]
+    if color_mode is MeshColorMode.UNIFORM:
+        facecolors = np.repeat(visual.color[np.newaxis, :], visual.faces.shape[0], axis=0)
+    elif color_mode is MeshColorMode.FACE:
+        facecolors = visual.color
+    else:
+        raise NotImplementedError(f"unsupported mesh color mode: {color_mode.value}")
+
+    collection = matplotlib.collections.PolyCollection(
+        [np.ascontiguousarray(triangle, dtype=np.float32) for triangle in triangles],
+        facecolors=_rgba_for_matplotlib(facecolors),
+        edgecolors="none",
+        closed=True,
+        antialiaseds=False,
+        zorder=visual.order,
+    )
+    collection.set_gid(visual.id)
+    axes.add_collection(collection)
+    return collection
 
 
 def render_text_visual(

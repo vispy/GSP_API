@@ -149,7 +149,7 @@
       "id": "S025",
       "title": "Mesh and 3D Geometry Visuals v1",
       "state": "in_progress",
-      "progress": 35
+      "progress": 50
     }
   ],
   "missions": [
@@ -913,16 +913,16 @@
       "id": "M085",
       "title": "S025 Matplotlib MeshVisual reference renderer and QA smoke",
       "stage": "S025",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 85
     },
     {
       "id": "M086",
       "title": "S025 Datoviz v0.4 mesh capability probe",
       "stage": "S025",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 86
@@ -1001,9 +1001,9 @@
     }
   ],
   "recommendations": [
-    "M084 is complete: MeshVisual protocol dataclass, validation, exports, and focused tests are in place.",
-    "Run M085 next to add the strict 2D Matplotlib reference renderer and QA smoke for MeshVisual.",
-    "Keep Datoviz mesh work gated until M086 refreshes retained v0.4 mesh capability evidence."
+    "M085 is complete: strict 2D Matplotlib MeshVisual rendering and S025 mesh QA smoke cases are in place.",
+    "Run M086 next to refresh Datoviz v0.4 retained mesh capability evidence before implementing any Datoviz mesh adapter.",
+    "Keep Datoviz MeshVisual rendering structured-unsupported until M087 and avoid textures/materials/instancing in S025 v1."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1017,6 +1017,7 @@
     "S025 opened with mission batch M082-M089; M082 is ready, M083 is blocked pending P010, and implementation missions remain draft.",
     "M082 completed: created P010 Mesh/3D protocol consultation packet and opened Q080; M083 remains blocked pending the response.",
     "M083 completed: accepted S025 MeshVisual v1 baseline from P010; M084 is ready for protocol dataclass/validation implementation.",
-    "M084 completed: added MeshVisual protocol/enums/validation and 9 focused tests; M085 is ready for Matplotlib renderer/QA smoke."
+    "M084 completed: added MeshVisual protocol/enums/validation and 9 focused tests; M085 is ready for Matplotlib renderer/QA smoke.",
+    "M085 completed: added Matplotlib MeshVisual renderer, S025 QA suite/cases, and focused tests; M086 is ready for Datoviz mesh probe."
   ]
 }

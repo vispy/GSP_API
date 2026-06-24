@@ -9,10 +9,13 @@ import numpy as np
 import pytest
 
 from gsp.protocol import (
+    CoordinateSpace,
     FontRole,
     ImageColormap,
     ImageOrigin,
     ImageVisual,
+    MeshColorMode,
+    MeshVisual,
     MarkerShape,
     MarkerVisual,
     PathVisual,
@@ -30,6 +33,7 @@ from gsp_matplotlib.protocol_renderer import (
     _marker_path,
     render_image_visual,
     render_marker_visual,
+    render_mesh_visual,
     render_path_visual,
     render_point_visual,
     render_segment_visual,
@@ -259,6 +263,76 @@ def test_marker_diamond_path_uses_bbox_diameter_semantics():
     np.testing.assert_allclose(
         [bbox.x0, bbox.x1, bbox.y0, bbox.y1], [-0.5, 0.5, -0.5, 0.5]
     )
+
+
+
+
+def test_render_mesh_visual_creates_poly_collection_for_uniform_color():
+    """Strict 2D MeshVisual renders as filled Matplotlib polygons."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array([[-0.5, -0.5], [0.5, -0.5], [0.0, 0.5]], dtype=np.float32),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 0, 0, 255], dtype=np.uint8),
+        )
+
+        artist = render_mesh_visual(ax, visual)
+
+        assert artist.get_gid() == "visual:mesh"
+        assert len(artist.get_paths()) == 1
+        np.testing.assert_allclose(
+            artist.get_facecolors()[0], np.array([1.0, 0.0, 0.0, 1.0])
+        )
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_preserves_per_face_colors():
+    """Per-face MeshVisual colors map one RGBA value to each triangle."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([[255, 0, 0, 255], [0, 0, 255, 128]], dtype=np.uint8),
+            color_mode=MeshColorMode.FACE,
+        )
+
+        artist = render_mesh_visual(ax, visual)
+
+        assert len(artist.get_paths()) == 2
+        np.testing.assert_allclose(
+            artist.get_facecolors(),
+            np.array([[1.0, 0.0, 0.0, 1.0], [0.0, 0.0, 1.0, 128 / 255.0]]),
+        )
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_rejects_3d_reference_path():
+    """S025 Matplotlib strict reference is 2D only."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=np.float32),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.DATA,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        )
+
+        with pytest.raises(NotImplementedError, match="2D positions"):
+            render_mesh_visual(ax, visual)
+    finally:
+        plt.close(fig)
 
 
 def test_render_text_visual_maps_protocol_fields_to_text_artists():

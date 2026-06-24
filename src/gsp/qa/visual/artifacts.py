@@ -12,6 +12,7 @@ import numpy as np
 
 from gsp.protocol import (
     ImageVisual,
+    MeshVisual,
     MarkerVisual,
     PathVisual,
     PointVisual,
@@ -313,6 +314,34 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             },
             "z_order": visual.z_order,
         }
+    if isinstance(visual, MeshVisual):
+        return {
+            "family": "mesh",
+            "id": visual.id,
+            "coordinate_space": visual.coordinate_space.value,
+            "positions": {
+                "shape": list(visual.positions.shape),
+                "dtype": str(visual.positions.dtype),
+            },
+            "faces": {
+                "shape": list(visual.faces.shape),
+                "dtype": str(visual.faces.dtype),
+            },
+            "color": {
+                "shape": list(visual.color.shape),
+                "dtype": str(visual.color.dtype),
+            },
+            "color_mode": visual.resolved_color_mode().value,
+            "normal_mode": visual.resolved_normal_mode().value,
+            "normal_generation": visual.normal_generation.value,
+            "shading": visual.shading.value,
+            "face_culling": visual.face_culling.value,
+            "depth_test": visual.depth_test.value,
+            "depth_write": visual.depth_write.value,
+            "order": visual.order,
+            "opacity_policy": visual.opacity_policy.value,
+        }
+
     if isinstance(visual, ImageVisual):
         return {
             "family": "image",

@@ -9,6 +9,7 @@ import numpy as np
 
 from gsp.protocol import (
     ImageVisual,
+    MeshVisual,
     MarkerVisual,
     PathVisual,
     PointVisual,
@@ -18,7 +19,7 @@ from gsp.protocol import (
 
 
 ProtocolVisual: TypeAlias = (
-    PointVisual | MarkerVisual | SegmentVisual | PathVisual | ImageVisual | TextVisual
+    PointVisual | MarkerVisual | SegmentVisual | PathVisual | ImageVisual | TextVisual | MeshVisual
 )
 
 

@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 
 from gsp.protocol import (
     ImageVisual,
+    MeshVisual,
     MarkerVisual,
     PathVisual,
     PointVisual,
@@ -37,7 +38,7 @@ from gsp.qa.visual.backend_ids import (
     MATPLOTLIB_BACKEND_ID,
 )
 from gsp.qa.visual.case_spec import ProtocolVisual, VisualQACase
-from gsp.qa.visual.cases import S023_SUITE, S024_SUITE, case_slug, list_cases
+from gsp.qa.visual.cases import S023_SUITE, S024_SUITE, S025_SUITE, case_slug, list_cases
 from gsp.qa.visual.contact_sheet import write_contact_sheets
 from gsp.qa.visual.datoviz_probe import DatovizV04ProbeReport, probe_datoviz_v04
 from gsp_datoviz.protocol_renderer import (
@@ -48,6 +49,7 @@ from gsp_datoviz.protocol_renderer import (
 from gsp_matplotlib.protocol_renderer import (
     render_image_visual,
     render_marker_visual,
+    render_mesh_visual,
     render_path_visual,
     render_point_visual,
     render_segment_visual,
@@ -70,7 +72,7 @@ def run_visual_qa_suite(
     datoviz_color_pipeline: DatovizColorPipeline = "legacy_srgb_blend",
 ) -> dict[str, object]:
     """Run the visual QA suite and return its report."""
-    if suite not in (S023_SUITE, S024_SUITE):
+    if suite not in (S023_SUITE, S024_SUITE, S025_SUITE):
         raise ValueError(f"unknown visual QA suite: {suite}")
     normalized_backends = _normalize_backends(backends)
     selected_cases = _select_cases(case_ids, suite=suite)
@@ -288,6 +290,8 @@ def _render_matplotlib_visual(ax: Axes, visual: ProtocolVisual) -> None:
         render_image_visual(ax, visual)
     elif isinstance(visual, TextVisual):
         render_text_visual(ax, visual)
+    elif isinstance(visual, MeshVisual):
+        render_mesh_visual(ax, visual)
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
 
@@ -307,6 +311,8 @@ def _render_datoviz_visual(
         renderer.add_image_visual(visual)
     elif isinstance(visual, TextVisual):
         renderer.add_text_visual(visual)
+    elif isinstance(visual, MeshVisual):
+        raise DatovizV04Unsupported("MESH_UNSUPPORTED: MeshVisual Datoviz support is pending M086/M087")
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
 

@@ -196,3 +196,42 @@ def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:
     )
 
     assert "gsp_datoviz.renderer" not in combined
+
+
+def test_s025_case_registry_extends_s024_with_mesh_cases() -> None:
+    """S025 adds strict MeshVisual QA cases after the S024 text cases."""
+    from gsp.qa.visual.cases import S025_SUITE
+
+    case_ids = [case.case_id for case in list_cases(suite=S025_SUITE)]
+
+    assert case_ids[-3:] == [
+        "mesh/single_triangle_uniform_ndc_2d",
+        "mesh/indexed_square_uniform_ndc_2d",
+        "mesh/indexed_square_per_face_ndc_2d",
+    ]
+
+
+def test_s025_mesh_visual_qa_run_writes_matplotlib_artifacts(tmp_path: Path) -> None:
+    """S025 strict mesh cases render through the Matplotlib reference backend."""
+    from gsp.qa.visual.cases import S025_SUITE
+
+    report = run_visual_qa_suite(
+        suite=S025_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=("mesh/single_triangle_uniform_ndc_2d", "mesh/indexed_square_per_face_ndc_2d"),
+        run_id="test-s025-mesh",
+        resolution=(320, 240),
+    )
+
+    assert report["stage"] == "S025"
+    assert (tmp_path / "contact_sheets" / "s025_all_cases.png").stat().st_size > 0
+    scene = json.loads(
+        (tmp_path / "scenes" / "mesh_single_triangle_uniform_ndc_2d.scene.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert scene["visuals"][0]["family"] == "mesh"
+    assert scene["visuals"][0]["color_mode"] == "uniform"
+    for case in report["cases"]:
+        assert case["backends"]["matplotlib"]["status"] == "rendered"

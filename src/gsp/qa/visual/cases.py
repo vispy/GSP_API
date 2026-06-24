@@ -11,6 +11,8 @@ from gsp.protocol import (
     ImageInterpolation,
     ImageOrigin,
     ImageVisual,
+    MeshColorMode,
+    MeshVisual,
     MarkerShape,
     MarkerVisual,
     PathVisual,
@@ -27,6 +29,7 @@ from gsp.qa.visual.case_spec import VisualQACase, VisualQAScene
 
 S023_SUITE = "s023"
 S024_SUITE = "s024"
+S025_SUITE = "s025"
 
 
 def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
@@ -35,6 +38,8 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
         return _s023_cases()
     if suite == S024_SUITE:
         return _s023_cases() + _s024_text_cases()
+    if suite == S025_SUITE:
+        return _s023_cases() + _s024_text_cases() + _s025_mesh_cases()
     raise ValueError(f"unknown visual QA suite: {suite}")
 
 
@@ -192,6 +197,33 @@ def _s024_text_cases() -> tuple[VisualQACase, ...]:
             family="text",
             required_features=("text", "multiline", "unicode"),
             builder=_text_multiline_unicode_smoke,
+        ),
+    )
+
+
+
+def _s025_mesh_cases() -> tuple[VisualQACase, ...]:
+    return (
+        VisualQACase(
+            case_id="mesh/single_triangle_uniform_ndc_2d",
+            title="Single uniform 2D mesh triangle in NDC",
+            family="mesh",
+            required_features=("mesh", "ndc", "rgba8", "uniform", "2d"),
+            builder=_mesh_single_triangle_uniform_ndc_2d,
+        ),
+        VisualQACase(
+            case_id="mesh/indexed_square_uniform_ndc_2d",
+            title="Indexed square 2D mesh with uniform color",
+            family="mesh",
+            required_features=("mesh", "ndc", "rgba8", "indexed", "2d"),
+            builder=_mesh_indexed_square_uniform_ndc_2d,
+        ),
+        VisualQACase(
+            case_id="mesh/indexed_square_per_face_ndc_2d",
+            title="Indexed square 2D mesh with per-face color",
+            family="mesh",
+            required_features=("mesh", "ndc", "rgba8", "per-face", "2d"),
+            builder=_mesh_indexed_square_per_face_ndc_2d,
         ),
     )
 
@@ -926,3 +958,69 @@ def _orientation_image(size: int) -> np.ndarray:
     image[3:-1, 4] = np.array([35, 40, 45, 255], dtype=np.uint8)
     image[3, 4:-2] = np.array([35, 40, 45, 255], dtype=np.uint8)
     return image
+
+
+def _mesh_single_triangle_uniform_ndc_2d() -> VisualQAScene:
+    positions = np.array([[-0.72, -0.55], [0.72, -0.45], [-0.1, 0.65]], dtype=np.float32)
+    faces = np.array([[0, 1, 2]], dtype=np.uint32)
+    color = np.array([230, 57, 70, 255], dtype=np.uint8)
+    visual = MeshVisual(
+        id="visual:mesh-single-triangle",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=color,
+        color_mode=MeshColorMode.UNIFORM,
+    )
+    return VisualQAScene(
+        case_id="mesh/single_triangle_uniform_ndc_2d",
+        visuals=(visual,),
+        arrays={"mesh_positions": positions, "mesh_faces": faces, "mesh_color": color},
+        notes=("One opaque uniform-color indexed triangle in NDC.",),
+    )
+
+
+def _mesh_indexed_square_uniform_ndc_2d() -> VisualQAScene:
+    positions = np.array(
+        [[-0.55, -0.55], [0.55, -0.55], [0.55, 0.55], [-0.55, 0.55]],
+        dtype=np.float32,
+    )
+    faces = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32)
+    color = np.array([42, 157, 143, 255], dtype=np.uint8)
+    visual = MeshVisual(
+        id="visual:mesh-indexed-square",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=color,
+        color_mode=MeshColorMode.UNIFORM,
+    )
+    return VisualQAScene(
+        case_id="mesh/indexed_square_uniform_ndc_2d",
+        visuals=(visual,),
+        arrays={"mesh_positions": positions, "mesh_faces": faces, "mesh_color": color},
+        notes=("Two indexed triangles share vertices to form one opaque square.",),
+    )
+
+
+def _mesh_indexed_square_per_face_ndc_2d() -> VisualQAScene:
+    positions = np.array(
+        [[-0.55, -0.55], [0.55, -0.55], [0.55, 0.55], [-0.55, 0.55]],
+        dtype=np.float32,
+    )
+    faces = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32)
+    colors = np.array([[244, 162, 97, 255], [69, 123, 157, 255]], dtype=np.uint8)
+    visual = MeshVisual(
+        id="visual:mesh-per-face-square",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=colors,
+        color_mode=MeshColorMode.FACE,
+    )
+    return VisualQAScene(
+        case_id="mesh/indexed_square_per_face_ndc_2d",
+        visuals=(visual,),
+        arrays={"mesh_positions": positions, "mesh_faces": faces, "mesh_colors": colors},
+        notes=("Two indexed triangles with distinct per-face colors and a visible diagonal.",),
+    )
