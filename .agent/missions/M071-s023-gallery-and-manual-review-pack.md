@@ -6,7 +6,7 @@ S023 - Visual Families v1 and Manual Visual QA Foundation
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -18,6 +18,14 @@ Produce user-facing examples and a final manual review artifact pack for S023 vi
 - Combined gallery command or script using formal protocol scenes.
 - Final contact sheets and manual review notes templates.
 - README/docs update explaining how to run the visual QA suite.
+
+## Completed
+
+- Added VisPy2 protocol examples for marker, segment, path, and scalar image visuals.
+- Updated `examples/README.md` with S023 protocol examples and visual QA run instructions.
+- Added MkDocs page `mkdocs_source/s023_visual_qa.md` and linked it from `mkdocs.yml`.
+- Regenerated the final S023 visual QA pack under `artifacts/visual_qa/s023/latest-local/`; all Matplotlib and Datoviz cases rendered.
+- Verified examples write PNG outputs under `examples/output/`.
 
 ## Acceptance
 

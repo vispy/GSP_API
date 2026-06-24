@@ -31,3 +31,26 @@ manually.
 
 - Stop if examples import backend renderers directly except through the visual QA harness.
 - Stop if examples use legacy GSP/Datoviz paths as implementation dependencies.
+
+## Completion Notes
+
+- Added examples:
+  - `examples/vispy2_protocol_marker.py`
+  - `examples/vispy2_protocol_segment.py`
+  - `examples/vispy2_protocol_path.py`
+  - `examples/vispy2_protocol_image_scalar.py`
+- Updated documentation:
+  - `examples/README.md`
+  - `mkdocs_source/s023_visual_qa.md`
+  - `mkdocs.yml`
+- Final QA artifacts regenerated under `artifacts/visual_qa/s023/latest-local/`:
+  - `contact_sheets/s023_all_cases.png`
+  - `manual_notes.yaml`
+  - `report.json`
+  - `summary.md`
+- Validation passed:
+  - all protocol examples run and write PNGs
+  - S023 QA: 13 cases, Matplotlib rendered, Datoviz rendered
+  - `uv run pytest tests -q`
+  - `uv run mypy src/ --strict --show-error-codes`
+  - `uv run mkdocs build --strict`

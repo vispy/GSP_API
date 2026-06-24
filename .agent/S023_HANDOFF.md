@@ -282,3 +282,12 @@ segment contract added in M068.
 - Datoviz converts scalar gray and RGB/RGBA images to RGBA8 and uses sampled-field or texture paths.
 - Added QA cases for lower origin, scalar gray/clim, and RGBA alpha.
 - Latest visual QA run rendered all Matplotlib and Datoviz cases under `artifacts/visual_qa/s023/latest-local/`.
+
+
+## M071 gallery and manual review pack update
+
+- Added protocol examples for marker, segment, path, and scalar image families.
+- Added S023 Visual QA MkDocs page and examples README instructions.
+- Regenerated final review pack under `artifacts/visual_qa/s023/latest-local/`.
+- Final contact sheet: `artifacts/visual_qa/s023/latest-local/contact_sheets/s023_all_cases.png`.
+- Manual review template: `artifacts/visual_qa/s023/latest-local/manual_notes.yaml`.

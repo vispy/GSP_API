@@ -137,7 +137,7 @@
       "id": "S023",
       "title": "Visual Families v1 and Manual Visual QA Foundation",
       "state": "in_progress",
-      "progress": 80
+      "progress": 90
     }
   ],
   "missions": [
@@ -775,9 +775,9 @@
       "id": "M071",
       "title": "S023 gallery and manual review pack",
       "stage": "S023",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 71
     },
     {
@@ -830,7 +830,8 @@
     "M069 completed PathVisual v1 semantics, Matplotlib/Datoviz render paths, VisPy2 producers, and visual QA coverage.",
     "S023 should proceed visual family by visual family: Point, Marker, Segment, Path, then Image hardening. Legacy GSP/Datoviz code is reference material only.",
     "M070 completed ImageVisual v1 hardening with scalar gray/clim semantics, Matplotlib/Datoviz rendering, and visual QA coverage.",
-    "Next mission: M071 should generate the S023 gallery and manual review pack.",
-    "Do not implement against v0.3-style Datoviz APIs such as `dvz_*_alloc`; use retained scene constructors plus `dvz_visual_set_data*` uploads and explicit attach descriptors."
+    "Do not implement against v0.3-style Datoviz APIs such as `dvz_*_alloc`; use retained scene constructors plus `dvz_visual_set_data*` uploads and explicit attach descriptors.",
+    "M071 completed the S023 gallery examples, visual QA docs, final contact sheets, and manual review pack.",
+    "Next mission: M072 should close S023 docs and spec index."
   ]
 }

@@ -43,6 +43,10 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | `texts_example.py` | Text rendering and typography | Adding and styling text in visualizations |
 | `texts_animated_example.py` | Animated text elements | Text animation and dynamic updates |
 | `vispy2_protocol_scatter.py` | VisPy2 protocol scatter producer | High-level scatter API rendered through the protocol backend |
+| `vispy2_protocol_marker.py` | VisPy2 protocol marker producer | Marker shapes, fills, strokes, and pixel sizes through the protocol backend |
+| `vispy2_protocol_segment.py` | VisPy2 protocol segment producer | Independent stroked segments with width and cap semantics |
+| `vispy2_protocol_path.py` | VisPy2 protocol path producer | Open multi-subpath polylines with cap/join semantics |
+| `vispy2_protocol_image_scalar.py` | VisPy2 protocol scalar image producer | Scalar gray image with explicit clim through ImageVisual v1 |
 | `vispy2_protocol_imshow.py` | VisPy2 protocol image producer | High-level image API rendered through the protocol backend |
 | `vispy2_protocol_point_over_image.py` | VisPy2 protocol overlay producer | Point/image composition through the protocol backend |
 | `vispy2_protocol_guides.py` | VisPy2 protocol guide API | Scatter, image, limits, labels, title, ticks, and grid intent |
@@ -143,6 +147,25 @@ Many examples support command-line arguments. Check the script for details:
 ```bash
 python examples/example_name.py --help
 ```
+
+
+### S023 Visual QA Pack
+
+The S023 protocol visual-family review pack renders formal protocol scenes through Matplotlib and Datoviz v0.4 and writes contact sheets plus manual notes:
+
+```bash
+PYTHONPATH=../datoviz:. \
+DYLD_LIBRARY_PATH=../datoviz/build/src \
+DVZ_SHADERC_RUNTIME_LIBRARY=../datoviz/build/src/libshaderc_shared.dylib \
+uv run python -m gsp.qa.visual run \
+  --backends matplotlib,datoviz \
+  --out artifacts/visual_qa/s023/latest-local \
+  --run-id latest-local \
+  --contact-sheet \
+  --resolution 800x600
+```
+
+Inspect `artifacts/visual_qa/s023/latest-local/contact_sheets/s023_all_cases.png` and record decisions in `artifacts/visual_qa/s023/latest-local/manual_notes.yaml`. If Datoviz v0.4 is not active, use `--backends matplotlib` for a reference-only run.
 
 ### Testing Optional Backends
 

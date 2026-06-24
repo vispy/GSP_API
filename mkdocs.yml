@@ -47,6 +47,7 @@ nav:
   - Home: index.md
   - About: about.md
   - Gallery: gallery.md
+  - S023 Visual QA: s023_visual_qa.md
   - Philosophy:
       - Overview: philosophy/README.md
       - Whitepaper: philosophy/whitepaper.md
