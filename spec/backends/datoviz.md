@@ -265,13 +265,33 @@ and `label`, and synthetic field readback succeeds. However, the current mixed v
 artifact leaves `visual_family`, `item_id`, `texel`, displayed color, and value unset in the live
 result. Treat that as the remaining Datoviz live payload parity gap.
 
+## M032 color pipeline selection
+
+The Datoviz v0.4 adapter exposes a figure-wide color-pipeline option through
+`DatovizV04ProtocolRenderer(color_pipeline=...)`:
+
+- `linear_srgb` is the renderer default and matches Datoviz's color-managed path: authored semantic
+  sRGB colors are converted to linear RGB before scene arithmetic and alpha blending.
+- `legacy_srgb_blend` is an opt-in compatibility mode for comparison against renderers that blend
+  directly in display/sRGB values, notably Matplotlib/Agg.
+
+`legacy_srgb_blend` requires a Datoviz binding with `dvz_figure_set_color_pipeline()` and
+`DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND`. If the binding is missing, GSP raises
+`DatovizV04Unavailable` instead of silently producing linear-light output.
+
+The S023 visual-QA harness defaults Datoviz comparison renders to `legacy_srgb_blend` so contact
+sheets compare Matplotlib/Agg and Datoviz geometry/rasterization with the same legacy display-space
+blend semantics. Use `python -m gsp.qa.visual run --datoviz-color-pipeline linear_srgb ...` to
+inspect the physically correct Datoviz mode.
+
 ## Post-M011 parity gap update
 
 The current GSP Datoviz adapter is still a slice, not parity:
 
 - implemented: point visual, RGBA/RGB uint8 image via texture fallback or sampled field, Datoviz
   capability translation, query decoding and binding gate, bounded point/image query execution
-  wrapper, bounded offscreen PNG capture, v0.4-dev wheel-stage smoke harness;
+  wrapper, bounded offscreen PNG capture, color-pipeline selection, v0.4-dev wheel-stage smoke
+  harness;
 - not implemented: scalar sampled-field images, live GPU/headless query execution validation,
   guide/all-rendered query scopes, scientific readback, tiled-source support.
 

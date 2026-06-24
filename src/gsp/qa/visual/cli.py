@@ -26,6 +26,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     run_parser.add_argument("--contact-sheet", action="store_true")
     run_parser.add_argument("--no-contact-sheet", action="store_true")
     run_parser.add_argument("--resolution", default="800x600")
+    run_parser.add_argument(
+        "--datoviz-color-pipeline",
+        choices=("linear_srgb", "legacy_srgb_blend"),
+        default="legacy_srgb_blend",
+        help="Datoviz color pipeline for S023 comparison renders.",
+    )
     run_parser.add_argument("--run-id", default=None)
 
     args = parser.parse_args(argv)
@@ -39,13 +45,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         report = run_visual_qa_suite(
             suite=args.suite,
             out_dir=Path(args.out),
-            backends=tuple(part.strip() for part in args.backends.split(",") if part.strip()),
+            backends=tuple(
+                part.strip() for part in args.backends.split(",") if part.strip()
+            ),
             case_ids=tuple(args.cases),
             contact_sheet=contact_sheet,
             run_id=args.run_id,
             resolution=(width, height),
+            datoviz_color_pipeline=args.datoviz_color_pipeline,
         )
-        print(report["report_path"] if "report_path" in report else str(Path(args.out) / "report.json"))
+        print(
+            report["report_path"]
+            if "report_path" in report
+            else str(Path(args.out) / "report.json")
+        )
         return 0
     raise AssertionError(f"unhandled command: {args.command}")
 
@@ -56,7 +69,9 @@ def _parse_resolution(value: str) -> tuple[int, int]:
         width = int(width_text)
         height = int(height_text)
     except ValueError as exc:
-        raise argparse.ArgumentTypeError("resolution must look like WIDTHxHEIGHT") from exc
+        raise argparse.ArgumentTypeError(
+            "resolution must look like WIDTHxHEIGHT"
+        ) from exc
     if width <= 0 or height <= 0:
         raise argparse.ArgumentTypeError("resolution dimensions must be positive")
     return width, height

@@ -7,7 +7,13 @@ import ctypes
 import numpy as np
 import pytest
 
-from gsp.protocol import ImageOrigin, ImageVisual, MarkerShape, MarkerVisual, PointVisual
+from gsp.protocol import (
+    ImageOrigin,
+    ImageVisual,
+    MarkerShape,
+    MarkerVisual,
+    PointVisual,
+)
 from gsp.protocol import (
     AxisProviderRequest,
     QueryCoordinateSpace,
@@ -100,7 +106,9 @@ class FakeDatovizV04:
         )
 
     def dvz_panel_set_background_color(self, panel, color):
-        self.calls.append(("set_background_color", panel, (color.r, color.g, color.b, color.a)))
+        self.calls.append(
+            ("set_background_color", panel, (color.r, color.g, color.b, color.a))
+        )
         return None
 
     def dvz_point(self, scene, flags):
@@ -120,7 +128,9 @@ class FakeDatovizV04:
         return 0
 
     def dvz_visual_set_texture(self, visual, pixels, width, height):
-        self.calls.append(("set_texture", visual, np.array(pixels, copy=True), width, height))
+        self.calls.append(
+            ("set_texture", visual, np.array(pixels, copy=True), width, height)
+        )
         return 0
 
     def dvz_visual_set_alpha_mode(self, visual, mode):
@@ -170,6 +180,15 @@ class FakeDatovizV04:
     def dvz_scene_destroy(self, scene):
         self.calls.append(("destroy", scene))
         self.destroyed = True
+
+
+class FakeDatovizV04WithColorPipeline(FakeDatovizV04):
+    DVZ_COLOR_PIPELINE_LINEAR_SRGB = 10
+    DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND = 11
+
+    def dvz_figure_set_color_pipeline(self, figure, pipeline):
+        self.calls.append(("figure_set_color_pipeline", figure, pipeline))
+        return None
 
 
 class FakeDatovizV04WithAxes(FakeDatovizV04):
@@ -357,7 +376,9 @@ class FakeDatovizV04WithImageSampling(FakeDatovizV04WithQueryCapabilities):
         return 0
 
 
-class FakeDatovizV04WithSampledFieldsAndImageSampling(FakeDatovizV04WithSampledFields, FakeDatovizV04WithImageSampling):
+class FakeDatovizV04WithSampledFieldsAndImageSampling(
+    FakeDatovizV04WithSampledFields, FakeDatovizV04WithImageSampling
+):
     pass
 
 
@@ -433,8 +454,39 @@ def _calls(fake, name):
     return [call for call in fake.calls if call[0] == name]
 
 
+def test_renderer_sets_datoviz_color_pipeline_when_binding_is_available():
+    fake = FakeDatovizV04WithColorPipeline()
+
+    DatovizV04ProtocolRenderer(dvz=fake, color_pipeline="legacy_srgb_blend")
+
+    assert _calls(fake, "figure_set_color_pipeline") == [
+        ("figure_set_color_pipeline", "figure", 11)
+    ]
+
+
+def test_renderer_defaults_to_linear_color_pipeline_when_binding_is_available():
+    fake = FakeDatovizV04WithColorPipeline()
+
+    DatovizV04ProtocolRenderer(dvz=fake)
+
+    assert _calls(fake, "figure_set_color_pipeline") == [
+        ("figure_set_color_pipeline", "figure", 10)
+    ]
+
+
+def test_renderer_rejects_legacy_color_pipeline_without_datoviz_binding():
+    with pytest.raises(
+        DatovizV04Unavailable, match="legacy sRGB blend mode is unavailable"
+    ):
+        DatovizV04ProtocolRenderer(
+            dvz=FakeDatovizV04(), color_pipeline="legacy_srgb_blend"
+        )
+
+
 def test_capability_snapshot_defers_query_support():
-    caps = gsp_capability_snapshot_from_datoviz(None, dvz=None, source="static-gsp-slice")
+    caps = gsp_capability_snapshot_from_datoviz(
+        None, dvz=None, source="static-gsp-slice"
+    )
 
     assert caps.server_name == "datoviz-v0.4-protocol-slice"
     assert caps.visual_families == ("point", "image")
@@ -445,7 +497,9 @@ def test_capability_snapshot_defers_query_support():
 
 
 def test_datoviz_capability_translation_preserves_raw_fields_without_overclaiming_query_support():
-    caps = gsp_capability_snapshot_from_datoviz(FakeDvzCapabilitySnapshot(), dvz=FakeDatovizV04WithAxes())
+    caps = gsp_capability_snapshot_from_datoviz(
+        FakeDvzCapabilitySnapshot(), dvz=FakeDatovizV04WithAxes()
+    )
 
     assert caps.server_name == "datoviz-v0.4-protocol-slice"
     assert caps.max_buffer_bytes == 512 * 1024 * 1024
@@ -461,12 +515,17 @@ def test_datoviz_capability_translation_preserves_raw_fields_without_overclaimin
 
 
 def test_datoviz_capabilities_promote_png_output_only_when_capture_binding_is_ready():
-    promoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithCapture()).capabilities()
+    promoted = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithCapture()
+    ).capabilities()
     unpromoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04()).capabilities()
 
     assert datoviz_v04_capture_ready(FakeDatovizV04WithCapture())
     assert promoted.output_formats == ("png",)
-    assert promoted.metadata["capture_support"] == "offscreen PNG screenshot/export; not scientific readback"
+    assert (
+        promoted.metadata["capture_support"]
+        == "offscreen PNG screenshot/export; not scientific readback"
+    )
     assert unpromoted.output_formats == ()
     assert "datoviz_capture_diagnostics" in unpromoted.metadata
 
@@ -488,43 +547,64 @@ def test_datoviz_query_binding_readiness_requires_queue_poll_and_decodable_resul
 
     assert datoviz_v04_query_binding_ready(ready)
     assert datoviz_v04_query_binding_diagnostics(ready) == ()
-    assert "DvzQueryResult" in " ".join(datoviz_v04_query_binding_diagnostics(incomplete))
+    assert "DvzQueryResult" in " ".join(
+        datoviz_v04_query_binding_diagnostics(incomplete)
+    )
 
 
 def test_datoviz_capabilities_promote_panel_query_only_when_query_binding_is_ready():
     promoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithQuery()).capabilities()
-    unpromoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithCapabilities()).capabilities()
+    unpromoted = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithCapabilities()
+    ).capabilities()
 
     assert promoted.query_modes == ("panel-query", "point-item", "image-texel")
     assert promoted.supports_query_scope(QueryScope.DATA)
-    assert promoted.adapt_query_request(
-        QueryRequest(
-            id="query:datoviz",
-            panel_id="panel:main",
-            coordinate=(0.0, 0.0),
-            coordinate_space=QueryCoordinateSpace.PANEL,
-        )
-    ).outcome.value == "accept"
+    assert (
+        promoted.adapt_query_request(
+            QueryRequest(
+                id="query:datoviz",
+                panel_id="panel:main",
+                coordinate=(0.0, 0.0),
+                coordinate_space=QueryCoordinateSpace.PANEL,
+            )
+        ).outcome.value
+        == "accept"
+    )
     assert "datoviz_query_binding_diagnostics" not in promoted.metadata
     assert unpromoted.query_modes == ()
     assert "datoviz_query_binding_diagnostics" in unpromoted.metadata
 
 
 def test_decode_datoviz_query_statuses_to_gsp_statuses():
-    assert decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_MISS)).status == QueryStatus.MISS
     assert (
-        decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_OUTSIDE_PANEL)).status
+        decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_MISS)).status
+        == QueryStatus.MISS
+    )
+    assert (
+        decode_dvz_query_result(
+            FakeDvzQueryResult(status=DVZ_QUERY_STATUS_OUTSIDE_PANEL)
+        ).status
         == QueryStatus.OUTSIDE_PANEL
     )
     assert (
-        decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_NO_CAPABLE_VISUAL)).status
+        decode_dvz_query_result(
+            FakeDvzQueryResult(status=DVZ_QUERY_STATUS_NO_CAPABLE_VISUAL)
+        ).status
         == QueryStatus.UNSUPPORTED
     )
     assert (
-        decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_STALE_DROPPED)).status
+        decode_dvz_query_result(
+            FakeDvzQueryResult(status=DVZ_QUERY_STATUS_STALE_DROPPED)
+        ).status
         == QueryStatus.DROPPED
     )
-    assert decode_dvz_query_result(FakeDvzQueryResult(status=DVZ_QUERY_STATUS_DECODE_FAILED)).status == QueryStatus.FAILED
+    assert (
+        decode_dvz_query_result(
+            FakeDvzQueryResult(status=DVZ_QUERY_STATUS_DECODE_FAILED)
+        ).status
+        == QueryStatus.FAILED
+    )
 
 
 def test_decode_datoviz_point_hit_to_gsp_query_result():
@@ -639,7 +719,10 @@ def test_query_panel_returns_dropped_when_bounded_poll_has_no_result():
     result = renderer.query_panel(request)
 
     assert result.status == QueryStatus.DROPPED
-    assert result.diagnostic == "Datoviz query produced no resolved result during bounded poll"
+    assert (
+        result.diagnostic
+        == "Datoviz query produced no resolved result during bounded poll"
+    )
 
 
 def test_query_panel_renders_offscreen_frame_before_poll_when_available():
@@ -666,8 +749,14 @@ def test_query_panel_renders_offscreen_frame_before_poll_when_available():
 
     names = [call[0] for call in fake.calls]
     assert result.status == QueryStatus.HIT
-    assert names.index("panel_query") < names.index("view_render_once") < names.index("scene_poll_query")
-    assert _calls(fake, "view_offscreen") == [("view_offscreen", "app", "figure", 64, 64)]
+    assert (
+        names.index("panel_query")
+        < names.index("view_render_once")
+        < names.index("scene_poll_query")
+    )
+    assert _calls(fake, "view_offscreen") == [
+        ("view_offscreen", "app", "figure", 64, 64)
+    ]
 
 
 def test_query_panel_rejects_unadvertised_scopes_and_policies():
@@ -691,7 +780,9 @@ def test_query_panel_rejects_unadvertised_scopes_and_policies():
             hit_policy=QueryHitPolicy.ALL,
         )
     )
-    data_coordinates = renderer.query_panel(QueryRequest(id="query:data", panel_id="panel:main", coordinate=(0.0, 0.0)))
+    data_coordinates = renderer.query_panel(
+        QueryRequest(id="query:data", panel_id="panel:main", coordinate=(0.0, 0.0))
+    )
 
     assert guides.status == QueryStatus.UNSUPPORTED
     assert "data scope only" in str(guides.diagnostic)
@@ -723,7 +814,9 @@ def test_datoviz_axis_provider_is_capability_gated():
 
 def test_capability_snapshot_selects_datoviz_axis_provider_when_facade_exposes_symbols():
     renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithAxes())
-    provider = renderer.capabilities().select_axis_provider(AxisProviderRequest(policy="prefer_native", tick_authority="backend_resolved"))
+    provider = renderer.capabilities().select_axis_provider(
+        AxisProviderRequest(policy="prefer_native", tick_authority="backend_resolved")
+    )
 
     assert provider is not None
     assert provider.provider_id == DATOVIZ_V04_AXIS_PROVIDER
@@ -749,10 +842,14 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     set_data = _calls(fake, "set_data")
     assert [call[2] for call in set_data] == ["position", "color", "diameter_px"]
     np.testing.assert_allclose(set_data[0][3], [[-0.5, 0.25, 0.0], [0.5, -0.25, 0.0]])
-    np.testing.assert_array_equal(set_data[1][3], [[255, 0, 0, 255], [0, 128, 255, 128]])
+    np.testing.assert_array_equal(
+        set_data[1][3], [[255, 0, 0, 255], [0, 128, 255, 128]]
+    )
     np.testing.assert_allclose(set_data[2][3], [2.0, 4.0], rtol=1e-6)
     assert _calls(fake, "set_alpha_mode") == [("set_alpha_mode", "point-visual", 1)]
-    assert _calls(fake, "set_query_capabilities") == [("set_query_capabilities", "point-visual", 0x02)]
+    assert _calls(fake, "set_query_capabilities") == [
+        ("set_query_capabilities", "point-visual", 0x02)
+    ]
     add_visual_call = _calls(fake, "add_visual")[-1]
     assert add_visual_call[:3] == ("add_visual", "panel", "point-visual")
     attach_desc = add_visual_call[3]
@@ -768,7 +865,9 @@ def test_add_marker_visual_uses_dvz_marker_attributes_shape_angle_and_style():
         id="visual:markers",
         positions=np.array([[-0.5, 0.25], [0.5, -0.25]], dtype=np.float32),
         shape=(MarkerShape.DISC, MarkerShape.DIAMOND),
-        fill_colors=np.array([[1.0, 0.0, 0.0, 1.0], [0.0, 0.5, 1.0, 0.5]], dtype=np.float32),
+        fill_colors=np.array(
+            [[1.0, 0.0, 0.0, 1.0], [0.0, 0.5, 1.0, 0.5]], dtype=np.float32
+        ),
         sizes=np.array([12.0, 24.0], dtype=np.float32),
         angle=np.array([0.0, 0.5], dtype=np.float32),
         stroke_color=np.array([0, 0, 0, 255], dtype=np.uint8),
@@ -784,14 +883,24 @@ def test_add_marker_visual_uses_dvz_marker_attributes_shape_angle_and_style():
     assert style_call[2].aspect == 2
     assert style_call[2].edge_color == [0, 0, 0, 255]
     set_data = _calls(fake, "set_data")
-    assert [call[2] for call in set_data] == ["position", "color", "diameter_px", "angle", "shape"]
+    assert [call[2] for call in set_data] == [
+        "position",
+        "color",
+        "diameter_px",
+        "angle",
+        "shape",
+    ]
     np.testing.assert_allclose(set_data[0][3], [[-0.5, 0.25, 0.0], [0.5, -0.25, 0.0]])
-    np.testing.assert_array_equal(set_data[1][3], [[255, 0, 0, 255], [0, 128, 255, 128]])
+    np.testing.assert_array_equal(
+        set_data[1][3], [[255, 0, 0, 255], [0, 128, 255, 128]]
+    )
     np.testing.assert_allclose(set_data[2][3], [12.0, 24.0], rtol=1e-6)
     np.testing.assert_allclose(set_data[3][3], [0.0, 0.5], rtol=1e-6)
     np.testing.assert_array_equal(set_data[4][3], [0, 3])
     assert _calls(fake, "set_alpha_mode") == [("set_alpha_mode", "marker-visual", 1)]
-    assert _calls(fake, "set_query_capabilities") == [("set_query_capabilities", "marker-visual", 0x02)]
+    assert _calls(fake, "set_query_capabilities") == [
+        ("set_query_capabilities", "marker-visual", 0x02)
+    ]
     add_visual_call = _calls(fake, "add_visual")[-1]
     assert add_visual_call[:3] == ("add_visual", "panel", "marker-visual")
 
@@ -818,7 +927,9 @@ def test_renderer_configures_equal_aspect_ndc_panel_when_available():
     fake = FakeDatovizV04()
     DatovizV04ProtocolRenderer(dvz=fake)
 
-    assert _calls(fake, "set_background_color") == [("set_background_color", "panel", (255, 255, 255, 255))]
+    assert _calls(fake, "set_background_color") == [
+        ("set_background_color", "panel", (255, 255, 255, 255))
+    ]
     view_call = _calls(fake, "set_view2d")[0]
     assert view_call[1] == "panel"
     assert view_call[2].aspect == 1
@@ -849,12 +960,16 @@ def test_add_image_visual_uses_sampling_api_and_texture_upload():
     dvz_visual = renderer.add_image_visual(visual)
 
     assert dvz_visual == "image-visual"
-    assert _calls(fake, "image_set_sampling") == [("image_set_sampling", "image-visual", 1)]
+    assert _calls(fake, "image_set_sampling") == [
+        ("image_set_sampling", "image-visual", 1)
+    ]
     assert [call[2] for call in _calls(fake, "set_data")] == ["position", "texcoords"]
     texture_call = _calls(fake, "set_texture")[0]
     assert texture_call[1] == "image-visual"
     np.testing.assert_array_equal(texture_call[2][..., :3], image)
-    np.testing.assert_array_equal(texture_call[2][..., 3], np.full((2, 2), 255, dtype=np.uint8))
+    np.testing.assert_array_equal(
+        texture_call[2][..., 3], np.full((2, 2), 255, dtype=np.uint8)
+    )
     assert texture_call[3:] == (2, 2)
     assert _calls(fake, "set_query_capabilities") == [
         ("set_query_capabilities", "image-visual", 0x12)
@@ -875,7 +990,9 @@ def test_add_image_visual_maps_linear_sampling():
 
     renderer.add_image_visual(visual)
 
-    assert _calls(fake, "image_set_sampling") == [("image_set_sampling", "image-visual", 0)]
+    assert _calls(fake, "image_set_sampling") == [
+        ("image_set_sampling", "image-visual", 0)
+    ]
 
 
 def test_add_image_visual_rejects_nearest_without_datoviz_sampler_api():
@@ -923,9 +1040,13 @@ def test_add_image_visual_uses_sampled_field_path_with_sampling_api():
 
     assert dvz_visual == "image-visual"
     assert datoviz_v04_sampled_field_ready(fake)
-    assert _calls(fake, "image_set_sampling") == [("image_set_sampling", "image-visual", 1)]
+    assert _calls(fake, "image_set_sampling") == [
+        ("image_set_sampling", "image-visual", 1)
+    ]
     assert _calls(fake, "sampled_field")
-    assert _calls(fake, "set_field") == [("set_field", "image-visual", "field", "sampled-field")]
+    assert _calls(fake, "set_field") == [
+        ("set_field", "image-visual", "field", "sampled-field")
+    ]
     assert _calls(fake, "set_texture") == []
     assert renderer.sampled_fields == {"visual:image": "sampled-field"}
 
@@ -945,7 +1066,9 @@ def test_capture_png_bytes_uses_offscreen_view_and_returns_png_bytes():
 
     assert png.startswith(b"\x89PNG")
     assert _calls(fake, "app") == [("app", "scene")]
-    assert _calls(fake, "view_offscreen") == [("view_offscreen", "app", "figure", 320, 240)]
+    assert _calls(fake, "view_offscreen") == [
+        ("view_offscreen", "app", "figure", 320, 240)
+    ]
     assert _calls(fake, "render_once") == [("render_once", "app")]
     capture_calls = _calls(fake, "capture_png")
     assert capture_calls[0][1] == "offscreen-view"
@@ -958,13 +1081,17 @@ def test_capture_png_bytes_rejects_missing_capture_binding():
 
     assert not datoviz_v04_capture_ready(fake)
     assert "dvz_view_capture_png" in " ".join(datoviz_v04_capture_diagnostics(fake))
-    with pytest.raises(DatovizV04Unavailable, match="offscreen PNG capture is unavailable"):
+    with pytest.raises(
+        DatovizV04Unavailable, match="offscreen PNG capture is unavailable"
+    ):
         renderer.capture_png_bytes()
 
 
 def test_lower_origin_texcoords_are_not_flipped():
     texcoords = _image_texcoords(ImageOrigin.LOWER)
-    np.testing.assert_allclose(texcoords, [[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]])
+    np.testing.assert_allclose(
+        texcoords, [[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]]
+    )
 
 
 def test_image_slice_rejects_unlocked_semantics():
@@ -1049,22 +1176,46 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
     fake = FakeDatovizV04WithAxes()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
 
-    renderer.configure_view2d_axes(View2D(id="view:main", panel_id="panel:main", x_range=(-1.0, 2.0), y_range=(-3.0, 4.0)), x_label="x", y_label="y", grid=True)
+    renderer.configure_view2d_axes(
+        View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(-1.0, 2.0),
+            y_range=(-3.0, 4.0),
+        ),
+        x_label="x",
+        y_label="y",
+        grid=True,
+    )
 
     assert _calls(fake, "set_domain") == [
         ("set_domain", "panel", 0, -1.0, 2.0),
         ("set_domain", "panel", 1, -3.0, 4.0),
     ]
     assert _calls(fake, "set_view2d")[-1] == ("set_view2d", "panel", "view2d")
-    assert _calls(fake, "panel_axis") == [("panel_axis", "panel", 0), ("panel_axis", "panel", 1)]
-    assert _calls(fake, "set_tick_policy") == [("set_tick_policy", "axis:0", "tick-policy"), ("set_tick_policy", "axis:1", "tick-policy")]
-    assert _calls(fake, "set_grid") == [("set_grid", "axis:0", True), ("set_grid", "axis:1", True)]
-    assert _calls(fake, "set_label") == [("set_label", "axis:0", "x"), ("set_label", "axis:1", "y")]
+    assert _calls(fake, "panel_axis") == [
+        ("panel_axis", "panel", 0),
+        ("panel_axis", "panel", 1),
+    ]
+    assert _calls(fake, "set_tick_policy") == [
+        ("set_tick_policy", "axis:0", "tick-policy"),
+        ("set_tick_policy", "axis:1", "tick-policy"),
+    ]
+    assert _calls(fake, "set_grid") == [
+        ("set_grid", "axis:0", True),
+        ("set_grid", "axis:1", True),
+    ]
+    assert _calls(fake, "set_label") == [
+        ("set_label", "axis:0", "x"),
+        ("set_label", "axis:1", "y"),
+    ]
 
 
 def test_configure_view2d_axes_rejects_unavailable_or_strict_explicit_ticks():
     with pytest.raises(DatovizV04Unavailable, match="missing v0.4-dev axis symbols"):
-        DatovizV04ProtocolRenderer(dvz=FakeDatovizV04()).configure_view2d_axes(View2D(id="view:main", panel_id="panel:main"))
+        DatovizV04ProtocolRenderer(dvz=FakeDatovizV04()).configure_view2d_axes(
+            View2D(id="view:main", panel_id="panel:main")
+        )
 
     with pytest.raises(DatovizV04Unsupported, match="explicit GSP ticks"):
         DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithAxes()).configure_view2d_axes(
@@ -1100,7 +1251,9 @@ def test_imported_datoviz_query_result_binding_is_decodable_when_available():
     dvz = pytest.importorskip("datoviz")
     query_result_type = getattr(dvz, "DvzQueryResult", None)
     if query_result_type is None or not hasattr(query_result_type, "_fields_"):
-        pytest.skip("installed Datoviz binding does not expose decodable DvzQueryResult fields")
+        pytest.skip(
+            "installed Datoviz binding does not expose decodable DvzQueryResult fields"
+        )
 
     raw = query_result_type()
     raw.request_id = 1
@@ -1128,7 +1281,9 @@ def test_imported_datoviz_query_capability_promotes_when_binding_is_ready():
 def test_imported_datoviz_sampled_field_binding_smoke_when_available():
     dvz = pytest.importorskip("datoviz")
     if not datoviz_v04_sampled_field_ready(dvz):
-        pytest.skip("installed Datoviz binding does not expose sampled-field image symbols")
+        pytest.skip(
+            "installed Datoviz binding does not expose sampled-field image symbols"
+        )
 
     assert datoviz_v04_sampled_field_diagnostics(dvz) == ()
 
@@ -1136,6 +1291,8 @@ def test_imported_datoviz_sampled_field_binding_smoke_when_available():
 def test_imported_datoviz_capture_binding_smoke_when_available():
     dvz = pytest.importorskip("datoviz")
     if not datoviz_v04_capture_ready(dvz):
-        pytest.skip("installed Datoviz binding does not expose offscreen PNG capture symbols")
+        pytest.skip(
+            "installed Datoviz binding does not expose offscreen PNG capture symbols"
+        )
 
     assert datoviz_v04_capture_diagnostics(dvz) == ()

@@ -59,10 +59,15 @@ def test_visual_qa_run_writes_matplotlib_artifacts_and_report(tmp_path: Path) ->
 
     payload = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
     assert payload["run_id"] == "test-run"
+    assert payload["datoviz_color_pipeline"] == "legacy_srgb_blend"
     assert payload["datoviz_probe_summary"]["facade_imported"] is True
+    manifest = json.loads((tmp_path / "run_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["datoviz_color_pipeline"] == "legacy_srgb_blend"
 
 
-def test_visual_qa_datoviz_backend_reports_rendered_or_unsupported(tmp_path: Path) -> None:
+def test_visual_qa_datoviz_backend_reports_rendered_or_unsupported(
+    tmp_path: Path,
+) -> None:
     """The Datoviz path renders or writes explicit unsupported diagnostics."""
     report = run_visual_qa_suite(
         out_dir=tmp_path,
@@ -76,6 +81,7 @@ def test_visual_qa_datoviz_backend_reports_rendered_or_unsupported(tmp_path: Pat
     assert isinstance(case, dict)
     backend = case["backends"]["datoviz"]
     assert backend["status"] in {"rendered", "unsupported"}
+    assert backend["datoviz_color_pipeline"] == "legacy_srgb_blend"
     if backend["status"] == "rendered":
         assert Path(str(backend["artifact_path"])).stat().st_size > 0
         assert "backends/datoviz/" in str(backend["artifact_path"])
@@ -85,6 +91,7 @@ def test_visual_qa_datoviz_backend_reports_rendered_or_unsupported(tmp_path: Pat
         assert payload["schema_kind"] == "gsp.visual_qa.unsupported"
         assert payload["backend_id"] == "datoviz"
         assert payload["case_id"] == "point/basic_ndc"
+        assert payload["datoviz_color_pipeline"] == "legacy_srgb_blend"
 
 
 def test_visual_qa_datoviz_v04_alias_normalizes_to_datoviz(tmp_path: Path) -> None:
@@ -102,9 +109,29 @@ def test_visual_qa_datoviz_v04_alias_normalizes_to_datoviz(tmp_path: Path) -> No
     assert manifest["backends"] == ["datoviz"]
 
 
+def test_visual_qa_datoviz_color_pipeline_override_is_recorded(tmp_path: Path) -> None:
+    """S023 can opt out of the Matplotlib-compatibility color pipeline."""
+    report = run_visual_qa_suite(
+        out_dir=tmp_path,
+        backends=("datoviz",),
+        case_ids=("point/basic_ndc",),
+        run_id="test-datoviz-linear",
+        resolution=(96, 96),
+        datoviz_color_pipeline="linear_srgb",
+    )
+
+    assert report["datoviz_color_pipeline"] == "linear_srgb"
+    backend = report["cases"][0]["backends"]["datoviz"]
+    assert backend["datoviz_color_pipeline"] == "linear_srgb"
+    manifest = json.loads((tmp_path / "run_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["datoviz_color_pipeline"] == "linear_srgb"
+
+
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:
     """The S023 harness uses the v0.4 protocol renderer, not the legacy renderer package."""
     source_root = Path("src/gsp/qa/visual")
-    combined = "\n".join(path.read_text(encoding="utf-8") for path in source_root.glob("*.py"))
+    combined = "\n".join(
+        path.read_text(encoding="utf-8") for path in source_root.glob("*.py")
+    )
 
     assert "gsp_datoviz.renderer" not in combined
