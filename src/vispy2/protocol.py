@@ -19,6 +19,7 @@ from gsp.protocol import (
     AxisGuide,
     AxisSide,
     CoordinateSpace,
+    FontRole,
     ImageColormap,
     ImageInterpolation,
     ImageOrigin,
@@ -31,6 +32,9 @@ from gsp.protocol import (
     PathVisual,
     PointVisual,
     SegmentVisual,
+    TextAnchorX,
+    TextAnchorY,
+    TextVisual,
     StrokeCap,
     StrokeJoin,
     TickSpec,
@@ -45,6 +49,7 @@ from gsp_matplotlib.protocol_renderer import (
     render_path_visual,
     render_point_visual,
     render_segment_visual,
+    render_text_visual,
 )
 
 
@@ -67,7 +72,13 @@ class Figure:
     def visuals(
         self,
     ) -> tuple[
-        PointVisual | MarkerVisual | SegmentVisual | PathVisual | ImageVisual, ...
+        PointVisual
+        | MarkerVisual
+        | SegmentVisual
+        | PathVisual
+        | ImageVisual
+        | TextVisual,
+        ...,
     ]:
         """Return protocol visuals in creation order."""
         return tuple(visual for axes in self.axes for visual in axes.visuals)
@@ -110,6 +121,8 @@ class Figure:
                 render_path_visual(mpl_axes, visual)
             elif isinstance(visual, PointVisual):
                 render_point_visual(mpl_axes, visual)
+            elif isinstance(visual, TextVisual):
+                render_text_visual(mpl_axes, visual)
             else:
                 raise TypeError(f"unsupported protocol visual: {type(visual)!r}")
         if self.axes:
@@ -149,7 +162,12 @@ class Axes:
 
     figure: Figure
     visuals: list[
-        PointVisual | MarkerVisual | SegmentVisual | PathVisual | ImageVisual
+        PointVisual
+        | MarkerVisual
+        | SegmentVisual
+        | PathVisual
+        | ImageVisual
+        | TextVisual
     ] = field(default_factory=list)
     panel: Panel = field(init=False)
     view: View2D = field(init=False)
@@ -441,6 +459,53 @@ class Axes:
         """Create one open polyline path from x/y or an ``(N, 2|3)`` array."""
         return self.path(_positions(x, y), None, **kwargs)
 
+    def text(
+        self,
+        x: npt.ArrayLike,
+        y: npt.ArrayLike | None,
+        texts: str | tuple[str, ...] | list[str],
+        *,
+        color: npt.ArrayLike | None = None,
+        font_size_px: npt.ArrayLike | float = 13.0,
+        font_role: str | FontRole = FontRole.DEFAULT,
+        anchor_x: str
+        | TextAnchorX
+        | tuple[str | TextAnchorX, ...]
+        | list[str | TextAnchorX] = TextAnchorX.LEFT,
+        anchor_y: str
+        | TextAnchorY
+        | tuple[str | TextAnchorY, ...]
+        | list[str | TextAnchorY] = TextAnchorY.BASELINE,
+        rotation_rad: npt.ArrayLike | float = 0.0,
+        z_order: int = 0,
+        id: str | None = None,
+    ) -> TextVisual:
+        """Create a protocol TextVisual for explicit labels/annotations."""
+        positions = _positions(x, y)
+        text_values = _text_values(texts, positions.shape[0])
+        visual = TextVisual(
+            id=id or _visual_id("text"),
+            texts=text_values,
+            positions=positions,
+            coordinate_space=CoordinateSpace.DATA,
+            rgba=_text_rgba(color, positions.shape[0]),
+            font_size_px=_positive_values(
+                font_size_px, positions.shape[0], field_name="font_size_px"
+            ),
+            font_role=_font_role(font_role),
+            anchor_x=_text_anchor_x(anchor_x, positions.shape[0]),
+            anchor_y=_text_anchor_y(anchor_y, positions.shape[0]),
+            rotation_rad=_angles(rotation_rad, positions.shape[0]),
+            z_order=int(z_order),
+        )
+        self.visuals.append(visual)
+        self.attachments.append(
+            VisualAttachment(
+                visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id
+            )
+        )
+        return visual
+
     @property
     def _index(self) -> int:
         return int(self.panel.id.rsplit(":", maxsplit=1)[1])
@@ -539,6 +604,17 @@ def plot(x: npt.ArrayLike, y: npt.ArrayLike | None = None, **kwargs: Any) -> Pat
     return ax.plot(x, y, **kwargs)
 
 
+def text(
+    x: npt.ArrayLike,
+    y: npt.ArrayLike | None,
+    texts: str | tuple[str, ...] | list[str],
+    **kwargs: Any,
+) -> TextVisual:
+    """Create a text visual in a temporary one-axes figure."""
+    _, ax = subplots()
+    return ax.text(x, y, texts, **kwargs)
+
+
 def imshow(image: npt.ArrayLike, **kwargs: Any) -> ImageVisual:
     """Create an image visual in a temporary one-axes figure."""
     _, ax = subplots()
@@ -600,6 +676,82 @@ def _angles(
     if array.ndim != 1 or array.shape[0] != count_:
         raise ValueError("angle must be scalar or shape (N,)")
     return np.ascontiguousarray(array).astype(np.float32, copy=False)
+
+
+def _text_values(
+    texts: str | tuple[str, ...] | list[str], count_: int
+) -> tuple[str, ...]:
+    if isinstance(texts, str):
+        if count_ != 1:
+            raise ValueError("single text string requires exactly one position")
+        return (texts,)
+    values = tuple(texts)
+    if len(values) != count_:
+        raise ValueError("texts length must match positions")
+    return values
+
+
+def _text_rgba(
+    value: npt.ArrayLike | None, count_: int
+) -> npt.NDArray[np.uint8] | npt.NDArray[np.float32]:
+    if value is None:
+        return np.array([0, 0, 0, 255], dtype=np.uint8)
+    return _colors(value, count_)
+
+
+def _positive_values(
+    value: npt.ArrayLike | float, count_: int, *, field_name: str
+) -> npt.NDArray[np.float32] | float:
+    values = _sizes(value, count_)
+    if isinstance(values, np.ndarray):
+        if np.any(values <= 0):
+            raise ValueError(f"{field_name} must be positive")
+        return values
+    if values <= 0:
+        raise ValueError(f"{field_name} must be positive")
+    return values
+
+
+def _font_role(value: str | FontRole) -> FontRole:
+    if isinstance(value, FontRole):
+        return value
+    return FontRole(value)
+
+
+def _text_anchor_x(
+    value: str | TextAnchorX | tuple[str | TextAnchorX, ...] | list[str | TextAnchorX],
+    count_: int,
+) -> TextAnchorX | tuple[TextAnchorX, ...]:
+    if isinstance(value, (str, TextAnchorX)):
+        return _text_anchor_x_value(value)
+    anchors = tuple(_text_anchor_x_value(item) for item in value)
+    if len(anchors) != count_:
+        raise ValueError("anchor_x must be scalar or shape (N,)")
+    return anchors
+
+
+def _text_anchor_x_value(value: str | TextAnchorX) -> TextAnchorX:
+    if isinstance(value, TextAnchorX):
+        return value
+    return TextAnchorX(value)
+
+
+def _text_anchor_y(
+    value: str | TextAnchorY | tuple[str | TextAnchorY, ...] | list[str | TextAnchorY],
+    count_: int,
+) -> TextAnchorY | tuple[TextAnchorY, ...]:
+    if isinstance(value, (str, TextAnchorY)):
+        return _text_anchor_y_value(value)
+    anchors = tuple(_text_anchor_y_value(item) for item in value)
+    if len(anchors) != count_:
+        raise ValueError("anchor_y must be scalar or shape (N,)")
+    return anchors
+
+
+def _text_anchor_y_value(value: str | TextAnchorY) -> TextAnchorY:
+    if isinstance(value, TextAnchorY):
+        return value
+    return TextAnchorY(value)
 
 
 def _marker_shapes(

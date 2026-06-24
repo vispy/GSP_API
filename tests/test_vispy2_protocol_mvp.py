@@ -15,6 +15,7 @@ import vispy2 as vp
 from gsp.protocol import (
     AxisDimension,
     CoordinateSpace,
+    FontRole,
     ImageOrigin,
     ImageVisual,
     MarkerShape,
@@ -25,6 +26,9 @@ from gsp.protocol import (
     SegmentVisual,
     StrokeCap,
     StrokeJoin,
+    TextAnchorX,
+    TextAnchorY,
+    TextVisual,
     TickSpecKind,
     View2D,
 )
@@ -142,6 +146,67 @@ def test_subplots_path_and_plot_emit_path_visuals():
     assert plotted.path_lengths == (2,)
 
 
+def test_subplots_text_emits_text_visual():
+    fig, ax = vp.subplots()
+
+    visual = ax.text(
+        np.array([-0.5, 0.5], dtype=np.float32),
+        np.array([0.25, -0.25], dtype=np.float32),
+        ["left", "right"],
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+        font_size_px=np.array([16.0, 24.0], dtype=np.float32),
+        font_role="monospace",
+        anchor_x=("left", TextAnchorX.RIGHT),
+        anchor_y=TextAnchorY.CENTER,
+        rotation_rad=np.array([0.0, 0.5], dtype=np.float32),
+        z_order=3,
+        id="visual:text",
+    )
+
+    assert isinstance(visual, TextVisual)
+    assert visual.coordinate_space == CoordinateSpace.DATA
+    assert fig.visuals() == (visual,)
+    assert fig.attachments()[0].visual_id == "visual:text"
+    assert visual.texts == ("left", "right")
+    np.testing.assert_allclose(visual.positions, [[-0.5, 0.25], [0.5, -0.25]])
+    np.testing.assert_array_equal(visual.rgba, [[255, 0, 0, 255], [255, 0, 0, 255]])
+    np.testing.assert_allclose(visual.font_size_values(), [16.0, 24.0])
+    assert visual.font_role == FontRole.MONOSPACE
+    assert visual.anchor_x_values() == (TextAnchorX.LEFT, TextAnchorX.RIGHT)
+    assert visual.anchor_y_values() == (TextAnchorY.CENTER, TextAnchorY.CENTER)
+    np.testing.assert_allclose(visual.rotation_values(), [0.0, 0.5])
+    assert visual.z_order == 3
+
+
+def test_text_rejects_deferred_font_and_mismatched_texts():
+    _, ax = vp.subplots()
+
+    with pytest.raises(ValueError, match="texts length"):
+        ax.text([0.0, 1.0], [0.0, 1.0], ["one"])
+
+    with pytest.raises(ValueError):
+        ax.text([0.0], [0.0], "one", font_role="Helvetica")
+
+    with pytest.raises(ValueError, match="font_size_px"):
+        ax.text([0.0], [0.0], "one", font_size_px=0.0)
+
+
+def test_vispy2_text_renders_through_matplotlib_protocol_backend():
+    fig, ax = vp.subplots()
+    ax.text(
+        [0.0], [0.0], "center", anchor_x="center", anchor_y="center", id="visual:text"
+    )
+
+    mpl_fig, mpl_axes = fig.render_matplotlib()
+    try:
+        assert len(mpl_axes.texts) == 1
+        assert mpl_axes.texts[0].get_text() == "center"
+        assert mpl_axes.texts[0].get_gid() == "visual:text"
+        assert mpl_axes.texts[0].get_ha() == "center"
+    finally:
+        plt.close(mpl_fig)
+
+
 def test_vispy2_output_renders_through_matplotlib_protocol_backend():
     fig, ax = vp.subplots()
     ax.imshow(
@@ -212,12 +277,14 @@ def test_top_level_helpers_emit_protocol_visuals():
     )
     path = vp.path(np.array([[0.0, 0.0], [1.0, 0.0]], dtype=np.float32))
     image = vp.imshow(np.zeros((1, 1), dtype=np.float32))
+    label = vp.text([0.0], [0.0], "label")
 
     assert isinstance(point, PointVisual)
     assert isinstance(marker, MarkerVisual)
     assert isinstance(segment, SegmentVisual)
     assert isinstance(path, PathVisual)
     assert isinstance(image, ImageVisual)
+    assert isinstance(label, TextVisual)
 
 
 def test_vispy2_guide_apis_emit_semantic_protocol_guides():
