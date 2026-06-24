@@ -35,7 +35,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 | Figure/canvas | `dvz_figure(scene, width, height, flags)` | feasible |
 | Panel/viewport | `dvz_panel()` or `dvz_panel_full()` | feasible; convert GSP pixel viewports to normalized panel desc |
 | Point visual | `dvz_point()` plus `dvz_visual_set_data()` for `position`, `color`, `diameter_px` | feasible after point-size semantic alignment |
-| Path visual | `dvz_path()` plus `position`, `color`, `stroke_width`, subpaths, caps, and joins | feasible when path helpers are exposed |
+| Path visual | `dvz_path()` plus `position`, `color`, `stroke_width_px`, subpaths, caps, and joins | feasible when path helpers are exposed |
 | Image visual | `dvz_image()` plus `position`, `texcoords`, sampled field or texture binding | feasible after image origin/interpolation confirmation |
 | Capabilities | `dvz_capability_snapshot()` | feasible |
 | Queries | `dvz_panel_query()` / `dvz_scene_poll_query()` | conceptually aligned; local `../datoviz` headers define `DvzQueryResult`, but the current GSP env imports Datoviz 0.3.5 |
@@ -66,7 +66,7 @@ Current supported surface:
 | Point visual | `dvz_point()` + `position`, `color`, `diameter_px` attributes | implemented for NDC positions |
 | Point size | GSP screen-pixel diameter uploaded to Datoviz `diameter_px` | implemented |
 | Marker visual | `dvz_marker()` + `position`, `color`, `diameter_px`, `angle`, `shape` attributes | implemented when marker facade symbols are exposed |
-| Path visual | `dvz_path()` + `position`, `color`, `stroke_width`, subpaths, caps, joins | implemented when path facade symbols are exposed |
+| Path visual | `dvz_path()` + `position`, `color`, `stroke_width_px`, subpaths, caps, joins | implemented when path facade symbols are exposed |
 | Image visual | `dvz_image()` + `position`, `texcoords`, `dvz_visual_set_texture()` | implemented for uint8 RGB/RGBA, nearest, NDC extents |
 | Image scalar fields | sampled-field path | deferred to `DATOVIZ-V04-IMAGE-FIELD-CONTRACT` |
 | Queries | Datoviz panel query APIs | not advertised; deferred to `DATOVIZ-V04-QUERY-BINDING` |

@@ -33,7 +33,7 @@ S023.
 - Matplotlib: LineCollection or Path/Patch collection depending on what gives clean open-subpath
   semantics; keep implementation simple and typed.
 - Datoviz v0.4: `dvz_path(scene, flags)`, upload `"position"`, `"color"`, and always
-  `"stroke_width"`; call `dvz_path_set_subpaths`, `dvz_path_set_caps`, and `dvz_path_set_join`
+  `"stroke_width_px"`; call `dvz_path_set_subpaths`, `dvz_path_set_caps`, and `dvz_path_set_join`
   when present.
 - Datoviz expects per-point color/width arrays; expand GSP per-path values using `path_lengths`.
 

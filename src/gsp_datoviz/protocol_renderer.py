@@ -443,8 +443,8 @@ class DatovizV04ProtocolRenderer:
         )
         if join_result not in (0, None, True):
             raise DatovizV04Unsupported("Datoviz path join configuration failed")
-        subpath_result = self.dvz.dvz_path_set_subpaths(
-            dvz_visual, len(visual.path_lengths), subpaths
+        subpath_result = _set_path_subpaths(
+            self.dvz, dvz_visual, len(visual.path_lengths), subpaths
         )
         if subpath_result not in (0, None, True):
             raise DatovizV04Unsupported("Datoviz path subpath configuration failed")
@@ -452,7 +452,7 @@ class DatovizV04ProtocolRenderer:
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
-        _set_visual_data(self.dvz, dvz_visual, "stroke_width", widths)
+        _set_visual_data(self.dvz, dvz_visual, "stroke_width_px", widths)
         self.dvz.dvz_panel_add_visual(
             self.panel,
             dvz_visual,
@@ -966,6 +966,16 @@ def _datoviz_path_diagnostics(dvz: Any) -> tuple[str, ...]:
         for name in _REQUIRED_DVZ_PATH_FUNCTIONS
         if not hasattr(dvz, name)
     )
+
+
+def _set_path_subpaths(
+    dvz: Any, visual: Any, count: int, subpaths: npt.NDArray[np.uint32]
+) -> Any:
+    try:
+        return dvz.dvz_path_set_subpaths(visual, count, subpaths)
+    except (ctypes.ArgumentError, TypeError):
+        pointer = subpaths.ctypes.data_as(ctypes.POINTER(ctypes.c_uint32))
+        return dvz.dvz_path_set_subpaths(visual, count, pointer)
 
 
 def _set_marker_style(

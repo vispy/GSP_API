@@ -1028,7 +1028,7 @@ def test_add_path_visual_uses_dvz_path_subpaths_styles_and_expanded_attributes()
     assert subpaths_call[:3] == ("path_set_subpaths", "path-visual", 2)
     np.testing.assert_array_equal(subpaths_call[3], [2, 2])
     set_data = _calls(fake, "set_data")
-    assert [call[2] for call in set_data] == ["position", "color", "stroke_width"]
+    assert [call[2] for call in set_data] == ["position", "color", "stroke_width_px"]
     np.testing.assert_allclose(
         set_data[0][3],
         [[-0.5, 0.25, 0.0], [0.0, 0.5, 0.0], [0.5, -0.25, 0.0], [0.75, 0.25, 0.0]],

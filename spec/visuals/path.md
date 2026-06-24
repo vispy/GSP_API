@@ -30,4 +30,4 @@ linewidths using figure DPI, and applies cap/join styles.
 
 Datoviz v0.4 maps paths to `dvz_path()` when the facade exposes `dvz_path_set_subpaths`,
 `dvz_path_set_caps`, and `dvz_path_set_join`. Per-subpath colors and widths are expanded to
-per-vertex arrays before upload as `position`, `color`, and `stroke_width`.
+per-vertex arrays before upload as `position`, `color`, and `stroke_width_px`.
