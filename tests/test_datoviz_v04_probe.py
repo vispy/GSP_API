@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import sys
 
 from gsp.qa.visual.datoviz_probe import probe_datoviz_v04, scan_banned_symbols
 
@@ -235,6 +236,39 @@ def test_probe_reports_missing_symbols_without_constructing_point(
     )
     assert payload["minimal_point_scene"]["attempted"] is False
     assert "missing capabilities" in str(payload["minimal_point_scene"]["reason"])
+
+
+def test_probe_imports_datoviz_from_source_path_when_not_installed(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """The probe can use a sibling Datoviz checkout without manual PYTHONPATH."""
+    source = tmp_path / "datoviz"
+    package = source / "datoviz"
+    package.mkdir(parents=True)
+    (package / "__init__.py").write_text(
+        "def dvz_scene(): return 'scene-from-source'\n",
+        encoding="utf-8",
+    )
+    (package / "raw.py").write_text(
+        "class DvzBuiltinColormap:\n"
+        "    DVZ_BUILTIN_COLORMAP_GRAY = 7\n"
+        "class DvzScaleKind:\n"
+        "    DVZ_SCALE_CONTINUOUS = 0\n",
+        encoding="utf-8",
+    )
+    monkeypatch.delitem(sys.modules, "datoviz", raising=False)
+    monkeypatch.delitem(sys.modules, "datoviz.raw", raising=False)
+
+    report = probe_datoviz_v04(source_path=source, banned_scan_paths=())
+    payload = report.to_json()
+
+    assert payload["installed_package"]["imported"] is True
+    assert payload["installed_package"]["path"].endswith("datoviz/__init__.py")
+    assert (
+        payload["color_mapping_symbols"]["DVZ_BUILTIN_COLORMAP_GRAY"]["available"]
+        is True
+    )
+    assert payload["color_mapping_symbols"]["DVZ_SCALE_CONTINUOUS"]["available"] is True
 
 
 def test_banned_symbol_detection_marks_source_hits_unexpected(tmp_path: Path) -> None:

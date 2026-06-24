@@ -2,67 +2,67 @@
   "hits": [
     {
       "allowed_context": true,
-      "line": 85,
+      "line": 86,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "dvz_path_alloc"
     },
     {
       "allowed_context": true,
-      "line": 86,
+      "line": 87,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "dvz_point_alloc"
     },
     {
       "allowed_context": true,
-      "line": 87,
+      "line": 88,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "dvz_marker_alloc"
     },
     {
       "allowed_context": true,
-      "line": 88,
+      "line": 89,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "dvz_segment_alloc"
     },
     {
       "allowed_context": true,
-      "line": 89,
+      "line": 90,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "dvz_image_alloc"
     },
     {
       "allowed_context": true,
-      "line": 90,
+      "line": 91,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "dvz_point_position"
     },
     {
       "allowed_context": true,
-      "line": 91,
+      "line": 92,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "dvz_marker_color"
     },
     {
       "allowed_context": true,
-      "line": 92,
+      "line": 93,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "dvz_segment_linewidth"
     },
     {
       "allowed_context": true,
-      "line": 150,
+      "line": 151,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "dvz_label_desc"
     },
     {
       "allowed_context": true,
-      "line": 151,
+      "line": 152,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "DvzLabelDesc"
     },
     {
       "allowed_context": true,
-      "line": 152,
+      "line": 153,
       "path": "src/gsp/qa/visual/datoviz_probe.py",
       "symbol": "DVZ_WASM_VISUAL_GLYPH"
     },

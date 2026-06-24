@@ -21,10 +21,11 @@ Gather Datoviz v0.4 evidence for accepted S026 color mapping/colorbar/scalar rea
 
 The Datoviz v0.4 probe now records S026 color mapping symbols and capability
 gates. Local sibling source contains evidence for scales, colormaps, scalar
-sampled fields, visual scale binding, colorbars, and query APIs, but the Python
-facade/raw runtime is not importable in this environment. Keep S026 Datoviz
-color mapping paths structured unsupported until bindings expose and verify the
-recorded retained-scene semantics.
+sampled fields, visual scale binding, colorbars, and query APIs. The probe now
+imports the sibling `../datoviz` checkout automatically, and runtime bindings
+expose the accepted S026 image/point/colorbar/query implementation candidates.
+Marker scalar fill and mesh face scalar remain capability-gated until native
+contracts or explicit CPU-mapped RGBA adaptations are verified.
 
 ## Acceptance
 

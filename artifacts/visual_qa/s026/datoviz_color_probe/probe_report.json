@@ -3,67 +3,67 @@
     "hits": [
       {
         "allowed_context": true,
-        "line": 85,
+        "line": 86,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "dvz_path_alloc"
       },
       {
         "allowed_context": true,
-        "line": 86,
+        "line": 87,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "dvz_point_alloc"
       },
       {
         "allowed_context": true,
-        "line": 87,
+        "line": 88,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "dvz_marker_alloc"
       },
       {
         "allowed_context": true,
-        "line": 88,
+        "line": 89,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "dvz_segment_alloc"
       },
       {
         "allowed_context": true,
-        "line": 89,
+        "line": 90,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "dvz_image_alloc"
       },
       {
         "allowed_context": true,
-        "line": 90,
+        "line": 91,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "dvz_point_position"
       },
       {
         "allowed_context": true,
-        "line": 91,
+        "line": 92,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "dvz_marker_color"
       },
       {
         "allowed_context": true,
-        "line": 92,
+        "line": 93,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "dvz_segment_linewidth"
       },
       {
         "allowed_context": true,
-        "line": 150,
+        "line": 151,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "dvz_label_desc"
       },
       {
         "allowed_context": true,
-        "line": 151,
+        "line": 152,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "DvzLabelDesc"
       },
       {
         "allowed_context": true,
-        "line": 152,
+        "line": 153,
         "path": "src/gsp/qa/visual/datoviz_probe.py",
         "symbol": "DVZ_WASM_VISUAL_GLYPH"
       },
@@ -174,212 +174,212 @@
   "capability_matrix": {
     "attach.coord_space.DVZ_COORD_DATA": {
       "capability": "attach.coord_space.DVZ_COORD_DATA",
-      "reason": "missing raw symbol DVZ_COORD_DATA",
+      "reason": null,
       "source": "raw",
-      "supported": false,
+      "supported": true,
       "symbol": "DVZ_COORD_DATA"
     },
     "attach.coord_space.DVZ_COORD_PANEL": {
       "capability": "attach.coord_space.DVZ_COORD_PANEL",
-      "reason": "missing raw symbol DVZ_COORD_PANEL",
+      "reason": null,
       "source": "raw",
-      "supported": false,
+      "supported": true,
       "symbol": "DVZ_COORD_PANEL"
     },
     "attach.coord_space.DVZ_COORD_VIEW": {
       "capability": "attach.coord_space.DVZ_COORD_VIEW",
-      "reason": "missing raw symbol DVZ_COORD_VIEW",
+      "reason": null,
       "source": "raw",
-      "supported": false,
+      "supported": true,
       "symbol": "DVZ_COORD_VIEW"
     },
     "attach.desc.DvzVisualAttachDesc": {
       "capability": "attach.desc.DvzVisualAttachDesc",
-      "reason": "missing facade symbol DvzVisualAttachDesc",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "DvzVisualAttachDesc"
     },
     "capture.top_level.datoviz_capture": {
       "capability": "capture.top_level.datoviz_capture",
-      "reason": "missing facade symbol capture",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "capture"
     },
     "datoviz.facade.import": {
       "capability": "datoviz.facade.import",
-      "reason": "No module named 'datoviz'",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "datoviz"
     },
     "datoviz.raw.import": {
       "capability": "datoviz.raw.import",
-      "reason": "No module named 'datoviz'",
+      "reason": null,
       "source": "raw",
-      "supported": false,
+      "supported": true,
       "symbol": "datoviz.raw"
     },
     "panel.add_visual.dvz_panel_add_visual": {
       "capability": "panel.add_visual.dvz_panel_add_visual",
-      "reason": "missing facade symbol dvz_panel_add_visual",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_panel_add_visual"
     },
     "scene.create.dvz_scene": {
       "capability": "scene.create.dvz_scene",
-      "reason": "missing facade symbol dvz_scene",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_scene"
     },
     "scene.figure.dvz_figure": {
       "capability": "scene.figure.dvz_figure",
-      "reason": "missing facade symbol dvz_figure",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_figure"
     },
     "scene.panel.dvz_panel_full": {
       "capability": "scene.panel.dvz_panel_full",
-      "reason": "missing facade symbol dvz_panel_full",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_panel_full"
     },
     "visual.data.dvz_visual_set_data": {
       "capability": "visual.data.dvz_visual_set_data",
-      "reason": "missing facade symbol dvz_visual_set_data",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_visual_set_data"
     },
     "visual.data_many.dvz_visual_set_data_many": {
       "capability": "visual.data_many.dvz_visual_set_data_many",
-      "reason": "missing facade symbol dvz_visual_set_data_many",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_visual_set_data_many"
     },
     "visual.data_range.dvz_visual_set_data_range": {
       "capability": "visual.data_range.dvz_visual_set_data_range",
-      "reason": "missing facade symbol dvz_visual_set_data_range",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_visual_set_data_range"
     },
     "visual.image.constructor.dvz_image": {
       "capability": "visual.image.constructor.dvz_image",
-      "reason": "missing facade symbol dvz_image",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_image"
     },
     "visual.image.field.dvz_sampled_field": {
       "capability": "visual.image.field.dvz_sampled_field",
-      "reason": "missing facade symbol dvz_sampled_field",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_sampled_field"
     },
     "visual.image.field.dvz_sampled_field_set_data": {
       "capability": "visual.image.field.dvz_sampled_field_set_data",
-      "reason": "missing facade symbol dvz_sampled_field_set_data",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_sampled_field_set_data"
     },
     "visual.image.field.dvz_visual_set_field": {
       "capability": "visual.image.field.dvz_visual_set_field",
-      "reason": "missing facade symbol dvz_visual_set_field",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_visual_set_field"
     },
     "visual.marker.constructor.dvz_marker": {
       "capability": "visual.marker.constructor.dvz_marker",
-      "reason": "missing facade symbol dvz_marker",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_marker"
     },
     "visual.path.constructor.dvz_path": {
       "capability": "visual.path.constructor.dvz_path",
-      "reason": "missing facade symbol dvz_path",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_path"
     },
     "visual.path.style.dvz_path_set_caps": {
       "capability": "visual.path.style.dvz_path_set_caps",
-      "reason": "missing facade symbol dvz_path_set_caps",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_path_set_caps"
     },
     "visual.path.style.dvz_path_set_join": {
       "capability": "visual.path.style.dvz_path_set_join",
-      "reason": "missing facade symbol dvz_path_set_join",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_path_set_join"
     },
     "visual.path.style.dvz_path_set_subpaths": {
       "capability": "visual.path.style.dvz_path_set_subpaths",
-      "reason": "missing facade symbol dvz_path_set_subpaths",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_path_set_subpaths"
     },
     "visual.point.constructor.dvz_point": {
       "capability": "visual.point.constructor.dvz_point",
-      "reason": "missing facade symbol dvz_point",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_point"
     },
     "visual.segment.constructor.dvz_segment": {
       "capability": "visual.segment.constructor.dvz_segment",
-      "reason": "missing facade symbol dvz_segment",
+      "reason": null,
       "source": "facade",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_segment"
     }
   },
   "capture": {
-    "offscreen_symbols_available": false,
-    "run_symbols_available": false,
-    "top_level_capture_available": false
+    "offscreen_symbols_available": true,
+    "run_symbols_available": true,
+    "top_level_capture_available": true
   },
   "color_mapping_capability_matrix": {
     "color.colorbar.semantic": {
       "capability": "color.colorbar.semantic",
-      "reason": "missing symbols: ('dvz_colorbar', 'DvzColorbarDesc', 'DVZ_COLORBAR_ORIENTATION_VERTICAL', 'DVZ_COLORBAR_ORIENTATION_HORIZONTAL')",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_colorbar,DvzColorbarDesc,DVZ_COLORBAR_ORIENTATION_VERTICAL,DVZ_COLORBAR_ORIENTATION_HORIZONTAL"
     },
     "color.colormap.accepted_named": {
       "capability": "color.colormap.accepted_named",
-      "reason": "missing symbols: ('dvz_colormap_builtin', 'DVZ_BUILTIN_COLORMAP_GRAY', 'DVZ_BUILTIN_COLORMAP_VIRIDIS', 'DVZ_BUILTIN_COLORMAP_MAGMA', 'DVZ_BUILTIN_COLORMAP_PLASMA', 'DVZ_BUILTIN_COLORMAP_INFERNO', 'DVZ_BUILTIN_COLORMAP_CIVIDIS')",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_colormap_builtin,DVZ_BUILTIN_COLORMAP_GRAY,DVZ_BUILTIN_COLORMAP_VIRIDIS,DVZ_BUILTIN_COLORMAP_MAGMA,DVZ_BUILTIN_COLORMAP_PLASMA,DVZ_BUILTIN_COLORMAP_INFERNO,DVZ_BUILTIN_COLORMAP_CIVIDIS"
     },
     "color.colormap.custom_lut": {
       "capability": "color.colormap.custom_lut",
-      "reason": "missing symbols: ('dvz_colormap_custom', 'dvz_colormap_set_stops')",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_colormap_custom,dvz_colormap_set_stops"
     },
     "color.image.scalar_field": {
       "capability": "color.image.scalar_field",
-      "reason": "missing symbols: ('dvz_sampled_field', 'dvz_sampled_field_set_data', 'dvz_visual_set_field', 'dvz_visual_set_scale', 'DVZ_FIELD_DIM_2D', 'DVZ_FIELD_FORMAT_R32_FLOAT', 'DVZ_FIELD_SEMANTIC_SCALAR')",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_sampled_field,dvz_sampled_field_set_data,dvz_visual_set_field,dvz_visual_set_scale,DVZ_FIELD_DIM_2D,DVZ_FIELD_FORMAT_R32_FLOAT,DVZ_FIELD_SEMANTIC_SCALAR"
     },
     "color.marker.scalar_fill": {
@@ -398,65 +398,65 @@
     },
     "color.point.scalar_attribute": {
       "capability": "color.point.scalar_attribute",
-      "reason": "missing symbols: ('dvz_point', 'dvz_visual_set_data', 'dvz_visual_set_scale', 'dvz_scale')",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_point,dvz_visual_set_data,dvz_visual_set_scale,dvz_scale"
     },
     "color.query.scalar_readback": {
       "capability": "color.query.scalar_readback",
-      "reason": "missing symbols: ('DvzQueryResult', 'dvz_panel_query', 'dvz_panel_query_now', 'dvz_scene_poll_query')",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "DvzQueryResult,dvz_panel_query,dvz_panel_query_now,dvz_scene_poll_query"
     },
     "color.scale.continuous": {
       "capability": "color.scale.continuous",
-      "reason": "missing symbols: ('dvz_scale', 'dvz_scale_set_domain', 'DVZ_SCALE_CONTINUOUS')",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_scale,dvz_scale_set_domain,DVZ_SCALE_CONTINUOUS"
     }
   },
   "color_mapping_symbols": {
     "DVZ_BUILTIN_COLORMAP_CIVIDIS": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_BUILTIN_COLORMAP_CIVIDIS"
     },
     "DVZ_BUILTIN_COLORMAP_GRAY": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_BUILTIN_COLORMAP_GRAY"
     },
     "DVZ_BUILTIN_COLORMAP_INFERNO": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_BUILTIN_COLORMAP_INFERNO"
     },
     "DVZ_BUILTIN_COLORMAP_MAGMA": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_BUILTIN_COLORMAP_MAGMA"
     },
     "DVZ_BUILTIN_COLORMAP_PLASMA": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_BUILTIN_COLORMAP_PLASMA"
     },
     "DVZ_BUILTIN_COLORMAP_VIRIDIS": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_BUILTIN_COLORMAP_VIRIDIS"
     },
     "DVZ_COLORBAR_ORIENTATION_HORIZONTAL": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_COLORBAR_ORIENTATION_HORIZONTAL"
     },
     "DVZ_COLORBAR_ORIENTATION_VERTICAL": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_COLORBAR_ORIENTATION_VERTICAL"
     },
     "DVZ_COLOR_ROLE_DATA": {
@@ -465,203 +465,203 @@
       "symbol": "DVZ_COLOR_ROLE_DATA"
     },
     "DVZ_FIELD_DIM_2D": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_FIELD_DIM_2D"
     },
     "DVZ_FIELD_FORMAT_R32_FLOAT": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_FIELD_FORMAT_R32_FLOAT"
     },
     "DVZ_FIELD_SEMANTIC_SCALAR": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_FIELD_SEMANTIC_SCALAR"
     },
     "DVZ_SCALE_CONTINUOUS": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_SCALE_CONTINUOUS"
     },
     "DvzColorbar": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzColorbar"
     },
     "DvzColorbarDesc": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzColorbarDesc"
     },
     "DvzColorbarOrientation": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzColorbarOrientation"
     },
     "DvzColormap": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzColormap"
     },
     "DvzColormapDesc": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzColormapDesc"
     },
     "DvzColormapStop": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzColormapStop"
     },
     "DvzFieldDataView": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzFieldDataView"
     },
     "DvzQueryResult": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzQueryResult"
     },
     "DvzSampledField": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzSampledField"
     },
     "DvzSampledFieldDesc": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzSampledFieldDesc"
     },
     "DvzScale": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzScale"
     },
     "DvzScaleDesc": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzScaleDesc"
     },
     "dvz_colorbar": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colorbar"
     },
     "dvz_colorbar_desc": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colorbar_desc"
     },
     "dvz_colorbar_set_format": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colorbar_set_format"
     },
     "dvz_colorbar_set_layout": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colorbar_set_layout"
     },
     "dvz_colorbar_set_orientation": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colorbar_set_orientation"
     },
     "dvz_colorbar_set_title": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colorbar_set_title"
     },
     "dvz_colormap": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colormap"
     },
     "dvz_colormap_builtin": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colormap_builtin"
     },
     "dvz_colormap_custom": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colormap_custom"
     },
     "dvz_colormap_sample": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colormap_sample"
     },
     "dvz_colormap_set_stops": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_colormap_set_stops"
     },
     "dvz_panel_query": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_panel_query"
     },
     "dvz_panel_query_now": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_panel_query_now"
     },
     "dvz_sampled_field": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_sampled_field"
     },
     "dvz_sampled_field_desc": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_sampled_field_desc"
     },
     "dvz_sampled_field_set_data": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_sampled_field_set_data"
     },
     "dvz_scale": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_scale"
     },
     "dvz_scale_desc": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_scale_desc"
     },
     "dvz_scale_set_colormap": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_scale_set_colormap"
     },
     "dvz_scale_set_domain": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_scale_set_domain"
     },
     "dvz_scale_set_view_range": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_scale_set_view_range"
     },
     "dvz_scene_poll_query": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_scene_poll_query"
     },
     "dvz_visual_set_field": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_visual_set_field"
     },
     "dvz_visual_set_scale": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_visual_set_scale"
     }
   },
@@ -672,18 +672,18 @@
       "symbol": "DVZ_BLEND_ALPHA"
     },
     "DVZ_COORD_DATA": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_COORD_DATA"
     },
     "DVZ_COORD_PANEL": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_COORD_PANEL"
     },
     "DVZ_COORD_VIEW": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DVZ_COORD_VIEW"
     },
     "DVZ_MARKER_SHAPE_CIRCLE": {
@@ -732,38 +732,38 @@
       "symbol": "DVZ_SEGMENT_CAP_SQUARE"
     },
     "DvzDimMaskFlag": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzDimMaskFlag"
     },
     "DvzVisualAttachDesc": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzVisualAttachDesc"
     },
     "dvz_marker_set_style": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_marker_set_style"
     },
     "dvz_marker_style": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_marker_style"
     },
     "dvz_point_set_style": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_point_set_style"
     },
     "dvz_point_style_desc": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_point_style_desc"
     },
     "dvz_segment_set_caps": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_segment_set_caps"
     }
   },
@@ -774,17 +774,17 @@
       "symbol": "DVZ_BLEND_ALPHA"
     },
     "DVZ_COORD_DATA": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "DVZ_COORD_DATA"
     },
     "DVZ_COORD_PANEL": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "DVZ_COORD_PANEL"
     },
     "DVZ_COORD_VIEW": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "DVZ_COORD_VIEW"
     },
@@ -834,169 +834,169 @@
       "symbol": "DVZ_SEGMENT_CAP_SQUARE"
     },
     "DvzDimMaskFlag": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "DvzDimMaskFlag"
     },
     "DvzVisualAttachDesc": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "DvzVisualAttachDesc"
     },
     "capture": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "capture"
     },
     "dvz_figure": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_figure"
     },
     "dvz_image": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_image"
     },
     "dvz_marker": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_marker"
     },
     "dvz_marker_set_style": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_marker_set_style"
     },
     "dvz_marker_style": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_marker_style"
     },
     "dvz_panel_add_visual": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_panel_add_visual"
     },
     "dvz_panel_full": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_panel_full"
     },
     "dvz_path": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_path"
     },
     "dvz_path_set_caps": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_path_set_caps"
     },
     "dvz_path_set_join": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_path_set_join"
     },
     "dvz_path_set_subpaths": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_path_set_subpaths"
     },
     "dvz_point": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_point"
     },
     "dvz_point_set_style": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_point_set_style"
     },
     "dvz_point_style_desc": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_point_style_desc"
     },
     "dvz_sampled_field": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_sampled_field"
     },
     "dvz_sampled_field_set_data": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_sampled_field_set_data"
     },
     "dvz_scene": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_scene"
     },
     "dvz_segment": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_segment"
     },
     "dvz_segment_set_caps": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_segment_set_caps"
     },
     "dvz_visual_set_data": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_visual_set_data"
     },
     "dvz_visual_set_data_many": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_visual_set_data_many"
     },
     "dvz_visual_set_data_range": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_visual_set_data_range"
     },
     "dvz_visual_set_field": {
-      "available": false,
+      "available": true,
       "source": "facade",
       "symbol": "dvz_visual_set_field"
     }
   },
   "generated_files": {
-    "_array_facade.py": null,
-    "_ctypes.py": null
+    "_array_facade.py": true,
+    "_ctypes.py": true
   },
   "imports": {
     "datoviz": {
-      "error_message": "No module named 'datoviz'",
-      "error_type": "ModuleNotFoundError",
-      "imported": false,
+      "error_message": null,
+      "error_type": null,
+      "imported": true,
       "module": "datoviz",
-      "path": null,
-      "traceback": "Traceback (most recent call last):\n  File \"/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/datoviz_probe.py\", line 644, in _import_probe\n    module = import_module(module_name)\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py\", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1406, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1371, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1335, in _find_and_load_unlocked\nModuleNotFoundError: No module named 'datoviz'\n"
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "traceback": null
     },
     "datoviz.raw": {
-      "error_message": "No module named 'datoviz'",
-      "error_type": "ModuleNotFoundError",
-      "imported": false,
+      "error_message": null,
+      "error_type": null,
+      "imported": true,
       "module": "datoviz.raw",
-      "path": null,
-      "traceback": "Traceback (most recent call last):\n  File \"/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/datoviz_probe.py\", line 644, in _import_probe\n    module = import_module(module_name)\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py\", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1406, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1371, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1314, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 491, in _call_with_frames_removed\n  File \"<frozen importlib._bootstrap>\", line 1406, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1371, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1335, in _find_and_load_unlocked\nModuleNotFoundError: No module named 'datoviz'\n"
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/raw.py",
+      "traceback": null
     }
   },
   "installed_package": {
-    "imported": false,
-    "path": null,
+    "imported": true,
+    "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
     "version": null
   },
   "mesh_capability_matrix": {
     "mesh.attribute.upload": {
       "capability": "mesh.attribute.upload",
-      "reason": "missing symbols: ('dvz_visual_set_data',)",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_visual_set_data"
     },
     "mesh.depth.helper": {
@@ -1008,37 +1008,37 @@
     },
     "mesh.geometry.upload": {
       "capability": "mesh.geometry.upload",
-      "reason": "missing symbols: ('dvz_mesh_set_geometry',)",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_mesh_set_geometry"
     },
     "mesh.index.upload": {
       "capability": "mesh.index.upload",
-      "reason": "missing symbols: ('dvz_visual_set_index_data',)",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_visual_set_index_data"
     },
     "mesh.material.helper": {
       "capability": "mesh.material.helper",
-      "reason": "missing symbols: ('dvz_visual_set_material',)",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_visual_set_material"
     },
     "mesh.texture.deferred.evidence": {
       "capability": "mesh.texture.deferred.evidence",
-      "reason": "missing symbols: ('dvz_visual_set_texture',)",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_visual_set_texture"
     },
     "mesh.visual.constructor": {
       "capability": "mesh.visual.constructor",
-      "reason": "missing symbols: ('dvz_mesh',)",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_mesh"
     }
   },
@@ -1049,8 +1049,8 @@
       "symbol": "DVZ_SCENE_VISUAL_FAMILY_MESH"
     },
     "DvzGeometry": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzGeometry"
     },
     "DvzIndex": {
@@ -1064,18 +1064,18 @@
       "symbol": "DvzMaterial"
     },
     "dvz_mesh": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_mesh"
     },
     "dvz_mesh_set_geometry": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_mesh_set_geometry"
     },
     "dvz_visual_set_data": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_visual_set_data"
     },
     "dvz_visual_set_depth": {
@@ -1084,26 +1084,35 @@
       "symbol": "dvz_visual_set_depth"
     },
     "dvz_visual_set_index_data": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_visual_set_index_data"
     },
     "dvz_visual_set_material": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_visual_set_material"
     },
     "dvz_visual_set_texture": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_visual_set_texture"
     }
   },
   "minimal_point_scene": {
-    "attempted": false,
-    "calls_completed": [],
-    "reason": "missing capabilities: ('scene.create.dvz_scene', 'scene.figure.dvz_figure', 'scene.panel.dvz_panel_full', 'visual.point.constructor.dvz_point', 'visual.data.dvz_visual_set_data', 'panel.add_visual.dvz_panel_add_visual')",
-    "supported": false
+    "attempted": true,
+    "calls_completed": [
+      "dvz_scene",
+      "dvz_figure",
+      "dvz_panel_full",
+      "dvz_point",
+      "dvz_visual_set_data.position",
+      "dvz_visual_set_data.color",
+      "dvz_visual_set_data.diameter_px",
+      "dvz_panel_add_visual"
+    ],
+    "reason": null,
+    "supported": true
   },
   "raw_symbols": {
     "DVZ_BLEND_ALPHA": {
@@ -1112,42 +1121,42 @@
       "symbol": "DVZ_BLEND_ALPHA"
     },
     "DVZ_BUILTIN_COLORMAP_CIVIDIS": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_BUILTIN_COLORMAP_CIVIDIS"
     },
     "DVZ_BUILTIN_COLORMAP_GRAY": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_BUILTIN_COLORMAP_GRAY"
     },
     "DVZ_BUILTIN_COLORMAP_INFERNO": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_BUILTIN_COLORMAP_INFERNO"
     },
     "DVZ_BUILTIN_COLORMAP_MAGMA": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_BUILTIN_COLORMAP_MAGMA"
     },
     "DVZ_BUILTIN_COLORMAP_PLASMA": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_BUILTIN_COLORMAP_PLASMA"
     },
     "DVZ_BUILTIN_COLORMAP_VIRIDIS": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_BUILTIN_COLORMAP_VIRIDIS"
     },
     "DVZ_COLORBAR_ORIENTATION_HORIZONTAL": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_COLORBAR_ORIENTATION_HORIZONTAL"
     },
     "DVZ_COLORBAR_ORIENTATION_VERTICAL": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_COLORBAR_ORIENTATION_VERTICAL"
     },
@@ -1157,32 +1166,32 @@
       "symbol": "DVZ_COLOR_ROLE_DATA"
     },
     "DVZ_COORD_DATA": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_COORD_DATA"
     },
     "DVZ_COORD_PANEL": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_COORD_PANEL"
     },
     "DVZ_COORD_VIEW": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_COORD_VIEW"
     },
     "DVZ_FIELD_DIM_2D": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_FIELD_DIM_2D"
     },
     "DVZ_FIELD_FORMAT_R32_FLOAT": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_FIELD_FORMAT_R32_FLOAT"
     },
     "DVZ_FIELD_SEMANTIC_SCALAR": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_FIELD_SEMANTIC_SCALAR"
     },
@@ -1217,7 +1226,7 @@
       "symbol": "DVZ_PATH_JOIN_ROUND"
     },
     "DVZ_SCALE_CONTINUOUS": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DVZ_SCALE_CONTINUOUS"
     },
@@ -1282,47 +1291,47 @@
       "symbol": "DVZ_TEXT_RENDERER_SDF"
     },
     "DvzColorbar": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzColorbar"
     },
     "DvzColorbarDesc": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzColorbarDesc"
     },
     "DvzColorbarOrientation": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzColorbarOrientation"
     },
     "DvzColormap": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzColormap"
     },
     "DvzColormapDesc": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzColormapDesc"
     },
     "DvzColormapStop": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzColormapStop"
     },
     "DvzDimMaskFlag": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzDimMaskFlag"
     },
     "DvzFieldDataView": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzFieldDataView"
     },
     "DvzGeometry": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzGeometry"
     },
@@ -1337,357 +1346,357 @@
       "symbol": "DvzMaterial"
     },
     "DvzQueryResult": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzQueryResult"
     },
     "DvzSampledField": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzSampledField"
     },
     "DvzSampledFieldDesc": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzSampledFieldDesc"
     },
     "DvzScale": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzScale"
     },
     "DvzScaleDesc": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzScaleDesc"
     },
     "DvzText": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzText"
     },
     "DvzTextAtlas": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzTextAtlas"
     },
     "DvzTextAtlasGlyph": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzTextAtlasGlyph"
     },
     "DvzTextAtlasInfo": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzTextAtlasInfo"
     },
     "DvzTextAtlasSpec": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzTextAtlasSpec"
     },
     "DvzTextPlacement": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzTextPlacement"
     },
     "DvzTextPlacementMode": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzTextPlacementMode"
     },
     "DvzTextRenderer": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzTextRenderer"
     },
     "DvzTextStyle": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzTextStyle"
     },
     "DvzVisualAttachDesc": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "DvzVisualAttachDesc"
     },
     "dvz_colorbar": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colorbar"
     },
     "dvz_colorbar_desc": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colorbar_desc"
     },
     "dvz_colorbar_set_format": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colorbar_set_format"
     },
     "dvz_colorbar_set_layout": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colorbar_set_layout"
     },
     "dvz_colorbar_set_orientation": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colorbar_set_orientation"
     },
     "dvz_colorbar_set_title": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colorbar_set_title"
     },
     "dvz_colormap": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colormap"
     },
     "dvz_colormap_builtin": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colormap_builtin"
     },
     "dvz_colormap_custom": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colormap_custom"
     },
     "dvz_colormap_sample": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colormap_sample"
     },
     "dvz_colormap_set_stops": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_colormap_set_stops"
     },
     "dvz_figure": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_figure"
     },
     "dvz_font": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_font"
     },
     "dvz_font_atlas": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_font_atlas"
     },
     "dvz_font_atlas_ensure_string": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_font_atlas_ensure_string"
     },
     "dvz_font_atlas_ensure_strings": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_font_atlas_ensure_strings"
     },
     "dvz_font_desc": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_font_desc"
     },
     "dvz_glyph": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_glyph"
     },
     "dvz_glyph_set_atlas": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_glyph_set_atlas"
     },
     "dvz_image": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_image"
     },
     "dvz_labels": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_labels"
     },
     "dvz_marker": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_marker"
     },
     "dvz_marker_set_style": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_marker_set_style"
     },
     "dvz_marker_style": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_marker_style"
     },
     "dvz_mesh": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_mesh"
     },
     "dvz_mesh_set_geometry": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_mesh_set_geometry"
     },
     "dvz_panel_add_visual": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_panel_add_visual"
     },
     "dvz_panel_full": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_panel_full"
     },
     "dvz_panel_query": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_panel_query"
     },
     "dvz_panel_query_now": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_panel_query_now"
     },
     "dvz_path": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_path"
     },
     "dvz_path_set_caps": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_path_set_caps"
     },
     "dvz_path_set_join": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_path_set_join"
     },
     "dvz_path_set_subpaths": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_path_set_subpaths"
     },
     "dvz_point": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_point"
     },
     "dvz_point_set_style": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_point_set_style"
     },
     "dvz_point_style_desc": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_point_style_desc"
     },
     "dvz_sampled_field": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_sampled_field"
     },
     "dvz_sampled_field_desc": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_sampled_field_desc"
     },
     "dvz_sampled_field_set_data": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_sampled_field_set_data"
     },
     "dvz_scale": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_scale"
     },
     "dvz_scale_desc": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_scale_desc"
     },
     "dvz_scale_set_colormap": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_scale_set_colormap"
     },
     "dvz_scale_set_domain": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_scale_set_domain"
     },
     "dvz_scale_set_view_range": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_scale_set_view_range"
     },
     "dvz_scene": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_scene"
     },
     "dvz_scene_poll_query": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_scene_poll_query"
     },
     "dvz_segment": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_segment"
     },
     "dvz_segment_set_caps": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_segment_set_caps"
     },
     "dvz_text": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_text"
     },
     "dvz_text_atlas_field": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_text_atlas_field"
     },
     "dvz_text_atlas_glyph": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_text_atlas_glyph"
     },
     "dvz_text_atlas_info": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_text_atlas_info"
     },
     "dvz_text_atlas_spec": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_text_atlas_spec"
     },
     "dvz_text_destroy": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_text_destroy"
     },
     "dvz_text_id": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_text_id"
     },
@@ -1697,27 +1706,27 @@
       "symbol": "dvz_text_placement"
     },
     "dvz_text_set_string": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_text_set_string"
     },
     "dvz_text_style": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_text_style"
     },
     "dvz_visual_set_data": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_visual_set_data"
     },
     "dvz_visual_set_data_many": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_visual_set_data_many"
     },
     "dvz_visual_set_data_range": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_visual_set_data_range"
     },
@@ -1727,27 +1736,27 @@
       "symbol": "dvz_visual_set_depth"
     },
     "dvz_visual_set_field": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_visual_set_field"
     },
     "dvz_visual_set_index_data": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_visual_set_index_data"
     },
     "dvz_visual_set_material": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_visual_set_material"
     },
     "dvz_visual_set_scale": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_visual_set_scale"
     },
     "dvz_visual_set_texture": {
-      "available": false,
+      "available": true,
       "source": "raw",
       "symbol": "dvz_visual_set_texture"
     }
@@ -10992,23 +11001,23 @@
   "text_capability_matrix": {
     "text.font.atlas": {
       "capability": "text.font.atlas",
-      "reason": "missing symbols: ('dvz_text_atlas_spec', 'dvz_font_atlas_ensure_strings', 'dvz_font_atlas', 'dvz_text_atlas_field')",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_text_atlas_spec,dvz_font_atlas_ensure_strings,dvz_font_atlas,dvz_text_atlas_field"
     },
     "text.font.create": {
       "capability": "text.font.create",
-      "reason": "missing symbols: ('dvz_font', 'dvz_font_desc')",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_font,dvz_font_desc"
     },
     "text.glyph.visual": {
       "capability": "text.glyph.visual",
-      "reason": "missing symbols: ('dvz_glyph', 'dvz_glyph_set_atlas')",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_glyph,dvz_glyph_set_atlas"
     },
     "text.placement": {
@@ -11020,23 +11029,23 @@
     },
     "text.style": {
       "capability": "text.style",
-      "reason": "missing symbols: ('dvz_text_style',)",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_text_style"
     },
     "text.visual.constructor": {
       "capability": "text.visual.constructor",
-      "reason": "missing symbols: ('dvz_text',)",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_text"
     },
     "text.visual.string": {
       "capability": "text.visual.string",
-      "reason": "missing symbols: ('dvz_text_set_string',)",
+      "reason": null,
       "source": "facade_or_raw",
-      "supported": false,
+      "supported": true,
       "symbol": "dvz_text_set_string"
     }
   },
@@ -11082,123 +11091,123 @@
       "symbol": "DVZ_TEXT_RENDERER_SDF"
     },
     "DvzText": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzText"
     },
     "DvzTextAtlas": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzTextAtlas"
     },
     "DvzTextAtlasGlyph": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzTextAtlasGlyph"
     },
     "DvzTextAtlasInfo": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzTextAtlasInfo"
     },
     "DvzTextAtlasSpec": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzTextAtlasSpec"
     },
     "DvzTextPlacement": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzTextPlacement"
     },
     "DvzTextPlacementMode": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzTextPlacementMode"
     },
     "DvzTextRenderer": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzTextRenderer"
     },
     "DvzTextStyle": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "DvzTextStyle"
     },
     "dvz_font": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_font"
     },
     "dvz_font_atlas": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_font_atlas"
     },
     "dvz_font_atlas_ensure_string": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_font_atlas_ensure_string"
     },
     "dvz_font_atlas_ensure_strings": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_font_atlas_ensure_strings"
     },
     "dvz_font_desc": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_font_desc"
     },
     "dvz_glyph": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_glyph"
     },
     "dvz_glyph_set_atlas": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_glyph_set_atlas"
     },
     "dvz_labels": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_labels"
     },
     "dvz_text": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_text"
     },
     "dvz_text_atlas_field": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_text_atlas_field"
     },
     "dvz_text_atlas_glyph": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_text_atlas_glyph"
     },
     "dvz_text_atlas_info": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_text_atlas_info"
     },
     "dvz_text_atlas_spec": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_text_atlas_spec"
     },
     "dvz_text_destroy": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_text_destroy"
     },
     "dvz_text_id": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_text_id"
     },
     "dvz_text_placement": {
@@ -11207,13 +11216,13 @@
       "symbol": "dvz_text_placement"
     },
     "dvz_text_set_string": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_text_set_string"
     },
     "dvz_text_style": {
-      "available": false,
-      "source": "raw",
+      "available": true,
+      "source": "facade",
       "symbol": "dvz_text_style"
     }
   }

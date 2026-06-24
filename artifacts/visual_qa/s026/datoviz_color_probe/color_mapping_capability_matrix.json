@@ -1,30 +1,30 @@
 {
   "color.colorbar.semantic": {
     "capability": "color.colorbar.semantic",
-    "reason": "missing symbols: ('dvz_colorbar', 'DvzColorbarDesc', 'DVZ_COLORBAR_ORIENTATION_VERTICAL', 'DVZ_COLORBAR_ORIENTATION_HORIZONTAL')",
+    "reason": null,
     "source": "facade_or_raw",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_colorbar,DvzColorbarDesc,DVZ_COLORBAR_ORIENTATION_VERTICAL,DVZ_COLORBAR_ORIENTATION_HORIZONTAL"
   },
   "color.colormap.accepted_named": {
     "capability": "color.colormap.accepted_named",
-    "reason": "missing symbols: ('dvz_colormap_builtin', 'DVZ_BUILTIN_COLORMAP_GRAY', 'DVZ_BUILTIN_COLORMAP_VIRIDIS', 'DVZ_BUILTIN_COLORMAP_MAGMA', 'DVZ_BUILTIN_COLORMAP_PLASMA', 'DVZ_BUILTIN_COLORMAP_INFERNO', 'DVZ_BUILTIN_COLORMAP_CIVIDIS')",
+    "reason": null,
     "source": "facade_or_raw",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_colormap_builtin,DVZ_BUILTIN_COLORMAP_GRAY,DVZ_BUILTIN_COLORMAP_VIRIDIS,DVZ_BUILTIN_COLORMAP_MAGMA,DVZ_BUILTIN_COLORMAP_PLASMA,DVZ_BUILTIN_COLORMAP_INFERNO,DVZ_BUILTIN_COLORMAP_CIVIDIS"
   },
   "color.colormap.custom_lut": {
     "capability": "color.colormap.custom_lut",
-    "reason": "missing symbols: ('dvz_colormap_custom', 'dvz_colormap_set_stops')",
+    "reason": null,
     "source": "facade_or_raw",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_colormap_custom,dvz_colormap_set_stops"
   },
   "color.image.scalar_field": {
     "capability": "color.image.scalar_field",
-    "reason": "missing symbols: ('dvz_sampled_field', 'dvz_sampled_field_set_data', 'dvz_visual_set_field', 'dvz_visual_set_scale', 'DVZ_FIELD_DIM_2D', 'DVZ_FIELD_FORMAT_R32_FLOAT', 'DVZ_FIELD_SEMANTIC_SCALAR')",
+    "reason": null,
     "source": "facade_or_raw",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_sampled_field,dvz_sampled_field_set_data,dvz_visual_set_field,dvz_visual_set_scale,DVZ_FIELD_DIM_2D,DVZ_FIELD_FORMAT_R32_FLOAT,DVZ_FIELD_SEMANTIC_SCALAR"
   },
   "color.marker.scalar_fill": {
@@ -43,23 +43,23 @@
   },
   "color.point.scalar_attribute": {
     "capability": "color.point.scalar_attribute",
-    "reason": "missing symbols: ('dvz_point', 'dvz_visual_set_data', 'dvz_visual_set_scale', 'dvz_scale')",
+    "reason": null,
     "source": "facade_or_raw",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_point,dvz_visual_set_data,dvz_visual_set_scale,dvz_scale"
   },
   "color.query.scalar_readback": {
     "capability": "color.query.scalar_readback",
-    "reason": "missing symbols: ('DvzQueryResult', 'dvz_panel_query', 'dvz_panel_query_now', 'dvz_scene_poll_query')",
+    "reason": null,
     "source": "facade_or_raw",
-    "supported": false,
+    "supported": true,
     "symbol": "DvzQueryResult,dvz_panel_query,dvz_panel_query_now,dvz_scene_poll_query"
   },
   "color.scale.continuous": {
     "capability": "color.scale.continuous",
-    "reason": "missing symbols: ('dvz_scale', 'dvz_scale_set_domain', 'DVZ_SCALE_CONTINUOUS')",
+    "reason": null,
     "source": "facade_or_raw",
-    "supported": false,
+    "supported": true,
     "symbol": "dvz_scale,dvz_scale_set_domain,DVZ_SCALE_CONTINUOUS"
   }
 }

@@ -7,6 +7,7 @@ from importlib import import_module
 import importlib.util
 from pathlib import Path
 import subprocess
+import sys
 import traceback
 from types import ModuleType
 from typing import Any, Iterable, Mapping, Sequence
@@ -289,6 +290,16 @@ COLOR_MAPPING_UNVERIFIED_CAPABILITY_REASONS: Mapping[str, str] = {
     ),
 }
 
+ENUM_CONTAINER_SYMBOLS: tuple[str, ...] = (
+    "DvzBuiltinColormap",
+    "DvzColorbarOrientation",
+    "DvzFieldDim",
+    "DvzFieldFormat",
+    "DvzFieldSemantic",
+    "DvzScaleKind",
+    "DvzVisualCoordSpace",
+)
+
 
 @dataclass(frozen=True)
 class ImportProbe:
@@ -488,18 +499,20 @@ def probe_datoviz_v04(
 ) -> DatovizV04ProbeReport:
     """Probe the installed Datoviz package and local v0.4 checkout."""
     source = Path(source_path)
-    facade_import = _import_probe("datoviz", injected_module=facade_module)
-    raw_import = _import_probe("datoviz.raw", injected_module=raw_module)
-    facade = (
-        facade_module
-        if facade_module is not None
-        else _imported_module_or_none("datoviz")
-    )
-    raw = (
-        raw_module
-        if raw_module is not None
-        else _imported_module_or_none("datoviz.raw")
-    )
+    source_import_path = source if source.exists() else None
+    with _temporary_sys_path(source_import_path):
+        facade_import = _import_probe("datoviz", injected_module=facade_module)
+        raw_import = _import_probe("datoviz.raw", injected_module=raw_module)
+        facade = (
+            facade_module
+            if facade_module is not None
+            else _imported_module_or_none("datoviz")
+        )
+        raw = (
+            raw_module
+            if raw_module is not None
+            else _imported_module_or_none("datoviz.raw")
+        )
 
     installed_path = facade_import.path
     generated_files = _generated_files(installed_path)
@@ -669,6 +682,22 @@ def _imported_module_or_none(module_name: str) -> ModuleType | None:
     return module
 
 
+class _temporary_sys_path:
+    def __init__(self, path: Path | None) -> None:
+        self._path = str(path.resolve()) if path is not None else None
+        self._inserted = False
+
+    def __enter__(self) -> None:
+        if self._path is None or self._path in sys.path:
+            return
+        sys.path.insert(0, self._path)
+        self._inserted = True
+
+    def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
+        if self._inserted and self._path in sys.path:
+            sys.path.remove(self._path)
+
+
 def _spec_origin(module_name: str) -> str | None:
     try:
         spec = importlib.util.find_spec(module_name)
@@ -726,12 +755,22 @@ def _has_symbol(module: Any | None, symbol: str) -> bool:
     try:
         getattr(module, symbol)
     except Exception:  # noqa: BLE001 - getattr on Datoviz can trigger generated binding import.
-        if symbol.startswith("DVZ_COORD_"):
-            coord_space = getattr(module, "DvzVisualCoordSpace", None)
-            return coord_space is not None and hasattr(coord_space, symbol)
-        return False
+        return _has_enum_member(module, symbol)
     else:
         return True
+
+
+def _has_enum_member(module: Any, symbol: str) -> bool:
+    if not symbol.startswith("DVZ_"):
+        return False
+    for container_name in ENUM_CONTAINER_SYMBOLS:
+        try:
+            container = getattr(module, container_name)
+        except Exception:  # noqa: BLE001 - generated bindings can raise during getattr.
+            continue
+        if hasattr(container, symbol):
+            return True
+    return False
 
 
 def _capability_matrix(
