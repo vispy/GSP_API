@@ -1,6 +1,6 @@
 # S023 Handoff - Visual Families v1 and Manual Visual QA Foundation
 
-Generated: 2026-06-23
+Generated: 2026-06-24
 
 ## Current State
 
@@ -13,17 +13,28 @@ Completed:
 - M066 - PointVisual v1 and Datoviz v0.4 retained point path.
 - M067 - MarkerVisual v1.
 
+Milestone reached:
+
+- The current S023 contact sheet has good-enough Matplotlib/Datoviz parity for point, marker,
+  nearest-image, and point-over-image cases.
+- The systematic Datoviz paleness was fixed by the Datoviz legacy sRGB blend pipeline and UNORM
+  offscreen legacy target.
+- Datoviz `v0.4-dev` now contains the no-ff merge commit:
+  `f0d90d2bb` - Merge legacy sRGB blend pipeline.
+- GSP commit `d2938c2` wires Datoviz color-pipeline selection and defaults visual QA comparison
+  runs to `legacy_srgb_blend`.
+
 Next:
 
 - M068 - SegmentVisual v1.
 
 Recent commits:
 
-- `5d9ec8e` - Implement Datoviz v0.4 API probe.
-- `1b92a8f` - Correct Datoviz v0.4 probe evidence.
-- `ea70c79` - Implement visual QA harness foundation.
-- local working tree - Complete M066 PointVisual v1.
-- local working tree - Complete M067 MarkerVisual v1.
+- `d2938c2` - Wire Datoviz color pipeline option.
+- `216698d` - Normalize Matplotlib diamond marker bbox.
+- `3d9fec2` - Fix Matplotlib rotated marker scale semantics.
+- `f705219` - Remove Datoviz marker angle workaround.
+- `d667ee5` - Fix Datoviz marker orientation and alpha blending.
 
 ## Datoviz Environment
 
@@ -46,7 +57,7 @@ If the environment falls back to PyPI `datoviz 0.3.5`, rerun:
 uv pip install -e ../datoviz
 ```
 
-The sibling checkout was on `v0.4-dev` during M064/M065 work.
+The sibling checkout should be on Datoviz `v0.4-dev` at or after `f0d90d2bb`.
 
 ## M064 Output
 
@@ -156,9 +167,25 @@ Observed result after M067:
 - Status JSON and diff whitespace checks passed.
 - Both backend import checks passed.
 
-CLI smoke rendered all S023 cases to `artifacts/visual_qa/s023/latest-local`. Point and marker cases
-rendered in both Matplotlib and Datoviz. Datoviz image cases remain structured unsupported until the
-Datoviz nearest-sampler API is added.
+CLI smoke rendered all S023 cases to `artifacts/visual_qa/s023/latest-local`. Point, marker, image
+nearest, and point-over-image cases render in both Matplotlib and Datoviz.
+
+The latest regenerated contact sheet is:
+
+- `artifacts/visual_qa/s023/latest-local/contact_sheets/s023_all_cases.png`
+
+Use this command shape for local regeneration:
+
+```bash
+DVZ_SHADERC_RUNTIME_LIBRARY=/home/cyrille/GIT/Viz/datoviz/build/wheel-stage/datoviz/libshaderc_shared.so \
+  uv run python -m gsp.qa.visual run \
+    --out artifacts/visual_qa/s023/latest-local \
+    --run-id latest-local \
+    --contact-sheet \
+    --resolution 800x600
+```
+
+The generated run records `datoviz_color_pipeline: legacy_srgb_blend`.
 
 ## M066 Completion
 
@@ -196,6 +223,20 @@ M067 added markers as a distinct visual family:
   and `shape`.
 - `marker/shapes_ndc` and `marker/angle_size_stroke_ndc` were added to visual QA and render in both
   backends in the latest local run.
+
+## Datoviz Parity Fixes Landed
+
+The visual QA work exposed several Datoviz-side semantic gaps that are now fixed on Datoviz
+`v0.4-dev`:
+
+- nearest image sampling support;
+- marker triangle bbox/rotation semantics;
+- marker angle handling with positive angles using the math convention;
+- legacy sRGB/display-space blending as an opt-in figure color pipeline;
+- UNORM offscreen targets for legacy color-pipeline capture.
+
+Those fixes make the S023 visual QA cases useful for checking GSP regressions rather than mainly
+tracking Datoviz limitations.
 
 ## M068 Review Point
 
