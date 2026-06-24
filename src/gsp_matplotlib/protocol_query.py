@@ -8,15 +8,22 @@ from typing import Iterable
 
 import numpy as np
 
-from gsp.protocol.query import QueryHitPolicy, QueryRequest, QueryResult, QueryStatus, VisualFamily
-from gsp.protocol.visuals import ImageOrigin, ImageVisual, PointVisual
+from gsp.protocol.query import (
+    TEXT_QUERY_PAYLOAD_KIND,
+    QueryHitPolicy,
+    QueryRequest,
+    QueryResult,
+    QueryStatus,
+    VisualFamily,
+)
+from gsp.protocol.visuals import ImageOrigin, ImageVisual, PointVisual, TextVisual
 
 
 @dataclass(frozen=True, slots=True)
 class QueryVisualEntry:
     """Visual plus z-order for reference query evaluation."""
 
-    visual: PointVisual | ImageVisual
+    visual: PointVisual | ImageVisual | TextVisual
     z_order: int = 0
 
 
@@ -47,6 +54,8 @@ def query_visuals(
             hit = _query_point_visual(request, visual)
         elif isinstance(visual, ImageVisual):
             hit = _query_image_visual(request, visual)
+        elif isinstance(visual, TextVisual):
+            hit = _query_text_visual(request, visual)
         else:
             hit = None
         if hit is not None:
@@ -92,7 +101,9 @@ def failed_query_result(request: QueryRequest, diagnostic: str) -> QueryResult:
     )
 
 
-def _contains(bounds: tuple[float, float, float, float], coordinate: tuple[float, float]) -> bool:
+def _contains(
+    bounds: tuple[float, float, float, float], coordinate: tuple[float, float]
+) -> bool:
     left, right, bottom, top = bounds
     x, y = coordinate
     x_min, x_max = sorted((left, right))
@@ -100,9 +111,15 @@ def _contains(bounds: tuple[float, float, float, float], coordinate: tuple[float
     return x_min <= x <= x_max and y_min <= y <= y_max
 
 
-def _query_point_visual(request: QueryRequest, visual: PointVisual) -> QueryResult | None:
+def _query_point_visual(
+    request: QueryRequest, visual: PointVisual
+) -> QueryResult | None:
     positions = visual.positions[:, :2]
-    sizes = visual.sizes if isinstance(visual.sizes, np.ndarray) else np.full(positions.shape[0], visual.sizes)
+    sizes = (
+        visual.sizes
+        if isinstance(visual.sizes, np.ndarray)
+        else np.full(positions.shape[0], visual.sizes)
+    )
     colors = _rgba01(visual.colors)
     query = np.array(request.coordinate, dtype=np.float64)
 
@@ -138,7 +155,9 @@ def _query_point_visual(request: QueryRequest, visual: PointVisual) -> QueryResu
     )
 
 
-def _query_image_visual(request: QueryRequest, visual: ImageVisual) -> QueryResult | None:
+def _query_image_visual(
+    request: QueryRequest, visual: ImageVisual
+) -> QueryResult | None:
     left, right, bottom, top = visual.extent
     x, y = request.coordinate
     x_min, x_max = sorted((left, right))
@@ -175,13 +194,66 @@ def _query_image_visual(request: QueryRequest, visual: ImageVisual) -> QueryResu
     )
 
 
+def _query_text_visual(request: QueryRequest, visual: TextVisual) -> QueryResult | None:
+    positions = visual.positions[:, :2]
+    sizes = visual.font_size_values()
+    colors = _rgba01(visual.rgba_values())
+    query = np.array(request.coordinate, dtype=np.float64)
+
+    best_index: int | None = None
+    best_distance = float("inf")
+    for index, (position, size) in enumerate(zip(positions, sizes, strict=True)):
+        # Conservative item-level CPU proxy: hit the label anchor neighborhood only.
+        # Glyph-level geometry and exact backend text metrics remain deferred.
+        radius = max(float(size) * 0.5, 1.0)
+        distance = float(np.linalg.norm(query - position.astype(np.float64)))
+        if distance <= radius and distance < best_distance:
+            best_index = index
+            best_distance = distance
+
+    if best_index is None:
+        return None
+
+    position = positions[best_index]
+    text = visual.texts[best_index]
+    return QueryResult(
+        request_id=request.id,
+        status=QueryStatus.HIT,
+        hit=True,
+        panel_coordinate=request.coordinate,
+        visual_id=visual.id,
+        visual_family=VisualFamily.TEXT,
+        item_id=best_index,
+        visual_coordinate=(float(position[0]), float(position[1])),
+        data_coordinate=(float(position[0]), float(position[1])),
+        displayed_rgba=(
+            float(colors[best_index][0]),
+            float(colors[best_index][1]),
+            float(colors[best_index][2]),
+            float(colors[best_index][3]),
+        ),
+        value=text,
+        extension_payload_kind=TEXT_QUERY_PAYLOAD_KIND,
+        extension_payload={
+            "kind": "text",
+            "visual_id": visual.id,
+            "item_index": best_index,
+            "text": text,
+            "position": (float(position[0]), float(position[1])),
+            "coordinate_space": visual.coordinate_space.value,
+        },
+    )
+
+
 def _rgba01(colors: np.ndarray) -> np.ndarray:
     if colors.dtype == np.dtype(np.uint8):
         return colors.astype(np.float64) / 255.0
     return colors.astype(np.float64)
 
 
-def _image_value_to_rgba(value: np.ndarray | np.generic) -> tuple[float, float, float, float]:
+def _image_value_to_rgba(
+    value: np.ndarray | np.generic,
+) -> tuple[float, float, float, float]:
     array = np.asarray(value)
     scale = 255.0 if array.dtype == np.dtype(np.uint8) else 1.0
     flat = array.astype(np.float64).reshape(-1) / scale

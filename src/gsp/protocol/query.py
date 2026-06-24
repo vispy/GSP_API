@@ -57,6 +57,7 @@ class VisualFamily(str, Enum):
 
     POINT = "point"
     IMAGE = "image"
+    TEXT = "text"
 
 
 class QueryContributionKind(str, Enum):
@@ -67,6 +68,7 @@ class QueryContributionKind(str, Enum):
 
 
 GUIDE_QUERY_PAYLOAD_KIND = "gsp.guide-query@0.1"
+TEXT_QUERY_PAYLOAD_KIND = "gsp.text-query@0.1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -138,7 +140,9 @@ class QueryHit:
         if self.texel is not None and (self.texel[0] < 0 or self.texel[1] < 0):
             raise ValueError("texel coordinates must be non-negative")
         if (self.extension_payload is None) != (self.extension_payload_kind is None):
-            raise ValueError("extension payload kind and value must be provided together")
+            raise ValueError(
+                "extension payload kind and value must be provided together"
+            )
 
 
 @dataclass(frozen=True, slots=True)
@@ -169,9 +173,16 @@ class QueryResult:
         if self.status != QueryStatus.HIT and self.hit:
             raise ValueError("non-hit results must set hit=False")
         self._normalize_hit_payloads()
-        if self.status in (QueryStatus.UNSUPPORTED, QueryStatus.STALE, QueryStatus.DROPPED, QueryStatus.FAILED):
+        if self.status in (
+            QueryStatus.UNSUPPORTED,
+            QueryStatus.STALE,
+            QueryStatus.DROPPED,
+            QueryStatus.FAILED,
+        ):
             if not self.diagnostic:
-                raise ValueError(f"{self.status.value} query results require a diagnostic")
+                raise ValueError(
+                    f"{self.status.value} query results require a diagnostic"
+                )
         if self.status != QueryStatus.HIT and (
             self.hits
             or self.visual_id is not None
@@ -185,9 +196,13 @@ class QueryResult:
             or self.extension_payload_kind is not None
             or self.extension_payload is not None
         ):
-            raise ValueError("non-hit query results must not include hit payload fields")
+            raise ValueError(
+                "non-hit query results must not include hit payload fields"
+            )
         if (self.extension_payload is None) != (self.extension_payload_kind is None):
-            raise ValueError("extension payload kind and value must be provided together")
+            raise ValueError(
+                "extension payload kind and value must be provided together"
+            )
 
     def _normalize_hit_payloads(self) -> None:
         if self.status != QueryStatus.HIT:
@@ -211,7 +226,9 @@ class QueryResult:
 
 def _query_hit_from_result_fields(result: QueryResult) -> QueryHit:
     contribution_kind = (
-        QueryContributionKind.GUIDE if result.extension_payload_kind == GUIDE_QUERY_PAYLOAD_KIND else QueryContributionKind.DATA
+        QueryContributionKind.GUIDE
+        if result.extension_payload_kind == GUIDE_QUERY_PAYLOAD_KIND
+        else QueryContributionKind.DATA
     )
     return QueryHit(
         contribution_kind=contribution_kind,

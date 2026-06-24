@@ -74,6 +74,7 @@ from .ids import ObjectRef, new_id, validate_id
 from .panels import AspectPolicy, Panel, View2D, VisualAttachment, VisualCoordinateSpace
 from .query import (
     GUIDE_QUERY_PAYLOAD_KIND,
+    TEXT_QUERY_PAYLOAD_KIND,
     GuideQueryPayload,
     QueryContributionKind,
     QueryCoordinateSpace,
@@ -225,6 +226,7 @@ __all__ = [
     "TextAnchorX",
     "TextAnchorY",
     "TextVisual",
+    "TEXT_QUERY_PAYLOAD_KIND",
     "TILED_IMAGE_QUERY_PAYLOAD_KIND",
     "TileAvailability",
     "TileEncoding",
