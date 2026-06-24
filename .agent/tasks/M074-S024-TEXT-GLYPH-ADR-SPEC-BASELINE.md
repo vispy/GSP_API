@@ -9,9 +9,9 @@ M074
 After P009 is answered, convert the consultation result into durable Text/Glyph protocol decisions
 and mission-sized implementation tasks.
 
-## Blocker
+## Status
 
-Awaiting ChatGPT Pro response for `.agent/consultations/P009-text-glyph-protocol-semantics.md`.
+Completed. P009 response saved and converted into ADR/spec/task records.
 
 ## Required Work After Response
 
@@ -30,3 +30,10 @@ Awaiting ChatGPT Pro response for `.agent/consultations/P009-text-glyph-protocol
 
 - Stop if no P009 response exists.
 - Stop if P009 leaves a key design decision unresolved and no safe narrow default is stated.
+
+## Completion Notes
+
+- Added `.agent/consultations/P009-response.md`.
+- Added ADR-0016, `spec/visuals/text.md`, and `.agent/decisions/S024_textvisual_contracts.md`.
+- Updated relevant spec indexes and capability/query/QA/backend notes.
+- Created M075-M081 follow-up missions; M075 is ready.

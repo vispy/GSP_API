@@ -6,7 +6,7 @@ S024 - Text/Glyph Visuals v1
 
 ## Status
 
-Blocked pending ChatGPT Pro consultation result.
+Completed.
 
 ## Summary
 
@@ -23,6 +23,14 @@ family before implementation begins.
 - Follow-up implementation missions for Matplotlib reference rendering, Datoviz capability-gated
   support, VisPy2 producer APIs, tests, and visual QA cases.
 
+## Completed
+
+- Saved the ChatGPT Pro answer as `.agent/consultations/P009-response.md`.
+- Accepted ADR-0016 and `spec/visuals/text.md` for `TextVisual` v1.
+- Updated spec indexes, visual-family docs, capability/query notes, Datoviz boundary, visual QA plan, and VisPy2 visual API notes.
+- Added `.agent/decisions/S024_textvisual_contracts.md`.
+- Created follow-up missions M075-M081.
+
 ## Acceptance
 
 - Public Text/Glyph fields are documented before implementation.
@@ -32,5 +40,4 @@ family before implementation begins.
 
 ## Stop Condition
 
-Stop until the P009 ChatGPT Pro result is available. Do not invent missing semantics from legacy
-`Texts` code or backend APIs.
+Stop if implementation starts before M075 or if workers add public glyph/atlas/font-handle fields outside ADR-0016.

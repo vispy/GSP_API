@@ -304,3 +304,11 @@ S022 adds these recommended diagnostic codes:
 Existing S020 diagnostics remain preferred where they already express the violation. The new codes
 cover source-contract selection, stable decoder ids, HTTP response policy, and URL validation gaps
 that were not specific in S020.
+
+
+## S024 TextVisual capability notes
+
+Text rendering capabilities are explicit. Core support requires `visual.text` plus printable ASCII,
+positions, RGBA alpha, logical pixel font size, anchors, and generic font roles. Unicode beyond ASCII,
+multiline, baseline, rotation, per-item style, Datoviz text support, and text query/readback are
+separate capability/diagnostic surfaces and must not be silently assumed.

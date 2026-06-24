@@ -143,7 +143,7 @@
       "id": "S024",
       "title": "Text/Glyph Visuals v1",
       "state": "in_progress",
-      "progress": 10
+      "progress": 25
     }
   ],
   "missions": [
@@ -808,10 +808,73 @@
       "id": "M074",
       "title": "S024 Text/Glyph ADR/spec baseline",
       "stage": "S024",
-      "state": "blocked",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 74
+    },
+    {
+      "id": "M075",
+      "title": "S024 TextVisual protocol dataclass and validation",
+      "stage": "S024",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
-      "priority": 74
+      "priority": 75
+    },
+    {
+      "id": "M076",
+      "title": "S024 Matplotlib TextVisual reference renderer",
+      "stage": "S024",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 76
+    },
+    {
+      "id": "M077",
+      "title": "S024 TextVisual visual QA fixtures",
+      "stage": "S024",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 77
+    },
+    {
+      "id": "M078",
+      "title": "S024 Datoviz v0.4 text capability probe",
+      "stage": "S024",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 78
+    },
+    {
+      "id": "M079",
+      "title": "S024 Datoviz TextVisual renderer or unsupported report",
+      "stage": "S024",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 79
+    },
+    {
+      "id": "M080",
+      "title": "S024 VisPy2 text producer API",
+      "stage": "S024",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 80
+    },
+    {
+      "id": "M081",
+      "title": "S024 TextVisual query/readback integration",
+      "stage": "S024",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 81
     }
   ],
   "review_queue": [],
@@ -846,24 +909,17 @@
     },
     {
       "id": "Q070-TEXT-GLYPH-PROTOCOL-SEMANTICS",
-      "summary": "Resolve Text/Glyph v1 protocol semantics before implementation: TextVisual vs GlyphVisual, font policy, units, anchors, rotation, glyph atlas visibility, Unicode/shaping, guide relation, query payloads, and QA cases. Packet: .agent/consultations/P009-text-glyph-protocol-semantics.md",
-      "requires_human": true,
+      "summary": "Resolved by P009 response: S024 defines public TextVisual only, defers GlyphVisual/atlases, uses screen-pixel font sizes, radians, explicit anchors, generic font roles, ASCII conformance with Unicode capability gates, and item-level query guidance.",
+      "requires_human": false,
       "requires_chatgpt_pro": true,
-      "state": "open"
+      "state": "closed"
     }
   ],
   "recommendations": [
-    "M067 completed MarkerVisual v1 semantics, Matplotlib and Datoviz marker renderers, VisPy2 `Axes.markers()`, and marker visual QA coverage.",
-    "M068 completed SegmentVisual v1 semantics, Matplotlib and Datoviz segment renderers, VisPy2 `Axes.segments()`, and segment visual QA coverage.",
-    "M069 completed PathVisual v1 semantics, Matplotlib/Datoviz render paths, VisPy2 producers, and visual QA coverage.",
-    "S023 should proceed visual family by visual family: Point, Marker, Segment, Path, then Image hardening. Legacy GSP/Datoviz code is reference material only.",
-    "M070 completed ImageVisual v1 hardening with scalar gray/clim semantics, Matplotlib/Datoviz rendering, and visual QA coverage.",
-    "Do not implement against v0.3-style Datoviz APIs such as `dvz_*_alloc`; use retained scene constructors plus `dvz_visual_set_data*` uploads and explicit attach descriptors.",
-    "M071 completed the S023 gallery examples, visual QA docs, final contact sheets, and manual review pack.",
-    "M072 completed S023 closure docs, ADRs, spec index updates, legacy mapping, and S024 scoping.",
     "M073 completed S024 Text/Glyph scoping and created P009 ChatGPT Pro consultation packet.",
-    "M074 is blocked until the P009 response is pasted or committed; do not freeze TextVisual/GlyphVisual fields from legacy code.",
-    "Manual S023 visual QA notes remain useful for release signoff, but they do not block Text/Glyph scoping.",
-    "Next user action: paste the P009 prompt into ChatGPT Pro and add the response as .agent/consultations/P009-response.md, then run M074."
+    "M074 completed the P009 ADR/spec baseline: TextVisual is public v1; GlyphVisual and atlases are deferred/internal.",
+    "Next mission is M075: implement TextVisual protocol dataclass/enums/validation only; no renderer or Datoviz assumptions yet.",
+    "After M075, proceed through Matplotlib reference rendering, visual QA fixtures, Datoviz capability probe, Datoviz renderer/unsupported diagnostics, VisPy2 producer API, and text query integration.",
+    "Manual S023 visual QA notes remain useful for release signoff, but they do not block S024 implementation."
   ]
 }

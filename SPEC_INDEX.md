@@ -28,11 +28,14 @@ This file tells agents where to find authoritative design information.
 | Datoviz v0.4 API boundary | spec/datoviz_v04_api_boundary.md |
 | VisPy2 visual API | spec/vispy2_visual_api.md |
 | Segment visual | spec/visuals/segment.md |
+| Text visual | spec/visuals/text.md |
 | S023 visual-family decision | .agent/decisions/S023_visual_family_contracts.md |
 | S023 visual family order ADR | adr/ADR-0011-s023-visual-family-order.md |
 | Screen-space units ADR | adr/ADR-0012-s023-screen-space-units.md |
 | Datoviz v0.4 retained API ADR | adr/ADR-0013-datoviz-v04-retained-scene-api.md |
 | Coordinate-space mapping ADR | adr/ADR-0014-s023-coordinate-space-mapping.md |
 | Image scalar gray/clim ADR | adr/ADR-0015-imagevisual-scalar-gray-clim.md |
+| TextVisual v1 ADR | adr/ADR-0016-textvisual-v1-no-public-glyphvisual.md |
+| S024 TextVisual decision | .agent/decisions/S024_textvisual_contracts.md |
 | Existing repo reuse | LEGACY_MAP.md |
 | Agent workflow | AGENTS.md and .agent/project.json |

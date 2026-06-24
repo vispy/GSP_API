@@ -154,3 +154,11 @@ Reference behavior:
 - requests for unsupported extension payload kinds return `unsupported` with a diagnostic;
 - requested extension payload kinds limit direct reference routing to entries that can satisfy
   those payloads rather than returning a core visual hit without the requested extension payload.
+
+
+## S024 TextVisual query payload
+
+Text query/readback is item-level and capability-gated. A text hit payload uses `kind="text"`,
+`visual_id`, and `item_index`, and may include `text`, original `position`, `coordinate_space`,
+resolved anchors, `bounds_px`, `distance_px`, and `z_order`. Glyph-level hit testing is deferred.
+Guide labels and titles remain guide-query payloads, not public `TextVisual` hits.

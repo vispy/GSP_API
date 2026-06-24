@@ -1,6 +1,6 @@
 # Visual Cross-Cutting Rules - Accepted S023 Baseline
 
-Status: accepted for S023.
+Status: accepted for S023; extended by S024 TextVisual baseline.
 
 These rules apply across S023 visual families unless an individual family spec says otherwise.
 
@@ -16,6 +16,7 @@ These rules apply across S023 visual families unless an individual family spec s
 
 - Point and marker `sizes` are rendered screen-pixel diameters.
 - Segment and path `widths` are rendered screen-pixel stroke widths.
+- Text `font_size_px` values are logical screen-pixel font sizes.
 - Marker `stroke_width` is a rendered screen-pixel stroke width.
 - Matplotlib converts screen pixels to points via figure DPI. Datoviz v0.4 uses `*_px` attributes
   where exposed by the facade.
@@ -31,5 +32,6 @@ These rules apply across S023 visual families unless an individual family spec s
 
 ## Scope boundaries
 
-S023 does not define text/glyph, mesh, volume, legend, colorbar, tiled-source, remote-source, or
-interactive editing semantics.
+S024 defines `TextVisual` only. It does not define public glyph visuals/resources, mesh, volume,
+legend, colorbar, tiled-source, remote-source, rich text, layout engines, or interactive editing
+semantics.
