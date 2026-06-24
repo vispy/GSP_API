@@ -136,8 +136,8 @@
     {
       "id": "S023",
       "title": "Visual Families v1 and Manual Visual QA Foundation",
-      "state": "in_progress",
-      "progress": 90
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -784,9 +784,9 @@
       "id": "M072",
       "title": "S023 closure docs and spec index",
       "stage": "S023",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 72
     }
   ],
@@ -832,6 +832,7 @@
     "M070 completed ImageVisual v1 hardening with scalar gray/clim semantics, Matplotlib/Datoviz rendering, and visual QA coverage.",
     "Do not implement against v0.3-style Datoviz APIs such as `dvz_*_alloc`; use retained scene constructors plus `dvz_visual_set_data*` uploads and explicit attach descriptors.",
     "M071 completed the S023 gallery examples, visual QA docs, final contact sheets, and manual review pack.",
-    "Next mission: M072 should close S023 docs and spec index."
+    "M072 completed S023 closure docs, ADRs, spec index updates, legacy mapping, and S024 scoping.",
+    "Next stage should choose Text/Glyph or Mesh explicitly; do not infer either from legacy code."
   ]
 }

@@ -21,5 +21,18 @@ This file tells agents where to find authoritative design information.
 | Matplotlib backend | spec/backends/matplotlib.md |
 | Datoviz backend | spec/backends/datoviz.md |
 | VisPy2 API | spec/vispy2/api.md |
+| Visual families v1 | spec/visual_families_v1.md |
+| Visual cross-cutting rules | spec/visual_cross_cutting_rules.md |
+| Visual QA harness | spec/visual_qa_harness.md |
+| Backend visual capabilities | spec/backend_capabilities_visuals.md |
+| Datoviz v0.4 API boundary | spec/datoviz_v04_api_boundary.md |
+| VisPy2 visual API | spec/vispy2_visual_api.md |
+| Segment visual | spec/visuals/segment.md |
+| S023 visual-family decision | .agent/decisions/S023_visual_family_contracts.md |
+| S023 visual family order ADR | adr/ADR-0011-s023-visual-family-order.md |
+| Screen-space units ADR | adr/ADR-0012-s023-screen-space-units.md |
+| Datoviz v0.4 retained API ADR | adr/ADR-0013-datoviz-v04-retained-scene-api.md |
+| Coordinate-space mapping ADR | adr/ADR-0014-s023-coordinate-space-mapping.md |
+| Image scalar gray/clim ADR | adr/ADR-0015-imagevisual-scalar-gray-clim.md |
 | Existing repo reuse | LEGACY_MAP.md |
 | Agent workflow | AGENTS.md and .agent/project.json |

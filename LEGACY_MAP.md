@@ -99,6 +99,25 @@ Risks:
 - Current functions create legacy `gsp.visuals` directly.
 - Axes/navigation semantics need alignment with the future controller and query models.
 
+
+## S023 Visual Family Mapping
+
+S023 accepted formal protocol families for point, marker, segment, path, and image visuals. Legacy
+visual classes remain implementation reference material only.
+
+| Legacy area | S023 protocol family | Reuse guidance |
+|---|---|---|
+| `src/gsp/visuals/points.py` and point examples | `PointVisual` | Reference data patterns only; protocol size units are screen-pixel diameters. |
+| `src/gsp/visuals/markers.py` and marker examples | `MarkerVisual` | Reference shape vocabulary and examples only; formal shape/angle/stroke fields live in protocol specs. |
+| `src/gsp/visuals/segments.py` | `SegmentVisual` | Reference independent segment semantics only; no arrows/dashes/vector heads in S023. |
+| `src/gsp/visuals/paths.py` | `PathVisual` | Reference ordered path vocabulary only; S023 paths are open polylines without fills, closed fields, holes, Beziers, or dashes. |
+| `src/gsp/visuals/image.py` and image examples | `ImageVisual` | Reference image workflows only; S023 accepts eager scalar/RGB/RGBA images, explicit origin/extent/interpolation, gray scalar colormap, and optional scalar clim. |
+| `src/gsp/visuals/texts.py` | deferred Text/Glyph stage | Do not treat legacy text behavior as accepted protocol semantics. |
+| mesh/object helpers under `src/gsp/visuals/` and `src/gsp_extra/` | deferred Mesh stage | Do not treat legacy mesh behavior as accepted protocol semantics. |
+
+Authoritative S023 contracts are indexed in `SPEC_INDEX.md`, especially `spec/visual_families_v1.md`
+and `.agent/decisions/S023_visual_family_contracts.md`.
+
 ## Recommended Mission Inputs
 
 ### M002 Protocol Spine

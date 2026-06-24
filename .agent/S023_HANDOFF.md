@@ -291,3 +291,11 @@ segment contract added in M068.
 - Regenerated final review pack under `artifacts/visual_qa/s023/latest-local/`.
 - Final contact sheet: `artifacts/visual_qa/s023/latest-local/contact_sheets/s023_all_cases.png`.
 - Manual review template: `artifacts/visual_qa/s023/latest-local/manual_notes.yaml`.
+
+
+## M072 S023 closure update
+
+- S023 is closed. Accepted protocol visual families are Point, Marker, Segment, Path, and Image.
+- Closure specs and ADRs are indexed in `SPEC_INDEX.md`.
+- Legacy visual classes are mapped to accepted families or deferred stages in `LEGACY_MAP.md`.
+- Text/Glyph and Mesh are explicitly deferred to S024+ and must not be inferred from legacy code.

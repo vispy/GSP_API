@@ -37,3 +37,17 @@ Create or update, based on what earlier S023 missions actually implemented:
 
 - Stop if docs assert support that the QA report does not prove.
 - Stop if closure tries to complete unfinished visual families without artifacts.
+
+## Completion Notes
+
+- Created closure specs:
+  - `spec/visual_families_v1.md`
+  - `spec/visual_cross_cutting_rules.md`
+  - `spec/visual_qa_harness.md`
+  - `spec/backend_capabilities_visuals.md`
+  - `spec/datoviz_v04_api_boundary.md`
+  - `spec/vispy2_visual_api.md`
+  - `spec/visuals/segment.md`
+- Created ADRs `ADR-0011` through `ADR-0015`.
+- Updated `SPEC_INDEX.md`, `LEGACY_MAP.md`, `.agent/decisions/S023_visual_family_contracts.md`, and S024 scoping.
+- S023 is closed with Text/Glyph and Mesh explicitly deferred.
