@@ -1,6 +1,6 @@
 # Visual Cross-Cutting Rules - Accepted S023 Baseline
 
-Status: accepted for S023; extended by S024 TextVisual baseline.
+Status: accepted for S023; extended by S024 TextVisual and S025 MeshVisual baselines.
 
 These rules apply across S023 visual families unless an individual family spec says otherwise.
 
@@ -11,6 +11,7 @@ These rules apply across S023 visual families unless an individual family spec s
 - RGBA arrays are uint8 `[0, 255]` or finite float `[0, 1]` with explicit shape documented by the
   family.
 - Numeric style arrays are finite and non-negative where they represent rendered size or width.
+- Mesh `faces` arrays are integer triangle indices into the visual's `positions` array.
 
 ## Units
 
@@ -32,6 +33,7 @@ These rules apply across S023 visual families unless an individual family spec s
 
 ## Scope boundaries
 
-S024 defines `TextVisual` only. It does not define public glyph visuals/resources, mesh, volume,
+S024 defines public `TextVisual` without public glyph resources. S025 defines public `MeshVisual`
+without public geometry resources, materials, lights, textures, instancing, surface/volume visuals,
 legend, colorbar, tiled-source, remote-source, rich text, layout engines, or interactive editing
 semantics.

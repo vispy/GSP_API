@@ -1,6 +1,6 @@
 # Visual Families v1 - Accepted Baseline
 
-Status: S023 accepted Point/Marker/Segment/Path/Image; S024 TextVisual implementation complete.
+Status: S023 accepted Point/Marker/Segment/Path/Image; S024 TextVisual implemented; S025 MeshVisual accepted for implementation.
 
 S023 establishes the first durable protocol visual-family baseline. The implemented and QA-backed
 families are:
@@ -13,6 +13,7 @@ families are:
 | Path | `PathVisual` | `spec/visuals/path.md` | accepted |
 | Image | `ImageVisual` | `spec/visuals/image.md` | accepted |
 | Text | `TextVisual` | `spec/visuals/text.md` | accepted and implemented for protocol, Matplotlib reference rendering, QA fixtures, VisPy2 producer API, and item-level Matplotlib query/readback; Datoviz reports structured unsupported diagnostics pending verified v0.4 text semantics |
+| Mesh | `MeshVisual` | `spec/visuals/mesh.md` | accepted for S025 implementation |
 
 The v1 baseline is deliberately narrow:
 
@@ -27,7 +28,7 @@ The v1 baseline is deliberately narrow:
 Deferred visual families and features:
 
 - public `GlyphVisual` and glyph/atlas resources;
-- Mesh/Surface/Volume visuals;
+- Surface/Volume visuals and broader mesh-resource/material systems;
 - filled polygons, holes, closed path semantics, Beziers, dashes, and arrows;
 - colorbars, broad colormap registries, advanced normalization, legends, and layout systems;
 - tiled/remote/virtual images as eager ImageVisual fields.
@@ -42,3 +43,10 @@ S024 adds and implements `TextVisual` as the public text family. `GlyphVisual` i
 atlases, shaping output, and backend text buffers are renderer-internal realization details. Text
 font sizes are logical screen pixels, rotation is radians, font selection uses generic `FontRole`,
 and printable ASCII plus newline is the required conformance subset.
+
+## S025 MeshVisual addition
+
+S025 accepts `MeshVisual` as a narrow inline indexed triangular-mesh protocol. Strict conformance is
+2D filled triangles in NDC/DATA with flat uniform or per-face RGBA. Public geometry resources,
+materials/lights, textures/UVs, instancing, mesh-local transforms, surface/volume visuals, scalar
+colormaps/colorbars, and broad 3D camera conformance are deferred.

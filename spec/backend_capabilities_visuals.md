@@ -1,6 +1,6 @@
 # Backend Visual Capabilities - Accepted S023 Baseline
 
-Status: accepted for S023; S024 text capability gates accepted.
+Status: accepted for S023; S024 text and S025 mesh capability gates accepted.
 
 S023 validates two backend paths:
 
@@ -25,7 +25,7 @@ reports rather than fallback approximations. Required visual families use:
 Remaining non-S023 limitations are follow-up scope, not hidden S023 failures:
 
 - backend-native colormap registries beyond grayscale;
-- public glyph and mesh visual families;
+- public glyph resources and mesh features beyond S025 strict `MeshVisual`;
 - tiled/remote/virtual image sources in Datoviz;
 - scientific readback and full query payload parity;
 - all-rendered/guide query scopes.
@@ -48,3 +48,19 @@ Structured diagnostics include `TEXT_UNSUPPORTED`, `TEXT_API_UNVERIFIED`,
 `TEXT_PER_ITEM_STYLE_UNSUPPORTED`, `TEXT_SIZE_DPI_UNVERIFIED`, `TEXT_MULTILINE_UNSUPPORTED`,
 `TEXT_GLYPH_MISSING`, `TEXT_ATLAS_CREATION_FAILED`, `TEXT_FONT_ROLE_UNRESOLVED`,
 `TEXT_FONT_SUBSTITUTED`, `TEXT_SHAPING_UNSUPPORTED`, and `TEXT_BIDI_UNSUPPORTED`.
+
+## S025 MeshVisual capability gates
+
+A backend may claim strict `MeshVisual` support only when it can render 2D indexed triangle meshes
+with finite NDC/DATA positions, uniform RGBA, per-face RGBA, flat colors, deterministic visual order,
+and validation diagnostics. Optional capabilities include `mesh.color.vertex`, `mesh.normals.face`,
+`mesh.normals.vertex`, `mesh.normal_generation.face_flat`, `mesh.shading.lambert`,
+`mesh.depth_test`, `mesh.depth_write`, `mesh.face_culling`, `mesh.alpha`, `mesh.query.face_2d`,
+`mesh.render_3d`, and `mesh.query.face_3d`.
+
+Structured diagnostics include `MESH_UNSUPPORTED`, `MESH_API_UNVERIFIED`,
+`MESH_INDEXED_GEOMETRY_UNSUPPORTED`, `MESH_POSITION_DIM_UNSUPPORTED`,
+`MESH_COLOR_MODE_UNSUPPORTED`, `MESH_VERTEX_COLOR_SIMPLIFIED`, `MESH_NORMALS_UNSUPPORTED`,
+`MESH_SHADING_UNSUPPORTED`, `MESH_DEPTH_UNSUPPORTED`, `MESH_CULLING_UNSUPPORTED`,
+`MESH_ALPHA_LIMITED`, `MESH_QUERY_UNSUPPORTED`, `MESH_3D_VIEW_UNSUPPORTED`,
+`MESH_TEXTURE_DEFERRED`, and `MESH_INSTANCING_DEFERRED`.

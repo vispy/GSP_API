@@ -1,6 +1,6 @@
 # Visual QA Harness - Accepted S023 Baseline
 
-Status: accepted for S023; S024 text QA plan accepted.
+Status: accepted for S023; S024 text QA accepted; S025 mesh QA plan accepted.
 
 The S023 visual QA harness lives under `gsp.qa.visual` and provides deterministic scene generation,
 backend rendering, contact-sheet generation, reports, and manual review templates.
@@ -60,3 +60,23 @@ capability-gated support exists, contact sheets, and manual review notes:
 
 Manual review focuses on semantic placement, size class, anchors, alpha, rotation, and diagnostics,
 not pixel-perfect glyph raster identity across backends.
+
+
+## S025 MeshVisual QA plan
+
+Strict mesh QA covers deterministic 2D filled-triangle cases with Matplotlib reference output and
+Datoviz output where capability gates pass:
+
+- `mesh_single_triangle_uniform_ndc_2d`;
+- `mesh_indexed_square_uniform_ndc_2d`;
+- `mesh_indexed_square_per_face_ndc_2d`;
+- `mesh_data_coordinates_2d`;
+- `mesh_order_overlap_2d`;
+- `mesh_validation_invalid_index`;
+- `mesh_validation_bad_color_shape`;
+- `mesh_query_face_2d`.
+
+Optional/capability-gated cases include per-vertex color interpolation, 3D cube depth/culling, alpha
+overlap, normals/flat shading, optional Lambert demonstration, 3D face query, and wireframe only if
+later accepted. Manual review checks geometry placement, face colors, draw order, diagnostics, and
+face-query payloads rather than pixel-perfect antialiasing.

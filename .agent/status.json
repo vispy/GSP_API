@@ -149,7 +149,7 @@
       "id": "S025",
       "title": "Mesh and 3D Geometry Visuals v1",
       "state": "in_progress",
-      "progress": 10
+      "progress": 20
     }
   ],
   "missions": [
@@ -895,16 +895,16 @@
       "id": "M083",
       "title": "S025 MeshVisual ADR/spec baseline",
       "stage": "S025",
-      "state": "blocked",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 83
     },
     {
       "id": "M084",
       "title": "S025 MeshVisual protocol dataclass and validation",
       "stage": "S025",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 84
@@ -994,16 +994,16 @@
     },
     {
       "id": "Q080-MESH-3D-PROTOCOL-SEMANTICS",
-      "summary": "Awaiting P010 ChatGPT Pro response before freezing MeshVisual/3D geometry/material/query semantics for S025.",
-      "requires_human": true,
+      "summary": "Resolved by P010 response: S025 defines public MeshVisual only, inline indexed triangles, strict 2D flat uniform/per-face RGBA conformance, capability-gated 3D/normals/shading/query, and defers resources/materials/textures/instancing.",
+      "requires_human": false,
       "requires_chatgpt_pro": true,
-      "state": "open"
+      "state": "closed"
     }
   ],
   "recommendations": [
-    "M082 is complete: P010 Mesh/3D protocol consultation packet is ready for ChatGPT Pro.",
-    "Paste or commit the P010 response as `.agent/consultations/P010-response.md`, then run M083 to convert it into ADR/spec baseline.",
-    "Keep M084-M089 draft until M083 accepts MeshVisual semantics; do not implement mesh fields directly from legacy code."
+    "M083 is complete: P010 was converted into ADR-0017, `spec/visuals/mesh.md`, and related spec updates.",
+    "Run M084 next to implement the MeshVisual protocol dataclass and deterministic validation for the strict S025 subset.",
+    "Keep M085-M089 sequenced after M084; do not implement materials, textures, instancing, or broad 3D camera semantics in S025 v1."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1015,6 +1015,7 @@
     "M081 added item-level TextVisual query/readback payloads for the Matplotlib reference path; glyph-level query remains deferred.",
     "S024 closeout: all S024 missions M073-M081 are complete; stage marked completed at 100%.",
     "S025 opened with mission batch M082-M089; M082 is ready, M083 is blocked pending P010, and implementation missions remain draft.",
-    "M082 completed: created P010 Mesh/3D protocol consultation packet and opened Q080; M083 remains blocked pending the response."
+    "M082 completed: created P010 Mesh/3D protocol consultation packet and opened Q080; M083 remains blocked pending the response.",
+    "M083 completed: accepted S025 MeshVisual v1 baseline from P010; M084 is ready for protocol dataclass/validation implementation."
   ]
 }

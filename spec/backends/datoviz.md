@@ -37,6 +37,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 | Point visual | `dvz_point()` plus `dvz_visual_set_data()` for `position`, `color`, `diameter_px` | feasible after point-size semantic alignment |
 | Path visual | `dvz_path()` plus `position`, `color`, `stroke_width_px`, subpaths, caps, and joins | feasible when path helpers are exposed |
 | Image visual | `dvz_image()` plus `position`, `texcoords`, sampled field or texture binding | feasible after image origin/interpolation confirmation |
+| Mesh visual | `dvz_mesh()` plus indexed geometry/attribute upload | capability-gated by S025 retained mesh probe |
 | Capabilities | `dvz_capability_snapshot()` | feasible |
 | Queries | `dvz_panel_query()` / `dvz_scene_poll_query()` | conceptually aligned; local `../datoviz` headers define `DvzQueryResult`, but the current GSP env imports Datoviz 0.3.5 |
 | Capture | offscreen view capture or `dvz.capture()` | feasible for PNG screenshots only |
@@ -317,3 +318,12 @@ Datoviz v0.4-dev headers expose a native panel-axis candidate provider:
 GSP models this as `datoviz.v04.panel_axis.wip`. The provider is capability-gated on actual Python
 facade/raw binding symbols. Native backend auto ticks are adapted output unless Datoviz can accept
 GSP-resolved explicit ticks or an equivalent declared GSP policy.
+
+
+## S025 MeshVisual target
+
+S025 Datoviz work targets retained `dvz_mesh` support only after a fresh capability probe. The adapter
+must preserve GSP `MeshVisual` semantics: inline indexed triangles, flat uniform/per-face RGBA,
+explicit NDC/DATA mapping, conservative depth/culling controls, and structured unsupported reports for
+vertex color, normals, shading, 3D projection, and mesh query gaps. Public GSP fields must not expose
+Datoviz slot names, material structs, helper geometry loaders, or draw calls.
