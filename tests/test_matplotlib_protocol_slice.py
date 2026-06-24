@@ -9,6 +9,10 @@ import numpy as np
 import pytest
 
 from gsp.protocol import (
+    ColorMapId,
+    ColorMapRef,
+    ColorScale,
+    ColorbarGuide,
     CoordinateSpace,
     FontRole,
     ImageColormap,
@@ -18,8 +22,11 @@ from gsp.protocol import (
     MeshVisual,
     MarkerShape,
     MarkerVisual,
+    LinearNormalize,
     PathVisual,
     PointVisual,
+    ScalarColorEncoding,
+    ScalarColorSlot,
     SegmentVisual,
     StrokeCap,
     StrokeJoin,
@@ -27,10 +34,12 @@ from gsp.protocol import (
     TextAnchorY,
     TextVisual,
 )
+from gsp_matplotlib.color_mapping import map_scalar_values
 from gsp.protocol.visuals import ImageInterpolation
 from gsp_matplotlib.protocol_renderer import (
     _marker_areas_from_pixel_diameters,
     _marker_path,
+    render_colorbar_guide,
     render_image_visual,
     render_marker_visual,
     render_mesh_visual,
@@ -133,6 +142,134 @@ def test_render_scalar_image_visual_applies_gray_colormap_and_clim():
 
         assert artist.get_cmap().name == "gray"
         assert artist.get_clim() == (0.5, 2.5)
+    finally:
+        plt.close(fig)
+
+
+def test_render_scalar_image_visual_maps_color_scale_to_rgba():
+    """S026 scalar images use the accepted color scale sampling rule."""
+    fig, ax = plt.subplots()
+    try:
+        scale = _test_color_scale()
+        image_data = np.array([[0.0, 0.5, 1.0]], dtype=np.float32)
+        visual = ImageVisual(
+            id="visual:scalar-image",
+            image=image_data,
+            extent=(0.0, 3.0, 0.0, 1.0),
+            color_scale_id=scale.id,
+        )
+
+        artist = render_image_visual(ax, visual, color_scales={scale.id: scale})
+
+        np.testing.assert_allclose(
+            np.asarray(artist.get_array()), map_scalar_values(image_data, scale)
+        )
+        assert artist.get_cmap().name == "viridis"
+    finally:
+        plt.close(fig)
+
+
+def test_render_point_visual_maps_scalar_color_encoding():
+    """PointVisual scalar colors render through canonical S026 mapping."""
+    fig, ax = plt.subplots()
+    try:
+        scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+        visual = PointVisual(
+            id="visual:points",
+            positions=np.array([[0.0, 0.0], [1.0, 0.0]], dtype=np.float32),
+            sizes=np.array([10.0, 10.0], dtype=np.float32),
+            color_encoding=ScalarColorEncoding(
+                slot=ScalarColorSlot.COLOR,
+                values=np.array([0.0, 0.5], dtype=np.float32),
+                color_scale_id=scale.id,
+            ),
+        )
+
+        artist = render_point_visual(ax, visual, color_scales={scale.id: scale})
+
+        np.testing.assert_allclose(
+            artist.get_facecolors(),
+            map_scalar_values(visual.color_encoding.values, scale),
+        )
+    finally:
+        plt.close(fig)
+
+
+def test_render_marker_visual_maps_scalar_fill_encoding():
+    """MarkerVisual fill scalars render while stroke styling remains explicit."""
+    fig, ax = plt.subplots()
+    try:
+        scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+        visual = MarkerVisual(
+            id="visual:markers",
+            positions=np.array([[0.0, 0.0]], dtype=np.float32),
+            shape=MarkerShape.DISC,
+            sizes=np.array([12.0], dtype=np.float32),
+            stroke_color=np.array([255, 0, 0, 255], dtype=np.uint8),
+            stroke_width=2.0,
+            fill_color_encoding=ScalarColorEncoding(
+                slot=ScalarColorSlot.FILL,
+                values=np.array([1.0], dtype=np.float32),
+                color_scale_id=scale.id,
+                alpha=0.5,
+            ),
+        )
+
+        (artist,) = render_marker_visual(ax, visual, color_scales={scale.id: scale})
+
+        np.testing.assert_allclose(
+            artist.get_facecolors()[0],
+            map_scalar_values(visual.fill_color_encoding.values, scale, alpha=0.5)[0],
+        )
+        np.testing.assert_allclose(artist.get_edgecolors()[0], [1.0, 0.0, 0.0, 1.0])
+    finally:
+        plt.close(fig)
+
+
+def test_render_scalar_visual_requires_declared_color_scale():
+    """Scalar color encodings fail loudly when their scale resource is absent."""
+    fig, ax = plt.subplots()
+    try:
+        visual = PointVisual(
+            id="visual:points",
+            positions=np.array([[0.0, 0.0]], dtype=np.float32),
+            color_encoding=ScalarColorEncoding(
+                slot=ScalarColorSlot.COLOR,
+                values=np.array([0.0], dtype=np.float32),
+                color_scale_id="scale:missing",
+            ),
+        )
+
+        with pytest.raises(ValueError, match="missing color scale"):
+            render_point_visual(ax, visual, color_scales={})
+    finally:
+        plt.close(fig)
+
+
+def test_render_colorbar_guide_uses_semantic_scale_and_ticks():
+    """ColorbarGuide renders from semantic color scale data."""
+    fig, ax = plt.subplots()
+    try:
+        scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+        guide = ColorbarGuide(
+            id="guide:colorbar",
+            panel_id="panel:main",
+            color_scale_id=scale.id,
+            label="Intensity",
+            ticks=(0.0, 0.5, 1.0),
+            tick_labels=("low", "mid", "high"),
+        )
+
+        colorbar = render_colorbar_guide(ax, guide, color_scales={scale.id: scale})
+
+        assert colorbar.ax.get_gid() == "guide:colorbar"
+        assert colorbar.ax.get_ylabel() == "Intensity"
+        np.testing.assert_allclose(colorbar.get_ticks(), [0.0, 0.5, 1.0])
+        assert [tick.get_text() for tick in colorbar.ax.get_yticklabels()] == [
+            "low",
+            "mid",
+            "high",
+        ]
     finally:
         plt.close(fig)
 
@@ -265,15 +402,15 @@ def test_marker_diamond_path_uses_bbox_diameter_semantics():
     )
 
 
-
-
 def test_render_mesh_visual_creates_poly_collection_for_uniform_color():
     """Strict 2D MeshVisual renders as filled Matplotlib polygons."""
     fig, ax = plt.subplots()
     try:
         visual = MeshVisual(
             id="visual:mesh",
-            positions=np.array([[-0.5, -0.5], [0.5, -0.5], [0.0, 0.5]], dtype=np.float32),
+            positions=np.array(
+                [[-0.5, -0.5], [0.5, -0.5], [0.0, 0.5]], dtype=np.float32
+            ),
             faces=np.array([[0, 1, 2]], dtype=np.uint32),
             coordinate_space=CoordinateSpace.NDC,
             color=np.array([255, 0, 0, 255], dtype=np.uint8),
@@ -379,6 +516,14 @@ def test_render_text_visual_maps_protocol_fields_to_text_artists():
         )
     finally:
         plt.close(fig)
+
+
+def _test_color_scale(*, colormap_id: ColorMapId = ColorMapId.VIRIDIS) -> ColorScale:
+    return ColorScale(
+        id="scale:main",
+        colormap=ColorMapRef(colormap_id),
+        normalize=LinearNormalize(vmin=0.0, vmax=1.0),
+    )
 
 
 def test_render_text_visual_uses_data_transform_for_data_coordinates():

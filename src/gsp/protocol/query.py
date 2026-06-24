@@ -5,6 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
+import numpy as np
+
+from .color import ScalarColorSlot, ScalarRangeClass
 from .ids import validate_id
 from .guides import AxisDimension
 
@@ -71,6 +74,7 @@ class QueryContributionKind(str, Enum):
 GUIDE_QUERY_PAYLOAD_KIND = "gsp.guide-query@0.1"
 TEXT_QUERY_PAYLOAD_KIND = "gsp.text-query@0.1"
 MESH_QUERY_PAYLOAD_KIND = "gsp.mesh-query@0.1"
+SCALAR_COLOR_QUERY_PAYLOAD_KIND = "gsp.scalar-color-query@0.1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -111,6 +115,66 @@ class MeshQueryPayload:
             index < 0 for index in self.vertex_indices
         ):
             raise ValueError("vertex_indices must contain three non-negative indices")
+
+
+@dataclass(frozen=True, slots=True)
+class ScalarColorQueryPayload:
+    """Scalar color mapping payload for deterministic query/readback tests."""
+
+    visual_id: str
+    item_kind: str
+    color_slot: ScalarColorSlot | str
+    color_scale_id: str
+    colormap_id: str
+    source_value: float
+    normalized_value_raw: float
+    normalized_value_clipped: float
+    range_class: ScalarRangeClass | str
+    lut_index: int
+    displayed_rgba: tuple[float, float, float, float]
+    item_id: int | None = None
+    texel: tuple[int, int] | None = None
+    face_index: int | None = None
+
+    def __post_init__(self) -> None:
+        validate_id(self.visual_id)
+        validate_id(self.color_scale_id)
+        if not self.item_kind:
+            raise ValueError("item_kind must not be empty")
+        if isinstance(self.color_slot, str):
+            ScalarColorSlot(self.color_slot)
+        elif not isinstance(self.color_slot, ScalarColorSlot):
+            raise TypeError("color_slot must be a ScalarColorSlot or string")
+        if not self.colormap_id:
+            raise ValueError("colormap_id must not be empty")
+        if isinstance(self.range_class, str):
+            ScalarRangeClass(self.range_class)
+        elif not isinstance(self.range_class, ScalarRangeClass):
+            raise TypeError("range_class must be a ScalarRangeClass or string")
+        if not all(
+            np.isfinite(value)
+            for value in (
+                self.source_value,
+                self.normalized_value_raw,
+                self.normalized_value_clipped,
+            )
+        ):
+            raise ValueError("scalar query numeric fields must be finite")
+        if self.normalized_value_clipped < 0.0 or self.normalized_value_clipped > 1.0:
+            raise ValueError("normalized_value_clipped must be in [0, 1]")
+        if self.lut_index < 0 or self.lut_index > 255:
+            raise ValueError("lut_index must be in [0, 255]")
+        if len(self.displayed_rgba) != 4 or any(
+            not np.isfinite(channel) or channel < 0.0 or channel > 1.0
+            for channel in self.displayed_rgba
+        ):
+            raise ValueError("displayed_rgba must contain four values in [0, 1]")
+        if self.item_id is not None and self.item_id < 0:
+            raise ValueError("item_id must be non-negative")
+        if self.texel is not None and (self.texel[0] < 0 or self.texel[1] < 0):
+            raise ValueError("texel coordinates must be non-negative")
+        if self.face_index is not None and self.face_index < 0:
+            raise ValueError("face_index must be non-negative")
 
 
 @dataclass(frozen=True, slots=True)

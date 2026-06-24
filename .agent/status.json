@@ -155,7 +155,7 @@
       "id": "S026",
       "title": "Color Mapping, Colorbars, and Scalar Data Semantics",
       "state": "in_progress",
-      "progress": 42
+      "progress": 57
     }
   ],
   "missions": [
@@ -991,16 +991,16 @@
       "id": "M093",
       "title": "S026 Matplotlib color mapping reference behavior",
       "stage": "S026",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 93
     },
     {
       "id": "M094",
       "title": "S026 color mapping visual QA and examples",
       "stage": "S026",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 94

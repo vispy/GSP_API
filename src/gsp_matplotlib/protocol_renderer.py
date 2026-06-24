@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 import matplotlib.axes
+import matplotlib.colorbar
 import matplotlib.collections
+import matplotlib.cm
+import matplotlib.colors
 import matplotlib.image
 import matplotlib.markers
 import matplotlib.path
@@ -13,6 +18,7 @@ import matplotlib.transforms
 import numpy as np
 import numpy.typing as npt
 
+from gsp.protocol import ColorScale, ColorbarGuide
 from gsp.protocol.visuals import (
     CoordinateSpace,
     FontRole,
@@ -30,6 +36,11 @@ from gsp.protocol.visuals import (
     TextAnchorX,
     TextAnchorY,
     TextVisual,
+)
+from gsp_matplotlib.color_mapping import (
+    listed_colormap_for_scale,
+    map_scalar_values,
+    resolve_color_scale,
 )
 
 
@@ -99,28 +110,35 @@ def _marker_areas_from_pixel_diameters(
 
 
 def render_point_visual(
-    axes: matplotlib.axes.Axes, visual: PointVisual
+    axes: matplotlib.axes.Axes,
+    visual: PointVisual,
+    *,
+    color_scales: Mapping[str, ColorScale] | None = None,
 ) -> matplotlib.collections.PathCollection:
     """Render a protocol point visual into a Matplotlib axes."""
     offsets = visual.positions[:, :2]
     areas = _marker_areas_from_pixel_diameters(axes, visual.sizes)
+    colors = _point_colors(visual, color_scales=color_scales)
     collection = axes.scatter(
         offsets[:, 0],
         offsets[:, 1],
         s=areas,
-        c=_rgba_for_matplotlib(visual.colors),
+        c=colors,
     )
     collection.set_gid(visual.id)
     return collection
 
 
 def render_marker_visual(
-    axes: matplotlib.axes.Axes, visual: MarkerVisual
+    axes: matplotlib.axes.Axes,
+    visual: MarkerVisual,
+    *,
+    color_scales: Mapping[str, ColorScale] | None = None,
 ) -> tuple[matplotlib.collections.PathCollection, ...]:
     """Render a protocol marker visual into a Matplotlib axes."""
     offsets = visual.positions[:, :2]
     areas = _marker_area_values(axes, visual.sizes, offsets.shape[0])
-    fill_colors = _rgba_for_matplotlib(visual.fill_colors)
+    fill_colors = _marker_fill_colors(visual, color_scales=color_scales)
     stroke_color = _rgba_tuple(_rgba_for_matplotlib(visual.stroke_color))
     shapes = visual.shape_values()
     angles = visual.angle_values()
@@ -205,15 +223,25 @@ def render_mesh_visual(
     axes: matplotlib.axes.Axes, visual: MeshVisual
 ) -> matplotlib.collections.PolyCollection:
     """Render the strict 2D MeshVisual subset into a Matplotlib axes."""
+    if visual.face_color_encoding is not None:
+        raise NotImplementedError(
+            "Matplotlib MeshVisual scalar face colors are capability-gated"
+        )
     if visual.positions.shape[1] != 2:
-        raise NotImplementedError("Matplotlib MeshVisual reference supports 2D positions only")
+        raise NotImplementedError(
+            "Matplotlib MeshVisual reference supports 2D positions only"
+        )
     color_mode = visual.resolved_color_mode()
     if color_mode is MeshColorMode.VERTEX:
-        raise NotImplementedError("Matplotlib MeshVisual vertex colors are capability-gated")
+        raise NotImplementedError(
+            "Matplotlib MeshVisual vertex colors are capability-gated"
+        )
 
     triangles = visual.positions[visual.faces][:, :, :2]
     if color_mode is MeshColorMode.UNIFORM:
-        facecolors = np.repeat(visual.color[np.newaxis, :], visual.faces.shape[0], axis=0)
+        facecolors = np.repeat(
+            visual.color[np.newaxis, :], visual.faces.shape[0], axis=0
+        )
     elif color_mode is MeshColorMode.FACE:
         facecolors = visual.color
     else:
@@ -268,26 +296,64 @@ def render_text_visual(
 
 
 def render_image_visual(
-    axes: matplotlib.axes.Axes, visual: ImageVisual
+    axes: matplotlib.axes.Axes,
+    visual: ImageVisual,
+    *,
+    color_scales: Mapping[str, ColorScale] | None = None,
 ) -> matplotlib.image.AxesImage:
     """Render a protocol image visual into a Matplotlib axes."""
     interpolation = (
         "nearest" if visual.interpolation == ImageInterpolation.NEAREST else "bilinear"
     )
-    cmap = visual.colormap.value if visual.colormap is not None else None
-    if cmap is None and visual.image.ndim == 2:
-        cmap = "gray"
+    image_data = visual.image
+    cmap = None
+    if visual.color_scale_id is not None:
+        scale = resolve_color_scale(color_scales, visual.color_scale_id)
+        image_data = map_scalar_values(visual.image, scale)
+    else:
+        cmap = visual.colormap.value if visual.colormap is not None else None
+        if cmap is None and visual.image.ndim == 2:
+            cmap = "gray"
     image = axes.imshow(
-        visual.image,
+        image_data,
         extent=visual.extent,
         interpolation=interpolation,
         origin=visual.origin.value,
         cmap=cmap,
     )
-    if visual.clim is not None:
+    if visual.clim is not None and visual.color_scale_id is None:
         image.set_clim(*visual.clim)
     image.set_gid(visual.id)
     return image
+
+
+def render_colorbar_guide(
+    axes: matplotlib.axes.Axes,
+    guide: ColorbarGuide,
+    *,
+    color_scales: Mapping[str, ColorScale],
+) -> matplotlib.colorbar.Colorbar:
+    """Render a semantic colorbar guide for one Matplotlib axes."""
+    scale = resolve_color_scale(color_scales, guide.color_scale_id)
+    norm = matplotlib.colors.Normalize(
+        vmin=scale.normalize.vmin, vmax=scale.normalize.vmax, clip=True
+    )
+    mappable = matplotlib.cm.ScalarMappable(
+        norm=norm,
+        cmap=listed_colormap_for_scale(scale),
+    )
+    colorbar = axes.figure.colorbar(
+        mappable,
+        ax=axes,
+        orientation=guide.orientation.value,
+    )
+    colorbar.set_label(guide.label)
+    if guide.ticks:
+        colorbar.set_ticks(guide.ticks)
+    if guide.tick_labels is not None:
+        colorbar.set_ticklabels(guide.tick_labels)
+    colorbar.ax.set_gid(guide.id)
+    return colorbar
 
 
 def _text_transform(
@@ -323,6 +389,36 @@ def _marker_area_values(
     if isinstance(areas, np.ndarray):
         return np.ascontiguousarray(areas.astype(np.float32, copy=False).reshape(-1))
     return np.full((count,), float(areas), dtype=np.float32)
+
+
+def _point_colors(
+    visual: PointVisual, *, color_scales: Mapping[str, ColorScale] | None
+) -> npt.NDArray[np.float64] | npt.NDArray[np.float32]:
+    if visual.color_encoding is not None:
+        scale = resolve_color_scale(color_scales, visual.color_encoding.color_scale_id)
+        return map_scalar_values(
+            visual.color_encoding.values, scale, alpha=visual.color_encoding.alpha
+        )
+    if visual.colors is None:
+        raise ValueError("PointVisual requires colors or color_encoding")
+    return _rgba_for_matplotlib(visual.colors)
+
+
+def _marker_fill_colors(
+    visual: MarkerVisual, *, color_scales: Mapping[str, ColorScale] | None
+) -> npt.NDArray[np.float64] | npt.NDArray[np.float32]:
+    if visual.fill_color_encoding is not None:
+        scale = resolve_color_scale(
+            color_scales, visual.fill_color_encoding.color_scale_id
+        )
+        return map_scalar_values(
+            visual.fill_color_encoding.values,
+            scale,
+            alpha=visual.fill_color_encoding.alpha,
+        )
+    if visual.fill_colors is None:
+        raise ValueError("MarkerVisual requires fill_colors or fill_color_encoding")
+    return _rgba_for_matplotlib(visual.fill_colors)
 
 
 def _linewidth_from_pixel_width(axes: matplotlib.axes.Axes, width: float) -> float:

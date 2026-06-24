@@ -10,13 +10,20 @@ Add Matplotlib reference rendering/query behavior for the accepted S026 color ma
 
 ## Status
 
-Draft.
+Completed.
 
 ## Deliverables
 
-- Reference rendering for accepted scalar/color mapping behavior.
-- Query/readback support matching M091.
-- Focused Matplotlib tests.
+- Completed: Reference rendering for accepted scalar/color mapping behavior.
+- Completed: Query/readback support matching M091.
+- Completed: Focused Matplotlib tests.
+
+## Notes
+
+- Added canonical scalar-to-RGBA LUT sampling helpers for Matplotlib reference paths.
+- Wired scalar color scales into ImageVisual, PointVisual, and MarkerVisual rendering.
+- Added scalar color query payloads for image texels, points, and markers.
+- Kept MeshVisual scalar face colors capability-gated for a later backend-specific mission.
 
 ## Acceptance
 

@@ -90,6 +90,7 @@ from .panels import AspectPolicy, Panel, View2D, VisualAttachment, VisualCoordin
 from .query import (
     GUIDE_QUERY_PAYLOAD_KIND,
     MESH_QUERY_PAYLOAD_KIND,
+    SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     TEXT_QUERY_PAYLOAD_KIND,
     GuideQueryPayload,
     MeshQueryPayload,
@@ -102,6 +103,7 @@ from .query import (
     QueryResult,
     QueryScope,
     QueryStatus,
+    ScalarColorQueryPayload,
     VisualFamily,
 )
 from .resources import (
@@ -266,6 +268,8 @@ __all__ = [
     "S022NpyHeader",
     "ScalarColorDomain",
     "ScalarColorEncoding",
+    "SCALAR_COLOR_QUERY_PAYLOAD_KIND",
+    "ScalarColorQueryPayload",
     "ScalarColorSlot",
     "ScalarRangeClass",
     "TILED_IMAGE_EXTENSION_CAPABILITY",

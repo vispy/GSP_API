@@ -6,7 +6,7 @@ S026 - Color Mapping, Colorbars, and Scalar Data Semantics
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -14,8 +14,14 @@ Implement Matplotlib reference behavior for accepted S026 color mapping/query se
 
 ## Planned Deliverables
 
-- Reference rendering and query/readback updates.
-- Focused tests and docs notes.
+- Completed: Reference rendering and query/readback updates.
+- Completed: Focused tests and docs notes.
+
+## Outcome
+
+Matplotlib now has deterministic S026 scalar color reference behavior for scalar
+images, point colors, marker fill colors, semantic colorbar guides, and query
+payload readback. Mesh scalar face colors remain capability-gated.
 
 ## Acceptance
 

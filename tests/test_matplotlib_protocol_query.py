@@ -5,13 +5,20 @@ import numpy as np
 import pytest
 
 from gsp.protocol import (
+    ColorMapId,
+    ColorMapRef,
+    ColorScale,
     CoordinateSpace,
     ImageOrigin,
     ImageVisual,
+    LinearNormalize,
     MESH_QUERY_PAYLOAD_KIND,
+    SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     MeshColorMode,
     MeshQueryPayload,
     MeshVisual,
+    MarkerShape,
+    MarkerVisual,
     PointVisual,
     QueryContributionKind,
     QueryHit,
@@ -20,10 +27,15 @@ from gsp.protocol import (
     QueryResult,
     QueryScope,
     QueryStatus,
+    ScalarColorEncoding,
+    ScalarColorQueryPayload,
+    ScalarColorSlot,
+    ScalarRangeClass,
     TEXT_QUERY_PAYLOAD_KIND,
     TextVisual,
     VisualFamily,
 )
+from gsp_matplotlib.color_mapping import map_scalar_value
 from gsp_matplotlib.protocol_query import (
     QueryVisualEntry,
     failed_query_result,
@@ -101,6 +113,107 @@ def test_query_returns_image_texel_and_value():
     assert result.texel == (0, 1)
     assert result.value == (40, 50, 60, 255)
     assert result.displayed_rgba == (40 / 255.0, 50 / 255.0, 60 / 255.0, 1.0)
+
+
+def test_query_scalar_image_returns_color_mapping_payload():
+    """Scalar image query reports the canonical displayed RGBA and mapping details."""
+    scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+    image = ImageVisual(
+        id="visual:image",
+        image=np.array([[0.0, 0.5]], dtype=np.float32),
+        extent=(0.0, 2.0, 0.0, 1.0),
+        origin=ImageOrigin.LOWER,
+        color_scale_id=scale.id,
+    )
+
+    result = query_visuals(
+        QueryRequest(id="query:image", panel_id="panel:main", coordinate=(1.25, 0.5)),
+        [QueryVisualEntry(image)],
+        color_scales={scale.id: scale},
+    )
+
+    mapped = map_scalar_value(0.5, scale)
+    assert result.status == QueryStatus.HIT
+    assert result.texel == (0, 1)
+    assert result.displayed_rgba == mapped.displayed_rgba
+    assert result.extension_payload_kind == SCALAR_COLOR_QUERY_PAYLOAD_KIND
+    assert result.extension_payload == ScalarColorQueryPayload(
+        visual_id="visual:image",
+        item_kind="texel",
+        texel=(0, 1),
+        color_slot=ScalarColorSlot.IMAGE,
+        color_scale_id=scale.id,
+        colormap_id="gray",
+        source_value=0.5,
+        normalized_value_raw=0.5,
+        normalized_value_clipped=0.5,
+        range_class=ScalarRangeClass.IN_RANGE,
+        lut_index=128,
+        displayed_rgba=mapped.displayed_rgba,
+    )
+
+
+def test_query_scalar_point_returns_color_mapping_payload():
+    """Point scalar query includes item identity and range classification."""
+    scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+    points = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 0.0], [4.0, 0.0]], dtype=np.float32),
+        sizes=np.array([4.0, 4.0], dtype=np.float32),
+        color_encoding=ScalarColorEncoding(
+            slot=ScalarColorSlot.COLOR,
+            values=np.array([-1.0, 2.0], dtype=np.float32),
+            color_scale_id=scale.id,
+        ),
+    )
+
+    result = query_visuals(
+        QueryRequest(id="query:points", panel_id="panel:main", coordinate=(4.0, 0.0)),
+        [QueryVisualEntry(points)],
+        color_scales={scale.id: scale},
+    )
+
+    mapped = map_scalar_value(2.0, scale)
+    assert result.status == QueryStatus.HIT
+    assert result.visual_family == VisualFamily.POINT
+    assert result.item_id == 1
+    assert result.value == 2.0
+    assert result.displayed_rgba == mapped.displayed_rgba
+    assert result.extension_payload_kind == SCALAR_COLOR_QUERY_PAYLOAD_KIND
+    assert result.extension_payload.range_class == ScalarRangeClass.OVER
+    assert result.extension_payload.lut_index == 255
+
+
+def test_query_scalar_marker_returns_fill_color_payload():
+    """Marker scalar fill query uses the fill slot and marker item identity."""
+    scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+    markers = MarkerVisual(
+        id="visual:markers",
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        shape=MarkerShape.SQUARE,
+        sizes=np.array([4.0], dtype=np.float32),
+        fill_color_encoding=ScalarColorEncoding(
+            slot=ScalarColorSlot.FILL,
+            values=np.array([0.25], dtype=np.float32),
+            color_scale_id=scale.id,
+            alpha=0.5,
+        ),
+    )
+
+    result = query_visuals(
+        QueryRequest(id="query:markers", panel_id="panel:main", coordinate=(0.0, 0.0)),
+        [QueryVisualEntry(markers)],
+        color_scales={scale.id: scale},
+    )
+
+    mapped = map_scalar_value(0.25, scale, alpha=0.5)
+    assert result.status == QueryStatus.HIT
+    assert result.visual_family == "marker"
+    assert result.item_id == 0
+    assert result.displayed_rgba == mapped.displayed_rgba
+    assert result.extension_payload_kind == SCALAR_COLOR_QUERY_PAYLOAD_KIND
+    assert result.extension_payload.color_slot == ScalarColorSlot.FILL
+    assert result.extension_payload.item_kind == "marker"
 
 
 def test_query_returns_text_item_payload_without_glyph_fields():
@@ -411,3 +524,11 @@ def test_query_helper_results_use_diagnostics_for_terminal_failures():
     assert unsupported.diagnostic == "backend does not advertise point-item queries"
     assert failed.status == QueryStatus.FAILED
     assert failed.diagnostic == "readback buffer allocation failed"
+
+
+def _test_color_scale(*, colormap_id: ColorMapId = ColorMapId.VIRIDIS) -> ColorScale:
+    return ColorScale(
+        id="scale:main",
+        colormap=ColorMapRef(colormap_id),
+        normalize=LinearNormalize(vmin=0.0, vmax=1.0),
+    )

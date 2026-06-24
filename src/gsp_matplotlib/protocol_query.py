@@ -2,37 +2,43 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from math import sqrt
 from typing import Iterable
 
 import numpy as np
 
+from gsp.protocol.color import ColorScale, ScalarColorSlot
 from gsp.protocol.query import (
     MESH_QUERY_PAYLOAD_KIND,
+    SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     TEXT_QUERY_PAYLOAD_KIND,
     MeshQueryPayload,
     QueryHitPolicy,
     QueryRequest,
     QueryResult,
     QueryStatus,
+    ScalarColorQueryPayload,
     VisualFamily,
 )
 from gsp.protocol.visuals import (
     ImageOrigin,
     ImageVisual,
+    MarkerVisual,
     MeshColorMode,
     MeshVisual,
     PointVisual,
     TextVisual,
 )
+from gsp_matplotlib.color_mapping import map_scalar_value, resolve_color_scale
 
 
 @dataclass(frozen=True, slots=True)
 class QueryVisualEntry:
     """Visual plus z-order for reference query evaluation."""
 
-    visual: PointVisual | ImageVisual | TextVisual | MeshVisual
+    visual: PointVisual | ImageVisual | TextVisual | MeshVisual | MarkerVisual
     z_order: int = 0
 
 
@@ -41,6 +47,7 @@ def query_visuals(
     entries: Iterable[QueryVisualEntry],
     *,
     panel_bounds: tuple[float, float, float, float] | None = None,
+    color_scales: Mapping[str, ColorScale] | None = None,
 ) -> QueryResult:
     """Answer a panel query against formal visual models.
 
@@ -60,9 +67,11 @@ def query_visuals(
     for entry in sorted(entries, key=lambda item: item.z_order, reverse=True):
         visual = entry.visual
         if isinstance(visual, PointVisual):
-            hit = _query_point_visual(request, visual)
+            hit = _query_point_visual(request, visual, color_scales=color_scales)
+        elif isinstance(visual, MarkerVisual):
+            hit = _query_marker_visual(request, visual, color_scales=color_scales)
         elif isinstance(visual, ImageVisual):
-            hit = _query_image_visual(request, visual)
+            hit = _query_image_visual(request, visual, color_scales=color_scales)
         elif isinstance(visual, TextVisual):
             hit = _query_text_visual(request, visual)
         elif isinstance(visual, MeshVisual):
@@ -123,7 +132,10 @@ def _contains(
 
 
 def _query_point_visual(
-    request: QueryRequest, visual: PointVisual
+    request: QueryRequest,
+    visual: PointVisual,
+    *,
+    color_scales: Mapping[str, ColorScale] | None,
 ) -> QueryResult | None:
     positions = visual.positions[:, :2]
     sizes = (
@@ -131,7 +143,6 @@ def _query_point_visual(
         if isinstance(visual.sizes, np.ndarray)
         else np.full(positions.shape[0], visual.sizes)
     )
-    colors = _rgba01(visual.colors)
     query = np.array(request.coordinate, dtype=np.float64)
 
     best_index: int | None = None
@@ -147,6 +158,9 @@ def _query_point_visual(
         return None
 
     point = positions[best_index]
+    rgba, payload = _point_color_query_payload(
+        visual, best_index, color_scales=color_scales
+    )
     return QueryResult(
         request_id=request.id,
         status=QueryStatus.HIT,
@@ -157,17 +171,18 @@ def _query_point_visual(
         item_id=best_index,
         visual_coordinate=(float(point[0]), float(point[1])),
         data_coordinate=(float(point[0]), float(point[1])),
-        displayed_rgba=(
-            float(colors[best_index][0]),
-            float(colors[best_index][1]),
-            float(colors[best_index][2]),
-            float(colors[best_index][3]),
-        ),
+        displayed_rgba=rgba,
+        value=_point_query_value(visual, best_index),
+        extension_payload_kind=SCALAR_COLOR_QUERY_PAYLOAD_KIND if payload else None,
+        extension_payload=payload,
     )
 
 
 def _query_image_visual(
-    request: QueryRequest, visual: ImageVisual
+    request: QueryRequest,
+    visual: ImageVisual,
+    *,
+    color_scales: Mapping[str, ColorScale] | None,
 ) -> QueryResult | None:
     left, right, bottom, top = visual.extent
     x, y = request.coordinate
@@ -188,7 +203,9 @@ def _query_image_visual(
     col = int(np.clip(np.floor(u * width), 0, width - 1))
     row = int(np.clip(np.floor(v * height), 0, height - 1))
     value = visual.image[row, col]
-    rgba = _image_value_to_rgba(value)
+    rgba, payload = _image_color_query_payload(
+        visual, value, row, col, color_scales=color_scales
+    )
 
     return QueryResult(
         request_id=request.id,
@@ -202,6 +219,55 @@ def _query_image_visual(
         data_coordinate=(float(x), float(y)),
         displayed_rgba=rgba,
         value=_python_value(value),
+        extension_payload_kind=SCALAR_COLOR_QUERY_PAYLOAD_KIND if payload else None,
+        extension_payload=payload,
+    )
+
+
+def _query_marker_visual(
+    request: QueryRequest,
+    visual: MarkerVisual,
+    *,
+    color_scales: Mapping[str, ColorScale] | None,
+) -> QueryResult | None:
+    positions = visual.positions[:, :2]
+    sizes = (
+        visual.sizes
+        if isinstance(visual.sizes, np.ndarray)
+        else np.full(positions.shape[0], visual.sizes)
+    )
+    query = np.array(request.coordinate, dtype=np.float64)
+
+    best_index: int | None = None
+    best_distance = float("inf")
+    for index, (position, size) in enumerate(zip(positions, sizes, strict=True)):
+        radius = sqrt(float(size) / np.pi)
+        distance = float(np.linalg.norm(query - position.astype(np.float64)))
+        if distance <= radius and distance < best_distance:
+            best_index = index
+            best_distance = distance
+
+    if best_index is None:
+        return None
+
+    marker = positions[best_index]
+    rgba, payload = _marker_color_query_payload(
+        visual, best_index, color_scales=color_scales
+    )
+    return QueryResult(
+        request_id=request.id,
+        status=QueryStatus.HIT,
+        hit=True,
+        panel_coordinate=request.coordinate,
+        visual_id=visual.id,
+        visual_family="marker",
+        item_id=best_index,
+        visual_coordinate=(float(marker[0]), float(marker[1])),
+        data_coordinate=(float(marker[0]), float(marker[1])),
+        displayed_rgba=rgba,
+        value=_marker_query_value(visual, best_index),
+        extension_payload_kind=SCALAR_COLOR_QUERY_PAYLOAD_KIND if payload else None,
+        extension_payload=payload,
     )
 
 
@@ -342,6 +408,123 @@ def _mesh_face_rgba(
     else:
         raise ValueError("vertex mesh colors are not supported by face query")
     return (float(color[0]), float(color[1]), float(color[2]), float(color[3]))
+
+
+def _point_color_query_payload(
+    visual: PointVisual,
+    item_index: int,
+    *,
+    color_scales: Mapping[str, ColorScale] | None,
+) -> tuple[tuple[float, float, float, float], ScalarColorQueryPayload | None]:
+    if visual.color_encoding is None:
+        if visual.colors is None:
+            raise ValueError("PointVisual requires colors or color_encoding")
+        color = _rgba01(visual.colors)[item_index]
+        return (
+            float(color[0]),
+            float(color[1]),
+            float(color[2]),
+            float(color[3]),
+        ), None
+
+    encoding = visual.color_encoding
+    scale = resolve_color_scale(color_scales, encoding.color_scale_id)
+    mapped = map_scalar_value(
+        float(encoding.values[item_index]), scale, alpha=encoding.alpha
+    )
+    return mapped.displayed_rgba, ScalarColorQueryPayload(
+        visual_id=visual.id,
+        item_kind="point",
+        item_id=item_index,
+        color_slot=ScalarColorSlot.COLOR,
+        color_scale_id=scale.id,
+        colormap_id=scale.colormap.id.value,
+        source_value=mapped.source_value,
+        normalized_value_raw=mapped.normalized_value_raw,
+        normalized_value_clipped=mapped.normalized_value_clipped,
+        range_class=mapped.range_class,
+        lut_index=mapped.lut_index,
+        displayed_rgba=mapped.displayed_rgba,
+    )
+
+
+def _marker_color_query_payload(
+    visual: MarkerVisual,
+    item_index: int,
+    *,
+    color_scales: Mapping[str, ColorScale] | None,
+) -> tuple[tuple[float, float, float, float], ScalarColorQueryPayload | None]:
+    if visual.fill_color_encoding is None:
+        if visual.fill_colors is None:
+            raise ValueError("MarkerVisual requires fill_colors or fill_color_encoding")
+        color = _rgba01(visual.fill_colors)[item_index]
+        return (
+            float(color[0]),
+            float(color[1]),
+            float(color[2]),
+            float(color[3]),
+        ), None
+
+    encoding = visual.fill_color_encoding
+    scale = resolve_color_scale(color_scales, encoding.color_scale_id)
+    mapped = map_scalar_value(
+        float(encoding.values[item_index]), scale, alpha=encoding.alpha
+    )
+    return mapped.displayed_rgba, ScalarColorQueryPayload(
+        visual_id=visual.id,
+        item_kind="marker",
+        item_id=item_index,
+        color_slot=ScalarColorSlot.FILL,
+        color_scale_id=scale.id,
+        colormap_id=scale.colormap.id.value,
+        source_value=mapped.source_value,
+        normalized_value_raw=mapped.normalized_value_raw,
+        normalized_value_clipped=mapped.normalized_value_clipped,
+        range_class=mapped.range_class,
+        lut_index=mapped.lut_index,
+        displayed_rgba=mapped.displayed_rgba,
+    )
+
+
+def _image_color_query_payload(
+    visual: ImageVisual,
+    value: np.ndarray | np.generic,
+    row: int,
+    col: int,
+    *,
+    color_scales: Mapping[str, ColorScale] | None,
+) -> tuple[tuple[float, float, float, float], ScalarColorQueryPayload | None]:
+    if visual.color_scale_id is None:
+        return _image_value_to_rgba(value), None
+
+    scale = resolve_color_scale(color_scales, visual.color_scale_id)
+    mapped = map_scalar_value(float(np.asarray(value).item()), scale)
+    return mapped.displayed_rgba, ScalarColorQueryPayload(
+        visual_id=visual.id,
+        item_kind="texel",
+        texel=(row, col),
+        color_slot=ScalarColorSlot.IMAGE,
+        color_scale_id=scale.id,
+        colormap_id=scale.colormap.id.value,
+        source_value=mapped.source_value,
+        normalized_value_raw=mapped.normalized_value_raw,
+        normalized_value_clipped=mapped.normalized_value_clipped,
+        range_class=mapped.range_class,
+        lut_index=mapped.lut_index,
+        displayed_rgba=mapped.displayed_rgba,
+    )
+
+
+def _point_query_value(visual: PointVisual, item_index: int) -> object | None:
+    if visual.color_encoding is None:
+        return None
+    return float(visual.color_encoding.values[item_index])
+
+
+def _marker_query_value(visual: MarkerVisual, item_index: int) -> object | None:
+    if visual.fill_color_encoding is None:
+        return None
+    return float(visual.fill_color_encoding.values[item_index])
 
 
 def _rgba01(colors: np.ndarray) -> np.ndarray:
