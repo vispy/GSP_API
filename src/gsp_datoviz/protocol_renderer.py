@@ -234,7 +234,7 @@ class DatovizV04ProtocolRenderer:
         fill_colors = _rgba8(visual.fill_colors)
         diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
         shape_values = visual.shape_values()
-        angles = _datoviz_marker_angles(shape_values, visual.angle_values())
+        angles = np.ascontiguousarray(visual.angle_values())
         shapes = _marker_shapes(self.dvz, shape_values)
 
         dvz_visual = self.dvz.dvz_marker(self.scene, 0)
@@ -718,16 +718,6 @@ def _assign_rgba_field(target: Any, field_name: str, rgba: npt.NDArray[np.uint8]
 
 def _marker_shapes(dvz: Any, shapes: tuple[MarkerShape, ...]) -> npt.NDArray[np.uint32]:
     return np.ascontiguousarray(np.array([_marker_shape_value(dvz, shape) for shape in shapes], dtype=np.uint32))
-
-
-def _datoviz_marker_angles(
-    shapes: tuple[MarkerShape, ...], angles: npt.NDArray[np.float32]
-) -> npt.NDArray[np.float32]:
-    corrected = np.array(angles, dtype=np.float32, copy=True).reshape(-1)
-    for index, shape in enumerate(shapes):
-        if shape == MarkerShape.TRIANGLE:
-            corrected[index] = np.float32(np.pi) - corrected[index]
-    return np.ascontiguousarray(corrected)
 
 
 def _marker_shape_value(dvz: Any, shape: MarkerShape) -> int:
