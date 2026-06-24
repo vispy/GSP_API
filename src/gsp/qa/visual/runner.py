@@ -312,7 +312,7 @@ def _render_datoviz_visual(
     elif isinstance(visual, TextVisual):
         renderer.add_text_visual(visual)
     elif isinstance(visual, MeshVisual):
-        raise DatovizV04Unsupported("MESH_UNSUPPORTED: MeshVisual Datoviz support is pending M086/M087")
+        renderer.add_mesh_visual(visual)
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
 

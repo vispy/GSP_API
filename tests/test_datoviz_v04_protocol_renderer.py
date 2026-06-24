@@ -10,6 +10,7 @@ import pytest
 from gsp.protocol import (
     ImageOrigin,
     ImageVisual,
+    MeshVisual,
     MarkerShape,
     MarkerVisual,
     PathVisual,
@@ -42,6 +43,8 @@ from gsp_datoviz.protocol_renderer import (
     DatovizV04Unavailable,
     DatovizV04Unsupported,
     capability_snapshot,
+    datoviz_v04_mesh_diagnostics,
+    datoviz_v04_mesh_ready,
     datoviz_v04_sampled_field_diagnostics,
     datoviz_v04_sampled_field_ready,
     datoviz_v04_text_diagnostics,
@@ -1240,6 +1243,67 @@ def test_lower_origin_texcoords_are_not_flipped():
     np.testing.assert_allclose(
         texcoords, [[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]]
     )
+
+
+
+
+def test_add_mesh_visual_reports_structured_unsupported_until_semantics_verified():
+    fake = FakeDatovizV04()
+    fake.dvz_mesh = lambda scene, flags: "mesh"
+    fake.dvz_mesh_set_geometry = lambda visual, geometry: 0
+    fake.dvz_visual_set_index_data = lambda visual, indices, index_count: 0
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    visual = MeshVisual(
+        id="visual:mesh",
+        positions=np.array([[0.0, 0.0], [0.5, 0.0], [0.0, 0.5]], dtype=np.float32),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+    )
+
+    with pytest.raises(
+        DatovizV04Unsupported, match="MeshVisual support is unavailable"
+    ) as exc_info:
+        renderer.add_mesh_visual(visual)
+
+    message = str(exc_info.value)
+    assert "not verified for S025" in message
+    assert "topology preservation" in message
+    assert datoviz_v04_mesh_ready(fake) is False
+
+
+def test_add_mesh_visual_rejects_data_and_3d_before_runtime_diagnostics():
+    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04())
+    data_visual = MeshVisual(
+        id="visual:data-mesh",
+        positions=np.array([[0.0, 0.0], [0.5, 0.0], [0.0, 0.5]], dtype=np.float32),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+    )
+    mesh_3d = MeshVisual(
+        id="visual:mesh-3d",
+        positions=np.array([[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]], dtype=np.float32),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+    )
+
+    with pytest.raises(DatovizV04Unsupported, match="NDC mesh"):
+        renderer.add_mesh_visual(data_visual)
+    with pytest.raises(DatovizV04Unsupported, match="2D positions"):
+        renderer.add_mesh_visual(mesh_3d)
+
+
+def test_datoviz_mesh_diagnostics_name_missing_and_unverified_symbols():
+    fake = FakeDatovizV04()
+
+    diagnostics = datoviz_v04_mesh_diagnostics(fake)
+
+    assert "missing dvz_mesh" in diagnostics
+    assert "missing dvz_mesh_set_geometry" in diagnostics
+    assert "not verified for S025" in diagnostics[-1]
+    assert datoviz_v04_mesh_ready(fake) is False
 
 
 def test_add_text_visual_reports_structured_unsupported_until_semantics_verified():

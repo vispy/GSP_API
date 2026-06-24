@@ -10,7 +10,7 @@ Implement the Datoviz MeshVisual adapter when evidence supports it, otherwise pr
 
 ## Status
 
-Draft.
+Completed.
 
 ## Deliverables
 
@@ -27,3 +27,12 @@ Draft.
 ## Stop Conditions
 
 - Stop if this requires legacy Datoviz paths or unverified material/ownership semantics.
+
+
+## Completed
+
+- Added Datoviz MeshVisual adapter entry point with explicit S025 structured unsupported diagnostics.
+- Added `datoviz_v04_mesh_diagnostics()` and `datoviz_v04_mesh_ready()` gates.
+- Routed visual QA MeshVisual Datoviz attempts through the adapter instead of ad-hoc runner rejection.
+- Added focused Datoviz adapter tests for mesh unsupported/data/3D diagnostics.
+- Validation: `uv run pytest tests/test_datoviz_v04_protocol_renderer.py tests/test_visual_qa_harness.py -q`; `python3 -m compileall -q src/gsp_datoviz/protocol_renderer.py src/gsp/qa/visual/runner.py`; `git diff --check`.

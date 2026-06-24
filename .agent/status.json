@@ -149,7 +149,7 @@
       "id": "S025",
       "title": "Mesh and 3D Geometry Visuals v1",
       "state": "in_progress",
-      "progress": 65
+      "progress": 78
     }
   ],
   "missions": [
@@ -931,16 +931,16 @@
       "id": "M087",
       "title": "S025 Datoviz MeshVisual renderer or unsupported report",
       "stage": "S025",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 87
     },
     {
       "id": "M088",
       "title": "S025 VisPy2 mesh producer API and examples",
       "stage": "S025",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 88
@@ -1001,9 +1001,9 @@
     }
   ],
   "recommendations": [
-    "M086 is complete: Datoviz v0.4 mesh probe now records retained mesh symbols and capability evidence.",
-    "Run M087 next to implement the Datoviz MeshVisual adapter only for exact strict semantics, otherwise keep structured unsupported diagnostics.",
-    "Keep textures, public materials/lights, instancing, and broad 3D query support deferred or capability-gated."
+    "M087 is complete: Datoviz MeshVisual now has adapter-level structured unsupported diagnostics rather than ad-hoc rejection.",
+    "Run M088 next to add the VisPy2 mesh producer API and examples for accepted strict MeshVisual semantics.",
+    "Datoviz strict mesh rendering remains deferred until flat RGBA, topology/face identity, 2D mapping, and query semantics are verified."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1019,6 +1019,7 @@
     "M083 completed: accepted S025 MeshVisual v1 baseline from P010; M084 is ready for protocol dataclass/validation implementation.",
     "M084 completed: added MeshVisual protocol/enums/validation and 9 focused tests; M085 is ready for Matplotlib renderer/QA smoke.",
     "M085 completed: added Matplotlib MeshVisual renderer, S025 QA suite/cases, and focused tests; M086 is ready for Datoviz mesh probe.",
-    "M086 completed: extended Datoviz probe with mesh symbols/capabilities and source evidence; M087 is ready."
+    "M086 completed: extended Datoviz probe with mesh symbols/capabilities and source evidence; M087 is ready.",
+    "M087 completed: added Datoviz MeshVisual unsupported gates/adapter entry point and focused tests; M088 is ready."
   ]
 }

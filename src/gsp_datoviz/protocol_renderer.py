@@ -24,6 +24,7 @@ from gsp.protocol import (
     CapabilitySnapshot,
     ImageOrigin,
     ImageVisual,
+    MeshVisual,
     MarkerShape,
     MarkerVisual,
     PathVisual,
@@ -89,6 +90,19 @@ _REQUIRED_DVZ_PATH_FUNCTIONS = (
     "dvz_path_set_subpaths",
     "dvz_path_set_caps",
     "dvz_path_set_join",
+)
+
+
+_REQUIRED_DVZ_MESH_FUNCTIONS = (
+    "dvz_mesh",
+    "dvz_mesh_set_geometry",
+    "dvz_visual_set_data",
+    "dvz_visual_set_index_data",
+)
+
+_OPTIONAL_UNVERIFIED_DVZ_MESH_FUNCTIONS = (
+    "dvz_visual_set_material",
+    "dvz_visual_set_depth",
 )
 
 
@@ -195,6 +209,31 @@ def datoviz_v04_sampled_field_diagnostics(module: ModuleType | Any) -> tuple[str
         for name in _REQUIRED_DVZ_SAMPLED_FIELD_FUNCTIONS
         if not hasattr(module, name)
     )
+
+
+def datoviz_v04_mesh_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
+    """Return why Datoviz MeshVisual rendering is disabled for this slice."""
+    diagnostics = [
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_MESH_FUNCTIONS
+        if not hasattr(module, name)
+    ]
+    diagnostics.extend(
+        f"unverified {name}"
+        for name in _OPTIONAL_UNVERIFIED_DVZ_MESH_FUNCTIONS
+        if not hasattr(module, name)
+    )
+    diagnostics.append(
+        "Datoviz v0.4 MeshVisual flat RGBA, per-face color adaptation, "
+        "2D z=0 mapping, topology preservation, and face query semantics are "
+        "not verified for S025"
+    )
+    return tuple(diagnostics)
+
+
+def datoviz_v04_mesh_ready(module: ModuleType | Any) -> bool:
+    """Return whether this adapter slice may render MeshVisual through Datoviz."""
+    return not datoviz_v04_mesh_diagnostics(module)
 
 
 def datoviz_v04_text_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
@@ -529,6 +568,23 @@ class DatovizV04ProtocolRenderer:
         )
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
+
+    def add_mesh_visual(self, visual: MeshVisual) -> Any:
+        """Report Datoviz MeshVisual support status for accepted S025 semantics."""
+        if visual.coordinate_space != CoordinateSpace.NDC:
+            raise DatovizV04Unsupported(
+                "Datoviz v0.4 slice currently supports NDC mesh positions only"
+            )
+        if visual.positions.shape[1] != 2:
+            raise DatovizV04Unsupported(
+                "Datoviz v0.4 MeshVisual strict adapter is limited to 2D positions "
+                "until 3D camera semantics are accepted"
+            )
+        diagnostics = datoviz_v04_mesh_diagnostics(self.dvz)
+        raise DatovizV04Unsupported(
+            "Datoviz v0.4 MeshVisual support is unavailable: " + "; ".join(diagnostics)
+        )
+
 
     def add_text_visual(self, visual: TextVisual) -> Any:
         """Report Datoviz TextVisual support status for accepted S024 semantics."""
