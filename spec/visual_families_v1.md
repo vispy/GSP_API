@@ -1,6 +1,6 @@
 # Visual Families v1 - Accepted Baseline
 
-Status: S023 accepted Point/Marker/Segment/Path/Image; S024 accepts TextVisual protocol baseline.
+Status: S023 accepted Point/Marker/Segment/Path/Image; S024 TextVisual implementation complete.
 
 S023 establishes the first durable protocol visual-family baseline. The implemented and QA-backed
 families are:
@@ -12,7 +12,7 @@ families are:
 | Segment | `SegmentVisual` | `spec/visuals/segment.md` | accepted |
 | Path | `PathVisual` | `spec/visuals/path.md` | accepted |
 | Image | `ImageVisual` | `spec/visuals/image.md` | accepted |
-| Text | `TextVisual` | `spec/visuals/text.md` | accepted protocol baseline; implementation pending |
+| Text | `TextVisual` | `spec/visuals/text.md` | accepted and implemented for protocol, Matplotlib reference rendering, QA fixtures, VisPy2 producer API, and item-level Matplotlib query/readback; Datoviz reports structured unsupported diagnostics pending verified v0.4 text semantics |
 
 The v1 baseline is deliberately narrow:
 
@@ -38,7 +38,7 @@ Datoviz rendered when the local Datoviz v0.4 binding is active.
 
 ## S024 TextVisual addition
 
-S024 adds `TextVisual` as the public text family. `GlyphVisual` is explicitly deferred; glyphs,
+S024 adds and implements `TextVisual` as the public text family. `GlyphVisual` is explicitly deferred; glyphs,
 atlases, shaping output, and backend text buffers are renderer-internal realization details. Text
 font sizes are logical screen pixels, rotation is radians, font selection uses generic `FontRole`,
 and printable ASCII plus newline is the required conformance subset.

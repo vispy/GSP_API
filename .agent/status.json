@@ -142,8 +142,8 @@
     {
       "id": "S024",
       "title": "Text/Glyph Visuals v1",
-      "state": "in_progress",
-      "progress": 25
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -916,11 +916,9 @@
     }
   ],
   "recommendations": [
-    "M073 completed S024 Text/Glyph scoping and created P009 ChatGPT Pro consultation packet.",
-    "M074 completed the P009 ADR/spec baseline: TextVisual is public v1; GlyphVisual and atlases are deferred/internal.",
-    "Next mission is M075: implement TextVisual protocol dataclass/enums/validation only; no renderer or Datoviz assumptions yet.",
-    "After M075, proceed through Matplotlib reference rendering, visual QA fixtures, Datoviz capability probe, Datoviz renderer/unsupported diagnostics, VisPy2 producer API, and text query integration.",
-    "Manual S023 visual QA notes remain useful for release signoff, but they do not block S024 implementation."
+    "S024 Text/Glyph Visuals v1 is complete through M081: TextVisual protocol, Matplotlib renderer, QA fixtures, Datoviz unsupported diagnostics, VisPy2 producer API, and item-level query/readback are implemented.",
+    "Datoviz TextVisual rendering remains intentionally unsupported until the v0.4-dev text placement/anchor/font-size/rotation/font-role semantics are exposed and verified by a follow-up mission.",
+    "No next missions are currently listed; ask Mission Control to propose the next stage when ready."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -929,6 +927,7 @@
     "M078 added Datoviz text/glyph/font capability evidence artifacts; uv environment lacks importable Datoviz text symbols, while sibling source contains retained text/glyph APIs, so M079 should keep unsupported unless runtime bindings are activated and semantics verified.",
     "M079 kept Datoviz TextVisual as structured unsupported because placement, anchors, font-size, rotation, and font-role semantics are not verified; QA routes TextVisual through adapter diagnostics.",
     "M080 added a minimal VisPy2 text producer API that emits TextVisual without exposing glyphs, atlases, arbitrary font names, rich text, or backend calls.",
-    "M081 added item-level TextVisual query/readback payloads for the Matplotlib reference path; glyph-level query remains deferred."
+    "M081 added item-level TextVisual query/readback payloads for the Matplotlib reference path; glyph-level query remains deferred.",
+    "S024 closeout: all S024 missions M073-M081 are complete; stage marked completed at 100%."
   ]
 }
