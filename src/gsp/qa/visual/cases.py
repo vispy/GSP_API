@@ -395,8 +395,8 @@ def _segment_width_cap_ndc() -> VisualQAScene:
     visuals = (
         SegmentVisual(
             id="visual:segment-butt-ndc",
-            start_positions=starts + np.array([0.0, 0.10], dtype=np.float32),
-            end_positions=ends + np.array([0.0, 0.10], dtype=np.float32),
+            start_positions=starts + np.array([0.0, 0.20], dtype=np.float32),
+            end_positions=ends + np.array([0.0, 0.20], dtype=np.float32),
             colors=colors,
             widths=widths,
             cap=StrokeCap.BUTT,
@@ -413,8 +413,8 @@ def _segment_width_cap_ndc() -> VisualQAScene:
         ),
         SegmentVisual(
             id="visual:segment-square-ndc",
-            start_positions=starts - np.array([0.0, 0.10], dtype=np.float32),
-            end_positions=ends - np.array([0.0, 0.10], dtype=np.float32),
+            start_positions=starts - np.array([0.0, 0.20], dtype=np.float32),
+            end_positions=ends - np.array([0.0, 0.20], dtype=np.float32),
             colors=colors,
             widths=widths,
             cap=StrokeCap.SQUARE,
@@ -431,7 +431,7 @@ def _segment_width_cap_ndc() -> VisualQAScene:
             "segment_widths": widths,
         },
         notes=(
-            "Three offset rows of independent segments compare butt, round, and square caps with increasing pixel widths.",
+            "Three clearly separated offset rows of independent segments compare butt, round, and square caps with increasing pixel widths.",
         ),
     )
 
