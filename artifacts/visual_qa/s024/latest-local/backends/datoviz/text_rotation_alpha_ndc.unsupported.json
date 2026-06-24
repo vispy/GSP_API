@@ -1,0 +1,15 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "text/rotation_alpha_ndc",
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "diagnostics": {
+    "attempted": false,
+    "calls_completed": [],
+    "reason": "missing capabilities: ('scene.create.dvz_scene', 'scene.figure.dvz_figure', 'scene.panel.dvz_panel_full', 'visual.point.constructor.dvz_point', 'visual.data.dvz_visual_set_data', 'panel.add_visual.dvz_panel_add_visual')",
+    "supported": false
+  },
+  "reason": "Datoviz v0.4 retained-scene point probe is unsupported",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

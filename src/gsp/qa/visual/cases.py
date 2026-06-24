@@ -6,6 +6,7 @@ import numpy as np
 
 from gsp.protocol import (
     CoordinateSpace,
+    FontRole,
     ImageColormap,
     ImageInterpolation,
     ImageOrigin,
@@ -17,17 +18,27 @@ from gsp.protocol import (
     SegmentVisual,
     StrokeCap,
     StrokeJoin,
+    TextAnchorX,
+    TextAnchorY,
+    TextVisual,
 )
 from gsp.qa.visual.case_spec import VisualQACase, VisualQAScene
 
 
 S023_SUITE = "s023"
+S024_SUITE = "s024"
 
 
 def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
     """Return the registered cases for a suite."""
-    if suite != S023_SUITE:
-        raise ValueError(f"unknown visual QA suite: {suite}")
+    if suite == S023_SUITE:
+        return _s023_cases()
+    if suite == S024_SUITE:
+        return _s023_cases() + _s024_text_cases()
+    raise ValueError(f"unknown visual QA suite: {suite}")
+
+
+def _s023_cases() -> tuple[VisualQACase, ...]:
     return (
         VisualQACase(
             case_id="point/basic_ndc",
@@ -141,6 +152,46 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
             family="overlay",
             required_features=("point", "image", "ndc", "rgba8", "layering"),
             builder=_overlay_point_over_image_ndc,
+        ),
+    )
+
+
+def _s024_text_cases() -> tuple[VisualQACase, ...]:
+    return (
+        VisualQACase(
+            case_id="text/basic_ndc",
+            title="Basic NDC text labels",
+            family="text",
+            required_features=("text", "ndc", "rgba8", "font-size"),
+            builder=_text_basic_ndc,
+        ),
+        VisualQACase(
+            case_id="text/anchor_grid_ndc",
+            title="Text anchor grid in NDC",
+            family="text",
+            required_features=("text", "ndc", "anchor"),
+            builder=_text_anchor_grid_ndc,
+        ),
+        VisualQACase(
+            case_id="text/rotation_alpha_ndc",
+            title="Text rotation and alpha overlap in NDC",
+            family="text",
+            required_features=("text", "ndc", "rotation", "alpha", "z-order"),
+            builder=_text_rotation_alpha_ndc,
+        ),
+        VisualQACase(
+            case_id="text/data_vs_ndc",
+            title="Text DATA and NDC coordinate comparison",
+            family="text",
+            required_features=("text", "data", "ndc"),
+            builder=_text_data_vs_ndc,
+        ),
+        VisualQACase(
+            case_id="text/multiline_unicode_smoke",
+            title="Text multiline and Unicode smoke",
+            family="text",
+            required_features=("text", "multiline", "unicode"),
+            builder=_text_multiline_unicode_smoke,
         ),
     )
 
@@ -689,6 +740,175 @@ def _overlay_point_over_image_ndc() -> VisualQAScene:
         },
         notes=(
             "Asymmetric orientation image with four high-contrast points anchored over distinct colored quadrants.",
+        ),
+    )
+
+
+def _text_basic_ndc() -> VisualQAScene:
+    positions = np.array(
+        [[-0.72, 0.48], [-0.25, 0.12], [0.32, -0.18], [0.72, -0.52]],
+        dtype=np.float32,
+    )
+    rgba = np.array(
+        [
+            [33, 102, 172, 255],
+            [216, 27, 96, 255],
+            [0, 137, 123, 255],
+            [35, 40, 45, 255],
+        ],
+        dtype=np.uint8,
+    )
+    sizes = np.array([18.0, 24.0, 30.0, 36.0], dtype=np.float32)
+    visual = TextVisual(
+        id="visual:text-basic-ndc",
+        texts=("Alpha", "Beta", "Gamma", "Delta"),
+        positions=positions,
+        coordinate_space=CoordinateSpace.NDC,
+        rgba=rgba,
+        font_size_px=sizes,
+        font_role=FontRole.SANS,
+    )
+    return VisualQAScene(
+        case_id="text/basic_ndc",
+        visuals=(visual,),
+        arrays={"text_positions": positions, "text_rgba": rgba, "text_sizes": sizes},
+        notes=("Four ASCII labels in NDC with increasing logical pixel font sizes.",),
+    )
+
+
+def _text_anchor_grid_ndc() -> VisualQAScene:
+    anchor_x = (TextAnchorX.LEFT, TextAnchorX.CENTER, TextAnchorX.RIGHT)
+    anchor_y = (
+        TextAnchorY.TOP,
+        TextAnchorY.CENTER,
+        TextAnchorY.BASELINE,
+        TextAnchorY.BOTTOM,
+    )
+    positions = np.array(
+        [[x, y] for y in (0.54, 0.18, -0.18, -0.54) for x in (-0.60, 0.0, 0.60)],
+        dtype=np.float32,
+    )
+    texts = tuple(
+        f"{ax.value[0].upper()}/{ay.value[0].upper()}"
+        for ay in anchor_y
+        for ax in anchor_x
+    )
+    visual = TextVisual(
+        id="visual:text-anchor-grid-ndc",
+        texts=texts,
+        positions=positions,
+        coordinate_space=CoordinateSpace.NDC,
+        rgba=np.array([20, 20, 20, 255], dtype=np.uint8),
+        font_size_px=18.0,
+        anchor_x=tuple(ax for _ay in anchor_y for ax in anchor_x),
+        anchor_y=tuple(ay for ay in anchor_y for _ax in anchor_x),
+    )
+    return VisualQAScene(
+        case_id="text/anchor_grid_ndc",
+        visuals=(visual,),
+        arrays={"text_positions": positions},
+        notes=("Twelve labels exercise horizontal and vertical anchor combinations.",),
+    )
+
+
+def _text_rotation_alpha_ndc() -> VisualQAScene:
+    positions = np.array(
+        [[-0.50, -0.18], [-0.18, 0.08], [0.18, -0.04], [0.50, 0.20]],
+        dtype=np.float32,
+    )
+    rotations = np.array([-0.65, -0.25, 0.25, 0.65], dtype=np.float32)
+    rgba = np.array(
+        [
+            [230, 57, 70, 170],
+            [42, 157, 143, 170],
+            [38, 70, 83, 170],
+            [251, 140, 0, 170],
+        ],
+        dtype=np.uint8,
+    )
+    background = ImageVisual(
+        id="visual:text-alpha-background",
+        image=_orientation_image(8),
+        extent=(-0.82, 0.82, -0.42, 0.42),
+        coordinate_space=CoordinateSpace.NDC,
+        interpolation=ImageInterpolation.NEAREST,
+        origin=ImageOrigin.UPPER,
+    )
+    text = TextVisual(
+        id="visual:text-rotation-alpha-ndc",
+        texts=("rotate", "alpha", "over", "image"),
+        positions=positions,
+        coordinate_space=CoordinateSpace.NDC,
+        rgba=rgba,
+        font_size_px=34.0,
+        anchor_x=TextAnchorX.CENTER,
+        anchor_y=TextAnchorY.CENTER,
+        rotation_rad=rotations,
+        z_order=4,
+    )
+    return VisualQAScene(
+        case_id="text/rotation_alpha_ndc",
+        visuals=(background, text),
+        arrays={
+            "text_positions": positions,
+            "text_rgba": rgba,
+            "text_rotation_rad": rotations,
+        },
+        notes=(
+            "Semi-transparent rotated ASCII labels draw above an orientation image.",
+        ),
+    )
+
+
+def _text_data_vs_ndc() -> VisualQAScene:
+    data_positions = np.array([[-0.72, 0.44], [0.72, -0.44]], dtype=np.float32)
+    ndc_positions = np.array([[-0.72, -0.44], [0.72, 0.44]], dtype=np.float32)
+    data_text = TextVisual(
+        id="visual:text-data",
+        texts=("DATA left/top", "DATA right/bottom"),
+        positions=data_positions,
+        coordinate_space=CoordinateSpace.DATA,
+        rgba=np.array([33, 102, 172, 255], dtype=np.uint8),
+        font_size_px=22.0,
+    )
+    ndc_text = TextVisual(
+        id="visual:text-ndc",
+        texts=("NDC left/bottom", "NDC right/top"),
+        positions=ndc_positions,
+        coordinate_space=CoordinateSpace.NDC,
+        rgba=np.array([216, 27, 96, 255], dtype=np.uint8),
+        font_size_px=22.0,
+        anchor_x=TextAnchorX.RIGHT,
+    )
+    return VisualQAScene(
+        case_id="text/data_vs_ndc",
+        visuals=(data_text, ndc_text),
+        arrays={"data_positions": data_positions, "ndc_positions": ndc_positions},
+        notes=(
+            "DATA and NDC text coordinates are compared under the QA runner's [-1,+1] data limits.",
+        ),
+    )
+
+
+def _text_multiline_unicode_smoke() -> VisualQAScene:
+    positions = np.array([[-0.48, 0.20], [0.48, -0.18]], dtype=np.float32)
+    visual = TextVisual(
+        id="visual:text-multiline-unicode",
+        texts=("line one\nline two", "Unicode: café Ω"),
+        positions=positions,
+        coordinate_space=CoordinateSpace.NDC,
+        rgba=np.array([[35, 40, 45, 255], [94, 53, 177, 255]], dtype=np.uint8),
+        font_size_px=np.array([24.0, 26.0], dtype=np.float32),
+        anchor_x=(TextAnchorX.LEFT, TextAnchorX.CENTER),
+        anchor_y=(TextAnchorY.BASELINE, TextAnchorY.CENTER),
+        font_role=FontRole.SERIF,
+    )
+    return VisualQAScene(
+        case_id="text/multiline_unicode_smoke",
+        visuals=(visual,),
+        arrays={"text_positions": positions},
+        notes=(
+            "Explicit newline plus simple non-ASCII glyph smoke; exact metrics are not conformance criteria.",
         ),
     )
 

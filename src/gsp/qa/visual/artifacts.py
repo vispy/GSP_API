@@ -16,6 +16,7 @@ from gsp.protocol import (
     PathVisual,
     PointVisual,
     SegmentVisual,
+    TextVisual,
 )
 from gsp.qa.visual.backend_ids import DATOVIZ_BACKEND_ID
 from gsp.qa.visual.case_spec import ProtocolVisual, VisualQAScene
@@ -111,7 +112,7 @@ def write_summary(out_dir: Path, report: Mapping[str, object]) -> Path:
     cases = report["cases"]
     assert isinstance(cases, list)
     lines = [
-        "# S023 Visual QA Run",
+        f"# {str(report['stage'])} Visual QA Run",
         "",
         f"Run id: `{report['run_id']}`",
         "",
@@ -267,6 +268,50 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "cap": visual.cap.value,
             "join": visual.join.value,
             "miter_limit": visual.miter_limit,
+        }
+
+    if isinstance(visual, TextVisual):
+        font_size = visual.font_size_px
+        font_size_shape = (
+            list(font_size.shape) if isinstance(font_size, np.ndarray) else []
+        )
+        rotation = visual.rotation_rad
+        rotation_shape = (
+            list(rotation.shape) if isinstance(rotation, np.ndarray) else []
+        )
+        return {
+            "family": "text",
+            "id": visual.id,
+            "coordinate_space": visual.coordinate_space.value,
+            "texts": list(visual.texts),
+            "positions": {
+                "shape": list(visual.positions.shape),
+                "dtype": str(visual.positions.dtype),
+            },
+            "rgba": {
+                "shape": list(visual.rgba.shape),
+                "dtype": str(visual.rgba.dtype),
+            },
+            "font_size_px": {
+                "shape": font_size_shape,
+                "dtype": str(font_size.dtype)
+                if isinstance(font_size, np.ndarray)
+                else "float",
+            },
+            "font_role": visual.font_role.value,
+            "anchor_x": [value.value for value in visual.anchor_x]
+            if isinstance(visual.anchor_x, tuple)
+            else visual.anchor_x.value,
+            "anchor_y": [value.value for value in visual.anchor_y]
+            if isinstance(visual.anchor_y, tuple)
+            else visual.anchor_y.value,
+            "rotation_rad": {
+                "shape": rotation_shape,
+                "dtype": str(rotation.dtype)
+                if isinstance(rotation, np.ndarray)
+                else "float",
+            },
+            "z_order": visual.z_order,
         }
     if isinstance(visual, ImageVisual):
         return {

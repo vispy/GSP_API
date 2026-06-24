@@ -19,6 +19,7 @@ from gsp.protocol import (
     PathVisual,
     PointVisual,
     SegmentVisual,
+    TextVisual,
 )
 from gsp.qa.visual.artifacts import (
     ensure_run_dirs,
@@ -36,12 +37,13 @@ from gsp.qa.visual.backend_ids import (
     MATPLOTLIB_BACKEND_ID,
 )
 from gsp.qa.visual.case_spec import ProtocolVisual, VisualQACase
-from gsp.qa.visual.cases import S023_SUITE, case_slug, list_cases
+from gsp.qa.visual.cases import S023_SUITE, S024_SUITE, case_slug, list_cases
 from gsp.qa.visual.contact_sheet import write_contact_sheets
 from gsp.qa.visual.datoviz_probe import DatovizV04ProbeReport, probe_datoviz_v04
 from gsp_datoviz.protocol_renderer import (
     DatovizColorPipeline,
     DatovizV04ProtocolRenderer,
+    DatovizV04Unsupported,
 )
 from gsp_matplotlib.protocol_renderer import (
     render_image_visual,
@@ -49,6 +51,7 @@ from gsp_matplotlib.protocol_renderer import (
     render_path_visual,
     render_point_visual,
     render_segment_visual,
+    render_text_visual,
 )
 
 
@@ -67,13 +70,13 @@ def run_visual_qa_suite(
     datoviz_color_pipeline: DatovizColorPipeline = "legacy_srgb_blend",
 ) -> dict[str, object]:
     """Run the visual QA suite and return its report."""
-    if suite != S023_SUITE:
+    if suite not in (S023_SUITE, S024_SUITE):
         raise ValueError(f"unknown visual QA suite: {suite}")
     normalized_backends = _normalize_backends(backends)
-    selected_cases = _select_cases(case_ids)
+    selected_cases = _select_cases(case_ids, suite=suite)
     ensure_run_dirs(out_dir)
     resolved_run_id = run_id or datetime.now(timezone.utc).strftime(
-        "s023-%Y%m%dT%H%M%SZ"
+        f"{suite}-%Y%m%dT%H%M%SZ"
     )
     started_at = datetime.now(timezone.utc).isoformat()
     probe_report = probe_datoviz_v04()
@@ -83,7 +86,7 @@ def run_visual_qa_suite(
         {
             "schema_version": 1,
             "schema_kind": "gsp.visual_qa.run_manifest",
-            "stage": "S023",
+            "stage": suite.upper(),
             "suite": suite,
             "run_id": resolved_run_id,
             "started_at": started_at,
@@ -129,14 +132,16 @@ def run_visual_qa_suite(
         )
 
     if contact_sheet:
-        contact_paths = write_contact_sheets(out_dir, case_reports, normalized_backends)
+        contact_paths = write_contact_sheets(
+            out_dir, case_reports, normalized_backends, suite=suite
+        )
     else:
         contact_paths = ()
 
     report: dict[str, object] = {
         "schema_version": 1,
         "schema_kind": "gsp.visual_qa.report",
-        "stage": "S023",
+        "stage": suite.upper(),
         "suite": suite,
         "run_id": resolved_run_id,
         "started_at": started_at,
@@ -164,8 +169,8 @@ def _normalize_backends(backends: tuple[str, ...]) -> tuple[str, ...]:
     return tuple(normalized)
 
 
-def _select_cases(case_ids: tuple[str, ...]) -> tuple[VisualQACase, ...]:
-    cases = list_cases()
+def _select_cases(case_ids: tuple[str, ...], *, suite: str) -> tuple[VisualQACase, ...]:
+    cases = list_cases(suite=suite)
     if not case_ids:
         return cases
     by_id = {case.case_id: case for case in cases}
@@ -281,6 +286,8 @@ def _render_matplotlib_visual(ax: Axes, visual: ProtocolVisual) -> None:
         render_path_visual(ax, visual)
     elif isinstance(visual, ImageVisual):
         render_image_visual(ax, visual)
+    elif isinstance(visual, TextVisual):
+        render_text_visual(ax, visual)
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
 
@@ -298,6 +305,10 @@ def _render_datoviz_visual(
         renderer.add_path_visual(visual)
     elif isinstance(visual, ImageVisual):
         renderer.add_image_visual(visual)
+    elif isinstance(visual, TextVisual):
+        raise DatovizV04Unsupported(
+            "Datoviz TextVisual support awaits M078/M079 capability evidence"
+        )
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
 

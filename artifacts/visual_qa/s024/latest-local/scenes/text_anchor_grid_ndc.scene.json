@@ -1,0 +1,88 @@
+{
+  "arrays": {
+    "text_positions": {
+      "dtype": "float32",
+      "key": "text_positions",
+      "path": "text_anchor_grid_ndc.arrays.npz",
+      "shape": [
+        12,
+        2
+      ]
+    }
+  },
+  "case_id": "text/anchor_grid_ndc",
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "visuals": [
+    {
+      "anchor_x": [
+        "left",
+        "center",
+        "right",
+        "left",
+        "center",
+        "right",
+        "left",
+        "center",
+        "right",
+        "left",
+        "center",
+        "right"
+      ],
+      "anchor_y": [
+        "top",
+        "top",
+        "top",
+        "center",
+        "center",
+        "center",
+        "baseline",
+        "baseline",
+        "baseline",
+        "bottom",
+        "bottom",
+        "bottom"
+      ],
+      "coordinate_space": "ndc",
+      "family": "text",
+      "font_role": "default",
+      "font_size_px": {
+        "dtype": "float",
+        "shape": []
+      },
+      "id": "visual:text-anchor-grid-ndc",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          12,
+          2
+        ]
+      },
+      "rgba": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "rotation_rad": {
+        "dtype": "float",
+        "shape": []
+      },
+      "texts": [
+        "L/T",
+        "C/T",
+        "R/T",
+        "L/C",
+        "C/C",
+        "R/C",
+        "L/B",
+        "C/B",
+        "R/B",
+        "L/B",
+        "C/B",
+        "R/B"
+      ],
+      "z_order": 0
+    }
+  ]
+}

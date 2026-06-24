@@ -1,0 +1,61 @@
+{
+  "arrays": {
+    "text_positions": {
+      "dtype": "float32",
+      "key": "text_positions",
+      "path": "text_multiline_unicode_smoke.arrays.npz",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  },
+  "case_id": "text/multiline_unicode_smoke",
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "visuals": [
+    {
+      "anchor_x": [
+        "left",
+        "center"
+      ],
+      "anchor_y": [
+        "baseline",
+        "center"
+      ],
+      "coordinate_space": "ndc",
+      "family": "text",
+      "font_role": "serif",
+      "font_size_px": {
+        "dtype": "float32",
+        "shape": [
+          2
+        ]
+      },
+      "id": "visual:text-multiline-unicode",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "rgba": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      "rotation_rad": {
+        "dtype": "float",
+        "shape": []
+      },
+      "texts": [
+        "line one\nline two",
+        "Unicode: caf\u00e9 \u03a9"
+      ],
+      "z_order": 0
+    }
+  ]
+}

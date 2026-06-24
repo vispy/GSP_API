@@ -1,0 +1,185 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s024/latest-local/scenes/text_basic_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "log_path": "artifacts/visual_qa/s024/latest-local/backends/datoviz/text_basic_ndc.log.txt",
+          "reason": "Datoviz v0.4 retained-scene point probe is unsupported",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s024/latest-local/backends/datoviz/text_basic_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s024/latest-local/backends/matplotlib/text_basic_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s024/latest-local/backends/matplotlib/text_basic_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/basic_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rgba8",
+        "font-size"
+      ],
+      "scene_path": "artifacts/visual_qa/s024/latest-local/scenes/text_basic_ndc.scene.json",
+      "title": "Basic NDC text labels"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s024/latest-local/scenes/text_anchor_grid_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "log_path": "artifacts/visual_qa/s024/latest-local/backends/datoviz/text_anchor_grid_ndc.log.txt",
+          "reason": "Datoviz v0.4 retained-scene point probe is unsupported",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s024/latest-local/backends/datoviz/text_anchor_grid_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s024/latest-local/backends/matplotlib/text_anchor_grid_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s024/latest-local/backends/matplotlib/text_anchor_grid_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/anchor_grid_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "anchor"
+      ],
+      "scene_path": "artifacts/visual_qa/s024/latest-local/scenes/text_anchor_grid_ndc.scene.json",
+      "title": "Text anchor grid in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s024/latest-local/scenes/text_rotation_alpha_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "log_path": "artifacts/visual_qa/s024/latest-local/backends/datoviz/text_rotation_alpha_ndc.log.txt",
+          "reason": "Datoviz v0.4 retained-scene point probe is unsupported",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s024/latest-local/backends/datoviz/text_rotation_alpha_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s024/latest-local/backends/matplotlib/text_rotation_alpha_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s024/latest-local/backends/matplotlib/text_rotation_alpha_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/rotation_alpha_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rotation",
+        "alpha",
+        "z-order"
+      ],
+      "scene_path": "artifacts/visual_qa/s024/latest-local/scenes/text_rotation_alpha_ndc.scene.json",
+      "title": "Text rotation and alpha overlap in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s024/latest-local/scenes/text_data_vs_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "log_path": "artifacts/visual_qa/s024/latest-local/backends/datoviz/text_data_vs_ndc.log.txt",
+          "reason": "Datoviz v0.4 retained-scene point probe is unsupported",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s024/latest-local/backends/datoviz/text_data_vs_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s024/latest-local/backends/matplotlib/text_data_vs_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s024/latest-local/backends/matplotlib/text_data_vs_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/data_vs_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "data",
+        "ndc"
+      ],
+      "scene_path": "artifacts/visual_qa/s024/latest-local/scenes/text_data_vs_ndc.scene.json",
+      "title": "Text DATA and NDC coordinate comparison"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s024/latest-local/scenes/text_multiline_unicode_smoke.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "log_path": "artifacts/visual_qa/s024/latest-local/backends/datoviz/text_multiline_unicode_smoke.log.txt",
+          "reason": "Datoviz v0.4 retained-scene point probe is unsupported",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s024/latest-local/backends/datoviz/text_multiline_unicode_smoke.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s024/latest-local/backends/matplotlib/text_multiline_unicode_smoke.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s024/latest-local/backends/matplotlib/text_multiline_unicode_smoke.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/multiline_unicode_smoke",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "multiline",
+        "unicode"
+      ],
+      "scene_path": "artifacts/visual_qa/s024/latest-local/scenes/text_multiline_unicode_smoke.scene.json",
+      "title": "Text multiline and Unicode smoke"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s024/latest-local/contact_sheets/text_basic_ndc.png",
+    "artifacts/visual_qa/s024/latest-local/contact_sheets/text_anchor_grid_ndc.png",
+    "artifacts/visual_qa/s024/latest-local/contact_sheets/text_rotation_alpha_ndc.png",
+    "artifacts/visual_qa/s024/latest-local/contact_sheets/text_data_vs_ndc.png",
+    "artifacts/visual_qa/s024/latest-local/contact_sheets/text_multiline_unicode_smoke.png",
+    "artifacts/visual_qa/s024/latest-local/contact_sheets/s024_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": false,
+      "run_symbols_available": false,
+      "top_level_capture_available": false
+    },
+    "facade_imported": false,
+    "installed_package": {
+      "imported": false,
+      "path": null,
+      "version": null
+    },
+    "minimal_point_supported": false,
+    "raw_imported": false,
+    "source_revision": "f88f5d82f8a50d6abafa1ee722c042e233e8110b",
+    "unexpected_banned_hits": 0
+  },
+  "environment_path": "artifacts/visual_qa/s024/latest-local/environment.json",
+  "run_id": "s024-latest-local",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S024",
+  "started_at": "2026-06-24T17:10:58.260396+00:00",
+  "suite": "s024"
+}

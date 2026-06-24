@@ -1,0 +1,24 @@
+{
+  "backends": [
+    "matplotlib",
+    "datoviz"
+  ],
+  "case_ids": [
+    "text/basic_ndc",
+    "text/anchor_grid_ndc",
+    "text/rotation_alpha_ndc",
+    "text/data_vs_ndc",
+    "text/multiline_unicode_smoke"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "resolution": [
+    800,
+    600
+  ],
+  "run_id": "s024-latest-local",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S024",
+  "started_at": "2026-06-24T17:10:58.260396+00:00",
+  "suite": "s024"
+}

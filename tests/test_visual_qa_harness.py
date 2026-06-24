@@ -7,7 +7,7 @@ from pathlib import Path
 
 import matplotlib.image as mpimg
 
-from gsp.qa.visual.cases import list_cases
+from gsp.qa.visual.cases import S024_SUITE, list_cases
 from gsp.qa.visual.runner import run_visual_qa_suite
 
 
@@ -30,6 +30,61 @@ def test_s023_case_registry_lists_initial_cases() -> None:
         "image/rgba_alpha_ndc",
         "overlay/point_over_image_ndc",
     ]
+
+
+def test_s024_case_registry_extends_s023_with_text_cases() -> None:
+    """S024 adds deterministic TextVisual QA cases without changing S023."""
+    case_ids = [case.case_id for case in list_cases(suite=S024_SUITE)]
+
+    assert case_ids[-5:] == [
+        "text/basic_ndc",
+        "text/anchor_grid_ndc",
+        "text/rotation_alpha_ndc",
+        "text/data_vs_ndc",
+        "text/multiline_unicode_smoke",
+    ]
+
+
+def test_s024_text_visual_qa_run_writes_matplotlib_artifacts(tmp_path: Path) -> None:
+    """S024 text cases render through the Matplotlib reference backend."""
+    report = run_visual_qa_suite(
+        suite=S024_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=("text/basic_ndc", "text/rotation_alpha_ndc"),
+        run_id="test-s024-text",
+        resolution=(320, 240),
+    )
+
+    assert report["stage"] == "S024"
+    assert (tmp_path / "contact_sheets" / "s024_all_cases.png").stat().st_size > 0
+    scene = json.loads(
+        (tmp_path / "scenes" / "text_basic_ndc.scene.json").read_text(encoding="utf-8")
+    )
+    assert scene["visuals"][0]["family"] == "text"
+    assert scene["visuals"][0]["texts"] == ["Alpha", "Beta", "Gamma", "Delta"]
+    for case in report["cases"]:
+        assert case["backends"]["matplotlib"]["status"] == "rendered"
+
+
+def test_s024_text_visual_datoviz_reports_structured_unsupported(
+    tmp_path: Path,
+) -> None:
+    """Datoviz text QA remains capability-gated until M078/M079."""
+    report = run_visual_qa_suite(
+        suite=S024_SUITE,
+        out_dir=tmp_path,
+        backends=("datoviz",),
+        case_ids=("text/basic_ndc",),
+        run_id="test-s024-text-dvz",
+        resolution=(96, 96),
+    )
+
+    backend = report["cases"][0]["backends"]["datoviz"]
+    assert backend["status"] == "unsupported"
+    payload = json.loads(Path(str(backend["unsupported_path"])).read_text())
+    assert payload["schema_kind"] == "gsp.visual_qa.unsupported"
+    assert payload["case_id"] == "text/basic_ndc"
 
 
 def test_visual_qa_run_writes_matplotlib_artifacts_and_report(tmp_path: Path) -> None:

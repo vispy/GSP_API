@@ -13,11 +13,12 @@ from gsp.protocol import (
     PathVisual,
     PointVisual,
     SegmentVisual,
+    TextVisual,
 )
 
 
 ProtocolVisual: TypeAlias = (
-    PointVisual | MarkerVisual | SegmentVisual | PathVisual | ImageVisual
+    PointVisual | MarkerVisual | SegmentVisual | PathVisual | ImageVisual | TextVisual
 )
 
 

@@ -1,0 +1,95 @@
+{
+  "arrays": {
+    "data_positions": {
+      "dtype": "float32",
+      "key": "data_positions",
+      "path": "text_data_vs_ndc.arrays.npz",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "ndc_positions": {
+      "dtype": "float32",
+      "key": "ndc_positions",
+      "path": "text_data_vs_ndc.arrays.npz",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  },
+  "case_id": "text/data_vs_ndc",
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "visuals": [
+    {
+      "anchor_x": "left",
+      "anchor_y": "baseline",
+      "coordinate_space": "data",
+      "family": "text",
+      "font_role": "default",
+      "font_size_px": {
+        "dtype": "float",
+        "shape": []
+      },
+      "id": "visual:text-data",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "rgba": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "rotation_rad": {
+        "dtype": "float",
+        "shape": []
+      },
+      "texts": [
+        "DATA left/top",
+        "DATA right/bottom"
+      ],
+      "z_order": 0
+    },
+    {
+      "anchor_x": "right",
+      "anchor_y": "baseline",
+      "coordinate_space": "ndc",
+      "family": "text",
+      "font_role": "default",
+      "font_size_px": {
+        "dtype": "float",
+        "shape": []
+      },
+      "id": "visual:text-ndc",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "rgba": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "rotation_rad": {
+        "dtype": "float",
+        "shape": []
+      },
+      "texts": [
+        "NDC left/bottom",
+        "NDC right/top"
+      ],
+      "z_order": 0
+    }
+  ]
+}
