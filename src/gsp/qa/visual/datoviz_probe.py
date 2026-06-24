@@ -153,6 +153,31 @@ BANNED_TEXT_SYMBOLS: tuple[str, ...] = (
 )
 
 
+MESH_SYMBOLS: tuple[str, ...] = (
+    "DvzGeometry",
+    "DvzIndex",
+    "DvzMaterial",
+    "DVZ_SCENE_VISUAL_FAMILY_MESH",
+    "dvz_mesh",
+    "dvz_mesh_set_geometry",
+    "dvz_visual_set_data",
+    "dvz_visual_set_index_data",
+    "dvz_visual_set_material",
+    "dvz_visual_set_depth",
+    "dvz_visual_set_texture",
+)
+
+MESH_RENDERER_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
+    "mesh.visual.constructor": ("dvz_mesh",),
+    "mesh.geometry.upload": ("dvz_mesh_set_geometry",),
+    "mesh.attribute.upload": ("dvz_visual_set_data",),
+    "mesh.index.upload": ("dvz_visual_set_index_data",),
+    "mesh.material.helper": ("dvz_visual_set_material",),
+    "mesh.depth.helper": ("dvz_visual_set_depth",),
+    "mesh.texture.deferred.evidence": ("dvz_visual_set_texture",),
+}
+
+
 @dataclass(frozen=True)
 class ImportProbe:
     """JSON-safe import result."""
@@ -278,6 +303,8 @@ class DatovizV04ProbeReport:
     enum_style_symbols: dict[str, SymbolProbe]
     text_symbols: dict[str, SymbolProbe]
     text_capability_matrix: dict[str, CapabilityProbe]
+    mesh_symbols: dict[str, SymbolProbe]
+    mesh_capability_matrix: dict[str, CapabilityProbe]
     source_symbol_matrix: dict[str, list[SourceSymbolHit]]
     minimal_point_scene: MinimalPointProbe
     capture: dict[str, object]
@@ -312,6 +339,13 @@ class DatovizV04ProbeReport:
             "text_capability_matrix": {
                 name: result.to_json()
                 for name, result in self.text_capability_matrix.items()
+            },
+            "mesh_symbols": {
+                name: result.to_json() for name, result in self.mesh_symbols.items()
+            },
+            "mesh_capability_matrix": {
+                name: result.to_json()
+                for name, result in self.mesh_capability_matrix.items()
             },
             "source_symbol_matrix": {
                 name: [hit.to_json() for hit in hits]
@@ -349,7 +383,7 @@ def probe_datoviz_v04(
     generated_files = _generated_files(installed_path)
     facade_symbols = _probe_symbols(facade, _facade_symbol_names(), "facade")
     raw_symbols = _probe_symbols(
-        raw, RAW_MIRROR_SYMBOLS + ENUM_AND_STYLE_SYMBOLS + TEXT_SYMBOLS, "raw"
+        raw, RAW_MIRROR_SYMBOLS + ENUM_AND_STYLE_SYMBOLS + TEXT_SYMBOLS + MESH_SYMBOLS, "raw"
     )
     capability_matrix = _capability_matrix(
         facade_symbols, raw_symbols, facade_import, raw_import
@@ -357,6 +391,8 @@ def probe_datoviz_v04(
     enum_style_symbols = _enum_style_matrix(facade, raw)
     text_symbols = _text_symbol_matrix(facade, raw)
     text_capability_matrix = _text_capability_matrix(text_symbols)
+    mesh_symbols = _mesh_symbol_matrix(facade, raw)
+    mesh_capability_matrix = _mesh_capability_matrix(mesh_symbols)
     source_symbol_matrix = _source_symbol_matrix(
         source,
         tuple(
@@ -365,6 +401,7 @@ def probe_datoviz_v04(
                 | set(RAW_MIRROR_SYMBOLS)
                 | set(ENUM_AND_STYLE_SYMBOLS)
                 | set(TEXT_SYMBOLS)
+                | set(MESH_SYMBOLS)
                 | set(BANNED_TEXT_SYMBOLS)
             )
         ),
@@ -398,6 +435,8 @@ def probe_datoviz_v04(
         enum_style_symbols=enum_style_symbols,
         text_symbols=text_symbols,
         text_capability_matrix=text_capability_matrix,
+        mesh_symbols=mesh_symbols,
+        mesh_capability_matrix=mesh_capability_matrix,
         source_symbol_matrix=source_symbol_matrix,
         minimal_point_scene=minimal_point_scene,
         capture={
@@ -643,6 +682,40 @@ def _text_capability_matrix(
     return dict(sorted(matrix.items()))
 
 
+def _mesh_symbol_matrix(facade: Any | None, raw: Any | None) -> dict[str, SymbolProbe]:
+    matrix: dict[str, SymbolProbe] = {}
+    for symbol in MESH_SYMBOLS:
+        facade_available = _has_symbol(facade, symbol)
+        raw_available = _has_symbol(raw, symbol)
+        source = "facade" if facade_available else "raw"
+        matrix[symbol] = SymbolProbe(
+            symbol=symbol, available=facade_available or raw_available, source=source
+        )
+    return dict(sorted(matrix.items()))
+
+
+def _mesh_capability_matrix(
+    mesh_symbols: Mapping[str, SymbolProbe],
+) -> dict[str, CapabilityProbe]:
+    matrix: dict[str, CapabilityProbe] = {}
+    for capability, symbols in MESH_RENDERER_CAPABILITIES.items():
+        missing = tuple(
+            symbol
+            for symbol in symbols
+            if not mesh_symbols.get(
+                symbol, SymbolProbe(symbol=symbol, available=False, source="facade")
+            ).available
+        )
+        matrix[capability] = CapabilityProbe(
+            capability=capability,
+            source="facade_or_raw",
+            symbol=",".join(symbols),
+            supported=not missing,
+            reason=None if not missing else f"missing symbols: {missing}",
+        )
+    return dict(sorted(matrix.items()))
+
+
 def _source_symbol_matrix(
     source: Path, symbols: Sequence[str]
 ) -> dict[str, list[SourceSymbolHit]]:
@@ -671,9 +744,9 @@ def _datoviz_source_files(source: Path) -> tuple[Path, ...]:
         path = source / relative
         if path.exists():
             candidates.append(path)
-    examples = source / "examples" / "c" / "visuals"
-    if examples.exists():
-        candidates.extend(sorted(examples.glob("*.c")))
+    for examples in (source / "examples" / "c" / "visuals", source / "examples" / "c" / "features"):
+        if examples.exists():
+            candidates.extend(sorted(examples.glob("*.c")))
     include_dir = source / "include" / "datoviz"
     if include_dir.exists():
         candidates.extend(sorted(include_dir.rglob("*.h")))

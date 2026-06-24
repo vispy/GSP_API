@@ -235,3 +235,39 @@ def test_s025_mesh_visual_qa_run_writes_matplotlib_artifacts(tmp_path: Path) -> 
     assert scene["visuals"][0]["color_mode"] == "uniform"
     for case in report["cases"]:
         assert case["backends"]["matplotlib"]["status"] == "rendered"
+
+
+def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
+    """The v0.4 probe records retained mesh evidence separately from text evidence."""
+    from types import SimpleNamespace
+
+    from gsp.qa.visual.datoviz_probe import probe_datoviz_v04
+
+    source = tmp_path / "datoviz"
+    include = source / "include" / "datoviz"
+    include.mkdir(parents=True)
+    (include / "scene.h").write_text(
+        "DVZ_EXPORT DvzVisual* dvz_mesh(DvzScene* scene, uint32_t flags);\n"
+        "DVZ_EXPORT int dvz_mesh_set_geometry(DvzVisual* visual, const DvzGeometry* geometry);\n"
+        "DVZ_EXPORT int dvz_visual_set_index_data(DvzVisual* visual, const DvzIndex* indices, uint32_t index_count);\n",
+        encoding="utf-8",
+    )
+    fake = SimpleNamespace(
+        __version__="0.4-test",
+        dvz_mesh=lambda *args: None,
+        dvz_mesh_set_geometry=lambda *args: None,
+        dvz_visual_set_data=lambda *args: None,
+        dvz_visual_set_index_data=lambda *args: None,
+        dvz_visual_set_material=lambda *args: None,
+        dvz_visual_set_depth=lambda *args: None,
+        dvz_visual_set_texture=lambda *args: None,
+    )
+
+    report = probe_datoviz_v04(source_path=source, facade_module=fake, raw_module=fake)
+    payload = report.to_json()
+
+    assert payload["mesh_symbols"]["dvz_mesh"]["available"] is True
+    assert payload["mesh_symbols"]["dvz_mesh_set_geometry"]["available"] is True
+    assert payload["mesh_capability_matrix"]["mesh.visual.constructor"]["supported"] is True
+    assert payload["mesh_capability_matrix"]["mesh.index.upload"]["supported"] is True
+    assert payload["source_symbol_matrix"]["dvz_mesh"]
