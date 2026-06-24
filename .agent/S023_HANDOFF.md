@@ -260,3 +260,15 @@ M068 added SegmentVisual as a distinct visual family:
 Before implementing M069, keep PathVisual distinct from SegmentVisual. Path should cover continuous
 polyline/subpath semantics with joins and ordered vertices; it should not regress the independent
 segment contract added in M068.
+
+## M069 PathVisual v1 update
+
+- Added `PathVisual` and `StrokeJoin` for open polyline/subpath semantics.
+- `path_lengths` partitions ordered vertices into open subpaths; closed paths, fills, holes,
+  Beziers, dashes, and polygons remain deferred.
+- Matplotlib renders each subpath as an open `PathPatch` with cap/join styles and pixel-width
+  conversion.
+- Datoviz v0.4 uses `dvz_path`, `dvz_path_set_subpaths`, `dvz_path_set_caps`, and
+  `dvz_path_set_join` when exposed, expanding per-subpath colors/widths to per-vertex arrays.
+- Visual QA case `path/subpaths_width_join_ndc` was added and Matplotlib smoke-generated under
+  `artifacts/visual_qa/s023/m069_path_smoke`.

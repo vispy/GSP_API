@@ -10,7 +10,13 @@ from typing import Any, Mapping, cast
 
 import numpy as np
 
-from gsp.protocol import ImageVisual, MarkerVisual, PointVisual, SegmentVisual
+from gsp.protocol import (
+    ImageVisual,
+    MarkerVisual,
+    PathVisual,
+    PointVisual,
+    SegmentVisual,
+)
 from gsp.qa.visual.backend_ids import DATOVIZ_BACKEND_ID
 from gsp.qa.visual.case_spec import ProtocolVisual, VisualQAScene
 from gsp.qa.visual.cases import case_slug
@@ -235,6 +241,32 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
                 else "float",
             },
             "cap": visual.cap.value,
+        }
+    if isinstance(visual, PathVisual):
+        widths = visual.widths
+        width_shape = list(widths.shape) if isinstance(widths, np.ndarray) else []
+        return {
+            "family": "path",
+            "id": visual.id,
+            "coordinate_space": visual.coordinate_space.value,
+            "positions": {
+                "shape": list(visual.positions.shape),
+                "dtype": str(visual.positions.dtype),
+            },
+            "path_lengths": list(visual.path_lengths),
+            "colors": {
+                "shape": list(visual.colors.shape),
+                "dtype": str(visual.colors.dtype),
+            },
+            "widths": {
+                "shape": width_shape,
+                "dtype": str(widths.dtype)
+                if isinstance(widths, np.ndarray)
+                else "float",
+            },
+            "cap": visual.cap.value,
+            "join": visual.join.value,
+            "miter_limit": visual.miter_limit,
         }
     if isinstance(visual, ImageVisual):
         return {

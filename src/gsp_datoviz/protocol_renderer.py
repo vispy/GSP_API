@@ -26,9 +26,11 @@ from gsp.protocol import (
     ImageVisual,
     MarkerShape,
     MarkerVisual,
+    PathVisual,
     PointVisual,
     SegmentVisual,
     StrokeCap,
+    StrokeJoin,
     QueryCoordinateSpace,
     QueryHitPolicy,
     QueryRequest,
@@ -81,6 +83,13 @@ _REQUIRED_DVZ_SEGMENT_FUNCTIONS = (
     "dvz_segment_set_caps",
 )
 
+_REQUIRED_DVZ_PATH_FUNCTIONS = (
+    "dvz_path",
+    "dvz_path_set_subpaths",
+    "dvz_path_set_caps",
+    "dvz_path_set_join",
+)
+
 DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
 DVZ_FIELD_SEMANTIC_COLOR = 4
@@ -103,6 +112,9 @@ DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND = 1
 DVZ_SEGMENT_CAP_ROUND = 1
 DVZ_SEGMENT_CAP_SQUARE = 4
 DVZ_SEGMENT_CAP_BUTT = 5
+DVZ_PATH_JOIN_MITER = 0
+DVZ_PATH_JOIN_ROUND = 1
+DVZ_PATH_JOIN_BEVEL = 2
 DEFAULT_BACKGROUND_RGBA8 = (255, 255, 255, 255)
 
 DatovizColorPipeline = Literal["linear_srgb", "legacy_srgb_blend"]
@@ -133,6 +145,18 @@ _STROKE_CAP_NAMES = {
     StrokeCap.BUTT: "DVZ_SEGMENT_CAP_BUTT",
     StrokeCap.ROUND: "DVZ_SEGMENT_CAP_ROUND",
     StrokeCap.SQUARE: "DVZ_SEGMENT_CAP_SQUARE",
+}
+
+_STROKE_JOIN_FALLBACKS = {
+    StrokeJoin.MITER: DVZ_PATH_JOIN_MITER,
+    StrokeJoin.ROUND: DVZ_PATH_JOIN_ROUND,
+    StrokeJoin.BEVEL: DVZ_PATH_JOIN_BEVEL,
+}
+
+_STROKE_JOIN_NAMES = {
+    StrokeJoin.MITER: "DVZ_PATH_JOIN_MITER",
+    StrokeJoin.ROUND: "DVZ_PATH_JOIN_ROUND",
+    StrokeJoin.BEVEL: "DVZ_PATH_JOIN_BEVEL",
 }
 
 
@@ -380,6 +404,55 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "position_end", end_positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
         _set_visual_data(self.dvz, dvz_visual, "stroke_width_px", widths)
+        self.dvz.dvz_panel_add_visual(
+            self.panel,
+            dvz_visual,
+            _visual_attach_desc(self.dvz, coord_space="data", z_layer=0),
+        )
+        self.visuals[visual.id] = dvz_visual
+        return dvz_visual
+
+    def add_path_visual(self, visual: PathVisual) -> Any:
+        """Create and attach a Datoviz path visual."""
+        if visual.coordinate_space != CoordinateSpace.NDC:
+            raise DatovizV04Unsupported(
+                "Datoviz v0.4 slice currently supports NDC path positions only"
+            )
+        path_diagnostics = _datoviz_path_diagnostics(self.dvz)
+        if path_diagnostics:
+            raise DatovizV04Unsupported(
+                f"Datoviz v0.4 path facade is unavailable: {', '.join(path_diagnostics)}"
+            )
+
+        positions = _positions_3d(visual.positions)
+        colors = _expand_path_colors(visual)
+        widths = _expand_path_widths(visual)
+        subpaths = np.ascontiguousarray(np.array(visual.path_lengths, dtype=np.uint32))
+
+        dvz_visual = self.dvz.dvz_path(self.scene, 0)
+        if dvz_visual is None:
+            raise DatovizV04Unsupported("Datoviz path visual allocation failed")
+        cap = _stroke_cap_value(self.dvz, visual.cap)
+        cap_result = self.dvz.dvz_path_set_caps(dvz_visual, cap, cap)
+        if cap_result not in (0, None, True):
+            raise DatovizV04Unsupported("Datoviz path cap configuration failed")
+        join_result = self.dvz.dvz_path_set_join(
+            dvz_visual,
+            _stroke_join_value(self.dvz, visual.join),
+            float(visual.miter_limit),
+        )
+        if join_result not in (0, None, True):
+            raise DatovizV04Unsupported("Datoviz path join configuration failed")
+        subpath_result = self.dvz.dvz_path_set_subpaths(
+            dvz_visual, len(visual.path_lengths), subpaths
+        )
+        if subpath_result not in (0, None, True):
+            raise DatovizV04Unsupported("Datoviz path subpath configuration failed")
+        _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
+        _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
+        _set_visual_data(self.dvz, dvz_visual, "position", positions)
+        _set_visual_data(self.dvz, dvz_visual, "color", colors)
+        _set_visual_data(self.dvz, dvz_visual, "stroke_width", widths)
         self.dvz.dvz_panel_add_visual(
             self.panel,
             dvz_visual,
@@ -887,6 +960,14 @@ def _datoviz_segment_diagnostics(dvz: Any) -> tuple[str, ...]:
     )
 
 
+def _datoviz_path_diagnostics(dvz: Any) -> tuple[str, ...]:
+    return tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_PATH_FUNCTIONS
+        if not hasattr(dvz, name)
+    )
+
+
 def _set_marker_style(
     dvz: Any, visual: Any, stroke_color: npt.NDArray[Any], stroke_width: float
 ) -> None:
@@ -968,6 +1049,27 @@ def _stroke_cap_value(dvz: Any, cap: StrokeCap) -> int:
     if enum_type is not None:
         return int(getattr(enum_type, name))
     return _STROKE_CAP_FALLBACKS[cap]
+
+
+def _stroke_join_value(dvz: Any, join: StrokeJoin) -> int:
+    name = _STROKE_JOIN_NAMES[join]
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, "DvzPathJoin", None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return _STROKE_JOIN_FALLBACKS[join]
+
+
+def _expand_path_colors(visual: PathVisual) -> npt.NDArray[np.uint8]:
+    colors = _rgba8(visual.colors)
+    return np.ascontiguousarray(np.repeat(colors, visual.path_lengths, axis=0))
+
+
+def _expand_path_widths(visual: PathVisual) -> npt.NDArray[np.float32]:
+    widths = visual.width_values()
+    return np.ascontiguousarray(np.repeat(widths, visual.path_lengths, axis=0))
 
 
 def _configure_ndc_panel_view2d(dvz: Any, panel: Any) -> None:

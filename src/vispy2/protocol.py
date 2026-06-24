@@ -27,9 +27,11 @@ from gsp.protocol import (
     Panel,
     PanelTextGuide,
     PanelTextRole,
+    PathVisual,
     PointVisual,
     SegmentVisual,
     StrokeCap,
+    StrokeJoin,
     TickSpec,
     TickSpecKind,
     View2D,
@@ -39,6 +41,7 @@ from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.protocol_renderer import (
     render_image_visual,
     render_marker_visual,
+    render_path_visual,
     render_point_visual,
     render_segment_visual,
 )
@@ -62,7 +65,9 @@ class Figure:
 
     def visuals(
         self,
-    ) -> tuple[PointVisual | MarkerVisual | SegmentVisual | ImageVisual, ...]:
+    ) -> tuple[
+        PointVisual | MarkerVisual | SegmentVisual | PathVisual | ImageVisual, ...
+    ]:
         """Return protocol visuals in creation order."""
         return tuple(visual for axes in self.axes for visual in axes.visuals)
 
@@ -100,6 +105,8 @@ class Figure:
                 render_marker_visual(mpl_axes, visual)
             elif isinstance(visual, SegmentVisual):
                 render_segment_visual(mpl_axes, visual)
+            elif isinstance(visual, PathVisual):
+                render_path_visual(mpl_axes, visual)
             elif isinstance(visual, PointVisual):
                 render_point_visual(mpl_axes, visual)
             else:
@@ -140,9 +147,9 @@ class Axes:
     """Minimal axes object that produces GSP protocol visuals."""
 
     figure: Figure
-    visuals: list[PointVisual | MarkerVisual | SegmentVisual | ImageVisual] = field(
-        default_factory=list
-    )
+    visuals: list[
+        PointVisual | MarkerVisual | SegmentVisual | PathVisual | ImageVisual
+    ] = field(default_factory=list)
     panel: Panel = field(init=False)
     view: View2D = field(init=False)
     attachments: list[VisualAttachment] = field(default_factory=list)
@@ -388,6 +395,51 @@ class Axes:
         )
         return visual
 
+    def path(
+        self,
+        positions: npt.ArrayLike,
+        path_lengths: tuple[int, ...] | list[int] | npt.ArrayLike | None = None,
+        *,
+        color: npt.ArrayLike | None = None,
+        width: npt.ArrayLike | float = 1.0,
+        cap: str | StrokeCap = StrokeCap.BUTT,
+        join: str | StrokeJoin = StrokeJoin.MITER,
+        miter_limit: float = 4.0,
+        id: str | None = None,
+    ) -> PathVisual:
+        """Create a protocol open polyline path from ordered ``(N, 2|3)`` vertices."""
+        position_array = _positions(positions, None)
+        lengths = _path_lengths(path_lengths, position_array.shape[0])
+        colors = _colors(color, len(lengths))
+        widths = _sizes(width, len(lengths))
+        visual = PathVisual(
+            id=id or _visual_id("path"),
+            positions=position_array,
+            path_lengths=lengths,
+            colors=colors,
+            widths=widths,
+            cap=_stroke_cap(cap),
+            join=_stroke_join(join),
+            miter_limit=float(miter_limit),
+            coordinate_space=CoordinateSpace.DATA,
+        )
+        self.visuals.append(visual)
+        self.attachments.append(
+            VisualAttachment(
+                visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id
+            )
+        )
+        return visual
+
+    def plot(
+        self,
+        x: npt.ArrayLike,
+        y: npt.ArrayLike | None = None,
+        **kwargs: Any,
+    ) -> PathVisual:
+        """Create one open polyline path from x/y or an ``(N, 2|3)`` array."""
+        return self.path(_positions(x, y), None, **kwargs)
+
     @property
     def _index(self) -> int:
         return int(self.panel.id.rsplit(":", maxsplit=1)[1])
@@ -468,6 +520,18 @@ def segments(start: npt.ArrayLike, end: npt.ArrayLike, **kwargs: Any) -> Segment
     """Create a segment visual in a temporary one-axes figure."""
     _, ax = subplots()
     return ax.segments(start, end, **kwargs)
+
+
+def path(positions: npt.ArrayLike, **kwargs: Any) -> PathVisual:
+    """Create a path visual in a temporary one-axes figure."""
+    _, ax = subplots()
+    return ax.path(positions, **kwargs)
+
+
+def plot(x: npt.ArrayLike, y: npt.ArrayLike | None = None, **kwargs: Any) -> PathVisual:
+    """Create a path visual in a temporary one-axes figure."""
+    _, ax = subplots()
+    return ax.plot(x, y, **kwargs)
 
 
 def imshow(image: npt.ArrayLike, **kwargs: Any) -> ImageVisual:
@@ -555,6 +619,23 @@ def _stroke_cap(value: str | StrokeCap) -> StrokeCap:
     if isinstance(value, StrokeCap):
         return value
     return StrokeCap(value)
+
+
+def _stroke_join(value: str | StrokeJoin) -> StrokeJoin:
+    if isinstance(value, StrokeJoin):
+        return value
+    return StrokeJoin(value)
+
+
+def _path_lengths(
+    value: tuple[int, ...] | list[int] | npt.ArrayLike | None, count_: int
+) -> tuple[int, ...]:
+    if value is None:
+        return (count_,)
+    array = np.asarray(value, dtype=np.int64)
+    if array.ndim != 1:
+        raise ValueError("path_lengths must be one-dimensional")
+    return tuple(int(item) for item in array)
 
 
 def _stroke_color(

@@ -332,7 +332,10 @@ def _imported_module_or_none(module_name: str) -> ModuleType | None:
 
 
 def _spec_origin(module_name: str) -> str | None:
-    spec = importlib.util.find_spec(module_name)
+    try:
+        spec = importlib.util.find_spec(module_name)
+    except ModuleNotFoundError:
+        return None
     if spec is None:
         return None
     return spec.origin

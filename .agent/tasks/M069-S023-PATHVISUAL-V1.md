@@ -48,3 +48,13 @@ S023.
 
 - Stop if path semantics require filled polygons or text/glyph decisions.
 - Stop if per-vertex public styling is added without a separate decision.
+
+## Completion Notes
+
+- Implemented protocol `PathVisual` with `path_lengths`, per-subpath colors/widths, cap, join, and miter-limit validation.
+- Added Matplotlib, Datoviz v0.4, VisPy2 producer, and visual-QA harness support.
+- Added QA case `path/subpaths_width_join_ndc` and path scene JSON serialization.
+- Validation passed:
+  - `uv run pytest tests -q`
+  - `uv run mypy src/ --strict --show-error-codes`
+  - `uv run python -m gsp.qa.visual.cli run --backend matplotlib --case path/subpaths_width_join_ndc --out-dir artifacts/visual_qa/s023/m069_path_smoke --run-id m069-path-smoke`

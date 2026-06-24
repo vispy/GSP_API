@@ -18,6 +18,7 @@ The backend should consume formal GSP models, not define protocol semantics.
 
 - `PointVisual` to `matplotlib.collections.PathCollection`;
 - `MarkerVisual` to shaped `matplotlib.collections.PathCollection` markers;
+- `PathVisual` subpaths to open `matplotlib.patches.PathPatch` artists;
 - `ImageVisual` to `matplotlib.image.AxesImage`.
 
 This is a narrow conformance slice beside the legacy renderer. The legacy `MatplotlibRenderer` remains available for existing examples.
@@ -27,6 +28,11 @@ area units with the active figure DPI, matching `PointVisual`. Marker `stroke_wi
 protocol pixel width and is converted to Matplotlib point linewidth using the active figure DPI. The
 reference path supports the conservative v1 shapes `disc`, `square`, `triangle`, `diamond`, and
 `cross`, plus scalar or per-marker angles in radians.
+
+For `PathVisual`, protocol widths are screen-pixel stroke widths and are converted to Matplotlib
+point linewidths using the active figure DPI. Each subpath is rendered as an open path patch so
+Matplotlib can preserve cap and join styles without treating path interiors as independent
+segments.
 
 ## M011 tiled-source reference proof
 

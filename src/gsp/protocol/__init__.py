@@ -126,9 +126,11 @@ from .visuals import (
     ImageVisual,
     MarkerShape,
     MarkerVisual,
+    PathVisual,
     PointVisual,
     SegmentVisual,
     StrokeCap,
+    StrokeJoin,
 )
 
 __all__ = [
@@ -172,6 +174,7 @@ __all__ = [
     "Panel",
     "PanelTextGuide",
     "PanelTextRole",
+    "PathVisual",
     "PointVisual",
     "ProtocolCommand",
     "PreconfiguredSourceResolution",
@@ -222,6 +225,7 @@ __all__ = [
     "TickSpec",
     "TickSpecKind",
     "StrokeCap",
+    "StrokeJoin",
     "TiledImageQueryPayload",
     "TiledImageSource",
     "TransportKind",

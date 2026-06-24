@@ -2,7 +2,7 @@
 
 from . import axes
 from .plot.plot import plot
-from .protocol import Axes, Figure, imshow, markers, scatter, segments, subplots
+from .protocol import Axes, Figure, imshow, markers, path, scatter, segments, subplots
 
 __all__ = [
     "Axes",
@@ -10,6 +10,7 @@ __all__ = [
     "axes",
     "imshow",
     "markers",
+    "path",
     "plot",
     "scatter",
     "segments",

@@ -11,9 +11,11 @@ from gsp.protocol import (
     ImageVisual,
     MarkerShape,
     MarkerVisual,
+    PathVisual,
     PointVisual,
     SegmentVisual,
     StrokeCap,
+    StrokeJoin,
 )
 from gsp.qa.visual.case_spec import VisualQACase, VisualQAScene
 
@@ -81,6 +83,21 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
             family="segment",
             required_features=("segment", "ndc", "rgba8", "alpha", "layering"),
             builder=_segment_alpha_order_ndc,
+        ),
+        VisualQACase(
+            case_id="path/subpaths_width_join_ndc",
+            title="Path subpaths, widths, caps, and joins in NDC",
+            family="path",
+            required_features=(
+                "path",
+                "ndc",
+                "rgba8",
+                "subpath",
+                "width",
+                "cap",
+                "join",
+            ),
+            builder=_path_subpaths_width_join_ndc,
         ),
         VisualQACase(
             case_id="image/checker_nearest_ndc",
@@ -454,6 +471,72 @@ def _segment_alpha_order_ndc() -> VisualQAScene:
         },
         notes=(
             "Three thick semi-transparent round-capped segments overlap in creation order.",
+        ),
+    )
+
+
+def _path_subpaths_width_join_ndc() -> VisualQAScene:
+    miter = np.array(
+        [
+            [-0.82, 0.54],
+            [-0.48, 0.20],
+            [-0.20, 0.48],
+            [0.08, 0.12],
+            [0.38, 0.42],
+        ],
+        dtype=np.float32,
+    )
+    round_join = np.array(
+        [
+            [-0.78, -0.04],
+            [-0.42, -0.36],
+            [-0.08, -0.06],
+            [0.28, -0.40],
+            [0.62, -0.08],
+        ],
+        dtype=np.float32,
+    )
+    bevel = np.array(
+        [
+            [0.20, 0.62],
+            [0.48, 0.28],
+            [0.74, 0.56],
+            [0.86, 0.16],
+        ],
+        dtype=np.float32,
+    )
+    positions = np.ascontiguousarray(np.vstack([miter, round_join, bevel]))
+    path_lengths = (miter.shape[0], round_join.shape[0], bevel.shape[0])
+    colors = np.array(
+        [
+            [30, 136, 229, 255],
+            [216, 27, 96, 255],
+            [0, 137, 123, 255],
+        ],
+        dtype=np.uint8,
+    )
+    widths = np.array([10.0, 22.0, 34.0], dtype=np.float32)
+    visual = PathVisual(
+        id="visual:path-subpaths-width-join-ndc",
+        positions=positions,
+        path_lengths=path_lengths,
+        colors=colors,
+        widths=widths,
+        cap=StrokeCap.ROUND,
+        join=StrokeJoin.ROUND,
+        coordinate_space=CoordinateSpace.NDC,
+    )
+    return VisualQAScene(
+        case_id="path/subpaths_width_join_ndc",
+        visuals=(visual,),
+        arrays={
+            "path_positions": positions,
+            "path_lengths": np.array(path_lengths, dtype=np.uint32),
+            "path_colors": colors,
+            "path_widths": widths,
+        },
+        notes=(
+            "Three open polyline subpaths exercise ordered vertices, round caps/joins, and increasing pixel widths.",
         ),
     )
 

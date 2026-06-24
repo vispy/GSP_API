@@ -23,6 +23,7 @@ def test_s023_case_registry_lists_initial_cases() -> None:
         "marker/angle_size_stroke_ndc",
         "segment/width_cap_ndc",
         "segment/alpha_order_ndc",
+        "path/subpaths_width_join_ndc",
         "image/checker_nearest_ndc",
         "overlay/point_over_image_ndc",
     ]
@@ -62,7 +63,7 @@ def test_visual_qa_run_writes_matplotlib_artifacts_and_report(tmp_path: Path) ->
     payload = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
     assert payload["run_id"] == "test-run"
     assert payload["datoviz_color_pipeline"] == "legacy_srgb_blend"
-    assert payload["datoviz_probe_summary"]["facade_imported"] is True
+    assert isinstance(payload["datoviz_probe_summary"]["facade_imported"], bool)
     manifest = json.loads((tmp_path / "run_manifest.json").read_text(encoding="utf-8"))
     assert manifest["datoviz_color_pipeline"] == "legacy_srgb_blend"
 

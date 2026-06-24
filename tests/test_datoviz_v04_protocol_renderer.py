@@ -12,9 +12,11 @@ from gsp.protocol import (
     ImageVisual,
     MarkerShape,
     MarkerVisual,
+    PathVisual,
     PointVisual,
     SegmentVisual,
     StrokeCap,
+    StrokeJoin,
 )
 from gsp.protocol import (
     AxisProviderRequest,
@@ -129,6 +131,10 @@ class FakeDatovizV04:
         self.calls.append(("segment", scene, flags))
         return "segment-visual"
 
+    def dvz_path(self, scene, flags):
+        self.calls.append(("path", scene, flags))
+        return "path-visual"
+
     class DvzSegmentCap:
         DVZ_SEGMENT_CAP_ROUND = 1
         DVZ_SEGMENT_CAP_SQUARE = 4
@@ -136,6 +142,25 @@ class FakeDatovizV04:
 
     def dvz_segment_set_caps(self, visual, start_cap, end_cap):
         self.calls.append(("segment_set_caps", visual, start_cap, end_cap))
+        return 0
+
+    class DvzPathJoin:
+        DVZ_PATH_JOIN_MITER = 0
+        DVZ_PATH_JOIN_ROUND = 1
+        DVZ_PATH_JOIN_BEVEL = 2
+
+    def dvz_path_set_subpaths(self, visual, count, subpaths):
+        self.calls.append(
+            ("path_set_subpaths", visual, count, np.array(subpaths, copy=True))
+        )
+        return 0
+
+    def dvz_path_set_caps(self, visual, start_cap, end_cap):
+        self.calls.append(("path_set_caps", visual, start_cap, end_cap))
+        return 0
+
+    def dvz_path_set_join(self, visual, join, miter_limit):
+        self.calls.append(("path_set_join", visual, join, miter_limit))
         return 0
 
     def dvz_visual_set_data(self, visual, name, data):
@@ -975,6 +1000,50 @@ def test_add_segment_visual_uses_dvz_segment_attributes_widths_and_caps():
     ]
     add_visual_call = _calls(fake, "add_visual")[-1]
     assert add_visual_call[:3] == ("add_visual", "panel", "segment-visual")
+
+
+def test_add_path_visual_uses_dvz_path_subpaths_styles_and_expanded_attributes():
+    fake = FakeDatovizV04WithQueryCapabilities()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
+    visual = PathVisual(
+        id="visual:paths",
+        positions=np.array(
+            [[-0.5, 0.25], [0.0, 0.5], [0.5, -0.25], [0.75, 0.25]],
+            dtype=np.float32,
+        ),
+        path_lengths=(2, 2),
+        colors=np.array([[1.0, 0.0, 0.0, 1.0], [0.0, 0.5, 1.0, 0.5]], dtype=np.float32),
+        widths=np.array([12.0, 24.0], dtype=np.float32),
+        cap=StrokeCap.ROUND,
+        join=StrokeJoin.BEVEL,
+        miter_limit=8.0,
+    )
+
+    dvz_visual = renderer.add_path_visual(visual)
+
+    assert dvz_visual == "path-visual"
+    assert _calls(fake, "path_set_caps") == [("path_set_caps", "path-visual", 1, 1)]
+    assert _calls(fake, "path_set_join") == [("path_set_join", "path-visual", 2, 8.0)]
+    subpaths_call = _calls(fake, "path_set_subpaths")[0]
+    assert subpaths_call[:3] == ("path_set_subpaths", "path-visual", 2)
+    np.testing.assert_array_equal(subpaths_call[3], [2, 2])
+    set_data = _calls(fake, "set_data")
+    assert [call[2] for call in set_data] == ["position", "color", "stroke_width"]
+    np.testing.assert_allclose(
+        set_data[0][3],
+        [[-0.5, 0.25, 0.0], [0.0, 0.5, 0.0], [0.5, -0.25, 0.0], [0.75, 0.25, 0.0]],
+    )
+    np.testing.assert_array_equal(
+        set_data[1][3],
+        [[255, 0, 0, 255], [255, 0, 0, 255], [0, 128, 255, 128], [0, 128, 255, 128]],
+    )
+    np.testing.assert_allclose(set_data[2][3], [12.0, 12.0, 24.0, 24.0], rtol=1e-6)
+    assert _calls(fake, "set_alpha_mode") == [("set_alpha_mode", "path-visual", 1)]
+    assert _calls(fake, "set_query_capabilities") == [
+        ("set_query_capabilities", "path-visual", 0x02)
+    ]
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[:3] == ("add_visual", "panel", "path-visual")
 
 
 def test_renderer_configures_equal_aspect_ndc_panel_when_available():

@@ -20,9 +20,11 @@ from gsp.protocol import (
     MarkerShape,
     MarkerVisual,
     PanelTextRole,
+    PathVisual,
     PointVisual,
     SegmentVisual,
     StrokeCap,
+    StrokeJoin,
     TickSpecKind,
     View2D,
 )
@@ -112,6 +114,34 @@ def test_subplots_segments_emits_segment_visual():
     assert visual.cap == StrokeCap.ROUND
 
 
+def test_subplots_path_and_plot_emit_path_visuals():
+    fig, ax = vp.subplots()
+
+    visual = ax.path(
+        np.array(
+            [[-0.5, 0.25], [0.0, 0.5], [0.5, -0.25], [0.75, 0.25]],
+            dtype=np.float32,
+        ),
+        path_lengths=(2, 2),
+        color=np.array([[255, 0, 0, 255], [0, 0, 255, 255]], dtype=np.uint8),
+        width=np.array([16.0, 36.0], dtype=np.float32),
+        cap="round",
+        join="bevel",
+        id="visual:paths",
+    )
+
+    assert isinstance(visual, PathVisual)
+    assert visual.coordinate_space == CoordinateSpace.DATA
+    assert fig.visuals() == (visual,)
+    assert visual.path_lengths == (2, 2)
+    assert visual.cap == StrokeCap.ROUND
+    assert visual.join == StrokeJoin.BEVEL
+
+    plotted = ax.plot([0.0, 1.0], [1.0, 0.0], id="visual:plot")
+    assert isinstance(plotted, PathVisual)
+    assert plotted.path_lengths == (2,)
+
+
 def test_vispy2_output_renders_through_matplotlib_protocol_backend():
     fig, ax = vp.subplots()
     ax.imshow(
@@ -180,11 +210,13 @@ def test_top_level_helpers_emit_protocol_visuals():
         np.array([[0.0, 0.0]], dtype=np.float32),
         np.array([[1.0, 0.0]], dtype=np.float32),
     )
+    path = vp.path(np.array([[0.0, 0.0], [1.0, 0.0]], dtype=np.float32))
     image = vp.imshow(np.zeros((1, 1), dtype=np.float32))
 
     assert isinstance(point, PointVisual)
     assert isinstance(marker, MarkerVisual)
     assert isinstance(segment, SegmentVisual)
+    assert isinstance(path, PathVisual)
     assert isinstance(image, ImageVisual)
 
 

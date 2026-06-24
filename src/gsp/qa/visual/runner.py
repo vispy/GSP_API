@@ -13,7 +13,13 @@ matplotlib.use("Agg")
 from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 
-from gsp.protocol import ImageVisual, MarkerVisual, PointVisual, SegmentVisual
+from gsp.protocol import (
+    ImageVisual,
+    MarkerVisual,
+    PathVisual,
+    PointVisual,
+    SegmentVisual,
+)
 from gsp.qa.visual.artifacts import (
     ensure_run_dirs,
     write_case_note,
@@ -40,6 +46,7 @@ from gsp_datoviz.protocol_renderer import (
 from gsp_matplotlib.protocol_renderer import (
     render_image_visual,
     render_marker_visual,
+    render_path_visual,
     render_point_visual,
     render_segment_visual,
 )
@@ -270,6 +277,8 @@ def _render_matplotlib_visual(ax: Axes, visual: ProtocolVisual) -> None:
         render_marker_visual(ax, visual)
     elif isinstance(visual, SegmentVisual):
         render_segment_visual(ax, visual)
+    elif isinstance(visual, PathVisual):
+        render_path_visual(ax, visual)
     elif isinstance(visual, ImageVisual):
         render_image_visual(ax, visual)
     else:
@@ -285,6 +294,8 @@ def _render_datoviz_visual(
         renderer.add_marker_visual(visual)
     elif isinstance(visual, SegmentVisual):
         renderer.add_segment_visual(visual)
+    elif isinstance(visual, PathVisual):
+        renderer.add_path_visual(visual)
     elif isinstance(visual, ImageVisual):
         renderer.add_image_visual(visual)
     else:

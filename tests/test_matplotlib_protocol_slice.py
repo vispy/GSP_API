@@ -13,9 +13,11 @@ from gsp.protocol import (
     ImageVisual,
     MarkerShape,
     MarkerVisual,
+    PathVisual,
     PointVisual,
     SegmentVisual,
     StrokeCap,
+    StrokeJoin,
 )
 from gsp.protocol.visuals import ImageInterpolation
 from gsp_matplotlib.protocol_renderer import (
@@ -23,6 +25,7 @@ from gsp_matplotlib.protocol_renderer import (
     _marker_path,
     render_image_visual,
     render_marker_visual,
+    render_path_visual,
     render_point_visual,
     render_segment_visual,
 )
@@ -164,6 +167,39 @@ def test_render_segment_visual_creates_line_collection_with_pixel_widths():
         plt.close(fig)
 
 
+def test_render_path_visual_creates_open_path_patches_with_pixel_widths():
+    """Protocol paths render as open Matplotlib PathPatches."""
+    fig, ax = plt.subplots(dpi=144)
+    try:
+        visual = PathVisual(
+            id="visual:paths",
+            positions=np.array(
+                [[-0.5, 0.0], [0.0, 0.5], [0.5, 0.0], [0.6, -0.2], [0.8, 0.2]],
+                dtype=np.float32,
+            ),
+            path_lengths=(3, 2),
+            colors=np.array([[255, 0, 0, 255], [0, 0, 255, 128]], dtype=np.uint8),
+            widths=np.array([10.0, 20.0], dtype=np.float32),
+            cap=StrokeCap.ROUND,
+            join=StrokeJoin.BEVEL,
+        )
+
+        artists = render_path_visual(ax, visual)
+
+        assert len(artists) == 2
+        assert all(artist.get_gid() == "visual:paths" for artist in artists)
+        np.testing.assert_allclose(
+            artists[0].get_path().vertices, [[-0.5, 0.0], [0.0, 0.5], [0.5, 0.0]]
+        )
+        np.testing.assert_allclose(artists[0].get_linewidth(), 5.0)
+        np.testing.assert_allclose(artists[1].get_linewidth(), 10.0)
+        assert artists[0].get_capstyle() == "round"
+        assert artists[0].get_joinstyle() == "bevel"
+        assert artists[0].get_fill() is False
+    finally:
+        plt.close(fig)
+
+
 def test_render_marker_visual_does_not_renormalize_rotated_marker_paths():
     """Rotated marker paths keep the requested marker-space scale."""
     fig, ax = plt.subplots()
@@ -293,6 +329,39 @@ def test_segment_visual_validation_covers_positions_widths_and_colors():
 
     with pytest.raises(ValueError, match="widths must be non-negative"):
         SegmentVisual("visual:bad-width", starts, ends, colors, -1.0)
+
+
+def test_path_visual_validation_covers_path_lengths_widths_and_colors():
+    """PathVisual validates open subpath partitioning and per-path attributes."""
+    positions = np.array(
+        [[0.0, 0.0], [0.5, 0.5], [1.0, 0.0], [1.5, 0.5]], dtype=np.float32
+    )
+    colors = np.array([[255, 255, 255, 255], [0, 0, 0, 255]], dtype=np.uint8)
+
+    visual = PathVisual(
+        "visual:paths",
+        positions,
+        (2, 2),
+        colors,
+        np.array([2.0, 4.0], dtype=np.float32),
+        join=StrokeJoin.ROUND,
+    )
+
+    np.testing.assert_allclose(
+        visual.width_values(), np.array([2.0, 4.0], dtype=np.float32)
+    )
+
+    with pytest.raises(ValueError, match="path_lengths sum"):
+        PathVisual("visual:bad-length-sum", positions, (3,), colors[:1], 2.0)
+
+    with pytest.raises(ValueError, match="at least 2"):
+        PathVisual("visual:bad-short-subpath", positions, (1, 3), colors, 2.0)
+
+    with pytest.raises(ValueError, match="colors"):
+        PathVisual("visual:bad-colors", positions, (2, 2), colors[:1], 2.0)
+
+    with pytest.raises(ValueError, match="miter_limit must be non-negative"):
+        PathVisual("visual:bad-miter", positions, (2, 2), colors, 2.0, miter_limit=-1.0)
 
 
 def test_protocol_visual_validation_rejects_non_finite_point_fields():

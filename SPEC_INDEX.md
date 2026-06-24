@@ -15,6 +15,8 @@ This file tells agents where to find authoritative design information.
 | Extensions | spec/extensions.md |
 | Virtual data sources/LOD | spec/data_sources.md |
 | Point visual | spec/visuals/point.md |
+| Marker visual | spec/visuals/marker.md |
+| Path visual | spec/visuals/path.md |
 | Image visual | spec/visuals/image.md |
 | Matplotlib backend | spec/backends/matplotlib.md |
 | Datoviz backend | spec/backends/datoviz.md |

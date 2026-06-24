@@ -50,6 +50,14 @@ class StrokeCap(str, Enum):
     SQUARE = "square"
 
 
+class StrokeJoin(str, Enum):
+    """Conservative v1 screen-stroked path join vocabulary."""
+
+    MITER = "miter"
+    ROUND = "round"
+    BEVEL = "bevel"
+
+
 FloatArray = npt.NDArray[np.float32] | npt.NDArray[np.float64]
 ColorArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.float64]
 ImageArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.float64]
@@ -193,6 +201,50 @@ class SegmentVisual:
         return np.full(
             (self.start_positions.shape[0],), float(self.widths), dtype=np.float32
         )
+
+
+@dataclass(frozen=True, slots=True)
+class PathVisual:
+    """Semantic open polyline/subpath visual model.
+
+    ``path_lengths`` partitions ordered vertices into open subpaths. ``widths`` are
+    rendered screen-pixel stroke widths and are scalar or per subpath.
+    """
+
+    id: str
+    positions: FloatArray
+    path_lengths: tuple[int, ...]
+    colors: ColorArray
+    widths: FloatArray | float
+    cap: StrokeCap = StrokeCap.BUTT
+    join: StrokeJoin = StrokeJoin.MITER
+    miter_limit: float = 4.0
+    coordinate_space: CoordinateSpace = CoordinateSpace.NDC
+
+    def __post_init__(self) -> None:
+        validate_id(self.id)
+        point_count = _validate_positions(self.positions)
+        if not self.path_lengths:
+            raise ValueError("path_lengths must not be empty")
+        if any(length < 2 for length in self.path_lengths):
+            raise ValueError("path_lengths entries must be at least 2")
+        if sum(self.path_lengths) != point_count:
+            raise ValueError("path_lengths sum must match positions length")
+        path_count = len(self.path_lengths)
+        _validate_rgba_array(self.colors, shape=(path_count, 4), field_name="colors")
+        _validate_sizes(self.widths, path_count, field_name="widths")
+        if not np.isfinite(self.miter_limit):
+            raise ValueError("miter_limit must be finite")
+        if self.miter_limit < 0:
+            raise ValueError("miter_limit must be non-negative")
+
+    def width_values(self) -> npt.NDArray[np.float32]:
+        """Return one pixel stroke width per subpath."""
+        if isinstance(self.widths, np.ndarray):
+            return np.ascontiguousarray(
+                np.asarray(self.widths, dtype=np.float32).reshape(-1)
+            )
+        return np.full((len(self.path_lengths),), float(self.widths), dtype=np.float32)
 
 
 @dataclass(frozen=True, slots=True)

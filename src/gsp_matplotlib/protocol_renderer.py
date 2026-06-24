@@ -7,6 +7,7 @@ import matplotlib.collections
 import matplotlib.image
 import matplotlib.markers
 import matplotlib.path
+import matplotlib.patches
 import matplotlib.transforms
 import numpy as np
 import numpy.typing as npt
@@ -16,9 +17,11 @@ from gsp.protocol.visuals import (
     ImageVisual,
     MarkerShape,
     MarkerVisual,
+    PathVisual,
     PointVisual,
     SegmentVisual,
     StrokeCap,
+    StrokeJoin,
 )
 
 
@@ -39,6 +42,12 @@ _STROKE_CAPS_MPL = {
     StrokeCap.BUTT: "butt",
     StrokeCap.ROUND: "round",
     StrokeCap.SQUARE: "projecting",
+}
+
+_STROKE_JOINS_MPL = {
+    StrokeJoin.MITER: "miter",
+    StrokeJoin.ROUND: "round",
+    StrokeJoin.BEVEL: "bevel",
 }
 
 
@@ -129,6 +138,41 @@ def render_segment_visual(
     return collection
 
 
+def render_path_visual(
+    axes: matplotlib.axes.Axes, visual: PathVisual
+) -> tuple[matplotlib.patches.PathPatch, ...]:
+    """Render protocol open polyline subpaths into a Matplotlib axes."""
+    subpaths = _path_subpath_arrays(visual)
+    colors = _rgba_for_matplotlib(visual.colors)
+    linewidths = _linewidth_values_from_pixel_widths(axes, visual.widths)
+    width_values = (
+        linewidths
+        if isinstance(linewidths, np.ndarray)
+        else np.full((len(subpaths),), float(linewidths), dtype=np.float32)
+    )
+
+    patches: list[matplotlib.patches.PathPatch] = []
+    for index, vertices in enumerate(subpaths):
+        codes = np.full(
+            (vertices.shape[0],), matplotlib.path.Path.LINETO, dtype=np.uint8
+        )
+        codes[0] = matplotlib.path.Path.MOVETO
+        path = matplotlib.path.Path(vertices, codes)
+        patch = matplotlib.patches.PathPatch(
+            path,
+            facecolor="none",
+            edgecolor=colors[index],
+            linewidth=float(width_values[index]),
+            capstyle=_STROKE_CAPS_MPL[visual.cap],
+            joinstyle=_STROKE_JOINS_MPL[visual.join],
+            fill=False,
+        )
+        patch.set_gid(visual.id)
+        axes.add_patch(patch)
+        patches.append(patch)
+    return tuple(patches)
+
+
 def render_image_visual(
     axes: matplotlib.axes.Axes, visual: ImageVisual
 ) -> matplotlib.image.AxesImage:
@@ -144,6 +188,17 @@ def render_image_visual(
     )
     image.set_gid(visual.id)
     return image
+
+
+def _path_subpath_arrays(visual: PathVisual) -> tuple[npt.NDArray[np.float32], ...]:
+    offsets = visual.positions[:, :2]
+    subpaths: list[npt.NDArray[np.float32]] = []
+    start = 0
+    for length in visual.path_lengths:
+        stop = start + length
+        subpaths.append(np.ascontiguousarray(offsets[start:stop], dtype=np.float32))
+        start = stop
+    return tuple(subpaths)
 
 
 def _marker_area_values(
