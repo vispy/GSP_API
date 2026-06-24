@@ -149,7 +149,7 @@
       "id": "S025",
       "title": "Mesh and 3D Geometry Visuals v1",
       "state": "in_progress",
-      "progress": 0
+      "progress": 10
     }
   ],
   "missions": [
@@ -886,9 +886,9 @@
       "id": "M082",
       "title": "S025 Mesh/3D scoping and consultation",
       "stage": "S025",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 82
     },
     {
@@ -991,12 +991,19 @@
       "requires_human": false,
       "requires_chatgpt_pro": true,
       "state": "closed"
+    },
+    {
+      "id": "Q080-MESH-3D-PROTOCOL-SEMANTICS",
+      "summary": "Awaiting P010 ChatGPT Pro response before freezing MeshVisual/3D geometry/material/query semantics for S025.",
+      "requires_human": true,
+      "requires_chatgpt_pro": true,
+      "state": "open"
     }
   ],
   "recommendations": [
-    "S025 Mesh and 3D Geometry Visuals v1 is now the next stage after completed S024 Text/Glyph.",
-    "Run M082 first to create a self-contained P010 ChatGPT Pro consultation packet before freezing MeshVisual/material/query semantics.",
-    "Keep M083-M089 blocked or draft until P010 is accepted into ADR/spec updates; do not implement mesh semantics directly from legacy code."
+    "M082 is complete: P010 Mesh/3D protocol consultation packet is ready for ChatGPT Pro.",
+    "Paste or commit the P010 response as `.agent/consultations/P010-response.md`, then run M083 to convert it into ADR/spec baseline.",
+    "Keep M084-M089 draft until M083 accepts MeshVisual semantics; do not implement mesh fields directly from legacy code."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1007,6 +1014,7 @@
     "M080 added a minimal VisPy2 text producer API that emits TextVisual without exposing glyphs, atlases, arbitrary font names, rich text, or backend calls.",
     "M081 added item-level TextVisual query/readback payloads for the Matplotlib reference path; glyph-level query remains deferred.",
     "S024 closeout: all S024 missions M073-M081 are complete; stage marked completed at 100%.",
-    "S025 opened with mission batch M082-M089; M082 is ready, M083 is blocked pending P010, and implementation missions remain draft."
+    "S025 opened with mission batch M082-M089; M082 is ready, M083 is blocked pending P010, and implementation missions remain draft.",
+    "M082 completed: created P010 Mesh/3D protocol consultation packet and opened Q080; M083 remains blocked pending the response."
   ]
 }

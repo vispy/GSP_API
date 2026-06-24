@@ -10,7 +10,7 @@ Open S025 around MeshVisual/3D geometry and create the ChatGPT Pro consultation 
 
 ## Status
 
-Ready.
+Completed.
 
 ## Deliverables
 
@@ -27,3 +27,10 @@ Ready.
 ## Stop Conditions
 
 - Stop if the work starts committing public MeshVisual fields, material semantics, or 3D query rules before P010 is answered and converted into ADR/spec updates.
+
+
+## Completed
+
+- Created `.agent/consultations/P010-mesh-3d-protocol-semantics.md`.
+- Recorded S025 as Mesh/3D with implementation blocked pending P010.
+- Added open question Q080 for the ChatGPT Pro consultation result.

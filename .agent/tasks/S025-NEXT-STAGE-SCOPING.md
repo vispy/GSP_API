@@ -19,7 +19,7 @@ Potential deliverables:
 ## Consultation policy
 
 Use ChatGPT Pro before committing public MeshVisual, material, lighting, 3D transform, or mesh query
-semantics. M082 creates the self-contained P010 packet. M083 and implementation missions remain
+semantics. M082 created the self-contained P010 packet at `.agent/consultations/P010-mesh-3d-protocol-semantics.md`. M083 and implementation missions remain
 blocked or draft until the response is accepted into ADR/spec files.
 
 ## Deferred candidate: color mapping and colorbars
@@ -32,7 +32,7 @@ baseline that belongs in MeshVisual v1.
 
 | Mission | State | Purpose |
 |---|---|---|
-| M082 | ready | Create S025 Mesh/3D scoping and P010 ChatGPT Pro consultation packet. |
+| M082 | completed | Created S025 Mesh/3D scoping and P010 ChatGPT Pro consultation packet. |
 | M083 | blocked | Convert P010 response into ADR/spec baseline before implementation. |
 | M084 | draft | Implement MeshVisual protocol dataclass and validation after M083. |
 | M085 | draft | Add Matplotlib MeshVisual reference rendering and QA smoke after M083/M084. |
