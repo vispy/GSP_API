@@ -155,7 +155,7 @@
       "id": "S026",
       "title": "Color Mapping, Colorbars, and Scalar Data Semantics",
       "state": "in_progress",
-      "progress": 28
+      "progress": 42
     }
   ],
   "missions": [
@@ -982,16 +982,16 @@
       "id": "M092",
       "title": "S026 color mapping protocol dataclasses and validation",
       "stage": "S026",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 92
     },
     {
       "id": "M093",
       "title": "S026 Matplotlib color mapping reference behavior",
       "stage": "S026",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 93
@@ -1077,9 +1077,9 @@
     }
   ],
   "recommendations": [
-    "M091 is complete: P011 is accepted into ADR-0018, `spec/color_mapping.md`, and S026 decision records.",
-    "Run M092 next to implement S026 color mapping protocol dataclasses/enums/validation.",
-    "Keep implementation inside the accepted strict slice: ColorScale, canonical named LUTs, LinearNormalize, scalar image/point/marker fill encodings, ColorbarGuide, and scalar query payloads."
+    "M092 is complete: S026 protocol dataclasses/enums and visual-slot validation are implemented.",
+    "Run M093 next to add Matplotlib reference rendering/query behavior for accepted scalar color semantics.",
+    "Keep rendering/query work inside the accepted strict slice and leave Datoviz capability probing for M095."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1100,6 +1100,7 @@
     "M088 completed: added bounded VisPy2 MeshVisual producer APIs, strict 2D mesh example, API docs, and focused tests; M089 is ready for query/readback and S025 closeout.",
     "M089 completed: added typed MeshVisual face-query/readback payloads for the strict 2D Matplotlib reference path, documented deferred mesh query semantics, and closed S025.",
     "M090 completed: opened S026 for color mapping/colorbars/scalar data semantics, created P011 ChatGPT Pro consultation packet, and blocked M091 pending response.",
-    "M091 completed: converted P011 into ADR-0018, `spec/color_mapping.md`, S026 decision records, and adjacent spec updates; M092 is ready."
+    "M091 completed: converted P011 into ADR-0018, `spec/color_mapping.md`, S026 decision records, and adjacent spec updates; M092 is ready.",
+    "M092 completed: added S026 color mapping protocol dataclasses/enums, optional scalar visual encodings, and focused validation tests; M093 is ready."
   ]
 }

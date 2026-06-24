@@ -9,6 +9,12 @@ from enum import Enum
 import numpy as np
 import numpy.typing as npt
 
+from .color import (
+    ScalarColorDomain,
+    ScalarColorEncoding,
+    ScalarColorSlot,
+    validate_scalar_encoding_shape,
+)
 from .ids import validate_id
 
 
@@ -161,9 +167,10 @@ class PointVisual:
 
     id: str
     positions: FloatArray
-    colors: ColorArray
-    sizes: FloatArray | float
+    colors: ColorArray | None = None
+    sizes: FloatArray | float = 1.0
     coordinate_space: CoordinateSpace = CoordinateSpace.NDC
+    color_encoding: ScalarColorEncoding | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
@@ -192,18 +199,15 @@ class PointVisual:
             if self.sizes < 0:
                 raise ValueError("sizes must be non-negative")
 
-        if self.colors.ndim != 2 or self.colors.shape[1] != 4:
-            raise ValueError("colors must have shape (N, 4)")
-        if self.colors.shape[0] != point_count:
-            raise ValueError("colors length must match positions")
-        if self.colors.dtype == np.dtype(np.uint8):
-            return
-        if self.colors.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
-            raise TypeError("colors must be rgba8, float32, or float64")
-        if not np.all(np.isfinite(self.colors)):
-            raise ValueError("floating point colors must be finite")
-        if np.any((self.colors < 0.0) | (self.colors > 1.0)):
-            raise ValueError("floating point colors must be in [0, 1]")
+        _validate_color_or_scalar_encoding(
+            self.colors,
+            self.color_encoding,
+            color_shape=(point_count, 4),
+            scalar_shape=(point_count,),
+            slot=ScalarColorSlot.COLOR,
+            domain=ScalarColorDomain.ITEM,
+            field_name="colors",
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -216,14 +220,15 @@ class MarkerVisual:
     id: str
     positions: FloatArray
     shape: MarkerShape | MarkerShapeTuple
-    fill_colors: ColorArray
-    sizes: FloatArray | float
+    fill_colors: ColorArray | None = None
+    sizes: FloatArray | float = 1.0
     angle: FloatArray | float = 0.0
     stroke_color: ColorArray = field(
         default_factory=lambda: np.array([0, 0, 0, 255], dtype=np.uint8)
     )
     stroke_width: float = 0.0
     coordinate_space: CoordinateSpace = CoordinateSpace.NDC
+    fill_color_encoding: ScalarColorEncoding | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
@@ -231,8 +236,14 @@ class MarkerVisual:
         _validate_shapes(self.shape, point_count)
         _validate_sizes(self.sizes, point_count)
         _validate_angles(self.angle, point_count)
-        _validate_rgba_array(
-            self.fill_colors, shape=(point_count, 4), field_name="fill_colors"
+        _validate_color_or_scalar_encoding(
+            self.fill_colors,
+            self.fill_color_encoding,
+            color_shape=(point_count, 4),
+            scalar_shape=(point_count,),
+            slot=ScalarColorSlot.FILL,
+            domain=ScalarColorDomain.ITEM,
+            field_name="fill_colors",
         )
         _validate_rgba_array(self.stroke_color, shape=(4,), field_name="stroke_color")
         if not np.isfinite(self.stroke_width):
@@ -343,8 +354,9 @@ class MeshVisual:
     positions: FloatArray
     faces: IndexArray
     coordinate_space: CoordinateSpace
-    color: ColorArray
+    color: ColorArray | None = None
     color_mode: MeshColorMode | None = None
+    face_color_encoding: ScalarColorEncoding | None = None
     normal_mode: MeshNormalMode | None = None
     normals: FloatArray | None = None
     normal_generation: MeshNormalGeneration = MeshNormalGeneration.NONE
@@ -365,17 +377,36 @@ class MeshVisual:
         if not isinstance(self.coordinate_space, CoordinateSpace):
             raise TypeError("coordinate_space must be a CoordinateSpace")
 
-        mode = _resolve_mesh_color_mode(
-            self.color, self.color_mode, vertex_count, face_count
-        )
-        _validate_mesh_color(self.color, mode, vertex_count, face_count)
+        if self.face_color_encoding is None:
+            if self.color is None:
+                raise ValueError(
+                    "color is required when face_color_encoding is omitted"
+                )
+            mode = _resolve_mesh_color_mode(
+                self.color, self.color_mode, vertex_count, face_count
+            )
+            _validate_mesh_color(self.color, mode, vertex_count, face_count)
+        else:
+            if self.color is not None:
+                raise ValueError("color and face_color_encoding are mutually exclusive")
+            if self.color_mode is not None:
+                raise ValueError("color_mode requires color")
+            validate_scalar_encoding_shape(
+                self.face_color_encoding,
+                slot=ScalarColorSlot.FACE_COLOR,
+                shape=(face_count,),
+                domain=ScalarColorDomain.FACE,
+            )
 
         resolved_normal_mode = _resolve_mesh_normal_mode(
             self.normals, self.normal_mode, vertex_count, face_count
         )
         if not isinstance(self.normal_generation, MeshNormalGeneration):
             raise TypeError("normal_generation must be a MeshNormalGeneration")
-        if self.normal_generation is not MeshNormalGeneration.NONE and self.normals is not None:
+        if (
+            self.normal_generation is not MeshNormalGeneration.NONE
+            and self.normals is not None
+        ):
             raise ValueError("normal_generation requires normals to be omitted")
         if (
             self.normal_generation is MeshNormalGeneration.FACE_FLAT
@@ -383,7 +414,9 @@ class MeshVisual:
         ):
             raise ValueError("face_flat normal generation requires 3D positions")
         if self.normals is not None:
-            _validate_mesh_normals(self.normals, resolved_normal_mode, vertex_count, face_count)
+            _validate_mesh_normals(
+                self.normals, resolved_normal_mode, vertex_count, face_count
+            )
 
         if not isinstance(self.shading, MeshShading):
             raise TypeError("shading must be a MeshShading")
@@ -400,6 +433,10 @@ class MeshVisual:
 
     def resolved_color_mode(self) -> MeshColorMode:
         """Return the explicit or inferred color association mode."""
+        if self.face_color_encoding is not None:
+            return MeshColorMode.FACE
+        if self.color is None:
+            raise ValueError("color is required to resolve mesh color mode")
         return _resolve_mesh_color_mode(
             self.color, self.color_mode, self.positions.shape[0], self.faces.shape[0]
         )
@@ -423,6 +460,7 @@ class ImageVisual:
     origin: ImageOrigin = ImageOrigin.UPPER
     colormap: ImageColormap | None = None
     clim: tuple[float, float] | None = None
+    color_scale_id: str | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
@@ -439,9 +477,15 @@ class ImageVisual:
         if self.extent[0] == self.extent[1] or self.extent[2] == self.extent[3]:
             raise ValueError("extent width and height must be non-zero")
         if self.image.ndim != 2 and (
-            self.colormap is not None or self.clim is not None
+            self.colormap is not None
+            or self.clim is not None
+            or self.color_scale_id is not None
         ):
-            raise ValueError("colormap and clim apply to scalar images only")
+            raise ValueError(
+                "colormap, clim, and color_scale_id apply to scalar images only"
+            )
+        if self.color_scale_id is not None:
+            validate_id(self.color_scale_id)
         if self.clim is not None:
             vmin, vmax = self.clim
             if not np.isfinite(vmin) or not np.isfinite(vmax):
@@ -740,6 +784,38 @@ def _validate_rgba_values(colors: ColorArray, count: int, *, field_name: str) ->
         _validate_rgba_array(colors, shape=(4,), field_name=field_name)
         return
     _validate_rgba_array(colors, shape=(count, 4), field_name=field_name)
+
+
+def _validate_color_or_scalar_encoding(
+    colors: ColorArray | None,
+    encoding: ScalarColorEncoding | None,
+    *,
+    color_shape: tuple[int, ...],
+    scalar_shape: tuple[int, ...],
+    slot: ScalarColorSlot,
+    domain: ScalarColorDomain,
+    field_name: str,
+) -> None:
+    if encoding is None:
+        if colors is None:
+            raise ValueError(
+                f"{field_name} is required when scalar encoding is omitted"
+            )
+        if (
+            field_name == "colors"
+            and len(color_shape) == 2
+            and colors.ndim == 2
+            and colors.shape[1] == color_shape[1]
+            and colors.shape[0] != color_shape[0]
+        ):
+            raise ValueError("colors length must match positions")
+        _validate_rgba_array(colors, shape=color_shape, field_name=field_name)
+        return
+    if colors is not None:
+        raise ValueError(f"{field_name} and scalar encoding are mutually exclusive")
+    validate_scalar_encoding_shape(
+        encoding, slot=slot, shape=scalar_shape, domain=domain
+    )
 
 
 def _validate_enum_values(
