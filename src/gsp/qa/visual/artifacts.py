@@ -10,7 +10,7 @@ from typing import Any, Mapping, cast
 
 import numpy as np
 
-from gsp.protocol import ImageVisual, MarkerVisual, PointVisual
+from gsp.protocol import ImageVisual, MarkerVisual, PointVisual, SegmentVisual
 from gsp.qa.visual.backend_ids import DATOVIZ_BACKEND_ID
 from gsp.qa.visual.case_spec import ProtocolVisual, VisualQAScene
 from gsp.qa.visual.cases import case_slug
@@ -31,7 +31,9 @@ def ensure_run_dirs(out_dir: Path) -> None:
 
 def write_json(path: Path, payload: Mapping[str, object]) -> None:
     """Write deterministic JSON."""
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
 
 def write_scene_artifacts(out_dir: Path, scene: VisualQAScene) -> tuple[Path, Path]:
@@ -85,7 +87,9 @@ def write_manual_notes(out_dir: Path, case_ids: tuple[str, ...]) -> Path:
     return path
 
 
-def write_case_note(out_dir: Path, case_id: str, title: str, notes: tuple[str, ...]) -> Path:
+def write_case_note(
+    out_dir: Path, case_id: str, title: str, notes: tuple[str, ...]
+) -> Path:
     """Write a per-case manual review note."""
     path = out_dir / "notes" / f"{case_slug(case_id)}.md"
     body = [f"# {title}", "", f"Case: `{case_id}`", "", "## Review Notes", ""]
@@ -100,14 +104,23 @@ def write_summary(out_dir: Path, report: Mapping[str, object]) -> Path:
     path = out_dir / "summary.md"
     cases = report["cases"]
     assert isinstance(cases, list)
-    lines = ["# S023 Visual QA Run", "", f"Run id: `{report['run_id']}`", "", "| Case | Matplotlib | Datoviz |", "|---|---|---|"]
+    lines = [
+        "# S023 Visual QA Run",
+        "",
+        f"Run id: `{report['run_id']}`",
+        "",
+        "| Case | Matplotlib | Datoviz |",
+        "|---|---|---|",
+    ]
     for entry in cases:
         assert isinstance(entry, dict)
         backends = entry["backends"]
         assert isinstance(backends, dict)
         matplotlib_status = _backend_status(backends, "matplotlib")
         datoviz_status = _backend_status(backends, DATOVIZ_BACKEND_ID)
-        lines.append(f"| `{entry['case_id']}` | {matplotlib_status} | {datoviz_status} |")
+        lines.append(
+            f"| `{entry['case_id']}` | {matplotlib_status} | {datoviz_status} |"
+        )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path
 
@@ -141,14 +154,25 @@ def _scene_json(scene: VisualQAScene) -> dict[str, object]:
 def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
     if isinstance(visual, PointVisual):
         sizes = visual.sizes
-        size_shape: list[int] = list(sizes.shape) if isinstance(sizes, np.ndarray) else []
+        size_shape: list[int] = (
+            list(sizes.shape) if isinstance(sizes, np.ndarray) else []
+        )
         return {
             "family": "point",
             "id": visual.id,
             "coordinate_space": visual.coordinate_space.value,
-            "positions": {"shape": list(visual.positions.shape), "dtype": str(visual.positions.dtype)},
-            "colors": {"shape": list(visual.colors.shape), "dtype": str(visual.colors.dtype)},
-            "sizes": {"shape": size_shape, "dtype": str(sizes.dtype) if isinstance(sizes, np.ndarray) else "float"},
+            "positions": {
+                "shape": list(visual.positions.shape),
+                "dtype": str(visual.positions.dtype),
+            },
+            "colors": {
+                "shape": list(visual.colors.shape),
+                "dtype": str(visual.colors.dtype),
+            },
+            "sizes": {
+                "shape": size_shape,
+                "dtype": str(sizes.dtype) if isinstance(sizes, np.ndarray) else "float",
+            },
         }
     if isinstance(visual, MarkerVisual):
         sizes = visual.sizes
@@ -160,20 +184,67 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "family": "marker",
             "id": visual.id,
             "coordinate_space": visual.coordinate_space.value,
-            "positions": {"shape": list(visual.positions.shape), "dtype": str(visual.positions.dtype)},
-            "shape": [value.value for value in shape] if isinstance(shape, tuple) else shape.value,
-            "fill_colors": {"shape": list(visual.fill_colors.shape), "dtype": str(visual.fill_colors.dtype)},
-            "sizes": {"shape": size_shape, "dtype": str(sizes.dtype) if isinstance(sizes, np.ndarray) else "float"},
-            "angle": {"shape": angle_shape, "dtype": str(angle.dtype) if isinstance(angle, np.ndarray) else "float"},
-            "stroke_color": {"shape": list(visual.stroke_color.shape), "dtype": str(visual.stroke_color.dtype)},
+            "positions": {
+                "shape": list(visual.positions.shape),
+                "dtype": str(visual.positions.dtype),
+            },
+            "shape": [value.value for value in shape]
+            if isinstance(shape, tuple)
+            else shape.value,
+            "fill_colors": {
+                "shape": list(visual.fill_colors.shape),
+                "dtype": str(visual.fill_colors.dtype),
+            },
+            "sizes": {
+                "shape": size_shape,
+                "dtype": str(sizes.dtype) if isinstance(sizes, np.ndarray) else "float",
+            },
+            "angle": {
+                "shape": angle_shape,
+                "dtype": str(angle.dtype) if isinstance(angle, np.ndarray) else "float",
+            },
+            "stroke_color": {
+                "shape": list(visual.stroke_color.shape),
+                "dtype": str(visual.stroke_color.dtype),
+            },
             "stroke_width": visual.stroke_width,
+        }
+    if isinstance(visual, SegmentVisual):
+        widths = visual.widths
+        width_shape = list(widths.shape) if isinstance(widths, np.ndarray) else []
+        return {
+            "family": "segment",
+            "id": visual.id,
+            "coordinate_space": visual.coordinate_space.value,
+            "start_positions": {
+                "shape": list(visual.start_positions.shape),
+                "dtype": str(visual.start_positions.dtype),
+            },
+            "end_positions": {
+                "shape": list(visual.end_positions.shape),
+                "dtype": str(visual.end_positions.dtype),
+            },
+            "colors": {
+                "shape": list(visual.colors.shape),
+                "dtype": str(visual.colors.dtype),
+            },
+            "widths": {
+                "shape": width_shape,
+                "dtype": str(widths.dtype)
+                if isinstance(widths, np.ndarray)
+                else "float",
+            },
+            "cap": visual.cap.value,
         }
     if isinstance(visual, ImageVisual):
         return {
             "family": "image",
             "id": visual.id,
             "coordinate_space": visual.coordinate_space.value,
-            "image": {"shape": list(visual.image.shape), "dtype": str(visual.image.dtype)},
+            "image": {
+                "shape": list(visual.image.shape),
+                "dtype": str(visual.image.dtype),
+            },
             "extent": list(visual.extent),
             "interpolation": visual.interpolation.value,
             "origin": visual.origin.value,

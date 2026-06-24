@@ -28,13 +28,20 @@ from gsp.protocol import (
     PanelTextGuide,
     PanelTextRole,
     PointVisual,
+    SegmentVisual,
+    StrokeCap,
     TickSpec,
     TickSpecKind,
     View2D,
     VisualAttachment,
 )
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
-from gsp_matplotlib.protocol_renderer import render_image_visual, render_marker_visual, render_point_visual
+from gsp_matplotlib.protocol_renderer import (
+    render_image_visual,
+    render_marker_visual,
+    render_point_visual,
+    render_segment_visual,
+)
 
 
 _visual_counter = count(1)
@@ -53,7 +60,9 @@ class Figure:
         self.axes.append(axes)
         return axes
 
-    def visuals(self) -> tuple[PointVisual | MarkerVisual | ImageVisual, ...]:
+    def visuals(
+        self,
+    ) -> tuple[PointVisual | MarkerVisual | SegmentVisual | ImageVisual, ...]:
         """Return protocol visuals in creation order."""
         return tuple(visual for axes in self.axes for visual in axes.visuals)
 
@@ -67,7 +76,9 @@ class Figure:
 
     def attachments(self) -> tuple[VisualAttachment, ...]:
         """Return data visual attachments to panels/views."""
-        return tuple(attachment for axes in self.axes for attachment in axes.attachments)
+        return tuple(
+            attachment for axes in self.axes for attachment in axes.attachments
+        )
 
     def axis_guides(self) -> tuple[AxisGuide, ...]:
         """Return semantic axis guide intent without expanding guide visuals."""
@@ -87,6 +98,8 @@ class Figure:
                 render_image_visual(mpl_axes, visual)
             elif isinstance(visual, MarkerVisual):
                 render_marker_visual(mpl_axes, visual)
+            elif isinstance(visual, SegmentVisual):
+                render_segment_visual(mpl_axes, visual)
             elif isinstance(visual, PointVisual):
                 render_point_visual(mpl_axes, visual)
             else:
@@ -96,7 +109,9 @@ class Figure:
             view = axes_model.view
             mpl_axes.set_xlim(view.x_range)
             mpl_axes.set_ylim(view.y_range)
-            mpl_axes.set_aspect("equal" if view.aspect_policy.value == "equal" else "auto")
+            mpl_axes.set_aspect(
+                "equal" if view.aspect_policy.value == "equal" else "auto"
+            )
             render_axis_guides(mpl_axes, view, tuple(axes_model.axis_guides))
             render_panel_text_guides(mpl_axes, tuple(axes_model.panel_text_guides))
         return fig, mpl_axes
@@ -125,7 +140,9 @@ class Axes:
     """Minimal axes object that produces GSP protocol visuals."""
 
     figure: Figure
-    visuals: list[PointVisual | MarkerVisual | ImageVisual] = field(default_factory=list)
+    visuals: list[PointVisual | MarkerVisual | SegmentVisual | ImageVisual] = field(
+        default_factory=list
+    )
     panel: Panel = field(init=False)
     view: View2D = field(init=False)
     attachments: list[VisualAttachment] = field(default_factory=list)
@@ -140,8 +157,18 @@ class Axes:
         self.view = View2D(id=view_id, panel_id=panel_id)
         self.axis_guides.extend(
             [
-                AxisGuide(id=f"guide:x-{index}", view_id=view_id, dimension=AxisDimension.X, side=AxisSide.BOTTOM),
-                AxisGuide(id=f"guide:y-{index}", view_id=view_id, dimension=AxisDimension.Y, side=AxisSide.LEFT),
+                AxisGuide(
+                    id=f"guide:x-{index}",
+                    view_id=view_id,
+                    dimension=AxisDimension.X,
+                    side=AxisSide.BOTTOM,
+                ),
+                AxisGuide(
+                    id=f"guide:y-{index}",
+                    view_id=view_id,
+                    dimension=AxisDimension.Y,
+                    side=AxisSide.LEFT,
+                ),
             ]
         )
 
@@ -195,7 +222,11 @@ class Axes:
 
     def set_title(self, text: str | None) -> str | None:
         """Set or clear the semantic panel title."""
-        self.panel_text_guides = [guide for guide in self.panel_text_guides if guide.role != PanelTextRole.TITLE]
+        self.panel_text_guides = [
+            guide
+            for guide in self.panel_text_guides
+            if guide.role != PanelTextRole.TITLE
+        ]
         if text:
             self.panel_text_guides.append(
                 PanelTextGuide(
@@ -214,10 +245,14 @@ class Axes:
                 return guide.text
         return None
 
-    def set_xticks(self, ticks: npt.ArrayLike, labels: tuple[str, ...] | list[str] | None = None) -> tuple[float, ...]:
+    def set_xticks(
+        self, ticks: npt.ArrayLike, labels: tuple[str, ...] | list[str] | None = None
+    ) -> tuple[float, ...]:
         """Set explicit semantic x-axis tick values and optional labels."""
         values = _tick_values(ticks)
-        self._set_axis_guide(AxisDimension.X, tick_spec=_explicit_tick_spec(values, labels))
+        self._set_axis_guide(
+            AxisDimension.X, tick_spec=_explicit_tick_spec(values, labels)
+        )
         return values
 
     def get_xticks(self) -> tuple[float, ...]:
@@ -225,10 +260,14 @@ class Axes:
         spec = self._axis_guide(AxisDimension.X).tick_spec
         return spec.explicit_values if spec.kind == TickSpecKind.EXPLICIT else ()
 
-    def set_yticks(self, ticks: npt.ArrayLike, labels: tuple[str, ...] | list[str] | None = None) -> tuple[float, ...]:
+    def set_yticks(
+        self, ticks: npt.ArrayLike, labels: tuple[str, ...] | list[str] | None = None
+    ) -> tuple[float, ...]:
         """Set explicit semantic y-axis tick values and optional labels."""
         values = _tick_values(ticks)
-        self._set_axis_guide(AxisDimension.Y, tick_spec=_explicit_tick_spec(values, labels))
+        self._set_axis_guide(
+            AxisDimension.Y, tick_spec=_explicit_tick_spec(values, labels)
+        )
         return values
 
     def get_yticks(self) -> tuple[float, ...]:
@@ -265,7 +304,11 @@ class Axes:
             coordinate_space=CoordinateSpace.DATA,
         )
         self.visuals.append(visual)
-        self.attachments.append(VisualAttachment(visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id))
+        self.attachments.append(
+            VisualAttachment(
+                visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id
+            )
+        )
         return visual
 
     def markers(
@@ -273,7 +316,10 @@ class Axes:
         x: npt.ArrayLike,
         y: npt.ArrayLike | None = None,
         *,
-        shape: str | MarkerShape | tuple[str | MarkerShape, ...] | list[str | MarkerShape] = MarkerShape.DISC,
+        shape: str
+        | MarkerShape
+        | tuple[str | MarkerShape, ...]
+        | list[str | MarkerShape] = MarkerShape.DISC,
         fill_color: npt.ArrayLike | None = None,
         color: npt.ArrayLike | None = None,
         s: npt.ArrayLike | float = 36.0,
@@ -285,7 +331,9 @@ class Axes:
     ) -> MarkerVisual:
         """Create a protocol marker visual from x/y or an ``(N, 2|3)`` array."""
         positions = _positions(x, y)
-        fill_colors = _colors(fill_color if fill_color is not None else color, positions.shape[0])
+        fill_colors = _colors(
+            fill_color if fill_color is not None else color, positions.shape[0]
+        )
         sizes = _sizes(size if size is not None else s, positions.shape[0])
         visual = MarkerVisual(
             id=id or _visual_id("markers"),
@@ -299,7 +347,45 @@ class Axes:
             coordinate_space=CoordinateSpace.DATA,
         )
         self.visuals.append(visual)
-        self.attachments.append(VisualAttachment(visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id))
+        self.attachments.append(
+            VisualAttachment(
+                visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id
+            )
+        )
+        return visual
+
+    def segments(
+        self,
+        start: npt.ArrayLike,
+        end: npt.ArrayLike,
+        *,
+        color: npt.ArrayLike | None = None,
+        width: npt.ArrayLike | float = 1.0,
+        cap: str | StrokeCap = StrokeCap.BUTT,
+        id: str | None = None,
+    ) -> SegmentVisual:
+        """Create a protocol segment visual from start/end ``(N, 2|3)`` arrays."""
+        start_positions = _positions(start, None)
+        end_positions = _positions(end, None)
+        if end_positions.shape != start_positions.shape:
+            raise ValueError("segment start and end positions must have the same shape")
+        colors = _colors(color, start_positions.shape[0])
+        widths = _sizes(width, start_positions.shape[0])
+        visual = SegmentVisual(
+            id=id or _visual_id("segments"),
+            start_positions=start_positions,
+            end_positions=end_positions,
+            colors=colors,
+            widths=widths,
+            cap=_stroke_cap(cap),
+            coordinate_space=CoordinateSpace.DATA,
+        )
+        self.visuals.append(visual)
+        self.attachments.append(
+            VisualAttachment(
+                visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id
+            )
+        )
         return visual
 
     @property
@@ -347,7 +433,11 @@ class Axes:
             interpolation=_interpolation(interpolation),
         )
         self.visuals.append(visual)
-        self.attachments.append(VisualAttachment(visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id))
+        self.attachments.append(
+            VisualAttachment(
+                visual_id=visual.id, panel_id=self.panel.id, view_id=self.view.id
+            )
+        )
         return visual
 
 
@@ -358,16 +448,26 @@ def subplots() -> tuple[Figure, Axes]:
     return fig, ax
 
 
-def scatter(x: npt.ArrayLike, y: npt.ArrayLike | None = None, **kwargs: Any) -> PointVisual:
+def scatter(
+    x: npt.ArrayLike, y: npt.ArrayLike | None = None, **kwargs: Any
+) -> PointVisual:
     """Create a point visual in a temporary one-axes figure."""
     _, ax = subplots()
     return ax.scatter(x, y, **kwargs)
 
 
-def markers(x: npt.ArrayLike, y: npt.ArrayLike | None = None, **kwargs: Any) -> MarkerVisual:
+def markers(
+    x: npt.ArrayLike, y: npt.ArrayLike | None = None, **kwargs: Any
+) -> MarkerVisual:
     """Create a marker visual in a temporary one-axes figure."""
     _, ax = subplots()
     return ax.markers(x, y, **kwargs)
+
+
+def segments(start: npt.ArrayLike, end: npt.ArrayLike, **kwargs: Any) -> SegmentVisual:
+    """Create a segment visual in a temporary one-axes figure."""
+    _, ax = subplots()
+    return ax.segments(start, end, **kwargs)
 
 
 def imshow(image: npt.ArrayLike, **kwargs: Any) -> ImageVisual:
@@ -384,7 +484,9 @@ def _positions(x: npt.ArrayLike, y: npt.ArrayLike | None) -> npt.NDArray[np.floa
     x_array = np.asarray(x, dtype=np.float32)
     if y is None:
         if x_array.ndim != 2 or x_array.shape[1] not in (2, 3):
-            raise ValueError("scatter requires x/y arrays or an array with shape (N, 2) or (N, 3)")
+            raise ValueError(
+                "scatter requires x/y arrays or an array with shape (N, 2) or (N, 3)"
+            )
         return np.ascontiguousarray(x_array)
     y_array = np.asarray(y, dtype=np.float32)
     if x_array.ndim != 1 or y_array.ndim != 1 or x_array.shape[0] != y_array.shape[0]:
@@ -392,7 +494,9 @@ def _positions(x: npt.ArrayLike, y: npt.ArrayLike | None) -> npt.NDArray[np.floa
     return np.ascontiguousarray(np.column_stack([x_array, y_array]).astype(np.float32))
 
 
-def _colors(value: npt.ArrayLike | None, count_: int) -> npt.NDArray[np.uint8] | npt.NDArray[np.float32]:
+def _colors(
+    value: npt.ArrayLike | None, count_: int
+) -> npt.NDArray[np.uint8] | npt.NDArray[np.float32]:
     if value is None:
         return np.tile(np.array([[31, 119, 180, 255]], dtype=np.uint8), (count_, 1))
     array = np.asarray(value)
@@ -407,7 +511,9 @@ def _colors(value: npt.ArrayLike | None, count_: int) -> npt.NDArray[np.uint8] |
     return np.ascontiguousarray(array.astype(np.float32))
 
 
-def _sizes(value: npt.ArrayLike | float, count_: int) -> npt.NDArray[np.float32] | float:
+def _sizes(
+    value: npt.ArrayLike | float, count_: int
+) -> npt.NDArray[np.float32] | float:
     if np.isscalar(value):
         return float(cast(SupportsFloat, value))
     array = np.asarray(value, dtype=np.float32)
@@ -416,7 +522,9 @@ def _sizes(value: npt.ArrayLike | float, count_: int) -> npt.NDArray[np.float32]
     return np.ascontiguousarray(array).astype(np.float32, copy=False)
 
 
-def _angles(value: npt.ArrayLike | float, count_: int) -> npt.NDArray[np.float32] | float:
+def _angles(
+    value: npt.ArrayLike | float, count_: int
+) -> npt.NDArray[np.float32] | float:
     if np.isscalar(value):
         return float(cast(SupportsFloat, value))
     array = np.asarray(value, dtype=np.float32)
@@ -443,7 +551,15 @@ def _marker_shape(value: str | MarkerShape) -> MarkerShape:
     return MarkerShape(value)
 
 
-def _stroke_color(value: npt.ArrayLike | None) -> npt.NDArray[np.uint8] | npt.NDArray[np.float32]:
+def _stroke_cap(value: str | StrokeCap) -> StrokeCap:
+    if isinstance(value, StrokeCap):
+        return value
+    return StrokeCap(value)
+
+
+def _stroke_color(
+    value: npt.ArrayLike | None,
+) -> npt.NDArray[np.uint8] | npt.NDArray[np.float32]:
     colors = _colors(value, 1)
     return np.ascontiguousarray(colors[0])
 
@@ -467,7 +583,9 @@ def _tick_values(values: npt.ArrayLike) -> tuple[float, ...]:
     return tuple(float(value) for value in array)
 
 
-def _explicit_tick_spec(values: tuple[float, ...], labels: tuple[str, ...] | list[str] | None) -> TickSpec:
+def _explicit_tick_spec(
+    values: tuple[float, ...], labels: tuple[str, ...] | list[str] | None
+) -> TickSpec:
     if not values:
         return TickSpec(kind=TickSpecKind.NONE, target_count=None)
     return TickSpec(

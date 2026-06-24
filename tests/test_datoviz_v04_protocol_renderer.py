@@ -13,6 +13,8 @@ from gsp.protocol import (
     MarkerShape,
     MarkerVisual,
     PointVisual,
+    SegmentVisual,
+    StrokeCap,
 )
 from gsp.protocol import (
     AxisProviderRequest,
@@ -122,6 +124,19 @@ class FakeDatovizV04:
     def dvz_marker(self, scene, flags):
         self.calls.append(("marker", scene, flags))
         return "marker-visual"
+
+    def dvz_segment(self, scene, flags):
+        self.calls.append(("segment", scene, flags))
+        return "segment-visual"
+
+    class DvzSegmentCap:
+        DVZ_SEGMENT_CAP_ROUND = 1
+        DVZ_SEGMENT_CAP_SQUARE = 4
+        DVZ_SEGMENT_CAP_BUTT = 5
+
+    def dvz_segment_set_caps(self, visual, start_cap, end_cap):
+        self.calls.append(("segment_set_caps", visual, start_cap, end_cap))
+        return 0
 
     def dvz_visual_set_data(self, visual, name, data):
         self.calls.append(("set_data", visual, name, np.array(data, copy=True)))
@@ -921,6 +936,45 @@ def test_add_marker_visual_passes_marker_angles_through_to_datoviz():
 
     set_data = _calls(fake, "set_data")
     np.testing.assert_allclose(set_data[3][3], [0.25, 0.5], rtol=1e-6)
+
+
+def test_add_segment_visual_uses_dvz_segment_attributes_widths_and_caps():
+    fake = FakeDatovizV04WithQueryCapabilities()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
+    visual = SegmentVisual(
+        id="visual:segments",
+        start_positions=np.array([[-0.5, 0.25], [0.5, -0.25]], dtype=np.float32),
+        end_positions=np.array([[0.0, 0.5], [0.75, 0.25]], dtype=np.float32),
+        colors=np.array([[1.0, 0.0, 0.0, 1.0], [0.0, 0.5, 1.0, 0.5]], dtype=np.float32),
+        widths=np.array([12.0, 24.0], dtype=np.float32),
+        cap=StrokeCap.SQUARE,
+    )
+
+    dvz_visual = renderer.add_segment_visual(visual)
+
+    assert dvz_visual == "segment-visual"
+    assert _calls(fake, "segment_set_caps") == [
+        ("segment_set_caps", "segment-visual", 4, 4)
+    ]
+    set_data = _calls(fake, "set_data")
+    assert [call[2] for call in set_data] == [
+        "position_start",
+        "position_end",
+        "color",
+        "stroke_width_px",
+    ]
+    np.testing.assert_allclose(set_data[0][3], [[-0.5, 0.25, 0.0], [0.5, -0.25, 0.0]])
+    np.testing.assert_allclose(set_data[1][3], [[0.0, 0.5, 0.0], [0.75, 0.25, 0.0]])
+    np.testing.assert_array_equal(
+        set_data[2][3], [[255, 0, 0, 255], [0, 128, 255, 128]]
+    )
+    np.testing.assert_allclose(set_data[3][3], [12.0, 24.0], rtol=1e-6)
+    assert _calls(fake, "set_alpha_mode") == [("set_alpha_mode", "segment-visual", 1)]
+    assert _calls(fake, "set_query_capabilities") == [
+        ("set_query_capabilities", "segment-visual", 0x02)
+    ]
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[:3] == ("add_visual", "panel", "segment-visual")
 
 
 def test_renderer_configures_equal_aspect_ndc_panel_when_available():

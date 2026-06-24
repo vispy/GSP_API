@@ -42,6 +42,14 @@ class MarkerShape(str, Enum):
     CROSS = "cross"
 
 
+class StrokeCap(str, Enum):
+    """Conservative v1 screen-stroked segment cap vocabulary."""
+
+    BUTT = "butt"
+    ROUND = "round"
+    SQUARE = "square"
+
+
 FloatArray = npt.NDArray[np.float32] | npt.NDArray[np.float64]
 ColorArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.float64]
 ImageArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.float64]
@@ -115,7 +123,9 @@ class MarkerVisual:
     fill_colors: ColorArray
     sizes: FloatArray | float
     angle: FloatArray | float = 0.0
-    stroke_color: ColorArray = field(default_factory=lambda: np.array([0, 0, 0, 255], dtype=np.uint8))
+    stroke_color: ColorArray = field(
+        default_factory=lambda: np.array([0, 0, 0, 255], dtype=np.uint8)
+    )
     stroke_width: float = 0.0
     coordinate_space: CoordinateSpace = CoordinateSpace.NDC
 
@@ -125,7 +135,9 @@ class MarkerVisual:
         _validate_shapes(self.shape, point_count)
         _validate_sizes(self.sizes, point_count)
         _validate_angles(self.angle, point_count)
-        _validate_rgba_array(self.fill_colors, shape=(point_count, 4), field_name="fill_colors")
+        _validate_rgba_array(
+            self.fill_colors, shape=(point_count, 4), field_name="fill_colors"
+        )
         _validate_rgba_array(self.stroke_color, shape=(4,), field_name="stroke_color")
         if not np.isfinite(self.stroke_width):
             raise ValueError("stroke_width must be finite")
@@ -141,8 +153,46 @@ class MarkerVisual:
     def angle_values(self) -> npt.NDArray[np.float32]:
         """Return one angle in radians per marker."""
         if isinstance(self.angle, np.ndarray):
-            return np.ascontiguousarray(np.asarray(self.angle, dtype=np.float32).reshape(-1))
+            return np.ascontiguousarray(
+                np.asarray(self.angle, dtype=np.float32).reshape(-1)
+            )
         return np.full((self.positions.shape[0],), float(self.angle), dtype=np.float32)
+
+
+@dataclass(frozen=True, slots=True)
+class SegmentVisual:
+    """Semantic independent line segment visual model.
+
+    ``widths`` are rendered screen-pixel stroke widths. ``cap`` applies to both ends.
+    """
+
+    id: str
+    start_positions: FloatArray
+    end_positions: FloatArray
+    colors: ColorArray
+    widths: FloatArray | float
+    cap: StrokeCap = StrokeCap.BUTT
+    coordinate_space: CoordinateSpace = CoordinateSpace.NDC
+
+    def __post_init__(self) -> None:
+        validate_id(self.id)
+        segment_count = _validate_positions(self.start_positions)
+        if _validate_positions(self.end_positions) != segment_count:
+            raise ValueError("end_positions length must match start_positions")
+        if self.end_positions.shape[1] != self.start_positions.shape[1]:
+            raise ValueError("end_positions dimensionality must match start_positions")
+        _validate_rgba_array(self.colors, shape=(segment_count, 4), field_name="colors")
+        _validate_sizes(self.widths, segment_count, field_name="widths")
+
+    def width_values(self) -> npt.NDArray[np.float32]:
+        """Return one pixel stroke width per segment."""
+        if isinstance(self.widths, np.ndarray):
+            return np.ascontiguousarray(
+                np.asarray(self.widths, dtype=np.float32).reshape(-1)
+            )
+        return np.full(
+            (self.start_positions.shape[0],), float(self.widths), dtype=np.float32
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -193,23 +243,25 @@ def _validate_shapes(shape: MarkerShape | MarkerShapeTuple, count: int) -> None:
         raise TypeError("shape entries must be MarkerShape values")
 
 
-def _validate_sizes(sizes: FloatArray | float, count: int) -> None:
+def _validate_sizes(
+    sizes: FloatArray | float, count: int, *, field_name: str = "sizes"
+) -> None:
     if isinstance(sizes, np.ndarray):
         if sizes.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
-            raise TypeError("sizes must be float32 or float64")
+            raise TypeError(f"{field_name} must be float32 or float64")
         if sizes.ndim != 1:
-            raise ValueError("sizes must be scalar or shape (N,)")
+            raise ValueError(f"{field_name} must be scalar or shape (N,)")
         if sizes.shape[0] != count:
-            raise ValueError("sizes length must match positions")
+            raise ValueError(f"{field_name} length must match positions")
         if not np.all(np.isfinite(sizes)):
-            raise ValueError("sizes must be finite")
+            raise ValueError(f"{field_name} must be finite")
         if np.any(sizes < 0):
-            raise ValueError("sizes must be non-negative")
+            raise ValueError(f"{field_name} must be non-negative")
         return
     if not np.isfinite(sizes):
-        raise ValueError("sizes must be finite")
+        raise ValueError(f"{field_name} must be finite")
     if sizes < 0:
-        raise ValueError("sizes must be non-negative")
+        raise ValueError(f"{field_name} must be non-negative")
 
 
 def _validate_angles(angle: FloatArray | float, count: int) -> None:
@@ -227,7 +279,9 @@ def _validate_angles(angle: FloatArray | float, count: int) -> None:
         raise ValueError("angle must be finite")
 
 
-def _validate_rgba_array(colors: ColorArray, *, shape: tuple[int, ...], field_name: str) -> None:
+def _validate_rgba_array(
+    colors: ColorArray, *, shape: tuple[int, ...], field_name: str
+) -> None:
     if colors.shape != shape:
         raise ValueError(f"{field_name} must have shape {shape}")
     if colors.dtype == np.dtype(np.uint8):

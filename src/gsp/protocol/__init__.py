@@ -86,7 +86,13 @@ from .query import (
     QueryStatus,
     VisualFamily,
 )
-from .resources import AttributeSource, BufferResource, ResourceLocality, ResourceMutability, ResourceUsage
+from .resources import (
+    AttributeSource,
+    BufferResource,
+    ResourceLocality,
+    ResourceMutability,
+    ResourceUsage,
+)
 from .security import (
     REDACTED_CREDENTIAL_REF,
     REDACTED_CACHE_KEY,
@@ -106,9 +112,24 @@ from .security import (
     validate_s022_http_array_source_descriptor,
     validate_static_manifest_security,
 )
-from .transports import CommandResult, InProcessGSPServer, InProcessTransport, InitializeResult
+from .transports import (
+    CommandResult,
+    InProcessGSPServer,
+    InProcessTransport,
+    InitializeResult,
+)
 from .ticks import ResolvedTicks, resolve_ticks
-from .visuals import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, MarkerShape, MarkerVisual, PointVisual
+from .visuals import (
+    CoordinateSpace,
+    ImageInterpolation,
+    ImageOrigin,
+    ImageVisual,
+    MarkerShape,
+    MarkerVisual,
+    PointVisual,
+    SegmentVisual,
+    StrokeCap,
+)
 
 __all__ = [
     "AdaptationDecision",
@@ -181,6 +202,7 @@ __all__ = [
     "ResolvedTicks",
     "S020_CREDENTIAL_POLICIES",
     "S020_EXECUTABLE_LOCALITIES",
+    "SegmentVisual",
     "SecurityDiagnostic",
     "SecurityDiagnosticCode",
     "SecurityValidationResult",
@@ -199,6 +221,7 @@ __all__ = [
     "TileStatus",
     "TickSpec",
     "TickSpecKind",
+    "StrokeCap",
     "TiledImageQueryPayload",
     "TiledImageSource",
     "TransportKind",

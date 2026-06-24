@@ -8,9 +8,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-from gsp.protocol import ImageOrigin, ImageVisual, MarkerShape, MarkerVisual, PointVisual
+from gsp.protocol import (
+    ImageOrigin,
+    ImageVisual,
+    MarkerShape,
+    MarkerVisual,
+    PointVisual,
+    SegmentVisual,
+    StrokeCap,
+)
 from gsp.protocol.visuals import ImageInterpolation
-from gsp_matplotlib.protocol_renderer import _marker_areas_from_pixel_diameters, _marker_path, render_image_visual, render_marker_visual, render_point_visual
+from gsp_matplotlib.protocol_renderer import (
+    _marker_areas_from_pixel_diameters,
+    _marker_path,
+    render_image_visual,
+    render_marker_visual,
+    render_point_visual,
+    render_segment_visual,
+)
 
 
 def test_render_point_visual_creates_path_collection():
@@ -27,8 +42,12 @@ def test_render_point_visual_creates_path_collection():
         artist = render_point_visual(ax, visual)
 
         np.testing.assert_allclose(artist.get_offsets(), visual.positions)
-        np.testing.assert_allclose(artist.get_sizes(), _marker_areas_from_pixel_diameters(ax, visual.sizes))
-        np.testing.assert_allclose(artist.get_facecolors()[0], np.array([1.0, 0.0, 0.0, 1.0]))
+        np.testing.assert_allclose(
+            artist.get_sizes(), _marker_areas_from_pixel_diameters(ax, visual.sizes)
+        )
+        np.testing.assert_allclose(
+            artist.get_facecolors()[0], np.array([1.0, 0.0, 0.0, 1.0])
+        )
         assert artist.get_gid() == "visual:points"
     finally:
         plt.close(fig)
@@ -47,7 +66,9 @@ def test_render_point_visual_converts_pixel_diameters_using_figure_dpi():
 
         artist = render_point_visual(ax, visual)
 
-        np.testing.assert_allclose(artist.get_sizes(), np.array([100.0], dtype=np.float32))
+        np.testing.assert_allclose(
+            artist.get_sizes(), np.array([100.0], dtype=np.float32)
+        )
     finally:
         plt.close(fig)
 
@@ -102,10 +123,43 @@ def test_render_marker_visual_creates_marker_collections():
         assert len(artists) == 2
         assert all(artist.get_gid() == "visual:markers" for artist in artists)
         np.testing.assert_allclose(artists[0].get_offsets(), np.array([[-0.5, 0.25]]))
-        np.testing.assert_allclose(artists[1].get_sizes(), np.array([_marker_areas_from_pixel_diameters(ax, visual.sizes)[1]]))
-        np.testing.assert_allclose(artists[0].get_facecolors()[0], np.array([1.0, 0.0, 0.0, 1.0]))
-        np.testing.assert_allclose(artists[0].get_edgecolors()[0], np.array([0.0, 0.0, 0.0, 1.0]))
+        np.testing.assert_allclose(
+            artists[1].get_sizes(),
+            np.array([_marker_areas_from_pixel_diameters(ax, visual.sizes)[1]]),
+        )
+        np.testing.assert_allclose(
+            artists[0].get_facecolors()[0], np.array([1.0, 0.0, 0.0, 1.0])
+        )
+        np.testing.assert_allclose(
+            artists[0].get_edgecolors()[0], np.array([0.0, 0.0, 0.0, 1.0])
+        )
         np.testing.assert_allclose(artists[0].get_linewidths(), np.array([1.08]))
+    finally:
+        plt.close(fig)
+
+
+def test_render_segment_visual_creates_line_collection_with_pixel_widths():
+    """Protocol segments render as a Matplotlib LineCollection."""
+    fig, ax = plt.subplots(dpi=144)
+    try:
+        visual = SegmentVisual(
+            id="visual:segments",
+            start_positions=np.array([[-0.5, 0.25], [0.5, -0.25]], dtype=np.float32),
+            end_positions=np.array([[0.0, 0.5], [0.75, 0.25]], dtype=np.float32),
+            colors=np.array([[255, 0, 0, 255], [0, 0, 255, 128]], dtype=np.uint8),
+            widths=np.array([10.0, 20.0], dtype=np.float32),
+            cap=StrokeCap.ROUND,
+        )
+
+        artist = render_segment_visual(ax, visual)
+
+        assert artist.get_gid() == "visual:segments"
+        np.testing.assert_allclose(artist.get_segments()[0], [[-0.5, 0.25], [0.0, 0.5]])
+        np.testing.assert_allclose(artist.get_linewidths(), np.array([5.0, 10.0]))
+        np.testing.assert_allclose(
+            artist.get_colors()[0], np.array([1.0, 0.0, 0.0, 1.0])
+        )
+        assert artist.get_capstyle() == "round"
     finally:
         plt.close(fig)
 
@@ -139,7 +193,9 @@ def test_marker_diamond_path_uses_bbox_diameter_semantics():
     path = _marker_path(MarkerShape.DIAMOND, 0.0)
     bbox = path.get_extents()
 
-    np.testing.assert_allclose([bbox.x0, bbox.x1, bbox.y0, bbox.y1], [-0.5, 0.5, -0.5, 0.5])
+    np.testing.assert_allclose(
+        [bbox.x0, bbox.x1, bbox.y0, bbox.y1], [-0.5, 0.5, -0.5, 0.5]
+    )
 
 
 def test_protocol_visual_validation_rejects_shape_mismatch():
@@ -148,7 +204,9 @@ def test_protocol_visual_validation_rejects_shape_mismatch():
     colors = np.array([[255, 255, 255, 255]], dtype=np.uint8)
 
     try:
-        PointVisual("visual:bad", positions, colors, np.array([1.0, 2.0], dtype=np.float32))
+        PointVisual(
+            "visual:bad", positions, colors, np.array([1.0, 2.0], dtype=np.float32)
+        )
     except ValueError as exc:
         assert "colors length" in str(exc)
     else:
@@ -170,19 +228,71 @@ def test_marker_visual_validation_covers_shapes_angles_and_stroke():
     )
 
     assert visual.shape_values() == (MarkerShape.DISC, MarkerShape.DISC)
-    np.testing.assert_allclose(visual.angle_values(), np.array([0.0, 0.5], dtype=np.float32))
+    np.testing.assert_allclose(
+        visual.angle_values(), np.array([0.0, 0.5], dtype=np.float32)
+    )
 
     with pytest.raises(ValueError, match="shape length"):
         MarkerVisual("visual:bad-shape", positions, (MarkerShape.DISC,), colors, 4.0)
 
     with pytest.raises(ValueError, match="angle length"):
-        MarkerVisual("visual:bad-angle", positions, MarkerShape.DISC, colors, 4.0, angle=np.array([0.0], dtype=np.float32))
+        MarkerVisual(
+            "visual:bad-angle",
+            positions,
+            MarkerShape.DISC,
+            colors,
+            4.0,
+            angle=np.array([0.0], dtype=np.float32),
+        )
 
     with pytest.raises(ValueError, match="stroke_color"):
-        MarkerVisual("visual:bad-stroke-color", positions, MarkerShape.DISC, colors, 4.0, stroke_color=np.zeros((1, 4), dtype=np.uint8))
+        MarkerVisual(
+            "visual:bad-stroke-color",
+            positions,
+            MarkerShape.DISC,
+            colors,
+            4.0,
+            stroke_color=np.zeros((1, 4), dtype=np.uint8),
+        )
 
     with pytest.raises(ValueError, match="stroke_width must be non-negative"):
-        MarkerVisual("visual:bad-stroke-width", positions, MarkerShape.DISC, colors, 4.0, stroke_width=-1.0)
+        MarkerVisual(
+            "visual:bad-stroke-width",
+            positions,
+            MarkerShape.DISC,
+            colors,
+            4.0,
+            stroke_width=-1.0,
+        )
+
+
+def test_segment_visual_validation_covers_positions_widths_and_colors():
+    """SegmentVisual validates independent line segment attributes."""
+    starts = np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float32)
+    ends = np.array([[0.5, 0.0], [1.5, 1.0]], dtype=np.float32)
+    colors = np.array([[255, 255, 255, 255], [0, 0, 0, 255]], dtype=np.uint8)
+
+    visual = SegmentVisual(
+        "visual:segments",
+        starts,
+        ends,
+        colors,
+        np.array([2.0, 4.0], dtype=np.float32),
+        cap=StrokeCap.SQUARE,
+    )
+
+    np.testing.assert_allclose(
+        visual.width_values(), np.array([2.0, 4.0], dtype=np.float32)
+    )
+
+    with pytest.raises(ValueError, match="end_positions length"):
+        SegmentVisual("visual:bad-end-count", starts, ends[:1], colors, 2.0)
+
+    with pytest.raises(ValueError, match="colors"):
+        SegmentVisual("visual:bad-colors", starts, ends, colors[:1], 2.0)
+
+    with pytest.raises(ValueError, match="widths must be non-negative"):
+        SegmentVisual("visual:bad-width", starts, ends, colors, -1.0)
 
 
 def test_protocol_visual_validation_rejects_non_finite_point_fields():
@@ -191,10 +301,20 @@ def test_protocol_visual_validation_rejects_non_finite_point_fields():
     finite_positions = np.array([[0.0, 0.0]], dtype=np.float32)
 
     with pytest.raises(ValueError, match="positions must be finite"):
-        PointVisual("visual:bad-positions", np.array([[np.nan, 0.0]], dtype=np.float32), colors, 1.0)
+        PointVisual(
+            "visual:bad-positions",
+            np.array([[np.nan, 0.0]], dtype=np.float32),
+            colors,
+            1.0,
+        )
 
     with pytest.raises(ValueError, match="sizes must be finite"):
-        PointVisual("visual:bad-sizes", finite_positions, colors, np.array([np.inf], dtype=np.float32))
+        PointVisual(
+            "visual:bad-sizes",
+            finite_positions,
+            colors,
+            np.array([np.inf], dtype=np.float32),
+        )
 
     with pytest.raises(ValueError, match="floating point colors must be finite"):
         PointVisual(

@@ -4,7 +4,7 @@ Generated: 2026-06-24
 
 ## Current State
 
-S023 is in progress at 50%.
+S023 is in progress at 60%.
 
 Completed:
 
@@ -12,6 +12,7 @@ Completed:
 - M065 - Visual QA harness foundation.
 - M066 - PointVisual v1 and Datoviz v0.4 retained point path.
 - M067 - MarkerVisual v1.
+- M068 - SegmentVisual v1.
 
 Milestone reached:
 
@@ -26,7 +27,7 @@ Milestone reached:
 
 Next:
 
-- M068 - SegmentVisual v1.
+- M069 - PathVisual v1.
 
 Recent commits:
 
@@ -110,6 +111,8 @@ Current S023 cases:
 - `point/alpha_overlap_ndc`
 - `marker/shapes_ndc`
 - `marker/angle_size_stroke_ndc`
+- `segment/width_cap_ndc`
+- `segment/alpha_order_ndc`
 - `image/checker_nearest_ndc`
 - `overlay/point_over_image_ndc`
 
@@ -167,8 +170,8 @@ Observed result after M067:
 - Status JSON and diff whitespace checks passed.
 - Both backend import checks passed.
 
-CLI smoke rendered all S023 cases to `artifacts/visual_qa/s023/latest-local`. Point, marker, image
-nearest, and point-over-image cases render in both Matplotlib and Datoviz.
+CLI smoke rendered all S023 cases to `artifacts/visual_qa/s023/latest-local`. Point, marker,
+segment, image nearest, and point-over-image cases render in both Matplotlib and Datoviz.
 
 The latest regenerated contact sheet is:
 
@@ -240,6 +243,20 @@ tracking Datoviz limitations.
 
 ## M068 Review Point
 
-Before implementing M068, keep SegmentVisual distinct from PathVisual. Segment should cover
-independent line segments with simple width/cap/color semantics and should not expand into arrows,
-dashes, joins, or continuous polyline subpath behavior.
+M068 added SegmentVisual as a distinct visual family:
+
+- `SegmentVisual` and `StrokeCap` live in `gsp.protocol`.
+- The v1 cap vocabulary is conservative: `butt`, `round`, and `square`.
+- `Axes.segments(...)` and `vispy2.segments(...)` emit protocol segment visuals.
+- Matplotlib renders segments with `LineCollection`; protocol widths are screen pixels and are
+  converted to Matplotlib point linewidths using figure DPI.
+- Datoviz v0.4 renders retained segments with `dvz_segment`, `dvz_segment_set_caps`, and dense
+  uploads for `position_start`, `position_end`, `color`, and `stroke_width_px`.
+- `segment/width_cap_ndc` and `segment/alpha_order_ndc` were added to visual QA and render in both
+  backends in the latest local run.
+
+## M069 Review Point
+
+Before implementing M069, keep PathVisual distinct from SegmentVisual. Path should cover continuous
+polyline/subpath semantics with joins and ordered vertices; it should not regress the independent
+segment contract added in M068.

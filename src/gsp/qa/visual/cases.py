@@ -4,7 +4,17 @@ from __future__ import annotations
 
 import numpy as np
 
-from gsp.protocol import CoordinateSpace, ImageInterpolation, ImageOrigin, ImageVisual, MarkerShape, MarkerVisual, PointVisual
+from gsp.protocol import (
+    CoordinateSpace,
+    ImageInterpolation,
+    ImageOrigin,
+    ImageVisual,
+    MarkerShape,
+    MarkerVisual,
+    PointVisual,
+    SegmentVisual,
+    StrokeCap,
+)
 from gsp.qa.visual.case_spec import VisualQACase, VisualQAScene
 
 
@@ -48,14 +58,42 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
             case_id="marker/angle_size_stroke_ndc",
             title="Marker angle, size, and stroke in NDC",
             family="marker",
-            required_features=("marker", "ndc", "rgba8", "angle", "pixel-size", "stroke"),
+            required_features=(
+                "marker",
+                "ndc",
+                "rgba8",
+                "angle",
+                "pixel-size",
+                "stroke",
+            ),
             builder=_marker_angle_size_stroke_ndc,
+        ),
+        VisualQACase(
+            case_id="segment/width_cap_ndc",
+            title="Segment width and cap styles in NDC",
+            family="segment",
+            required_features=("segment", "ndc", "rgba8", "width", "cap"),
+            builder=_segment_width_cap_ndc,
+        ),
+        VisualQACase(
+            case_id="segment/alpha_order_ndc",
+            title="Segment alpha and draw order in NDC",
+            family="segment",
+            required_features=("segment", "ndc", "rgba8", "alpha", "layering"),
+            builder=_segment_alpha_order_ndc,
         ),
         VisualQACase(
             case_id="image/checker_nearest_ndc",
             title="Nearest asymmetric image in NDC",
             family="image",
-            required_features=("image", "ndc", "rgba8", "nearest", "extent", "orientation"),
+            required_features=(
+                "image",
+                "ndc",
+                "rgba8",
+                "nearest",
+                "extent",
+                "orientation",
+            ),
             builder=_image_checker_nearest_ndc,
         ),
         VisualQACase(
@@ -113,7 +151,11 @@ def _point_basic_ndc() -> VisualQAScene:
     return VisualQAScene(
         case_id="point/basic_ndc",
         visuals=(visual,),
-        arrays={"point_positions": positions, "point_colors": colors, "point_sizes": sizes},
+        arrays={
+            "point_positions": positions,
+            "point_colors": colors,
+            "point_sizes": sizes,
+        },
         notes=("Five colored NDC points with a constant nominal pixel size.",),
     )
 
@@ -147,7 +189,11 @@ def _point_diameter_ramp_ndc() -> VisualQAScene:
     return VisualQAScene(
         case_id="point/diameter_ramp_ndc",
         visuals=(visual,),
-        arrays={"point_positions": positions, "point_colors": colors, "point_diameters": diameters},
+        arrays={
+            "point_positions": positions,
+            "point_colors": colors,
+            "point_diameters": diameters,
+        },
         notes=("Horizontal point row with increasing requested pixel diameters.",),
     )
 
@@ -180,8 +226,14 @@ def _point_alpha_overlap_ndc() -> VisualQAScene:
     return VisualQAScene(
         case_id="point/alpha_overlap_ndc",
         visuals=(visual,),
-        arrays={"point_positions": positions, "point_colors": colors, "point_sizes": sizes},
-        notes=("Three strongly overlapping semi-transparent points with fixed pixel diameters.",),
+        arrays={
+            "point_positions": positions,
+            "point_colors": colors,
+            "point_sizes": sizes,
+        },
+        notes=(
+            "Three strongly overlapping semi-transparent points with fixed pixel diameters.",
+        ),
     )
 
 
@@ -234,7 +286,9 @@ def _marker_shapes_ndc() -> VisualQAScene:
             "marker_fill_colors": colors,
             "marker_sizes": sizes,
         },
-        notes=("Five conservative built-in marker shapes at asymmetric Y positions with shared dark pixel-width stroke.",),
+        notes=(
+            "Five conservative built-in marker shapes at asymmetric Y positions with shared dark pixel-width stroke.",
+        ),
     )
 
 
@@ -251,7 +305,10 @@ def _marker_angle_size_stroke_ndc() -> VisualQAScene:
         dtype=np.float32,
     )
     sizes = np.array([34.0, 42.0, 50.0, 60.0, 72.0, 84.0], dtype=np.float32)
-    angles = np.array([0.0, np.pi / 2.0, np.pi, np.pi * 1.5, np.pi / 4.0, -np.pi / 4.0], dtype=np.float32)
+    angles = np.array(
+        [0.0, np.pi / 2.0, np.pi, np.pi * 1.5, np.pi / 4.0, -np.pi / 4.0],
+        dtype=np.float32,
+    )
     colors = np.array(
         [
             [46, 125, 50, 255],
@@ -283,7 +340,121 @@ def _marker_angle_size_stroke_ndc() -> VisualQAScene:
             "marker_sizes": sizes,
             "marker_angles": angles,
         },
-        notes=("Compass-like triangle rotations at asymmetric Y positions with increasing requested pixel diameters and a visible stroke.",),
+        notes=(
+            "Compass-like triangle rotations at asymmetric Y positions with increasing requested pixel diameters and a visible stroke.",
+        ),
+    )
+
+
+def _segment_width_cap_ndc() -> VisualQAScene:
+    starts = np.array(
+        [
+            [-0.76, 0.48],
+            [-0.70, 0.16],
+            [-0.64, -0.18],
+            [-0.58, -0.52],
+        ],
+        dtype=np.float32,
+    )
+    ends = np.array(
+        [
+            [0.58, 0.30],
+            [0.64, 0.04],
+            [0.70, -0.26],
+            [0.76, -0.46],
+        ],
+        dtype=np.float32,
+    )
+    widths = np.array([8.0, 16.0, 28.0, 42.0], dtype=np.float32)
+    colors = np.array(
+        [
+            [30, 136, 229, 255],
+            [0, 137, 123, 255],
+            [251, 140, 0, 255],
+            [216, 27, 96, 255],
+        ],
+        dtype=np.uint8,
+    )
+    visuals = (
+        SegmentVisual(
+            id="visual:segment-butt-ndc",
+            start_positions=starts + np.array([0.0, 0.10], dtype=np.float32),
+            end_positions=ends + np.array([0.0, 0.10], dtype=np.float32),
+            colors=colors,
+            widths=widths,
+            cap=StrokeCap.BUTT,
+            coordinate_space=CoordinateSpace.NDC,
+        ),
+        SegmentVisual(
+            id="visual:segment-round-ndc",
+            start_positions=starts,
+            end_positions=ends,
+            colors=colors,
+            widths=widths,
+            cap=StrokeCap.ROUND,
+            coordinate_space=CoordinateSpace.NDC,
+        ),
+        SegmentVisual(
+            id="visual:segment-square-ndc",
+            start_positions=starts - np.array([0.0, 0.10], dtype=np.float32),
+            end_positions=ends - np.array([0.0, 0.10], dtype=np.float32),
+            colors=colors,
+            widths=widths,
+            cap=StrokeCap.SQUARE,
+            coordinate_space=CoordinateSpace.NDC,
+        ),
+    )
+    return VisualQAScene(
+        case_id="segment/width_cap_ndc",
+        visuals=visuals,
+        arrays={
+            "segment_start_positions": starts,
+            "segment_end_positions": ends,
+            "segment_colors": colors,
+            "segment_widths": widths,
+        },
+        notes=(
+            "Three offset rows of independent segments compare butt, round, and square caps with increasing pixel widths.",
+        ),
+    )
+
+
+def _segment_alpha_order_ndc() -> VisualQAScene:
+    starts = np.array([[-0.70, -0.44], [-0.70, 0.40], [-0.55, -0.06]], dtype=np.float32)
+    ends = np.array([[0.72, 0.36], [0.64, -0.46], [0.72, -0.02]], dtype=np.float32)
+    colors = np.array(
+        [
+            [230, 57, 70, 170],
+            [42, 157, 143, 170],
+            [38, 70, 83, 170],
+        ],
+        dtype=np.uint8,
+    )
+    widths = np.array([70.0, 58.0, 46.0], dtype=np.float32)
+    visuals = tuple(
+        SegmentVisual(
+            id=f"visual:segment-alpha-order-{index}",
+            start_positions=starts[index : index + 1],
+            end_positions=ends[index : index + 1],
+            colors=colors[index : index + 1],
+            widths=widths[index : index + 1],
+            cap=StrokeCap.ROUND,
+            coordinate_space=CoordinateSpace.NDC,
+        )
+        for index in range(starts.shape[0])
+    )
+    return VisualQAScene(
+        case_id="segment/alpha_order_ndc",
+        visuals=visuals,
+        arrays={
+            "segment_start_positions": starts,
+            "segment_end_positions": ends,
+            "segment_colors": colors,
+            "segment_widths": widths,
+        },
+        notes=(
+            "Three thick semi-transparent round-capped segments overlap in creation order.",
+        ),
     )
 
 
@@ -301,7 +472,9 @@ def _image_checker_nearest_ndc() -> VisualQAScene:
         case_id="image/checker_nearest_ndc",
         visuals=(visual,),
         arrays={"orientation_rgba": image},
-        notes=("Small asymmetric RGBA orientation image with nearest interpolation and explicit NDC extent.",),
+        notes=(
+            "Small asymmetric RGBA orientation image with nearest interpolation and explicit NDC extent.",
+        ),
     )
 
 
@@ -315,9 +488,16 @@ def _overlay_point_over_image_ndc() -> VisualQAScene:
         interpolation=ImageInterpolation.NEAREST,
         origin=ImageOrigin.UPPER,
     )
-    positions = np.array([[-0.60, 0.42], [0.58, 0.40], [-0.58, -0.40], [0.55, -0.42]], dtype=np.float32)
+    positions = np.array(
+        [[-0.60, 0.42], [0.58, 0.40], [-0.58, -0.40], [0.55, -0.42]], dtype=np.float32
+    )
     colors = np.array(
-        [[255, 255, 255, 255], [20, 20, 20, 255], [255, 255, 255, 255], [20, 20, 20, 255]],
+        [
+            [255, 255, 255, 255],
+            [20, 20, 20, 255],
+            [255, 255, 255, 255],
+            [20, 20, 20, 255],
+        ],
         dtype=np.uint8,
     )
     sizes = np.full(positions.shape[0], 36.0, dtype=np.float32)
@@ -337,12 +517,16 @@ def _overlay_point_over_image_ndc() -> VisualQAScene:
             "point_colors": colors,
             "point_sizes": sizes,
         },
-        notes=("Asymmetric orientation image with four high-contrast points anchored over distinct colored quadrants.",),
+        notes=(
+            "Asymmetric orientation image with four high-contrast points anchored over distinct colored quadrants.",
+        ),
     )
 
 
 def _orientation_image(size: int) -> np.ndarray:
-    image = np.full((size, size, 4), np.array([245, 245, 245, 255], dtype=np.uint8), dtype=np.uint8)
+    image = np.full(
+        (size, size, 4), np.array([245, 245, 245, 255], dtype=np.uint8), dtype=np.uint8
+    )
     image[0, :] = np.array([35, 40, 45, 255], dtype=np.uint8)
     image[:, 0] = np.array([35, 40, 45, 255], dtype=np.uint8)
     image[:3, :3] = np.array([230, 57, 70, 255], dtype=np.uint8)

@@ -7,10 +7,10 @@ from typing import Callable, TypeAlias
 
 import numpy as np
 
-from gsp.protocol import ImageVisual, MarkerVisual, PointVisual
+from gsp.protocol import ImageVisual, MarkerVisual, PointVisual, SegmentVisual
 
 
-ProtocolVisual: TypeAlias = PointVisual | MarkerVisual | ImageVisual
+ProtocolVisual: TypeAlias = PointVisual | MarkerVisual | SegmentVisual | ImageVisual
 
 
 @dataclass(frozen=True, slots=True)

@@ -137,7 +137,7 @@
       "id": "S023",
       "title": "Visual Families v1 and Manual Visual QA Foundation",
       "state": "in_progress",
-      "progress": 50
+      "progress": 60
     }
   ],
   "missions": [
@@ -748,9 +748,9 @@
       "id": "M068",
       "title": "SegmentVisual v1",
       "stage": "S023",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 68
     },
     {
@@ -826,7 +826,8 @@
     "M065 completed the Visual QA harness foundation with CLI list/run commands, four S023 starter cases, Matplotlib and Datoviz runners, reports, contact sheets, and manual review templates.",
     "M066 completed PointVisual v1 semantics, Matplotlib pixel-diameter conversion, Datoviz v0.4 retained point upload/attach handling, and point visual QA coverage.",
     "M067 completed MarkerVisual v1 semantics, Matplotlib and Datoviz marker renderers, VisPy2 `Axes.markers()`, and marker visual QA coverage.",
-    "Next mission: M068 should introduce SegmentVisual v1 as the next S023 visual family.",
+    "M068 completed SegmentVisual v1 semantics, Matplotlib and Datoviz segment renderers, VisPy2 `Axes.segments()`, and segment visual QA coverage.",
+    "Next mission: M069 should introduce PathVisual v1 as the next S023 visual family.",
     "S023 should proceed visual family by visual family: Point, Marker, Segment, Path, then Image hardening. Legacy GSP/Datoviz code is reference material only.",
     "Do not implement against v0.3-style Datoviz APIs such as `dvz_*_alloc`; use retained scene constructors plus `dvz_visual_set_data*` uploads and explicit attach descriptors."
   ]

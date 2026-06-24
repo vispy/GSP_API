@@ -11,7 +11,15 @@ import matplotlib.transforms
 import numpy as np
 import numpy.typing as npt
 
-from gsp.protocol.visuals import ImageInterpolation, ImageVisual, MarkerShape, MarkerVisual, PointVisual
+from gsp.protocol.visuals import (
+    ImageInterpolation,
+    ImageVisual,
+    MarkerShape,
+    MarkerVisual,
+    PointVisual,
+    SegmentVisual,
+    StrokeCap,
+)
 
 
 _MARKER_SHAPES_MPL = {
@@ -22,8 +30,16 @@ _MARKER_SHAPES_MPL = {
 }
 
 _DIAMOND_PATH = matplotlib.path.Path(
-    np.array([[0.0, 0.5], [0.5, 0.0], [0.0, -0.5], [-0.5, 0.0], [0.0, 0.5]], dtype=np.float32)
+    np.array(
+        [[0.0, 0.5], [0.5, 0.0], [0.0, -0.5], [-0.5, 0.0], [0.0, 0.5]], dtype=np.float32
+    )
 )
+
+_STROKE_CAPS_MPL = {
+    StrokeCap.BUTT: "butt",
+    StrokeCap.ROUND: "round",
+    StrokeCap.SQUARE: "projecting",
+}
 
 
 def _rgba_for_matplotlib(colors: np.ndarray) -> np.ndarray:
@@ -45,7 +61,9 @@ def _marker_areas_from_pixel_diameters(
     return float((sizes * pixel_to_point) ** 2)
 
 
-def render_point_visual(axes: matplotlib.axes.Axes, visual: PointVisual) -> matplotlib.collections.PathCollection:
+def render_point_visual(
+    axes: matplotlib.axes.Axes, visual: PointVisual
+) -> matplotlib.collections.PathCollection:
     """Render a protocol point visual into a Matplotlib axes."""
     offsets = visual.positions[:, :2]
     areas = _marker_areas_from_pixel_diameters(axes, visual.sizes)
@@ -59,7 +77,9 @@ def render_point_visual(axes: matplotlib.axes.Axes, visual: PointVisual) -> matp
     return collection
 
 
-def render_marker_visual(axes: matplotlib.axes.Axes, visual: MarkerVisual) -> tuple[matplotlib.collections.PathCollection, ...]:
+def render_marker_visual(
+    axes: matplotlib.axes.Axes, visual: MarkerVisual
+) -> tuple[matplotlib.collections.PathCollection, ...]:
     """Render a protocol marker visual into a Matplotlib axes."""
     offsets = visual.positions[:, :2]
     areas = _marker_area_values(axes, visual.sizes, offsets.shape[0])
@@ -73,7 +93,9 @@ def render_marker_visual(axes: matplotlib.axes.Axes, visual: MarkerVisual) -> tu
         collection = matplotlib.collections.PathCollection(
             [_marker_path(shape, float(angle))],
             sizes=[areas[index]],
-            offsets=np.array([[offsets[index, 0], offsets[index, 1]]], dtype=np.float32),
+            offsets=np.array(
+                [[offsets[index, 0], offsets[index, 1]]], dtype=np.float32
+            ),
             offset_transform=axes.transData,
             facecolors=[fill_colors[index]],
             edgecolors=[stroke_color],
@@ -86,9 +108,34 @@ def render_marker_visual(axes: matplotlib.axes.Axes, visual: MarkerVisual) -> tu
     return tuple(collections)
 
 
-def render_image_visual(axes: matplotlib.axes.Axes, visual: ImageVisual) -> matplotlib.image.AxesImage:
+def render_segment_visual(
+    axes: matplotlib.axes.Axes, visual: SegmentVisual
+) -> matplotlib.collections.LineCollection:
+    """Render a protocol segment visual into a Matplotlib axes."""
+    segments = np.stack(
+        [visual.start_positions[:, :2], visual.end_positions[:, :2]], axis=1
+    )
+    segment_list = [
+        np.ascontiguousarray(segment, dtype=np.float32) for segment in segments
+    ]
+    collection = matplotlib.collections.LineCollection(
+        segment_list,
+        colors=_rgba_for_matplotlib(visual.colors),
+        linewidths=_linewidth_values_from_pixel_widths(axes, visual.widths),
+        capstyle=_STROKE_CAPS_MPL[visual.cap],
+    )
+    collection.set_gid(visual.id)
+    axes.add_collection(collection)
+    return collection
+
+
+def render_image_visual(
+    axes: matplotlib.axes.Axes, visual: ImageVisual
+) -> matplotlib.image.AxesImage:
     """Render a protocol image visual into a Matplotlib axes."""
-    interpolation = "nearest" if visual.interpolation == ImageInterpolation.NEAREST else "bilinear"
+    interpolation = (
+        "nearest" if visual.interpolation == ImageInterpolation.NEAREST else "bilinear"
+    )
     image = axes.imshow(
         visual.image,
         extent=visual.extent,
@@ -115,6 +162,19 @@ def _linewidth_from_pixel_width(axes: matplotlib.axes.Axes, width: float) -> flo
     return float(width * _pixel_to_point(axes))
 
 
+def _linewidth_values_from_pixel_widths(
+    axes: matplotlib.axes.Axes,
+    widths: np.ndarray | float,
+) -> npt.NDArray[np.float32] | float:
+    """Convert protocol pixel stroke widths to Matplotlib point linewidths."""
+    pixel_to_point = np.float32(_pixel_to_point(axes))
+    if isinstance(widths, np.ndarray):
+        return np.ascontiguousarray(
+            widths.reshape(-1).astype(np.float32, copy=False) * pixel_to_point
+        )
+    return float(widths * float(pixel_to_point))
+
+
 def _pixel_to_point(axes: matplotlib.axes.Axes) -> float:
     return 72.0 / float(axes.figure.dpi)
 
@@ -130,5 +190,7 @@ def _marker_path(shape: MarkerShape, angle: float) -> matplotlib.path.Path:
     return path.transformed(matplotlib.transforms.Affine2D().rotate(angle))
 
 
-def _rgba_tuple(color: npt.NDArray[np.float32] | npt.NDArray[np.float64]) -> tuple[float, float, float, float]:
+def _rgba_tuple(
+    color: npt.NDArray[np.float32] | npt.NDArray[np.float64],
+) -> tuple[float, float, float, float]:
     return (float(color[0]), float(color[1]), float(color[2]), float(color[3]))

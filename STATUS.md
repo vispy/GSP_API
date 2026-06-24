@@ -14,15 +14,16 @@ Current state:
 
 - Completed through S022 remote source family selection and consultation.
 - Current stage: S023 Visual Families v1 and Manual Visual QA Foundation.
-- S023 progress: M064-M067 complete; M068-M072 remain draft.
+- S023 progress: M064-M068 complete; M069-M072 remain draft.
 - M064 Datoviz v0.4 API audit and probe is complete.
 - M065 visual QA harness foundation is complete.
 - M066 PointVisual v1 and Datoviz retained point path is complete.
 - M067 MarkerVisual v1 is complete.
+- M068 SegmentVisual v1 is complete.
 - Datoviz v0.4 parity milestone reached: S023 point, marker, nearest-image, and point-over-image
   cases now render in both Matplotlib and Datoviz with good-enough visual/color parity in the
   regenerated `s023_all_cases.png` contact sheet.
-- Next mission: M068 SegmentVisual v1.
+- Next mission: M069 PathVisual v1.
 
 Notes:
 

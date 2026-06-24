@@ -27,6 +27,8 @@ from gsp.protocol import (
     MarkerShape,
     MarkerVisual,
     PointVisual,
+    SegmentVisual,
+    StrokeCap,
     QueryCoordinateSpace,
     QueryHitPolicy,
     QueryRequest,
@@ -74,6 +76,11 @@ _REQUIRED_DVZ_MARKER_FUNCTIONS = (
     "dvz_marker_set_style",
 )
 
+_REQUIRED_DVZ_SEGMENT_FUNCTIONS = (
+    "dvz_segment",
+    "dvz_segment_set_caps",
+)
+
 DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
 DVZ_FIELD_SEMANTIC_COLOR = 4
@@ -93,6 +100,9 @@ DVZ_IMAGE_SAMPLING_LINEAR = 0
 DVZ_IMAGE_SAMPLING_NEAREST = 1
 DVZ_COLOR_PIPELINE_LINEAR_SRGB = 0
 DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND = 1
+DVZ_SEGMENT_CAP_ROUND = 1
+DVZ_SEGMENT_CAP_SQUARE = 4
+DVZ_SEGMENT_CAP_BUTT = 5
 DEFAULT_BACKGROUND_RGBA8 = (255, 255, 255, 255)
 
 DatovizColorPipeline = Literal["linear_srgb", "legacy_srgb_blend"]
@@ -111,6 +121,18 @@ _MARKER_SHAPE_NAMES = {
     MarkerShape.TRIANGLE: "DVZ_MARKER_SHAPE_TRIANGLE",
     MarkerShape.DIAMOND: "DVZ_MARKER_SHAPE_DIAMOND",
     MarkerShape.CROSS: "DVZ_MARKER_SHAPE_CROSS",
+}
+
+_STROKE_CAP_FALLBACKS = {
+    StrokeCap.BUTT: DVZ_SEGMENT_CAP_BUTT,
+    StrokeCap.ROUND: DVZ_SEGMENT_CAP_ROUND,
+    StrokeCap.SQUARE: DVZ_SEGMENT_CAP_SQUARE,
+}
+
+_STROKE_CAP_NAMES = {
+    StrokeCap.BUTT: "DVZ_SEGMENT_CAP_BUTT",
+    StrokeCap.ROUND: "DVZ_SEGMENT_CAP_ROUND",
+    StrokeCap.SQUARE: "DVZ_SEGMENT_CAP_SQUARE",
 }
 
 
@@ -320,6 +342,44 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "diameter_px", diameters)
         _set_visual_data(self.dvz, dvz_visual, "angle", angles)
         _set_visual_data(self.dvz, dvz_visual, "shape", shapes)
+        self.dvz.dvz_panel_add_visual(
+            self.panel,
+            dvz_visual,
+            _visual_attach_desc(self.dvz, coord_space="data", z_layer=0),
+        )
+        self.visuals[visual.id] = dvz_visual
+        return dvz_visual
+
+    def add_segment_visual(self, visual: SegmentVisual) -> Any:
+        """Create and attach a Datoviz segment visual."""
+        if visual.coordinate_space != CoordinateSpace.NDC:
+            raise DatovizV04Unsupported(
+                "Datoviz v0.4 slice currently supports NDC segment positions only"
+            )
+        segment_diagnostics = _datoviz_segment_diagnostics(self.dvz)
+        if segment_diagnostics:
+            raise DatovizV04Unsupported(
+                f"Datoviz v0.4 segment facade is unavailable: {', '.join(segment_diagnostics)}"
+            )
+
+        start_positions = _positions_3d(visual.start_positions)
+        end_positions = _positions_3d(visual.end_positions)
+        colors = _rgba8(visual.colors)
+        widths = np.ascontiguousarray(visual.width_values())
+
+        dvz_visual = self.dvz.dvz_segment(self.scene, 0)
+        if dvz_visual is None:
+            raise DatovizV04Unsupported("Datoviz segment visual allocation failed")
+        cap = _stroke_cap_value(self.dvz, visual.cap)
+        result = self.dvz.dvz_segment_set_caps(dvz_visual, cap, cap)
+        if result not in (0, None, True):
+            raise DatovizV04Unsupported("Datoviz segment cap configuration failed")
+        _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
+        _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
+        _set_visual_data(self.dvz, dvz_visual, "position_start", start_positions)
+        _set_visual_data(self.dvz, dvz_visual, "position_end", end_positions)
+        _set_visual_data(self.dvz, dvz_visual, "color", colors)
+        _set_visual_data(self.dvz, dvz_visual, "stroke_width_px", widths)
         self.dvz.dvz_panel_add_visual(
             self.panel,
             dvz_visual,
@@ -819,6 +879,14 @@ def _datoviz_marker_diagnostics(dvz: Any) -> tuple[str, ...]:
     )
 
 
+def _datoviz_segment_diagnostics(dvz: Any) -> tuple[str, ...]:
+    return tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_SEGMENT_FUNCTIONS
+        if not hasattr(dvz, name)
+    )
+
+
 def _set_marker_style(
     dvz: Any, visual: Any, stroke_color: npt.NDArray[Any], stroke_width: float
 ) -> None:
@@ -889,6 +957,17 @@ def _marker_shape_value(dvz: Any, shape: MarkerShape) -> int:
     if enum_type is not None:
         return int(getattr(enum_type, name))
     return _MARKER_SHAPE_FALLBACKS[shape]
+
+
+def _stroke_cap_value(dvz: Any, cap: StrokeCap) -> int:
+    name = _STROKE_CAP_NAMES[cap]
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, "DvzSegmentCap", None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return _STROKE_CAP_FALLBACKS[cap]
 
 
 def _configure_ndc_panel_view2d(dvz: Any, panel: Any) -> None:
