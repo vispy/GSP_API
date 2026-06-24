@@ -91,9 +91,62 @@ class TextAnchorY(str, Enum):
     BOTTOM = "bottom"
 
 
+class MeshColorMode(str, Enum):
+    """Association between mesh colors and geometry."""
+
+    UNIFORM = "uniform"
+    FACE = "face"
+    VERTEX = "vertex"
+
+
+class MeshNormalMode(str, Enum):
+    """Association between optional mesh normals and geometry."""
+
+    NONE = "none"
+    FACE = "face"
+    VERTEX = "vertex"
+
+
+class MeshNormalGeneration(str, Enum):
+    """Explicit deterministic mesh normal generation policies."""
+
+    NONE = "none"
+    FACE_FLAT = "face_flat"
+
+
+class MeshShading(str, Enum):
+    """Mesh shading semantics."""
+
+    FLAT = "flat"
+    LAMBERT = "lambert"
+
+
+class FaceCulling(str, Enum):
+    """Conservative mesh face culling policy."""
+
+    NONE = "none"
+    BACK = "back"
+    FRONT = "front"
+
+
+class DepthMode(str, Enum):
+    """Conservative mesh depth test/write policy."""
+
+    AUTO = "auto"
+    DISABLED = "disabled"
+    ENABLED = "enabled"
+
+
+class OpacityPolicy(str, Enum):
+    """Mesh opacity policy."""
+
+    ORDINARY_ALPHA = "ordinary_alpha"
+
+
 FloatArray = npt.NDArray[np.float32] | npt.NDArray[np.float64]
 ColorArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.float64]
 ImageArray = npt.NDArray[np.uint8] | npt.NDArray[np.float32] | npt.NDArray[np.float64]
+IndexArray = npt.NDArray[np.integer]
 MarkerShapeTuple = tuple[MarkerShape, ...]
 TextAnchorXTuple = tuple[TextAnchorX, ...]
 TextAnchorYTuple = tuple[TextAnchorY, ...]
@@ -283,6 +336,82 @@ class PathVisual:
 
 
 @dataclass(frozen=True, slots=True)
+class MeshVisual:
+    """Semantic inline indexed triangular mesh visual model."""
+
+    id: str
+    positions: FloatArray
+    faces: IndexArray
+    coordinate_space: CoordinateSpace
+    color: ColorArray
+    color_mode: MeshColorMode | None = None
+    normal_mode: MeshNormalMode | None = None
+    normals: FloatArray | None = None
+    normal_generation: MeshNormalGeneration = MeshNormalGeneration.NONE
+    shading: MeshShading = MeshShading.FLAT
+    face_culling: FaceCulling = FaceCulling.NONE
+    depth_test: DepthMode = DepthMode.AUTO
+    depth_write: DepthMode = DepthMode.AUTO
+    order: float = 0.0
+    opacity_policy: OpacityPolicy = OpacityPolicy.ORDINARY_ALPHA
+
+    def __post_init__(self) -> None:
+        validate_id(self.id)
+        vertex_count = _validate_positions(self.positions)
+        if vertex_count < 3:
+            raise ValueError("positions must contain at least three vertices")
+        face_count = _validate_faces(self.faces, vertex_count)
+        _validate_mesh_degenerate_faces(self.positions, self.faces)
+        if not isinstance(self.coordinate_space, CoordinateSpace):
+            raise TypeError("coordinate_space must be a CoordinateSpace")
+
+        mode = _resolve_mesh_color_mode(
+            self.color, self.color_mode, vertex_count, face_count
+        )
+        _validate_mesh_color(self.color, mode, vertex_count, face_count)
+
+        resolved_normal_mode = _resolve_mesh_normal_mode(
+            self.normals, self.normal_mode, vertex_count, face_count
+        )
+        if not isinstance(self.normal_generation, MeshNormalGeneration):
+            raise TypeError("normal_generation must be a MeshNormalGeneration")
+        if self.normal_generation is not MeshNormalGeneration.NONE and self.normals is not None:
+            raise ValueError("normal_generation requires normals to be omitted")
+        if (
+            self.normal_generation is MeshNormalGeneration.FACE_FLAT
+            and self.positions.shape[1] != 3
+        ):
+            raise ValueError("face_flat normal generation requires 3D positions")
+        if self.normals is not None:
+            _validate_mesh_normals(self.normals, resolved_normal_mode, vertex_count, face_count)
+
+        if not isinstance(self.shading, MeshShading):
+            raise TypeError("shading must be a MeshShading")
+        if not isinstance(self.face_culling, FaceCulling):
+            raise TypeError("face_culling must be a FaceCulling")
+        if not isinstance(self.depth_test, DepthMode):
+            raise TypeError("depth_test must be a DepthMode")
+        if not isinstance(self.depth_write, DepthMode):
+            raise TypeError("depth_write must be a DepthMode")
+        if not isinstance(self.opacity_policy, OpacityPolicy):
+            raise TypeError("opacity_policy must be an OpacityPolicy")
+        if isinstance(self.order, bool) or not np.isfinite(self.order):
+            raise ValueError("order must be finite")
+
+    def resolved_color_mode(self) -> MeshColorMode:
+        """Return the explicit or inferred color association mode."""
+        return _resolve_mesh_color_mode(
+            self.color, self.color_mode, self.positions.shape[0], self.faces.shape[0]
+        )
+
+    def resolved_normal_mode(self) -> MeshNormalMode:
+        """Return the explicit or inferred normal association mode."""
+        return _resolve_mesh_normal_mode(
+            self.normals, self.normal_mode, self.positions.shape[0], self.faces.shape[0]
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class ImageVisual:
     """Semantic image visual model for the protocol reference slice."""
 
@@ -419,6 +548,112 @@ def _validate_positions(positions: FloatArray) -> int:
     if not np.all(np.isfinite(positions)):
         raise ValueError("positions must be finite")
     return int(positions.shape[0])
+
+
+def _validate_faces(faces: IndexArray, vertex_count: int) -> int:
+    if faces.ndim != 2 or faces.shape[1] != 3:
+        raise ValueError("faces must have shape (M, 3)")
+    if faces.shape[0] < 1:
+        raise ValueError("faces must contain at least one triangle")
+    if not np.issubdtype(faces.dtype, np.integer):
+        raise TypeError("faces must have integer dtype")
+    if np.any(faces < 0) or np.any(faces >= vertex_count):
+        raise ValueError("faces indices must reference positions")
+    return int(faces.shape[0])
+
+
+def _validate_mesh_degenerate_faces(positions: FloatArray, faces: IndexArray) -> None:
+    triangles = positions[faces]
+    if positions.shape[1] == 2:
+        edges_a = triangles[:, 1, :] - triangles[:, 0, :]
+        edges_b = triangles[:, 2, :] - triangles[:, 0, :]
+        area2 = edges_a[:, 0] * edges_b[:, 1] - edges_a[:, 1] * edges_b[:, 0]
+        if np.any(area2 == 0):
+            raise ValueError("faces must not contain degenerate triangles")
+        return
+    edges_a = triangles[:, 1, :] - triangles[:, 0, :]
+    edges_b = triangles[:, 2, :] - triangles[:, 0, :]
+    area2 = np.linalg.norm(np.cross(edges_a, edges_b), axis=1)
+    if np.any(area2 == 0):
+        raise ValueError("faces must not contain degenerate triangles")
+
+
+def _resolve_mesh_color_mode(
+    color: ColorArray,
+    color_mode: MeshColorMode | None,
+    vertex_count: int,
+    face_count: int,
+) -> MeshColorMode:
+    if color_mode is not None and not isinstance(color_mode, MeshColorMode):
+        raise TypeError("color_mode must be a MeshColorMode")
+    if color_mode is not None:
+        return color_mode
+    if color.shape == (4,):
+        return MeshColorMode.UNIFORM
+    if color.shape == (face_count, 4) and color.shape != (vertex_count, 4):
+        return MeshColorMode.FACE
+    if color.shape == (vertex_count, 4) and color.shape != (face_count, 4):
+        return MeshColorMode.VERTEX
+    if color.shape == (face_count, 4) and color.shape == (vertex_count, 4):
+        raise ValueError("color_mode is ambiguous and must be explicit")
+    raise ValueError("color shape must match a mesh color mode")
+
+
+def _validate_mesh_color(
+    color: ColorArray, mode: MeshColorMode, vertex_count: int, face_count: int
+) -> None:
+    if mode is MeshColorMode.UNIFORM:
+        _validate_rgba_array(color, shape=(4,), field_name="color")
+    elif mode is MeshColorMode.FACE:
+        _validate_rgba_array(color, shape=(face_count, 4), field_name="color")
+    elif mode is MeshColorMode.VERTEX:
+        _validate_rgba_array(color, shape=(vertex_count, 4), field_name="color")
+    else:
+        raise TypeError("color_mode must be a MeshColorMode")
+
+
+def _resolve_mesh_normal_mode(
+    normals: FloatArray | None,
+    normal_mode: MeshNormalMode | None,
+    vertex_count: int,
+    face_count: int,
+) -> MeshNormalMode:
+    if normal_mode is not None and not isinstance(normal_mode, MeshNormalMode):
+        raise TypeError("normal_mode must be a MeshNormalMode")
+    if normals is None:
+        if normal_mode not in (None, MeshNormalMode.NONE):
+            raise ValueError("normal_mode requires normals")
+        return MeshNormalMode.NONE
+    if normal_mode is not None:
+        if normal_mode is MeshNormalMode.NONE:
+            raise ValueError("normal_mode none requires normals to be omitted")
+        return normal_mode
+    if normals.shape == (face_count, 3) and normals.shape != (vertex_count, 3):
+        return MeshNormalMode.FACE
+    if normals.shape == (vertex_count, 3) and normals.shape != (face_count, 3):
+        return MeshNormalMode.VERTEX
+    if normals.shape == (face_count, 3) and normals.shape == (vertex_count, 3):
+        raise ValueError("normal_mode is ambiguous and must be explicit")
+    raise ValueError("normals shape must match a mesh normal mode")
+
+
+def _validate_mesh_normals(
+    normals: FloatArray, mode: MeshNormalMode, vertex_count: int, face_count: int
+) -> None:
+    if normals.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
+        raise TypeError("normals must be float32 or float64")
+    if mode is MeshNormalMode.FACE:
+        expected_shape = (face_count, 3)
+    elif mode is MeshNormalMode.VERTEX:
+        expected_shape = (vertex_count, 3)
+    else:
+        raise ValueError("normal_mode none requires normals to be omitted")
+    if normals.shape != expected_shape:
+        raise ValueError(f"normals must have shape {expected_shape}")
+    if not np.all(np.isfinite(normals)):
+        raise ValueError("normals must be finite")
+    if np.any(np.linalg.norm(normals, axis=1) == 0):
+        raise ValueError("normals must be nonzero")
 
 
 def _validate_shapes(shape: MarkerShape | MarkerShapeTuple, count: int) -> None:
