@@ -15,6 +15,7 @@ from gsp.protocol import (
     PathVisual,
     PointVisual,
     SegmentVisual,
+    TextVisual,
     StrokeCap,
     StrokeJoin,
 )
@@ -43,6 +44,8 @@ from gsp_datoviz.protocol_renderer import (
     capability_snapshot,
     datoviz_v04_sampled_field_diagnostics,
     datoviz_v04_sampled_field_ready,
+    datoviz_v04_text_diagnostics,
+    datoviz_v04_text_ready,
     is_datoviz_v04_facade,
     _image_texcoords,
 )
@@ -1237,6 +1240,54 @@ def test_lower_origin_texcoords_are_not_flipped():
     np.testing.assert_allclose(
         texcoords, [[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]]
     )
+
+
+def test_add_text_visual_reports_structured_unsupported_until_semantics_verified():
+    fake = FakeDatovizV04()
+    fake.dvz_text = lambda panel, flags: "text"
+    fake.dvz_text_set_string = lambda text, value: None
+    fake.dvz_text_style = lambda: object()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    visual = TextVisual(
+        id="visual:text",
+        texts=("hello",),
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        coordinate_space=CoordinateSpace.NDC,
+    )
+
+    with pytest.raises(
+        DatovizV04Unsupported, match="TextVisual support is unavailable"
+    ) as exc_info:
+        renderer.add_text_visual(visual)
+
+    message = str(exc_info.value)
+    assert "unverified dvz_text_placement" in message
+    assert "anchors" in message
+    assert "font-size" in message
+    assert datoviz_v04_text_ready(fake) is False
+
+
+def test_add_text_visual_rejects_data_coordinates_before_runtime_diagnostics():
+    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04())
+    visual = TextVisual(
+        id="visual:data-text",
+        texts=("data",),
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        coordinate_space=CoordinateSpace.DATA,
+    )
+
+    with pytest.raises(DatovizV04Unsupported, match="NDC text"):
+        renderer.add_text_visual(visual)
+
+
+def test_datoviz_text_diagnostics_name_missing_and_unverified_symbols():
+    fake = FakeDatovizV04()
+
+    diagnostics = datoviz_v04_text_diagnostics(fake)
+
+    assert "missing dvz_text" in diagnostics
+    assert "unverified dvz_text_placement" in diagnostics
+    assert datoviz_v04_text_ready(fake) is False
 
 
 def test_image_slice_rejects_unlocked_semantics():

@@ -1,0 +1,57 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s024/m079-datoviz-text-unsupported/scenes/text_basic_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "log_path": "artifacts/visual_qa/s024/m079-datoviz-text-unsupported/backends/datoviz/text_basic_ndc.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 TextVisual support is unavailable: unverified dvz_text_placement; Datoviz v0.4 TextVisual placement, anchors, font-size mapping, rotation, and font-role semantics are not verified for S024",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s024/m079-datoviz-text-unsupported/backends/datoviz/text_basic_ndc.unsupported.json"
+        }
+      },
+      "case_id": "text/basic_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rgba8",
+        "font-size"
+      ],
+      "scene_path": "artifacts/visual_qa/s024/m079-datoviz-text-unsupported/scenes/text_basic_ndc.scene.json",
+      "title": "Basic NDC text labels"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s024/m079-datoviz-text-unsupported/contact_sheets/text_basic_ndc.png",
+    "artifacts/visual_qa/s024/m079-datoviz-text-unsupported/contact_sheets/s024_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "b2a562f7f1b68601aef18b7c62be768ea71830f4",
+    "unexpected_banned_hits": 0
+  },
+  "environment_path": "artifacts/visual_qa/s024/m079-datoviz-text-unsupported/environment.json",
+  "run_id": "m079-datoviz-text-unsupported",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S024",
+  "started_at": "2026-06-24T17:36:35.996436+00:00",
+  "suite": "s024"
+}

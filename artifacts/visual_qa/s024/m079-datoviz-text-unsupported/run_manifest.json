@@ -1,0 +1,19 @@
+{
+  "backends": [
+    "datoviz"
+  ],
+  "case_ids": [
+    "text/basic_ndc"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "resolution": [
+    160,
+    120
+  ],
+  "run_id": "m079-datoviz-text-unsupported",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S024",
+  "started_at": "2026-06-24T17:36:35.996436+00:00",
+  "suite": "s024"
+}

@@ -306,9 +306,7 @@ def _render_datoviz_visual(
     elif isinstance(visual, ImageVisual):
         renderer.add_image_visual(visual)
     elif isinstance(visual, TextVisual):
-        raise DatovizV04Unsupported(
-            "Datoviz TextVisual support awaits M078/M079 capability evidence"
-        )
+        renderer.add_text_visual(visual)
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
 

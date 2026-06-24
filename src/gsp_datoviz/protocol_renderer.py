@@ -29,6 +29,7 @@ from gsp.protocol import (
     PathVisual,
     PointVisual,
     SegmentVisual,
+    TextVisual,
     StrokeCap,
     StrokeJoin,
     QueryCoordinateSpace,
@@ -89,6 +90,15 @@ _REQUIRED_DVZ_PATH_FUNCTIONS = (
     "dvz_path_set_caps",
     "dvz_path_set_join",
 )
+
+
+_REQUIRED_DVZ_TEXT_FUNCTIONS = (
+    "dvz_text",
+    "dvz_text_set_string",
+    "dvz_text_style",
+)
+
+_OPTIONAL_UNVERIFIED_DVZ_TEXT_FUNCTIONS = ("dvz_text_placement",)
 
 DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
@@ -185,6 +195,30 @@ def datoviz_v04_sampled_field_diagnostics(module: ModuleType | Any) -> tuple[str
         for name in _REQUIRED_DVZ_SAMPLED_FIELD_FUNCTIONS
         if not hasattr(module, name)
     )
+
+
+def datoviz_v04_text_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
+    """Return why Datoviz TextVisual rendering is disabled for this slice."""
+    diagnostics = [
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_TEXT_FUNCTIONS
+        if not hasattr(module, name)
+    ]
+    diagnostics.extend(
+        f"unverified {name}"
+        for name in _OPTIONAL_UNVERIFIED_DVZ_TEXT_FUNCTIONS
+        if not hasattr(module, name)
+    )
+    diagnostics.append(
+        "Datoviz v0.4 TextVisual placement, anchors, font-size mapping, "
+        "rotation, and font-role semantics are not verified for S024"
+    )
+    return tuple(diagnostics)
+
+
+def datoviz_v04_text_ready(module: ModuleType | Any) -> bool:
+    """Return whether this adapter slice may render TextVisual through Datoviz."""
+    return not datoviz_v04_text_diagnostics(module)
 
 
 def import_datoviz_v04() -> ModuleType:
@@ -495,6 +529,17 @@ class DatovizV04ProtocolRenderer:
         )
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
+
+    def add_text_visual(self, visual: TextVisual) -> Any:
+        """Report Datoviz TextVisual support status for accepted S024 semantics."""
+        if visual.coordinate_space != CoordinateSpace.NDC:
+            raise DatovizV04Unsupported(
+                "Datoviz v0.4 slice currently supports NDC text positions only"
+            )
+        diagnostics = datoviz_v04_text_diagnostics(self.dvz)
+        raise DatovizV04Unsupported(
+            "Datoviz v0.4 TextVisual support is unavailable: " + "; ".join(diagnostics)
+        )
 
     def show(self, *, frame_count: int = 0) -> None:
         """Open an interactive Datoviz window and run the app.

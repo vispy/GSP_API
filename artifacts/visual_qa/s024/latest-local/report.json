@@ -172,7 +172,7 @@
     },
     "minimal_point_supported": false,
     "raw_imported": false,
-    "source_revision": "f88f5d82f8a50d6abafa1ee722c042e233e8110b",
+    "source_revision": "b2a562f7f1b68601aef18b7c62be768ea71830f4",
     "unexpected_banned_hits": 0
   },
   "environment_path": "artifacts/visual_qa/s024/latest-local/environment.json",
@@ -180,6 +180,6 @@
   "schema_kind": "gsp.visual_qa.report",
   "schema_version": 1,
   "stage": "S024",
-  "started_at": "2026-06-24T17:10:58.260396+00:00",
+  "started_at": "2026-06-24T17:36:23.857634+00:00",
   "suite": "s024"
 }
