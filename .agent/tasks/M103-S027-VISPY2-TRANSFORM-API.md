@@ -11,7 +11,7 @@ View2D state.
 
 ## Status
 
-Ready.
+Completed.
 
 ## Deliverables
 
@@ -29,3 +29,11 @@ Ready.
 ## Stop Conditions
 
 - Stop if a public transform stack/graph, camera object, or controller event model is needed.
+
+## Completion Notes
+
+- Implemented bounded VisPy2 affine transform producer APIs.
+- No backend-native transform, camera, shader, or controller object was exposed.
+- Validation: full `uv run pytest tests/` passed with 363 passed and 8 skipped before the local
+  tuple typing fix; focused VisPy2 tests passed after the fix; mypy reports only five pre-existing
+  unrelated errors outside M103 scope.

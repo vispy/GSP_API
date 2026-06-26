@@ -53,6 +53,7 @@ from gsp.protocol import (
     TickSpecKind,
     View2D,
     VisualAttachment,
+    VisualTransformBinding,
 )
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.protocol_renderer import (
@@ -252,6 +253,27 @@ class Axes:
         )
         return self.view.y_range
 
+    def set_view2d(
+        self,
+        *,
+        xlim: tuple[float, float] | None = None,
+        ylim: tuple[float, float] | None = None,
+        clip: bool | None = None,
+    ) -> View2D:
+        """Set deterministic S027 View2D state."""
+        next_xlim = self.view.xlim if xlim is None else (float(xlim[0]), float(xlim[1]))
+        next_ylim = self.view.ylim if ylim is None else (float(ylim[0]), float(ylim[1]))
+        self.view = View2D(
+            id=self.view.id,
+            panel_id=self.view.panel_id,
+            x_range=next_xlim,
+            y_range=next_ylim,
+            aspect_policy=self.view.aspect_policy,
+            kind=self.view.kind,
+            clip=self.view.clip if clip is None else bool(clip),
+        )
+        return self.view
+
     def get_xlim(self) -> tuple[float, float]:
         """Return the semantic x range for this 2D view."""
         return self.view.x_range
@@ -398,6 +420,7 @@ class Axes:
         alpha: float = 1.0,
         s: npt.ArrayLike | float = 36.0,
         size: npt.ArrayLike | float | None = None,
+        transform: npt.ArrayLike | VisualTransformBinding | None = None,
         id: str | None = None,
     ) -> PointVisual:
         """Create a protocol point visual from x/y or an ``(N, 2|3)`` array."""
@@ -424,6 +447,7 @@ class Axes:
             sizes=sizes,
             coordinate_space=CoordinateSpace.DATA,
             color_encoding=encoding,
+            transform=_visual_transform(transform),
         )
         self.visuals.append(visual)
         self.attachments.append(
@@ -453,6 +477,7 @@ class Axes:
         angle: npt.ArrayLike | float = 0.0,
         stroke_color: npt.ArrayLike | None = None,
         stroke_width: float = 0.0,
+        transform: npt.ArrayLike | VisualTransformBinding | None = None,
         id: str | None = None,
     ) -> MarkerVisual:
         """Create a protocol marker visual from x/y or an ``(N, 2|3)`` array."""
@@ -483,6 +508,7 @@ class Axes:
             stroke_width=float(stroke_width),
             coordinate_space=CoordinateSpace.DATA,
             fill_color_encoding=encoding,
+            transform=_visual_transform(transform),
         )
         self.visuals.append(visual)
         self.attachments.append(
@@ -500,6 +526,7 @@ class Axes:
         color: npt.ArrayLike | None = None,
         width: npt.ArrayLike | float = 1.0,
         cap: str | StrokeCap = StrokeCap.BUTT,
+        transform: npt.ArrayLike | VisualTransformBinding | None = None,
         id: str | None = None,
     ) -> SegmentVisual:
         """Create a protocol segment visual from start/end ``(N, 2|3)`` arrays."""
@@ -517,6 +544,7 @@ class Axes:
             widths=widths,
             cap=_stroke_cap(cap),
             coordinate_space=CoordinateSpace.DATA,
+            transform=_visual_transform(transform),
         )
         self.visuals.append(visual)
         self.attachments.append(
@@ -536,6 +564,7 @@ class Axes:
         cap: str | StrokeCap = StrokeCap.BUTT,
         join: str | StrokeJoin = StrokeJoin.MITER,
         miter_limit: float = 4.0,
+        transform: npt.ArrayLike | VisualTransformBinding | None = None,
         id: str | None = None,
     ) -> PathVisual:
         """Create a protocol open polyline path from ordered ``(N, 2|3)`` vertices."""
@@ -553,6 +582,7 @@ class Axes:
             join=_stroke_join(join),
             miter_limit=float(miter_limit),
             coordinate_space=CoordinateSpace.DATA,
+            transform=_visual_transform(transform),
         )
         self.visuals.append(visual)
         self.attachments.append(
@@ -590,6 +620,7 @@ class Axes:
         | list[str | TextAnchorY] = TextAnchorY.BASELINE,
         rotation_rad: npt.ArrayLike | float = 0.0,
         z_order: int = 0,
+        transform: npt.ArrayLike | VisualTransformBinding | None = None,
         id: str | None = None,
     ) -> TextVisual:
         """Create a protocol TextVisual for explicit labels/annotations."""
@@ -609,6 +640,7 @@ class Axes:
             anchor_y=_text_anchor_y(anchor_y, positions.shape[0]),
             rotation_rad=_angles(rotation_rad, positions.shape[0]),
             z_order=int(z_order),
+            transform=_visual_transform(transform),
         )
         self.visuals.append(visual)
         self.attachments.append(
@@ -627,6 +659,7 @@ class Axes:
         color_mode: str | MeshColorMode | None = None,
         coordinate_space: str | CoordinateSpace = CoordinateSpace.DATA,
         order: float = 0.0,
+        transform: npt.ArrayLike | VisualTransformBinding | None = None,
         id: str | None = None,
     ) -> MeshVisual:
         """Create a protocol MeshVisual for accepted inline triangle meshes."""
@@ -640,6 +673,7 @@ class Axes:
             color=_mesh_color(color),
             color_mode=_mesh_color_mode(color_mode),
             order=float(order),
+            transform=_visual_transform(transform),
         )
         self.visuals.append(visual)
         self.attachments.append(
@@ -808,6 +842,11 @@ def subplots() -> tuple[Figure, Axes]:
     return fig, ax
 
 
+def affine2d(matrix: npt.ArrayLike) -> VisualTransformBinding:
+    """Create an inline S027 affine 2D visual transform binding."""
+    return VisualTransformBinding.inline_affine(_affine_matrix(matrix))
+
+
 def scatter(
     x: npt.ArrayLike, y: npt.ArrayLike | None = None, **kwargs: Any
 ) -> PointVisual:
@@ -875,6 +914,23 @@ def colorbar(color_scale: str | ColorScale, **kwargs: Any) -> ColorbarGuide:
     """Create a colorbar guide in a temporary one-axes figure."""
     _, ax = subplots()
     return ax.colorbar(color_scale, **kwargs)
+
+
+def _visual_transform(
+    transform: npt.ArrayLike | VisualTransformBinding | None,
+) -> VisualTransformBinding | None:
+    if transform is None:
+        return None
+    if isinstance(transform, VisualTransformBinding):
+        return transform
+    return affine2d(transform)
+
+
+def _affine_matrix(matrix: npt.ArrayLike) -> npt.NDArray[np.float64]:
+    array = np.asarray(matrix, dtype=np.float64)
+    if array.shape != (3, 3):
+        raise ValueError("affine2d matrix must have shape (3, 3)")
+    return np.ascontiguousarray(array)
 
 
 def _visual_id(prefix: str) -> str:

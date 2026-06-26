@@ -161,7 +161,7 @@
       "id": "S027",
       "title": "Transform, View, Camera, and Navigation Semantics",
       "state": "in_progress",
-      "progress": 50
+      "progress": 70
     }
   ],
   "missions": [
@@ -1087,10 +1087,19 @@
       "id": "M103",
       "title": "S027 VisPy2 transform/view producer API",
       "stage": "S027",
+      "state": "completed",
+      "agent": "codex-ucl",
+      "progress": 100,
+      "priority": 103
+    },
+    {
+      "id": "M104",
+      "title": "S027 QA fixtures and closeout",
+      "stage": "S027",
       "state": "ready",
       "agent": "codex-ucl",
       "progress": 0,
-      "priority": 103
+      "priority": 104
     }
   ],
   "review_queue": [],
@@ -1157,7 +1166,8 @@
     "M100 is complete: S027 protocol dataclasses/enums/validation and transform query payload shells are implemented.",
     "M101 is complete: Matplotlib strict transform/view rendering and query inverse behavior is implemented for the accepted reference subset.",
     "M102 is complete: Datoviz transform capability gates, explicit CPU adaptation reports, and unsupported diagnostics are in place.",
-    "M103 is ready: expose bounded VisPy2 transform/view producer API that emits GSP protocol records only.",
+    "M103 is complete: bounded VisPy2 transform/view producer APIs emit GSP protocol records only.",
+    "M104 is ready: add S027 QA/fixture coverage, close the stage, and delete `ANSWER` only after confirming full integration.",
     "Keep S027 implementation 2D-first; do not add public 3D camera/projection/controller or transform graph semantics without a new decision."
   ],
   "notes": [
@@ -1190,6 +1200,7 @@
     "M099 completed: converted the P012 response into ADR-0019, `spec/transforms.md`, S027 decision records, adjacent spec updates, and M100 protocol-validation mission records.",
     "M100 completed: added S027 transform protocol resources/bindings/enums, stricter View2D validation, transform query payload shell, capability helpers, and focused tests; full pytest passed with 351 passed and 8 skipped.",
     "M101 completed: added Matplotlib reference transform/view helpers, transformed renderer/query paths, transform query payload output, and focused tests; full pytest passed with 357 passed and 8 skipped.",
-    "M102 completed: added Datoviz S027 transform capability metadata, bounded finite eager NDC inline-affine CPU adaptation for point/marker/segment/path, transform query inverse unsupported diagnostics, and focused tests; full pytest passed with 359 passed and 8 skipped."
+    "M102 completed: added Datoviz S027 transform capability metadata, bounded finite eager NDC inline-affine CPU adaptation for point/marker/segment/path, transform query inverse unsupported diagnostics, and focused tests; full pytest passed with 359 passed and 8 skipped.",
+    "M103 completed: added VisPy2 affine2d helper, visual transform parameters, set_view2d convenience, and focused tests; full pytest passed with 363 passed and 8 skipped before tuple typing cleanup."
   ]
 }

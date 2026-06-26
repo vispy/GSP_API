@@ -5,6 +5,7 @@ from .plot.plot import plot
 from .protocol import (
     Axes,
     Figure,
+    affine2d,
     color_scale,
     colorbar,
     imshow,
@@ -20,6 +21,7 @@ from .protocol import (
 __all__ = [
     "Axes",
     "Figure",
+    "affine2d",
     "axes",
     "color_scale",
     "colorbar",

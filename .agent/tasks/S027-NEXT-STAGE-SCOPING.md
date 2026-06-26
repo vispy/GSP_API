@@ -34,5 +34,5 @@ graph semantics.
 | M100 | completed | Implemented accepted protocol dataclasses/enums/validation. |
 | M101 | completed | Added Matplotlib reference transform/query behavior after M100. |
 | M102 | completed | Added Datoviz transform capability gates and bounded CPU adaptation. |
-| M103 | ready | Add VisPy2 producer API updates after protocol models exist. |
-| M104 | blocked | Add QA fixtures and close S027. |
+| M103 | completed | Added VisPy2 producer API updates after protocol models exist. |
+| M104 | ready | Add QA fixtures and close S027. |

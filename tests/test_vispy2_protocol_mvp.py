@@ -36,6 +36,7 @@ from gsp.protocol import (
     TextVisual,
     TickSpecKind,
     View2D,
+    VisualTransformBinding,
 )
 
 
@@ -56,6 +57,60 @@ def test_subplots_scatter_emits_point_visual():
     np.testing.assert_allclose(visual.positions, [[-0.5, 0.25], [0.5, -0.25]])
     np.testing.assert_array_equal(visual.colors, [[255, 0, 0, 255], [255, 0, 0, 255]])
     np.testing.assert_allclose(visual.sizes, [16.0, 36.0])
+
+
+def test_vispy2_affine2d_helper_emits_protocol_binding():
+    binding = vp.affine2d(
+        np.array([[1.0, 0.0, 2.0], [0.0, 1.0, -1.0], [0.0, 0.0, 1.0]])
+    )
+
+    assert isinstance(binding, VisualTransformBinding)
+    assert binding.inline is not None
+    assert binding.ref is None
+    np.testing.assert_allclose(
+        binding.inline.matrix,
+        [[1.0, 0.0, 2.0], [0.0, 1.0, -1.0], [0.0, 0.0, 1.0]],
+    )
+
+
+def test_subplots_scatter_accepts_inline_transform_parameter():
+    fig, ax = vp.subplots()
+    binding = vp.affine2d(
+        np.array([[1.0, 0.0, 0.25], [0.0, 1.0, -0.5], [0.0, 0.0, 1.0]])
+    )
+
+    visual = ax.scatter(
+        [0.0],
+        [0.0],
+        color=[255, 255, 255, 255],
+        transform=binding,
+        id="visual:points",
+    )
+
+    assert fig.visuals() == (visual,)
+    assert visual.transform is binding
+    assert visual.transform.inline is not None
+
+
+def test_subplots_visual_methods_accept_matrix_transform_convenience():
+    _, ax = vp.subplots()
+    matrix = np.array([[1.0, 0.0, 1.0], [0.0, 1.0, 2.0], [0.0, 0.0, 1.0]])
+
+    marker = ax.markers([0.0], [0.0], transform=matrix)
+    segment = ax.segments([[0.0, 0.0]], [[1.0, 0.0]], transform=matrix)
+    path = ax.path([[0.0, 0.0], [1.0, 0.0]], transform=matrix)
+    text = ax.text([0.0], [0.0], "label", transform=matrix)
+    mesh = ax.mesh(
+        [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+        [[0, 1, 2]],
+        color=[255, 0, 0, 255],
+        transform=matrix,
+    )
+
+    for visual in (marker, segment, path, text, mesh):
+        assert visual.transform is not None
+        assert visual.transform.inline is not None
+        np.testing.assert_allclose(visual.transform.inline.matrix, matrix)
 
 
 def test_subplots_imshow_emits_image_visual():
@@ -399,6 +454,21 @@ def test_view2d_is_separate_from_data_visual_stream():
     )
     assert ax.get_xlim() == (-1.0, 2.0)
     assert ax.get_ylim() == (-3.0, 4.0)
+
+
+def test_set_view2d_updates_deterministic_view_state():
+    fig, ax = vp.subplots()
+
+    view = ax.set_view2d(xlim=(2.0, -2.0), ylim=(-1.0, 1.0), clip=False)
+
+    assert view == View2D(
+        id="view:1",
+        panel_id="panel:1",
+        x_range=(2.0, -2.0),
+        y_range=(-1.0, 1.0),
+        clip=False,
+    )
+    assert fig.views() == (view,)
 
 
 def test_matplotlib_render_honors_view2d_limits():

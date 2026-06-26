@@ -6,7 +6,7 @@ S027 - Transform, View, Camera, and Navigation Semantics
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -31,3 +31,10 @@ without exposing backend-native transform, camera, or controller objects.
 ## Stop Condition
 
 Stop if API design requires public 3D camera/projection/controller semantics or transform graphs.
+
+## Completion Notes
+
+- Added `vispy2.affine2d()` producer convenience for inline S027 affine transform bindings.
+- Added `transform=` support to point, marker, segment, path/plot, text, and mesh producer methods.
+- Added explicit `Axes.set_view2d()` convenience while preserving existing x/y limit APIs.
+- Added focused VisPy2 tests proving protocol transform records are emitted.
