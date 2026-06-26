@@ -172,6 +172,10 @@ DVZ_TEXT_PLACEMENT_DATA = 1
 DVZ_COLORBAR_ORIENTATION_VERTICAL = 0
 DVZ_COLORBAR_ORIENTATION_HORIZONTAL = 1
 DVZ_COLORBAR_PLACEMENT_ATTACHED = 0
+DVZ_COLORBAR_PLACEMENT_DETACHED = 1
+DVZ_PLACEMENT_SPACE_PANEL = 0
+DVZ_HORIZONTAL_ANCHOR_RIGHT = 2
+DVZ_VERTICAL_ANCHOR_CENTER = 1
 DVZ_SCENE_ANCHOR_PANEL_TOP = 2
 DVZ_SCENE_ANCHOR_PANEL_LEFT = 4
 DVZ_SCENE_ANCHOR_PANEL_RIGHT = 6
@@ -835,17 +839,7 @@ class DatovizV04ProtocolRenderer:
 
         native_scale = self._create_native_colorbar_scale(scale, guide)
         desc = self.dvz.dvz_colorbar_desc()
-        if hasattr(desc, "orientation"):
-            desc.orientation = _colorbar_orientation_value(
-                self.dvz, guide.orientation
-            )
-        if hasattr(desc, "placement_mode"):
-            desc.placement_mode = _enum_value(
-                self.dvz,
-                "DvzColorbarPlacementMode",
-                "DVZ_COLORBAR_PLACEMENT_ATTACHED",
-                DVZ_COLORBAR_PLACEMENT_ATTACHED,
-            )
+        _configure_colorbar_layout(self.dvz, desc, guide, self.width, self.height)
         if hasattr(desc, "anchor"):
             desc.anchor = _colorbar_anchor_value(self.dvz, guide.placement)
         if hasattr(desc, "title"):
@@ -864,6 +858,7 @@ class DatovizV04ProtocolRenderer:
         )
         if anchor_result not in (0, None, True):
             raise DatovizV04Unsupported("Datoviz colorbar anchor configuration failed")
+        _configure_colorbar_format(self.dvz, colorbar)
         if guide.label:
             self.dvz.dvz_colorbar_set_title(colorbar, guide.label.encode("utf-8"))
         self.colorbars[guide.id] = colorbar
@@ -1707,6 +1702,67 @@ def _colorbar_anchor_value(
     raise DatovizV04Unsupported(
         f"unsupported Datoviz colorbar placement: {placement.value}"
     )
+
+
+def _configure_colorbar_layout(
+    dvz: Any, desc: Any, guide: ColorbarGuide, width: int, height: int
+) -> None:
+    """Use a bounded colorbar placement for visual QA captures."""
+    if hasattr(desc, "orientation"):
+        desc.orientation = _colorbar_orientation_value(dvz, guide.orientation)
+    if hasattr(desc, "placement_mode"):
+        desc.placement_mode = _enum_value(
+            dvz,
+            "DvzColorbarPlacementMode",
+            "DVZ_COLORBAR_PLACEMENT_DETACHED",
+            DVZ_COLORBAR_PLACEMENT_DETACHED,
+        )
+    if hasattr(desc, "ramp_width_px"):
+        desc.ramp_width_px = 18.0
+    if hasattr(desc, "tick_length_px"):
+        desc.tick_length_px = 6.0
+    if hasattr(desc, "label_gap_px"):
+        desc.label_gap_px = 6.0
+    placement = getattr(desc, "placement", None)
+    if placement is None:
+        return
+    if hasattr(placement, "space"):
+        placement.space = _enum_value(
+            dvz, "DvzPlacementSpace", "DVZ_PLACEMENT_SPACE_PANEL", DVZ_PLACEMENT_SPACE_PANEL
+        )
+    if hasattr(placement, "horizontal_anchor"):
+        placement.horizontal_anchor = _enum_value(
+            dvz,
+            "DvzHorizontalAnchor",
+            "DVZ_HORIZONTAL_ANCHOR_RIGHT",
+            DVZ_HORIZONTAL_ANCHOR_RIGHT,
+        )
+    if hasattr(placement, "vertical_anchor"):
+        placement.vertical_anchor = _enum_value(
+            dvz,
+            "DvzVerticalAnchor",
+            "DVZ_VERTICAL_ANCHOR_CENTER",
+            DVZ_VERTICAL_ANCHOR_CENTER,
+        )
+    if hasattr(placement, "offset_x_px"):
+        placement.offset_x_px = -max(76.0, float(width) * 0.115)
+    if hasattr(placement, "offset_y_px"):
+        placement.offset_y_px = 0.0
+    if hasattr(placement, "width_px"):
+        placement.width_px = 18.0
+    if hasattr(placement, "height_px"):
+        placement.height_px = max(160.0, float(height) * 0.62)
+
+
+def _configure_colorbar_format(dvz: Any, colorbar: Any) -> None:
+    if not hasattr(dvz, "dvz_format_desc") or not hasattr(dvz, "dvz_colorbar_set_format"):
+        return
+    fmt = dvz.dvz_format_desc()
+    if hasattr(fmt, "precision"):
+        fmt.precision = 2
+    if hasattr(fmt, "trim_trailing_zeros"):
+        fmt.trim_trailing_zeros = True
+    dvz.dvz_colorbar_set_format(colorbar, _ctypes_pointer_arg(fmt))
 
 
 def _image_sampling_value(dvz: Any, interpolation: ImageInterpolation) -> int:

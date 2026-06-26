@@ -457,6 +457,16 @@ class FakeDatovizV04WithColorbar(FakeDatovizV04):
 
     class DvzColorbarPlacementMode:
         DVZ_COLORBAR_PLACEMENT_ATTACHED = 0
+        DVZ_COLORBAR_PLACEMENT_DETACHED = 1
+
+    class DvzPlacementSpace:
+        DVZ_PLACEMENT_SPACE_PANEL = 0
+
+    class DvzHorizontalAnchor:
+        DVZ_HORIZONTAL_ANCHOR_RIGHT = 2
+
+    class DvzVerticalAnchor:
+        DVZ_VERTICAL_ANCHOR_CENTER = 1
 
     class DvzSceneAnchor:
         DVZ_SCENE_ANCHOR_PANEL_RIGHT = 6
@@ -466,12 +476,31 @@ class FakeDatovizV04WithColorbar(FakeDatovizV04):
             self.kind = None
             self.label = None
 
+    class FakePlacement:
+        def __init__(self):
+            self.space = None
+            self.horizontal_anchor = None
+            self.vertical_anchor = None
+            self.offset_x_px = None
+            self.offset_y_px = None
+            self.width_px = None
+            self.height_px = None
+
     class FakeColorbarDesc:
         def __init__(self):
             self.orientation = None
             self.placement_mode = None
             self.anchor = None
             self.title = None
+            self.ramp_width_px = None
+            self.tick_length_px = None
+            self.label_gap_px = None
+            self.placement = FakeDatovizV04WithColorbar.FakePlacement()
+
+    class FakeFormatDesc:
+        def __init__(self):
+            self.precision = None
+            self.trim_trailing_zeros = None
 
     def dvz_scale_desc(self):
         self.calls.append(("scale_desc",))
@@ -511,6 +540,14 @@ class FakeDatovizV04WithColorbar(FakeDatovizV04):
                 desc.placement_mode,
                 desc.anchor,
                 desc.title,
+                desc.ramp_width_px,
+                desc.tick_length_px,
+                desc.label_gap_px,
+                desc.placement.space,
+                desc.placement.horizontal_anchor,
+                desc.placement.vertical_anchor,
+                desc.placement.width_px,
+                desc.placement.height_px,
             )
         )
         return "colorbar"
@@ -525,6 +562,21 @@ class FakeDatovizV04WithColorbar(FakeDatovizV04):
 
     def dvz_colorbar_set_title(self, colorbar, title):
         self.calls.append(("colorbar_set_title", colorbar, title))
+        return None
+
+    def dvz_format_desc(self):
+        self.calls.append(("format_desc",))
+        return self.FakeFormatDesc()
+
+    def dvz_colorbar_set_format(self, colorbar, format_desc):
+        self.calls.append(
+            (
+                "colorbar_set_format",
+                colorbar,
+                format_desc.precision,
+                format_desc.trim_trailing_zeros,
+            )
+        )
         return None
 
 
@@ -1778,13 +1830,16 @@ def test_add_colorbar_guide_creates_native_datoviz_scale_colormap_and_colorbar()
         ("scale_set_colormap", "scale", "colormap")
     ]
     assert _calls(fake, "colorbar") == [
-        ("colorbar", "panel", "scale", 0, 0, 6, b"value")
+        ("colorbar", "panel", "scale", 0, 1, 6, b"value", 18.0, 6.0, 6.0, 0, 2, 1, 18.0, 372.0)
     ]
     assert _calls(fake, "colorbar_set_orientation") == [
         ("colorbar_set_orientation", "colorbar", 0)
     ]
     assert _calls(fake, "colorbar_set_anchor") == [
         ("colorbar_set_anchor", "colorbar", 6)
+    ]
+    assert _calls(fake, "colorbar_set_format") == [
+        ("colorbar_set_format", "colorbar", 2, True)
     ]
     assert _calls(fake, "colorbar_set_title") == [
         ("colorbar_set_title", "colorbar", b"value")

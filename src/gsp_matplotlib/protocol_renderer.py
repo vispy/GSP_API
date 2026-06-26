@@ -388,9 +388,25 @@ def render_colorbar_guide(
         norm=norm,
         cmap=listed_colormap_for_scale(scale),
     )
+    axes_box = axes.get_position()
+    if guide.orientation.value == "vertical":
+        cax_bounds = (
+            axes_box.x0 + axes_box.width * 0.82,
+            axes_box.y0 + axes_box.height * 0.18,
+            axes_box.width * 0.035,
+            axes_box.height * 0.64,
+        )
+    else:
+        cax_bounds = (
+            axes_box.x0 + axes_box.width * 0.18,
+            axes_box.y0 + axes_box.height * 0.10,
+            axes_box.width * 0.64,
+            axes_box.height * 0.045,
+        )
+    cax = axes.figure.add_axes(cax_bounds)
     colorbar = axes.figure.colorbar(
         mappable,
-        ax=axes,
+        cax=cax,
         orientation=guide.orientation.value,
     )
     colorbar.set_label(guide.label)
@@ -398,6 +414,9 @@ def render_colorbar_guide(
         colorbar.set_ticks(guide.ticks)
     if guide.tick_labels is not None:
         colorbar.set_ticklabels(guide.tick_labels)
+    colorbar.ax.tick_params(labelsize=8, length=4, width=0.8)
+    colorbar.ax.xaxis.label.set_fontsize(8)
+    colorbar.ax.yaxis.label.set_fontsize(8)
     colorbar.ax.set_gid(guide.id)
     return colorbar
 
