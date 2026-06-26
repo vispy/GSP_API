@@ -88,6 +88,8 @@ Latest completed validation before this handoff:
 - `PYTHONPATH=/Users/cyrille/GIT/Viz/datoviz:. uv run pytest tests/test_visual_qa_harness.py -q`:
   23 passed
 - S029 full review pack regenerated successfully on macOS after regenerating Datoviz ctypes wrappers.
+- `tools/run_datoviz_visual_review_pack.sh` smoke passed after teaching the launcher to discover
+  `VK_ICD_FILENAMES`, VULKAN_SDK, and Homebrew MoltenVK locations.
 - Datoviz validation: `just ctypes-check` and `tools/bindings/array_facade_smoke.py` passed with
   the Datoviz `.venv` on `PATH`.
 - `git diff --check`: clean
