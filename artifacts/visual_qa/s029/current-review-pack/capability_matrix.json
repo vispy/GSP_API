@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T21:35:36.773139+00:00",
+  "generated_at": "2026-06-26T21:47:30.460409+00:00",
   "rows": [
     {
       "backend": "matplotlib",
@@ -1314,10 +1314,12 @@
       "family": "guide",
       "known_adaptations": [],
       "known_missing_semantics": [
-        "axis guide rendering, explicit tick labels, panel title placement, and guide query semantics are unverified"
+        "Datoviz native axes can be configured with backend auto ticks, labels, and optional grid, but the S029 review pack has no rendered Datoviz guide artifact proving GSP auto-tick/grid alignment with View2D data visuals",
+        "panel title placement and guide query semantics are unsupported for this Datoviz slice"
       ],
       "promotion_blockers": [
-        "wire Datoviz axis guides, panel titles, explicit tick labels, and guide query semantics"
+        "render and verify Datoviz backend-auto axis ticks, grid placement, axis labels, and panel title placement against the S028 View2D guide contract",
+        "add Datoviz guide-query support before advertising guide or all-rendered query semantics"
       ],
       "protocol_scope": [
         "guide",
@@ -1365,10 +1367,13 @@
       "family": "guide",
       "known_adaptations": [],
       "known_missing_semantics": [
-        "axis guide rendering, explicit tick labels, panel title placement, and guide query semantics are unverified"
+        "explicit GSP tick values and labels are not wired through the Datoviz axis guide review-pack path",
+        "strict reversed View2D domain rendering, grid placement, panel title placement, and guide query semantics are unverified or unsupported for this Datoviz slice"
       ],
       "promotion_blockers": [
-        "wire Datoviz axis guides, panel titles, explicit tick labels, and guide query semantics"
+        "wire and verify Datoviz explicit axis ticks/labels for the S028 guide contract before rendering promotion",
+        "prove reversed View2D axis/grid placement and title layout with a Datoviz artifact",
+        "add Datoviz guide-query support before advertising guide or all-rendered query semantics"
       ],
       "protocol_scope": [
         "guide",

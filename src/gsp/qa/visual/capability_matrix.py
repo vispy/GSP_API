@@ -102,6 +102,30 @@ _DATOVIZ_S029_RENDERED_BLOCKERS = {
     ],
 }
 
+_DATOVIZ_S029_UNSUPPORTED_GUIDE_ROWS = {
+    "guide/view2d_auto_grid": {
+        "missing": [
+            "Datoviz native axes can be configured with backend auto ticks, labels, and optional grid, but the S029 review pack has no rendered Datoviz guide artifact proving GSP auto-tick/grid alignment with View2D data visuals",
+            "panel title placement and guide query semantics are unsupported for this Datoviz slice",
+        ],
+        "blockers": [
+            "render and verify Datoviz backend-auto axis ticks, grid placement, axis labels, and panel title placement against the S028 View2D guide contract",
+            "add Datoviz guide-query support before advertising guide or all-rendered query semantics",
+        ],
+    },
+    "guide/view2d_reversed_explicit": {
+        "missing": [
+            "explicit GSP tick values and labels are not wired through the Datoviz axis guide review-pack path",
+            "strict reversed View2D domain rendering, grid placement, panel title placement, and guide query semantics are unverified or unsupported for this Datoviz slice",
+        ],
+        "blockers": [
+            "wire and verify Datoviz explicit axis ticks/labels for the S028 guide contract before rendering promotion",
+            "prove reversed View2D axis/grid placement and title layout with a Datoviz artifact",
+            "add Datoviz guide-query support before advertising guide or all-rendered query semantics",
+        ],
+    },
+}
+
 
 def build_capability_matrix(report: Mapping[str, object]) -> dict[str, object]:
     """Build a backend capability matrix from a visual QA report."""
@@ -233,6 +257,11 @@ def _datoviz_row(
         reason_code, status, missing = _classify_datoviz_unsupported(reason)
         adaptations = []
         blockers = _datoviz_blockers(reason_code)
+        if reason_code == "datoviz_axis_guide_contract_unverified":
+            guide_policy = _datoviz_unsupported_guide_policy(case)
+            if guide_policy is not None:
+                missing = guide_policy["missing"]
+                blockers = guide_policy["blockers"]
 
     return _base_row(case, DATOVIZ_BACKEND_ID) | {
         "status": status,
@@ -260,6 +289,15 @@ def _datoviz_rendered_blockers(case: Mapping[str, object]) -> list[str]:
         if blockers is not None:
             return blockers
     return ["strict promotion requires a family-specific capability audit"]
+
+
+def _datoviz_unsupported_guide_policy(
+    case: Mapping[str, object],
+) -> dict[str, list[str]] | None:
+    case_id = case.get("case_id")
+    if not isinstance(case_id, str):
+        return None
+    return _DATOVIZ_S029_UNSUPPORTED_GUIDE_ROWS.get(case_id)
 
 
 def _classify_datoviz_unsupported(reason: str) -> tuple[str, str, list[str]]:

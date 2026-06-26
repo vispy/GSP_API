@@ -173,7 +173,7 @@
       "id": "S029",
       "title": "Backend Capability Matrix and Visual Review Pack",
       "state": "in_progress",
-      "progress": 80
+      "progress": 90
     }
   ],
   "missions": [
@@ -1225,9 +1225,9 @@
       "id": "M118",
       "title": "S029 Datoviz guide/View2D unsupported closure",
       "stage": "S029",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 118
     },
     {
@@ -1301,7 +1301,7 @@
   ],
   "recommendations": [
     "Keep remaining text gaps, axes/guides, query payloads, and 3D previews as focused S029 follow-up audits with adapted or experimental status until proven.",
-    "Next mission is M118: close Datoviz guide/View2D unsupported capability rows.",
+    "Next mission is M119: close out the S029 review pack.",
     "Use M119 only after M117-M118 are completed or explicitly deferred."
   ],
   "notes": [
@@ -1351,6 +1351,7 @@
     "M113 completed: audited Datoviz rendered point, marker, segment, path, image, and overlay rows; promoted only exact S029 rendered scopes to strict, kept text/mesh/color/transform adapted, and regenerated the S029 review pack.",
     "M114 completed: audited Datoviz color/colorbar rendered rows; promoted scalar image colorbar, scalar point gray range, and scalar marker fill alpha to strict rendering-only status, while preserving query_supported false.",
     "M117 completed: audited Datoviz transform rows; promoted inline/named affine equivalence, reversed View2D DATA-to-NDC overlay, and bounded cross-family affine+View2D rendering to strict while preserving query_supported false.",
+    "M118 completed: kept Datoviz guide/View2D rows unsupported with row-specific blockers for backend auto ticks/grid/title proof, explicit tick labels, reversed domains, and guide/all-rendered query support.",
     "Created S029 continuation batch M115-M119 for Datoviz text, mesh, transform, guide/View2D, and final review-pack closeout so work can resume cleanly on another machine."
   ]
 }

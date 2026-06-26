@@ -547,6 +547,78 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
     ] is False
 
 
+def test_s029_datoviz_guide_view2d_rows_stay_unsupported_with_specific_blockers() -> None:
+    reason = (
+        "axis_guide_render_unsupported: Datoviz v0.4 axis guides and panel text "
+        "guides remain capability-gated until native axes, explicit tick labels, "
+        "title placement, and guide query semantics are verified together"
+    )
+    report = {
+        "suite": "s028",
+        "stage": "S029",
+        "run_id": "unit",
+        "cases": [
+            {
+                "case_id": "guide/view2d_auto_grid",
+                "family": "guide",
+                "required_features": [
+                    "guide",
+                    "view2d",
+                    "auto-ticks",
+                    "grid",
+                    "labels",
+                ],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "unsupported", "reason": reason},
+                },
+            },
+            {
+                "case_id": "guide/view2d_reversed_explicit",
+                "family": "guide",
+                "required_features": [
+                    "guide",
+                    "view2d",
+                    "reversed-limits",
+                    "explicit-ticks",
+                    "grid",
+                    "labels",
+                ],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "unsupported", "reason": reason},
+                },
+            },
+        ],
+    }
+
+    matrix = build_capability_matrix(report)
+    rows = {
+        row["case_id"]: row
+        for row in matrix["rows"]
+        if row["backend"] == "datoviz"
+    }
+
+    auto = rows["guide/view2d_auto_grid"]
+    assert auto["status"] == "unsupported"
+    assert auto["rendering_supported"] is False
+    assert auto["query_supported"] is False
+    assert auto["reason_code"] == "datoviz_axis_guide_contract_unverified"
+    assert "backend auto ticks" in auto["known_missing_semantics"][0]
+    assert "guide-query support" in auto["promotion_blockers"][1]
+
+    reversed_explicit = rows["guide/view2d_reversed_explicit"]
+    assert reversed_explicit["status"] == "unsupported"
+    assert reversed_explicit["rendering_supported"] is False
+    assert reversed_explicit["query_supported"] is False
+    assert "explicit GSP tick values and labels" in reversed_explicit[
+        "known_missing_semantics"
+    ][0]
+    assert "reversed View2D axis/grid placement" in reversed_explicit[
+        "promotion_blockers"
+    ][1]
+
+
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:
     """The S023 harness uses the v0.4 protocol renderer, not the legacy renderer package."""
     source_root = Path("src/gsp/qa/visual")

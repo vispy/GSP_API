@@ -4,7 +4,7 @@ Updated: 2026-06-26
 
 ## Current State
 
-S029 is open at 80% after the Datoviz transform promotion audit.
+S029 is open at 90% after the Datoviz guide/View2D unsupported closure.
 
 Completed S029 missions:
 
@@ -14,6 +14,7 @@ Completed S029 missions:
 - M115: Datoviz text promotion audit
 - M116: Datoviz mesh promotion audit
 - M117: Datoviz transform promotion audit
+- M118: Datoviz guide/View2D unsupported closure
 
 Current pushed GSP branch:
 
@@ -38,7 +39,7 @@ Current pack:
 
 - `artifacts/visual_qa/s029/current-review-pack`
 
-Current matrix status after M117:
+Current matrix status after M118:
 
 - `strict`: 52
 - `adapted`: 4
@@ -66,12 +67,20 @@ All promoted Datoviz rows remain rendering-only:
 
 - `query_supported: false`
 
+Datoviz guide/View2D rows remain explicitly unsupported:
+
+- `guide/view2d_auto_grid`
+- `guide/view2d_reversed_explicit`
+
+Both are blocked on rendered/runtime proof for Datoviz axis tick/grid/title placement and guide or
+all-rendered query semantics. The reversed-explicit row also requires exact explicit tick label and
+reversed-domain proof.
+
 ## Next Mission Batch
 
-The next batch is recorded as ready missions M118-M119:
+The next batch is recorded as ready mission M119:
 
-1. M118 - S029 Datoviz guide/View2D unsupported closure
-2. M119 - S029 review-pack closeout
+1. M119 - S029 review-pack closeout
 
 Execute in order unless one mission exposes an upstream Datoviz blocker.
 
@@ -81,10 +90,10 @@ From the GSP repo:
 
 ```bash
 tools/agentctl next
-tools/agentctl mission show M118
+tools/agentctl mission show M119
 ```
 
-Then execute M118 locally or approve a bounded worker launch.
+Then execute M119 locally or approve a bounded worker launch.
 
 ## Validation Baseline
 
@@ -96,9 +105,8 @@ Latest completed validation before this handoff:
 - `PYTHONPATH=/Users/cyrille/GIT/Viz/datoviz:. uv run pytest tests/test_visual_qa_harness.py tests/test_datoviz_v04_protocol_renderer.py -q`:
   93 passed
 - `DATOVIZ_REPO=/Users/cyrille/GIT/Viz/datoviz tools/run_datoviz_visual_review_pack.sh --suite s028 --out artifacts/visual_qa/s029/current-review-pack --run-id current-review-pack --resolution 800x600`:
-  runtime attempted during M117, but the current sibling Datoviz checkout lacked generated
-  `dvz_colorbar_set_ticks`; the transform policy layer was refreshed from the prior rendered
-  review-pack report to avoid baking an unrelated colorbar regression into M117.
+  passed after the local Datoviz dev environment was refreshed and the colorbar tick facade was
+  verified.
 - S029 full review pack regenerated successfully on macOS after regenerating Datoviz ctypes wrappers.
 - `tools/run_datoviz_visual_review_pack.sh` smoke passed after teaching the launcher to discover
   `VK_ICD_FILENAMES`, VULKAN_SDK, and Homebrew MoltenVK locations.
@@ -111,6 +119,15 @@ M117 focused validation:
 - `PYTHONPATH=. uv run pytest tests/test_visual_qa_harness.py -q`: 23 passed
 - `PATH=/Users/cyrille/GIT/Viz/datoviz/.venv/bin:$PATH PYTHONPATH=/Users/cyrille/GIT/Viz/datoviz:. uv run pytest tests/test_visual_qa_harness.py tests/test_datoviz_v04_protocol_renderer.py -q`:
   93 passed
+
+M118 focused validation:
+
+- `PYTHONPATH=. uv run pytest tests/test_visual_qa_harness.py -q`: 24 passed
+- `PATH=/Users/cyrille/GIT/Viz/datoviz/.venv/bin:$PATH PYTHONPATH=/Users/cyrille/GIT/Viz/datoviz:. uv run pytest tests/test_visual_qa_harness.py tests/test_datoviz_v04_protocol_renderer.py -q`:
+  94 passed
+- `DATOVIZ_REPO=/Users/cyrille/GIT/Viz/datoviz tools/run_datoviz_visual_review_pack.sh --suite s028 --out /tmp/gsp-s029-dataviz-binding-refresh.* --run-id binding-refresh-smoke --resolution 800x600`:
+  passed; `color/scalar_image_viridis_colorbar` rendered and the matrix was `strict=52`,
+  `adapted=4`, `unsupported=2`.
 
 ## Datoviz Binding Regeneration Note
 
