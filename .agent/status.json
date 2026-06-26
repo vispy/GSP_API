@@ -1,5 +1,5 @@
 {
-  "current_stage": "S029",
+  "current_stage": "S030",
   "stages": [
     {
       "id": "S001",
@@ -172,8 +172,14 @@
     {
       "id": "S029",
       "title": "Backend Capability Matrix and Visual Review Pack",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S030",
+      "title": "Datoviz Guide Axis Proof",
       "state": "in_progress",
-      "progress": 90
+      "progress": 0
     }
   ],
   "missions": [
@@ -1234,10 +1240,37 @@
       "id": "M119",
       "title": "S029 review-pack closeout",
       "stage": "S029",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 119
+    },
+    {
+      "id": "M120",
+      "title": "S030 Datoviz guide-axis runtime proof",
+      "stage": "S030",
       "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
-      "priority": 119
+      "priority": 120
+    },
+    {
+      "id": "M121",
+      "title": "S030 GSP Datoviz guide review-path wiring",
+      "stage": "S030",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 121
+    },
+    {
+      "id": "M122",
+      "title": "S030 guide promotion and closeout",
+      "stage": "S030",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 122
     }
   ],
   "review_queue": [],
@@ -1300,9 +1333,9 @@
     }
   ],
   "recommendations": [
-    "Keep remaining text gaps, axes/guides, query payloads, and 3D previews as focused S029 follow-up audits with adapted or experimental status until proven.",
-    "Next mission is M119: close out the S029 review pack.",
-    "Use M119 only after M117-M118 are completed or explicitly deferred."
+    "S029 is closed with Datoviz guide rows explicitly unsupported and all promoted Datoviz rows rendering-only.",
+    "Next mission is M120: run a bounded Datoviz guide-axis runtime proof before any guide row promotion.",
+    "Keep guide/all-rendered query unsupported unless Datoviz guide picking/query semantics are explicitly proven."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1352,6 +1385,7 @@
     "M114 completed: audited Datoviz color/colorbar rendered rows; promoted scalar image colorbar, scalar point gray range, and scalar marker fill alpha to strict rendering-only status, while preserving query_supported false.",
     "M117 completed: audited Datoviz transform rows; promoted inline/named affine equivalence, reversed View2D DATA-to-NDC overlay, and bounded cross-family affine+View2D rendering to strict while preserving query_supported false.",
     "M118 completed: kept Datoviz guide/View2D rows unsupported with row-specific blockers for backend auto ticks/grid/title proof, explicit tick labels, reversed domains, and guide/all-rendered query support.",
+    "M119 completed: regenerated the final S029 review pack, closed S029 with strict=52/adapted=4/unsupported=2, and opened S030 as the bounded Datoviz guide-axis proof stage.",
     "Created S029 continuation batch M115-M119 for Datoviz text, mesh, transform, guide/View2D, and final review-pack closeout so work can resume cleanly on another machine."
   ]
 }

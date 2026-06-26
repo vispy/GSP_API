@@ -912,7 +912,7 @@
     },
     "minimal_point_supported": true,
     "raw_imported": true,
-    "source_revision": "d641c6a6980e1bc4e8c123d3a4e991739c042d61",
+    "source_revision": "5e20e673b878c72179c9761f7d9c3c8e6128349c",
     "unexpected_banned_hits": 0
   },
   "environment_path": "artifacts/visual_qa/s029/current-review-pack/environment.json",
@@ -920,6 +920,6 @@
   "schema_kind": "gsp.visual_qa.report",
   "schema_version": 1,
   "stage": "S028",
-  "started_at": "2026-06-26T20:59:24.390821+00:00",
+  "started_at": "2026-06-26T21:54:36.638852+00:00",
   "suite": "s028"
 }

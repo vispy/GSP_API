@@ -4,7 +4,10 @@ Updated: 2026-06-26
 
 ## Current State
 
-S029 is open at 90% after the Datoviz guide/View2D unsupported closure.
+S029 is closed. The active next stage is S030, recorded in:
+
+- `.agent/S029_CLOSEOUT.md`
+- `.agent/tasks/S030-NEXT-STAGE-SCOPING.md`
 
 Completed S029 missions:
 
@@ -15,6 +18,7 @@ Completed S029 missions:
 - M116: Datoviz mesh promotion audit
 - M117: Datoviz transform promotion audit
 - M118: Datoviz guide/View2D unsupported closure
+- M119: review-pack closeout
 
 Current pushed GSP branch:
 
@@ -39,7 +43,7 @@ Current pack:
 
 - `artifacts/visual_qa/s029/current-review-pack`
 
-Current matrix status after M118:
+Final matrix status after M119:
 
 - `strict`: 52
 - `adapted`: 4
@@ -78,9 +82,11 @@ reversed-domain proof.
 
 ## Next Mission Batch
 
-The next batch is recorded as ready mission M119:
+The next batch is recorded under S030:
 
-1. M119 - S029 review-pack closeout
+1. M120 - S030 Datoviz guide-axis runtime proof
+2. M121 - S030 GSP Datoviz guide review-path wiring
+3. M122 - S030 guide promotion and closeout
 
 Execute in order unless one mission exposes an upstream Datoviz blocker.
 
@@ -90,10 +96,10 @@ From the GSP repo:
 
 ```bash
 tools/agentctl next
-tools/agentctl mission show M119
+tools/agentctl mission show M120
 ```
 
-Then execute M119 locally or approve a bounded worker launch.
+Then execute M120 locally or approve a bounded worker launch.
 
 ## Validation Baseline
 
