@@ -1,5 +1,5 @@
 {
-  "current_stage": "S026",
+  "current_stage": "S027",
   "stages": [
     {
       "id": "S001",
@@ -156,6 +156,12 @@
       "title": "Color Mapping, Colorbars, and Scalar Data Semantics",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S027",
+      "title": "Transform, View, Camera, and Navigation Semantics",
+      "state": "blocked",
+      "progress": 0
     }
   ],
   "missions": [
@@ -1031,6 +1037,24 @@
       "agent": "codex-ibl",
       "progress": 100,
       "priority": 97
+    },
+    {
+      "id": "M098",
+      "title": "S027 transform/view/camera scoping consultation",
+      "stage": "S027",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 98
+    },
+    {
+      "id": "M099",
+      "title": "S027 P012 ADR/spec baseline",
+      "stage": "S027",
+      "state": "blocked",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 99
     }
   ],
   "review_queue": [],
@@ -1083,12 +1107,19 @@
       "requires_human": false,
       "requires_chatgpt_pro": true,
       "state": "closed"
+    },
+    {
+      "id": "Q100-TRANSFORM-VIEW-CAMERA-NAVIGATION-SEMANTICS",
+      "summary": "S027 transform, view, camera, navigation, and query-inverse semantics require ChatGPT Pro consultation via P012 before ADR/spec or implementation work.",
+      "requires_human": true,
+      "requires_chatgpt_pro": true,
+      "state": "open"
     }
   ],
   "recommendations": [
-    "M097 is complete: Datoviz now CPU pre-maps finite eager scalar ImageVisual and PointVisual data to canonical RGBA8 while retaining scalar data for semantic query payloads.",
-    "ColorbarGuide rendering/query, marker scalar fill, and mesh face scalar colors remain capability-gated with structured unsupported diagnostics.",
-    "Next Mission Control action should review M097 or propose the next stage/release action."
+    "M098 is complete: S027 is opened for transform/view/camera/navigation semantics and P012 is ready for ChatGPT Pro consultation.",
+    "M099 is blocked until the P012 response is pasted or committed and converted into ADR/spec baselines.",
+    "Do not implement public transform, camera, controller/navigation, layout, or query-inverse semantics before P012 is accepted."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1115,6 +1146,7 @@
     "M094 completed: added S026 visual QA suite cases, Matplotlib review artifacts, protocol color mapping example, and examples docs; M095 is ready.",
     "M095 completed: added Datoviz S026 color mapping symbol/capability probes and artifacts; sibling checkout import works locally and runtime bindings expose image/point/colorbar/query candidates, with marker scalar fill and mesh face scalar still capability-gated; M096 is ready.",
     "M096 completed: added bounded VisPy2 S026 color scale, scalar image/point/marker encoding, and colorbar guide producer APIs with examples and focused tests; S026 is closed.",
-    "M097 completed: added Datoviz S026 scalar image/point CPU pre-mapping, retained scalar query payload decoration, shared protocol color-mapping helpers, structured colorbar/marker gates, and focused tests; full suite passed with 346 passed and 2 skipped."
+    "M097 completed: added Datoviz S026 scalar image/point CPU pre-mapping, retained scalar query payload decoration, shared protocol color-mapping helpers, structured colorbar/marker gates, and focused tests; full suite passed with 346 passed and 2 skipped.",
+    "M098 completed: opened S027 for transform/view/camera/navigation semantics, created P012 ChatGPT Pro consultation packet, and blocked M099 pending the response."
   ]
 }
