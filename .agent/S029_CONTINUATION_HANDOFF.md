@@ -85,7 +85,9 @@ Then execute M116 locally or approve a bounded worker launch.
 Latest completed validation before this handoff:
 
 - `PYTHONPATH=. uv run pytest tests/test_visual_qa_harness.py -q`: 23 passed
-- S029 capability matrix/index regenerated from existing `report.json`
-- Full Datoviz runtime regeneration blocked locally: missing
-  `/Users/cyrille/GIT/Viz/datoviz/libs/vulkan/macos_arm64/MoltenVK_icd.json`
+- `PYTHONPATH=/Users/cyrille/GIT/Viz/datoviz:. uv run pytest tests/test_visual_qa_harness.py -q`:
+  23 passed
+- S029 full review pack regenerated successfully on macOS after regenerating Datoviz ctypes wrappers.
+- Datoviz validation: `just ctypes-check` and `tools/bindings/array_facade_smoke.py` passed with
+  the Datoviz `.venv` on `PATH`.
 - `git diff --check`: clean

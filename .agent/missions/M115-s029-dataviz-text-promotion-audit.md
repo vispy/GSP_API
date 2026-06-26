@@ -51,5 +51,7 @@ Completed on 2026-06-26 in the local Mission Control session.
   `text/multiline_unicode_smoke` as `adapted` with row-specific blockers.
 - Preserved `query_supported: false` for all text rows.
 - Regenerated S029 capability matrix/index artifacts from the current review-pack report.
-- Full Datoviz runtime regeneration was blocked locally by missing macOS MoltenVK ICD files in the
-  Datoviz checkout.
+- Follow-up troubleshooting regenerated the Datoviz ctypes wrappers in the Datoviz checkout and
+  confirmed direct facade access to `dvz_text_placement`, `DvzColorbarTicks`, and
+  `dvz_colorbar_set_ticks`; the full S029 review pack then regenerated successfully on macOS with
+  system MoltenVK.
