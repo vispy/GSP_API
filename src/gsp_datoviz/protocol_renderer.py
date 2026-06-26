@@ -45,8 +45,10 @@ from gsp.protocol import (
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     ScalarColorQueryPayload,
     ScalarColorSlot,
+    TRANSFORM_QUERY_PAYLOAD_KIND,
     View2D,
     VisualFamily,
+    VisualTransformBinding,
 )
 from gsp.protocol.color_mapping import (
     map_scalar_value,
@@ -362,6 +364,9 @@ class DatovizV04ProtocolRenderer:
     visuals: dict[str, Any] = field(default_factory=dict, init=False)
     sampled_fields: dict[str, Any] = field(default_factory=dict, init=False)
     scalar_visuals: dict[str, _ScalarVisualData] = field(default_factory=dict, init=False)
+    transform_adaptations: dict[str, tuple[str, ...]] = field(
+        default_factory=dict, init=False
+    )
     _closed: bool = field(default=False, init=False)
 
     def __post_init__(self) -> None:
@@ -415,7 +420,10 @@ class DatovizV04ProtocolRenderer:
                 "Datoviz v0.4 slice currently supports NDC point positions only"
             )
 
-        positions = _positions_3d(visual.positions)
+        positions = _positions_3d(
+            _cpu_adapt_inline_affine_positions(visual.id, visual.positions, visual.transform)
+        )
+        _record_transform_adaptation(self.transform_adaptations, visual.id, visual.transform)
         colors = _point_colors(visual, color_scales=self.color_scales)
         diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
 
@@ -465,7 +473,10 @@ class DatovizV04ProtocolRenderer:
                 f"Datoviz v0.4 marker facade is unavailable: {', '.join(marker_diagnostics)}"
             )
 
-        positions = _positions_3d(visual.positions)
+        positions = _positions_3d(
+            _cpu_adapt_inline_affine_positions(visual.id, visual.positions, visual.transform)
+        )
+        _record_transform_adaptation(self.transform_adaptations, visual.id, visual.transform)
         if visual.fill_colors is None:
             raise ValueError("MarkerVisual requires fill_colors when scalar fill is absent")
         fill_colors = _rgba8(visual.fill_colors)
@@ -507,8 +518,17 @@ class DatovizV04ProtocolRenderer:
                 f"Datoviz v0.4 segment facade is unavailable: {', '.join(segment_diagnostics)}"
             )
 
-        start_positions = _positions_3d(visual.start_positions)
-        end_positions = _positions_3d(visual.end_positions)
+        start_positions = _positions_3d(
+            _cpu_adapt_inline_affine_positions(
+                visual.id, visual.start_positions, visual.transform
+            )
+        )
+        end_positions = _positions_3d(
+            _cpu_adapt_inline_affine_positions(
+                visual.id, visual.end_positions, visual.transform
+            )
+        )
+        _record_transform_adaptation(self.transform_adaptations, visual.id, visual.transform)
         colors = _rgba8(visual.colors)
         widths = np.ascontiguousarray(visual.width_values())
 
@@ -545,7 +565,10 @@ class DatovizV04ProtocolRenderer:
                 f"Datoviz v0.4 path facade is unavailable: {', '.join(path_diagnostics)}"
             )
 
-        positions = _positions_3d(visual.positions)
+        positions = _positions_3d(
+            _cpu_adapt_inline_affine_positions(visual.id, visual.positions, visual.transform)
+        )
+        _record_transform_adaptation(self.transform_adaptations, visual.id, visual.transform)
         colors = _expand_path_colors(visual)
         widths = _expand_path_widths(visual)
         subpaths = np.ascontiguousarray(np.array(visual.path_lengths, dtype=np.uint32))
@@ -633,6 +656,12 @@ class DatovizV04ProtocolRenderer:
             raise DatovizV04Unsupported(
                 "Datoviz v0.4 slice currently supports NDC mesh positions only"
             )
+        if visual.transform is not None:
+            raise DatovizV04Unsupported(
+                "GSP_QUERY_INVERSE_UNSUPPORTED: Datoviz MeshVisual transform "
+                "support is deferred until mesh placement and face query inverse "
+                "semantics are verified"
+            )
         if visual.positions.shape[1] != 2:
             raise DatovizV04Unsupported(
                 "Datoviz v0.4 MeshVisual strict adapter is limited to 2D positions "
@@ -649,6 +678,12 @@ class DatovizV04ProtocolRenderer:
         if visual.coordinate_space != CoordinateSpace.NDC:
             raise DatovizV04Unsupported(
                 "Datoviz v0.4 slice currently supports NDC text positions only"
+            )
+        if visual.transform is not None:
+            raise DatovizV04Unsupported(
+                "GSP_QUERY_INVERSE_UNSUPPORTED: Datoviz TextVisual transform "
+                "support is deferred until text placement and query inverse "
+                "semantics are verified"
             )
         diagnostics = datoviz_v04_text_diagnostics(self.dvz)
         raise DatovizV04Unsupported(
@@ -971,6 +1006,51 @@ def _positions_3d(
         return np.ascontiguousarray(array)
     zeros = np.zeros((array.shape[0], 1), dtype=np.float32)
     return np.ascontiguousarray(np.column_stack([array, zeros]))
+
+
+def _cpu_adapt_inline_affine_positions(
+    visual_id: str,
+    positions: npt.NDArray[np.float32] | npt.NDArray[np.float64],
+    transform: VisualTransformBinding | None,
+) -> npt.NDArray[np.float32] | npt.NDArray[np.float64]:
+    """Apply bounded S027 CPU transform adaptation for finite eager NDC positions."""
+    if transform is None:
+        return positions
+    if transform.ref is not None:
+        raise DatovizV04Unsupported(
+            "GSP_TRANSFORM_MISSING_REF: Datoviz v0.4 transform CPU adapter "
+            "does not resolve named transform resources in this slice"
+        )
+    if transform.inline is None:
+        raise DatovizV04Unsupported(
+            "GSP_TRANSFORM_UNSUPPORTED_KIND: Datoviz v0.4 transform binding is invalid"
+        )
+    xy = np.asarray(positions[:, :2], dtype=np.float64)
+    homogeneous = np.column_stack([xy, np.ones((xy.shape[0],), dtype=np.float64)])
+    matrix = np.asarray(transform.inline.matrix, dtype=np.float64)
+    transformed = np.asarray((homogeneous @ matrix.T)[:, :2], dtype=np.float64)
+    if positions.shape[1] == 3:
+        z = np.asarray(positions[:, 2:3], dtype=np.float64)
+        transformed = np.column_stack([transformed, z])
+    if not np.all(np.isfinite(transformed)):
+        raise DatovizV04Unsupported(
+            f"GSP_TRANSFORM_NONFINITE: CPU transform adaptation produced "
+            f"non-finite positions for {visual_id}"
+        )
+    return np.ascontiguousarray(transformed.astype(positions.dtype, copy=False))
+
+
+def _record_transform_adaptation(
+    adaptations: dict[str, tuple[str, ...]],
+    visual_id: str,
+    transform: VisualTransformBinding | None,
+) -> None:
+    if transform is None:
+        return
+    adaptations[visual_id] = (
+        "cpu_adapter_affine2d_eager_ndc",
+        "query_inverse_unsupported",
+    )
 
 
 def _rgba8(colors: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:
@@ -1486,6 +1566,11 @@ def _datoviz_query_request_diagnostic(request: QueryRequest) -> str | None:
         for kind in request.requested_extension_payload_kinds
         if kind != SCALAR_COLOR_QUERY_PAYLOAD_KIND
     )
+    if TRANSFORM_QUERY_PAYLOAD_KIND in unsupported_payloads:
+        return (
+            "GSP_QUERY_INVERSE_UNSUPPORTED: Datoviz v0.4 query slice does not "
+            "support gsp.transform-query@0.1 inverse payloads"
+        )
     if unsupported_payloads:
         return (
             "Datoviz v0.4 query slice does not support requested extension query "

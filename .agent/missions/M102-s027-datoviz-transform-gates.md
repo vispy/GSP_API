@@ -6,7 +6,7 @@ S027 - Transform, View, Camera, and Navigation Semantics
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -32,3 +32,12 @@ affine transforms, `View2D`, placement reporting, and query inverse support with
 
 Stop if Datoviz support requires changing accepted S027 semantics, adding public 3D camera behavior,
 or silently materializing virtual/remote data.
+
+## Completion Notes
+
+- Added Datoviz S027 transform capability metadata and CPU-adapter placement reporting.
+- Added bounded CPU pre-transform adaptation for finite eager NDC Point/Marker/Segment/PathVisual
+  inline affine transforms.
+- Added explicit unsupported behavior for named transform refs, transform query inverse payloads,
+  mesh/text transforms, and deferred semantics.
+- Added focused Datoviz tests.

@@ -35,8 +35,11 @@ from gsp.protocol import (
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     ScalarColorEncoding,
     ScalarColorSlot,
+    TRANSFORM_QUERY_PAYLOAD_KIND,
+    TransformPlacement,
     View2D,
     VisualFamily,
+    VisualTransformBinding,
 )
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
@@ -552,6 +555,10 @@ def test_capability_snapshot_defers_query_support():
     assert caps.visual_families == ("point", "image")
     assert caps.texture_formats == ("rgba8",)
     assert caps.query_modes == ()
+    assert caps.transform_placements == ("cpu-adapter", "unsupported")
+    assert caps.supports_transform_placement(TransformPlacement.CPU_ADAPTER)
+    assert caps.supports_transform_capability("gsp.transform.affine2d@0.1")
+    assert "s027_transform" in caps.metadata
     assert caps.metadata["datoviz_api"] == "v0.4 dvz_* facade"
     assert caps.axis_providers[0].provider_id == DATOVIZ_V04_AXIS_PROVIDER
 
@@ -851,6 +858,19 @@ def test_query_panel_rejects_unadvertised_scopes_and_policies():
     assert data_coordinates.status == QueryStatus.UNSUPPORTED
     assert "panel coordinates" in str(data_coordinates.diagnostic)
 
+    transform_payload = renderer.query_panel(
+        QueryRequest(
+            id="query:transform",
+            panel_id="panel:main",
+            coordinate=(0.0, 0.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            requested_extension_payload_kinds=(TRANSFORM_QUERY_PAYLOAD_KIND,),
+        )
+    )
+
+    assert transform_payload.status == QueryStatus.UNSUPPORTED
+    assert "GSP_QUERY_INVERSE_UNSUPPORTED" in str(transform_payload.diagnostic)
+
 
 def test_facade_shape_rejects_missing_v04_functions():
     class IncompleteDatoviz:
@@ -916,6 +936,47 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     assert isinstance(attach_desc, FakeDatovizV04.DvzVisualAttachDesc)
     assert attach_desc.z_layer == 0
     assert attach_desc.coord_space == 1
+
+
+def test_add_point_visual_cpu_adapts_inline_affine_transform():
+    fake = FakeDatovizV04WithQueryCapabilities()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
+    visual = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255], [0, 0, 255, 255]], dtype=np.uint8),
+        sizes=np.array([2.0, 4.0], dtype=np.float32),
+        transform=VisualTransformBinding.inline_affine(
+            np.array([[1.0, 0.0, 0.25], [0.0, 1.0, -0.5], [0.0, 0.0, 1.0]])
+        ),
+    )
+
+    renderer.add_point_visual(visual)
+
+    position_upload = _calls(fake, "set_data")[0]
+    assert position_upload[2] == "position"
+    np.testing.assert_allclose(
+        position_upload[3],
+        [[0.25, -0.5, 0.0], [1.25, 0.5, 0.0]],
+    )
+    assert renderer.transform_adaptations["visual:points"] == (
+        "cpu_adapter_affine2d_eager_ndc",
+        "query_inverse_unsupported",
+    )
+
+
+def test_add_point_visual_rejects_named_transform_ref_without_resource_resolution():
+    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithQueryCapabilities())
+    visual = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+        sizes=np.array([2.0], dtype=np.float32),
+        transform=VisualTransformBinding.from_ref("transform:model"),
+    )
+
+    with pytest.raises(DatovizV04Unsupported, match="GSP_TRANSFORM_MISSING_REF"):
+        renderer.add_point_visual(visual)
 
 
 def test_add_point_visual_cpu_premaps_scalar_color_encoding_to_canonical_rgba8():

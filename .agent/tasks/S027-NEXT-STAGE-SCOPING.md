@@ -33,6 +33,6 @@ graph semantics.
 | M099 | completed | Converted P012 response into ADR/spec baseline before implementation. |
 | M100 | completed | Implemented accepted protocol dataclasses/enums/validation. |
 | M101 | completed | Added Matplotlib reference transform/query behavior after M100. |
-| M102 | ready | Add Datoviz transform capability gates or bounded runtime mapping. |
-| M103 | blocked | Add VisPy2 producer API updates after protocol models exist. |
+| M102 | completed | Added Datoviz transform capability gates and bounded CPU adaptation. |
+| M103 | ready | Add VisPy2 producer API updates after protocol models exist. |
 | M104 | blocked | Add QA fixtures and close S027. |

@@ -11,7 +11,7 @@ transform/view subset.
 
 ## Status
 
-Ready.
+Completed.
 
 ## Deliverables
 
@@ -30,3 +30,11 @@ Ready.
 
 - Stop if current bindings cannot distinguish native/adapted/unsupported behavior.
 - Stop on any need for public 3D camera/projection/controller semantics.
+
+## Completion Notes
+
+- Datoviz capability snapshots now expose S027 CPU-adapter placement and transform diagnostics.
+- Inline affine transform adaptation is explicit and retained in renderer adaptation metadata.
+- Transform query inverse requests return `GSP_QUERY_INVERSE_UNSUPPORTED`.
+- Validation: full `uv run pytest tests/` passed with 359 passed and 8 skipped; backend import smoke
+  passed; mypy still reports five pre-existing unrelated errors outside M102 scope.

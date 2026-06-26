@@ -17,11 +17,20 @@ from gsp.protocol import (
     QueryTargetCapability,
     QueryTargetKind,
     TransportKind,
+    TransformPlacement,
 )
 from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics
 
 
 DATOVIZ_V04_AXIS_PROVIDER = "datoviz.v04.panel_axis.wip"
+S027_TRANSFORM_CAPABILITIES = (
+    "gsp.transform.affine2d@0.1",
+    "gsp.transform.inline-affine2d@0.1",
+    "gsp.transform.point@0.1",
+    "gsp.transform.marker@0.1",
+    "gsp.transform.segment@0.1",
+    "gsp.transform.path@0.1",
+)
 
 _REQUIRED_DVZ_CAPTURE_FUNCTIONS = (
     "dvz_app",
@@ -160,6 +169,21 @@ def gsp_capability_snapshot_from_datoviz(
             "colorbar_query_unsupported",
             "scalar_visual_family_unsupported",
         ),
+        "s027_transform": (
+            "finite eager NDC Point/Marker/Segment/PathVisual inline AFFINE_2D "
+            "positions are CPU pre-transformed before upload; named transform "
+            "resources, DATA-space adaptation, transform query inverse, image affine, "
+            "mesh/text transforms, 3D camera/projection/controller semantics, and "
+            "virtual-source materialization are unsupported"
+        ),
+        "s027_transform_diagnostics": (
+            "cpu_adapter_affine2d_eager_ndc",
+            "GSP_TRANSFORM_MISSING_REF",
+            "GSP_QUERY_INVERSE_UNSUPPORTED",
+            "GSP_TRANSFORM_IMAGE_AFFINE_DEFERRED",
+            "GSP_TRANSFORM_VIRTUAL_SOURCE_DEFERRED",
+            "GSP_CAMERA3D_DEFERRED",
+        ),
     }
     if raw_fields:
         metadata["datoviz_raw_capabilities"] = raw_fields
@@ -205,6 +229,11 @@ def gsp_capability_snapshot_from_datoviz(
         buffer_dtypes=("float32", "uint8", "rgba8"),
         texture_formats=tuple(texture_formats),
         visual_families=("point", "image"),
+        transform_placements=(
+            TransformPlacement.CPU_ADAPTER.value,
+            TransformPlacement.UNSUPPORTED.value,
+        ),
+        transform_capabilities=S027_TRANSFORM_CAPABILITIES,
         query_modes=query_modes,
         query_capabilities=query_capabilities,
         output_formats=output_formats,
