@@ -14,14 +14,17 @@ from gsp.protocol.query import (
     MESH_QUERY_PAYLOAD_KIND,
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     TEXT_QUERY_PAYLOAD_KIND,
+    TRANSFORM_QUERY_PAYLOAD_KIND,
     MeshQueryPayload,
     QueryHitPolicy,
     QueryRequest,
     QueryResult,
     QueryStatus,
     ScalarColorQueryPayload,
+    TransformQueryPayload,
     VisualFamily,
 )
+from gsp.protocol import AffineTransform2DResource, CoordinateSpace, InverseStatus, View2D
 from gsp.protocol.visuals import (
     ImageOrigin,
     ImageVisual,
@@ -32,6 +35,13 @@ from gsp.protocol.visuals import (
     TextVisual,
 )
 from gsp_matplotlib.color_mapping import map_scalar_value, resolve_color_scale
+from gsp_matplotlib.transforms import (
+    binding_inline_digest,
+    binding_transform_ids,
+    declared_to_panel_ndc,
+    inverse_transform_coordinate,
+    transformed_positions,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,6 +58,8 @@ def query_visuals(
     *,
     panel_bounds: tuple[float, float, float, float] | None = None,
     color_scales: Mapping[str, ColorScale] | None = None,
+    view: View2D | None = None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
 ) -> QueryResult:
     """Answer a panel query against formal visual models.
 
@@ -67,15 +79,31 @@ def query_visuals(
     for entry in sorted(entries, key=lambda item: item.z_order, reverse=True):
         visual = entry.visual
         if isinstance(visual, PointVisual):
-            hit = _query_point_visual(request, visual, color_scales=color_scales)
+            hit = _query_point_visual(
+                request,
+                visual,
+                color_scales=color_scales,
+                view=view,
+                transform_resources=transform_resources,
+            )
         elif isinstance(visual, MarkerVisual):
-            hit = _query_marker_visual(request, visual, color_scales=color_scales)
+            hit = _query_marker_visual(
+                request,
+                visual,
+                color_scales=color_scales,
+                view=view,
+                transform_resources=transform_resources,
+            )
         elif isinstance(visual, ImageVisual):
             hit = _query_image_visual(request, visual, color_scales=color_scales)
         elif isinstance(visual, TextVisual):
-            hit = _query_text_visual(request, visual)
+            hit = _query_text_visual(
+                request, visual, view=view, transform_resources=transform_resources
+            )
         elif isinstance(visual, MeshVisual):
-            hit = _query_mesh_visual(request, visual)
+            hit = _query_mesh_visual(
+                request, visual, view=view, transform_resources=transform_resources
+            )
         else:
             hit = None
         if hit is not None:
@@ -136,8 +164,13 @@ def _query_point_visual(
     visual: PointVisual,
     *,
     color_scales: Mapping[str, ColorScale] | None,
+    view: View2D | None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None,
 ) -> QueryResult | None:
-    positions = visual.positions[:, :2]
+    source_positions = visual.positions[:, :2]
+    positions = transformed_positions(
+        visual.positions, visual.transform, transform_resources
+    )
     sizes = (
         visual.sizes
         if isinstance(visual.sizes, np.ndarray)
@@ -158,8 +191,18 @@ def _query_point_visual(
         return None
 
     point = positions[best_index]
+    source = source_positions[best_index]
     rgba, payload = _point_color_query_payload(
         visual, best_index, color_scales=color_scales
+    )
+    extension_kind, extension_payload = _transform_or_existing_payload(
+        visual,
+        request,
+        (float(point[0]), float(point[1])),
+        (float(source[0]), float(source[1])),
+        view,
+        existing_kind=SCALAR_COLOR_QUERY_PAYLOAD_KIND if payload else None,
+        existing_payload=payload,
     )
     return QueryResult(
         request_id=request.id,
@@ -173,8 +216,8 @@ def _query_point_visual(
         data_coordinate=(float(point[0]), float(point[1])),
         displayed_rgba=rgba,
         value=_point_query_value(visual, best_index),
-        extension_payload_kind=SCALAR_COLOR_QUERY_PAYLOAD_KIND if payload else None,
-        extension_payload=payload,
+        extension_payload_kind=extension_kind,
+        extension_payload=extension_payload,
     )
 
 
@@ -229,8 +272,13 @@ def _query_marker_visual(
     visual: MarkerVisual,
     *,
     color_scales: Mapping[str, ColorScale] | None,
+    view: View2D | None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None,
 ) -> QueryResult | None:
-    positions = visual.positions[:, :2]
+    source_positions = visual.positions[:, :2]
+    positions = transformed_positions(
+        visual.positions, visual.transform, transform_resources
+    )
     sizes = (
         visual.sizes
         if isinstance(visual.sizes, np.ndarray)
@@ -251,8 +299,18 @@ def _query_marker_visual(
         return None
 
     marker = positions[best_index]
+    source = source_positions[best_index]
     rgba, payload = _marker_color_query_payload(
         visual, best_index, color_scales=color_scales
+    )
+    extension_kind, extension_payload = _transform_or_existing_payload(
+        visual,
+        request,
+        (float(marker[0]), float(marker[1])),
+        (float(source[0]), float(source[1])),
+        view,
+        existing_kind=SCALAR_COLOR_QUERY_PAYLOAD_KIND if payload else None,
+        existing_payload=payload,
     )
     return QueryResult(
         request_id=request.id,
@@ -266,13 +324,22 @@ def _query_marker_visual(
         data_coordinate=(float(marker[0]), float(marker[1])),
         displayed_rgba=rgba,
         value=_marker_query_value(visual, best_index),
-        extension_payload_kind=SCALAR_COLOR_QUERY_PAYLOAD_KIND if payload else None,
-        extension_payload=payload,
+        extension_payload_kind=extension_kind,
+        extension_payload=extension_payload,
     )
 
 
-def _query_text_visual(request: QueryRequest, visual: TextVisual) -> QueryResult | None:
-    positions = visual.positions[:, :2]
+def _query_text_visual(
+    request: QueryRequest,
+    visual: TextVisual,
+    *,
+    view: View2D | None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None,
+) -> QueryResult | None:
+    source_positions = visual.positions[:, :2]
+    positions = transformed_positions(
+        visual.positions, visual.transform, transform_resources
+    )
     sizes = visual.font_size_values()
     colors = _rgba01(visual.rgba_values())
     query = np.array(request.coordinate, dtype=np.float64)
@@ -292,7 +359,24 @@ def _query_text_visual(request: QueryRequest, visual: TextVisual) -> QueryResult
         return None
 
     position = positions[best_index]
+    source = source_positions[best_index]
     text = visual.texts[best_index]
+    extension_kind, extension_payload = _transform_or_existing_payload(
+        visual,
+        request,
+        (float(position[0]), float(position[1])),
+        (float(source[0]), float(source[1])),
+        view,
+        existing_kind=TEXT_QUERY_PAYLOAD_KIND,
+        existing_payload={
+            "kind": "text",
+            "visual_id": visual.id,
+            "item_index": best_index,
+            "text": text,
+            "position": (float(position[0]), float(position[1])),
+            "coordinate_space": visual.coordinate_space.value,
+        },
+    )
     return QueryResult(
         request_id=request.id,
         status=QueryStatus.HIT,
@@ -310,19 +394,18 @@ def _query_text_visual(request: QueryRequest, visual: TextVisual) -> QueryResult
             float(colors[best_index][3]),
         ),
         value=text,
-        extension_payload_kind=TEXT_QUERY_PAYLOAD_KIND,
-        extension_payload={
-            "kind": "text",
-            "visual_id": visual.id,
-            "item_index": best_index,
-            "text": text,
-            "position": (float(position[0]), float(position[1])),
-            "coordinate_space": visual.coordinate_space.value,
-        },
+        extension_payload_kind=extension_kind,
+        extension_payload=extension_payload,
     )
 
 
-def _query_mesh_visual(request: QueryRequest, visual: MeshVisual) -> QueryResult | None:
+def _query_mesh_visual(
+    request: QueryRequest,
+    visual: MeshVisual,
+    *,
+    view: View2D | None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None,
+) -> QueryResult | None:
     if visual.positions.shape[1] != 2:
         return None
     color_mode = visual.resolved_color_mode()
@@ -330,7 +413,9 @@ def _query_mesh_visual(request: QueryRequest, visual: MeshVisual) -> QueryResult
         return None
 
     query = np.array(request.coordinate, dtype=np.float64)
-    positions = visual.positions[:, :2].astype(np.float64)
+    positions = transformed_positions(
+        visual.positions, visual.transform, transform_resources
+    )
     best_face_index: int | None = None
     best_order = float("-inf")
     for face_index, vertex_indices in enumerate(visual.faces):
@@ -355,6 +440,18 @@ def _query_mesh_visual(request: QueryRequest, visual: MeshVisual) -> QueryResult
         coordinate_space=visual.coordinate_space.value,
         displayed_rgba=rgba,
     )
+    declared_coord = request.coordinate
+    extension_kind, extension_payload = _transform_or_existing_payload(
+        visual,
+        request,
+        declared_coord,
+        inverse_transform_coordinate(
+            declared_coord, visual.transform, transform_resources
+        ),
+        view,
+        existing_kind=MESH_QUERY_PAYLOAD_KIND,
+        existing_payload=payload,
+    )
     return QueryResult(
         request_id=request.id,
         status=QueryStatus.HIT,
@@ -371,9 +468,40 @@ def _query_mesh_visual(request: QueryRequest, visual: MeshVisual) -> QueryResult
             "face_index": best_face_index,
             "vertex_indices": vertex_indices_tuple,
         },
-        extension_payload_kind=MESH_QUERY_PAYLOAD_KIND,
-        extension_payload=payload,
+        extension_payload_kind=extension_kind,
+        extension_payload=extension_payload,
     )
+
+
+def _transform_or_existing_payload(
+    visual: PointVisual | MarkerVisual | TextVisual | MeshVisual,
+    request: QueryRequest,
+    declared_coord: tuple[float, float],
+    source_coord: tuple[float, float],
+    view: View2D | None,
+    *,
+    existing_kind: str | None,
+    existing_payload: object | None,
+) -> tuple[str | None, object | None]:
+    if visual.transform is None and view is None:
+        return existing_kind, existing_payload
+    data_coord = (
+        declared_coord if visual.coordinate_space is CoordinateSpace.DATA else None
+    )
+    payload = TransformQueryPayload(
+        visual_id=visual.id,
+        panel_xy=request.coordinate,
+        panel_ndc=declared_to_panel_ndc(declared_coord, visual.coordinate_space, view),
+        declared_coordinate_space=visual.coordinate_space.value,
+        declared_space_coord=declared_coord,
+        source_coord=source_coord,
+        data_coord=data_coord,
+        transform_ids=binding_transform_ids(visual.transform),
+        inline_transform_digest=binding_inline_digest(visual.transform),
+        view_id=view.id if view is not None else None,
+        inverse_status=InverseStatus.EXACT,
+    )
+    return TRANSFORM_QUERY_PAYLOAD_KIND, payload
 
 
 def _point_in_triangle(point: np.ndarray, triangle: np.ndarray) -> bool:

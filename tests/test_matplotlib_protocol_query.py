@@ -32,8 +32,12 @@ from gsp.protocol import (
     ScalarColorSlot,
     ScalarRangeClass,
     TEXT_QUERY_PAYLOAD_KIND,
+    TRANSFORM_QUERY_PAYLOAD_KIND,
     TextVisual,
+    TransformQueryPayload,
+    View2D,
     VisualFamily,
+    VisualTransformBinding,
 )
 from gsp_matplotlib.color_mapping import map_scalar_value
 from gsp_matplotlib.protocol_query import (
@@ -182,6 +186,70 @@ def test_query_scalar_point_returns_color_mapping_payload():
     assert result.extension_payload_kind == SCALAR_COLOR_QUERY_PAYLOAD_KIND
     assert result.extension_payload.range_class == ScalarRangeClass.OVER
     assert result.extension_payload.lut_index == 255
+
+
+def test_query_transformed_point_returns_inverse_payload():
+    """S027 transformed query reports source, declared, data, panel, and transform identity."""
+    points = PointVisual(
+        id="visual:points",
+        positions=np.array([[1.0, 2.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+        sizes=np.array([4.0], dtype=np.float32),
+        coordinate_space=CoordinateSpace.DATA,
+        transform=VisualTransformBinding.inline_affine(
+            np.array([[1.0, 0.0, 2.0], [0.0, 1.0, -1.0], [0.0, 0.0, 1.0]])
+        ),
+    )
+    view = View2D(
+        id="view:main",
+        panel_id="panel:main",
+        x_range=(0.0, 6.0),
+        y_range=(0.0, 2.0),
+    )
+
+    result = query_visuals(
+        QueryRequest(id="query:points", panel_id="panel:main", coordinate=(3.0, 1.0)),
+        [QueryVisualEntry(points)],
+        view=view,
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.extension_payload_kind == TRANSFORM_QUERY_PAYLOAD_KIND
+    assert isinstance(result.extension_payload, TransformQueryPayload)
+    assert result.extension_payload.declared_space_coord == (3.0, 1.0)
+    assert result.extension_payload.source_coord == (1.0, 2.0)
+    assert result.extension_payload.data_coord == (3.0, 1.0)
+    assert result.extension_payload.panel_ndc == (0.0, 0.0)
+    assert result.extension_payload.view_id == "view:main"
+    assert result.extension_payload.inline_transform_digest is not None
+
+
+def test_query_transformed_ndc_point_reports_no_data_coordinate():
+    """NDC visuals skip View2D and report data_coord as not applicable."""
+    points = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+        sizes=np.array([4.0], dtype=np.float32),
+        coordinate_space=CoordinateSpace.NDC,
+        transform=VisualTransformBinding.inline_affine(
+            np.array([[1.0, 0.0, 0.25], [0.0, 1.0, -0.5], [0.0, 0.0, 1.0]])
+        ),
+    )
+
+    result = query_visuals(
+        QueryRequest(
+            id="query:points", panel_id="panel:main", coordinate=(0.25, -0.5)
+        ),
+        [QueryVisualEntry(points)],
+        view=View2D(id="view:main", panel_id="panel:main", x_range=(10.0, 20.0)),
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.extension_payload_kind == TRANSFORM_QUERY_PAYLOAD_KIND
+    assert isinstance(result.extension_payload, TransformQueryPayload)
+    assert result.extension_payload.panel_ndc == (0.25, -0.5)
+    assert result.extension_payload.data_coord is None
 
 
 def test_query_scalar_marker_returns_fill_color_payload():

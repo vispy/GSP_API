@@ -18,7 +18,7 @@ import matplotlib.transforms
 import numpy as np
 import numpy.typing as npt
 
-from gsp.protocol import ColorScale, ColorbarGuide
+from gsp.protocol import AffineTransform2DResource, ColorScale, ColorbarGuide, View2D
 from gsp.protocol.visuals import (
     CoordinateSpace,
     FontRole,
@@ -41,6 +41,10 @@ from gsp_matplotlib.color_mapping import (
     listed_colormap_for_scale,
     map_scalar_values,
     resolve_color_scale,
+)
+from gsp_matplotlib.transforms import (
+    panel_ndc_to_axes_fraction,
+    transformed_positions,
 )
 
 
@@ -114,9 +118,13 @@ def render_point_visual(
     visual: PointVisual,
     *,
     color_scales: Mapping[str, ColorScale] | None = None,
+    view: View2D | None = None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
 ) -> matplotlib.collections.PathCollection:
     """Render a protocol point visual into a Matplotlib axes."""
-    offsets = visual.positions[:, :2]
+    offsets, transform = _render_positions(
+        axes, visual, visual.positions, view, transform_resources
+    )
     areas = _marker_areas_from_pixel_diameters(axes, visual.sizes)
     colors = _point_colors(visual, color_scales=color_scales)
     collection = axes.scatter(
@@ -124,6 +132,7 @@ def render_point_visual(
         offsets[:, 1],
         s=areas,
         c=colors,
+        transform=transform,
     )
     collection.set_gid(visual.id)
     return collection
@@ -134,9 +143,13 @@ def render_marker_visual(
     visual: MarkerVisual,
     *,
     color_scales: Mapping[str, ColorScale] | None = None,
+    view: View2D | None = None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
 ) -> tuple[matplotlib.collections.PathCollection, ...]:
     """Render a protocol marker visual into a Matplotlib axes."""
-    offsets = visual.positions[:, :2]
+    offsets, transform = _render_positions(
+        axes, visual, visual.positions, view, transform_resources
+    )
     areas = _marker_area_values(axes, visual.sizes, offsets.shape[0])
     fill_colors = _marker_fill_colors(visual, color_scales=color_scales)
     stroke_color = _rgba_tuple(_rgba_for_matplotlib(visual.stroke_color))
@@ -151,7 +164,7 @@ def render_marker_visual(
             offsets=np.array(
                 [[offsets[index, 0], offsets[index, 1]]], dtype=np.float32
             ),
-            offset_transform=axes.transData,
+            offset_transform=transform,
             facecolors=[fill_colors[index]],
             edgecolors=[stroke_color],
             linewidths=_linewidth_from_pixel_width(axes, visual.stroke_width),
@@ -164,11 +177,21 @@ def render_marker_visual(
 
 
 def render_segment_visual(
-    axes: matplotlib.axes.Axes, visual: SegmentVisual
+    axes: matplotlib.axes.Axes,
+    visual: SegmentVisual,
+    *,
+    view: View2D | None = None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
 ) -> matplotlib.collections.LineCollection:
     """Render a protocol segment visual into a Matplotlib axes."""
+    start_positions, transform = _render_positions(
+        axes, visual, visual.start_positions, view, transform_resources
+    )
+    end_positions, _ = _render_positions(
+        axes, visual, visual.end_positions, view, transform_resources
+    )
     segments = np.stack(
-        [visual.start_positions[:, :2], visual.end_positions[:, :2]], axis=1
+        [start_positions, end_positions], axis=1
     )
     segment_list = [
         np.ascontiguousarray(segment, dtype=np.float32) for segment in segments
@@ -179,16 +202,24 @@ def render_segment_visual(
         linewidths=_linewidth_values_from_pixel_widths(axes, visual.widths),
         capstyle=_STROKE_CAPS_MPL[visual.cap],
     )
+    collection.set_transform(transform)
     collection.set_gid(visual.id)
     axes.add_collection(collection)
     return collection
 
 
 def render_path_visual(
-    axes: matplotlib.axes.Axes, visual: PathVisual
+    axes: matplotlib.axes.Axes,
+    visual: PathVisual,
+    *,
+    view: View2D | None = None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
 ) -> tuple[matplotlib.patches.PathPatch, ...]:
     """Render protocol open polyline subpaths into a Matplotlib axes."""
-    subpaths = _path_subpath_arrays(visual)
+    positions, transform = _render_positions(
+        axes, visual, visual.positions, view, transform_resources
+    )
+    subpaths = _path_subpath_arrays(visual, positions)
     colors = _rgba_for_matplotlib(visual.colors)
     linewidths = _linewidth_values_from_pixel_widths(axes, visual.widths)
     width_values = (
@@ -213,6 +244,7 @@ def render_path_visual(
             joinstyle=_STROKE_JOINS_MPL[visual.join],
             fill=False,
         )
+        patch.set_transform(transform)
         patch.set_gid(visual.id)
         axes.add_patch(patch)
         patches.append(patch)
@@ -220,7 +252,11 @@ def render_path_visual(
 
 
 def render_mesh_visual(
-    axes: matplotlib.axes.Axes, visual: MeshVisual
+    axes: matplotlib.axes.Axes,
+    visual: MeshVisual,
+    *,
+    view: View2D | None = None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
 ) -> matplotlib.collections.PolyCollection:
     """Render the strict 2D MeshVisual subset into a Matplotlib axes."""
     if visual.face_color_encoding is not None:
@@ -237,7 +273,10 @@ def render_mesh_visual(
             "Matplotlib MeshVisual vertex colors are capability-gated"
         )
 
-    triangles = visual.positions[visual.faces][:, :, :2]
+    positions, transform = _render_positions(
+        axes, visual, visual.positions, view, transform_resources
+    )
+    triangles = positions[visual.faces]
     if color_mode is MeshColorMode.UNIFORM:
         facecolors = np.repeat(
             visual.color[np.newaxis, :], visual.faces.shape[0], axis=0
@@ -255,22 +294,28 @@ def render_mesh_visual(
         antialiaseds=False,
         zorder=visual.order,
     )
+    collection.set_transform(transform)
     collection.set_gid(visual.id)
     axes.add_collection(collection)
     return collection
 
 
 def render_text_visual(
-    axes: matplotlib.axes.Axes, visual: TextVisual
+    axes: matplotlib.axes.Axes,
+    visual: TextVisual,
+    *,
+    view: View2D | None = None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
 ) -> tuple[matplotlib.text.Text, ...]:
     """Render protocol text labels into a Matplotlib axes."""
-    positions = visual.positions[:, :2]
+    positions, transform = _render_positions(
+        axes, visual, visual.positions, view, transform_resources
+    )
     colors = _rgba_for_matplotlib(visual.rgba_values())
     font_sizes = visual.font_size_values() * np.float32(_pixel_to_point(axes))
     anchor_x_values = visual.anchor_x_values()
     anchor_y_values = visual.anchor_y_values()
     rotations = np.rad2deg(visual.rotation_values())
-    transform = _text_transform(axes, visual.coordinate_space)
     font_family = _FONT_FAMILIES_MPL.get(visual.font_role)
 
     artists: list[matplotlib.text.Text] = []
@@ -356,21 +401,9 @@ def render_colorbar_guide(
     return colorbar
 
 
-def _text_transform(
-    axes: matplotlib.axes.Axes, coordinate_space: CoordinateSpace
-) -> matplotlib.transforms.Transform:
-    if coordinate_space == CoordinateSpace.DATA:
-        return axes.transData
-    if coordinate_space == CoordinateSpace.NDC:
-        return (
-            matplotlib.transforms.Affine2D().scale(0.5).translate(0.5, 0.5)
-            + axes.transAxes
-        )
-    raise ValueError(f"unsupported coordinate_space: {coordinate_space!r}")
-
-
-def _path_subpath_arrays(visual: PathVisual) -> tuple[npt.NDArray[np.float32], ...]:
-    offsets = visual.positions[:, :2]
+def _path_subpath_arrays(
+    visual: PathVisual, offsets: npt.NDArray[np.float64]
+) -> tuple[npt.NDArray[np.float32], ...]:
     subpaths: list[npt.NDArray[np.float32]] = []
     start = 0
     for length in visual.path_lengths:
@@ -378,6 +411,38 @@ def _path_subpath_arrays(visual: PathVisual) -> tuple[npt.NDArray[np.float32], .
         subpaths.append(np.ascontiguousarray(offsets[start:stop], dtype=np.float32))
         start = stop
     return tuple(subpaths)
+
+
+def _render_positions(
+    axes: matplotlib.axes.Axes,
+    visual: PointVisual
+    | MarkerVisual
+    | SegmentVisual
+    | PathVisual
+    | MeshVisual
+    | TextVisual,
+    positions: npt.NDArray[np.float32] | npt.NDArray[np.float64],
+    view: View2D | None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None,
+) -> tuple[npt.NDArray[np.float64], matplotlib.transforms.Transform]:
+    transformed = transformed_positions(
+        positions, visual.transform, transform_resources
+    )
+    if view is None:
+        if isinstance(visual, TextVisual) and visual.coordinate_space == CoordinateSpace.NDC:
+            return panel_ndc_to_axes_fraction(transformed), axes.transAxes
+        return transformed, axes.transData
+    if visual.coordinate_space == CoordinateSpace.DATA:
+        x0, x1 = view.xlim
+        y0, y1 = view.ylim
+        panel_ndc = np.empty_like(transformed, dtype=np.float64)
+        panel_ndc[:, 0] = -1.0 + 2.0 * (transformed[:, 0] - x0) / (x1 - x0)
+        panel_ndc[:, 1] = -1.0 + 2.0 * (transformed[:, 1] - y0) / (y1 - y0)
+    elif visual.coordinate_space == CoordinateSpace.NDC:
+        panel_ndc = transformed
+    else:
+        raise ValueError(f"unsupported coordinate_space: {visual.coordinate_space!r}")
+    return panel_ndc_to_axes_fraction(panel_ndc), axes.transAxes
 
 
 def _marker_area_values(

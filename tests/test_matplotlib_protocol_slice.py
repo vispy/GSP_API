@@ -33,6 +33,8 @@ from gsp.protocol import (
     TextAnchorX,
     TextAnchorY,
     TextVisual,
+    View2D,
+    VisualTransformBinding,
 )
 from gsp_matplotlib.color_mapping import map_scalar_values
 from gsp.protocol.visuals import ImageInterpolation
@@ -91,6 +93,60 @@ def test_render_point_visual_converts_pixel_diameters_using_figure_dpi():
         np.testing.assert_allclose(
             artist.get_sizes(), np.array([100.0], dtype=np.float32)
         )
+    finally:
+        plt.close(fig)
+
+
+def test_render_point_visual_applies_inline_transform_and_view2d_mapping():
+    """S027 DATA positions transform, then map through View2D to panel/axes coordinates."""
+    fig, ax = plt.subplots()
+    try:
+        visual = PointVisual(
+            id="visual:points",
+            positions=np.array([[1.0, 2.0]], dtype=np.float32),
+            colors=np.array([[255, 255, 255, 255]], dtype=np.uint8),
+            sizes=np.array([10.0], dtype=np.float32),
+            coordinate_space=CoordinateSpace.DATA,
+            transform=VisualTransformBinding.inline_affine(
+                np.array([[1.0, 0.0, 1.0], [0.0, 1.0, -1.0], [0.0, 0.0, 1.0]])
+            ),
+        )
+        view = View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(0.0, 4.0),
+            y_range=(0.0, 2.0),
+        )
+
+        artist = render_point_visual(ax, visual, view=view)
+
+        np.testing.assert_allclose(artist.get_offsets(), np.array([[0.5, 0.5]]))
+        assert artist.get_offset_transform() == ax.transAxes
+    finally:
+        plt.close(fig)
+
+
+def test_render_point_visual_handles_reversed_view2d_limits():
+    """Reversed View2D limits are valid and reverse the panel mapping."""
+    fig, ax = plt.subplots()
+    try:
+        visual = PointVisual(
+            id="visual:points",
+            positions=np.array([[1.0, 0.0]], dtype=np.float32),
+            colors=np.array([[255, 255, 255, 255]], dtype=np.uint8),
+            sizes=np.array([10.0], dtype=np.float32),
+            coordinate_space=CoordinateSpace.DATA,
+        )
+        view = View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(2.0, 0.0),
+            y_range=(-1.0, 1.0),
+        )
+
+        artist = render_point_visual(ax, visual, view=view)
+
+        np.testing.assert_allclose(artist.get_offsets(), np.array([[0.5, 0.5]]))
     finally:
         plt.close(fig)
 
@@ -368,6 +424,32 @@ def test_render_path_visual_creates_open_path_patches_with_pixel_widths():
         plt.close(fig)
 
 
+def test_render_path_visual_applies_inline_transform_to_vertices():
+    """Path vertices are transformed while stroke width remains screen-pixel based."""
+    fig, ax = plt.subplots()
+    try:
+        visual = PathVisual(
+            id="visual:path",
+            positions=np.array([[0.0, 0.0], [1.0, 0.0]], dtype=np.float32),
+            path_lengths=(2,),
+            colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+            widths=2.0,
+            coordinate_space=CoordinateSpace.DATA,
+            transform=VisualTransformBinding.inline_affine(
+                np.array([[2.0, 0.0, 1.0], [0.0, 2.0, -1.0], [0.0, 0.0, 1.0]])
+            ),
+        )
+
+        (artist,) = render_path_visual(ax, visual)
+
+        np.testing.assert_allclose(
+            artist.get_path().vertices, np.array([[1.0, -1.0], [3.0, -1.0]])
+        )
+        np.testing.assert_allclose(artist.get_linewidth(), 1.44)
+    finally:
+        plt.close(fig)
+
+
 def test_render_marker_visual_does_not_renormalize_rotated_marker_paths():
     """Rotated marker paths keep the requested marker-space scale."""
     fig, ax = plt.subplots()
@@ -454,6 +536,35 @@ def test_render_mesh_visual_preserves_per_face_colors():
         plt.close(fig)
 
 
+def test_render_mesh_visual_applies_view2d_mapping():
+    """Mesh vertices map through View2D when rendered in DATA coordinates."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array([[0.0, 0.0], [2.0, 0.0], [0.0, 2.0]], dtype=np.float32),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.DATA,
+            color=np.array([255, 0, 0, 255], dtype=np.uint8),
+        )
+        view = View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(0.0, 4.0),
+            y_range=(0.0, 4.0),
+        )
+
+        artist = render_mesh_visual(ax, visual, view=view)
+
+        np.testing.assert_allclose(
+            artist.get_paths()[0].vertices[:3],
+            np.array([[0.0, 0.0], [0.5, 0.0], [0.0, 0.5]]),
+        )
+        assert artist.get_transform() == ax.transAxes
+    finally:
+        plt.close(fig)
+
+
 def test_render_mesh_visual_rejects_3d_reference_path():
     """S025 Matplotlib strict reference is 2D only."""
     fig, ax = plt.subplots()
@@ -510,8 +621,9 @@ def test_render_text_visual_maps_protocol_fields_to_text_artists():
         np.testing.assert_allclose(artists[1].get_rotation(), 90.0)
         assert artists[0].get_rotation_mode() == "anchor"
         assert artists[0].get_zorder() == 7
+        assert artists[0].get_position() == (0.0, 0.0)
         np.testing.assert_allclose(
-            artists[0].get_transform().transform((-1.0, -1.0)),
+            artists[0].get_transform().transform(artists[0].get_position()),
             ax.transAxes.transform((0.0, 0.0)),
         )
     finally:

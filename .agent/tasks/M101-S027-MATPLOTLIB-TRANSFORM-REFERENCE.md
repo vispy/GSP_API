@@ -11,7 +11,7 @@ transform and `View2D` subset.
 
 ## Status
 
-Ready.
+Completed.
 
 ## Deliverables
 
@@ -32,3 +32,12 @@ Ready.
 
 - Stop on any need for equal-aspect/layout, arbitrary image affine, 3D camera/projection, depth, or
   transform graph semantics.
+
+## Completion Notes
+
+- Implemented strict Matplotlib transform/view reference helpers and optional renderer/query
+  parameters.
+- Preserved existing behavior when no S027 view/transform context is supplied, except for equivalent
+  internal text position normalization.
+- Validation: full `uv run pytest tests/` passed with 357 passed and 8 skipped; backend import smoke
+  passed; mypy still reports five pre-existing unrelated errors outside M101 scope.
