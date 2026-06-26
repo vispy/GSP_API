@@ -1,0 +1,944 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/point_basic_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/point_basic_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/point_basic_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/point_basic_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/point_basic_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "point/basic_ndc",
+      "family": "point",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "ndc",
+        "rgba8",
+        "pixel-size"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/point_basic_ndc.scene.json",
+      "title": "Basic NDC point visual"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/point_diameter_ramp_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/point_diameter_ramp_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/point_diameter_ramp_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/point_diameter_ramp_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/point_diameter_ramp_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "point/diameter_ramp_ndc",
+      "family": "point",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "ndc",
+        "rgba8",
+        "diameter-ramp"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/point_diameter_ramp_ndc.scene.json",
+      "title": "Point diameter ramp in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/point_alpha_overlap_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/point_alpha_overlap_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/point_alpha_overlap_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/point_alpha_overlap_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/point_alpha_overlap_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "point/alpha_overlap_ndc",
+      "family": "point",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "ndc",
+        "rgba8",
+        "alpha"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/point_alpha_overlap_ndc.scene.json",
+      "title": "Point alpha overlap in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/marker_shapes_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/marker_shapes_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/marker_shapes_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/marker_shapes_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/marker_shapes_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "marker/shapes_ndc",
+      "family": "marker",
+      "manual_review_status": "pending",
+      "required_features": [
+        "marker",
+        "ndc",
+        "rgba8",
+        "shape",
+        "stroke"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/marker_shapes_ndc.scene.json",
+      "title": "Marker built-in shapes in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/marker_angle_size_stroke_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/marker_angle_size_stroke_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/marker_angle_size_stroke_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/marker_angle_size_stroke_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/marker_angle_size_stroke_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "marker/angle_size_stroke_ndc",
+      "family": "marker",
+      "manual_review_status": "pending",
+      "required_features": [
+        "marker",
+        "ndc",
+        "rgba8",
+        "angle",
+        "pixel-size",
+        "stroke"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/marker_angle_size_stroke_ndc.scene.json",
+      "title": "Marker angle, size, and stroke in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/segment_width_cap_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/segment_width_cap_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/segment_width_cap_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/segment_width_cap_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/segment_width_cap_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "segment/width_cap_ndc",
+      "family": "segment",
+      "manual_review_status": "pending",
+      "required_features": [
+        "segment",
+        "ndc",
+        "rgba8",
+        "width",
+        "cap"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/segment_width_cap_ndc.scene.json",
+      "title": "Segment width and cap styles in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/segment_alpha_order_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/segment_alpha_order_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/segment_alpha_order_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/segment_alpha_order_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/segment_alpha_order_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "segment/alpha_order_ndc",
+      "family": "segment",
+      "manual_review_status": "pending",
+      "required_features": [
+        "segment",
+        "ndc",
+        "rgba8",
+        "alpha",
+        "layering"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/segment_alpha_order_ndc.scene.json",
+      "title": "Segment alpha and draw order in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/path_subpaths_width_join_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/path_subpaths_width_join_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/path_subpaths_width_join_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/path_subpaths_width_join_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/path_subpaths_width_join_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "path/subpaths_width_join_ndc",
+      "family": "path",
+      "manual_review_status": "pending",
+      "required_features": [
+        "path",
+        "ndc",
+        "rgba8",
+        "subpath",
+        "width",
+        "cap",
+        "join"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/path_subpaths_width_join_ndc.scene.json",
+      "title": "Path subpaths, widths, caps, and joins in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/image_checker_nearest_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/image_checker_nearest_ndc.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/image_checker_nearest_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/image_checker_nearest_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/image_checker_nearest_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "image/checker_nearest_ndc",
+      "family": "image",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "ndc",
+        "rgba8",
+        "nearest",
+        "extent",
+        "orientation"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/image_checker_nearest_ndc.scene.json",
+      "title": "Nearest asymmetric image in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/image_origin_lower_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/image_origin_lower_ndc.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/image_origin_lower_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/image_origin_lower_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/image_origin_lower_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "image/origin_lower_ndc",
+      "family": "image",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "ndc",
+        "rgba8",
+        "origin-lower",
+        "extent"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/image_origin_lower_ndc.scene.json",
+      "title": "Lower-origin asymmetric image in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/image_scalar_gray_clim_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/image_scalar_gray_clim_ndc.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/image_scalar_gray_clim_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/image_scalar_gray_clim_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/image_scalar_gray_clim_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "image/scalar_gray_clim_ndc",
+      "family": "image",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "ndc",
+        "scalar",
+        "gray",
+        "clim"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/image_scalar_gray_clim_ndc.scene.json",
+      "title": "Scalar grayscale image with clim in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/image_rgba_alpha_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/image_rgba_alpha_ndc.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/image_rgba_alpha_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/image_rgba_alpha_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/image_rgba_alpha_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "image/rgba_alpha_ndc",
+      "family": "image",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "ndc",
+        "rgba8",
+        "alpha"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/image_rgba_alpha_ndc.scene.json",
+      "title": "RGBA image alpha gradient in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/overlay_point_over_image_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/overlay_point_over_image_ndc.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/overlay_point_over_image_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/overlay_point_over_image_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/overlay_point_over_image_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "overlay/point_over_image_ndc",
+      "family": "overlay",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "image",
+        "ndc",
+        "rgba8",
+        "layering"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/overlay_point_over_image_ndc.scene.json",
+      "title": "Point over image overlay in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/text_basic_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/text_basic_ndc.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 TextVisual support is unavailable: unverified dvz_text_placement; Datoviz v0.4 TextVisual placement, anchors, font-size mapping, rotation, and font-role semantics are not verified for S024",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/text_basic_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/text_basic_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/text_basic_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/basic_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rgba8",
+        "font-size"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/text_basic_ndc.scene.json",
+      "title": "Basic NDC text labels"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/text_anchor_grid_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/text_anchor_grid_ndc.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 TextVisual support is unavailable: unverified dvz_text_placement; Datoviz v0.4 TextVisual placement, anchors, font-size mapping, rotation, and font-role semantics are not verified for S024",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/text_anchor_grid_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/text_anchor_grid_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/text_anchor_grid_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/anchor_grid_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "anchor"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/text_anchor_grid_ndc.scene.json",
+      "title": "Text anchor grid in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/text_rotation_alpha_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/text_rotation_alpha_ndc.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/text_rotation_alpha_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/text_rotation_alpha_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/text_rotation_alpha_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/rotation_alpha_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rotation",
+        "alpha",
+        "z-order"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/text_rotation_alpha_ndc.scene.json",
+      "title": "Text rotation and alpha overlap in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/text_data_vs_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/text_data_vs_ndc.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC text positions only",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/text_data_vs_ndc.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/text_data_vs_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/text_data_vs_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/data_vs_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "data",
+        "ndc"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/text_data_vs_ndc.scene.json",
+      "title": "Text DATA and NDC coordinate comparison"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/text_multiline_unicode_smoke.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/text_multiline_unicode_smoke.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 TextVisual support is unavailable: unverified dvz_text_placement; Datoviz v0.4 TextVisual placement, anchors, font-size mapping, rotation, and font-role semantics are not verified for S024",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/text_multiline_unicode_smoke.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/text_multiline_unicode_smoke.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/text_multiline_unicode_smoke.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/multiline_unicode_smoke",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "multiline",
+        "unicode"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/text_multiline_unicode_smoke.scene.json",
+      "title": "Text multiline and Unicode smoke"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/mesh_single_triangle_uniform_ndc_2d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/mesh_single_triangle_uniform_ndc_2d.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 MeshVisual support is unavailable: unverified dvz_visual_set_depth; Datoviz v0.4 MeshVisual flat RGBA, per-face color adaptation, 2D z=0 mapping, topology preservation, and face query semantics are not verified for S025",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/mesh_single_triangle_uniform_ndc_2d.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/mesh_single_triangle_uniform_ndc_2d.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/mesh_single_triangle_uniform_ndc_2d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "mesh/single_triangle_uniform_ndc_2d",
+      "family": "mesh",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "uniform",
+        "2d"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/mesh_single_triangle_uniform_ndc_2d.scene.json",
+      "title": "Single uniform 2D mesh triangle in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/mesh_indexed_square_uniform_ndc_2d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/mesh_indexed_square_uniform_ndc_2d.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 MeshVisual support is unavailable: unverified dvz_visual_set_depth; Datoviz v0.4 MeshVisual flat RGBA, per-face color adaptation, 2D z=0 mapping, topology preservation, and face query semantics are not verified for S025",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/mesh_indexed_square_uniform_ndc_2d.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/mesh_indexed_square_uniform_ndc_2d.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/mesh_indexed_square_uniform_ndc_2d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "mesh/indexed_square_uniform_ndc_2d",
+      "family": "mesh",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "indexed",
+        "2d"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/mesh_indexed_square_uniform_ndc_2d.scene.json",
+      "title": "Indexed square 2D mesh with uniform color"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/mesh_indexed_square_per_face_ndc_2d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/mesh_indexed_square_per_face_ndc_2d.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 MeshVisual support is unavailable: unverified dvz_visual_set_depth; Datoviz v0.4 MeshVisual flat RGBA, per-face color adaptation, 2D z=0 mapping, topology preservation, and face query semantics are not verified for S025",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/mesh_indexed_square_per_face_ndc_2d.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/mesh_indexed_square_per_face_ndc_2d.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/mesh_indexed_square_per_face_ndc_2d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "mesh/indexed_square_per_face_ndc_2d",
+      "family": "mesh",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "per-face",
+        "2d"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/mesh_indexed_square_per_face_ndc_2d.scene.json",
+      "title": "Indexed square 2D mesh with per-face color"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/color_scalar_image_viridis_colorbar.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/color_scalar_image_viridis_colorbar.log.txt",
+          "reason": "ValueError: missing color scale: scale:viridis",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/color_scalar_image_viridis_colorbar.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/color_scalar_image_viridis_colorbar.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/color_scalar_image_viridis_colorbar.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "color/scalar_image_viridis_colorbar",
+      "family": "color",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "scalar",
+        "colormap",
+        "colorbar",
+        "viridis"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/color_scalar_image_viridis_colorbar.scene.json",
+      "title": "Scalar image with viridis color scale and colorbar"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/color_point_scalar_gray_range.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/color_point_scalar_gray_range.log.txt",
+          "reason": "ValueError: missing color scale: scale:gray",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/color_point_scalar_gray_range.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/color_point_scalar_gray_range.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/color_point_scalar_gray_range.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "color/point_scalar_gray_range",
+      "family": "color",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "scalar",
+        "colormap",
+        "range-clipping"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/color_point_scalar_gray_range.scene.json",
+      "title": "Point scalar colors with under and over clipping"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/color_marker_scalar_fill_alpha.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/color_marker_scalar_fill_alpha.log.txt",
+          "reason": "DatovizV04Unsupported: scalar_visual_family_unsupported: Datoviz v0.4 MarkerVisual scalar fill remains capability-gated until native or CPU-mapped fill-color contracts are verified",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/color_marker_scalar_fill_alpha.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/color_marker_scalar_fill_alpha.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/color_marker_scalar_fill_alpha.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "color/marker_scalar_fill_alpha",
+      "family": "color",
+      "manual_review_status": "pending",
+      "required_features": [
+        "marker",
+        "scalar",
+        "fill",
+        "alpha"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/color_marker_scalar_fill_alpha.scene.json",
+      "title": "Marker scalar fill colors with alpha"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/transform_inline_named_equivalence.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/transform_inline_named_equivalence.log.txt",
+          "reason": "DatovizV04Unsupported: GSP_TRANSFORM_MISSING_REF: Datoviz v0.4 transform CPU adapter does not resolve named transform resources in this slice",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/transform_inline_named_equivalence.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/transform_inline_named_equivalence.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/transform_inline_named_equivalence.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "transform/inline_named_equivalence",
+      "family": "transform",
+      "manual_review_status": "pending",
+      "required_features": [
+        "affine2d",
+        "inline-transform",
+        "named-transform"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/transform_inline_named_equivalence.scene.json",
+      "title": "Inline and named affine transform equivalence"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/transform_view2d_data_ndc_overlay.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/transform_view2d_data_ndc_overlay.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC point positions only",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/transform_view2d_data_ndc_overlay.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/transform_view2d_data_ndc_overlay.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/transform_view2d_data_ndc_overlay.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "transform/view2d_data_ndc_overlay",
+      "family": "transform",
+      "manual_review_status": "pending",
+      "required_features": [
+        "view2d",
+        "data",
+        "ndc",
+        "reversed-limits"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/transform_view2d_data_ndc_overlay.scene.json",
+      "title": "View2D DATA mapping with NDC overlay"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/transform_family_affine_view2d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/transform_family_affine_view2d.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC point positions only",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/transform_family_affine_view2d.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/transform_family_affine_view2d.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/transform_family_affine_view2d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "transform/family_affine_view2d",
+      "family": "transform",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "marker",
+        "segment",
+        "path",
+        "text",
+        "mesh",
+        "affine2d",
+        "view2d"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/transform_family_affine_view2d.scene.json",
+      "title": "Affine transform and View2D family coverage"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/guide_view2d_auto_grid.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/guide_view2d_auto_grid.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC point positions only",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/guide_view2d_auto_grid.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/guide_view2d_auto_grid.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/guide_view2d_auto_grid.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_auto_grid",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "auto-ticks",
+        "grid",
+        "labels"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/guide_view2d_auto_grid.scene.json",
+      "title": "View2D guide auto ticks and grids"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/guide_view2d_reversed_explicit.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "linear_srgb",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/guide_view2d_reversed_explicit.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC point positions only",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/datoviz/guide_view2d_reversed_explicit.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/guide_view2d_reversed_explicit.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/backends/matplotlib/guide_view2d_reversed_explicit.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_reversed_explicit",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "reversed-limits",
+        "explicit-ticks",
+        "grid",
+        "labels"
+      ],
+      "scene_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/scenes/guide_view2d_reversed_explicit.scene.json",
+      "title": "Reversed View2D guide explicit ticks"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/point_basic_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/point_diameter_ramp_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/point_alpha_overlap_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/marker_shapes_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/marker_angle_size_stroke_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/segment_width_cap_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/segment_alpha_order_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/path_subpaths_width_join_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/image_checker_nearest_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/image_origin_lower_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/image_scalar_gray_clim_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/image_rgba_alpha_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/overlay_point_over_image_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/text_basic_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/text_anchor_grid_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/text_rotation_alpha_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/text_data_vs_ndc.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/text_multiline_unicode_smoke.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/mesh_single_triangle_uniform_ndc_2d.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/mesh_indexed_square_uniform_ndc_2d.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/mesh_indexed_square_per_face_ndc_2d.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/color_scalar_image_viridis_colorbar.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/color_point_scalar_gray_range.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/color_marker_scalar_fill_alpha.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/transform_inline_named_equivalence.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/transform_view2d_data_ndc_overlay.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/transform_family_affine_view2d.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/guide_view2d_auto_grid.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/guide_view2d_reversed_explicit.png",
+    "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/contact_sheets/s028_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "linear_srgb",
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "65357d681e3ccaa9e905a0a31c048a4adea176a5",
+    "unexpected_banned_hits": 0
+  },
+  "environment_path": "artifacts/visual_qa/s028/datoviz-runtime-fixed-full/environment.json",
+  "run_id": "s028-dataviz-runtime-fixed-full",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-06-26T12:58:48.193976+00:00",
+  "suite": "s028"
+}

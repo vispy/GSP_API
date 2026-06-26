@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 329, in _run_datoviz
+    _render_datoviz_visual(renderer, visual)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 410, in _render_datoviz_visual
+    renderer.add_image_visual(visual)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 614, in add_image_visual
+    pixels = _rgba8_image_visual(visual, color_scales=self.color_scales)
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 1115, in _rgba8_image_visual
+    scale = resolve_color_scale(color_scales, visual.color_scale_id)
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/protocol/color_mapping.py", line 34, in resolve_color_scale
+    raise ValueError(f"missing color scale: {color_scale_id}")
+ValueError: missing color scale: scale:viridis

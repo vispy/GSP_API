@@ -1,0 +1,13 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "color/marker_scalar_fill_alpha",
+  "datoviz_color_pipeline": "linear_srgb",
+  "diagnostics": {
+    "exception_type": "DatovizV04Unsupported",
+    "message": "scalar_visual_family_unsupported: Datoviz v0.4 MarkerVisual scalar fill remains capability-gated until native or CPU-mapped fill-color contracts are verified"
+  },
+  "reason": "DatovizV04Unsupported: scalar_visual_family_unsupported: Datoviz v0.4 MarkerVisual scalar fill remains capability-gated until native or CPU-mapped fill-color contracts are verified",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

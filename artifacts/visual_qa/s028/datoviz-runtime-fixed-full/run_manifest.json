@@ -1,0 +1,48 @@
+{
+  "backends": [
+    "matplotlib",
+    "datoviz"
+  ],
+  "case_ids": [
+    "point/basic_ndc",
+    "point/diameter_ramp_ndc",
+    "point/alpha_overlap_ndc",
+    "marker/shapes_ndc",
+    "marker/angle_size_stroke_ndc",
+    "segment/width_cap_ndc",
+    "segment/alpha_order_ndc",
+    "path/subpaths_width_join_ndc",
+    "image/checker_nearest_ndc",
+    "image/origin_lower_ndc",
+    "image/scalar_gray_clim_ndc",
+    "image/rgba_alpha_ndc",
+    "overlay/point_over_image_ndc",
+    "text/basic_ndc",
+    "text/anchor_grid_ndc",
+    "text/rotation_alpha_ndc",
+    "text/data_vs_ndc",
+    "text/multiline_unicode_smoke",
+    "mesh/single_triangle_uniform_ndc_2d",
+    "mesh/indexed_square_uniform_ndc_2d",
+    "mesh/indexed_square_per_face_ndc_2d",
+    "color/scalar_image_viridis_colorbar",
+    "color/point_scalar_gray_range",
+    "color/marker_scalar_fill_alpha",
+    "transform/inline_named_equivalence",
+    "transform/view2d_data_ndc_overlay",
+    "transform/family_affine_view2d",
+    "guide/view2d_auto_grid",
+    "guide/view2d_reversed_explicit"
+  ],
+  "datoviz_color_pipeline": "linear_srgb",
+  "resolution": [
+    800,
+    600
+  ],
+  "run_id": "s028-dataviz-runtime-fixed-full",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-06-26T12:58:48.193976+00:00",
+  "suite": "s028"
+}

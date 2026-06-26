@@ -6,12 +6,33 @@ plan accepted.
 The S023 visual QA harness lives under `gsp.qa.visual` and provides deterministic scene generation,
 backend rendering, contact-sheet generation, reports, and manual review templates.
 
-Run with both S023 backends when Datoviz v0.4 is active:
+Run with both S023 backends when Datoviz v0.4 is active. On macOS, prefer the wrapper so the sibling
+Datoviz checkout and bundled MoltenVK ICD are configured consistently:
+
+```bash
+DATOVIZ_REPO=/Users/cyrille/GIT/Viz/datoviz \
+tools/run_datoviz_visual_qa.sh \
+  --suite s028 \
+  --backends matplotlib,datoviz \
+  --out artifacts/visual_qa/s028/latest-local \
+  --run-id latest-local \
+  --contact-sheet \
+  --resolution 800x600
+```
+
+The wrapper sets `GSP_DATOVIZ_QA_ENABLE_OFFSCREEN=1`, prepends `PYTHONPATH` with `DATOVIZ_REPO`,
+points `DYLD_LIBRARY_PATH` and `VK_ICD_FILENAMES` at the Datoviz `libs/vulkan/macos_arm64`
+directory, and keeps the QA default Datoviz color pipeline at `linear_srgb`. The legacy
+Matplotlib-compatible `legacy_srgb_blend` mode remains explicit opt-in and requires
+`dvz_figure_set_color_pipeline` in the Datoviz binding.
+
+The equivalent manual command shape is:
 
 ```bash
 PYTHONPATH=../datoviz:. \
-DYLD_LIBRARY_PATH=../datoviz/build/src \
-DVZ_SHADERC_RUNTIME_LIBRARY=../datoviz/build/src/libshaderc_shared.dylib \
+DYLD_LIBRARY_PATH=../datoviz/libs/vulkan/macos_arm64 \
+VK_ICD_FILENAMES=../datoviz/libs/vulkan/macos_arm64/MoltenVK_icd.json \
+GSP_DATOVIZ_QA_ENABLE_OFFSCREEN=1 \
 uv run python -m gsp.qa.visual run \
   --backends matplotlib,datoviz \
   --out artifacts/visual_qa/s023/latest-local \

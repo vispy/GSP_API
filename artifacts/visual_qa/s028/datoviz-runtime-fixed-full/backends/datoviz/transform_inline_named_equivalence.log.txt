@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 329, in _run_datoviz
+    _render_datoviz_visual(renderer, visual)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 402, in _render_datoviz_visual
+    renderer.add_point_visual(visual)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 424, in add_point_visual
+    _cpu_adapt_inline_affine_positions(visual.id, visual.positions, visual.transform)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 1020, in _cpu_adapt_inline_affine_positions
+    raise DatovizV04Unsupported(
+    ...<2 lines>...
+    )
+gsp_datoviz.protocol_renderer.DatovizV04Unsupported: GSP_TRANSFORM_MISSING_REF: Datoviz v0.4 transform CPU adapter does not resolve named transform resources in this slice

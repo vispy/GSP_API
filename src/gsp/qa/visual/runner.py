@@ -88,7 +88,7 @@ def run_visual_qa_suite(
     contact_sheet: bool = True,
     run_id: str | None = None,
     resolution: tuple[int, int] = (800, 600),
-    datoviz_color_pipeline: DatovizColorPipeline = "legacy_srgb_blend",
+    datoviz_color_pipeline: DatovizColorPipeline = "linear_srgb",
 ) -> dict[str, object]:
     """Run the visual QA suite and return its report."""
     if suite not in (

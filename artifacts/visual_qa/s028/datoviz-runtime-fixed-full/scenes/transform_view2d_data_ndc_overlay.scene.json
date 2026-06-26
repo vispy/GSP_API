@@ -1,0 +1,125 @@
+{
+  "arrays": {
+    "data_colors": {
+      "dtype": "uint8",
+      "key": "data_colors",
+      "path": "transform_view2d_data_ndc_overlay.arrays.npz",
+      "shape": [
+        3,
+        4
+      ]
+    },
+    "data_positions": {
+      "dtype": "float32",
+      "key": "data_positions",
+      "path": "transform_view2d_data_ndc_overlay.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "overlay_colors": {
+      "dtype": "uint8",
+      "key": "overlay_colors",
+      "path": "transform_view2d_data_ndc_overlay.arrays.npz",
+      "shape": [
+        3,
+        4
+      ]
+    },
+    "overlay_positions": {
+      "dtype": "float32",
+      "key": "overlay_positions",
+      "path": "transform_view2d_data_ndc_overlay.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "point_sizes": {
+      "dtype": "float32",
+      "key": "point_sizes",
+      "path": "transform_view2d_data_ndc_overlay.arrays.npz",
+      "shape": [
+        3
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "transform/view2d_data_ndc_overlay",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [],
+  "views": [
+    {
+      "aspect_policy": "auto",
+      "clip": true,
+      "id": "view:s027-reversed",
+      "kind": "view2d-linear",
+      "panel_id": "panel:main",
+      "x_range": [
+        10.0,
+        -10.0
+      ],
+      "y_range": [
+        -5.0,
+        5.0
+      ]
+    }
+  ],
+  "visuals": [
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          3,
+          4
+        ]
+      },
+      "coordinate_space": "data",
+      "family": "point",
+      "id": "visual:view2d-data-points",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          3,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          3
+        ]
+      }
+    },
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          3,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "family": "point",
+      "id": "visual:view2d-ndc-overlay",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          3,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          3
+        ]
+      }
+    }
+  ]
+}

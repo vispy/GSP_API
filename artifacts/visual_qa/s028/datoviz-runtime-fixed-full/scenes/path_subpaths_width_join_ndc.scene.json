@@ -1,0 +1,82 @@
+{
+  "arrays": {
+    "path_colors": {
+      "dtype": "uint8",
+      "key": "path_colors",
+      "path": "path_subpaths_width_join_ndc.arrays.npz",
+      "shape": [
+        3,
+        4
+      ]
+    },
+    "path_lengths": {
+      "dtype": "uint32",
+      "key": "path_lengths",
+      "path": "path_subpaths_width_join_ndc.arrays.npz",
+      "shape": [
+        3
+      ]
+    },
+    "path_positions": {
+      "dtype": "float32",
+      "key": "path_positions",
+      "path": "path_subpaths_width_join_ndc.arrays.npz",
+      "shape": [
+        14,
+        2
+      ]
+    },
+    "path_widths": {
+      "dtype": "float32",
+      "key": "path_widths",
+      "path": "path_subpaths_width_join_ndc.arrays.npz",
+      "shape": [
+        3
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "path/subpaths_width_join_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [],
+  "views": [],
+  "visuals": [
+    {
+      "cap": "round",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          3,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "family": "path",
+      "id": "visual:path-subpaths-width-join-ndc",
+      "join": "round",
+      "miter_limit": 4.0,
+      "path_lengths": [
+        5,
+        5,
+        4
+      ],
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          14,
+          2
+        ]
+      },
+      "widths": {
+        "dtype": "float32",
+        "shape": [
+          3
+        ]
+      }
+    }
+  ]
+}

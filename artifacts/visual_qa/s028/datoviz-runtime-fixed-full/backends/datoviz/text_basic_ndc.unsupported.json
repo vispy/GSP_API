@@ -1,0 +1,13 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "text/basic_ndc",
+  "datoviz_color_pipeline": "linear_srgb",
+  "diagnostics": {
+    "exception_type": "DatovizV04Unsupported",
+    "message": "Datoviz v0.4 TextVisual support is unavailable: unverified dvz_text_placement; Datoviz v0.4 TextVisual placement, anchors, font-size mapping, rotation, and font-role semantics are not verified for S024"
+  },
+  "reason": "DatovizV04Unsupported: Datoviz v0.4 TextVisual support is unavailable: unverified dvz_text_placement; Datoviz v0.4 TextVisual placement, anchors, font-size mapping, rotation, and font-role semantics are not verified for S024",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

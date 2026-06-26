@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 329, in _run_datoviz
+    _render_datoviz_visual(renderer, visual)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 410, in _render_datoviz_visual
+    renderer.add_image_visual(visual)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 620, in add_image_visual
+    _set_image_sampling(self.dvz, dvz_visual, visual.interpolation)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 1277, in _set_image_sampling
+    raise DatovizV04Unsupported(
+    ...<2 lines>...
+    )
+gsp_datoviz.protocol_renderer.DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling

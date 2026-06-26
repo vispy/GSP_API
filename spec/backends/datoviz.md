@@ -293,10 +293,11 @@ The Datoviz v0.4 adapter exposes a figure-wide color-pipeline option through
 `DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND`. If the binding is missing, GSP raises
 `DatovizV04Unavailable` instead of silently producing linear-light output.
 
-The S023 visual-QA harness defaults Datoviz comparison renders to `legacy_srgb_blend` so contact
-sheets compare Matplotlib/Agg and Datoviz geometry/rasterization with the same legacy display-space
-blend semantics. Use `python -m gsp.qa.visual run --datoviz-color-pipeline linear_srgb ...` to
-inspect the physically correct Datoviz mode.
+The visual-QA harness defaults Datoviz renders to `linear_srgb` because that mode is available in
+the v0.4-dev facade without extra figure configuration. Use
+`python -m gsp.qa.visual run --datoviz-color-pipeline legacy_srgb_blend ...` only with a Datoviz
+binding that exposes `dvz_figure_set_color_pipeline()` and
+`DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND`.
 
 ## Post-M011 parity gap update
 
