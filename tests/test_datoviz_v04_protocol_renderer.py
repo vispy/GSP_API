@@ -2299,8 +2299,8 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
         ("set_grid", "axis:1", True),
     ]
     assert _calls(fake, "set_label") == [
-        ("set_label", "axis:0", "x"),
-        ("set_label", "axis:1", "y"),
+        ("set_label", "axis:0", b"x"),
+        ("set_label", "axis:1", b"y"),
     ]
 
 

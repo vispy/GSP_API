@@ -1,0 +1,83 @@
+{
+  "schema_version": "gsp.s030.datoviz_guide_axis_proof.v1",
+  "generated_at": "2026-06-26T22:08:47.872896+00:00",
+  "datoviz_module": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+  "capture_requested": false,
+  "symbols": {
+    "dvz_panel_set_domain": true,
+    "dvz_panel_view2d": true,
+    "dvz_panel_set_view2d": true,
+    "dvz_panel_axis": true,
+    "dvz_axis_tick_policy": true,
+    "dvz_axis_set_tick_policy": true,
+    "dvz_axis_set_grid": true,
+    "dvz_axis_set_label": true,
+    "dvz_axis_set_ticks": true,
+    "dvz_panel_visible_domain": true,
+    "dvz_panel_set_title": false,
+    "dvz_panel_title": false
+  },
+  "cases": [
+    {
+      "case_id": "guide/view2d_auto_grid",
+      "png": null,
+      "capture_status": "not_requested",
+      "png_bytes": null,
+      "behaviors": {
+        "backend_auto_tick_policy_api": "proven",
+        "grid_api": "proven",
+        "axis_label_api": "proven",
+        "view2d_domain_api": "proven",
+        "rendered_tick_placement": "blocked",
+        "rendered_grid_placement": "blocked",
+        "rendered_axis_label_placement": "blocked",
+        "title": "unsupported",
+        "guide_query": "unsupported",
+        "gsp_strict_auto_tick_identity": "adapted"
+      },
+      "notes": [
+        "Native Datoviz panel-axis APIs accept backend-resolved ticks, grid, and labels.",
+        "The GSP renderer still CPU-adapts DATA point positions to panel NDC in this slice.",
+        "Rendered placement remains blocked unless this probe is rerun with --capture in a stable Datoviz offscreen environment."
+      ]
+    },
+    {
+      "case_id": "guide/view2d_reversed_explicit",
+      "png": null,
+      "capture_status": "not_requested",
+      "png_bytes": null,
+      "explicit_tick_calls": {
+        "x_ticks_ok": true,
+        "y_ticks_ok": true
+      },
+      "behaviors": {
+        "explicit_tick_values_api": "proven",
+        "explicit_tick_labels_api": "proven",
+        "reversed_view2d_domain_api": "proven",
+        "grid_api": "proven",
+        "axis_label_api": "proven",
+        "rendered_reversed_layout": "blocked",
+        "rendered_explicit_tick_placement": "blocked",
+        "title": "unsupported",
+        "guide_query": "unsupported",
+        "gsp_renderer_explicit_tick_path": "blocked"
+      },
+      "notes": [
+        "The facade accepts explicit tick values and labels directly through dvz_axis_set_ticks.",
+        "The production GSP renderer still rejects explicit ticks in configure_view2d_axes().",
+        "Rendered placement remains blocked unless this probe is rerun with --capture in a stable Datoviz offscreen environment."
+      ]
+    }
+  ],
+  "mission_classification": {
+    "no_matrix_promotion": true,
+    "guide_all_rendered_query": "unsupported",
+    "panel_title": "unsupported",
+    "backend_auto_tick_policy_api": "proven",
+    "explicit_ticks_facade_api": "proven",
+    "rendered_axis_placement": "blocked",
+    "production_gsp_explicit_ticks": "blocked",
+    "promotion_recommendation": "defer"
+  },
+  "stop_condition": "Promotion would still require approximating title layout or guide query behavior, and wiring explicit ticks through the GSP adapter contract."
+}

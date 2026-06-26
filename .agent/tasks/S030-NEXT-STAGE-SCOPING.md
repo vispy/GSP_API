@@ -25,6 +25,6 @@ guide query.
 
 | Mission | State | Purpose |
 |---|---|---|
-| M120 | ready | Probe/render Datoviz native guide-axis behavior for auto ticks, explicit ticks, reversed domains, grid, labels, and title placement. |
-| M121 | draft | Wire GSP Datoviz guide review-path rendering only if M120 proves sufficient Datoviz behavior. |
+| M120 | completed | Runtime API proof completed; Datoviz axis APIs are callable, but rendered placement, panel title, guide query, and GSP explicit tick wiring remain blockers. |
+| M121 | draft | Wire GSP Datoviz guide review-path rendering only if the remaining blockers are explicitly accepted or resolved. |
 | M122 | draft | Regenerate review artifacts and promote/defer rows based on M120-M121 evidence. |

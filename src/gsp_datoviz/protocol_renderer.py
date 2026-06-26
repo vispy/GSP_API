@@ -1191,9 +1191,9 @@ class DatovizV04ProtocolRenderer:
             self.dvz.dvz_axis_set_grid(y_axis, grid)
 
         if x_label is not None:
-            self.dvz.dvz_axis_set_label(x_axis, x_label)
+            self.dvz.dvz_axis_set_label(x_axis, x_label.encode("utf-8"))
         if y_label is not None:
-            self.dvz.dvz_axis_set_label(y_axis, y_label)
+            self.dvz.dvz_axis_set_label(y_axis, y_label.encode("utf-8"))
 
 
 def _positions_3d(

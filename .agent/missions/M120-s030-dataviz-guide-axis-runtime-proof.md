@@ -6,7 +6,7 @@ S030 - Datoviz Guide Axis Proof
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -31,6 +31,14 @@ GSP capability promotion.
 - Each required guide behavior is classified as proven, adapted, unsupported, or blocked.
 - Guide/all-rendered query remains unsupported unless Datoviz guide picking/query is explicitly
   proven.
+
+## Result
+
+Runtime API proof is recorded in `.agent/S030_DATOVIZ_GUIDE_AXIS_PROOF.md` and
+`artifacts/visual_qa/s030/datoviz-guide-axis-proof/report.json`. Native axis APIs, backend tick
+policy, explicit facade ticks, labels, grids, and reversed domains are callable; rendered placement,
+panel title, guide query, and production GSP explicit tick wiring remain blockers. No matrix row was
+promoted.
 
 ## Stop Condition
 

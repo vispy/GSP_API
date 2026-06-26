@@ -179,7 +179,7 @@
       "id": "S030",
       "title": "Datoviz Guide Axis Proof",
       "state": "in_progress",
-      "progress": 0
+      "progress": 35
     }
   ],
   "missions": [
@@ -1249,9 +1249,9 @@
       "id": "M120",
       "title": "S030 Datoviz guide-axis runtime proof",
       "stage": "S030",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 120
     },
     {
@@ -1333,9 +1333,9 @@
     }
   ],
   "recommendations": [
-    "S029 is closed with Datoviz guide rows explicitly unsupported and all promoted Datoviz rows rendering-only.",
-    "Next mission is M120: run a bounded Datoviz guide-axis runtime proof before any guide row promotion.",
-    "Keep guide/all-rendered query unsupported unless Datoviz guide picking/query semantics are explicitly proven."
+    "M120 is complete: Datoviz native axis APIs are callable, but rendered placement, panel title, guide query, and production explicit tick wiring remain blockers.",
+    "Keep M121 in draft until those blockers are explicitly accepted or resolved; do not promote guide rows from API-call evidence alone.",
+    "If continuing S030, decide whether to pursue a capture-stable Datoviz guide review path or defer the guide rows unchanged."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
