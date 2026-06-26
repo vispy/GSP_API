@@ -166,8 +166,8 @@
     {
       "id": "S028",
       "title": "Guide and View2D Integration",
-      "state": "ready",
-      "progress": 0
+      "state": "in_progress",
+      "progress": 10
     }
   ],
   "missions": [
@@ -1111,10 +1111,55 @@
       "id": "M105",
       "title": "S028 Guide/View2D integration scoping",
       "stage": "S028",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 105
+    },
+    {
+      "id": "M106",
+      "title": "S028 guide/View2D spec reconciliation",
+      "stage": "S028",
       "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
-      "priority": 105
+      "priority": 106
+    },
+    {
+      "id": "M107",
+      "title": "S028 reversed View2D tick and guide reference behavior",
+      "stage": "S028",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 107
+    },
+    {
+      "id": "M108",
+      "title": "S028 guide query/readout View2D parity",
+      "stage": "S028",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 108
+    },
+    {
+      "id": "M109",
+      "title": "S028 visual QA and VisPy2 guide View2D coverage",
+      "stage": "S028",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 109
+    },
+    {
+      "id": "M110",
+      "title": "S028 Datoviz guide capability report and closeout",
+      "stage": "S028",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 110
     }
   ],
   "review_queue": [],
@@ -1177,10 +1222,10 @@
     }
   ],
   "recommendations": [
-    "M104 is complete: S027 visual/query QA coverage is present, S027 is closed, and `ANSWER` was deleted after confirming P012 content is integrated.",
-    "S028 is ready to scope Guide/View2D integration. Start with M105 in the local main session before launching workers.",
-    "M105 should reconcile existing guide/tick/grid/query behavior with accepted `View2D` semantics, including reversed axes and deterministic tick/readout behavior.",
-    "Stop and report if existing guide specs conflict with `spec/transforms.md`; do not expand into public 3D camera/projection/controller, nonlinear transforms, or layout/collision semantics without a new accepted decision."
+    "M105 is complete: S028 scoping found no ChatGPT Pro blocker and identified reversed `View2D` guide/tick/query behavior as the main implementation gap.",
+    "M106 is ready: reconcile guide/tick/query specs with accepted `View2D`, especially reversed axes and same-snapshot guide/data readouts.",
+    "After M106, execute M107-M110 as bounded implementation/QA/backend-report missions.",
+    "Stop and report if S028 scope expands into public 3D camera/projection/controller, nonlinear axes, equal-aspect layout, guide collision/layout solving, or live navigation event semantics."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1215,6 +1260,7 @@
     "M102 completed: added Datoviz S027 transform capability metadata, bounded finite eager NDC inline-affine CPU adaptation for point/marker/segment/path, transform query inverse unsupported diagnostics, and focused tests; full pytest passed with 359 passed and 8 skipped.",
     "M103 completed: added VisPy2 affine2d helper, visual transform parameters, set_view2d convenience, and focused tests; full pytest passed with 363 passed and 8 skipped before tuple typing cleanup.",
     "M104 completed: added S027 visual QA cases for inline/named affine equivalence, View2D DATA/NDC overlay, and cross-family affine+View2D coverage; added transform-query inverse fixture coverage; closed S027 after auditing and deleting ANSWER.",
-    "S028 opened as a ready planning stage for Guide/View2D integration. M105 is the next local Mission Control task."
+    "S028 opened as a ready planning stage for Guide/View2D integration. M105 is the next local Mission Control task.",
+    "M105 completed: audited guide/tick/grid/query, VisPy2, Matplotlib, Datoviz, and S027 transform authority. No durable architecture conflict was found. The actionable gap is that `View2D` accepts reversed limits while the deterministic tick resolver and guide tests still reject or omit reversed-domain behavior."
   ]
 }

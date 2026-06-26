@@ -11,7 +11,7 @@ implementation mission batch.
 
 ## Status
 
-Ready.
+Completed.
 
 ## Deliverables
 
@@ -32,3 +32,12 @@ Ready.
 - Stop on unresolved conflict between guide specs and `spec/transforms.md`.
 - Stop if scope expands into public 3D camera/projection/controller, nonlinear transforms,
   equal-aspect layout, guide collision/layout solving, or live navigation event semantics.
+
+## Result
+
+- No ChatGPT Pro consultation is needed for initial S028 implementation planning.
+- S028 should focus on making guides, ticks, grids, guide queries, and readouts consume the same
+  deterministic `View2D` snapshot as data visuals.
+- Reversed `View2D` limits are the concrete gap: `View2D` accepts them, while current tick resolver
+  behavior and tests still reject reversed ranges.
+- Next mission is M106, a local spec reconciliation task before worker implementation.

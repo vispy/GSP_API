@@ -6,7 +6,7 @@ S028 - Guide and View2D Integration
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -38,3 +38,15 @@ the accepted transform/view contract before implementation workers are launched.
 Stop if existing guide authority documents conflict with accepted `View2D` semantics in
 `spec/transforms.md`, or if the work requires public 3D camera/projection/controller, nonlinear
 view, equal-aspect layout, or automatic guide layout/collision semantics.
+
+## Result
+
+- Audited guide/tick/grid/query authority in `spec/vispy2/api.md`, `spec/query.md`,
+  `spec/transforms.md`, ADR-0019, and S027 decision records.
+- Audited current Matplotlib guide rendering/query tests, scoped-query tests, VisPy2 guide API
+  tests, and Datoviz guide capability notes.
+- Found no conflict requiring ChatGPT Pro consultation.
+- Identified the main implementation gap: accepted `View2D` permits reversed limits, but the
+  deterministic tick resolver and guide coverage still treat reversed domains as invalid or
+  untested.
+- Opened the S028 mission batch M106-M110 with M106 as the next ready local Mission Control task.
