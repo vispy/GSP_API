@@ -161,7 +161,7 @@
       "id": "S027",
       "title": "Transform, View, Camera, and Navigation Semantics",
       "state": "in_progress",
-      "progress": 15
+      "progress": 25
     }
   ],
   "missions": [
@@ -1060,10 +1060,19 @@
       "id": "M100",
       "title": "S027 transform protocol dataclasses and validation",
       "stage": "S027",
+      "state": "completed",
+      "agent": "codex-ucl",
+      "progress": 100,
+      "priority": 100
+    },
+    {
+      "id": "M101",
+      "title": "S027 Matplotlib transform/view reference behavior",
+      "stage": "S027",
       "state": "ready",
       "agent": "codex-ucl",
       "progress": 0,
-      "priority": 100
+      "priority": 101
     }
   ],
   "review_queue": [],
@@ -1127,7 +1136,8 @@
   ],
   "recommendations": [
     "M099 is complete: P012 is converted into ADR-0019, `spec/transforms.md`, and S027 decision records.",
-    "M100 is ready: implement S027 protocol dataclasses/enums/validation for AFFINE_2D, View2D, visual transform bindings, placement vocabulary, and transform query payload shells.",
+    "M100 is complete: S027 protocol dataclasses/enums/validation and transform query payload shells are implemented.",
+    "M101 is ready: implement Matplotlib strict transform/view rendering and query inverse behavior.",
     "Keep S027 implementation 2D-first; do not add public 3D camera/projection/controller or transform graph semantics without a new decision."
   ],
   "notes": [
@@ -1157,6 +1167,7 @@
     "M096 completed: added bounded VisPy2 S026 color scale, scalar image/point/marker encoding, and colorbar guide producer APIs with examples and focused tests; S026 is closed.",
     "M097 completed: added Datoviz S026 scalar image/point CPU pre-mapping, retained scalar query payload decoration, shared protocol color-mapping helpers, structured colorbar/marker gates, and focused tests; full suite passed with 346 passed and 2 skipped.",
     "M098 completed: opened S027 for transform/view/camera/navigation semantics, created P012 ChatGPT Pro consultation packet, and blocked M099 pending the response.",
-    "M099 completed: converted the P012 response into ADR-0019, `spec/transforms.md`, S027 decision records, adjacent spec updates, and M100 protocol-validation mission records."
+    "M099 completed: converted the P012 response into ADR-0019, `spec/transforms.md`, S027 decision records, adjacent spec updates, and M100 protocol-validation mission records.",
+    "M100 completed: added S027 transform protocol resources/bindings/enums, stricter View2D validation, transform query payload shell, capability helpers, and focused tests; full pytest passed with 351 passed and 8 skipped."
   ]
 }

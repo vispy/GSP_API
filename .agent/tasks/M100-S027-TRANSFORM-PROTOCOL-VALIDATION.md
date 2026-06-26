@@ -11,7 +11,7 @@ linear `View2D`, visual transform bindings, placement vocabulary, and query inve
 
 ## Status
 
-Ready.
+Completed.
 
 ## Deliverables
 
@@ -32,3 +32,10 @@ Ready.
 
 - Stop on conflict with accepted ADR/spec authority.
 - Stop if implementation requires deciding 3D camera/projection/controller behavior.
+
+## Completion Notes
+
+- Implemented S027 protocol dataclasses/enums/validation and query payload shell.
+- Preserved renderer/backend behavior for later missions.
+- Validation: full `uv run pytest tests/` passed with 351 passed and 8 skipped; backend import smoke
+  passed; mypy still reports five pre-existing unrelated errors outside M100 scope.

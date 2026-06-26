@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import cast
 
 import numpy as np
 import numpy.typing as npt
@@ -16,6 +17,7 @@ from .color import (
     validate_scalar_encoding_shape,
 )
 from .ids import validate_id
+from .transforms import VisualTransformBinding
 
 
 class CoordinateSpace(str, Enum):
@@ -171,9 +173,11 @@ class PointVisual:
     sizes: FloatArray | float = 1.0
     coordinate_space: CoordinateSpace = CoordinateSpace.NDC
     color_encoding: ScalarColorEncoding | None = None
+    transform: VisualTransformBinding | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
+        _validate_visual_transform(self.transform)
         if self.positions.ndim != 2 or self.positions.shape[1] not in (2, 3):
             raise ValueError("positions must have shape (N, 2) or (N, 3)")
         if self.positions.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
@@ -229,9 +233,11 @@ class MarkerVisual:
     stroke_width: float = 0.0
     coordinate_space: CoordinateSpace = CoordinateSpace.NDC
     fill_color_encoding: ScalarColorEncoding | None = None
+    transform: VisualTransformBinding | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
+        _validate_visual_transform(self.transform)
         point_count = _validate_positions(self.positions)
         _validate_shapes(self.shape, point_count)
         _validate_sizes(self.sizes, point_count)
@@ -280,9 +286,11 @@ class SegmentVisual:
     widths: FloatArray | float
     cap: StrokeCap = StrokeCap.BUTT
     coordinate_space: CoordinateSpace = CoordinateSpace.NDC
+    transform: VisualTransformBinding | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
+        _validate_visual_transform(self.transform)
         segment_count = _validate_positions(self.start_positions)
         if _validate_positions(self.end_positions) != segment_count:
             raise ValueError("end_positions length must match start_positions")
@@ -319,9 +327,11 @@ class PathVisual:
     join: StrokeJoin = StrokeJoin.MITER
     miter_limit: float = 4.0
     coordinate_space: CoordinateSpace = CoordinateSpace.NDC
+    transform: VisualTransformBinding | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
+        _validate_visual_transform(self.transform)
         point_count = _validate_positions(self.positions)
         if not self.path_lengths:
             raise ValueError("path_lengths must not be empty")
@@ -366,9 +376,11 @@ class MeshVisual:
     depth_write: DepthMode = DepthMode.AUTO
     order: float = 0.0
     opacity_policy: OpacityPolicy = OpacityPolicy.ORDINARY_ALPHA
+    transform: VisualTransformBinding | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
+        _validate_visual_transform(self.transform)
         vertex_count = _validate_positions(self.positions)
         if vertex_count < 3:
             raise ValueError("positions must contain at least three vertices")
@@ -523,9 +535,11 @@ class TextVisual:
     anchor_y: TextAnchorY | TextAnchorYTuple = TextAnchorY.BASELINE
     rotation_rad: FloatArray | float = 0.0
     z_order: int = 0
+    transform: VisualTransformBinding | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
+        _validate_visual_transform(self.transform)
         text_count = _validate_texts(self.texts)
         if _validate_positions(self.positions) != text_count:
             raise ValueError("positions length must match texts")
@@ -550,10 +564,13 @@ class TextVisual:
     def rgba_values(self) -> ColorArray:
         """Return one RGBA value per text item."""
         if self.rgba.shape == (4,):
-            return np.ascontiguousarray(
-                np.repeat(self.rgba[np.newaxis, :], len(self.texts), axis=0)
+            return cast(
+                ColorArray,
+                np.ascontiguousarray(
+                    np.repeat(self.rgba[np.newaxis, :], len(self.texts), axis=0)
+                ),
             )
-        return np.ascontiguousarray(self.rgba)
+        return cast(ColorArray, np.ascontiguousarray(self.rgba))
 
     def font_size_values(self) -> npt.NDArray[np.float32]:
         """Return one font size in logical pixels per text item."""
@@ -592,6 +609,11 @@ def _validate_positions(positions: FloatArray) -> int:
     if not np.all(np.isfinite(positions)):
         raise ValueError("positions must be finite")
     return int(positions.shape[0])
+
+
+def _validate_visual_transform(transform: VisualTransformBinding | None) -> None:
+    if transform is not None and not isinstance(transform, VisualTransformBinding):
+        raise TypeError("transform must be a VisualTransformBinding")
 
 
 def _validate_faces(faces: IndexArray, vertex_count: int) -> int:

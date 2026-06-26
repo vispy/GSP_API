@@ -10,6 +10,7 @@ import numpy as np
 from .color import ScalarColorSlot, ScalarRangeClass
 from .ids import validate_id
 from .guides import AxisDimension
+from .transforms import InverseStatus
 
 
 class QueryCoordinateSpace(str, Enum):
@@ -75,6 +76,7 @@ GUIDE_QUERY_PAYLOAD_KIND = "gsp.guide-query@0.1"
 TEXT_QUERY_PAYLOAD_KIND = "gsp.text-query@0.1"
 MESH_QUERY_PAYLOAD_KIND = "gsp.mesh-query@0.1"
 SCALAR_COLOR_QUERY_PAYLOAD_KIND = "gsp.scalar-color-query@0.1"
+TRANSFORM_QUERY_PAYLOAD_KIND = "gsp.transform-query@0.1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -175,6 +177,53 @@ class ScalarColorQueryPayload:
             raise ValueError("texel coordinates must be non-negative")
         if self.face_index is not None and self.face_index < 0:
             raise ValueError("face_index must be non-negative")
+
+
+@dataclass(frozen=True, slots=True)
+class TransformQueryPayload:
+    """Transformed query inverse/readout payload for S027."""
+
+    visual_id: str
+    panel_xy: tuple[float, float]
+    panel_ndc: tuple[float, float]
+    declared_coordinate_space: str
+    declared_space_coord: tuple[float, float] | None
+    source_coord: tuple[float, float] | None
+    data_coord: tuple[float, float] | None
+    inverse_status: InverseStatus | str
+    transform_ids: tuple[str, ...] = ()
+    inline_transform_digest: str | None = None
+    view_id: str | None = None
+    view_digest: str | None = None
+    diagnostics: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        validate_id(self.visual_id)
+        _validate_finite_pair("panel_xy", self.panel_xy)
+        _validate_finite_pair("panel_ndc", self.panel_ndc)
+        if not self.declared_coordinate_space:
+            raise ValueError("declared_coordinate_space must not be empty")
+        _validate_optional_finite_pair("declared_space_coord", self.declared_space_coord)
+        _validate_optional_finite_pair("source_coord", self.source_coord)
+        _validate_optional_finite_pair("data_coord", self.data_coord)
+        if isinstance(self.inverse_status, str):
+            try:
+                InverseStatus(self.inverse_status)
+            except ValueError as exc:
+                raise ValueError("inverse_status must be a valid InverseStatus") from exc
+        elif not isinstance(self.inverse_status, InverseStatus):
+            raise TypeError("inverse_status must be an InverseStatus or string")
+        for transform_id in self.transform_ids:
+            validate_id(transform_id)
+        if self.inline_transform_digest is not None and not self.inline_transform_digest:
+            raise ValueError("inline_transform_digest must not be empty")
+        if self.view_id is not None:
+            validate_id(self.view_id)
+        if self.view_digest is not None and not self.view_digest:
+            raise ValueError("view_digest must not be empty")
+        for diagnostic in self.diagnostics:
+            if not diagnostic:
+                raise ValueError("diagnostics must not contain empty strings")
 
 
 @dataclass(frozen=True, slots=True)
@@ -338,3 +387,15 @@ def _query_hit_from_result_fields(result: QueryResult) -> QueryHit:
 def _set_if_none(result: QueryResult, field_name: str, value: object | None) -> None:
     if getattr(result, field_name) is None and value is not None:
         object.__setattr__(result, field_name, value)
+
+
+def _validate_finite_pair(name: str, value: tuple[float, float]) -> None:
+    if len(value) != 2 or not all(np.isfinite(component) for component in value):
+        raise ValueError(f"{name} must contain two finite values")
+
+
+def _validate_optional_finite_pair(
+    name: str, value: tuple[float, float] | None
+) -> None:
+    if value is not None:
+        _validate_finite_pair(name, value)

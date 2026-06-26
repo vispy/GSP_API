@@ -6,7 +6,7 @@ S027 - Transform, View, Camera, and Navigation Semantics
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -34,3 +34,13 @@ payload shells.
 
 Stop if existing public source code already exposes incompatible transform/camera/view semantics.
 Report the conflict instead of reconciling by invention.
+
+## Completion Notes
+
+- Added `gsp.protocol.transforms` with accepted S027 enums, resources, bindings, matrix validation,
+  placement vocabulary, inverse statuses, and diagnostic codes.
+- Tightened `View2D` validation to allow reversed finite limits and reject equal-aspect S027
+  semantics.
+- Added optional transform bindings to positional visual families without renderer application.
+- Added `gsp.transform-query@0.1` payload shell and capability helpers.
+- Added focused protocol tests.

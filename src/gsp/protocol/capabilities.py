@@ -9,6 +9,7 @@ from typing import Literal, TypeVar
 
 from .extensions import ExtensionManifest, validate_extension_manifest
 from .query import QueryCoordinateSpace, QueryHitPolicy, QueryPayload, QueryRequest, QueryScope
+from .transforms import TransformPlacement
 
 
 class TransportKind(str, Enum):
@@ -282,6 +283,7 @@ class CapabilitySnapshot:
     texture_formats: tuple[str, ...] = ()
     visual_families: tuple[str, ...] = ()
     transform_placements: tuple[str, ...] = ()
+    transform_capabilities: tuple[str, ...] = ()
     query_modes: tuple[str, ...] = ()
     query_capabilities: tuple[QueryScopeCapability, ...] = ()
     output_formats: tuple[str, ...] = ()
@@ -344,6 +346,15 @@ class CapabilitySnapshot:
         """Return whether a query/readback mode is advertised."""
         return mode in self.query_modes
 
+    def supports_transform_placement(self, placement: TransformPlacement | str) -> bool:
+        """Return whether a transform placement is advertised."""
+        value = placement.value if isinstance(placement, TransformPlacement) else placement
+        return value in self.transform_placements
+
+    def supports_transform_capability(self, capability: str) -> bool:
+        """Return whether a semantic transform capability is advertised."""
+        return capability in self.transform_capabilities
+
     def query_capability(self, scope: QueryScope) -> QueryScopeCapability | None:
         """Return an advertised typed query capability by scope."""
         return _first(capability for capability in self.query_capabilities if capability.scope == scope)
@@ -380,6 +391,15 @@ class CapabilitySnapshot:
         return AdaptationDecision(
             AdaptationOutcome.REJECT,
             f"query mode {mode!r} is not supported by {self.server_name}",
+        )
+
+    def adapt_transform_capability(self, capability: str) -> AdaptationDecision:
+        """Return a minimal adaptation decision for a semantic transform capability."""
+        if self.supports_transform_capability(capability):
+            return AdaptationDecision(AdaptationOutcome.ACCEPT)
+        return AdaptationDecision(
+            AdaptationOutcome.REJECT,
+            f"transform capability {capability!r} is not supported by {self.server_name}",
         )
 
     def adapt_query_request(self, request: QueryRequest) -> AdaptationDecision:
