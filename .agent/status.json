@@ -1022,6 +1022,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 96
+    },
+    {
+      "id": "M097",
+      "title": "S026 Datoviz runtime scalar color slice",
+      "stage": "S026",
+      "state": "running",
+      "agent": "codex-ibl",
+      "progress": 0,
+      "priority": 97
     }
   ],
   "review_queue": [],
@@ -1077,9 +1086,9 @@
     }
   ],
   "recommendations": [
-    "M096 is complete: VisPy2 now emits accepted S026 ColorScale, scalar image/point/marker encodings, and ColorbarGuide protocol objects.",
-    "S026 is complete; ask Mission Control for the next stage proposal or release/review action.",
-    "Datoviz runtime exposes S026 image/point/colorbar/query implementation candidates; keep marker scalar fill and mesh face scalar capability-gated until verified."
+    "M097 is approved for medium Codex execution: implement or capability-gate the narrow Datoviz S026 scalar image/point/colorbar/query runtime slice.",
+    "Keep marker scalar fill and mesh face scalar capability-gated unless native Datoviz contracts are verified.",
+    "Stop and escalate only if Datoviz constraints require changing accepted S026 semantics."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1105,6 +1114,7 @@
     "M093 completed: added Matplotlib reference scalar color rendering/query behavior, semantic colorbar guide rendering, and focused tests; M094 is ready.",
     "M094 completed: added S026 visual QA suite cases, Matplotlib review artifacts, protocol color mapping example, and examples docs; M095 is ready.",
     "M095 completed: added Datoviz S026 color mapping symbol/capability probes and artifacts; sibling checkout import works locally and runtime bindings expose image/point/colorbar/query candidates, with marker scalar fill and mesh face scalar still capability-gated; M096 is ready.",
-    "M096 completed: added bounded VisPy2 S026 color scale, scalar image/point/marker encoding, and colorbar guide producer APIs with examples and focused tests; S026 is closed."
+    "M096 completed: added bounded VisPy2 S026 color scale, scalar image/point/marker encoding, and colorbar guide producer APIs with examples and focused tests; S026 is closed.",
+    "M097 approved: next medium Codex mission is a bounded Datoviz S026 scalar color runtime slice against accepted P011/M091 semantics."
   ]
 }
