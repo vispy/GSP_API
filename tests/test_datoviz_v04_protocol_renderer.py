@@ -10,6 +10,7 @@ import pytest
 from gsp.protocol import (
     ImageOrigin,
     ImageVisual,
+    MeshColorMode,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -21,6 +22,7 @@ from gsp.protocol import (
     StrokeJoin,
 )
 from gsp.protocol import (
+    AffineTransform2DResource,
     AxisProviderRequest,
     ColorbarGuide,
     ColorMapId,
@@ -36,6 +38,8 @@ from gsp.protocol import (
     ScalarColorEncoding,
     ScalarColorSlot,
     TRANSFORM_QUERY_PAYLOAD_KIND,
+    TextAnchorX,
+    TextAnchorY,
     TransformPlacement,
     View2D,
     VisualFamily,
@@ -423,6 +427,107 @@ class FakeDatovizV04WithQueryCapabilities(FakeDatovizV04):
         return None
 
 
+class FakeDatovizV04WithMesh(FakeDatovizV04WithQueryCapabilities):
+    def dvz_mesh(self, scene, flags):
+        self.calls.append(("mesh", scene, flags))
+        return "mesh-visual"
+
+    def dvz_visual_set_index_data(self, visual, indices, index_count):
+        self.calls.append(
+            ("set_index_data", visual, np.array(indices, copy=True), index_count)
+        )
+        return 0
+
+    def dvz_visual_set_depth_test(self, visual, enabled):
+        self.calls.append(("set_depth_test", visual, enabled))
+        return 0
+
+
+class FakeDatovizV04WithColorbar(FakeDatovizV04):
+    class DvzScaleKind:
+        DVZ_SCALE_CONTINUOUS = 0
+
+    class DvzBuiltinColormap:
+        DVZ_BUILTIN_COLORMAP_VIRIDIS = 1
+        DVZ_BUILTIN_COLORMAP_GRAY = 7
+
+    class DvzColorbarOrientation:
+        DVZ_COLORBAR_ORIENTATION_VERTICAL = 0
+        DVZ_COLORBAR_ORIENTATION_HORIZONTAL = 1
+
+    class DvzColorbarPlacementMode:
+        DVZ_COLORBAR_PLACEMENT_ATTACHED = 0
+
+    class DvzSceneAnchor:
+        DVZ_SCENE_ANCHOR_PANEL_RIGHT = 6
+
+    class FakeScaleDesc:
+        def __init__(self):
+            self.kind = None
+            self.label = None
+
+    class FakeColorbarDesc:
+        def __init__(self):
+            self.orientation = None
+            self.placement_mode = None
+            self.anchor = None
+            self.title = None
+
+    def dvz_scale_desc(self):
+        self.calls.append(("scale_desc",))
+        return self.FakeScaleDesc()
+
+    def dvz_scale(self, scene, desc):
+        self.calls.append(("scale", scene, desc.kind, desc.label))
+        return "scale"
+
+    def dvz_scale_set_domain(self, scale, vmin, vmax):
+        self.calls.append(("scale_set_domain", scale, vmin, vmax))
+        return None
+
+    def dvz_scale_set_view_range(self, scale, vmin, vmax):
+        self.calls.append(("scale_set_view_range", scale, vmin, vmax))
+        return None
+
+    def dvz_colormap_builtin(self, scene, colormap):
+        self.calls.append(("colormap_builtin", scene, colormap))
+        return "colormap"
+
+    def dvz_scale_set_colormap(self, scale, colormap):
+        self.calls.append(("scale_set_colormap", scale, colormap))
+        return None
+
+    def dvz_colorbar_desc(self):
+        self.calls.append(("colorbar_desc",))
+        return self.FakeColorbarDesc()
+
+    def dvz_colorbar(self, panel, scale, desc):
+        self.calls.append(
+            (
+                "colorbar",
+                panel,
+                scale,
+                desc.orientation,
+                desc.placement_mode,
+                desc.anchor,
+                desc.title,
+            )
+        )
+        return "colorbar"
+
+    def dvz_colorbar_set_orientation(self, colorbar, orientation):
+        self.calls.append(("colorbar_set_orientation", colorbar, orientation))
+        return None
+
+    def dvz_colorbar_set_anchor(self, colorbar, anchor):
+        self.calls.append(("colorbar_set_anchor", colorbar, anchor))
+        return True
+
+    def dvz_colorbar_set_title(self, colorbar, title):
+        self.calls.append(("colorbar_set_title", colorbar, title))
+        return None
+
+
 class FakeDatovizV04WithImageSampling(FakeDatovizV04WithQueryCapabilities):
     class DvzImageSampling:
         DVZ_IMAGE_SAMPLING_LINEAR = 0
@@ -431,6 +536,85 @@ class FakeDatovizV04WithImageSampling(FakeDatovizV04WithQueryCapabilities):
     def dvz_image_set_sampling(self, visual, sampling):
         self.calls.append(("image_set_sampling", visual, sampling))
         return 0
+
+
+class FakeDatovizV04WithText(FakeDatovizV04WithQueryCapabilities):
+    class DvzTextPlacementMode:
+        DVZ_TEXT_PLACEMENT_SCREEN = 0
+        DVZ_TEXT_PLACEMENT_DATA = 1
+
+    class DvzSceneAnchor:
+        DVZ_SCENE_ANCHOR_DATA = 10
+
+    class DvzTextRenderer:
+        DVZ_TEXT_RENDERER_MSDF_ATLAS = 3
+
+    class FakeTextStyle:
+        def __init__(self):
+            self.size_px = 0.0
+            self.renderer = 0
+            self.color = [0, 0, 0, 0]
+
+    class FakeTextPlacement:
+        def __init__(self):
+            self.mode = 0
+            self.anchor = 0
+            self.position = [0.0, 0.0, 0.0]
+            self.offset = [0.0, 0.0]
+            self.text_anchor = [0.0, 0.0]
+            self.has_text_anchor = False
+            self.angle = 0.0
+            self.depth_test = True
+
+    def __init__(self):
+        super().__init__()
+        self.text_count = 0
+
+    def dvz_text(self, panel, flags):
+        self.text_count += 1
+        text = f"text-{self.text_count}"
+        self.calls.append(("text", panel, flags, text))
+        return text
+
+    def dvz_text_style(self):
+        self.calls.append(("text_style",))
+        return self.FakeTextStyle()
+
+    def dvz_text_set_style(self, text, style):
+        self.calls.append(
+            (
+                "text_set_style",
+                text,
+                style.size_px,
+                style.renderer,
+                tuple(style.color),
+            )
+        )
+        return 0
+
+    def dvz_text_placement(self):
+        self.calls.append(("text_placement",))
+        return self.FakeTextPlacement()
+
+    def dvz_text_set_placement(self, text, placement):
+        self.calls.append(
+            (
+                "text_set_placement",
+                text,
+                placement.mode,
+                placement.anchor,
+                tuple(placement.position),
+                tuple(placement.text_anchor),
+                placement.has_text_anchor,
+                placement.angle,
+                placement.depth_test,
+            )
+        )
+        return None
+
+    def dvz_text_set_string(self, text, value):
+        self.calls.append(("text_set_string", text, value))
+        return None
 
 
 class FakeDatovizV04WithSampledFieldsAndImageSampling(
@@ -981,7 +1165,36 @@ def test_add_point_visual_cpu_adapts_inline_affine_transform():
     )
 
 
-def test_add_point_visual_rejects_named_transform_ref_without_resource_resolution():
+def test_add_point_visual_resolves_named_transform_ref_with_resource_map():
+    fake = FakeDatovizV04WithQueryCapabilities()
+    matrix = np.array(
+        [[1.0, 0.0, 0.25], [0.0, 1.0, -0.5], [0.0, 0.0, 1.0]],
+        dtype=np.float64,
+    )
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=fake,
+        transform_resources={
+            "transform:model": AffineTransform2DResource(
+                id="transform:model", matrix=matrix
+            )
+        },
+    )
+    visual = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+        sizes=np.array([2.0], dtype=np.float32),
+        transform=VisualTransformBinding.from_ref("transform:model"),
+    )
+
+    renderer.add_point_visual(visual)
+
+    position_upload = _calls(fake, "set_data")[0]
+    assert position_upload[2] == "position"
+    np.testing.assert_allclose(position_upload[3], [[0.25, -0.5, 0.0]])
+
+
+def test_add_point_visual_rejects_unresolved_named_transform_ref():
     renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithQueryCapabilities())
     visual = PointVisual(
         id="visual:points",
@@ -993,6 +1206,35 @@ def test_add_point_visual_rejects_named_transform_ref_without_resource_resolutio
 
     with pytest.raises(DatovizV04Unsupported, match="GSP_TRANSFORM_MISSING_REF"):
         renderer.add_point_visual(visual)
+
+
+def test_add_point_visual_maps_data_coordinates_through_view2d():
+    fake = FakeDatovizV04WithQueryCapabilities()
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=fake,
+        view=View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(10.0, -10.0),
+            y_range=(-5.0, 5.0),
+        ),
+    )
+    visual = PointVisual(
+        id="visual:data-points",
+        positions=np.array([[-8.0, -4.0], [0.0, 0.0], [8.0, 4.0]], dtype=np.float32),
+        colors=np.zeros((3, 4), dtype=np.uint8),
+        sizes=np.array([2.0, 4.0, 6.0], dtype=np.float32),
+        coordinate_space=CoordinateSpace.DATA,
+    )
+
+    renderer.add_point_visual(visual)
+
+    position_upload = _calls(fake, "set_data")[0]
+    np.testing.assert_allclose(
+        position_upload[3],
+        [[0.8, -0.8, 0.0], [0.0, 0.0, 0.0], [-0.8, 0.8, 0.0]],
+        atol=1e-6,
+    )
 
 
 def test_add_point_visual_cpu_premaps_scalar_color_encoding_to_canonical_rgba8():
@@ -1069,25 +1311,38 @@ def test_add_marker_visual_uses_dvz_marker_attributes_shape_angle_and_style():
     assert add_visual_call[:3] == ("add_visual", "panel", "marker-visual")
 
 
-def test_add_marker_visual_keeps_scalar_fill_capability_gated():
+def test_add_marker_visual_cpu_premaps_scalar_fill_to_canonical_rgba8():
     scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
-    renderer = DatovizV04ProtocolRenderer(
-        dvz=FakeDatovizV04WithQueryCapabilities(), color_scales={scale.id: scale}
-    )
+    fake = FakeDatovizV04WithQueryCapabilities()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, color_scales={scale.id: scale})
     visual = MarkerVisual(
         id="visual:scalar-markers",
-        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        positions=np.array([[-0.25, 0.0], [0.25, 0.0]], dtype=np.float32),
         shape=MarkerShape.DISC,
-        sizes=np.array([9.0], dtype=np.float32),
+        sizes=np.array([9.0, 11.0], dtype=np.float32),
         fill_color_encoding=ScalarColorEncoding(
             slot=ScalarColorSlot.FILL,
-            values=np.array([0.25], dtype=np.float32),
+            values=np.array([0.25, 1.5], dtype=np.float32),
             color_scale_id=scale.id,
+            alpha=0.5,
         ),
     )
 
-    with pytest.raises(DatovizV04Unsupported, match="scalar_visual_family_unsupported"):
-        renderer.add_marker_visual(visual)
+    renderer.add_marker_visual(visual)
+
+    color_upload = [
+        call for call in _calls(fake, "set_data") if call[2] == "color"
+    ][0]
+    np.testing.assert_array_equal(
+        color_upload[3], [[64, 64, 64, 128], [255, 255, 255, 128]]
+    )
+    metadata = renderer.scalar_visuals["visual:scalar-markers"]
+    assert metadata.visual_id == visual.id
+    assert metadata.visual_family == "marker"
+    assert metadata.item_kind == "marker"
+    assert metadata.color_slot == ScalarColorSlot.FILL
+    assert metadata.color_scale == scale
+    assert metadata.alpha == 0.5
 
 
 def test_add_marker_visual_passes_marker_angles_through_to_datoviz():
@@ -1477,7 +1732,7 @@ def test_query_panel_reports_unsupported_when_scalar_payload_cannot_be_matched()
     assert "scalar_query_source_unavailable" in str(result.diagnostic)
 
 
-def test_add_colorbar_guide_reports_structured_unsupported_until_verified():
+def test_add_colorbar_guide_reports_missing_native_colorbar_facade():
     scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
     renderer = DatovizV04ProtocolRenderer(
         dvz=FakeDatovizV04(), color_scales={scale.id: scale}
@@ -1491,6 +1746,50 @@ def test_add_colorbar_guide_reports_structured_unsupported_until_verified():
                 color_scale_id=scale.id,
             )
         )
+
+
+def test_add_colorbar_guide_creates_native_datoviz_scale_colormap_and_colorbar():
+    fake = FakeDatovizV04WithColorbar()
+    scale = _test_color_scale(colormap_id=ColorMapId.VIRIDIS)
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, color_scales={scale.id: scale})
+    guide = ColorbarGuide(
+        id="guide:colorbar",
+        panel_id="panel:main",
+        color_scale_id=scale.id,
+        label="value",
+        ticks=(0.0, 0.5, 1.0),
+        tick_labels=("low", "mid", "high"),
+    )
+
+    colorbar = renderer.add_colorbar_guide(guide)
+
+    assert colorbar == "colorbar"
+    assert _calls(fake, "scale") == [("scale", "scene", 0, b"value")]
+    assert _calls(fake, "scale_set_domain") == [
+        ("scale_set_domain", "scale", 0.0, 1.0)
+    ]
+    assert _calls(fake, "scale_set_view_range") == [
+        ("scale_set_view_range", "scale", 0.0, 1.0)
+    ]
+    assert _calls(fake, "colormap_builtin") == [
+        ("colormap_builtin", "scene", 1)
+    ]
+    assert _calls(fake, "scale_set_colormap") == [
+        ("scale_set_colormap", "scale", "colormap")
+    ]
+    assert _calls(fake, "colorbar") == [
+        ("colorbar", "panel", "scale", 0, 0, 6, b"value")
+    ]
+    assert _calls(fake, "colorbar_set_orientation") == [
+        ("colorbar_set_orientation", "colorbar", 0)
+    ]
+    assert _calls(fake, "colorbar_set_anchor") == [
+        ("colorbar_set_anchor", "colorbar", 6)
+    ]
+    assert _calls(fake, "colorbar_set_title") == [
+        ("colorbar_set_title", "colorbar", b"value")
+    ]
+    assert renderer.colorbars[guide.id] == "colorbar"
 
 
 def test_sampled_field_readiness_reports_missing_symbols():
@@ -1538,33 +1837,104 @@ def test_lower_origin_texcoords_are_not_flipped():
 
 
 
-def test_add_mesh_visual_reports_structured_unsupported_until_semantics_verified():
-    fake = FakeDatovizV04()
-    fake.dvz_mesh = lambda scene, flags: "mesh"
-    fake.dvz_mesh_set_geometry = lambda visual, geometry: 0
-    fake.dvz_visual_set_index_data = lambda visual, indices, index_count: 0
+def test_add_mesh_visual_uploads_uniform_indexed_triangles():
+    fake = FakeDatovizV04WithMesh()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     visual = MeshVisual(
         id="visual:mesh",
-        positions=np.array([[0.0, 0.0], [0.5, 0.0], [0.0, 0.5]], dtype=np.float32),
-        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        positions=np.array(
+            [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32),
         coordinate_space=CoordinateSpace.NDC,
-        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        color=np.array([42, 157, 143, 192], dtype=np.uint8),
+        order=2.0,
     )
 
-    with pytest.raises(
-        DatovizV04Unsupported, match="MeshVisual support is unavailable"
-    ) as exc_info:
-        renderer.add_mesh_visual(visual)
+    result = renderer.add_mesh_visual(visual)
 
-    message = str(exc_info.value)
-    assert "not verified for S025" in message
-    assert "topology preservation" in message
-    assert datoviz_v04_mesh_ready(fake) is False
+    assert result == "mesh-visual"
+    assert datoviz_v04_mesh_ready(fake) is True
+    assert _calls(fake, "mesh") == [("mesh", "scene", 0)]
+    set_data = _calls(fake, "set_data")
+    assert [call[2] for call in set_data] == ["position", "color"]
+    np.testing.assert_allclose(
+        set_data[0][3],
+        [
+            [-0.5, -0.5, 0.0],
+            [0.5, -0.5, 0.0],
+            [0.5, 0.5, 0.0],
+            [-0.5, 0.5, 0.0],
+        ],
+    )
+    np.testing.assert_array_equal(
+        set_data[1][3],
+        np.tile(np.array([[42, 157, 143, 192]], dtype=np.uint8), (4, 1)),
+    )
+    assert _calls(fake, "set_index_data")[0][3] == 6
+    np.testing.assert_array_equal(
+        _calls(fake, "set_index_data")[0][2],
+        np.array([0, 1, 2, 0, 2, 3], dtype=np.uint32),
+    )
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", False)]
+    assert _calls(fake, "set_alpha_mode")
 
 
-def test_add_mesh_visual_rejects_data_and_3d_before_runtime_diagnostics():
-    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04())
+def test_add_mesh_visual_duplicates_face_colors_for_datoviz_vertex_color_mesh():
+    fake = FakeDatovizV04WithMesh()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    visual = MeshVisual(
+        id="visual:mesh-face-color",
+        positions=np.array(
+            [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array(
+            [[255, 0, 0, 255], [0, 0, 255, 255]],
+            dtype=np.uint8,
+        ),
+        color_mode=MeshColorMode.FACE,
+    )
+
+    renderer.add_mesh_visual(visual)
+
+    set_data = _calls(fake, "set_data")
+    np.testing.assert_allclose(
+        set_data[0][3],
+        [
+            [-0.5, -0.5, 0.0],
+            [0.5, -0.5, 0.0],
+            [0.5, 0.5, 0.0],
+            [-0.5, -0.5, 0.0],
+            [0.5, 0.5, 0.0],
+            [-0.5, 0.5, 0.0],
+        ],
+    )
+    np.testing.assert_array_equal(
+        set_data[1][3],
+        np.array(
+            [
+                [255, 0, 0, 255],
+                [255, 0, 0, 255],
+                [255, 0, 0, 255],
+                [0, 0, 255, 255],
+                [0, 0, 255, 255],
+                [0, 0, 255, 255],
+            ],
+            dtype=np.uint8,
+        ),
+    )
+    np.testing.assert_array_equal(
+        _calls(fake, "set_index_data")[0][2],
+        np.arange(6, dtype=np.uint32),
+    )
+
+
+def test_add_mesh_visual_accepts_default_data_domain_and_rejects_3d_before_diagnostics():
+    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh())
     data_visual = MeshVisual(
         id="visual:data-mesh",
         positions=np.array([[0.0, 0.0], [0.5, 0.0], [0.0, 0.5]], dtype=np.float32),
@@ -1580,10 +1950,42 @@ def test_add_mesh_visual_rejects_data_and_3d_before_runtime_diagnostics():
         color=np.array([255, 255, 255, 255], dtype=np.uint8),
     )
 
-    with pytest.raises(DatovizV04Unsupported, match="NDC mesh"):
-        renderer.add_mesh_visual(data_visual)
+    renderer.add_mesh_visual(data_visual)
+    position_upload = _calls(renderer.dvz, "set_data")[0]
+    np.testing.assert_allclose(
+        position_upload[3],
+        [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]],
+    )
     with pytest.raises(DatovizV04Unsupported, match="2D positions"):
         renderer.add_mesh_visual(mesh_3d)
+
+
+def test_add_mesh_visual_maps_data_coordinates_through_view2d():
+    fake = FakeDatovizV04WithMesh()
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=fake,
+        view=View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(0.0, 10.0),
+            y_range=(0.0, 10.0),
+        ),
+    )
+    visual = MeshVisual(
+        id="visual:data-mesh",
+        positions=np.array([[0.0, 0.0], [10.0, 0.0], [0.0, 10.0]], dtype=np.float32),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+    )
+
+    renderer.add_mesh_visual(visual)
+
+    position_upload = _calls(fake, "set_data")[0]
+    np.testing.assert_allclose(
+        position_upload[3],
+        [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [-1.0, 1.0, 0.0]],
+    )
 
 
 def test_datoviz_mesh_diagnostics_name_missing_and_unverified_symbols():
@@ -1592,9 +1994,68 @@ def test_datoviz_mesh_diagnostics_name_missing_and_unverified_symbols():
     diagnostics = datoviz_v04_mesh_diagnostics(fake)
 
     assert "missing dvz_mesh" in diagnostics
-    assert "missing dvz_mesh_set_geometry" in diagnostics
-    assert "not verified for S025" in diagnostics[-1]
+    assert "missing dvz_visual_set_index_data" in diagnostics
+    assert "missing dvz_visual_set_depth_test" in diagnostics
     assert datoviz_v04_mesh_ready(fake) is False
+
+
+def test_add_text_visual_uses_retained_text_style_placement_and_strings():
+    fake = FakeDatovizV04WithText()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    visual = TextVisual(
+        id="visual:text",
+        texts=("left", "café"),
+        positions=np.array([[-0.5, 0.25], [0.5, -0.25]], dtype=np.float32),
+        coordinate_space=CoordinateSpace.NDC,
+        rgba=np.array([[10, 20, 30, 255], [200, 150, 100, 128]], dtype=np.uint8),
+        font_size_px=np.array([16.0, 24.0], dtype=np.float32),
+        anchor_x=(TextAnchorX.LEFT, TextAnchorX.RIGHT),
+        anchor_y=(TextAnchorY.TOP, TextAnchorY.BOTTOM),
+        rotation_rad=np.array([0.0, 0.5], dtype=np.float32),
+        z_order=4,
+    )
+
+    texts = renderer.add_text_visual(visual)
+
+    assert texts == ("text-1", "text-2")
+    assert datoviz_v04_text_ready(fake) is True
+    assert _calls(fake, "text") == [
+        ("text", "panel", 0, "text-1"),
+        ("text", "panel", 0, "text-2"),
+    ]
+    assert _calls(fake, "text_set_style") == [
+        ("text_set_style", "text-1", 16.0, 3, (10, 20, 30, 255)),
+        ("text_set_style", "text-2", 24.0, 3, (200, 150, 100, 128)),
+    ]
+    assert _calls(fake, "text_set_placement") == [
+        (
+            "text_set_placement",
+            "text-1",
+            1,
+            10,
+            (-0.5, 0.25, 4.0),
+            (0.0, 0.0),
+            True,
+            0.0,
+            False,
+        ),
+        (
+            "text_set_placement",
+            "text-2",
+            1,
+            10,
+            (0.5, -0.25, 4.0),
+            (1.0, 1.0),
+            True,
+            0.5,
+            False,
+        ),
+    ]
+    assert _calls(fake, "text_set_string") == [
+        ("text_set_string", "text-1", b"left"),
+        ("text_set_string", "text-2", "café".encode("utf-8")),
+    ]
+    assert renderer.visuals["visual:text"] == ("text-1", "text-2")
 
 
 def test_add_text_visual_reports_structured_unsupported_until_semantics_verified():
@@ -1616,13 +2077,12 @@ def test_add_text_visual_reports_structured_unsupported_until_semantics_verified
         renderer.add_text_visual(visual)
 
     message = str(exc_info.value)
-    assert "unverified dvz_text_placement" in message
-    assert "anchors" in message
-    assert "font-size" in message
+    assert "missing dvz_text_set_style" in message
+    assert "missing dvz_text_set_placement" in message
     assert datoviz_v04_text_ready(fake) is False
 
 
-def test_add_text_visual_rejects_data_coordinates_before_runtime_diagnostics():
+def test_add_text_visual_reports_missing_text_facade_for_data_coordinates():
     renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04())
     visual = TextVisual(
         id="visual:data-text",
@@ -1631,7 +2091,7 @@ def test_add_text_visual_rejects_data_coordinates_before_runtime_diagnostics():
         coordinate_space=CoordinateSpace.DATA,
     )
 
-    with pytest.raises(DatovizV04Unsupported, match="NDC text"):
+    with pytest.raises(DatovizV04Unsupported, match="missing dvz_text"):
         renderer.add_text_visual(visual)
 
 
@@ -1641,11 +2101,12 @@ def test_datoviz_text_diagnostics_name_missing_and_unverified_symbols():
     diagnostics = datoviz_v04_text_diagnostics(fake)
 
     assert "missing dvz_text" in diagnostics
-    assert "unverified dvz_text_placement" in diagnostics
+    assert "missing dvz_text_set_style" in diagnostics
+    assert "missing dvz_text_set_placement" in diagnostics
     assert datoviz_v04_text_ready(fake) is False
 
 
-def test_image_slice_rejects_unlocked_semantics():
+def test_image_slice_rejects_data_extents_but_point_data_uses_default_domain():
     fake = FakeDatovizV04()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
 
@@ -1659,16 +2120,17 @@ def test_image_slice_rejects_unlocked_semantics():
             )
         )
 
-    with pytest.raises(DatovizV04Unsupported, match="NDC point"):
-        renderer.add_point_visual(
-            PointVisual(
-                id="visual:data-points",
-                positions=np.zeros((1, 2), dtype=np.float32),
-                colors=np.zeros((1, 4), dtype=np.uint8),
-                sizes=1.0,
-                coordinate_space=CoordinateSpace.DATA,
-            )
+    renderer.add_point_visual(
+        PointVisual(
+            id="visual:data-points",
+            positions=np.array([[0.25, -0.5]], dtype=np.float32),
+            colors=np.zeros((1, 4), dtype=np.uint8),
+            sizes=1.0,
+            coordinate_space=CoordinateSpace.DATA,
         )
+    )
+    position_upload = _calls(fake, "set_data")[0]
+    np.testing.assert_allclose(position_upload[3], [[0.25, -0.5, 0.0]])
 
 
 def test_renderer_close_uses_scene_destroy_when_available():

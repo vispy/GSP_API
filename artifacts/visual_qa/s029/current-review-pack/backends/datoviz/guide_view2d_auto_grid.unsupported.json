@@ -1,12 +1,12 @@
 {
   "backend_id": "datoviz",
   "case_id": "guide/view2d_auto_grid",
-  "datoviz_color_pipeline": "linear_srgb",
+  "datoviz_color_pipeline": "legacy_srgb_blend",
   "diagnostics": {
-    "exception_type": "DatovizV04Unsupported",
-    "message": "Datoviz v0.4 slice currently supports NDC point positions only"
+    "axis_guide_count": 2,
+    "panel_text_guide_count": 1
   },
-  "reason": "DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC point positions only",
+  "reason": "axis_guide_render_unsupported: Datoviz v0.4 axis guides and panel text guides remain capability-gated until native axes, explicit tick labels, title placement, and guide query semantics are verified together",
   "schema_kind": "gsp.visual_qa.unsupported",
   "schema_version": 1,
   "status": "unsupported"

@@ -88,7 +88,7 @@ def run_visual_qa_suite(
     contact_sheet: bool = True,
     run_id: str | None = None,
     resolution: tuple[int, int] = (800, 600),
-    datoviz_color_pipeline: DatovizColorPipeline = "linear_srgb",
+    datoviz_color_pipeline: DatovizColorPipeline = "legacy_srgb_blend",
 ) -> dict[str, object]:
     """Run the visual QA suite and return its report."""
     if suite not in (
@@ -156,6 +156,12 @@ def run_visual_qa_suite(
                 resolution,
                 probe_report,
                 datoviz_color_pipeline,
+                color_scales={scale.id: scale for scale in scene.color_scales},
+                colorbar_guides=scene.colorbar_guides,
+                axis_guides=scene.axis_guides,
+                panel_text_guides=scene.panel_text_guides,
+                view=view,
+                transform_resources=transform_resources,
             )
         case_reports.append(
             {
@@ -293,6 +299,13 @@ def _run_datoviz(
     resolution: tuple[int, int],
     probe_report: DatovizV04ProbeReport,
     datoviz_color_pipeline: DatovizColorPipeline,
+    *,
+    color_scales: dict[str, ColorScale],
+    colorbar_guides: tuple[ColorbarGuide, ...],
+    axis_guides: tuple[AxisGuide, ...],
+    panel_text_guides: tuple[PanelTextGuide, ...],
+    view: View2D | None,
+    transform_resources: dict[str, AffineTransform2DResource],
 ) -> dict[str, object]:
     backend_dir = out_dir / "backends" / DATOVIZ_BACKEND_ID
     artifact_path = backend_dir / f"{case_slug(case.case_id)}.png"
@@ -320,13 +333,37 @@ def _run_datoviz(
             diagnostics={"env_var": DATOVIZ_QA_OFFSCREEN_ENV, "required_value": "1"},
             datoviz_color_pipeline=datoviz_color_pipeline,
         )
+    if axis_guides or panel_text_guides:
+        return _write_datoviz_unsupported(
+            unsupported_path,
+            log_path,
+            case,
+            reason=(
+                "axis_guide_render_unsupported: Datoviz v0.4 axis guides and "
+                "panel text guides remain capability-gated until native axes, "
+                "explicit tick labels, title placement, and guide query semantics "
+                "are verified together"
+            ),
+            diagnostics={
+                "axis_guide_count": len(axis_guides),
+                "panel_text_guide_count": len(panel_text_guides),
+            },
+            datoviz_color_pipeline=datoviz_color_pipeline,
+        )
     width, height = resolution
     try:
         with DatovizV04ProtocolRenderer(
-            width=width, height=height, color_pipeline=datoviz_color_pipeline
+            width=width,
+            height=height,
+            color_pipeline=datoviz_color_pipeline,
+            color_scales=color_scales,
+            view=view,
+            transform_resources=transform_resources,
         ) as renderer:
             for visual in visuals:
                 _render_datoviz_visual(renderer, visual)
+            for guide in colorbar_guides:
+                renderer.add_colorbar_guide(guide)
             png = renderer.capture_png_bytes()
         artifact_path.write_bytes(png)
         log_path.write_text("rendered\n", encoding="utf-8")

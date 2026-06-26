@@ -30,9 +30,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     run_parser.add_argument(
         "--datoviz-color-pipeline",
         choices=("linear_srgb", "legacy_srgb_blend"),
-        default="linear_srgb",
+        default="legacy_srgb_blend",
         help=(
-            "Datoviz color pipeline for QA renders. legacy_srgb_blend requires "
+            "Datoviz color pipeline for QA renders. The default legacy_srgb_blend "
+            "matches Matplotlib/Agg display-space alpha blending and requires "
             "dvz_figure_set_color_pipeline in the Datoviz binding."
         ),
     )
@@ -58,9 +59,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     review_parser.add_argument(
         "--datoviz-color-pipeline",
         choices=("linear_srgb", "legacy_srgb_blend"),
-        default="linear_srgb",
+        default="legacy_srgb_blend",
         help=(
-            "Datoviz color pipeline for QA renders. legacy_srgb_blend requires "
+            "Datoviz color pipeline for QA renders. The default legacy_srgb_blend "
+            "matches Matplotlib/Agg display-space alpha blending and requires "
             "dvz_figure_set_color_pipeline in the Datoviz binding."
         ),
     )

@@ -22,9 +22,15 @@ tools/run_datoviz_visual_qa.sh \
 
 The wrapper sets `GSP_DATOVIZ_QA_ENABLE_OFFSCREEN=1`, prepends `PYTHONPATH` with `DATOVIZ_REPO`,
 points `DYLD_LIBRARY_PATH` and `VK_ICD_FILENAMES` at the Datoviz `libs/vulkan/macos_arm64`
-directory, and keeps the QA default Datoviz color pipeline at `linear_srgb`. The legacy
-Matplotlib-compatible `legacy_srgb_blend` mode remains explicit opt-in and requires
-`dvz_figure_set_color_pipeline` in the Datoviz binding.
+directory, and keeps the QA default Datoviz color pipeline at `legacy_srgb_blend`.
+
+Visual QA uses `legacy_srgb_blend` by default because Matplotlib/Agg blends alpha directly in
+display/sRGB values. That is the legacy, non-linear behavior required for pixel-level parity with
+the Matplotlib reference. Datoviz also exposes the mathematically correct `linear_srgb` path, but
+that mode is for Datoviz-correct comparisons and must be requested explicitly with
+`--datoviz-color-pipeline linear_srgb`.
+
+`legacy_srgb_blend` requires `dvz_figure_set_color_pipeline` in the Datoviz binding.
 
 The equivalent manual command shape is:
 
@@ -90,7 +96,9 @@ Review-pack outputs:
 Matplotlib rendered rows are the strict reference for S023-S028 2D semantics. Datoviz rendered rows
 start as `adapted` until a family-specific promotion audit proves strict protocol conformance.
 Datoviz guide query, all-rendered guide contributions, and public 3D camera/projection semantics
-remain deferred.
+remain deferred. If Datoviz exposes a native visual family but the GSP adapter has not implemented
+and verified the accepted GSP contract, the row must say so as a GSP adapter/verification gap rather
+than as a missing Datoviz feature.
 
 ## S024 TextVisual QA plan
 
@@ -148,9 +156,10 @@ reference output:
 - `scalar_color_query_payloads`.
 
 Optional/capability-gated cases include Datoviz canonical LUT upload, Datoviz GPU normalization,
-CPU pre-map diagnostics, colorbar unsupported diagnostics, strict 2D `MeshVisual` per-face scalar
-colors, and mesh face scalar query. Manual review checks canonical color placement, endpoint
-clipping, explicit colorbar ticks/labels, diagnostics, and scalar query payloads.
+CPU pre-map diagnostics, native Datoviz colorbar rendering with explicit tick-label parity still
+unverified, strict 2D `MeshVisual` per-face scalar colors, and mesh face scalar query. Manual review
+checks canonical color placement, endpoint clipping, explicit colorbar ticks/labels, diagnostics,
+and scalar query payloads.
 
 ## S028 guide/View2D QA plan
 

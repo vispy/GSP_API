@@ -26,5 +26,5 @@ fi
 
 exec uv run python -m gsp.qa.visual review-pack \
   --mode datoviz-offscreen-opt-in \
-  --datoviz-color-pipeline linear_srgb \
+  --datoviz-color-pipeline legacy_srgb_blend \
   "$@"

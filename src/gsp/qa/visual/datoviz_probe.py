@@ -128,6 +128,8 @@ TEXT_SYMBOLS: tuple[str, ...] = (
     "dvz_text_destroy",
     "dvz_text_id",
     "dvz_text_placement",
+    "dvz_text_set_placement",
+    "dvz_text_set_style",
     "dvz_text_set_string",
     "dvz_text_style",
 )
@@ -135,8 +137,8 @@ TEXT_SYMBOLS: tuple[str, ...] = (
 TEXT_RENDERER_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
     "text.visual.constructor": ("dvz_text",),
     "text.visual.string": ("dvz_text_set_string",),
-    "text.style": ("dvz_text_style",),
-    "text.placement": ("dvz_text_placement",),
+    "text.style": ("dvz_text_style", "dvz_text_set_style"),
+    "text.placement": ("dvz_text_placement", "dvz_text_set_placement"),
     "text.font.create": ("dvz_font", "dvz_font_desc"),
     "text.font.atlas": (
         "dvz_text_atlas_spec",
@@ -164,7 +166,7 @@ MESH_SYMBOLS: tuple[str, ...] = (
     "dvz_visual_set_data",
     "dvz_visual_set_index_data",
     "dvz_visual_set_material",
-    "dvz_visual_set_depth",
+    "dvz_visual_set_depth_test",
     "dvz_visual_set_texture",
 )
 
@@ -174,7 +176,7 @@ MESH_RENDERER_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
     "mesh.attribute.upload": ("dvz_visual_set_data",),
     "mesh.index.upload": ("dvz_visual_set_index_data",),
     "mesh.material.helper": ("dvz_visual_set_material",),
-    "mesh.depth.helper": ("dvz_visual_set_depth",),
+    "mesh.depth_test.helper": ("dvz_visual_set_depth_test",),
     "mesh.texture.deferred.evidence": ("dvz_visual_set_texture",),
 }
 

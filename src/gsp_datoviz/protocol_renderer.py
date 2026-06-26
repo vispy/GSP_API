@@ -22,11 +22,16 @@ import numpy as np
 import numpy.typing as npt
 
 from gsp.protocol import (
+    AffineTransform2DResource,
     CapabilitySnapshot,
+    ColorMapId,
     ColorScale,
     ColorbarGuide,
+    ColorbarOrientation,
+    ColorbarPlacement,
     ImageOrigin,
     ImageVisual,
+    MeshColorMode,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -34,6 +39,8 @@ from gsp.protocol import (
     PointVisual,
     SegmentVisual,
     TextVisual,
+    TextAnchorX,
+    TextAnchorY,
     StrokeCap,
     StrokeJoin,
     QueryCoordinateSpace,
@@ -109,24 +116,24 @@ _REQUIRED_DVZ_PATH_FUNCTIONS = (
 
 _REQUIRED_DVZ_MESH_FUNCTIONS = (
     "dvz_mesh",
-    "dvz_mesh_set_geometry",
     "dvz_visual_set_data",
     "dvz_visual_set_index_data",
+    "dvz_visual_set_depth_test",
 )
 
-_OPTIONAL_UNVERIFIED_DVZ_MESH_FUNCTIONS = (
-    "dvz_visual_set_material",
-    "dvz_visual_set_depth",
-)
+_OPTIONAL_UNVERIFIED_DVZ_MESH_FUNCTIONS: tuple[str, ...] = ()
 
 
 _REQUIRED_DVZ_TEXT_FUNCTIONS = (
     "dvz_text",
     "dvz_text_set_string",
     "dvz_text_style",
+    "dvz_text_set_style",
+    "dvz_text_placement",
+    "dvz_text_set_placement",
 )
 
-_OPTIONAL_UNVERIFIED_DVZ_TEXT_FUNCTIONS = ("dvz_text_placement",)
+_OPTIONAL_UNVERIFIED_DVZ_TEXT_FUNCTIONS: tuple[str, ...] = ()
 
 DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
@@ -147,12 +154,30 @@ DVZ_IMAGE_SAMPLING_LINEAR = 0
 DVZ_IMAGE_SAMPLING_NEAREST = 1
 DVZ_COLOR_PIPELINE_LINEAR_SRGB = 0
 DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND = 1
+DVZ_SCALE_CONTINUOUS = 0
+DVZ_BUILTIN_COLORMAP_VIRIDIS = 1
+DVZ_BUILTIN_COLORMAP_MAGMA = 2
+DVZ_BUILTIN_COLORMAP_PLASMA = 3
+DVZ_BUILTIN_COLORMAP_INFERNO = 4
+DVZ_BUILTIN_COLORMAP_CIVIDIS = 5
+DVZ_BUILTIN_COLORMAP_GRAY = 7
 DVZ_SEGMENT_CAP_ROUND = 1
 DVZ_SEGMENT_CAP_SQUARE = 4
 DVZ_SEGMENT_CAP_BUTT = 5
 DVZ_PATH_JOIN_MITER = 0
 DVZ_PATH_JOIN_ROUND = 1
 DVZ_PATH_JOIN_BEVEL = 2
+DVZ_TEXT_PLACEMENT_SCREEN = 0
+DVZ_TEXT_PLACEMENT_DATA = 1
+DVZ_COLORBAR_ORIENTATION_VERTICAL = 0
+DVZ_COLORBAR_ORIENTATION_HORIZONTAL = 1
+DVZ_COLORBAR_PLACEMENT_ATTACHED = 0
+DVZ_SCENE_ANCHOR_PANEL_TOP = 2
+DVZ_SCENE_ANCHOR_PANEL_LEFT = 4
+DVZ_SCENE_ANCHOR_PANEL_RIGHT = 6
+DVZ_SCENE_ANCHOR_PANEL_BOTTOM = 8
+DVZ_SCENE_ANCHOR_DATA = 10
+DVZ_TEXT_RENDERER_MSDF_ATLAS = 3
 DEFAULT_BACKGROUND_RGBA8 = (255, 255, 255, 255)
 
 DatovizColorPipeline = Literal["linear_srgb", "legacy_srgb_blend"]
@@ -197,6 +222,24 @@ _STROKE_JOIN_NAMES = {
     StrokeJoin.BEVEL: "DVZ_PATH_JOIN_BEVEL",
 }
 
+_BUILTIN_COLORMAP_NAMES = {
+    ColorMapId.GRAY: ("DVZ_BUILTIN_COLORMAP_GRAY", DVZ_BUILTIN_COLORMAP_GRAY),
+    ColorMapId.VIRIDIS: (
+        "DVZ_BUILTIN_COLORMAP_VIRIDIS",
+        DVZ_BUILTIN_COLORMAP_VIRIDIS,
+    ),
+    ColorMapId.MAGMA: ("DVZ_BUILTIN_COLORMAP_MAGMA", DVZ_BUILTIN_COLORMAP_MAGMA),
+    ColorMapId.PLASMA: ("DVZ_BUILTIN_COLORMAP_PLASMA", DVZ_BUILTIN_COLORMAP_PLASMA),
+    ColorMapId.INFERNO: (
+        "DVZ_BUILTIN_COLORMAP_INFERNO",
+        DVZ_BUILTIN_COLORMAP_INFERNO,
+    ),
+    ColorMapId.CIVIDIS: (
+        "DVZ_BUILTIN_COLORMAP_CIVIDIS",
+        DVZ_BUILTIN_COLORMAP_CIVIDIS,
+    ),
+}
+
 
 class DatovizV04Unavailable(RuntimeError):
     """Raised when the imported Datoviz facade is not the expected v0.4 shape."""
@@ -237,11 +280,6 @@ def datoviz_v04_mesh_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
         for name in _OPTIONAL_UNVERIFIED_DVZ_MESH_FUNCTIONS
         if not hasattr(module, name)
     )
-    diagnostics.append(
-        "Datoviz v0.4 MeshVisual flat RGBA, per-face color adaptation, "
-        "2D z=0 mapping, topology preservation, and face query semantics are "
-        "not verified for S025"
-    )
     return tuple(diagnostics)
 
 
@@ -261,10 +299,6 @@ def datoviz_v04_text_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
         f"unverified {name}"
         for name in _OPTIONAL_UNVERIFIED_DVZ_TEXT_FUNCTIONS
         if not hasattr(module, name)
-    )
-    diagnostics.append(
-        "Datoviz v0.4 TextVisual placement, anchors, font-size mapping, "
-        "rotation, and font-role semantics are not verified for S024"
     )
     return tuple(diagnostics)
 
@@ -355,6 +389,8 @@ class DatovizV04ProtocolRenderer:
     height: int = 600
     background_rgba8: tuple[int, int, int, int] = DEFAULT_BACKGROUND_RGBA8
     color_pipeline: DatovizColorPipeline = "linear_srgb"
+    view: View2D | None = None
+    transform_resources: Mapping[str, AffineTransform2DResource] | None = None
     scene: Any = field(init=False)
     figure: Any = field(init=False)
     panel: Any = field(init=False)
@@ -363,6 +399,9 @@ class DatovizV04ProtocolRenderer:
     live_view: Any | None = field(default=None, init=False)
     visuals: dict[str, Any] = field(default_factory=dict, init=False)
     sampled_fields: dict[str, Any] = field(default_factory=dict, init=False)
+    native_scales: dict[str, Any] = field(default_factory=dict, init=False)
+    native_colormaps: dict[str, Any] = field(default_factory=dict, init=False)
+    colorbars: dict[str, Any] = field(default_factory=dict, init=False)
     scalar_visuals: dict[str, _ScalarVisualData] = field(default_factory=dict, init=False)
     transform_adaptations: dict[str, tuple[str, ...]] = field(
         default_factory=dict, init=False
@@ -415,15 +454,19 @@ class DatovizV04ProtocolRenderer:
 
     def add_point_visual(self, visual: PointVisual) -> Any:
         """Create and attach a Datoviz point visual."""
-        if visual.coordinate_space != CoordinateSpace.NDC:
-            raise DatovizV04Unsupported(
-                "Datoviz v0.4 slice currently supports NDC point positions only"
-            )
-
         positions = _positions_3d(
-            _cpu_adapt_inline_affine_positions(visual.id, visual.positions, visual.transform)
+            _adapt_visual_positions(
+                visual.id,
+                visual.positions,
+                visual.transform,
+                visual.coordinate_space,
+                self.view,
+                self.transform_resources,
+            )
         )
-        _record_transform_adaptation(self.transform_adaptations, visual.id, visual.transform)
+        _record_transform_adaptation(
+            self.transform_adaptations, visual.id, visual.transform
+        )
         colors = _point_colors(visual, color_scales=self.color_scales)
         diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
 
@@ -457,16 +500,6 @@ class DatovizV04ProtocolRenderer:
 
     def add_marker_visual(self, visual: MarkerVisual) -> Any:
         """Create and attach a Datoviz marker visual."""
-        if visual.coordinate_space != CoordinateSpace.NDC:
-            raise DatovizV04Unsupported(
-                "Datoviz v0.4 slice currently supports NDC marker positions only"
-            )
-        if visual.fill_color_encoding is not None:
-            raise DatovizV04Unsupported(
-                "scalar_visual_family_unsupported: Datoviz v0.4 MarkerVisual scalar "
-                "fill remains capability-gated until native or CPU-mapped fill-color "
-                "contracts are verified"
-            )
         marker_diagnostics = _datoviz_marker_diagnostics(self.dvz)
         if marker_diagnostics:
             raise DatovizV04Unsupported(
@@ -474,12 +507,19 @@ class DatovizV04ProtocolRenderer:
             )
 
         positions = _positions_3d(
-            _cpu_adapt_inline_affine_positions(visual.id, visual.positions, visual.transform)
+            _adapt_visual_positions(
+                visual.id,
+                visual.positions,
+                visual.transform,
+                visual.coordinate_space,
+                self.view,
+                self.transform_resources,
+            )
         )
-        _record_transform_adaptation(self.transform_adaptations, visual.id, visual.transform)
-        if visual.fill_colors is None:
-            raise ValueError("MarkerVisual requires fill_colors when scalar fill is absent")
-        fill_colors = _rgba8(visual.fill_colors)
+        _record_transform_adaptation(
+            self.transform_adaptations, visual.id, visual.transform
+        )
+        fill_colors = _marker_fill_colors(visual, color_scales=self.color_scales)
         diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
         shape_values = visual.shape_values()
         angles = np.ascontiguousarray(visual.angle_values())
@@ -504,14 +544,25 @@ class DatovizV04ProtocolRenderer:
             _visual_attach_desc(self.dvz, coord_space="data", z_layer=0),
         )
         self.visuals[visual.id] = dvz_visual
+        if visual.fill_color_encoding is not None:
+            scale = resolve_color_scale(
+                self.color_scales, visual.fill_color_encoding.color_scale_id
+            )
+            self.scalar_visuals[visual.id] = _ScalarVisualData(
+                visual_id=visual.id,
+                visual_family="marker",
+                item_kind="marker",
+                color_slot=ScalarColorSlot.FILL,
+                values=np.asarray(
+                    visual.fill_color_encoding.values, dtype=np.float64
+                ),
+                color_scale=scale,
+                alpha=float(visual.fill_color_encoding.alpha),
+            )
         return dvz_visual
 
     def add_segment_visual(self, visual: SegmentVisual) -> Any:
         """Create and attach a Datoviz segment visual."""
-        if visual.coordinate_space != CoordinateSpace.NDC:
-            raise DatovizV04Unsupported(
-                "Datoviz v0.4 slice currently supports NDC segment positions only"
-            )
         segment_diagnostics = _datoviz_segment_diagnostics(self.dvz)
         if segment_diagnostics:
             raise DatovizV04Unsupported(
@@ -519,16 +570,28 @@ class DatovizV04ProtocolRenderer:
             )
 
         start_positions = _positions_3d(
-            _cpu_adapt_inline_affine_positions(
-                visual.id, visual.start_positions, visual.transform
+            _adapt_visual_positions(
+                visual.id,
+                visual.start_positions,
+                visual.transform,
+                visual.coordinate_space,
+                self.view,
+                self.transform_resources,
             )
         )
         end_positions = _positions_3d(
-            _cpu_adapt_inline_affine_positions(
-                visual.id, visual.end_positions, visual.transform
+            _adapt_visual_positions(
+                visual.id,
+                visual.end_positions,
+                visual.transform,
+                visual.coordinate_space,
+                self.view,
+                self.transform_resources,
             )
         )
-        _record_transform_adaptation(self.transform_adaptations, visual.id, visual.transform)
+        _record_transform_adaptation(
+            self.transform_adaptations, visual.id, visual.transform
+        )
         colors = _rgba8(visual.colors)
         widths = np.ascontiguousarray(visual.width_values())
 
@@ -555,10 +618,6 @@ class DatovizV04ProtocolRenderer:
 
     def add_path_visual(self, visual: PathVisual) -> Any:
         """Create and attach a Datoviz path visual."""
-        if visual.coordinate_space != CoordinateSpace.NDC:
-            raise DatovizV04Unsupported(
-                "Datoviz v0.4 slice currently supports NDC path positions only"
-            )
         path_diagnostics = _datoviz_path_diagnostics(self.dvz)
         if path_diagnostics:
             raise DatovizV04Unsupported(
@@ -566,9 +625,18 @@ class DatovizV04ProtocolRenderer:
             )
 
         positions = _positions_3d(
-            _cpu_adapt_inline_affine_positions(visual.id, visual.positions, visual.transform)
+            _adapt_visual_positions(
+                visual.id,
+                visual.positions,
+                visual.transform,
+                visual.coordinate_space,
+                self.view,
+                self.transform_resources,
+            )
         )
-        _record_transform_adaptation(self.transform_adaptations, visual.id, visual.transform)
+        _record_transform_adaptation(
+            self.transform_adaptations, visual.id, visual.transform
+        )
         colors = _expand_path_colors(visual)
         widths = _expand_path_widths(visual)
         subpaths = np.ascontiguousarray(np.array(visual.path_lengths, dtype=np.uint32))
@@ -651,53 +719,187 @@ class DatovizV04ProtocolRenderer:
         return dvz_visual
 
     def add_mesh_visual(self, visual: MeshVisual) -> Any:
-        """Report Datoviz MeshVisual support status for accepted S025 semantics."""
-        if visual.coordinate_space != CoordinateSpace.NDC:
-            raise DatovizV04Unsupported(
-                "Datoviz v0.4 slice currently supports NDC mesh positions only"
-            )
-        if visual.transform is not None:
-            raise DatovizV04Unsupported(
-                "GSP_QUERY_INVERSE_UNSUPPORTED: Datoviz MeshVisual transform "
-                "support is deferred until mesh placement and face query inverse "
-                "semantics are verified"
-            )
+        """Create and attach a bounded Datoviz triangle mesh visual."""
         if visual.positions.shape[1] != 2:
             raise DatovizV04Unsupported(
                 "Datoviz v0.4 MeshVisual strict adapter is limited to 2D positions "
                 "until 3D camera semantics are accepted"
             )
         diagnostics = datoviz_v04_mesh_diagnostics(self.dvz)
-        raise DatovizV04Unsupported(
-            "Datoviz v0.4 MeshVisual support is unavailable: " + "; ".join(diagnostics)
-        )
+        if diagnostics:
+            raise DatovizV04Unsupported(
+                "Datoviz v0.4 MeshVisual support is unavailable: "
+                + "; ".join(diagnostics)
+            )
 
+        adapted_positions = _adapt_visual_positions(
+            visual.id,
+            visual.positions,
+            visual.transform,
+            visual.coordinate_space,
+            self.view,
+            self.transform_resources,
+        )
+        _record_transform_adaptation(
+            self.transform_adaptations, visual.id, visual.transform
+        )
+        positions, colors, indices = _datoviz_mesh_payload(visual, adapted_positions)
+        dvz_visual = self.dvz.dvz_mesh(self.scene, 0)
+        if dvz_visual is None:
+            raise DatovizV04Unsupported("Datoviz mesh visual allocation failed")
+        _set_visual_data(self.dvz, dvz_visual, "position", positions)
+        _set_visual_data(self.dvz, dvz_visual, "color", colors)
+        _set_visual_index_data(self.dvz, dvz_visual, indices)
+        result = self.dvz.dvz_visual_set_depth_test(dvz_visual, False)
+        if result not in (0, None, True):
+            raise DatovizV04Unsupported("Datoviz mesh depth-test disable failed")
+        _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
+        self.dvz.dvz_panel_add_visual(
+            self.panel,
+            dvz_visual,
+            _visual_attach_desc(self.dvz, coord_space="data", z_layer=round(visual.order)),
+        )
+        self.visuals[visual.id] = dvz_visual
+        return dvz_visual
 
     def add_text_visual(self, visual: TextVisual) -> Any:
-        """Report Datoviz TextVisual support status for accepted S024 semantics."""
-        if visual.coordinate_space != CoordinateSpace.NDC:
-            raise DatovizV04Unsupported(
-                "Datoviz v0.4 slice currently supports NDC text positions only"
-            )
-        if visual.transform is not None:
-            raise DatovizV04Unsupported(
-                "GSP_QUERY_INVERSE_UNSUPPORTED: Datoviz TextVisual transform "
-                "support is deferred until text placement and query inverse "
-                "semantics are verified"
-            )
+        """Create Datoviz retained text objects for bounded S024 text cases."""
         diagnostics = datoviz_v04_text_diagnostics(self.dvz)
-        raise DatovizV04Unsupported(
-            "Datoviz v0.4 TextVisual support is unavailable: " + "; ".join(diagnostics)
+        if diagnostics:
+            raise DatovizV04Unsupported(
+                "Datoviz v0.4 TextVisual support is unavailable: "
+                + "; ".join(diagnostics)
+            )
+
+        positions = _positions_3d(
+            _adapt_visual_positions(
+                visual.id,
+                visual.positions,
+                visual.transform,
+                visual.coordinate_space,
+                self.view,
+                self.transform_resources,
+            )
         )
+        _record_transform_adaptation(
+            self.transform_adaptations, visual.id, visual.transform
+        )
+        colors = _rgba8(visual.rgba_values())
+        sizes = visual.font_size_values()
+        rotations = visual.rotation_values()
+        anchor_x = visual.anchor_x_values()
+        anchor_y = visual.anchor_y_values()
+        mode = _text_placement_mode_value(self.dvz, visual.coordinate_space)
+        texts: list[Any] = []
+
+        for index, text_value in enumerate(visual.texts):
+            text = self.dvz.dvz_text(self.panel, 0)
+            if text is None:
+                raise DatovizV04Unsupported("Datoviz text object allocation failed")
+
+            style = self.dvz.dvz_text_style()
+            style.size_px = float(sizes[index])
+            style.renderer = _text_renderer_value(self.dvz)
+            _assign_rgba8(style.color, colors[index])
+            style_result = self.dvz.dvz_text_set_style(text, style)
+            if style_result not in (0, None, True):
+                raise DatovizV04Unsupported("Datoviz text style configuration failed")
+
+            placement = self.dvz.dvz_text_placement()
+            placement.mode = mode
+            placement.anchor = _text_anchor_value(self.dvz, visual.coordinate_space)
+            placement.position[0] = float(positions[index, 0])
+            placement.position[1] = float(positions[index, 1])
+            placement.position[2] = float(visual.z_order)
+            placement.text_anchor[0] = _text_anchor_x_value(anchor_x[index])
+            placement.text_anchor[1] = _text_anchor_y_value(anchor_y[index])
+            placement.has_text_anchor = True
+            placement.angle = float(rotations[index])
+            placement.depth_test = False
+            self.dvz.dvz_text_set_placement(text, placement)
+            self.dvz.dvz_text_set_string(text, text_value.encode("utf-8"))
+            texts.append(text)
+
+        self.visuals[visual.id] = tuple(texts)
+        return tuple(texts)
 
     def add_colorbar_guide(self, guide: ColorbarGuide) -> Any:
-        """Report Datoviz ColorbarGuide support status for accepted S026 semantics."""
-        resolve_color_scale(self.color_scales, guide.color_scale_id)
-        raise DatovizV04Unsupported(
-            "colorbar_render_unsupported: Datoviz v0.4 ColorbarGuide rendering "
-            "remains capability-gated until native colorbar layout, scale binding, "
-            "tick-label, and ramp-query contracts are verified"
+        """Create a native Datoviz colorbar bound to the guide's color scale."""
+        scale = resolve_color_scale(self.color_scales, guide.color_scale_id)
+        diagnostics = _datoviz_colorbar_diagnostics(self.dvz)
+        if diagnostics:
+            raise DatovizV04Unsupported(
+                "colorbar_render_unsupported: Datoviz v0.4 ColorbarGuide "
+                "facade is unavailable: " + "; ".join(diagnostics)
+            )
+
+        native_scale = self._create_native_colorbar_scale(scale, guide)
+        desc = self.dvz.dvz_colorbar_desc()
+        if hasattr(desc, "orientation"):
+            desc.orientation = _colorbar_orientation_value(
+                self.dvz, guide.orientation
+            )
+        if hasattr(desc, "placement_mode"):
+            desc.placement_mode = _enum_value(
+                self.dvz,
+                "DvzColorbarPlacementMode",
+                "DVZ_COLORBAR_PLACEMENT_ATTACHED",
+                DVZ_COLORBAR_PLACEMENT_ATTACHED,
+            )
+        if hasattr(desc, "anchor"):
+            desc.anchor = _colorbar_anchor_value(self.dvz, guide.placement)
+        if hasattr(desc, "title"):
+            desc.title = guide.label.encode("utf-8") if guide.label else None
+
+        colorbar = self.dvz.dvz_colorbar(
+            self.panel, native_scale, _ctypes_pointer_arg(desc)
         )
+        if colorbar is None:
+            raise DatovizV04Unsupported("Datoviz colorbar allocation failed")
+        self.dvz.dvz_colorbar_set_orientation(
+            colorbar, _colorbar_orientation_value(self.dvz, guide.orientation)
+        )
+        anchor_result = self.dvz.dvz_colorbar_set_anchor(
+            colorbar, _colorbar_anchor_value(self.dvz, guide.placement)
+        )
+        if anchor_result not in (0, None, True):
+            raise DatovizV04Unsupported("Datoviz colorbar anchor configuration failed")
+        if guide.label:
+            self.dvz.dvz_colorbar_set_title(colorbar, guide.label.encode("utf-8"))
+        self.colorbars[guide.id] = colorbar
+        return colorbar
+
+    def _create_native_colorbar_scale(
+        self, scale: ColorScale, guide: ColorbarGuide
+    ) -> Any:
+        if scale.id in self.native_scales:
+            return self.native_scales[scale.id]
+
+        desc = self.dvz.dvz_scale_desc()
+        if hasattr(desc, "kind"):
+            desc.kind = _enum_value(
+                self.dvz, "DvzScaleKind", "DVZ_SCALE_CONTINUOUS", DVZ_SCALE_CONTINUOUS
+            )
+        if hasattr(desc, "label"):
+            desc.label = guide.label.encode("utf-8") if guide.label else None
+        native_scale = self.dvz.dvz_scale(self.scene, _ctypes_pointer_arg(desc))
+        if native_scale is None:
+            raise DatovizV04Unsupported("Datoviz scale allocation failed")
+        self.dvz.dvz_scale_set_domain(
+            native_scale, scale.normalize.vmin, scale.normalize.vmax
+        )
+        self.dvz.dvz_scale_set_view_range(
+            native_scale, scale.normalize.vmin, scale.normalize.vmax
+        )
+        colormap = self.dvz.dvz_colormap_builtin(
+            self.scene, _builtin_colormap_value(self.dvz, scale.colormap.id)
+        )
+        if colormap is None:
+            raise DatovizV04Unsupported("Datoviz colormap allocation failed")
+        self.dvz.dvz_scale_set_colormap(native_scale, colormap)
+        self.native_colormaps[scale.id] = colormap
+        self.native_scales[scale.id] = native_scale
+        return native_scale
 
     def show(self, *, frame_count: int = 0) -> None:
         """Open an interactive Datoviz window and run the app.
@@ -1008,26 +1210,40 @@ def _positions_3d(
     return np.ascontiguousarray(np.column_stack([array, zeros]))
 
 
-def _cpu_adapt_inline_affine_positions(
+def _adapt_visual_positions(
     visual_id: str,
     positions: npt.NDArray[np.float32] | npt.NDArray[np.float64],
     transform: VisualTransformBinding | None,
+    coordinate_space: CoordinateSpace,
+    view: View2D | None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None,
 ) -> npt.NDArray[np.float32] | npt.NDArray[np.float64]:
-    """Apply bounded S027 CPU transform adaptation for finite eager NDC positions."""
+    transformed = _cpu_adapt_affine_positions(
+        visual_id, positions, transform, transform_resources
+    )
+    if coordinate_space is CoordinateSpace.NDC:
+        return transformed
+    if coordinate_space is CoordinateSpace.DATA:
+        if view is None:
+            return transformed
+        return _data_positions_to_panel_ndc(transformed, view)
+    raise DatovizV04Unsupported(
+        f"Datoviz visual coordinate space is unsupported: {coordinate_space.value}"
+    )
+
+
+def _cpu_adapt_affine_positions(
+    visual_id: str,
+    positions: npt.NDArray[np.float32] | npt.NDArray[np.float64],
+    transform: VisualTransformBinding | None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None,
+) -> npt.NDArray[np.float32] | npt.NDArray[np.float64]:
+    """Apply bounded S027 CPU transform adaptation for finite eager positions."""
     if transform is None:
         return positions
-    if transform.ref is not None:
-        raise DatovizV04Unsupported(
-            "GSP_TRANSFORM_MISSING_REF: Datoviz v0.4 transform CPU adapter "
-            "does not resolve named transform resources in this slice"
-        )
-    if transform.inline is None:
-        raise DatovizV04Unsupported(
-            "GSP_TRANSFORM_UNSUPPORTED_KIND: Datoviz v0.4 transform binding is invalid"
-        )
     xy = np.asarray(positions[:, :2], dtype=np.float64)
     homogeneous = np.column_stack([xy, np.ones((xy.shape[0],), dtype=np.float64)])
-    matrix = np.asarray(transform.inline.matrix, dtype=np.float64)
+    matrix = _transform_binding_matrix(transform, transform_resources)
     transformed = np.asarray((homogeneous @ matrix.T)[:, :2], dtype=np.float64)
     if positions.shape[1] == 3:
         z = np.asarray(positions[:, 2:3], dtype=np.float64)
@@ -1038,6 +1254,41 @@ def _cpu_adapt_inline_affine_positions(
             f"non-finite positions for {visual_id}"
         )
     return np.ascontiguousarray(transformed.astype(positions.dtype, copy=False))
+
+
+def _transform_binding_matrix(
+    transform: VisualTransformBinding,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None,
+) -> npt.NDArray[np.float64]:
+    if transform.inline is not None:
+        return np.asarray(transform.inline.matrix, dtype=np.float64)
+    if transform.ref is None:
+        raise DatovizV04Unsupported(
+            "GSP_TRANSFORM_UNSUPPORTED_KIND: Datoviz transform binding is invalid"
+        )
+    if transform_resources is None or transform.ref.id not in transform_resources:
+        if not transform.ref.required:
+            return np.eye(3, dtype=np.float64)
+        raise DatovizV04Unsupported(
+            "GSP_TRANSFORM_MISSING_REF: Datoviz v0.4 transform CPU adapter "
+            f"could not resolve named transform resource {transform.ref.id!r}"
+        )
+    return np.asarray(transform_resources[transform.ref.id].matrix, dtype=np.float64)
+
+
+def _data_positions_to_panel_ndc(
+    positions: npt.NDArray[np.float32] | npt.NDArray[np.float64], view: View2D
+) -> npt.NDArray[np.float32] | npt.NDArray[np.float64]:
+    x0, x1 = view.xlim
+    y0, y1 = view.ylim
+    mapped = np.array(positions, dtype=np.float64, copy=True)
+    mapped[:, 0] = -1.0 + 2.0 * (mapped[:, 0] - x0) / (x1 - x0)
+    mapped[:, 1] = -1.0 + 2.0 * (mapped[:, 1] - y0) / (y1 - y0)
+    if not np.all(np.isfinite(mapped)):
+        raise DatovizV04Unsupported(
+            "GSP_VIEW2D_NONFINITE: View2D CPU adaptation produced non-finite positions"
+        )
+    return np.ascontiguousarray(mapped.astype(positions.dtype, copy=False))
 
 
 def _record_transform_adaptation(
@@ -1059,6 +1310,47 @@ def _rgba8(colors: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:
     return np.ascontiguousarray(
         np.rint(np.asarray(colors) * 255.0).clip(0, 255).astype(np.uint8)
     )
+
+
+def _datoviz_mesh_payload(
+    visual: MeshVisual,
+    positions: npt.NDArray[np.float32] | npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float32], npt.NDArray[np.uint8], npt.NDArray[np.uint32]]:
+    if visual.face_color_encoding is not None:
+        raise DatovizV04Unsupported(
+            "Datoviz MeshVisual face scalar color encoding is unavailable"
+        )
+    if visual.color is None:
+        raise DatovizV04Unsupported("Datoviz MeshVisual requires resolved RGBA colors")
+    color_mode = visual.resolved_color_mode()
+    positions = np.asarray(positions, dtype=np.float32)
+    faces = np.asarray(visual.faces, dtype=np.uint32)
+    colors = _rgba8(np.asarray(visual.color))
+
+    if color_mode is MeshColorMode.UNIFORM:
+        rgba = np.asarray(colors, dtype=np.uint8).reshape(1, 4)
+        vertex_colors = np.repeat(rgba, positions.shape[0], axis=0)
+        return (
+            _positions_3d(positions),
+            np.ascontiguousarray(vertex_colors),
+            np.ascontiguousarray(faces.reshape(-1)),
+        )
+    if color_mode is MeshColorMode.VERTEX:
+        return (
+            _positions_3d(positions),
+            np.ascontiguousarray(colors.reshape(positions.shape[0], 4)),
+            np.ascontiguousarray(faces.reshape(-1)),
+        )
+    if color_mode is MeshColorMode.FACE:
+        triangle_positions = positions[faces].reshape(-1, positions.shape[1])
+        triangle_colors = np.repeat(colors.reshape(faces.shape[0], 4), 3, axis=0)
+        triangle_indices = np.arange(triangle_positions.shape[0], dtype=np.uint32)
+        return (
+            _positions_3d(np.ascontiguousarray(triangle_positions)),
+            np.ascontiguousarray(triangle_colors),
+            np.ascontiguousarray(triangle_indices),
+        )
+    raise DatovizV04Unsupported(f"unsupported mesh color mode: {color_mode}")
 
 
 def _diameters_from_pixel_diameters(
@@ -1104,6 +1396,79 @@ def _coord_space_value(dvz: Any, name: str, fallback: int) -> int:
     if enum_type is not None:
         return int(getattr(enum_type, name))
     return fallback
+
+
+def _text_placement_mode_value(dvz: Any, coordinate_space: CoordinateSpace) -> int:
+    if coordinate_space == CoordinateSpace.NDC:
+        name = "DVZ_TEXT_PLACEMENT_DATA"
+        fallback = DVZ_TEXT_PLACEMENT_DATA
+    elif coordinate_space == CoordinateSpace.DATA:
+        name = "DVZ_TEXT_PLACEMENT_DATA"
+        fallback = DVZ_TEXT_PLACEMENT_DATA
+    else:
+        raise DatovizV04Unsupported(
+            f"Datoviz TextVisual coordinate space is unsupported: {coordinate_space.value}"
+        )
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, "DvzTextPlacementMode", None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return fallback
+
+
+def _text_anchor_value(dvz: Any, coordinate_space: CoordinateSpace) -> int:
+    if coordinate_space in (CoordinateSpace.NDC, CoordinateSpace.DATA):
+        name = "DVZ_SCENE_ANCHOR_DATA"
+        fallback = DVZ_SCENE_ANCHOR_DATA
+    else:
+        raise DatovizV04Unsupported(
+            f"Datoviz TextVisual coordinate space is unsupported: {coordinate_space.value}"
+        )
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, "DvzSceneAnchor", None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return fallback
+
+
+def _text_renderer_value(dvz: Any) -> int:
+    name = "DVZ_TEXT_RENDERER_MSDF_ATLAS"
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, "DvzTextRenderer", None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return DVZ_TEXT_RENDERER_MSDF_ATLAS
+
+
+def _text_anchor_x_value(anchor: TextAnchorX) -> float:
+    if anchor == TextAnchorX.LEFT:
+        return 0.0
+    if anchor == TextAnchorX.CENTER:
+        return 0.5
+    if anchor == TextAnchorX.RIGHT:
+        return 1.0
+    raise ValueError(f"unsupported text horizontal anchor: {anchor.value}")
+
+
+def _text_anchor_y_value(anchor: TextAnchorY) -> float:
+    if anchor == TextAnchorY.TOP:
+        return 0.0
+    if anchor in (TextAnchorY.CENTER, TextAnchorY.BASELINE):
+        return 0.5
+    if anchor == TextAnchorY.BOTTOM:
+        return 1.0
+    raise ValueError(f"unsupported text vertical anchor: {anchor.value}")
+
+
+def _assign_rgba8(target: Any, color: npt.NDArray[np.uint8]) -> None:
+    for index, channel in enumerate(color):
+        target[index] = int(channel)
 
 
 def _rgba8_image_visual(
@@ -1161,6 +1526,23 @@ def _point_colors(
     if visual.colors is None:
         raise ValueError("PointVisual requires colors or color_encoding")
     return _rgba8(visual.colors)
+
+
+def _marker_fill_colors(
+    visual: MarkerVisual, *, color_scales: Mapping[str, ColorScale] | None
+) -> npt.NDArray[np.uint8]:
+    if visual.fill_color_encoding is not None:
+        scale = resolve_color_scale(
+            color_scales, visual.fill_color_encoding.color_scale_id
+        )
+        return _rgba8_scalar_values(
+            visual.fill_color_encoding.values,
+            scale,
+            alpha=float(visual.fill_color_encoding.alpha),
+        )
+    if visual.fill_colors is None:
+        raise ValueError("MarkerVisual requires fill_colors or fill_color_encoding")
+    return _rgba8(visual.fill_colors)
 
 
 def _rgba8_scalar_values(
@@ -1248,6 +1630,85 @@ def _set_visual_field(
         )
 
 
+def _ctypes_pointer_arg(value: Any) -> Any:
+    if isinstance(value, ctypes.Structure):
+        return ctypes.byref(value)
+    return value
+
+
+def _enum_value(dvz: Any, enum_type_name: str, name: str, fallback: int) -> int:
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, enum_type_name, None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return fallback
+
+
+def _builtin_colormap_value(dvz: Any, colormap_id: ColorMapId) -> int:
+    name, fallback = _BUILTIN_COLORMAP_NAMES[colormap_id]
+    return _enum_value(dvz, "DvzBuiltinColormap", name, fallback)
+
+
+def _colorbar_orientation_value(
+    dvz: Any, orientation: ColorbarOrientation
+) -> int:
+    if orientation is ColorbarOrientation.VERTICAL:
+        return _enum_value(
+            dvz,
+            "DvzColorbarOrientation",
+            "DVZ_COLORBAR_ORIENTATION_VERTICAL",
+            DVZ_COLORBAR_ORIENTATION_VERTICAL,
+        )
+    if orientation is ColorbarOrientation.HORIZONTAL:
+        return _enum_value(
+            dvz,
+            "DvzColorbarOrientation",
+            "DVZ_COLORBAR_ORIENTATION_HORIZONTAL",
+            DVZ_COLORBAR_ORIENTATION_HORIZONTAL,
+        )
+    raise DatovizV04Unsupported(
+        f"unsupported Datoviz colorbar orientation: {orientation.value}"
+    )
+
+
+def _colorbar_anchor_value(
+    dvz: Any, placement: ColorbarPlacement | None
+) -> int:
+    if placement is ColorbarPlacement.RIGHT or placement is None:
+        return _enum_value(
+            dvz,
+            "DvzSceneAnchor",
+            "DVZ_SCENE_ANCHOR_PANEL_RIGHT",
+            DVZ_SCENE_ANCHOR_PANEL_RIGHT,
+        )
+    if placement is ColorbarPlacement.LEFT:
+        return _enum_value(
+            dvz,
+            "DvzSceneAnchor",
+            "DVZ_SCENE_ANCHOR_PANEL_LEFT",
+            DVZ_SCENE_ANCHOR_PANEL_LEFT,
+        )
+    if placement is ColorbarPlacement.BOTTOM:
+        return _enum_value(
+            dvz,
+            "DvzSceneAnchor",
+            "DVZ_SCENE_ANCHOR_PANEL_BOTTOM",
+            DVZ_SCENE_ANCHOR_PANEL_BOTTOM,
+        )
+    if placement is ColorbarPlacement.TOP:
+        return _enum_value(
+            dvz,
+            "DvzSceneAnchor",
+            "DVZ_SCENE_ANCHOR_PANEL_TOP",
+            DVZ_SCENE_ANCHOR_PANEL_TOP,
+        )
+    raise DatovizV04Unsupported(
+        f"unsupported Datoviz colorbar placement: {placement.value}"
+    )
+
+
 def _image_sampling_value(dvz: Any, interpolation: ImageInterpolation) -> int:
     if interpolation == ImageInterpolation.NEAREST:
         name = "DVZ_IMAGE_SAMPLING_NEAREST"
@@ -1323,6 +1784,14 @@ def _set_visual_data(
         )
 
 
+def _set_visual_index_data(
+    dvz: Any, visual: Any, indices: npt.NDArray[np.uint32]
+) -> None:
+    result = dvz.dvz_visual_set_index_data(visual, indices, int(indices.shape[0]))
+    if result != 0:
+        raise DatovizV04Unsupported("Datoviz visual index upload failed")
+
+
 def _set_filled_point_style(dvz: Any, visual: Any) -> None:
     """Force the documented filled/no-stroke point style when the facade exposes it."""
     style_factory = getattr(dvz, "dvz_point_style_desc", None)
@@ -1390,6 +1859,23 @@ def _datoviz_path_diagnostics(dvz: Any) -> tuple[str, ...]:
         for name in _REQUIRED_DVZ_PATH_FUNCTIONS
         if not hasattr(dvz, name)
     )
+
+
+def _datoviz_colorbar_diagnostics(dvz: Any) -> tuple[str, ...]:
+    required = (
+        "dvz_scale_desc",
+        "dvz_scale",
+        "dvz_scale_set_domain",
+        "dvz_scale_set_view_range",
+        "dvz_scale_set_colormap",
+        "dvz_colormap_builtin",
+        "dvz_colorbar_desc",
+        "dvz_colorbar",
+        "dvz_colorbar_set_anchor",
+        "dvz_colorbar_set_orientation",
+        "dvz_colorbar_set_title",
+    )
+    return tuple(f"missing {name}" for name in required if not hasattr(dvz, name))
 
 
 def _set_path_subpaths(

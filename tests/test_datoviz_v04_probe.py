@@ -137,6 +137,15 @@ class FakeRaw:
     def dvz_text_style(self) -> object:
         return object()
 
+    def dvz_text_set_style(self, text: object, style: object) -> int:
+        return 0
+
+    def dvz_text_placement(self) -> object:
+        return object()
+
+    def dvz_text_set_placement(self, text: object, placement: object) -> None:
+        return None
+
     def dvz_font(self, scene: object, desc: object) -> str:
         return "font"
 
@@ -168,7 +177,7 @@ def test_probe_successful_fake_facade_is_json_safe(tmp_path: Path) -> None:
     source = tmp_path / "datoviz"
     source.mkdir()
     (source / "README.md").write_text(
-        "dvz_scene\nDvzVisualAttachDesc\nDVZ_COORD_DATA\ndvz_text\ndvz_text_placement\n",
+        "dvz_scene\nDvzVisualAttachDesc\nDVZ_COORD_DATA\ndvz_text\ndvz_text_set_placement\n",
         encoding="utf-8",
     )
     facade = FakeDatovizFacade()
@@ -198,13 +207,13 @@ def test_probe_successful_fake_facade_is_json_safe(tmp_path: Path) -> None:
         {"path": "README.md", "line": 1}
     ]
     assert payload["text_symbols"]["dvz_text"]["available"] is True
-    assert payload["text_symbols"]["dvz_text_placement"]["available"] is False
+    assert payload["text_symbols"]["dvz_text_placement"]["available"] is True
     assert (
         payload["text_capability_matrix"]["text.visual.constructor"]["supported"]
         is True
     )
-    assert payload["text_capability_matrix"]["text.placement"]["supported"] is False
-    assert payload["source_symbol_matrix"]["dvz_text_placement"] == [
+    assert payload["text_capability_matrix"]["text.placement"]["supported"] is True
+    assert payload["source_symbol_matrix"]["dvz_text_set_placement"] == [
         {"path": "README.md", "line": 5}
     ]
     assert "color_mapping_capability_matrix" in payload

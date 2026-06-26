@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T14:42:41.007213+00:00",
+  "generated_at": "2026-06-26T15:42:56.091093+00:00",
   "rows": [
     {
       "backend": "matplotlib",
@@ -677,16 +677,16 @@
       "backend": "datoviz",
       "case_id": "text/basic_ndc",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_basic_ndc.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_basic_ndc.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_basic_ndc.log.txt"
       ],
       "family": "text",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "text placement, anchors, font-size, rotation, and/or DATA mapping are unverified"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "promote only after a focused Datoviz capability audit"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "text",
@@ -695,9 +695,9 @@
         "font-size"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_text_contract_unverified",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -724,16 +724,16 @@
       "backend": "datoviz",
       "case_id": "text/anchor_grid_ndc",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_anchor_grid_ndc.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_anchor_grid_ndc.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_anchor_grid_ndc.log.txt"
       ],
       "family": "text",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "text placement, anchors, font-size, rotation, and/or DATA mapping are unverified"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "promote only after a focused Datoviz capability audit"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "text",
@@ -741,9 +741,9 @@
         "anchor"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_text_contract_unverified",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -772,16 +772,16 @@
       "backend": "datoviz",
       "case_id": "text/rotation_alpha_ndc",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_rotation_alpha_ndc.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_rotation_alpha_ndc.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_rotation_alpha_ndc.log.txt"
       ],
       "family": "text",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "text placement, anchors, font-size, rotation, and/or DATA mapping are unverified"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "promote only after a focused Datoviz capability audit"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "text",
@@ -791,9 +791,9 @@
         "z-order"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_text_contract_unverified",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -820,16 +820,16 @@
       "backend": "datoviz",
       "case_id": "text/data_vs_ndc",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_data_vs_ndc.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_data_vs_ndc.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_data_vs_ndc.log.txt"
       ],
       "family": "text",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "text placement, anchors, font-size, rotation, and/or DATA mapping are unverified"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "promote only after a focused Datoviz capability audit"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "text",
@@ -837,9 +837,9 @@
         "ndc"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_text_contract_unverified",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -866,16 +866,16 @@
       "backend": "datoviz",
       "case_id": "text/multiline_unicode_smoke",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_multiline_unicode_smoke.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_multiline_unicode_smoke.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/text_multiline_unicode_smoke.log.txt"
       ],
       "family": "text",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "text placement, anchors, font-size, rotation, and/or DATA mapping are unverified"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "promote only after a focused Datoviz capability audit"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "text",
@@ -883,9 +883,9 @@
         "unicode"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_text_contract_unverified",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -914,16 +914,16 @@
       "backend": "datoviz",
       "case_id": "mesh/single_triangle_uniform_ndc_2d",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/mesh_single_triangle_uniform_ndc_2d.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/mesh_single_triangle_uniform_ndc_2d.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/mesh_single_triangle_uniform_ndc_2d.log.txt"
       ],
       "family": "mesh",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "2D mesh topology, color mapping, z handling, and/or face query semantics are unverified"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "promote only after a focused Datoviz capability audit"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "mesh",
@@ -933,9 +933,9 @@
         "2d"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_mesh_contract_unverified",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -964,16 +964,16 @@
       "backend": "datoviz",
       "case_id": "mesh/indexed_square_uniform_ndc_2d",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/mesh_indexed_square_uniform_ndc_2d.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/mesh_indexed_square_uniform_ndc_2d.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/mesh_indexed_square_uniform_ndc_2d.log.txt"
       ],
       "family": "mesh",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "2D mesh topology, color mapping, z handling, and/or face query semantics are unverified"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "promote only after a focused Datoviz capability audit"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "mesh",
@@ -983,9 +983,9 @@
         "2d"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_mesh_contract_unverified",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -1014,16 +1014,16 @@
       "backend": "datoviz",
       "case_id": "mesh/indexed_square_per_face_ndc_2d",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/mesh_indexed_square_per_face_ndc_2d.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/mesh_indexed_square_per_face_ndc_2d.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/mesh_indexed_square_per_face_ndc_2d.log.txt"
       ],
       "family": "mesh",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "2D mesh topology, color mapping, z handling, and/or face query semantics are unverified"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "promote only after a focused Datoviz capability audit"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "mesh",
@@ -1033,9 +1033,9 @@
         "2d"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_mesh_contract_unverified",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -1064,16 +1064,16 @@
       "backend": "datoviz",
       "case_id": "color/scalar_image_viridis_colorbar",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/color_scalar_image_viridis_colorbar.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/color_scalar_image_viridis_colorbar.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/color_scalar_image_viridis_colorbar.log.txt"
       ],
       "family": "color",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "visual QA runner did not pass color scales into the Datoviz renderer for this case"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "pass QA color scales and colorbar guides into the Datoviz renderer"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "image",
@@ -1083,9 +1083,9 @@
         "viridis"
       ],
       "query_supported": false,
-      "reason_code": "qa_datoviz_color_scales_not_wired",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -1113,16 +1113,16 @@
       "backend": "datoviz",
       "case_id": "color/point_scalar_gray_range",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/color_point_scalar_gray_range.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/color_point_scalar_gray_range.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/color_point_scalar_gray_range.log.txt"
       ],
       "family": "color",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "visual QA runner did not pass color scales into the Datoviz renderer for this case"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "pass QA color scales and colorbar guides into the Datoviz renderer"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "point",
@@ -1131,9 +1131,9 @@
         "range-clipping"
       ],
       "query_supported": false,
-      "reason_code": "qa_datoviz_color_scales_not_wired",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -1161,16 +1161,16 @@
       "backend": "datoviz",
       "case_id": "color/marker_scalar_fill_alpha",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/color_marker_scalar_fill_alpha.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/color_marker_scalar_fill_alpha.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/color_marker_scalar_fill_alpha.log.txt"
       ],
       "family": "color",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "scalar color mapping for this visual family is not implemented by the Datoviz adapter"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "promote only after a focused Datoviz capability audit"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "marker",
@@ -1179,9 +1179,9 @@
         "alpha"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_scalar_visual_family_unsupported",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -1208,16 +1208,16 @@
       "backend": "datoviz",
       "case_id": "transform/inline_named_equivalence",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/transform_inline_named_equivalence.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/transform_inline_named_equivalence.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/transform_inline_named_equivalence.log.txt"
       ],
       "family": "transform",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "named transform resources are not resolved by the Datoviz CPU transform adapter"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "resolve named transform resources before Datoviz dispatch"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "affine2d",
@@ -1225,9 +1225,9 @@
         "named-transform"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_named_transform_unresolved",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -1255,16 +1255,16 @@
       "backend": "datoviz",
       "case_id": "transform/view2d_data_ndc_overlay",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/transform_view2d_data_ndc_overlay.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/transform_view2d_data_ndc_overlay.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/transform_view2d_data_ndc_overlay.log.txt"
       ],
       "family": "transform",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "DATA coordinates/View2D mapping are not wired through this Datoviz visual path"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "wire View2D/DATA mapping through the Datoviz adapter"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "view2d",
@@ -1273,9 +1273,9 @@
         "reversed-limits"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_data_coordinates_unsupported",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -1307,16 +1307,16 @@
       "backend": "datoviz",
       "case_id": "transform/family_affine_view2d",
       "evidence_artifacts": [
-        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/transform_family_affine_view2d.unsupported.json",
+        "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/transform_family_affine_view2d.png",
         "artifacts/visual_qa/s029/current-review-pack/backends/datoviz/transform_family_affine_view2d.log.txt"
       ],
       "family": "transform",
-      "known_adaptations": [],
-      "known_missing_semantics": [
-        "DATA coordinates/View2D mapping are not wired through this Datoviz visual path"
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
       ],
+      "known_missing_semantics": [],
       "promotion_blockers": [
-        "wire View2D/DATA mapping through the Datoviz adapter"
+        "strict promotion requires a family-specific capability audit"
       ],
       "protocol_scope": [
         "point",
@@ -1329,9 +1329,9 @@
         "view2d"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_data_coordinates_unsupported",
-      "rendering_supported": false,
-      "status": "unsupported"
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "status": "adapted"
     },
     {
       "backend": "matplotlib",
@@ -1366,10 +1366,10 @@
       "family": "guide",
       "known_adaptations": [],
       "known_missing_semantics": [
-        "DATA coordinates/View2D mapping are not wired through this Datoviz visual path"
+        "axis guide rendering, explicit tick labels, panel title placement, and guide query semantics are unverified"
       ],
       "promotion_blockers": [
-        "wire View2D/DATA mapping through the Datoviz adapter"
+        "wire Datoviz axis guides, panel titles, explicit tick labels, and guide query semantics"
       ],
       "protocol_scope": [
         "guide",
@@ -1379,7 +1379,7 @@
         "labels"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_data_coordinates_unsupported",
+      "reason_code": "datoviz_axis_guide_contract_unverified",
       "rendering_supported": false,
       "status": "unsupported"
     },
@@ -1417,10 +1417,10 @@
       "family": "guide",
       "known_adaptations": [],
       "known_missing_semantics": [
-        "DATA coordinates/View2D mapping are not wired through this Datoviz visual path"
+        "axis guide rendering, explicit tick labels, panel title placement, and guide query semantics are unverified"
       ],
       "promotion_blockers": [
-        "wire View2D/DATA mapping through the Datoviz adapter"
+        "wire Datoviz axis guides, panel titles, explicit tick labels, and guide query semantics"
       ],
       "protocol_scope": [
         "guide",
@@ -1431,7 +1431,7 @@
         "labels"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_data_coordinates_unsupported",
+      "reason_code": "datoviz_axis_guide_contract_unverified",
       "rendering_supported": false,
       "status": "unsupported"
     }
@@ -1451,12 +1451,12 @@
   ],
   "suite": "s028",
   "summary": {
-    "adapted": 13,
+    "adapted": 27,
     "crashed": 0,
     "disabled": 0,
     "experimental": 0,
     "not_run": 0,
     "strict": 29,
-    "unsupported": 16
+    "unsupported": 2
   }
 }

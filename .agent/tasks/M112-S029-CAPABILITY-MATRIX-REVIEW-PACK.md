@@ -30,6 +30,11 @@ Completed.
 ## Closeout
 
 - Implemented the review-pack generation path.
-- Added documentation and wrappers for local Datoviz review generation.
-- Kept text, mesh, colorbar, guide query, and public 3D promotion deferred pending focused S029
+- Added documentation and wrappers for local Datoviz review generation. S029 follow-up corrected
+  those wrappers and the QA default to `legacy_srgb_blend`, because Matplotlib/Agg alpha parity
+  requires reproducing display-space sRGB blending rather than Datoviz's mathematically correct
+  linear-light mode.
+- Follow-up S029 work now renders Datoviz text, bounded 2D mesh, native colorbar, and S027
+  transform/View2D rows as adapted, while axis guide contracts, explicit colorbar tick-label
+  parity, colorbar query, mesh query, and public 3D promotion remain deferred pending focused S029
   audits.

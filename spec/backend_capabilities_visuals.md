@@ -20,12 +20,19 @@ reports rather than fallback approximations. Required visual families use:
 - paths: `dvz_path`, `position`, `color`, `stroke_width_px`, subpaths, caps, joins;
 - images: `dvz_image`, `position`, `texcoords`, sampled-field binding or texture fallback,
   image sampling controls.
-- text: verified v0.4 retained text/glyph path only; no legacy/private text APIs.
+- text: verified v0.4 retained text/glyph path only; no legacy/private text APIs. Current v0.4
+  evidence includes `dvz_text`, `dvz_text_set_string`, `dvz_text_style`,
+  `dvz_text_set_style`, `dvz_text_placement`, and `dvz_text_set_placement`; unsupported GSP rows
+  mean the adapter has not yet verified the full TextVisual contract.
+- mesh: `dvz_mesh`, `position`, `color`, direct index upload, and
+  `dvz_visual_set_depth_test` for bounded 2D NDC triangle meshes. Per-face RGBA is adapted by
+  duplicating vertices because the Datoviz path is per-vertex color. Use `dvz_visual_set_depth_test`,
+  not the stale `dvz_visual_set_depth` name.
 
 Remaining non-S023 limitations are follow-up scope, not hidden S023 failures:
 
 - backend-native colormap registries beyond grayscale;
-- public glyph resources and mesh features beyond S025 strict `MeshVisual`;
+- public glyph resources and mesh features beyond the bounded S025 2D NDC `MeshVisual` slice;
 - tiled/remote/virtual image sources in Datoviz;
 - scientific readback and full query payload parity;
 - all-rendered/guide query scopes.
@@ -82,7 +89,7 @@ Recommended capability names include `gsp.scalar-color@0.1`, `gsp.colormap.named
 
 Structured diagnostics include `unsupported_colormap_id`, `colormap_approximated`,
 `lut_upload_unsupported`, `gpu_linear_normalize_unsupported`, `cpu_premap_scalar_to_rgba`,
-`cpu_premap_not_allowed_for_virtual_data`, `scalar_visual_family_unsupported`,
+`cpu_premap_not_allowed_for_virtual_data`, `mesh_face_scalar_unsupported`,
 `colorbar_render_unsupported`, `scalar_query_source_unavailable`,
 `scalar_query_normalized_unavailable`, `colorbar_query_unsupported`, `nonfinite_scalar_rejected`,
 and `invalid_color_scale_domain`.

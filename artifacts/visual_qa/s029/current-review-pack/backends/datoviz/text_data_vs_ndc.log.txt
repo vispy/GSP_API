@@ -1,12 +1,1 @@
-Traceback (most recent call last):
-  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 329, in _run_datoviz
-    _render_datoviz_visual(renderer, visual)
-    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
-  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 412, in _render_datoviz_visual
-    renderer.add_text_visual(visual)
-    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
-  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 679, in add_text_visual
-    raise DatovizV04Unsupported(
-        "Datoviz v0.4 slice currently supports NDC text positions only"
-    )
-gsp_datoviz.protocol_renderer.DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC text positions only
+rendered

@@ -34,13 +34,13 @@
     "artifacts/visual_qa/s029/current-review-pack/contact_sheets/s028_all_cases.png"
   ],
   "datoviz_status_counts": {
-    "adapted": 13,
+    "adapted": 27,
     "crashed": 0,
     "disabled": 0,
     "experimental": 0,
     "not_run": 0,
     "strict": 0,
-    "unsupported": 16
+    "unsupported": 2
   },
   "run_id": "s029-current-review-pack",
   "schema_kind": "gsp.visual_qa.review_summary",

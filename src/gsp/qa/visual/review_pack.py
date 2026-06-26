@@ -31,7 +31,7 @@ def run_visual_review_pack(
     case_ids: tuple[str, ...] = (),
     resolution: tuple[int, int] = (800, 600),
     run_id: str | None = None,
-    datoviz_color_pipeline: DatovizColorPipeline = "linear_srgb",
+    datoviz_color_pipeline: DatovizColorPipeline = "legacy_srgb_blend",
 ) -> dict[str, object]:
     """Run visual QA and write review-pack matrix artifacts."""
     backends: tuple[str, ...]

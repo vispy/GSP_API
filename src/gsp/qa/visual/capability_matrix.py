@@ -168,21 +168,34 @@ def _classify_datoviz_unsupported(reason: str) -> tuple[str, str, list[str]]:
         return ("datoviz_backend_symbol_missing", "unsupported", [reason])
     if "TextVisual support is unavailable" in reason or "NDC text positions only" in reason:
         return (
-            "datoviz_text_contract_unverified",
+            "gsp_datoviz_text_adapter_unverified",
             "unsupported",
-            ["text placement, anchors, font-size, rotation, and/or DATA mapping are unverified"],
+            [
+                "Datoviz retained text symbols are present in current v0.4 probes, "
+                "but the GSP adapter has not verified text placement, anchors, "
+                "font-size, rotation, DATA mapping, and query semantics"
+            ],
         )
-    if "MeshVisual support is unavailable" in reason or "NDC mesh positions only" in reason:
+    if "NDC mesh positions only" in reason:
         return (
-            "datoviz_mesh_contract_unverified",
+            "datoviz_data_coordinates_unsupported",
             "unsupported",
-            ["2D mesh topology, color mapping, z handling, and/or face query semantics are unverified"],
+            ["DATA coordinates/View2D mapping are not wired through this Datoviz mesh path"],
+        )
+    if "axis_guide_render_unsupported" in reason:
+        return (
+            "datoviz_axis_guide_contract_unverified",
+            "unsupported",
+            [
+                "axis guide rendering, explicit tick labels, panel title placement, "
+                "and guide query semantics are unverified"
+            ],
         )
     if "colorbar_render_unsupported" in reason:
         return (
             "datoviz_colorbar_contract_unverified",
             "unsupported",
-            ["colorbar scale binding, ticks, labels, layout, and query semantics are unverified"],
+            ["native Datoviz colorbar facade requirements are unavailable"],
         )
     if "missing color scale" in reason:
         return (
@@ -202,11 +215,11 @@ def _classify_datoviz_unsupported(reason: str) -> tuple[str, str, list[str]]:
             "unsupported",
             ["named transform resources are not resolved by the Datoviz CPU transform adapter"],
         )
-    if "NDC point positions only" in reason:
+    if "GSP_VIEW2D_MISSING" in reason or "NDC point positions only" in reason:
         return (
             "datoviz_data_coordinates_unsupported",
             "unsupported",
-            ["DATA coordinates/View2D mapping are not wired through this Datoviz visual path"],
+            ["DATA coordinates require a View2D for Datoviz CPU panel-NDC adaptation"],
         )
     return ("datoviz_adapter_unsupported", "unsupported", [reason] if reason else [])
 
@@ -222,6 +235,8 @@ def _datoviz_blockers(reason_code: str) -> list[str]:
         return ["resolve named transform resources before Datoviz dispatch"]
     if reason_code == "datoviz_data_coordinates_unsupported":
         return ["wire View2D/DATA mapping through the Datoviz adapter"]
+    if reason_code == "datoviz_axis_guide_contract_unverified":
+        return ["wire Datoviz axis guides, panel titles, explicit tick labels, and guide query semantics"]
     return ["promote only after a focused Datoviz capability audit"]
 
 

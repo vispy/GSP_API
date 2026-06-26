@@ -137,10 +137,10 @@ def test_visual_qa_run_writes_matplotlib_artifacts_and_report(tmp_path: Path) ->
 
     payload = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
     assert payload["run_id"] == "test-run"
-    assert payload["datoviz_color_pipeline"] == "linear_srgb"
+    assert payload["datoviz_color_pipeline"] == "legacy_srgb_blend"
     assert isinstance(payload["datoviz_probe_summary"]["facade_imported"], bool)
     manifest = json.loads((tmp_path / "run_manifest.json").read_text(encoding="utf-8"))
-    assert manifest["datoviz_color_pipeline"] == "linear_srgb"
+    assert manifest["datoviz_color_pipeline"] == "legacy_srgb_blend"
 
 
 def test_visual_qa_datoviz_backend_reports_rendered_or_unsupported(
@@ -159,7 +159,7 @@ def test_visual_qa_datoviz_backend_reports_rendered_or_unsupported(
     assert isinstance(case, dict)
     backend = case["backends"]["datoviz"]
     assert backend["status"] in {"rendered", "unsupported"}
-    assert backend["datoviz_color_pipeline"] == "linear_srgb"
+    assert backend["datoviz_color_pipeline"] == "legacy_srgb_blend"
     if backend["status"] == "rendered":
         assert Path(str(backend["artifact_path"])).stat().st_size > 0
         assert "backends/datoviz/" in str(backend["artifact_path"])
@@ -169,7 +169,7 @@ def test_visual_qa_datoviz_backend_reports_rendered_or_unsupported(
         assert payload["schema_kind"] == "gsp.visual_qa.unsupported"
         assert payload["backend_id"] == "datoviz"
         assert payload["case_id"] == "point/basic_ndc"
-        assert payload["datoviz_color_pipeline"] == "linear_srgb"
+        assert payload["datoviz_color_pipeline"] == "legacy_srgb_blend"
 
 
 def test_visual_qa_datoviz_v04_alias_normalizes_to_datoviz(tmp_path: Path) -> None:
@@ -187,24 +187,24 @@ def test_visual_qa_datoviz_v04_alias_normalizes_to_datoviz(tmp_path: Path) -> No
     assert manifest["backends"] == ["datoviz"]
 
 
-def test_visual_qa_datoviz_legacy_color_pipeline_override_is_recorded(
+def test_visual_qa_datoviz_linear_color_pipeline_override_is_recorded(
     tmp_path: Path,
 ) -> None:
-    """S023 can still opt into the Matplotlib-compatibility color pipeline."""
+    """S023 can still opt into the Datoviz-correct color pipeline."""
     report = run_visual_qa_suite(
         out_dir=tmp_path,
         backends=("datoviz",),
         case_ids=("point/basic_ndc",),
-        run_id="test-datoviz-legacy",
+        run_id="test-datoviz-linear",
         resolution=(96, 96),
-        datoviz_color_pipeline="legacy_srgb_blend",
+        datoviz_color_pipeline="linear_srgb",
     )
 
-    assert report["datoviz_color_pipeline"] == "legacy_srgb_blend"
+    assert report["datoviz_color_pipeline"] == "linear_srgb"
     backend = report["cases"][0]["backends"]["datoviz"]
-    assert backend["datoviz_color_pipeline"] == "legacy_srgb_blend"
+    assert backend["datoviz_color_pipeline"] == "linear_srgb"
     manifest = json.loads((tmp_path / "run_manifest.json").read_text(encoding="utf-8"))
-    assert manifest["datoviz_color_pipeline"] == "legacy_srgb_blend"
+    assert manifest["datoviz_color_pipeline"] == "linear_srgb"
 
 
 def test_capability_matrix_marks_matplotlib_strict_and_unselected_datoviz_not_run(
@@ -510,7 +510,7 @@ def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
         dvz_visual_set_data=lambda *args: None,
         dvz_visual_set_index_data=lambda *args: None,
         dvz_visual_set_material=lambda *args: None,
-        dvz_visual_set_depth=lambda *args: None,
+        dvz_visual_set_depth_test=lambda *args: None,
         dvz_visual_set_texture=lambda *args: None,
     )
 

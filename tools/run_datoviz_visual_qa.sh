@@ -24,4 +24,4 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   export VK_ICD_FILENAMES="${datoviz_icd}"
 fi
 
-exec uv run python -m gsp.qa.visual run --datoviz-color-pipeline linear_srgb "$@"
+exec uv run python -m gsp.qa.visual run --datoviz-color-pipeline legacy_srgb_blend "$@"

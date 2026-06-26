@@ -37,7 +37,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 | Point visual | `dvz_point()` plus `dvz_visual_set_data()` for `position`, `color`, `diameter_px` | feasible after point-size semantic alignment |
 | Path visual | `dvz_path()` plus `position`, `color`, `stroke_width_px`, subpaths, caps, and joins | feasible when path helpers are exposed |
 | Image visual | `dvz_image()` plus `position`, `texcoords`, sampled field or texture binding | feasible after image origin/interpolation confirmation |
-| Mesh visual | `dvz_mesh()` plus indexed geometry/attribute upload | capability-gated by S025 retained mesh probe |
+| Mesh visual | `dvz_mesh()` plus direct `position`/`color` attribute upload and index upload | implemented for bounded 2D NDC S025 cases; DATA/3D/query remain gated |
 | Capabilities | `dvz_capability_snapshot()` | feasible |
 | Queries | `dvz_panel_query()` / `dvz_scene_poll_query()` | conceptually aligned; local `../datoviz` headers define `DvzQueryResult`, but the current GSP env imports Datoviz 0.3.5 |
 | Capture | offscreen view capture or `dvz.capture()` | feasible for PNG screenshots only |
@@ -284,20 +284,44 @@ result. Treat that as the remaining Datoviz live payload parity gap.
 The Datoviz v0.4 adapter exposes a figure-wide color-pipeline option through
 `DatovizV04ProtocolRenderer(color_pipeline=...)`:
 
-- `linear_srgb` is the renderer default and matches Datoviz's color-managed path: authored semantic
-  sRGB colors are converted to linear RGB before scene arithmetic and alpha blending.
-- `legacy_srgb_blend` is an opt-in compatibility mode for comparison against renderers that blend
-  directly in display/sRGB values, notably Matplotlib/Agg.
+- `linear_srgb` is the low-level renderer default and matches Datoviz's color-managed path:
+  authored semantic sRGB colors are converted to linear RGB before scene arithmetic and alpha
+  blending. This is the mathematically correct path.
+- `legacy_srgb_blend` is the visual-QA and Matplotlib-parity default. It intentionally reproduces
+  Matplotlib/Agg's legacy behavior: alpha is blended directly in display/sRGB values instead of in
+  linear light.
 
 `legacy_srgb_blend` requires a Datoviz binding with `dvz_figure_set_color_pipeline()` and
 `DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND`. If the binding is missing, GSP raises
 `DatovizV04Unavailable` instead of silently producing linear-light output.
 
-The visual-QA harness defaults Datoviz renders to `linear_srgb` because that mode is available in
-the v0.4-dev facade without extra figure configuration. Use
-`python -m gsp.qa.visual run --datoviz-color-pipeline legacy_srgb_blend ...` only with a Datoviz
-binding that exposes `dvz_figure_set_color_pipeline()` and
-`DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND`.
+The visual-QA harness defaults Datoviz renders to `legacy_srgb_blend` so alpha-overlap cases compare
+against the Matplotlib reference's display-space blending behavior. Use
+`python -m gsp.qa.visual run --datoviz-color-pipeline linear_srgb ...` for Datoviz-correct
+linear-light comparisons.
+
+The current Python binding may expose `dvz_figure_set_color_pipeline()` without exporting enum
+constants; GSP therefore uses the documented v0.4 enum values
+`DVZ_COLOR_PIPELINE_LINEAR_SRGB = 0` and `DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND = 1` as fallbacks.
+If `legacy_srgb_blend` is requested and the setter is missing, GSP raises `DatovizV04Unavailable`
+instead of silently producing linear-light output.
+
+## S029 text and mesh probe update
+
+The current local Datoviz v0.4 checkout exposes retained text APIs (`dvz_text`,
+`dvz_text_set_string`, `dvz_text_style`, `dvz_text_set_style`, `dvz_text_placement`,
+`dvz_text_set_placement`), retained mesh APIs (`dvz_mesh`, direct `dvz_visual_set_data`,
+`dvz_visual_set_index_data`, `dvz_visual_set_depth_test`), and native colorbar APIs (`dvz_scale`,
+`dvz_colormap_builtin`, `dvz_colorbar`). Current S029 Datoviz renders text, bounded 2D mesh, scalar
+image colorbar, and S027 transform/View2D review cases as adapted rows; unsupported rows in those
+families are GSP adapter/verification gaps, not evidence that Datoviz lacks the families.
+
+Do not promote these rows to strict solely from symbol presence. Text still needs verified mapping
+for font roles, multiline/non-ASCII handling, z-order, and query payloads. Mesh
+still needs face-query payloads, depth/culling policy expansion, and strict parity audit. Per-face
+RGBA is currently adapted by duplicating indexed vertices before upload to Datoviz's per-vertex color
+mesh path. Colorbar rendering uses native Datoviz scale/colorbar objects, but explicit tick labels
+and colorbar ramp query are not strict yet.
 
 ## Post-M011 parity gap update
 
@@ -305,10 +329,11 @@ The current GSP Datoviz adapter is still a slice, not parity:
 
 - implemented: point visual, scalar gray and RGB/RGBA images via texture fallback or sampled field, Datoviz
   capability translation, query decoding and binding gate, bounded point/image query execution
-  wrapper, bounded offscreen PNG capture, color-pipeline selection, v0.4-dev wheel-stage smoke
-  harness;
-- not implemented: backend-native colormap registries, live GPU/headless query execution validation,
-  guide/all-rendered query scopes, scientific readback, tiled-source support.
+  wrapper, bounded offscreen PNG capture, color-pipeline selection, native colorbar rendering,
+  CPU-adapted named/inline affine transforms and DATA/View2D placement for finite eager visuals,
+  v0.4-dev wheel-stage smoke harness;
+- not implemented: strict explicit colorbar ticks/labels, colorbar query, live GPU/headless query
+  execution validation, guide/all-rendered query scopes, scientific readback, tiled-source support.
 
 Recommended next mission: establish the Datoviz v0.4 Python facade/raw binding import path, then
 implement Datoviz query/capability parity. Scope implementation to translating
@@ -358,8 +383,9 @@ payload semantics are exposed and validated through the Python facade.
 
 ## S025 MeshVisual target
 
-S025 Datoviz work targets retained `dvz_mesh` support only after a fresh capability probe. The adapter
-must preserve GSP `MeshVisual` semantics: inline indexed triangles, flat uniform/per-face RGBA,
-explicit NDC/DATA mapping, conservative depth/culling controls, and structured unsupported reports for
-vertex color, normals, shading, 3D projection, and mesh query gaps. Public GSP fields must not expose
-Datoviz slot names, material structs, helper geometry loaders, or draw calls.
+S025 Datoviz work uses retained `dvz_mesh` support after the S029 capability probe. The adapter
+preserves the bounded review-pack slice for inline indexed 2D triangles, uniform RGBA, vertex RGBA,
+DATA/View2D placement through CPU panel-NDC adaptation, and per-face RGBA adapted by vertex
+duplication. It still emits structured unsupported reports for face scalar colors, normals, shading,
+3D projection, and mesh query gaps. Public GSP fields must not expose Datoviz slot names, material
+structs, helper geometry loaders, or draw calls.

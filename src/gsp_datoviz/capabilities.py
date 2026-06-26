@@ -159,9 +159,9 @@ def gsp_capability_snapshot_from_datoviz(
             "strict_reversed_view2d_axes_unverified",
         ),
         "s026_scalar_color": (
-            "finite eager scalar ImageVisual and PointVisual data are CPU pre-mapped "
-            "to canonical GSP RGBA8 while scalar source values are retained for "
-            "semantic query payloads"
+            "finite eager scalar ImageVisual, PointVisual, and MarkerVisual fill "
+            "data are CPU pre-mapped to canonical GSP RGBA8; point/image scalar "
+            "source values are retained for semantic query payloads"
         ),
         "s026_scalar_color_capabilities": (
             "gsp.scalar-color@0.1",
@@ -173,22 +173,30 @@ def gsp_capability_snapshot_from_datoviz(
             "gsp.colormap.named.cividis@0.1",
             "gsp.scalar-image.color-scale@0.1",
             "gsp.point.scalar-color@0.1",
+            "gsp.marker.scalar-fill@0.1",
+            "gsp.colorbar-guide.render@0.1",
             "gsp.scalar-query.source-value@0.1",
             "gsp.scalar-query.normalized-value@0.1",
             "gsp.scalar-query.displayed-rgba@0.1",
         ),
         "s026_scalar_color_diagnostics": (
             "cpu_premap_scalar_to_rgba",
-            "colorbar_render_unsupported",
+            "colorbar_explicit_ticks_unverified",
             "colorbar_query_unsupported",
-            "scalar_visual_family_unsupported",
+            "mesh_face_scalar_unsupported",
+        ),
+        "s025_mesh": (
+            "bounded 2D MeshVisual rows render through dvz_mesh with direct "
+            "position/color/index upload; DATA positions are CPU-mapped through "
+            "View2D when present, per-face RGBA is adapted by duplicating vertices, "
+            "and scalar face colors plus mesh query payloads remain unsupported"
         ),
         "s027_transform": (
-            "finite eager NDC Point/Marker/Segment/PathVisual inline AFFINE_2D "
-            "positions are CPU pre-transformed before upload; named transform "
-            "resources, DATA-space adaptation, transform query inverse, image affine, "
-            "mesh/text transforms, 3D camera/projection/controller semantics, and "
-            "virtual-source materialization are unsupported"
+            "finite eager Point/Marker/Segment/Path/Text/Mesh positions are CPU "
+            "pre-transformed before upload for inline and named AFFINE_2D bindings; "
+            "DATA positions are CPU-mapped through View2D when present; transform "
+            "query inverse, image affine, 3D camera/projection/controller semantics, "
+            "and virtual-source materialization are unsupported"
         ),
         "s027_transform_diagnostics": (
             "cpu_adapter_affine2d_eager_ndc",
