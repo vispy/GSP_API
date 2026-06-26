@@ -6,6 +6,16 @@
       "cost_class": "high_or_current",
       "description": "The current interactive Codex session. Use for Mission Control and M001 until aisw providers are configured."
     },
+    "codex-ucl": {
+      "kind": "codex_exec",
+      "enabled": true,
+      "aisw_context": "codex/ucl",
+      "aisw_tool": "codex",
+      "aisw_profile": "ucl",
+      "cost_class": "medium",
+      "command_template": "bash -lc 'aisw use codex ucl --state-mode isolated --non-interactive --quiet; cd {worktree}; codex exec --json --sandbox workspace-write --cd {worktree} \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
+      "description": "Preferred stored aisw Codex profile for isolated medium worker launches."
+    },
     "codex-ibl": {
       "kind": "codex_exec",
       "enabled": true,
@@ -38,8 +48,8 @@
     }
   },
   "selection_policy": {
-    "cheap": ["codex-adikia", "codex-ibl"],
-    "medium": ["codex-adikia", "codex-ibl", "claude-main"],
+    "cheap": ["codex-ucl", "codex-adikia", "codex-ibl"],
+    "medium": ["codex-ucl", "codex-adikia", "codex-ibl", "claude-main"],
     "high": ["local-main-codex"]
   },
   "inventory": {
