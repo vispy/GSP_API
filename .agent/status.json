@@ -1,5 +1,5 @@
 {
-  "current_stage": "S027",
+  "current_stage": "S028",
   "stages": [
     {
       "id": "S001",
@@ -162,6 +162,12 @@
       "title": "Transform, View, Camera, and Navigation Semantics",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S028",
+      "title": "Guide and View2D Integration",
+      "state": "ready",
+      "progress": 0
     }
   ],
   "missions": [
@@ -1100,6 +1106,15 @@
       "agent": "codex-ucl",
       "progress": 100,
       "priority": 104
+    },
+    {
+      "id": "M105",
+      "title": "S028 Guide/View2D integration scoping",
+      "stage": "S028",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 105
     }
   ],
   "review_queue": [],
@@ -1162,13 +1177,10 @@
     }
   ],
   "recommendations": [
-    "M099 is complete: P012 is converted into ADR-0019, `spec/transforms.md`, and S027 decision records.",
-    "M100 is complete: S027 protocol dataclasses/enums/validation and transform query payload shells are implemented.",
-    "M101 is complete: Matplotlib strict transform/view rendering and query inverse behavior is implemented for the accepted reference subset.",
-    "M102 is complete: Datoviz transform capability gates, explicit CPU adaptation reports, and unsupported diagnostics are in place.",
-    "M103 is complete: bounded VisPy2 transform/view producer APIs emit GSP protocol records only.",
     "M104 is complete: S027 visual/query QA coverage is present, S027 is closed, and `ANSWER` was deleted after confirming P012 content is integrated.",
-    "Next stage planning can begin, but keep future transform work 2D-first unless a new accepted decision expands public 3D camera/projection/controller or transform graph semantics."
+    "S028 is ready to scope Guide/View2D integration. Start with M105 in the local main session before launching workers.",
+    "M105 should reconcile existing guide/tick/grid/query behavior with accepted `View2D` semantics, including reversed axes and deterministic tick/readout behavior.",
+    "Stop and report if existing guide specs conflict with `spec/transforms.md`; do not expand into public 3D camera/projection/controller, nonlinear transforms, or layout/collision semantics without a new accepted decision."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1202,6 +1214,7 @@
     "M101 completed: added Matplotlib reference transform/view helpers, transformed renderer/query paths, transform query payload output, and focused tests; full pytest passed with 357 passed and 8 skipped.",
     "M102 completed: added Datoviz S027 transform capability metadata, bounded finite eager NDC inline-affine CPU adaptation for point/marker/segment/path, transform query inverse unsupported diagnostics, and focused tests; full pytest passed with 359 passed and 8 skipped.",
     "M103 completed: added VisPy2 affine2d helper, visual transform parameters, set_view2d convenience, and focused tests; full pytest passed with 363 passed and 8 skipped before tuple typing cleanup.",
-    "M104 completed: added S027 visual QA cases for inline/named affine equivalence, View2D DATA/NDC overlay, and cross-family affine+View2D coverage; added transform-query inverse fixture coverage; closed S027 after auditing and deleting ANSWER."
+    "M104 completed: added S027 visual QA cases for inline/named affine equivalence, View2D DATA/NDC overlay, and cross-family affine+View2D coverage; added transform-query inverse fixture coverage; closed S027 after auditing and deleting ANSWER.",
+    "S028 opened as a ready planning stage for Guide/View2D integration. M105 is the next local Mission Control task."
   ]
 }
