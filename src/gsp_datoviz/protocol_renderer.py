@@ -1556,6 +1556,17 @@ def _scene_poll_query(dvz: Any, scene: Any, out_result: Any) -> bool:
 
 def _datoviz_query_request_diagnostic(request: QueryRequest) -> str | None:
     if request.scope != QueryScope.DATA:
+        if request.scope == QueryScope.GUIDES:
+            return (
+                "axis-guide-query-unsupported: Datoviz v0.4 query slice defers "
+                "guide picking/query; guide rendering capability does not imply "
+                "queryable ticks, labels, grids, or titles"
+            )
+        if request.scope == QueryScope.ALL_RENDERED:
+            return (
+                "all-rendered-guides-unsupported: Datoviz v0.4 query slice cannot "
+                "merge data and guide contributions because guide query is deferred"
+            )
         return f"Datoviz v0.4 query slice supports data scope only, got {request.scope.value!r}"
     if request.coordinate_space != QueryCoordinateSpace.PANEL:
         return f"Datoviz v0.4 query slice supports panel coordinates only, got {request.coordinate_space.value!r}"

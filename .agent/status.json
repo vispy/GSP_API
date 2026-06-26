@@ -166,8 +166,8 @@
     {
       "id": "S028",
       "title": "Guide and View2D Integration",
-      "state": "in_progress",
-      "progress": 85
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -1156,9 +1156,9 @@
       "id": "M110",
       "title": "S028 Datoviz guide capability report and closeout",
       "stage": "S028",
-      "state": "ready",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 110
     }
   ],
@@ -1222,9 +1222,9 @@
     }
   ],
   "recommendations": [
-    "M109 is complete: S028 visual QA and VisPy2 coverage now exercise normal and reversed guide/View2D behavior.",
-    "M110 is ready: add Datoviz guide capability/unsupported reporting and close S028.",
-    "Stop and report if S028 scope expands into public 3D camera/projection/controller, nonlinear axes, equal-aspect layout, guide collision/layout solving, or live navigation event semantics."
+    "S028 is complete: Matplotlib remains the strict guide/View2D reference path, VisPy2 producer coverage is in place, and Datoviz reports adapted/unsupported guide capability boundaries explicitly.",
+    "Do not open the next GSP stage until the desired post-S028 scope is selected; Datoviz-side explicit tick/label and query-payload work can land independently.",
+    "When Datoviz v0.4-dev exposes explicit tick labels, reversed-domain proof, or richer query payloads, add a follow-up GSP Datoviz capability-promotion mission."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1264,6 +1264,7 @@
     "M106 completed: updated `spec/transforms.md`, `spec/query.md`, `spec/vispy2/api.md`, Matplotlib/Datoviz backend specs, and visual QA guidance for reversed `View2D` guide semantics. M107 is ready.",
     "M107 completed: `resolve_ticks()` now accepts reversed finite domains for deterministic auto ticks, explicit ticks remain unchanged, Matplotlib guide rendering applies `View2D` x/y limits, and focused/nearby tests passed.",
     "M108 completed: fixed reversed-bound spine hit testing, added reversed auto/explicit guide query coverage, added scoped all-rendered reversed `View2D` ordering coverage, and validated focused/nearby query tests.",
-    "M109 completed: added S028 visual QA suite cases for auto-grid and reversed-explicit guide/View2D scenes; extended QA scene artifacts/rendering to carry axis and panel text guides; added VisPy2 reversed guide render coverage. Focused QA/VisPy2 tests and nearby guide tests passed; mypy was clean."
+    "M109 completed: added S028 visual QA suite cases for auto-grid and reversed-explicit guide/View2D scenes; extended QA scene artifacts/rendering to carry axis and panel text guides; added VisPy2 reversed guide render coverage. Focused QA/VisPy2 tests and nearby guide tests passed; mypy was clean.",
+    "M110 completed: added the S028 Datoviz guide/View2D capability report, kept Datoviz axis support adapted with explicit tick labels, strict reversed-domain proof, guide query, and all-rendered guide query reported by structured unsupported/unverified diagnostics, and closed S028."
   ]
 }

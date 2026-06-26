@@ -144,6 +144,20 @@ def gsp_capability_snapshot_from_datoviz(
         "query_support": "deferred until DvzQueryResult is decodable from Python",
         "capture_support": "PNG capture is advertised only when offscreen view capture bindings are available",
         "axis_provider": "datoviz.v04.panel_axis.wip when v0.4-dev Python symbols are exposed",
+        "s028_guide_view2d": (
+            "Datoviz native panel axes are an adapted provider in this GSP slice: "
+            "panel View2D/domain symbols are capability-gated, backend auto ticks "
+            "may render, explicit GSP tick values/labels are not verified, guide "
+            "query is deferred, and all-rendered guide contributions remain "
+            "unsupported until Datoviz exposes guide picking/query semantics"
+        ),
+        "s028_guide_view2d_diagnostics": (
+            "datoviz_axis_provider_adapted",
+            "explicit_gsp_ticks_unsupported",
+            "axis_guide_query_unsupported",
+            "all_rendered_guides_unsupported",
+            "strict_reversed_view2d_axes_unverified",
+        ),
         "s026_scalar_color": (
             "finite eager scalar ImageVisual and PointVisual data are CPU pre-mapped "
             "to canonical GSP RGBA8 while scalar source values are retained for "
@@ -319,7 +333,9 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
         diagnostics=(
             "axis-provider-selected: datoviz.v04.panel_axis.wip",
             "axis-provider-adapted: backend-native ticks used; explicit GSP ticks unsupported by verified binding",
-            "axis-guide-query-unsupported: provider renders guides but cannot query tick labels",
+            "axis-guide-query-unsupported: guide picking is deferred for Datoviz v0.4 RC",
+            "all-rendered-guides-unsupported: all-rendered guide contributions require guide query support",
+            "strict-reversed-view2d-unverified: Datoviz reversed finite domains require runtime/backend proof before strict status",
         ),
     )
 

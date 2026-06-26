@@ -10,7 +10,7 @@ Document Datoviz guide/View2D capability status and close S028 after implementat
 
 ## Status
 
-Draft.
+Completed.
 
 ## Deliverables
 
@@ -22,3 +22,14 @@ Draft.
 
 - Datoviz does not claim unverified strict guide/View2D support.
 - S028 is closed only after spec, reference behavior, QA, and producer records align.
+
+## Closeout
+
+- Added the S028 Datoviz guide/View2D capability report to `spec/backends/datoviz.md`.
+- Kept the Datoviz v0.4 axis provider at `adapted`, with explicit GSP tick values/labels,
+  strict reversed-domain proof, guide query, and all-rendered guide query reported as unsupported
+  or unverified by structured diagnostics.
+- Tightened Datoviz query diagnostics so `guides` and `all-rendered` scopes report guide-query
+  deferral explicitly instead of falling through to a generic data-scope message.
+- Added focused tests protecting the adapted provider status and guide-query deferral.
+- Closed S028 without opening the next stage prematurely.

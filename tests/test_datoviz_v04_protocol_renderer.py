@@ -559,6 +559,8 @@ def test_capability_snapshot_defers_query_support():
     assert caps.supports_transform_placement(TransformPlacement.CPU_ADAPTER)
     assert caps.supports_transform_capability("gsp.transform.affine2d@0.1")
     assert "s027_transform" in caps.metadata
+    assert "s028_guide_view2d" in caps.metadata
+    assert "axis_guide_query_unsupported" in caps.metadata["s028_guide_view2d_diagnostics"]
     assert caps.metadata["datoviz_api"] == "v0.4 dvz_* facade"
     assert caps.axis_providers[0].provider_id == DATOVIZ_V04_AXIS_PROVIDER
 
@@ -847,14 +849,25 @@ def test_query_panel_rejects_unadvertised_scopes_and_policies():
             hit_policy=QueryHitPolicy.ALL,
         )
     )
+    all_rendered = renderer.query_panel(
+        QueryRequest(
+            id="query:all-rendered",
+            panel_id="panel:main",
+            coordinate=(0.0, 0.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            scope=QueryScope.ALL_RENDERED,
+        )
+    )
     data_coordinates = renderer.query_panel(
         QueryRequest(id="query:data", panel_id="panel:main", coordinate=(0.0, 0.0))
     )
 
     assert guides.status == QueryStatus.UNSUPPORTED
-    assert "data scope only" in str(guides.diagnostic)
+    assert "axis-guide-query-unsupported" in str(guides.diagnostic)
     assert all_hits.status == QueryStatus.UNSUPPORTED
     assert "frontmost" in str(all_hits.diagnostic)
+    assert all_rendered.status == QueryStatus.UNSUPPORTED
+    assert "all-rendered-guides-unsupported" in str(all_rendered.diagnostic)
     assert data_coordinates.status == QueryStatus.UNSUPPORTED
     assert "panel coordinates" in str(data_coordinates.diagnostic)
 
@@ -890,6 +903,9 @@ def test_datoviz_axis_provider_is_capability_gated():
     assert supported.provider_status == "adapted"
     assert supported.supports_backend_auto_ticks
     assert not supported.supports_explicit_ticks
+    assert not supported.supports_guide_query
+    assert "axis-guide-query-unsupported" in " ".join(supported.diagnostics)
+    assert "strict-reversed-view2d-unverified" in " ".join(supported.diagnostics)
 
 
 def test_capability_snapshot_selects_datoviz_axis_provider_when_facade_exposes_symbols():

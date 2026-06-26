@@ -336,6 +336,24 @@ explicit GSP tick values/labels, handle reversed finite limits consistently, and
 support from the same view snapshot. Otherwise it must report adapted or unsupported guide behavior
 with structured diagnostics.
 
+S028 closeout status for the current GSP Datoviz adapter:
+
+| Capability | GSP status | Diagnostic |
+|---|---|---|
+| Panel axis provider symbols | `adapted` when Python facade exposes required v0.4-dev symbols | `datoviz.v04.panel_axis.wip` |
+| Backend auto ticks | `adapted` | Datoviz-native ticks may render but are not GSP-resolved tick output. |
+| Explicit GSP tick values/labels | `unsupported` | `explicit_gsp_ticks_unsupported` |
+| Grid lines | capability-gated | Requires `dvz_axis_set_grid`; alignment remains backend-native until explicit ticks exist. |
+| Axis labels | capability-gated/adapted | Requires `dvz_axis_set_label`; title/panel text remains outside strict Datoviz S028 support. |
+| Reversed finite `View2D` axes | unverified/adapted | `strict_reversed_view2d_axes_unverified` until Datoviz runtime proof lands. |
+| Guide picking/query | intentionally deferred | `axis_guide_query_unsupported` |
+| `all-rendered` query with guides | unsupported | `all_rendered_guides_unsupported`; do not silently degrade to data-only. |
+
+This is sufficient for S028 closeout because Matplotlib is the strict reference path and the Datoviz
+adapter reports the missing guide semantics explicitly. Future Datoviz releases may promote the
+provider toward strict status after native explicit ticks/labels, reversed-domain proof, and query
+payload semantics are exposed and validated through the Python facade.
+
 
 ## S025 MeshVisual target
 
