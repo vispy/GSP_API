@@ -1,0 +1,13 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "guide/view2d_auto_grid",
+  "datoviz_color_pipeline": "linear_srgb",
+  "diagnostics": {
+    "exception_type": "DatovizV04Unsupported",
+    "message": "Datoviz v0.4 slice currently supports NDC point positions only"
+  },
+  "reason": "DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC point positions only",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

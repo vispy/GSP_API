@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Sequence
 
 from gsp.qa.visual.cases import S023_SUITE, list_cases
+from gsp.qa.visual.review_pack import run_visual_review_pack
 from gsp.qa.visual.runner import run_visual_qa_suite
 
 
@@ -37,6 +38,34 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     run_parser.add_argument("--run-id", default=None)
 
+    review_parser = subparsers.add_parser(
+        "review-pack", help="run visual QA and write a capability review pack"
+    )
+    review_parser.add_argument("--suite", default="s028")
+    review_parser.add_argument(
+        "--mode",
+        choices=(
+            "side-by-side",
+            "matplotlib-only",
+            "datoviz-diagnostic",
+            "datoviz-offscreen-opt-in",
+        ),
+        default="side-by-side",
+    )
+    review_parser.add_argument("--out", required=True)
+    review_parser.add_argument("--case", action="append", dest="cases", default=[])
+    review_parser.add_argument("--resolution", default="800x600")
+    review_parser.add_argument(
+        "--datoviz-color-pipeline",
+        choices=("linear_srgb", "legacy_srgb_blend"),
+        default="linear_srgb",
+        help=(
+            "Datoviz color pipeline for QA renders. legacy_srgb_blend requires "
+            "dvz_figure_set_color_pipeline in the Datoviz binding."
+        ),
+    )
+    review_parser.add_argument("--run-id", default=None)
+
     args = parser.parse_args(argv)
     if args.command == "list":
         for case in list_cases(suite=args.suite):
@@ -62,6 +91,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             if "report_path" in report
             else str(Path(args.out) / "report.json")
         )
+        return 0
+    if args.command == "review-pack":
+        width, height = _parse_resolution(args.resolution)
+        result = run_visual_review_pack(
+            suite=args.suite,
+            out_dir=Path(args.out),
+            mode=args.mode,
+            case_ids=tuple(args.cases),
+            resolution=(width, height),
+            run_id=args.run_id,
+            datoviz_color_pipeline=args.datoviz_color_pipeline,
+        )
+        print(result["index_path"])
         return 0
     raise AssertionError(f"unhandled command: {args.command}")
 

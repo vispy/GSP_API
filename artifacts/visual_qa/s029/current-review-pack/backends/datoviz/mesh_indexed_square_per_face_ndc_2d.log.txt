@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 329, in _run_datoviz
+    _render_datoviz_visual(renderer, visual)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 414, in _render_datoviz_visual
+    renderer.add_mesh_visual(visual)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 671, in add_mesh_visual
+    raise DatovizV04Unsupported(
+        "Datoviz v0.4 MeshVisual support is unavailable: " + "; ".join(diagnostics)
+    )
+gsp_datoviz.protocol_renderer.DatovizV04Unsupported: Datoviz v0.4 MeshVisual support is unavailable: unverified dvz_visual_set_depth; Datoviz v0.4 MeshVisual flat RGBA, per-face color adaptation, 2D z=0 mapping, topology preservation, and face query semantics are not verified for S025

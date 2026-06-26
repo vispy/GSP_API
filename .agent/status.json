@@ -1,5 +1,5 @@
 {
-  "current_stage": "S028",
+  "current_stage": "S029",
   "stages": [
     {
       "id": "S001",
@@ -168,6 +168,12 @@
       "title": "Guide and View2D Integration",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S029",
+      "title": "Backend Capability Matrix and Visual Review Pack",
+      "state": "in_progress",
+      "progress": 15
     }
   ],
   "missions": [
@@ -1160,6 +1166,24 @@
       "agent": "codex-ucl",
       "progress": 100,
       "priority": 110
+    },
+    {
+      "id": "M112",
+      "title": "S029 capability matrix and review-pack foundation",
+      "stage": "S029",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 112
+    },
+    {
+      "id": "M113",
+      "title": "S029 Datoviz rendered-family promotion audit",
+      "stage": "S029",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 113
     }
   ],
   "review_queue": [],
@@ -1222,9 +1246,9 @@
     }
   ],
   "recommendations": [
-    "S028 is complete: Matplotlib remains the strict guide/View2D reference path, VisPy2 producer coverage is in place, and Datoviz reports adapted/unsupported guide capability boundaries explicitly.",
-    "Do not open the next GSP stage until the desired post-S028 scope is selected; Datoviz-side explicit tick/label and query-payload work can land independently.",
-    "When Datoviz v0.4-dev exposes explicit tick labels, reversed-domain proof, or richer query payloads, add a follow-up GSP Datoviz capability-promotion mission."
+    "S029 is open: build and review the backend capability matrix before strict Datoviz promotion.",
+    "Next mission should audit current Datoviz rendered families point, marker, segment, path, image, and overlay against the matrix and promote only exact proven scopes.",
+    "Keep text, 2D mesh, colorbar, axes/guides, query payloads, and 3D previews as focused S029 follow-up audits with adapted or experimental status until proven."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1265,6 +1289,8 @@
     "M107 completed: `resolve_ticks()` now accepts reversed finite domains for deterministic auto ticks, explicit ticks remain unchanged, Matplotlib guide rendering applies `View2D` x/y limits, and focused/nearby tests passed.",
     "M108 completed: fixed reversed-bound spine hit testing, added reversed auto/explicit guide query coverage, added scoped all-rendered reversed `View2D` ordering coverage, and validated focused/nearby query tests.",
     "M109 completed: added S028 visual QA suite cases for auto-grid and reversed-explicit guide/View2D scenes; extended QA scene artifacts/rendering to carry axis and panel text guides; added VisPy2 reversed guide render coverage. Focused QA/VisPy2 tests and nearby guide tests passed; mypy was clean.",
-    "M110 completed: added the S028 Datoviz guide/View2D capability report, kept Datoviz axis support adapted with explicit tick labels, strict reversed-domain proof, guide query, and all-rendered guide query reported by structured unsupported/unverified diagnostics, and closed S028."
+    "M110 completed: added the S028 Datoviz guide/View2D capability report, kept Datoviz axis support adapted with explicit tick labels, strict reversed-domain proof, guide query, and all-rendered guide query reported by structured unsupported/unverified diagnostics, and closed S028.",
+    "P013 response accepted: S029 should be Backend Capability Matrix and Visual Review Pack, with render-first review artifacts and strict promotion only after explicit contract evidence.",
+    "M112 completed: added the S029 capability matrix schema, review-pack generator, Datoviz review-pack runtime wrapper, focused tests, and Mission Control opening records."
   ]
 }

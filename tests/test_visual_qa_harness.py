@@ -22,6 +22,8 @@ from gsp.qa.visual.cases import (
     get_case,
     list_cases,
 )
+from gsp.qa.visual.capability_matrix import build_capability_matrix
+from gsp.qa.visual.review_pack import run_visual_review_pack
 from gsp.qa.visual.runner import run_visual_qa_suite
 from gsp_matplotlib.protocol_query import QueryVisualEntry, query_visuals
 
@@ -203,6 +205,83 @@ def test_visual_qa_datoviz_legacy_color_pipeline_override_is_recorded(
     assert backend["datoviz_color_pipeline"] == "legacy_srgb_blend"
     manifest = json.loads((tmp_path / "run_manifest.json").read_text(encoding="utf-8"))
     assert manifest["datoviz_color_pipeline"] == "legacy_srgb_blend"
+
+
+def test_capability_matrix_marks_matplotlib_strict_and_unselected_datoviz_not_run(
+    tmp_path: Path,
+) -> None:
+    """The S029 matrix distinguishes reference success from unselected backends."""
+    report = run_visual_qa_suite(
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=("point/basic_ndc",),
+        run_id="test-matrix",
+        resolution=(96, 96),
+    )
+
+    matrix = build_capability_matrix(report)
+    rows = matrix["rows"]
+    assert isinstance(rows, list)
+    by_backend = {row["backend"]: row for row in rows}
+
+    assert by_backend["matplotlib"]["status"] == "strict"
+    assert by_backend["matplotlib"]["reason_code"] == "matplotlib_reference_rendered"
+    assert by_backend["datoviz"]["status"] == "not_run"
+    assert by_backend["datoviz"]["reason_code"] == "backend_not_run"
+
+
+def test_capability_matrix_classifies_datoviz_offscreen_disabled() -> None:
+    """Datoviz disabled and unsupported states are separate review-pack outcomes."""
+    report = {
+        "suite": "s028",
+        "stage": "S028",
+        "run_id": "disabled",
+        "cases": [
+            {
+                "case_id": "point/basic_ndc",
+                "family": "point",
+                "required_features": ["point", "ndc"],
+                "backends": {
+                    "datoviz": {
+                        "status": "unsupported",
+                        "reason": (
+                            "Datoviz in-process offscreen QA is disabled by default "
+                            "because native offscreen view creation can abort the Python process"
+                        ),
+                    }
+                },
+            }
+        ],
+    }
+
+    matrix = build_capability_matrix(report)
+    datoviz_row = [
+        row
+        for row in matrix["rows"]
+        if isinstance(row, dict) and row["backend"] == "datoviz"
+    ][0]
+
+    assert datoviz_row["status"] == "disabled"
+    assert datoviz_row["reason_code"] == "datoviz_offscreen_disabled"
+
+
+def test_visual_review_pack_writes_matrix_and_index(tmp_path: Path) -> None:
+    """The S029 review-pack command writes the policy layer over visual QA artifacts."""
+    result = run_visual_review_pack(
+        out_dir=tmp_path,
+        mode="matplotlib-only",
+        case_ids=("point/basic_ndc",),
+        run_id="test-review-pack",
+        resolution=(96, 96),
+    )
+
+    assert Path(str(result["index_path"])).exists()
+    assert Path(str(result["capability_matrix_path"])).exists()
+    assert (tmp_path / "summary.json").exists()
+    matrix = json.loads((tmp_path / "capability_matrix.json").read_text())
+    assert matrix["schema_kind"] == "gsp.visual_qa.capability_matrix"
+    assert matrix["summary"]["strict"] == 1
+    assert matrix["summary"]["not_run"] == 1
 
 
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:

@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 329, in _run_datoviz
+    _render_datoviz_visual(renderer, visual)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 404, in _render_datoviz_visual
+    renderer.add_marker_visual(visual)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 465, in add_marker_visual
+    raise DatovizV04Unsupported(
+    ...<3 lines>...
+    )
+gsp_datoviz.protocol_renderer.DatovizV04Unsupported: scalar_visual_family_unsupported: Datoviz v0.4 MarkerVisual scalar fill remains capability-gated until native or CPU-mapped fill-color contracts are verified

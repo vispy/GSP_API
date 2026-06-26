@@ -1,0 +1,88 @@
+{
+  "arrays": {
+    "marker_angles": {
+      "dtype": "float32",
+      "key": "marker_angles",
+      "path": "marker_angle_size_stroke_ndc.arrays.npz",
+      "shape": [
+        6
+      ]
+    },
+    "marker_fill_colors": {
+      "dtype": "uint8",
+      "key": "marker_fill_colors",
+      "path": "marker_angle_size_stroke_ndc.arrays.npz",
+      "shape": [
+        6,
+        4
+      ]
+    },
+    "marker_positions": {
+      "dtype": "float32",
+      "key": "marker_positions",
+      "path": "marker_angle_size_stroke_ndc.arrays.npz",
+      "shape": [
+        6,
+        2
+      ]
+    },
+    "marker_sizes": {
+      "dtype": "float32",
+      "key": "marker_sizes",
+      "path": "marker_angle_size_stroke_ndc.arrays.npz",
+      "shape": [
+        6
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "marker/angle_size_stroke_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [],
+  "views": [],
+  "visuals": [
+    {
+      "angle": {
+        "dtype": "float32",
+        "shape": [
+          6
+        ]
+      },
+      "coordinate_space": "ndc",
+      "family": "marker",
+      "fill_colors": {
+        "dtype": "uint8",
+        "shape": [
+          6,
+          4
+        ]
+      },
+      "id": "visual:marker-angle-size-stroke-ndc",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          6,
+          2
+        ]
+      },
+      "shape": "triangle",
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          6
+        ]
+      },
+      "stroke_color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "stroke_width": 4.0
+    }
+  ]
+}

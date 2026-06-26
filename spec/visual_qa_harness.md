@@ -62,6 +62,36 @@ The harness may report structured unsupported diagnostics when a backend binding
 S023 closeout was validated with all 13 Matplotlib and Datoviz cases rendered in the local v0.4
 binding environment.
 
+## S029 capability matrix and review pack
+
+S029 adds a review-pack layer over the S023-S028 visual QA suites. The review pack does not promote
+Datoviz behavior by rendering alone; it classifies each backend/case row as `strict`, `adapted`,
+`experimental`, `unsupported`, `disabled`, `crashed`, or `not_run`.
+
+Generate the current Matplotlib-left / Datoviz-right review pack on macOS with:
+
+```bash
+DATOVIZ_REPO=/Users/cyrille/GIT/Viz/datoviz \
+tools/run_datoviz_visual_review_pack.sh \
+  --suite s028 \
+  --out artifacts/visual_qa/s029/latest-review-pack \
+  --run-id s029-latest-review-pack \
+  --resolution 800x600
+```
+
+Review-pack outputs:
+
+- `index.md`: human entry point;
+- `capability_matrix.json`: machine-readable taxonomy and evidence rows;
+- `capability_matrix.md`: compact matrix table;
+- `summary.json`: compact counts and contact-sheet pointers;
+- `contact_sheets/`: case sheets and full-suite sheet.
+
+Matplotlib rendered rows are the strict reference for S023-S028 2D semantics. Datoviz rendered rows
+start as `adapted` until a family-specific promotion audit proves strict protocol conformance.
+Datoviz guide query, all-rendered guide contributions, and public 3D camera/projection semantics
+remain deferred.
+
 ## S024 TextVisual QA plan
 
 Add deterministic text cases with Matplotlib reference output, optional Datoviz output where
