@@ -2,10 +2,10 @@
   "datoviz": {
     "imported": true,
     "minimal_point_supported": true,
-    "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+    "path": "/home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
     "raw_imported": true
   },
-  "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
-  "python": "3.14.5 (main, May 10 2026, 10:21:34) [Clang 17.0.0 (clang-1700.6.4.2)]",
-  "python_executable": "/Users/cyrille/GIT/Viz/GSP_API/.venv/bin/python3"
+  "platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",
+  "python": "3.13.3 (main, May 30 2025, 05:38:56) [Clang 20.1.4 ]",
+  "python_executable": "/home/cyrille/GIT/Viz/GSP_API/.venv/bin/python3"
 }

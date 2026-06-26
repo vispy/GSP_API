@@ -21,6 +21,32 @@ CAPABILITY_STATUSES = (
     "not_run",
 )
 
+_DATOVIZ_S029_STRICT_RENDER_CASES = {
+    "point/basic_ndc": [],
+    "point/diameter_ramp_ndc": [],
+    "point/alpha_overlap_ndc": [],
+    "marker/shapes_ndc": [],
+    "marker/angle_size_stroke_ndc": [],
+    "segment/width_cap_ndc": [],
+    "segment/alpha_order_ndc": [],
+    "path/subpaths_width_join_ndc": [],
+    "image/checker_nearest_ndc": [
+        "Datoviz uses retained RGBA8 image upload; S029 verifies nearest sampling, NDC extent, and upper-origin orientation"
+    ],
+    "image/origin_lower_ndc": [
+        "Datoviz uses retained RGBA8 image upload; S029 verifies lower-origin texcoord adaptation and NDC extent"
+    ],
+    "image/scalar_gray_clim_ndc": [
+        "GSP CPU maps scalar gray/clim data to canonical RGBA8 before Datoviz upload; S029 verifies rendered gray/clim output"
+    ],
+    "image/rgba_alpha_ndc": [
+        "Datoviz uses retained RGBA8 image upload with legacy sRGB blending for Matplotlib parity"
+    ],
+    "overlay/point_over_image_ndc": [
+        "S029 verifies Datoviz point-over-image layering for the rendered NDC overlay scope"
+    ],
+}
+
 
 def build_capability_matrix(report: Mapping[str, object]) -> dict[str, object]:
     """Build a backend capability matrix from a visual QA report."""
@@ -129,11 +155,19 @@ def _datoviz_row(
 ) -> dict[str, object]:
     reason = _backend_reason(backend_entry)
     if backend_status == "rendered":
-        status = "adapted"
-        reason_code = "datoviz_rendered_pending_promotion_audit"
-        adaptations = ["Datoviz rendering is reviewable but not yet promoted to strict"]
-        missing = []
-        blockers = ["strict promotion requires a family-specific capability audit"]
+        promotion = _datoviz_rendered_promotion(case)
+        if promotion is not None:
+            status = "strict"
+            reason_code = "datoviz_rendered_strict_s029_family_audit"
+            adaptations = promotion
+            missing: list[str] = []
+            blockers: list[str] = []
+        else:
+            status = "adapted"
+            reason_code = "datoviz_rendered_pending_promotion_audit"
+            adaptations = ["Datoviz rendering is reviewable but not yet promoted to strict"]
+            missing = []
+            blockers = ["strict promotion requires a family-specific capability audit"]
     elif backend_status == "error":
         status = "crashed"
         reason_code = "datoviz_runtime_error"
@@ -155,6 +189,13 @@ def _datoviz_row(
         "promotion_blockers": blockers,
         "evidence_artifacts": _evidence_artifacts(backend_entry),
     }
+
+
+def _datoviz_rendered_promotion(case: Mapping[str, object]) -> list[str] | None:
+    case_id = case.get("case_id")
+    if not isinstance(case_id, str):
+        return None
+    return _DATOVIZ_S029_STRICT_RENDER_CASES.get(case_id)
 
 
 def _classify_datoviz_unsupported(reason: str) -> tuple[str, str, list[str]]:

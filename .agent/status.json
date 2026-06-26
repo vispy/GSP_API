@@ -173,7 +173,7 @@
       "id": "S029",
       "title": "Backend Capability Matrix and Visual Review Pack",
       "state": "in_progress",
-      "progress": 15
+      "progress": 35
     }
   ],
   "missions": [
@@ -1180,9 +1180,9 @@
       "id": "M113",
       "title": "S029 Datoviz rendered-family promotion audit",
       "stage": "S029",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 113
     }
   ],
@@ -1246,9 +1246,9 @@
     }
   ],
   "recommendations": [
-    "S029 is open: build and review the backend capability matrix before strict Datoviz promotion.",
-    "Next mission should audit current Datoviz rendered families point, marker, segment, path, image, and overlay against the matrix and promote only exact proven scopes.",
-    "Keep text, 2D mesh, colorbar, axes/guides, query payloads, and 3D previews as focused S029 follow-up audits with adapted or experimental status until proven."
+    "S029 remains open: continue focused audits for rows still adapted or unsupported after the point/marker/segment/path/image/overlay promotion.",
+    "Keep text, 2D mesh, colorbar, axes/guides, query payloads, and 3D previews as focused S029 follow-up audits with adapted or experimental status until proven.",
+    "Next S029 audits should focus on Datoviz text, mesh, color/colorbar, transform, and guide rows that remain adapted or unsupported after M113."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1292,5 +1292,8 @@
     "M110 completed: added the S028 Datoviz guide/View2D capability report, kept Datoviz axis support adapted with explicit tick labels, strict reversed-domain proof, guide query, and all-rendered guide query reported by structured unsupported/unverified diagnostics, and closed S028.",
     "P013 response accepted: S029 should be Backend Capability Matrix and Visual Review Pack, with render-first review artifacts and strict promotion only after explicit contract evidence.",
     "M112 completed: added the S029 capability matrix schema, review-pack generator, Datoviz review-pack runtime wrapper, focused tests, and Mission Control opening records."
+  ],
+  "summaries": [
+    "M113 completed: audited Datoviz rendered point, marker, segment, path, image, and overlay rows; promoted only exact S029 rendered scopes to strict, kept text/mesh/color/transform adapted, and regenerated the S029 review pack."
   ]
 }

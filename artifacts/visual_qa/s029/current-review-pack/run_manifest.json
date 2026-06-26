@@ -39,10 +39,10 @@
     800,
     600
   ],
-  "run_id": "s029-current-review-pack",
+  "run_id": "current-review-pack",
   "schema_kind": "gsp.visual_qa.run_manifest",
   "schema_version": 1,
   "stage": "S028",
-  "started_at": "2026-06-26T15:59:00.602791+00:00",
+  "started_at": "2026-06-26T17:22:44.464116+00:00",
   "suite": "s028"
 }

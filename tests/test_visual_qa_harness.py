@@ -284,6 +284,61 @@ def test_visual_review_pack_writes_matrix_and_index(tmp_path: Path) -> None:
     assert matrix["summary"]["not_run"] == 1
 
 
+def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None:
+    report = {
+        "suite": "s028",
+        "stage": "S029",
+        "run_id": "unit",
+        "cases": [
+            {
+                "case_id": "point/basic_ndc",
+                "family": "point",
+                "required_features": ["point", "ndc", "rgba8", "pixel-size"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "image/scalar_gray_clim_ndc",
+                "family": "image",
+                "required_features": ["image", "ndc", "scalar", "gray", "clim"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "color/scalar_image_viridis_colorbar",
+                "family": "color",
+                "required_features": ["image", "scalar", "colormap", "colorbar"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+        ],
+    }
+
+    matrix = build_capability_matrix(report)
+    rows = {
+        (row["backend"], row["case_id"]): row
+        for row in matrix["rows"]
+        if row["backend"] == "datoviz"
+    }
+
+    assert rows[("datoviz", "point/basic_ndc")]["status"] == "strict"
+    assert rows[("datoviz", "point/basic_ndc")]["promotion_blockers"] == []
+    assert rows[("datoviz", "image/scalar_gray_clim_ndc")]["status"] == "strict"
+    assert "CPU maps scalar gray" in rows[
+        ("datoviz", "image/scalar_gray_clim_ndc")
+    ]["known_adaptations"][0]
+    assert rows[("datoviz", "color/scalar_image_viridis_colorbar")]["status"] == "adapted"
+    assert rows[("datoviz", "color/scalar_image_viridis_colorbar")][
+        "promotion_blockers"
+    ] == ["strict promotion requires a family-specific capability audit"]
+
+
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:
     """The S023 harness uses the v0.4 protocol renderer, not the legacy renderer package."""
     source_root = Path("src/gsp/qa/visual")

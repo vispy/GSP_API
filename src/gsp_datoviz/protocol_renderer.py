@@ -859,6 +859,7 @@ class DatovizV04ProtocolRenderer:
         if anchor_result not in (0, None, True):
             raise DatovizV04Unsupported("Datoviz colorbar anchor configuration failed")
         _configure_colorbar_format(self.dvz, colorbar)
+        _configure_colorbar_ticks(self.dvz, colorbar, guide)
         if guide.label:
             self.dvz.dvz_colorbar_set_title(colorbar, guide.label.encode("utf-8"))
         self.colorbars[guide.id] = colorbar
@@ -1763,6 +1764,22 @@ def _configure_colorbar_format(dvz: Any, colorbar: Any) -> None:
     if hasattr(fmt, "trim_trailing_zeros"):
         fmt.trim_trailing_zeros = True
     dvz.dvz_colorbar_set_format(colorbar, _ctypes_pointer_arg(fmt))
+
+
+def _configure_colorbar_ticks(dvz: Any, colorbar: Any, guide: ColorbarGuide) -> None:
+    if not guide.ticks:
+        return
+    setter = getattr(dvz, "dvz_colorbar_set_ticks", None)
+    if setter is None:
+        raise DatovizV04Unsupported(
+            "Datoviz colorbar explicit ticks are unavailable: missing dvz_colorbar_set_ticks"
+        )
+
+    values = np.asarray(guide.ticks, dtype=np.float64)
+    labels = list(guide.tick_labels) if guide.tick_labels else None
+    result = setter(colorbar, values, labels)
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz colorbar explicit tick configuration failed")
 
 
 def _image_sampling_value(dvz: Any, interpolation: ImageInterpolation) -> int:

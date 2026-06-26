@@ -1,6 +1,6 @@
 # Visual QA Review Pack
 
-Run id: `s029-current-review-pack`
+Run id: `current-review-pack`
 Suite: `s028`
 
 ## Entry Points
@@ -15,8 +15,8 @@ Suite: `s028`
 
 | Status | Count |
 |---|---:|
-| strict | 29 |
-| adapted | 27 |
+| strict | 42 |
+| adapted | 14 |
 | experimental | 0 |
 | unsupported | 2 |
 | disabled | 0 |

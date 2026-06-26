@@ -6,7 +6,7 @@ S029 - Backend Capability Matrix and Visual Review Pack
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -43,3 +43,14 @@ Families currently rendered by Datoviz in `artifacts/visual_qa/s029/current-revi
 
 Stop if a rendered Datoviz family would require silent approximation, ignored fields, or unverified
 query semantics to be marked strict.
+
+## Completion
+
+Completed on 2026-06-26 in the local Mission Control session.
+
+- Added `.agent/S029_DATOVIZ_RENDERED_FAMILY_AUDIT.md`.
+- Promoted only exact rendered point, marker, segment, path, image, and overlay S029 rows to
+  `strict`.
+- Kept rendered text, mesh, color/colorbar, and transform rows `adapted` pending focused audits.
+- Kept guide rows `unsupported`.
+- Regenerated `artifacts/visual_qa/s029/current-review-pack`.

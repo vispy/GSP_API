@@ -907,19 +907,19 @@
     "facade_imported": true,
     "installed_package": {
       "imported": true,
-      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "path": "/home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
       "version": null
     },
     "minimal_point_supported": true,
     "raw_imported": true,
-    "source_revision": "20be4d8ea6c8607c5b2c35b0973a90ca9884ea6e",
+    "source_revision": "af957337bd386a8e42ecffa2cf64d583f94b1ffa",
     "unexpected_banned_hits": 0
   },
   "environment_path": "artifacts/visual_qa/s029/current-review-pack/environment.json",
-  "run_id": "s029-current-review-pack",
+  "run_id": "current-review-pack",
   "schema_kind": "gsp.visual_qa.report",
   "schema_version": 1,
   "stage": "S028",
-  "started_at": "2026-06-26T15:59:00.602791+00:00",
+  "started_at": "2026-06-26T17:22:44.464116+00:00",
   "suite": "s028"
 }

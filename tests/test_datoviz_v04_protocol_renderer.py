@@ -564,6 +564,17 @@ class FakeDatovizV04WithColorbar(FakeDatovizV04):
         self.calls.append(("colorbar_set_title", colorbar, title))
         return None
 
+    def dvz_colorbar_set_ticks(self, colorbar, values, labels=None):
+        self.calls.append(
+            (
+                "colorbar_set_ticks",
+                colorbar,
+                np.array(values, copy=True),
+                tuple(labels) if labels is not None else None,
+            )
+        )
+        return True
+
     def dvz_format_desc(self):
         self.calls.append(("format_desc",))
         return self.FakeFormatDesc()
@@ -1841,10 +1852,33 @@ def test_add_colorbar_guide_creates_native_datoviz_scale_colormap_and_colorbar()
     assert _calls(fake, "colorbar_set_format") == [
         ("colorbar_set_format", "colorbar", 2, True)
     ]
+    tick_calls = _calls(fake, "colorbar_set_ticks")
+    assert len(tick_calls) == 1
+    _, colorbar_id, tick_values, tick_labels = tick_calls[0]
+    assert colorbar_id == "colorbar"
+    np.testing.assert_array_equal(tick_values, np.array([0.0, 0.5, 1.0]))
+    assert tick_labels == ("low", "mid", "high")
     assert _calls(fake, "colorbar_set_title") == [
         ("colorbar_set_title", "colorbar", b"value")
     ]
     assert renderer.colorbars[guide.id] == "colorbar"
+
+
+def test_add_colorbar_guide_rejects_missing_explicit_tick_facade():
+    fake = FakeDatovizV04WithColorbar()
+    fake.dvz_colorbar_set_ticks = None
+    scale = _test_color_scale(colormap_id=ColorMapId.VIRIDIS)
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, color_scales={scale.id: scale})
+
+    with pytest.raises(DatovizV04Unsupported, match="explicit ticks"):
+        renderer.add_colorbar_guide(
+            ColorbarGuide(
+                id="guide:colorbar",
+                panel_id="panel:main",
+                color_scale_id=scale.id,
+                ticks=(0.0, 1.0),
+            )
+        )
 
 
 def test_sampled_field_readiness_reports_missing_symbols():

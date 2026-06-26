@@ -1,6 +1,6 @@
 # S028 Visual QA Run
 
-Run id: `s029-current-review-pack`
+Run id: `current-review-pack`
 
 | Case | Matplotlib | Datoviz |
 |---|---|---|

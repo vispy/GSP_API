@@ -1,35 +1,35 @@
 # Backend Capability Matrix
 
-Run id: `s029-current-review-pack`
+Run id: `current-review-pack`
 
 | Case | Backend | Status | Reason code | Rendering | Query |
 |---|---|---|---|---|---|
 | `point/basic_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `point/basic_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `point/basic_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `point/diameter_ramp_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `point/diameter_ramp_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `point/diameter_ramp_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `point/alpha_overlap_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `point/alpha_overlap_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `point/alpha_overlap_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `marker/shapes_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `marker/shapes_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `marker/shapes_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `marker/angle_size_stroke_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `marker/angle_size_stroke_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `marker/angle_size_stroke_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `segment/width_cap_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `segment/width_cap_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `segment/width_cap_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `segment/alpha_order_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `segment/alpha_order_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `segment/alpha_order_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `path/subpaths_width_join_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `path/subpaths_width_join_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `path/subpaths_width_join_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `image/checker_nearest_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `image/checker_nearest_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `image/checker_nearest_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `image/origin_lower_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `image/origin_lower_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `image/origin_lower_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `image/scalar_gray_clim_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `image/scalar_gray_clim_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `image/scalar_gray_clim_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `image/rgba_alpha_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `image/rgba_alpha_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `image/rgba_alpha_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `overlay/point_over_image_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `overlay/point_over_image_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `overlay/point_over_image_ndc` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `text/basic_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
 | `text/basic_ndc` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
 | `text/anchor_grid_ndc` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
