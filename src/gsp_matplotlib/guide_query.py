@@ -128,5 +128,5 @@ def _close(left: float, right: float, tolerance: float) -> bool:
 
 
 def _within(value: float, bounds: tuple[float, float], tolerance: float) -> bool:
-    low, high = bounds
+    low, high = sorted(bounds)
     return low - tolerance <= value <= high + tolerance

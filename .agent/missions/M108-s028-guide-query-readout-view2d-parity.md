@@ -6,7 +6,7 @@ S028 - Guide and View2D Integration
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -29,3 +29,12 @@ including reversed axes.
 
 Stop if guide query/readout semantics require broader rendered-order or layout semantics than S015
 and S027 accepted.
+
+## Result
+
+- Fixed guide spine hit testing for reversed `View2D` bounds.
+- Added guide query coverage for reversed x-axis auto ticks, reversed y-axis explicit ticks, and
+  reversed-bound spine hits.
+- Added scoped query coverage proving guide-scoped and all-rendered queries use the reversed
+  `View2D` snapshot and preserve reference ordering.
+- Validated focused guide-query/scoped-query tests and nearby protocol/conformance tests.

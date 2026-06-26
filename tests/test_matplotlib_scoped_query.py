@@ -7,6 +7,7 @@ from gsp.protocol import (
     AxisGuide,
     AxisSide,
     FakeTiledImageProvider,
+    GUIDE_QUERY_PAYLOAD_KIND,
     PointVisual,
     QueryContributionKind,
     QueryHitPolicy,
@@ -51,6 +52,19 @@ def _x_guide() -> AxisGuide:
             explicit_labels=("zero", "half", "one"),
             target_count=None,
         ),
+    )
+
+
+def _reversed_view() -> View2D:
+    return View2D(id="view:main", panel_id="panel:main", x_range=(1.0, -1.0), y_range=(1.0, -1.0))
+
+
+def _point_on_reversed_x_axis() -> PointVisual:
+    return PointVisual(
+        id="visual:points",
+        positions=np.array([[0.5, 1.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+        sizes=np.array([0.25], dtype=np.float32),
     )
 
 
@@ -138,6 +152,41 @@ def test_scoped_query_all_rendered_all_returns_hits_front_to_back():
     assert result.status == QueryStatus.HIT
     assert [hit.visual_id for hit in result.hits] == ["guide:x", "visual:points"]
     assert [hit.contribution_kind for hit in result.hits] == [QueryContributionKind.GUIDE, QueryContributionKind.DATA]
+
+
+def test_scoped_query_guides_uses_reversed_view2d_snapshot():
+    result = query_scoped_scene(
+        QueryRequest(id="query:guides-reversed", panel_id="panel:main", coordinate=(0.5, 1.0), scope=QueryScope.GUIDES),
+        visual_entries=(QueryVisualEntry(_point_on_reversed_x_axis(), z_order=2),),
+        view=_reversed_view(),
+        guide_entries=(QueryGuideEntry(AxisGuide(id="guide:x", view_id="view:main", dimension=AxisDimension.X, side=AxisSide.BOTTOM), z_order=0),),
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.visual_id == "guide:x"
+    assert result.hits[0].contribution_kind == QueryContributionKind.GUIDE
+    assert result.extension_payload.tick_value == 0.5
+    assert result.extension_payload.text_value == "0.5"
+
+
+def test_scoped_query_all_rendered_reversed_view2d_keeps_reference_ordering():
+    result = query_scoped_scene(
+        QueryRequest(
+            id="query:all-rendered-reversed",
+            panel_id="panel:main",
+            coordinate=(0.5, 1.0),
+            scope=QueryScope.ALL_RENDERED,
+            hit_policy=QueryHitPolicy.ALL,
+        ),
+        visual_entries=(QueryVisualEntry(_point_on_reversed_x_axis(), z_order=0),),
+        view=_reversed_view(),
+        guide_entries=(QueryGuideEntry(AxisGuide(id="guide:x", view_id="view:main", dimension=AxisDimension.X, side=AxisSide.BOTTOM), z_order=1),),
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert [hit.visual_id for hit in result.hits] == ["guide:x", "visual:points"]
+    assert [hit.contribution_kind for hit in result.hits] == [QueryContributionKind.GUIDE, QueryContributionKind.DATA]
+    assert result.hits[0].extension_payload_kind == GUIDE_QUERY_PAYLOAD_KIND
 
 
 def test_scoped_query_all_rendered_with_guides_requires_view():
