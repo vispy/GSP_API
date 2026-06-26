@@ -1193,6 +1193,51 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 114
+    },
+    {
+      "id": "M115",
+      "title": "S029 Datoviz text promotion audit",
+      "stage": "S029",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 115
+    },
+    {
+      "id": "M116",
+      "title": "S029 Datoviz mesh promotion audit",
+      "stage": "S029",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 116
+    },
+    {
+      "id": "M117",
+      "title": "S029 Datoviz transform promotion audit",
+      "stage": "S029",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 117
+    },
+    {
+      "id": "M118",
+      "title": "S029 Datoviz guide/View2D unsupported closure",
+      "stage": "S029",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 118
+    },
+    {
+      "id": "M119",
+      "title": "S029 review-pack closeout",
+      "stage": "S029",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 119
     }
   ],
   "review_queue": [],
@@ -1255,9 +1300,9 @@
     }
   ],
   "recommendations": [
-    "S029 remains open: continue focused audits for rows still adapted or unsupported after the point/marker/segment/path/image/overlay promotion.",
     "Keep text, 2D mesh, colorbar, axes/guides, query payloads, and 3D previews as focused S029 follow-up audits with adapted or experimental status until proven.",
-    "Next S029 audits should focus on Datoviz text, mesh, transform, and guide rows that remain adapted or unsupported after M114."
+    "Next mission is M115: audit Datoviz text rows before mesh/transform/guide closeout.",
+    "Use M119 only after M115-M118 are completed or explicitly deferred."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1304,6 +1349,7 @@
   ],
   "summaries": [
     "M113 completed: audited Datoviz rendered point, marker, segment, path, image, and overlay rows; promoted only exact S029 rendered scopes to strict, kept text/mesh/color/transform adapted, and regenerated the S029 review pack.",
-    "M114 completed: audited Datoviz color/colorbar rendered rows; promoted scalar image colorbar, scalar point gray range, and scalar marker fill alpha to strict rendering-only status, while preserving query_supported false."
+    "M114 completed: audited Datoviz color/colorbar rendered rows; promoted scalar image colorbar, scalar point gray range, and scalar marker fill alpha to strict rendering-only status, while preserving query_supported false.",
+    "Created S029 continuation batch M115-M119 for Datoviz text, mesh, transform, guide/View2D, and final review-pack closeout so work can resume cleanly on another machine."
   ]
 }
