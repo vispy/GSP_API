@@ -135,6 +135,31 @@ def gsp_capability_snapshot_from_datoviz(
         "query_support": "deferred until DvzQueryResult is decodable from Python",
         "capture_support": "PNG capture is advertised only when offscreen view capture bindings are available",
         "axis_provider": "datoviz.v04.panel_axis.wip when v0.4-dev Python symbols are exposed",
+        "s026_scalar_color": (
+            "finite eager scalar ImageVisual and PointVisual data are CPU pre-mapped "
+            "to canonical GSP RGBA8 while scalar source values are retained for "
+            "semantic query payloads"
+        ),
+        "s026_scalar_color_capabilities": (
+            "gsp.scalar-color@0.1",
+            "gsp.colormap.named.gray@0.1",
+            "gsp.colormap.named.viridis@0.1",
+            "gsp.colormap.named.magma@0.1",
+            "gsp.colormap.named.plasma@0.1",
+            "gsp.colormap.named.inferno@0.1",
+            "gsp.colormap.named.cividis@0.1",
+            "gsp.scalar-image.color-scale@0.1",
+            "gsp.point.scalar-color@0.1",
+            "gsp.scalar-query.source-value@0.1",
+            "gsp.scalar-query.normalized-value@0.1",
+            "gsp.scalar-query.displayed-rgba@0.1",
+        ),
+        "s026_scalar_color_diagnostics": (
+            "cpu_premap_scalar_to_rgba",
+            "colorbar_render_unsupported",
+            "colorbar_query_unsupported",
+            "scalar_visual_family_unsupported",
+        ),
     }
     if raw_fields:
         metadata["datoviz_raw_capabilities"] = raw_fields

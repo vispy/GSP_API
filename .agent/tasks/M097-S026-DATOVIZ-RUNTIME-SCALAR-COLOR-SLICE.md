@@ -11,24 +11,37 @@ Datoviz v0.4 adapter.
 
 ## Status
 
-Approved.
+Completed.
 
 ## Deliverables
 
-- Pending: scalar `ImageVisual` color-scale runtime path or structured unsupported diagnostic.
-- Pending: `PointVisual` scalar color runtime path or structured unsupported diagnostic.
-- Pending: `ColorbarGuide` runtime handling or structured unsupported diagnostic.
-- Pending: scalar query/readback payload runtime handling or structured unsupported diagnostic.
-- Pending: focused tests with clean skips for unavailable Datoviz runtime/offscreen execution.
-- Pending: closeout notes for verified capabilities and remaining gates.
+- Completed: Datoviz scalar `ImageVisual` color-scale CPU pre-mapping for finite eager arrays.
+- Completed: Datoviz `PointVisual` scalar color CPU pre-mapping for finite eager arrays.
+- Completed: Shared S026 scalar mapping helper moved to `gsp.protocol.color_mapping`.
+- Completed: Semantic scalar query payload decoration from retained point/image scalar source data.
+- Completed: Structured unsupported diagnostics for ColorbarGuide rendering/query.
+- Completed: Structured unsupported diagnostics for marker scalar fill and retained mesh scalar gate.
+- Completed: Focused tests for implemented paths and capability-gated paths.
 
 ## Notes
 
-- P011/M091 already accepted the public S026 color mapping/colorbar/scalar query semantics.
-- M095 found candidate Datoviz runtime APIs for scales, accepted colormaps, scalar sampled fields,
-  visual scale binding, colorbars, point scalar colors, and query APIs.
-- Marker scalar fill and mesh face scalar colors stay capability-gated unless runtime contracts are
-  verified during this mission.
+- The Datoviz adapter now accepts a `color_scales` registry and uses canonical S026 mapping through
+  shared protocol color-mapping utilities.
+- CPU pre-mapping is recorded in Datoviz capability metadata as `cpu_premap_scalar_to_rgba`.
+- Query decoration is deterministic when the Datoviz query result can be matched to exactly one
+  retained scalar point/image visual and includes usable item or texel identity.
+- Requested scalar query payloads that cannot be matched return `unsupported` with
+  `scalar_query_source_unavailable`.
+
+## Validation
+
+- Full suite: `346 passed, 2 skipped`.
+- Focused Datoviz renderer suite: `61 passed`.
+- Focused S026 reference/query suite: `57 passed`.
+- Touched source strict mypy: clean.
+- Touched files ruff: clean.
+- Backend import checks: Matplotlib and DatoViz imports passed with `PYTHONPATH=src`.
+- Repo-wide strict mypy still fails on existing type debt and missing stubs outside this mission.
 
 ## Acceptance
 
@@ -36,10 +49,3 @@ Approved.
   `spec/backend_capabilities_visuals.md`.
 - Does not alter public protocol or VisPy2 API semantics.
 - Emits structured diagnostics for unsupported or lossy behavior.
-
-## Stop Conditions
-
-- Stop if implementation requires changing accepted S026 semantics.
-- Stop if Datoviz runtime behavior is too ambiguous to claim strict support.
-- Stop before expanding into deferred scalar slots, legends, broad colormap registries, nonlinear
-  normalization, layout, or mesh shading.

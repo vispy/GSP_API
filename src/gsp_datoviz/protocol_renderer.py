@@ -8,6 +8,7 @@ not use the older ``datoviz.App`` or ``datoviz.visuals`` wrapper APIs.
 from __future__ import annotations
 
 import ctypes
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from dataclasses import replace
 import os
@@ -22,6 +23,8 @@ import numpy.typing as npt
 
 from gsp.protocol import (
     CapabilitySnapshot,
+    ColorScale,
+    ColorbarGuide,
     ImageOrigin,
     ImageVisual,
     MeshVisual,
@@ -39,7 +42,16 @@ from gsp.protocol import (
     QueryResult,
     QueryScope,
     QueryStatus,
+    SCALAR_COLOR_QUERY_PAYLOAD_KIND,
+    ScalarColorQueryPayload,
+    ScalarColorSlot,
     View2D,
+    VisualFamily,
+)
+from gsp.protocol.color_mapping import (
+    map_scalar_value,
+    map_scalar_values,
+    resolve_color_scale,
 )
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
@@ -319,10 +331,24 @@ def _set_figure_color_pipeline(
 
 
 @dataclass
+class _ScalarVisualData:
+    """Scene-owned scalar color data retained for semantic query payloads."""
+
+    visual_id: str
+    visual_family: VisualFamily | str
+    item_kind: str
+    color_slot: ScalarColorSlot
+    values: npt.NDArray[np.float64]
+    color_scale: ColorScale
+    alpha: float = 1.0
+
+
+@dataclass
 class DatovizV04ProtocolRenderer:
     """Minimal point/image renderer using Datoviz v0.4 top-level functions."""
 
     dvz: Any = None
+    color_scales: Mapping[str, ColorScale] | None = None
     width: int = 800
     height: int = 600
     background_rgba8: tuple[int, int, int, int] = DEFAULT_BACKGROUND_RGBA8
@@ -335,6 +361,7 @@ class DatovizV04ProtocolRenderer:
     live_view: Any | None = field(default=None, init=False)
     visuals: dict[str, Any] = field(default_factory=dict, init=False)
     sampled_fields: dict[str, Any] = field(default_factory=dict, init=False)
+    scalar_visuals: dict[str, _ScalarVisualData] = field(default_factory=dict, init=False)
     _closed: bool = field(default=False, init=False)
 
     def __post_init__(self) -> None:
@@ -389,7 +416,7 @@ class DatovizV04ProtocolRenderer:
             )
 
         positions = _positions_3d(visual.positions)
-        colors = _rgba8(visual.colors)
+        colors = _point_colors(visual, color_scales=self.color_scales)
         diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
 
         dvz_visual = self.dvz.dvz_point(self.scene, 0)
@@ -405,6 +432,19 @@ class DatovizV04ProtocolRenderer:
             _visual_attach_desc(self.dvz, coord_space="data", z_layer=0),
         )
         self.visuals[visual.id] = dvz_visual
+        if visual.color_encoding is not None:
+            scale = resolve_color_scale(
+                self.color_scales, visual.color_encoding.color_scale_id
+            )
+            self.scalar_visuals[visual.id] = _ScalarVisualData(
+                visual_id=visual.id,
+                visual_family=VisualFamily.POINT,
+                item_kind="point",
+                color_slot=ScalarColorSlot.COLOR,
+                values=np.asarray(visual.color_encoding.values, dtype=np.float64),
+                color_scale=scale,
+                alpha=float(visual.color_encoding.alpha),
+            )
         return dvz_visual
 
     def add_marker_visual(self, visual: MarkerVisual) -> Any:
@@ -413,6 +453,12 @@ class DatovizV04ProtocolRenderer:
             raise DatovizV04Unsupported(
                 "Datoviz v0.4 slice currently supports NDC marker positions only"
             )
+        if visual.fill_color_encoding is not None:
+            raise DatovizV04Unsupported(
+                "scalar_visual_family_unsupported: Datoviz v0.4 MarkerVisual scalar "
+                "fill remains capability-gated until native or CPU-mapped fill-color "
+                "contracts are verified"
+            )
         marker_diagnostics = _datoviz_marker_diagnostics(self.dvz)
         if marker_diagnostics:
             raise DatovizV04Unsupported(
@@ -420,6 +466,8 @@ class DatovizV04ProtocolRenderer:
             )
 
         positions = _positions_3d(visual.positions)
+        if visual.fill_colors is None:
+            raise ValueError("MarkerVisual requires fill_colors when scalar fill is absent")
         fill_colors = _rgba8(visual.fill_colors)
         diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
         shape_values = visual.shape_values()
@@ -540,7 +588,7 @@ class DatovizV04ProtocolRenderer:
             raise DatovizV04Unsupported(
                 "Datoviz v0.4 slice currently supports NDC image extents only"
             )
-        pixels = _rgba8_image_visual(visual)
+        pixels = _rgba8_image_visual(visual, color_scales=self.color_scales)
         positions = _image_positions(visual.extent)
         texcoords = _image_texcoords(visual.origin)
         height, width = pixels.shape[:2]
@@ -567,6 +615,16 @@ class DatovizV04ProtocolRenderer:
             _visual_attach_desc(self.dvz, coord_space="data", z_layer=0),
         )
         self.visuals[visual.id] = dvz_visual
+        if visual.color_scale_id is not None:
+            scale = resolve_color_scale(self.color_scales, visual.color_scale_id)
+            self.scalar_visuals[visual.id] = _ScalarVisualData(
+                visual_id=visual.id,
+                visual_family=VisualFamily.IMAGE,
+                item_kind="texel",
+                color_slot=ScalarColorSlot.IMAGE,
+                values=np.asarray(visual.image, dtype=np.float64),
+                color_scale=scale,
+            )
         return dvz_visual
 
     def add_mesh_visual(self, visual: MeshVisual) -> Any:
@@ -595,6 +653,15 @@ class DatovizV04ProtocolRenderer:
         diagnostics = datoviz_v04_text_diagnostics(self.dvz)
         raise DatovizV04Unsupported(
             "Datoviz v0.4 TextVisual support is unavailable: " + "; ".join(diagnostics)
+        )
+
+    def add_colorbar_guide(self, guide: ColorbarGuide) -> Any:
+        """Report Datoviz ColorbarGuide support status for accepted S026 semantics."""
+        resolve_color_scale(self.color_scales, guide.color_scale_id)
+        raise DatovizV04Unsupported(
+            "colorbar_render_unsupported: Datoviz v0.4 ColorbarGuide rendering "
+            "remains capability-gated until native colorbar layout, scale binding, "
+            "tick-label, and ramp-query contracts are verified"
         )
 
     def show(self, *, frame_count: int = 0) -> None:
@@ -771,7 +838,74 @@ class DatovizV04ProtocolRenderer:
                 diagnostic="Datoviz query produced no resolved result during bounded poll",
             )
 
-        return replace(decode_dvz_query_result(raw_result), request_id=request.id)
+        decoded = replace(decode_dvz_query_result(raw_result), request_id=request.id)
+        return self._decorate_scalar_query_result(decoded, request)
+
+    def _decorate_scalar_query_result(
+        self, result: QueryResult, request: QueryRequest
+    ) -> QueryResult:
+        """Attach exact S026 scalar payloads from retained protocol scene data."""
+        if result.status != QueryStatus.HIT:
+            return result
+
+        wants_scalar_payload = (
+            SCALAR_COLOR_QUERY_PAYLOAD_KIND
+            in request.requested_extension_payload_kinds
+        )
+        metadata = self._scalar_metadata_for_query_result(result)
+        if metadata is None:
+            if wants_scalar_payload:
+                return QueryResult(
+                    request_id=request.id,
+                    status=QueryStatus.UNSUPPORTED,
+                    hit=False,
+                    panel_coordinate=request.coordinate,
+                    diagnostic=(
+                        "scalar_query_source_unavailable: Datoviz query hit could not "
+                        "be matched to a retained scalar-colored point or image visual"
+                    ),
+                )
+            return result
+
+        payload = _scalar_payload_for_query_result(metadata, result)
+        if payload is None:
+            if wants_scalar_payload:
+                return QueryResult(
+                    request_id=request.id,
+                    status=QueryStatus.UNSUPPORTED,
+                    hit=False,
+                    panel_coordinate=request.coordinate,
+                    diagnostic=(
+                        "scalar_query_source_unavailable: Datoviz query hit did not "
+                        "include a usable point item id or image texel id"
+                    ),
+                )
+            return result
+
+        return replace(
+            result,
+            displayed_rgba=payload.displayed_rgba,
+            value=payload.source_value,
+            extension_payload_kind=SCALAR_COLOR_QUERY_PAYLOAD_KIND,
+            extension_payload=payload,
+        )
+
+    def _scalar_metadata_for_query_result(
+        self, result: QueryResult
+    ) -> _ScalarVisualData | None:
+        if not self.scalar_visuals:
+            return None
+        if result.visual_id in self.scalar_visuals:
+            return self.scalar_visuals[result.visual_id]
+
+        candidates = [
+            metadata
+            for metadata in self.scalar_visuals.values()
+            if metadata.visual_family == result.visual_family
+        ]
+        if len(candidates) == 1:
+            return candidates[0]
+        return None
 
     def configure_view2d_axes(
         self,
@@ -892,9 +1026,14 @@ def _coord_space_value(dvz: Any, name: str, fallback: int) -> int:
     return fallback
 
 
-def _rgba8_image_visual(visual: ImageVisual) -> npt.NDArray[np.uint8]:
+def _rgba8_image_visual(
+    visual: ImageVisual, *, color_scales: Mapping[str, ColorScale] | None
+) -> npt.NDArray[np.uint8]:
     image = visual.image
     if image.ndim == 2:
+        if visual.color_scale_id is not None:
+            scale = resolve_color_scale(color_scales, visual.color_scale_id)
+            return _rgba8_scalar_values(image, scale, alpha=1.0)
         return _rgba8_scalar_image(image, visual.clim)
     return _rgba8_image(image)
 
@@ -927,6 +1066,88 @@ def _rgba8_scalar_image(
     gray = np.rint(normalized * 255.0).astype(np.uint8)
     alpha = np.full(gray.shape, 255, dtype=np.uint8)
     return np.ascontiguousarray(np.stack([gray, gray, gray, alpha], axis=2))
+
+
+def _point_colors(
+    visual: PointVisual, *, color_scales: Mapping[str, ColorScale] | None
+) -> npt.NDArray[np.uint8]:
+    if visual.color_encoding is not None:
+        scale = resolve_color_scale(color_scales, visual.color_encoding.color_scale_id)
+        return _rgba8_scalar_values(
+            visual.color_encoding.values,
+            scale,
+            alpha=float(visual.color_encoding.alpha),
+        )
+    if visual.colors is None:
+        raise ValueError("PointVisual requires colors or color_encoding")
+    return _rgba8(visual.colors)
+
+
+def _rgba8_scalar_values(
+    values: npt.ArrayLike, scale: ColorScale, *, alpha: float
+) -> npt.NDArray[np.uint8]:
+    mapped = map_scalar_values(values, scale, alpha=alpha)
+    return np.ascontiguousarray(
+        np.rint(mapped * 255.0).clip(0, 255).astype(np.uint8)
+    )
+
+
+def _scalar_payload_for_query_result(
+    metadata: _ScalarVisualData, result: QueryResult
+) -> ScalarColorQueryPayload | None:
+    item_id: int | None = None
+    texel: tuple[int, int] | None = None
+    if metadata.item_kind == "point":
+        if result.item_id is None:
+            return None
+        if result.item_id < 0 or result.item_id >= metadata.values.shape[0]:
+            return None
+        source_value = float(metadata.values[result.item_id])
+        item_id = result.item_id
+    elif metadata.item_kind == "texel":
+        texel = _resolved_scalar_texel(metadata.values, result)
+        if texel is None:
+            return None
+        source_value = float(metadata.values[texel[0], texel[1]])
+    else:
+        return None
+
+    mapped = map_scalar_value(source_value, metadata.color_scale, alpha=metadata.alpha)
+    return ScalarColorQueryPayload(
+        visual_id=metadata.visual_id,
+        item_kind=metadata.item_kind,
+        item_id=item_id,
+        texel=texel,
+        color_slot=metadata.color_slot,
+        color_scale_id=metadata.color_scale.id,
+        colormap_id=metadata.color_scale.colormap.id.value,
+        source_value=mapped.source_value,
+        normalized_value_raw=mapped.normalized_value_raw,
+        normalized_value_clipped=mapped.normalized_value_clipped,
+        range_class=mapped.range_class,
+        lut_index=mapped.lut_index,
+        displayed_rgba=mapped.displayed_rgba,
+    )
+
+
+def _resolved_scalar_texel(
+    values: npt.NDArray[np.float64], result: QueryResult
+) -> tuple[int, int] | None:
+    if values.ndim != 2:
+        return None
+    height, width = values.shape
+    if result.texel is not None:
+        row, col = result.texel
+        if 0 <= row < height and 0 <= col < width:
+            return (row, col)
+        flat_index = col if row == 0 else row * width + col
+        if 0 <= flat_index < values.size:
+            resolved_row, resolved_col = np.unravel_index(flat_index, values.shape)
+            return (int(resolved_row), int(resolved_col))
+    if result.item_id is not None and 0 <= result.item_id < values.size:
+        resolved_row, resolved_col = np.unravel_index(result.item_id, values.shape)
+        return (int(resolved_row), int(resolved_col))
+    return None
 
 
 def _set_data_view_payload(view: Any, pixels: npt.NDArray[np.uint8]) -> None:
@@ -1260,8 +1481,16 @@ def _datoviz_query_request_diagnostic(request: QueryRequest) -> str | None:
         return f"Datoviz v0.4 query slice supports panel coordinates only, got {request.coordinate_space.value!r}"
     if request.hit_policy != QueryHitPolicy.FRONTMOST:
         return f"Datoviz v0.4 query slice supports frontmost hit policy only, got {request.hit_policy.value!r}"
-    if request.requested_extension_payload_kinds:
-        return "Datoviz v0.4 query slice does not support extension query payloads"
+    unsupported_payloads = tuple(
+        kind
+        for kind in request.requested_extension_payload_kinds
+        if kind != SCALAR_COLOR_QUERY_PAYLOAD_KIND
+    )
+    if unsupported_payloads:
+        return (
+            "Datoviz v0.4 query slice does not support requested extension query "
+            f"payloads: {unsupported_payloads}"
+        )
     return None
 
 

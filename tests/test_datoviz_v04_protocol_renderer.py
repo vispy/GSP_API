@@ -22,11 +22,19 @@ from gsp.protocol import (
 )
 from gsp.protocol import (
     AxisProviderRequest,
+    ColorbarGuide,
+    ColorMapId,
+    ColorMapRef,
+    ColorScale,
+    LinearNormalize,
     QueryCoordinateSpace,
     QueryHitPolicy,
     QueryRequest,
     QueryScope,
     QueryStatus,
+    SCALAR_COLOR_QUERY_PAYLOAD_KIND,
+    ScalarColorEncoding,
+    ScalarColorSlot,
     View2D,
     VisualFamily,
 )
@@ -496,6 +504,12 @@ class FakeDatovizV04WithLiveRuntimeQuery(FakeDatovizV04WithRuntimeQuery):
         return None
 
 
+class FakeDatovizV04WithRuntimeQueryAndImageSampling(
+    FakeDatovizV04WithRuntimeQuery, FakeDatovizV04WithImageSampling
+):
+    pass
+
+
 def _calls(fake, name):
     return [call for call in fake.calls if call[0] == name]
 
@@ -904,6 +918,33 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     assert attach_desc.coord_space == 1
 
 
+def test_add_point_visual_cpu_premaps_scalar_color_encoding_to_canonical_rgba8():
+    fake = FakeDatovizV04WithQueryCapabilities()
+    scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, color_scales={scale.id: scale})
+    visual = PointVisual(
+        id="visual:scalar-points",
+        positions=np.array([[-0.5, 0.0], [0.5, 0.0]], dtype=np.float32),
+        sizes=np.array([5.0, 7.0], dtype=np.float32),
+        color_encoding=ScalarColorEncoding(
+            slot=ScalarColorSlot.COLOR,
+            values=np.array([-1.0, 0.5], dtype=np.float32),
+            color_scale_id=scale.id,
+            alpha=0.5,
+        ),
+    )
+
+    renderer.add_point_visual(visual)
+
+    color_upload = _calls(fake, "set_data")[1]
+    assert color_upload[2] == "color"
+    np.testing.assert_array_equal(
+        color_upload[3], [[0, 0, 0, 128], [128, 128, 128, 128]]
+    )
+    assert renderer.scalar_visuals["visual:scalar-points"].visual_id == visual.id
+    assert renderer.scalar_visuals["visual:scalar-points"].color_scale == scale
+
+
 def test_add_marker_visual_uses_dvz_marker_attributes_shape_angle_and_style():
     fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
@@ -949,6 +990,27 @@ def test_add_marker_visual_uses_dvz_marker_attributes_shape_angle_and_style():
     ]
     add_visual_call = _calls(fake, "add_visual")[-1]
     assert add_visual_call[:3] == ("add_visual", "panel", "marker-visual")
+
+
+def test_add_marker_visual_keeps_scalar_fill_capability_gated():
+    scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithQueryCapabilities(), color_scales={scale.id: scale}
+    )
+    visual = MarkerVisual(
+        id="visual:scalar-markers",
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        shape=MarkerShape.DISC,
+        sizes=np.array([9.0], dtype=np.float32),
+        fill_color_encoding=ScalarColorEncoding(
+            slot=ScalarColorSlot.FILL,
+            values=np.array([0.25], dtype=np.float32),
+            color_scale_id=scale.id,
+        ),
+    )
+
+    with pytest.raises(DatovizV04Unsupported, match="scalar_visual_family_unsupported"):
+        renderer.add_marker_visual(visual)
 
 
 def test_add_marker_visual_passes_marker_angles_through_to_datoviz():
@@ -1200,6 +1262,158 @@ def test_add_image_visual_converts_scalar_image_to_rgba8_texture():
             [[255, 255, 255, 255], [255, 255, 255, 255]],
         ],
     )
+
+
+def test_add_image_visual_cpu_premaps_scalar_color_scale_to_canonical_rgba8():
+    fake = FakeDatovizV04WithImageSampling()
+    scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, color_scales={scale.id: scale})
+    visual = ImageVisual(
+        id="visual:scalar-image",
+        image=np.array([[0.0, 0.5], [1.0, 2.0]], dtype=np.float32),
+        extent=(-1.0, 1.0, -0.5, 0.5),
+        color_scale_id=scale.id,
+    )
+
+    renderer.add_image_visual(visual)
+
+    texture_call = _calls(fake, "set_texture")[0]
+    np.testing.assert_array_equal(
+        texture_call[2],
+        [
+            [[0, 0, 0, 255], [128, 128, 128, 255]],
+            [[255, 255, 255, 255], [255, 255, 255, 255]],
+        ],
+    )
+    assert renderer.scalar_visuals["visual:scalar-image"].visual_id == visual.id
+
+
+def test_query_panel_adds_scalar_point_payload_from_retained_scene_data():
+    scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+    fake = FakeDatovizV04WithRuntimeQuery(
+        FakeDvzQueryResult(
+            request_id=99,
+            status=DVZ_QUERY_STATUS_HIT,
+            hit=True,
+            visual_id=123,
+            visual_family=DVZ_SCENE_VISUAL_FAMILY_POINT,
+            item_id=1,
+        )
+    )
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, color_scales={scale.id: scale})
+    renderer.add_point_visual(
+        PointVisual(
+            id="visual:scalar-points",
+            positions=np.array([[0.0, 0.0], [1.0, 0.0]], dtype=np.float32),
+            sizes=np.array([4.0, 4.0], dtype=np.float32),
+            color_encoding=ScalarColorEncoding(
+                slot=ScalarColorSlot.COLOR,
+                values=np.array([0.0, 2.0], dtype=np.float32),
+                color_scale_id=scale.id,
+            ),
+        )
+    )
+
+    result = renderer.query_panel(
+        QueryRequest(
+            id="query:scalar-point",
+            panel_id="panel:main",
+            coordinate=(32.0, 32.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            requested_extension_payload_kinds=(SCALAR_COLOR_QUERY_PAYLOAD_KIND,),
+        )
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.extension_payload_kind == SCALAR_COLOR_QUERY_PAYLOAD_KIND
+    assert result.extension_payload.visual_id == "visual:scalar-points"
+    assert result.extension_payload.item_kind == "point"
+    assert result.extension_payload.lut_index == 255
+    assert result.value == 2.0
+    assert result.displayed_rgba == (1.0, 1.0, 1.0, 1.0)
+
+
+def test_query_panel_adds_scalar_image_payload_from_flat_datoviz_texel_id():
+    scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+    fake = FakeDatovizV04WithRuntimeQueryAndImageSampling(
+        FakeDvzQueryResult(
+            request_id=99,
+            status=DVZ_QUERY_STATUS_HIT,
+            hit=True,
+            visual_id=456,
+            visual_family=DVZ_SCENE_VISUAL_FAMILY_IMAGE,
+            texel_id=3,
+        )
+    )
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, color_scales={scale.id: scale})
+    renderer.add_image_visual(
+        ImageVisual(
+            id="visual:scalar-image",
+            image=np.array([[0.0, 0.25], [0.5, 0.75]], dtype=np.float32),
+            extent=(-1.0, 1.0, -1.0, 1.0),
+            color_scale_id=scale.id,
+        )
+    )
+
+    result = renderer.query_panel(
+        QueryRequest(
+            id="query:scalar-image",
+            panel_id="panel:main",
+            coordinate=(32.0, 32.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            requested_extension_payload_kinds=(SCALAR_COLOR_QUERY_PAYLOAD_KIND,),
+        )
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.extension_payload_kind == SCALAR_COLOR_QUERY_PAYLOAD_KIND
+    assert result.extension_payload.visual_id == "visual:scalar-image"
+    assert result.extension_payload.texel == (1, 1)
+    assert result.extension_payload.source_value == 0.75
+    assert result.extension_payload.lut_index == 192
+
+
+def test_query_panel_reports_unsupported_when_scalar_payload_cannot_be_matched():
+    fake = FakeDatovizV04WithRuntimeQuery(
+        FakeDvzQueryResult(
+            request_id=99,
+            status=DVZ_QUERY_STATUS_HIT,
+            hit=True,
+            visual_id=123,
+            visual_family=DVZ_SCENE_VISUAL_FAMILY_POINT,
+            item_id=0,
+        )
+    )
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    result = renderer.query_panel(
+        QueryRequest(
+            id="query:scalar-unmatched",
+            panel_id="panel:main",
+            coordinate=(32.0, 32.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            requested_extension_payload_kinds=(SCALAR_COLOR_QUERY_PAYLOAD_KIND,),
+        )
+    )
+
+    assert result.status == QueryStatus.UNSUPPORTED
+    assert "scalar_query_source_unavailable" in str(result.diagnostic)
+
+
+def test_add_colorbar_guide_reports_structured_unsupported_until_verified():
+    scale = _test_color_scale(colormap_id=ColorMapId.GRAY)
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04(), color_scales={scale.id: scale}
+    )
+
+    with pytest.raises(DatovizV04Unsupported, match="colorbar_render_unsupported"):
+        renderer.add_colorbar_guide(
+            ColorbarGuide(
+                id="guide:colorbar",
+                panel_id="panel:main",
+                color_scale_id=scale.id,
+            )
+        )
 
 
 def test_sampled_field_readiness_reports_missing_symbols():
@@ -1547,3 +1761,11 @@ def test_imported_datoviz_capture_binding_smoke_when_available():
         )
 
     assert datoviz_v04_capture_diagnostics(dvz) == ()
+
+
+def _test_color_scale(*, colormap_id: ColorMapId = ColorMapId.VIRIDIS) -> ColorScale:
+    return ColorScale(
+        id=f"scale:{colormap_id.value}",
+        colormap=ColorMapRef(colormap_id),
+        normalize=LinearNormalize(vmin=0.0, vmax=1.0),
+    )
