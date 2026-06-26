@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import ctypes
+import sys
+import types
 
 import numpy as np
 import pytest
@@ -64,6 +66,7 @@ from gsp_datoviz.protocol_renderer import (
     datoviz_v04_sampled_field_ready,
     datoviz_v04_text_diagnostics,
     datoviz_v04_text_ready,
+    import_datoviz_v04,
     is_datoviz_v04_facade,
     _image_texcoords,
 )
@@ -1917,6 +1920,36 @@ def test_capture_png_bytes_rejects_missing_capture_binding():
         renderer.capture_png_bytes()
 
 
+def test_capture_png_bytes_rejects_null_ctypes_app_handle():
+    class FakeDatovizV04WithNullApp(FakeDatovizV04WithCapture):
+        def dvz_app(self, scene):
+            self.calls.append(("app", scene))
+            return ctypes.POINTER(ctypes.c_int)()
+
+    fake = FakeDatovizV04WithNullApp()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    with pytest.raises(DatovizV04Unavailable, match="offscreen app creation failed"):
+        renderer.capture_png_bytes()
+
+    assert _calls(fake, "view_offscreen") == []
+
+
+def test_capture_png_bytes_rejects_null_ctypes_offscreen_view_handle():
+    class FakeDatovizV04WithNullOffscreenView(FakeDatovizV04WithCapture):
+        def dvz_view_offscreen(self, app, figure, width, height):
+            self.calls.append(("view_offscreen", app, figure, width, height))
+            return ctypes.POINTER(ctypes.c_int)()
+
+    fake = FakeDatovizV04WithNullOffscreenView()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    with pytest.raises(DatovizV04Unavailable, match="offscreen view creation failed"):
+        renderer.capture_png_bytes()
+
+    assert _calls(fake, "render_once") == []
+
+
 def test_lower_origin_texcoords_are_not_flipped():
     texcoords = _image_texcoords(ImageOrigin.LOWER)
     np.testing.assert_allclose(
@@ -2323,6 +2356,17 @@ def test_imported_datoviz_binding_has_expected_v04_shape_when_available():
         pytest.skip("installed Datoviz binding is not the v0.4 facade")
 
     assert is_datoviz_v04_facade(dvz)
+
+
+def test_import_datoviz_v04_wraps_facade_load_runtime_error(monkeypatch):
+    class ExplodingDatoviz(types.ModuleType):
+        def __getattr__(self, name):
+            raise RuntimeError("unable to load libdatoviz")
+
+    monkeypatch.setitem(sys.modules, "datoviz", ExplodingDatoviz("datoviz"))
+
+    with pytest.raises(DatovizV04Unavailable, match="Datoviz is not importable"):
+        import_datoviz_v04()
 
 
 def test_imported_datoviz_capability_snapshot_translates_when_available():

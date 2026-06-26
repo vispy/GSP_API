@@ -34,11 +34,11 @@ GSP capability promotion.
 
 ## Result
 
-Runtime API proof is recorded in `.agent/S030_DATOVIZ_GUIDE_AXIS_PROOF.md` and
+Runtime proof is recorded in `.agent/S030_DATOVIZ_GUIDE_AXIS_PROOF.md` and
 `artifacts/visual_qa/s030/datoviz-guide-axis-proof/report.json`. Native axis APIs, backend tick
-policy, explicit facade ticks, labels, grids, and reversed domains are callable; rendered placement,
-panel title, guide query, and production GSP explicit tick wiring remain blockers. No matrix row was
-promoted.
+policy, explicit facade ticks, labels, grids, and reversed domains render when MoltenVK is
+configured; panel title, guide query, and production GSP explicit tick wiring remain blockers. No
+matrix row was promoted.
 
 ## Stop Condition
 

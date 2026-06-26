@@ -25,6 +25,6 @@ guide query.
 
 | Mission | State | Purpose |
 |---|---|---|
-| M120 | completed | Runtime API proof completed; Datoviz axis APIs are callable, but rendered placement, panel title, guide query, and GSP explicit tick wiring remain blockers. |
-| M121 | draft | Wire GSP Datoviz guide review-path rendering only if the remaining blockers are explicitly accepted or resolved. |
+| M120 | completed | Runtime proof completed; Datoviz axis APIs render with backend ticks, grid, labels, reversed domains, and explicit facade ticks when MoltenVK is configured. |
+| M121 | draft | Wire an axis-only adapted Datoviz guide review path only if title/query gaps stay explicit and production explicit tick wiring is added. |
 | M122 | draft | Regenerate review artifacts and promote/defer rows based on M120-M121 evidence. |

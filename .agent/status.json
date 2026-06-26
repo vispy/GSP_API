@@ -1333,9 +1333,9 @@
     }
   ],
   "recommendations": [
-    "M120 is complete: Datoviz native axis APIs are callable, but rendered placement, panel title, guide query, and production explicit tick wiring remain blockers.",
-    "Keep M121 in draft until those blockers are explicitly accepted or resolved; do not promote guide rows from API-call evidence alone.",
-    "If continuing S030, decide whether to pursue a capture-stable Datoviz guide review path or defer the guide rows unchanged."
+    "M120 capture evidence is now available: Datoviz native axis APIs render with backend ticks, grid, labels, reversed domains, and explicit facade ticks when MoltenVK is configured.",
+    "Remaining blockers are panel title support, guide/all-rendered query support, and production GSP explicit tick wiring.",
+    "M121 can be revised as a bounded axis-only adapted review path, but strict guide-row promotion still requires title/query decisions."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",

@@ -108,6 +108,15 @@ def _capture_if_requested(
     return "rendered", _write_png(renderer, path)
 
 
+def _capture_note(capture_status: str) -> str:
+    if capture_status == "rendered":
+        return "Rendered placement was captured successfully in the probe artifact."
+    return (
+        "Rendered placement remains blocked unless this probe is rerun with --capture "
+        "in a stable Datoviz offscreen environment."
+    )
+
+
 def _probe_auto_grid(
     dvz: ModuleType | Any, out_dir: Path, *, capture: bool
 ) -> dict[str, Any]:
@@ -161,7 +170,7 @@ def _probe_auto_grid(
         "notes": [
             "Native Datoviz panel-axis APIs accept backend-resolved ticks, grid, and labels.",
             "The GSP renderer still CPU-adapts DATA point positions to panel NDC in this slice.",
-            "Rendered placement remains blocked unless this probe is rerun with --capture in a stable Datoviz offscreen environment.",
+            _capture_note(capture_status),
         ],
     }
 
@@ -239,7 +248,7 @@ def _probe_reversed_explicit(
         "notes": [
             "The facade accepts explicit tick values and labels directly through dvz_axis_set_ticks.",
             "The production GSP renderer still rejects explicit ticks in configure_view2d_axes().",
-            "Rendered placement remains blocked unless this probe is rerun with --capture in a stable Datoviz offscreen environment.",
+            _capture_note(capture_status),
         ],
     }
 

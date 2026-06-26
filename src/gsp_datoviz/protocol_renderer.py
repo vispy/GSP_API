@@ -316,16 +316,17 @@ def import_datoviz_v04() -> ModuleType:
     """Import Datoviz and validate the C-shaped v0.4 facade."""
     try:
         import datoviz as dvz
+        if not is_datoviz_v04_facade(dvz):
+            missing = [
+                name for name in _REQUIRED_DVZ_V04_FUNCTIONS if not hasattr(dvz, name)
+            ]
+            raise DatovizV04Unavailable(
+                f"Datoviz facade is missing v0.4 functions: {missing}"
+            )
     except ModuleNotFoundError as exc:
         raise DatovizV04Unavailable("Datoviz is not importable") from exc
-
-    if not is_datoviz_v04_facade(dvz):
-        missing = [
-            name for name in _REQUIRED_DVZ_V04_FUNCTIONS if not hasattr(dvz, name)
-        ]
-        raise DatovizV04Unavailable(
-            f"Datoviz facade is missing v0.4 functions: {missing}"
-        )
+    except (OSError, RuntimeError) as exc:
+        raise DatovizV04Unavailable(f"Datoviz is not importable: {exc}") from exc
     return cast(ModuleType, dvz)
 
 
@@ -972,7 +973,7 @@ class DatovizV04ProtocolRenderer:
         self.offscreen_view = self.dvz.dvz_view_offscreen(
             self.app, self.figure, self.width, self.height
         )
-        if self.offscreen_view is None:
+        if _is_null_handle(self.offscreen_view):
             raise DatovizV04Unavailable("Datoviz offscreen view creation failed")
         return self.offscreen_view
 
@@ -988,7 +989,7 @@ class DatovizV04ProtocolRenderer:
                 "Datoviz interactive view is unavailable: missing dvz_view"
             )
         self.live_view = view(self.app, self.figure, None)
-        if self.live_view is None:
+        if _is_null_handle(self.live_view):
             raise DatovizV04Unavailable("Datoviz interactive view creation failed")
         return self.live_view
 
@@ -1002,7 +1003,7 @@ class DatovizV04ProtocolRenderer:
                 f"Datoviz {purpose} app creation is unavailable: missing dvz_app"
             )
         self.app = app(self.scene)
-        if self.app is None:
+        if _is_null_handle(self.app):
             raise DatovizV04Unavailable(f"Datoviz {purpose} app creation failed")
         return self.app
 
@@ -1204,6 +1205,16 @@ def _positions_3d(
         return np.ascontiguousarray(array)
     zeros = np.zeros((array.shape[0], 1), dtype=np.float32)
     return np.ascontiguousarray(np.column_stack([array, zeros]))
+
+
+def _is_null_handle(handle: Any) -> bool:
+    """Return whether a Datoviz/ctypes handle is absent or a NULL pointer."""
+    if handle is None:
+        return True
+    try:
+        return not bool(handle)
+    except TypeError:
+        return False
 
 
 def _adapt_visual_positions(
