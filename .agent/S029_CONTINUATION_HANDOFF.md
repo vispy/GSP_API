@@ -4,18 +4,20 @@ Updated: 2026-06-26
 
 ## Current State
 
-S029 is open at 45% after the backend capability matrix and visual review pack work.
+S029 is open at 55% after the Datoviz text promotion audit.
 
 Completed S029 missions:
 
 - M112: capability matrix and review-pack foundation
 - M113: Datoviz rendered-family promotion audit
 - M114: Datoviz color/colorbar promotion audit
+- M115: Datoviz text promotion audit
 
 Current pushed GSP branch:
 
 - `agentic-gsp-vispy2`
-- Latest completed commit before this handoff: `5e09c58 Complete S029 Datoviz color audit`
+- Latest completed commit before M115: `5e09c58 Complete S029 Datoviz color audit`
+- M115 changes are recorded by the commit containing this handoff update.
 
 Current pushed Datoviz branch:
 
@@ -34,10 +36,10 @@ Current pack:
 
 - `artifacts/visual_qa/s029/current-review-pack`
 
-Current matrix status after M114:
+Current matrix status after M115:
 
-- `strict`: 45
-- `adapted`: 11
+- `strict`: 46
+- `adapted`: 10
 - `unsupported`: 2
 - `crashed`: 0
 - `disabled`: 0
@@ -50,6 +52,7 @@ Strict Datoviz rendered rows now include:
 - `color/scalar_image_viridis_colorbar`
 - `color/point_scalar_gray_range`
 - `color/marker_scalar_fill_alpha`
+- `text/rotation_alpha_ndc`
 
 All promoted Datoviz rows remain rendering-only:
 
@@ -57,13 +60,12 @@ All promoted Datoviz rows remain rendering-only:
 
 ## Next Mission Batch
 
-The next batch is recorded as ready missions M115-M119:
+The next batch is recorded as ready missions M116-M119:
 
-1. M115 - S029 Datoviz text promotion audit
-2. M116 - S029 Datoviz mesh promotion audit
-3. M117 - S029 Datoviz transform promotion audit
-4. M118 - S029 Datoviz guide/View2D unsupported closure
-5. M119 - S029 review-pack closeout
+1. M116 - S029 Datoviz mesh promotion audit
+2. M117 - S029 Datoviz transform promotion audit
+3. M118 - S029 Datoviz guide/View2D unsupported closure
+4. M119 - S029 review-pack closeout
 
 Execute in order unless one mission exposes an upstream Datoviz blocker.
 
@@ -73,16 +75,17 @@ From the GSP repo:
 
 ```bash
 tools/agentctl next
-tools/agentctl mission show M115
+tools/agentctl mission show M116
 ```
 
-Then execute M115 locally or approve a bounded worker launch.
+Then execute M116 locally or approve a bounded worker launch.
 
 ## Validation Baseline
 
 Latest completed validation before this handoff:
 
-- `uv run pytest tests/ -q`: 396 passed, 2 skipped
-- `uv run mypy src/ --strict --show-error-codes`: clean
+- `PYTHONPATH=. uv run pytest tests/test_visual_qa_harness.py -q`: 23 passed
+- S029 capability matrix/index regenerated from existing `report.json`
+- Full Datoviz runtime regeneration blocked locally: missing
+  `/Users/cyrille/GIT/Viz/datoviz/libs/vulkan/macos_arm64/MoltenVK_icd.json`
 - `git diff --check`: clean
-

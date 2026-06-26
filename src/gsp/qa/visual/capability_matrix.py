@@ -57,6 +57,25 @@ _DATOVIZ_S029_STRICT_RENDER_CASES = {
         "GSP CPU maps scalar marker fill values through the canonical magma ColorScale before Datoviz RGBA8 upload",
         "S029 verifies scalar fill alpha with a constant marker stroke for the rendered marker scope",
     ],
+    "text/rotation_alpha_ndc": [
+        "Datoviz retained text receives per-item NDC positions, UTF-8 ASCII strings, RGBA alpha, font size, center anchors, and rotation radians",
+        "S029 verifies the rendered text draws above the orientation image with alpha blending and center-anchored rotation",
+    ],
+}
+
+_DATOVIZ_S029_RENDERED_BLOCKERS = {
+    "text/basic_ndc": [
+        "default BASELINE text-anchor semantics are not strictly verified by the Datoviz adapter"
+    ],
+    "text/anchor_grid_ndc": [
+        "baseline, top, center, and bottom text-box anchors need a focused fixture before strict promotion"
+    ],
+    "text/data_vs_ndc": [
+        "DATA and NDC text placement is only proven under the identity [-1,+1] review-pack view"
+    ],
+    "text/multiline_unicode_smoke": [
+        "Unicode fallback and multiline BASELINE anchoring remain unverified"
+    ],
 }
 
 
@@ -179,7 +198,7 @@ def _datoviz_row(
             reason_code = "datoviz_rendered_pending_promotion_audit"
             adaptations = ["Datoviz rendering is reviewable but not yet promoted to strict"]
             missing = []
-            blockers = ["strict promotion requires a family-specific capability audit"]
+            blockers = _datoviz_rendered_blockers(case)
     elif backend_status == "error":
         status = "crashed"
         reason_code = "datoviz_runtime_error"
@@ -208,6 +227,15 @@ def _datoviz_rendered_promotion(case: Mapping[str, object]) -> list[str] | None:
     if not isinstance(case_id, str):
         return None
     return _DATOVIZ_S029_STRICT_RENDER_CASES.get(case_id)
+
+
+def _datoviz_rendered_blockers(case: Mapping[str, object]) -> list[str]:
+    case_id = case.get("case_id")
+    if isinstance(case_id, str):
+        blockers = _DATOVIZ_S029_RENDERED_BLOCKERS.get(case_id)
+        if blockers is not None:
+            return blockers
+    return ["strict promotion requires a family-specific capability audit"]
 
 
 def _classify_datoviz_unsupported(reason: str) -> tuple[str, str, list[str]]:

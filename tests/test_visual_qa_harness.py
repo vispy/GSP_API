@@ -344,6 +344,42 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
                     "datoviz": {"status": "rendered"},
                 },
             },
+            {
+                "case_id": "text/anchor_grid_ndc",
+                "family": "text",
+                "required_features": ["text", "ndc", "anchor"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "text/rotation_alpha_ndc",
+                "family": "text",
+                "required_features": ["text", "ndc", "rotation", "alpha"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "text/data_vs_ndc",
+                "family": "text",
+                "required_features": ["text", "data", "ndc"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "text/multiline_unicode_smoke",
+                "family": "text",
+                "required_features": ["text", "multiline", "unicode"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
         ],
     }
 
@@ -374,8 +410,26 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
     ]["known_adaptations"][1]
     assert rows[("datoviz", "text/basic_ndc")]["status"] == "adapted"
     assert rows[("datoviz", "text/basic_ndc")]["promotion_blockers"] == [
-        "strict promotion requires a family-specific capability audit"
+        "default BASELINE text-anchor semantics are not strictly verified by the Datoviz adapter"
     ]
+    assert rows[("datoviz", "text/anchor_grid_ndc")]["status"] == "adapted"
+    assert "text-box anchors" in rows[
+        ("datoviz", "text/anchor_grid_ndc")
+    ]["promotion_blockers"][0]
+    assert rows[("datoviz", "text/rotation_alpha_ndc")]["status"] == "strict"
+    assert rows[("datoviz", "text/rotation_alpha_ndc")]["query_supported"] is False
+    assert rows[("datoviz", "text/rotation_alpha_ndc")]["promotion_blockers"] == []
+    assert "center-anchored rotation" in rows[
+        ("datoviz", "text/rotation_alpha_ndc")
+    ]["known_adaptations"][1]
+    assert rows[("datoviz", "text/data_vs_ndc")]["status"] == "adapted"
+    assert "identity [-1,+1]" in rows[
+        ("datoviz", "text/data_vs_ndc")
+    ]["promotion_blockers"][0]
+    assert rows[("datoviz", "text/multiline_unicode_smoke")]["status"] == "adapted"
+    assert "Unicode fallback" in rows[
+        ("datoviz", "text/multiline_unicode_smoke")
+    ]["promotion_blockers"][0]
 
 
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:

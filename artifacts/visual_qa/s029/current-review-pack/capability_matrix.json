@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T18:23:33.359015+00:00",
+  "generated_at": "2026-06-26T20:30:02.878946+00:00",
   "rows": [
     {
       "backend": "matplotlib",
@@ -644,7 +644,7 @@
       ],
       "known_missing_semantics": [],
       "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
+        "default BASELINE text-anchor semantics are not strictly verified by the Datoviz adapter"
       ],
       "protocol_scope": [
         "text",
@@ -691,7 +691,7 @@
       ],
       "known_missing_semantics": [],
       "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
+        "baseline, top, center, and bottom text-box anchors need a focused fixture before strict promotion"
       ],
       "protocol_scope": [
         "text",
@@ -735,12 +735,11 @@
       ],
       "family": "text",
       "known_adaptations": [
-        "Datoviz rendering is reviewable but not yet promoted to strict"
+        "Datoviz retained text receives per-item NDC positions, UTF-8 ASCII strings, RGBA alpha, font size, center anchors, and rotation radians",
+        "S029 verifies the rendered text draws above the orientation image with alpha blending and center-anchored rotation"
       ],
       "known_missing_semantics": [],
-      "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
-      ],
+      "promotion_blockers": [],
       "protocol_scope": [
         "text",
         "ndc",
@@ -749,9 +748,9 @@
         "z-order"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
-      "status": "adapted"
+      "status": "strict"
     },
     {
       "backend": "matplotlib",
@@ -787,7 +786,7 @@
       ],
       "known_missing_semantics": [],
       "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
+        "DATA and NDC text placement is only proven under the identity [-1,+1] review-pack view"
       ],
       "protocol_scope": [
         "text",
@@ -833,7 +832,7 @@
       ],
       "known_missing_semantics": [],
       "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
+        "Unicode fallback and multiline BASELINE anchoring remain unverified"
       ],
       "protocol_scope": [
         "text",
@@ -1406,12 +1405,12 @@
   ],
   "suite": "s028",
   "summary": {
-    "adapted": 11,
+    "adapted": 10,
     "crashed": 0,
     "disabled": 0,
     "experimental": 0,
     "not_run": 0,
-    "strict": 45,
+    "strict": 46,
     "unsupported": 2
   }
 }

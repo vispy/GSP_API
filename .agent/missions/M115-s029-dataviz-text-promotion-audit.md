@@ -6,7 +6,7 @@ S029 - Backend Capability Matrix and Visual Review Pack
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -41,3 +41,15 @@ Rendered Datoviz rows:
 Stop if strict promotion would require silently ignoring text anchors, font metrics, Unicode,
 rotation, DATA mapping, or query semantics.
 
+## Completion
+
+Completed on 2026-06-26 in the local Mission Control session.
+
+- Added `.agent/S029_DATOVIZ_TEXT_AUDIT.md`.
+- Promoted only `text/rotation_alpha_ndc` to `strict` for rendering only.
+- Left `text/basic_ndc`, `text/anchor_grid_ndc`, `text/data_vs_ndc`, and
+  `text/multiline_unicode_smoke` as `adapted` with row-specific blockers.
+- Preserved `query_supported: false` for all text rows.
+- Regenerated S029 capability matrix/index artifacts from the current review-pack report.
+- Full Datoviz runtime regeneration was blocked locally by missing macOS MoltenVK ICD files in the
+  Datoviz checkout.
