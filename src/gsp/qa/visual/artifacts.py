@@ -11,9 +11,11 @@ from typing import Any, Mapping, cast
 import numpy as np
 
 from gsp.protocol import (
+    AffineTransform2DResource,
     ColorScale,
     ColorbarGuide,
     ImageVisual,
+    InlineAffineTransform2D,
     MeshVisual,
     MarkerVisual,
     PathVisual,
@@ -21,6 +23,9 @@ from gsp.protocol import (
     ScalarColorEncoding,
     SegmentVisual,
     TextVisual,
+    TransformRef,
+    View2D,
+    VisualTransformBinding,
 )
 from gsp.qa.visual.backend_ids import DATOVIZ_BACKEND_ID
 from gsp.qa.visual.case_spec import ProtocolVisual, VisualQAScene
@@ -153,6 +158,11 @@ def _scene_json(scene: VisualQAScene) -> dict[str, object]:
         "colorbar_guides": [
             _colorbar_guide_json(guide) for guide in scene.colorbar_guides
         ],
+        "transform_resources": [
+            _transform_resource_json(transform)
+            for transform in scene.transform_resources
+        ],
+        "views": [_view2d_json(view) for view in scene.views],
         "visuals": [_visual_json(visual) for visual in scene.visuals],
         "arrays": {
             name: {
@@ -194,6 +204,7 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             payload["color_encoding"] = _scalar_color_encoding_json(
                 visual.color_encoding
             )
+        _add_transform_json(payload, visual.transform)
         return payload
     if isinstance(visual, MarkerVisual):
         sizes = visual.sizes
@@ -235,11 +246,12 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             payload["fill_color_encoding"] = _scalar_color_encoding_json(
                 visual.fill_color_encoding
             )
+        _add_transform_json(payload, visual.transform)
         return payload
     if isinstance(visual, SegmentVisual):
         widths = visual.widths
         width_shape = list(widths.shape) if isinstance(widths, np.ndarray) else []
-        return {
+        payload = {
             "family": "segment",
             "id": visual.id,
             "coordinate_space": visual.coordinate_space.value,
@@ -263,10 +275,12 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             },
             "cap": visual.cap.value,
         }
+        _add_transform_json(payload, visual.transform)
+        return payload
     if isinstance(visual, PathVisual):
         widths = visual.widths
         width_shape = list(widths.shape) if isinstance(widths, np.ndarray) else []
-        return {
+        payload = {
             "family": "path",
             "id": visual.id,
             "coordinate_space": visual.coordinate_space.value,
@@ -289,6 +303,8 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "join": visual.join.value,
             "miter_limit": visual.miter_limit,
         }
+        _add_transform_json(payload, visual.transform)
+        return payload
 
     if isinstance(visual, TextVisual):
         font_size = visual.font_size_px
@@ -299,7 +315,7 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
         rotation_shape = (
             list(rotation.shape) if isinstance(rotation, np.ndarray) else []
         )
-        return {
+        payload = {
             "family": "text",
             "id": visual.id,
             "coordinate_space": visual.coordinate_space.value,
@@ -333,6 +349,8 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             },
             "z_order": visual.z_order,
         }
+        _add_transform_json(payload, visual.transform)
+        return payload
     if isinstance(visual, MeshVisual):
         payload = {
             "family": "mesh",
@@ -365,6 +383,7 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             payload["face_color_encoding"] = _scalar_color_encoding_json(
                 visual.face_color_encoding
             )
+        _add_transform_json(payload, visual.transform)
         return payload
 
     if isinstance(visual, ImageVisual):
@@ -384,6 +403,57 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "color_scale_id": visual.color_scale_id,
         }
     raise TypeError(f"unsupported visual type: {type(visual).__name__}")
+
+
+def _add_transform_json(
+    payload: dict[str, Any], binding: VisualTransformBinding | None
+) -> None:
+    if binding is not None:
+        payload["transform"] = _transform_binding_json(binding)
+
+
+def _transform_resource_json(
+    transform: AffineTransform2DResource,
+) -> dict[str, object]:
+    payload: dict[str, object] = {
+        "id": transform.id,
+        "kind": transform.kind.value,
+        "matrix": np.asarray(transform.matrix, dtype=np.float64).tolist(),
+        "label": transform.label,
+    }
+    if transform.metadata is not None:
+        payload["metadata"] = transform.metadata
+    return payload
+
+
+def _transform_binding_json(binding: VisualTransformBinding) -> dict[str, object]:
+    if binding.ref is not None:
+        return {"ref": _transform_ref_json(binding.ref)}
+    assert binding.inline is not None
+    return {"inline": _inline_affine_json(binding.inline)}
+
+
+def _transform_ref_json(ref: TransformRef) -> dict[str, object]:
+    return {"id": ref.id, "required": ref.required}
+
+
+def _inline_affine_json(transform: InlineAffineTransform2D) -> dict[str, object]:
+    return {
+        "kind": transform.kind.value,
+        "matrix": np.asarray(transform.matrix, dtype=np.float64).tolist(),
+    }
+
+
+def _view2d_json(view: View2D) -> dict[str, object]:
+    return {
+        "id": view.id,
+        "panel_id": view.panel_id,
+        "kind": view.kind.value,
+        "x_range": list(view.x_range),
+        "y_range": list(view.y_range),
+        "aspect_policy": view.aspect_policy.value,
+        "clip": view.clip,
+    }
 
 
 def _color_scale_json(scale: ColorScale) -> dict[str, object]:

@@ -6,9 +6,17 @@ import json
 from pathlib import Path
 
 import matplotlib.image as mpimg
+import pytest
 
-from gsp.qa.visual.cases import S024_SUITE, S026_SUITE, list_cases
+from gsp.protocol import (
+    TRANSFORM_QUERY_PAYLOAD_KIND,
+    QueryRequest,
+    QueryStatus,
+    TransformQueryPayload,
+)
+from gsp.qa.visual.cases import S024_SUITE, S026_SUITE, S027_SUITE, get_case, list_cases
 from gsp.qa.visual.runner import run_visual_qa_suite
+from gsp_matplotlib.protocol_query import QueryVisualEntry, query_visuals
 
 
 def test_s023_case_registry_lists_initial_cases() -> None:
@@ -277,6 +285,74 @@ def test_s026_color_visual_qa_run_writes_matplotlib_artifacts(tmp_path: Path) ->
     assert scene["visuals"][0]["color_scale_id"] == "scale:viridis"
     for case in report["cases"]:
         assert case["backends"]["matplotlib"]["status"] == "rendered"
+
+
+def test_s027_case_registry_extends_s026_with_transform_cases() -> None:
+    """S027 adds deterministic transform and View2D QA cases after S026."""
+    case_ids = [case.case_id for case in list_cases(suite=S027_SUITE)]
+
+    assert case_ids[-3:] == [
+        "transform/inline_named_equivalence",
+        "transform/view2d_data_ndc_overlay",
+        "transform/family_affine_view2d",
+    ]
+
+
+def test_s027_transform_visual_qa_run_writes_matplotlib_artifacts(
+    tmp_path: Path,
+) -> None:
+    """S027 transform cases render and serialize transform/view fixture state."""
+    report = run_visual_qa_suite(
+        suite=S027_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=(
+            "transform/inline_named_equivalence",
+            "transform/family_affine_view2d",
+        ),
+        run_id="test-s027-transform",
+        resolution=(360, 240),
+    )
+
+    assert report["stage"] == "S027"
+    assert (tmp_path / "contact_sheets" / "s027_all_cases.png").stat().st_size > 0
+    scene = json.loads(
+        (
+            tmp_path / "scenes" / "transform_family_affine_view2d.scene.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert scene["transform_resources"][0]["id"] == "transform:s027-family-shear"
+    assert scene["views"][0]["id"] == "view:s027-family"
+    assert scene["visuals"][0]["transform"]["ref"]["id"] == "transform:s027-family-shear"
+    for case in report["cases"]:
+        assert case["backends"]["matplotlib"]["status"] == "rendered"
+
+
+def test_s027_transform_query_fixture_reports_inverse_payload() -> None:
+    """The S027 QA fixture supports strict transformed query inverse payloads."""
+    scene = get_case(
+        "transform/inline_named_equivalence", suite=S027_SUITE
+    ).build()
+    resources = {resource.id: resource for resource in scene.transform_resources}
+    result = query_visuals(
+        QueryRequest(
+            id="query:s027-transform",
+            panel_id="panel:main",
+            coordinate=(-0.0528, 0.0204),
+        ),
+        [QueryVisualEntry(scene.visuals[0])],
+        transform_resources=resources,
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.extension_payload_kind == TRANSFORM_QUERY_PAYLOAD_KIND
+    assert isinstance(result.extension_payload, TransformQueryPayload)
+    assert result.extension_payload.panel_ndc == pytest.approx((-0.0528, 0.0204))
+    assert result.extension_payload.declared_space_coord == pytest.approx(
+        (-0.0528, 0.0204)
+    )
+    assert result.extension_payload.source_coord == pytest.approx((-0.28, 0.18))
+    assert result.extension_payload.inline_transform_digest is not None
 
 
 def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:

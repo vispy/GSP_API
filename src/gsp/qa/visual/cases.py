@@ -5,6 +5,7 @@ from __future__ import annotations
 import numpy as np
 
 from gsp.protocol import (
+    AffineTransform2DResource,
     ColorMapId,
     ColorMapRef,
     ColorScale,
@@ -30,6 +31,8 @@ from gsp.protocol import (
     TextAnchorX,
     TextAnchorY,
     TextVisual,
+    View2D,
+    VisualTransformBinding,
 )
 from gsp.qa.visual.case_spec import VisualQACase, VisualQAScene
 
@@ -38,6 +41,7 @@ S023_SUITE = "s023"
 S024_SUITE = "s024"
 S025_SUITE = "s025"
 S026_SUITE = "s026"
+S027_SUITE = "s027"
 
 
 def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
@@ -54,6 +58,14 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
             + _s024_text_cases()
             + _s025_mesh_cases()
             + _s026_color_cases()
+        )
+    if suite == S027_SUITE:
+        return (
+            _s023_cases()
+            + _s024_text_cases()
+            + _s025_mesh_cases()
+            + _s026_color_cases()
+            + _s027_transform_cases()
         )
     raise ValueError(f"unknown visual QA suite: {suite}")
 
@@ -264,6 +276,41 @@ def _s026_color_cases() -> tuple[VisualQACase, ...]:
             family="color",
             required_features=("marker", "scalar", "fill", "alpha"),
             builder=_color_marker_scalar_fill_alpha,
+        ),
+    )
+
+
+def _s027_transform_cases() -> tuple[VisualQACase, ...]:
+    return (
+        VisualQACase(
+            case_id="transform/inline_named_equivalence",
+            title="Inline and named affine transform equivalence",
+            family="transform",
+            required_features=("affine2d", "inline-transform", "named-transform"),
+            builder=_transform_inline_named_equivalence,
+        ),
+        VisualQACase(
+            case_id="transform/view2d_data_ndc_overlay",
+            title="View2D DATA mapping with NDC overlay",
+            family="transform",
+            required_features=("view2d", "data", "ndc", "reversed-limits"),
+            builder=_transform_view2d_data_ndc_overlay,
+        ),
+        VisualQACase(
+            case_id="transform/family_affine_view2d",
+            title="Affine transform and View2D family coverage",
+            family="transform",
+            required_features=(
+                "point",
+                "marker",
+                "segment",
+                "path",
+                "text",
+                "mesh",
+                "affine2d",
+                "view2d",
+            ),
+            builder=_transform_family_affine_view2d,
         ),
     )
 
@@ -1096,6 +1143,251 @@ def _color_marker_scalar_fill_alpha() -> VisualQAScene:
         },
         notes=(
             "Marker fill colors use scalar magma mapping with alpha and a constant stroke.",
+        ),
+    )
+
+
+def _transform_inline_named_equivalence() -> VisualQAScene:
+    positions = np.array(
+        [[-0.62, -0.18], [-0.28, 0.18], [0.08, -0.10], [0.40, 0.20]],
+        dtype=np.float32,
+    )
+    colors_inline = np.array(
+        [
+            [230, 57, 70, 190],
+            [230, 57, 70, 190],
+            [230, 57, 70, 190],
+            [230, 57, 70, 190],
+        ],
+        dtype=np.uint8,
+    )
+    colors_named = np.array(
+        [
+            [42, 157, 143, 190],
+            [42, 157, 143, 190],
+            [42, 157, 143, 190],
+            [42, 157, 143, 190],
+        ],
+        dtype=np.uint8,
+    )
+    sizes = np.full(positions.shape[0], 34.0, dtype=np.float32)
+    matrix = np.array(
+        [[0.82, -0.24, 0.22], [0.24, 0.82, -0.06], [0.0, 0.0, 1.0]],
+        dtype=np.float64,
+    )
+    transform = AffineTransform2DResource(
+        id="transform:inline-named-equivalent",
+        matrix=matrix,
+        label="S027 inline/named equivalence",
+    )
+    inline = PointVisual(
+        id="visual:transform-inline-points",
+        positions=positions,
+        colors=colors_inline,
+        sizes=sizes,
+        coordinate_space=CoordinateSpace.NDC,
+        transform=VisualTransformBinding.inline_affine(matrix),
+    )
+    named = PointVisual(
+        id="visual:transform-named-points",
+        positions=positions,
+        colors=colors_named,
+        sizes=sizes * np.float32(0.62),
+        coordinate_space=CoordinateSpace.NDC,
+        transform=VisualTransformBinding.from_ref(transform.id),
+    )
+    return VisualQAScene(
+        case_id="transform/inline_named_equivalence",
+        visuals=(inline, named),
+        transform_resources=(transform,),
+        arrays={
+            "point_positions": positions,
+            "point_colors_inline": colors_inline,
+            "point_colors_named": colors_named,
+            "point_sizes": sizes,
+            "affine_matrix": matrix,
+        },
+        notes=(
+            "Red inline-transform points and smaller teal named-transform points share the same affine matrix and should coincide.",
+        ),
+    )
+
+
+def _transform_view2d_data_ndc_overlay() -> VisualQAScene:
+    data_positions = np.array(
+        [[-8.0, -4.0], [0.0, 0.0], [8.0, 4.0]], dtype=np.float32
+    )
+    overlay_positions = np.array([[0.8, -0.8], [0.0, 0.0], [-0.8, 0.8]], dtype=np.float32)
+    colors_data = np.array(
+        [[33, 102, 172, 255], [67, 147, 195, 255], [146, 197, 222, 255]],
+        dtype=np.uint8,
+    )
+    colors_overlay = np.array(
+        [[178, 24, 43, 210], [214, 96, 77, 210], [244, 165, 130, 210]],
+        dtype=np.uint8,
+    )
+    sizes = np.array([46.0, 56.0, 46.0], dtype=np.float32)
+    view = View2D(
+        id="view:s027-reversed",
+        panel_id="panel:main",
+        x_range=(10.0, -10.0),
+        y_range=(-5.0, 5.0),
+    )
+    data = PointVisual(
+        id="visual:view2d-data-points",
+        positions=data_positions,
+        colors=colors_data,
+        sizes=sizes,
+        coordinate_space=CoordinateSpace.DATA,
+    )
+    overlay = PointVisual(
+        id="visual:view2d-ndc-overlay",
+        positions=overlay_positions,
+        colors=colors_overlay,
+        sizes=sizes * np.float32(0.55),
+        coordinate_space=CoordinateSpace.NDC,
+    )
+    return VisualQAScene(
+        case_id="transform/view2d_data_ndc_overlay",
+        visuals=(data, overlay),
+        views=(view,),
+        arrays={
+            "data_positions": data_positions,
+            "overlay_positions": overlay_positions,
+            "data_colors": colors_data,
+            "overlay_colors": colors_overlay,
+            "point_sizes": sizes,
+        },
+        notes=(
+            "DATA points map through reversed x View2D limits while NDC overlay points skip View2D and align at the same panel locations.",
+        ),
+    )
+
+
+def _transform_family_affine_view2d() -> VisualQAScene:
+    matrix = np.array(
+        [[1.0, 0.22, 0.36], [-0.18, 1.0, -0.24], [0.0, 0.0, 1.0]],
+        dtype=np.float64,
+    )
+    transform = AffineTransform2DResource(
+        id="transform:s027-family-shear",
+        matrix=matrix,
+        label="S027 family affine shear",
+    )
+    binding = VisualTransformBinding.from_ref(transform.id)
+    view = View2D(
+        id="view:s027-family",
+        panel_id="panel:main",
+        x_range=(-1.5, 1.5),
+        y_range=(-1.2, 1.2),
+    )
+
+    point_positions = np.array([[-1.0, -0.55], [-0.82, -0.30], [-0.62, -0.48]], dtype=np.float32)
+    point_colors = np.array(
+        [[230, 57, 70, 255], [244, 162, 97, 255], [251, 191, 36, 255]],
+        dtype=np.uint8,
+    )
+    marker_positions = np.array([[-0.38, 0.24], [-0.18, 0.42]], dtype=np.float32)
+    marker_colors = np.array([[42, 157, 143, 255], [0, 137, 123, 255]], dtype=np.uint8)
+    segment_starts = np.array([[-0.72, 0.78], [-0.50, 0.62]], dtype=np.float32)
+    segment_ends = np.array([[-0.05, 0.82], [0.10, 0.66]], dtype=np.float32)
+    segment_colors = np.array([[38, 70, 83, 255], [69, 123, 157, 255]], dtype=np.uint8)
+    path_positions = np.array(
+        [[0.18, -0.72], [0.36, -0.50], [0.58, -0.66], [0.76, -0.42]],
+        dtype=np.float32,
+    )
+    path_colors = np.array([[94, 53, 177, 255]], dtype=np.uint8)
+    text_positions = np.array([[0.34, 0.20], [0.72, 0.48]], dtype=np.float32)
+    text_rgba = np.array([[35, 40, 45, 255], [35, 40, 45, 255]], dtype=np.uint8)
+    mesh_positions = np.array(
+        [[0.46, -0.04], [0.86, -0.02], [0.68, 0.34]], dtype=np.float32
+    )
+    mesh_faces = np.array([[0, 1, 2]], dtype=np.uint32)
+
+    point = PointVisual(
+        id="visual:s027-point-transform",
+        positions=point_positions,
+        colors=point_colors,
+        sizes=np.array([26.0, 32.0, 38.0], dtype=np.float32),
+        coordinate_space=CoordinateSpace.DATA,
+        transform=binding,
+    )
+    marker = MarkerVisual(
+        id="visual:s027-marker-transform",
+        positions=marker_positions,
+        shape=(MarkerShape.DIAMOND, MarkerShape.TRIANGLE),
+        fill_colors=marker_colors,
+        sizes=np.array([48.0, 58.0], dtype=np.float32),
+        stroke_color=np.array([20, 20, 20, 255], dtype=np.uint8),
+        stroke_width=3.0,
+        coordinate_space=CoordinateSpace.DATA,
+        transform=binding,
+    )
+    segment = SegmentVisual(
+        id="visual:s027-segment-transform",
+        start_positions=segment_starts,
+        end_positions=segment_ends,
+        colors=segment_colors,
+        widths=np.array([10.0, 18.0], dtype=np.float32),
+        cap=StrokeCap.ROUND,
+        coordinate_space=CoordinateSpace.DATA,
+        transform=binding,
+    )
+    path = PathVisual(
+        id="visual:s027-path-transform",
+        positions=path_positions,
+        path_lengths=(path_positions.shape[0],),
+        colors=path_colors,
+        widths=np.array([16.0], dtype=np.float32),
+        cap=StrokeCap.ROUND,
+        join=StrokeJoin.ROUND,
+        coordinate_space=CoordinateSpace.DATA,
+        transform=binding,
+    )
+    text = TextVisual(
+        id="visual:s027-text-transform",
+        texts=("View", "Affine"),
+        positions=text_positions,
+        rgba=text_rgba,
+        font_size_px=np.array([18.0, 18.0], dtype=np.float32),
+        anchor_x=(TextAnchorX.CENTER, TextAnchorX.CENTER),
+        anchor_y=(TextAnchorY.CENTER, TextAnchorY.CENTER),
+        coordinate_space=CoordinateSpace.DATA,
+        transform=binding,
+    )
+    mesh = MeshVisual(
+        id="visual:s027-mesh-transform",
+        positions=mesh_positions,
+        faces=mesh_faces,
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([30, 136, 229, 210], dtype=np.uint8),
+        color_mode=MeshColorMode.UNIFORM,
+        transform=binding,
+    )
+
+    return VisualQAScene(
+        case_id="transform/family_affine_view2d",
+        visuals=(point, marker, segment, path, text, mesh),
+        transform_resources=(transform,),
+        views=(view,),
+        arrays={
+            "affine_matrix": matrix,
+            "point_positions": point_positions,
+            "point_colors": point_colors,
+            "marker_positions": marker_positions,
+            "marker_colors": marker_colors,
+            "segment_starts": segment_starts,
+            "segment_ends": segment_ends,
+            "segment_colors": segment_colors,
+            "path_positions": path_positions,
+            "path_colors": path_colors,
+            "text_positions": text_positions,
+            "text_rgba": text_rgba,
+            "mesh_positions": mesh_positions,
+            "mesh_faces": mesh_faces,
+        },
+        notes=(
+            "One named affine transform is shared across point, marker, segment, path, text anchor, and strict 2D mesh DATA visuals before View2D mapping.",
         ),
     )
 

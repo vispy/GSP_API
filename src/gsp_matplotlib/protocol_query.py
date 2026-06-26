@@ -429,7 +429,12 @@ def _query_mesh_visual(
     if best_face_index is None:
         return None
 
-    vertex_indices_tuple = tuple(int(index) for index in visual.faces[best_face_index])
+    vertex_indices = visual.faces[best_face_index]
+    vertex_indices_tuple = (
+        int(vertex_indices[0]),
+        int(vertex_indices[1]),
+        int(vertex_indices[2]),
+    )
     rgba = _mesh_face_rgba(visual, best_face_index)
     payload = MeshQueryPayload(
         visual_id=visual.id,
@@ -528,6 +533,8 @@ def _mesh_face_rgba(
     visual: MeshVisual, face_index: int
 ) -> tuple[float, float, float, float]:
     color_mode = visual.resolved_color_mode()
+    if visual.color is None:
+        raise ValueError("MeshVisual color is required for face query")
     colors = _rgba01(visual.color)
     if color_mode is MeshColorMode.UNIFORM:
         color = colors.reshape(1, 4)[0]

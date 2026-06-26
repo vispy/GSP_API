@@ -1,6 +1,7 @@
 # Transform, View, and Query Inverse - Accepted S027 Baseline
 
-Status: accepted protocol baseline for S027; implementation pending.
+Status: accepted S027 baseline; protocol, Matplotlib reference behavior, Datoviz gates, VisPy2
+producer API, and deterministic QA coverage are implemented.
 
 Semantic purpose: define deterministic 2D visual transforms, panel view state, and transformed
 query/readback fields without accepting public 3D camera or controller semantics.

@@ -8,6 +8,7 @@ from typing import Callable, TypeAlias
 import numpy as np
 
 from gsp.protocol import (
+    AffineTransform2DResource,
     ColorScale,
     ColorbarGuide,
     ImageVisual,
@@ -17,6 +18,7 @@ from gsp.protocol import (
     PointVisual,
     SegmentVisual,
     TextVisual,
+    View2D,
 )
 
 
@@ -40,6 +42,8 @@ class VisualQAScene:
     arrays: dict[str, np.ndarray]
     color_scales: tuple[ColorScale, ...] = ()
     colorbar_guides: tuple[ColorbarGuide, ...] = ()
+    transform_resources: tuple[AffineTransform2DResource, ...] = ()
+    views: tuple[View2D, ...] = ()
     notes: tuple[str, ...] = ()
 
 

@@ -15,6 +15,7 @@ from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 
 from gsp.protocol import (
+    AffineTransform2DResource,
     ColorScale,
     ColorbarGuide,
     ImageVisual,
@@ -24,6 +25,7 @@ from gsp.protocol import (
     PointVisual,
     SegmentVisual,
     TextVisual,
+    View2D,
 )
 from gsp.qa.visual.artifacts import (
     ensure_run_dirs,
@@ -46,6 +48,7 @@ from gsp.qa.visual.cases import (
     S024_SUITE,
     S025_SUITE,
     S026_SUITE,
+    S027_SUITE,
     case_slug,
     list_cases,
 )
@@ -84,7 +87,7 @@ def run_visual_qa_suite(
     datoviz_color_pipeline: DatovizColorPipeline = "legacy_srgb_blend",
 ) -> dict[str, object]:
     """Run the visual QA suite and return its report."""
-    if suite not in (S023_SUITE, S024_SUITE, S025_SUITE, S026_SUITE):
+    if suite not in (S023_SUITE, S024_SUITE, S025_SUITE, S026_SUITE, S027_SUITE):
         raise ValueError(f"unknown visual QA suite: {suite}")
     normalized_backends = _normalize_backends(backends)
     selected_cases = _select_cases(case_ids, suite=suite)
@@ -118,6 +121,8 @@ def run_visual_qa_suite(
         scene = case.build()
         scene_path, arrays_path = write_scene_artifacts(out_dir, scene)
         write_case_note(out_dir, case.case_id, case.title, scene.notes)
+        view = _scene_view(scene.views)
+        transform_resources = _transform_resource_map(scene.transform_resources)
         backend_reports: dict[str, object] = {}
         if MATPLOTLIB_BACKEND_ID in normalized_backends:
             backend_reports[MATPLOTLIB_BACKEND_ID] = _run_matplotlib(
@@ -127,6 +132,8 @@ def run_visual_qa_suite(
                 resolution,
                 color_scales={scale.id: scale for scale in scene.color_scales},
                 colorbar_guides=scene.colorbar_guides,
+                view=view,
+                transform_resources=transform_resources,
             )
         if DATOVIZ_BACKEND_ID in normalized_backends:
             backend_reports[DATOVIZ_BACKEND_ID] = _run_datoviz(
@@ -207,6 +214,8 @@ def _run_matplotlib(
     *,
     color_scales: dict[str, ColorScale],
     colorbar_guides: tuple[ColorbarGuide, ...],
+    view: View2D | None,
+    transform_resources: dict[str, AffineTransform2DResource],
 ) -> dict[str, object]:
     artifact_path = (
         out_dir / "backends" / "matplotlib" / f"{case_slug(case.case_id)}.png"
@@ -225,7 +234,13 @@ def _run_matplotlib(
         ax.set_aspect("equal", adjustable="box")
         ax.set_axis_off()
         for visual in visuals:
-            _render_matplotlib_visual(ax, visual, color_scales=color_scales)
+            _render_matplotlib_visual(
+                ax,
+                visual,
+                color_scales=color_scales,
+                view=view,
+                transform_resources=transform_resources,
+            )
         for guide in colorbar_guides:
             render_colorbar_guide(ax, guide, color_scales=color_scales)
         fig.savefig(artifact_path, dpi=100, facecolor=fig.get_facecolor())
@@ -313,22 +328,47 @@ def _run_datoviz(
 
 
 def _render_matplotlib_visual(
-    ax: Axes, visual: ProtocolVisual, *, color_scales: dict[str, ColorScale]
+    ax: Axes,
+    visual: ProtocolVisual,
+    *,
+    color_scales: dict[str, ColorScale],
+    view: View2D | None,
+    transform_resources: dict[str, AffineTransform2DResource],
 ) -> None:
     if isinstance(visual, PointVisual):
-        render_point_visual(ax, visual, color_scales=color_scales)
+        render_point_visual(
+            ax,
+            visual,
+            color_scales=color_scales,
+            view=view,
+            transform_resources=transform_resources,
+        )
     elif isinstance(visual, MarkerVisual):
-        render_marker_visual(ax, visual, color_scales=color_scales)
+        render_marker_visual(
+            ax,
+            visual,
+            color_scales=color_scales,
+            view=view,
+            transform_resources=transform_resources,
+        )
     elif isinstance(visual, SegmentVisual):
-        render_segment_visual(ax, visual)
+        render_segment_visual(
+            ax, visual, view=view, transform_resources=transform_resources
+        )
     elif isinstance(visual, PathVisual):
-        render_path_visual(ax, visual)
+        render_path_visual(
+            ax, visual, view=view, transform_resources=transform_resources
+        )
     elif isinstance(visual, ImageVisual):
         render_image_visual(ax, visual, color_scales=color_scales)
     elif isinstance(visual, TextVisual):
-        render_text_visual(ax, visual)
+        render_text_visual(
+            ax, visual, view=view, transform_resources=transform_resources
+        )
     elif isinstance(visual, MeshVisual):
-        render_mesh_visual(ax, visual)
+        render_mesh_visual(
+            ax, visual, view=view, transform_resources=transform_resources
+        )
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
 
@@ -352,6 +392,18 @@ def _render_datoviz_visual(
         renderer.add_mesh_visual(visual)
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
+
+
+def _scene_view(views: tuple[View2D, ...]) -> View2D | None:
+    if len(views) > 1:
+        raise ValueError("visual QA scenes currently support at most one View2D")
+    return views[0] if views else None
+
+
+def _transform_resource_map(
+    resources: tuple[AffineTransform2DResource, ...],
+) -> dict[str, AffineTransform2DResource]:
+    return {resource.id: resource for resource in resources}
 
 
 def _write_datoviz_unsupported(

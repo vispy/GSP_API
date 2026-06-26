@@ -2,7 +2,7 @@
 
 ## Status
 
-S027 is in progress after completed S026 Color Mapping, Colorbars, and Scalar Data Semantics.
+S027 is complete after completed S026 Color Mapping, Colorbars, and Scalar Data Semantics.
 
 ## Selected direction
 
@@ -35,4 +35,4 @@ graph semantics.
 | M101 | completed | Added Matplotlib reference transform/query behavior after M100. |
 | M102 | completed | Added Datoviz transform capability gates and bounded CPU adaptation. |
 | M103 | completed | Added VisPy2 producer API updates after protocol models exist. |
-| M104 | ready | Add QA fixtures and close S027. |
+| M104 | completed | Added S027 visual/query QA fixtures and closed S027. |

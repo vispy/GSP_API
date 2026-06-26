@@ -272,17 +272,18 @@ def render_mesh_visual(
         raise NotImplementedError(
             "Matplotlib MeshVisual vertex colors are capability-gated"
         )
+    if visual.color is None:
+        raise ValueError("MeshVisual color is required for Matplotlib rendering")
+    mesh_color = visual.color
 
     positions, transform = _render_positions(
         axes, visual, visual.positions, view, transform_resources
     )
     triangles = positions[visual.faces]
     if color_mode is MeshColorMode.UNIFORM:
-        facecolors = np.repeat(
-            visual.color[np.newaxis, :], visual.faces.shape[0], axis=0
-        )
+        facecolors = np.repeat(mesh_color[np.newaxis, :], visual.faces.shape[0], axis=0)
     elif color_mode is MeshColorMode.FACE:
-        facecolors = visual.color
+        facecolors = mesh_color
     else:
         raise NotImplementedError(f"unsupported mesh color mode: {color_mode.value}")
 

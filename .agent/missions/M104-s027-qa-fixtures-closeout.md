@@ -6,7 +6,7 @@ S027 - Transform, View, Camera, and Navigation Semantics
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -31,3 +31,15 @@ raw `ANSWER` input can be removed after its contents are fully integrated.
 
 Stop if QA closeout reveals a contradiction between ADR/spec, Matplotlib reference behavior,
 Datoviz gates, or VisPy2 API.
+
+## Result
+
+- Added S027 visual QA suite cases for inline/named affine equivalence, reversed-limit `View2D`
+  DATA/NDC overlay behavior, and cross-family affine plus `View2D` coverage.
+- Extended visual QA scene artifacts to serialize transform resources, inline/ref transform
+  bindings, and `View2D` state.
+- Added focused query fixture coverage for `gsp.transform-query@0.1` inverse payloads.
+- Closed S027 without opening a new stage. Public 3D camera/projection/controller, transform graph,
+  nonlinear view, equal-aspect layout, image affine, depth, and virtual-source transform semantics
+  remain explicitly deferred by ADR-0019 and `spec/transforms.md`.
+- Audited the root `ANSWER` file against tracked ADR/spec/status content before deletion.

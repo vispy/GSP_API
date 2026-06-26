@@ -8,7 +8,7 @@ import json
 from http import HTTPStatus
 
 # pip imports
-import requests  # type: ignore[import-untyped]
+import requests
 import numpy as np
 import matplotlib.pyplot
 import matplotlib.image

@@ -11,7 +11,7 @@ integrated consistently.
 
 ## Status
 
-Ready.
+Completed.
 
 ## Deliverables
 
@@ -30,3 +30,12 @@ Ready.
 
 - Stop on unresolved spec/implementation conflict.
 - Stop if deletion of `ANSWER` would discard unintegrated P012 content.
+
+## Result
+
+- Added S027 visual QA cases for affine transform and `View2D` behavior.
+- Added transform-query inverse fixture coverage through the Matplotlib reference query path.
+- Updated status/spec closeout records and kept deferred public 3D/camera/controller semantics out
+  of S027.
+- Confirmed the P012 content from `ANSWER` is integrated in tracked ADR/spec/status records before
+  removing the root file.
