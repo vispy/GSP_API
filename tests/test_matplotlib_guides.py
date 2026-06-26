@@ -64,6 +64,54 @@ def test_render_axis_guides_uses_auto_linear_nice_ticks_not_native_locator():
         plt.close(fig)
 
 
+def test_render_axis_guides_accepts_reversed_view2d_limits():
+    fig, ax = plt.subplots()
+    view = View2D(id="view:main", panel_id="panel:main", x_range=(1.0, -1.0), y_range=(5.0, -5.0))
+
+    try:
+        render_axis_guides(
+            ax,
+            view,
+            (
+                AxisGuide(id="guide:x", view_id=view.id, dimension=AxisDimension.X, side=AxisSide.BOTTOM),
+                AxisGuide(id="guide:y", view_id=view.id, dimension=AxisDimension.Y, side=AxisSide.LEFT),
+            ),
+        )
+
+        assert ax.get_xlim() == (1.0, -1.0)
+        assert ax.get_ylim() == (5.0, -5.0)
+        assert list(ax.get_xticks()) == [-1.0, -0.5, 0.0, 0.5, 1.0]
+        assert list(ax.get_yticks()) == [-4.0, -2.0, 0.0, 2.0, 4.0]
+    finally:
+        plt.close(fig)
+
+
+def test_render_axis_guides_preserves_explicit_ticks_under_reversed_view2d_limits():
+    fig, ax = plt.subplots()
+    view = View2D(id="view:main", panel_id="panel:main", x_range=(1.0, -1.0), y_range=(-1.0, 1.0))
+    guide = AxisGuide(
+        id="guide:x",
+        view_id=view.id,
+        dimension=AxisDimension.X,
+        side=AxisSide.BOTTOM,
+        tick_spec=TickSpec(
+            kind=TickSpecKind.EXPLICIT,
+            explicit_values=(1.0, 0.0, -1.0),
+            explicit_labels=("right", "center", "left"),
+            target_count=None,
+        ),
+    )
+
+    try:
+        render_axis_guides(ax, view, (guide,))
+
+        assert ax.get_xlim() == (1.0, -1.0)
+        assert list(ax.get_xticks()) == [1.0, 0.0, -1.0]
+        assert [label.get_text() for label in ax.get_xticklabels()] == ["right", "center", "left"]
+    finally:
+        plt.close(fig)
+
+
 def test_render_panel_text_guide_sets_title():
     fig, ax = plt.subplots()
 
@@ -91,6 +139,28 @@ def test_grid_visibility_follows_axis_guides():
 
         assert any(line.get_visible() for line in ax.get_xgridlines())
         assert not any(line.get_visible() for line in ax.get_ygridlines())
+    finally:
+        plt.close(fig)
+
+
+def test_grid_visibility_follows_axis_guides_with_reversed_limits():
+    fig, ax = plt.subplots()
+    view = View2D(id="view:main", panel_id="panel:main", x_range=(1.0, -1.0), y_range=(1.0, -1.0))
+
+    try:
+        render_axis_guides(
+            ax,
+            view,
+            (
+                AxisGuide(id="guide:x", view_id=view.id, dimension=AxisDimension.X, side=AxisSide.BOTTOM, grid_visible=True),
+                AxisGuide(id="guide:y", view_id=view.id, dimension=AxisDimension.Y, side=AxisSide.LEFT, grid_visible=True),
+            ),
+        )
+
+        assert ax.get_xlim() == (1.0, -1.0)
+        assert ax.get_ylim() == (1.0, -1.0)
+        assert any(line.get_visible() for line in ax.get_xgridlines())
+        assert any(line.get_visible() for line in ax.get_ygridlines())
     finally:
         plt.close(fig)
 

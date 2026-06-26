@@ -35,6 +35,7 @@ def _render_x_guide(axes: matplotlib.axes.Axes, view: View2D, guide: AxisGuide |
         return
     if guide.side != AxisSide.BOTTOM:
         raise ValueError("Matplotlib reference slice only supports bottom x guides")
+    axes.set_xlim(view.x_range)
     axes.xaxis.set_visible(guide.visible)
     axes.spines["bottom"].set_visible(guide.visible and guide.spine_visible)
     axes.set_xlabel(guide.label_text or "")
@@ -53,6 +54,7 @@ def _render_y_guide(axes: matplotlib.axes.Axes, view: View2D, guide: AxisGuide |
         return
     if guide.side != AxisSide.LEFT:
         raise ValueError("Matplotlib reference slice only supports left y guides")
+    axes.set_ylim(view.y_range)
     axes.yaxis.set_visible(guide.visible)
     axes.spines["left"].set_visible(guide.visible and guide.spine_visible)
     axes.set_ylabel(guide.label_text or "")

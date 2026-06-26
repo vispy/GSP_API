@@ -6,7 +6,7 @@ S028 - Guide and View2D Integration
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -28,3 +28,14 @@ Implement deterministic tick resolution and Matplotlib guide rendering behavior 
 ## Stop Condition
 
 Stop if tick ordering or grid semantics require a new layout/axis architecture decision.
+
+## Result
+
+- Updated `resolve_ticks()` to accept reversed finite ranges for auto ticks by resolving over the
+  numeric interval spanned by the two limits.
+- Preserved explicit tick values and labels exactly under reversed domains.
+- Updated Matplotlib guide rendering to apply `View2D` x/y limits directly, including reversed
+  limits.
+- Added focused tests for reversed auto ticks, reversed explicit ticks, reversed guide rendering,
+  and grid visibility under reversed limits.
+- Validated focused and nearby guide/protocol/VisPy2 test slices.

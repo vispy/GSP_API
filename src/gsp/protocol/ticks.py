@@ -37,7 +37,8 @@ def resolve_ticks(tick_spec: TickSpec, data_range: tuple[float, float]) -> Resol
         )
     if tick_spec.kind == TickSpecKind.BACKEND_ADAPTED:
         raise ValueError("backend-adapted ticks cannot be resolved by the GSP reference resolver")
-    return _resolve_auto_linear_nice(start, end, tick_spec.target_count or 7, tick_spec.kind)
+    low, high = sorted((start, end))
+    return _resolve_auto_linear_nice(low, high, tick_spec.target_count or 7, tick_spec.kind)
 
 
 def _resolve_auto_linear_nice(start: float, end: float, target_count: int, source: TickSpecKind) -> ResolvedTicks:
@@ -55,8 +56,6 @@ def _finite_range(data_range: tuple[float, float]) -> tuple[float, float]:
     start, end = data_range
     if not math.isfinite(start) or not math.isfinite(end):
         raise ValueError("tick range values must be finite")
-    if start > end:
-        raise ValueError("tick range minimum must be less than or equal to maximum")
     return float(start), float(end)
 
 

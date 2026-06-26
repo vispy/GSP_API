@@ -167,7 +167,7 @@
       "id": "S028",
       "title": "Guide and View2D Integration",
       "state": "in_progress",
-      "progress": 25
+      "progress": 45
     }
   ],
   "missions": [
@@ -1129,16 +1129,16 @@
       "id": "M107",
       "title": "S028 reversed View2D tick and guide reference behavior",
       "stage": "S028",
-      "state": "ready",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 107
     },
     {
       "id": "M108",
       "title": "S028 guide query/readout View2D parity",
       "stage": "S028",
-      "state": "draft",
+      "state": "ready",
       "agent": "codex-ucl",
       "progress": 0,
       "priority": 108
@@ -1222,9 +1222,9 @@
     }
   ],
   "recommendations": [
-    "M106 is complete: guide/View2D specs now state reversed-axis tick, grid, guide-query, and same-snapshot readout rules.",
-    "M107 is ready: implement deterministic reversed `View2D` tick resolution and Matplotlib guide rendering behavior.",
-    "After M107, execute M108-M110 as bounded query/QA/backend-report missions.",
+    "M107 is complete: deterministic tick resolution accepts reversed finite ranges and Matplotlib guide rendering applies reversed `View2D` limits.",
+    "M108 is ready: align guide-scoped and all-rendered query/readout behavior with reversed `View2D` snapshots.",
+    "After M108, execute M109-M110 as bounded QA/backend-report missions.",
     "Stop and report if S028 scope expands into public 3D camera/projection/controller, nonlinear axes, equal-aspect layout, guide collision/layout solving, or live navigation event semantics."
   ],
   "notes": [
@@ -1262,6 +1262,7 @@
     "M104 completed: added S027 visual QA cases for inline/named affine equivalence, View2D DATA/NDC overlay, and cross-family affine+View2D coverage; added transform-query inverse fixture coverage; closed S027 after auditing and deleting ANSWER.",
     "S028 opened as a ready planning stage for Guide/View2D integration. M105 is the next local Mission Control task.",
     "M105 completed: audited guide/tick/grid/query, VisPy2, Matplotlib, Datoviz, and S027 transform authority. No durable architecture conflict was found. The actionable gap is that `View2D` accepts reversed limits while the deterministic tick resolver and guide tests still reject or omit reversed-domain behavior.",
-    "M106 completed: updated `spec/transforms.md`, `spec/query.md`, `spec/vispy2/api.md`, Matplotlib/Datoviz backend specs, and visual QA guidance for reversed `View2D` guide semantics. M107 is ready."
+    "M106 completed: updated `spec/transforms.md`, `spec/query.md`, `spec/vispy2/api.md`, Matplotlib/Datoviz backend specs, and visual QA guidance for reversed `View2D` guide semantics. M107 is ready.",
+    "M107 completed: `resolve_ticks()` now accepts reversed finite domains for deterministic auto ticks, explicit ticks remain unchanged, Matplotlib guide rendering applies `View2D` x/y limits, and focused/nearby tests passed."
   ]
 }
