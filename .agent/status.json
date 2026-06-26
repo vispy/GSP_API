@@ -173,7 +173,7 @@
       "id": "S029",
       "title": "Backend Capability Matrix and Visual Review Pack",
       "state": "in_progress",
-      "progress": 35
+      "progress": 45
     }
   ],
   "missions": [
@@ -1184,6 +1184,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 113
+    },
+    {
+      "id": "M114",
+      "title": "S029 Datoviz color and colorbar promotion audit",
+      "stage": "S029",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 114
     }
   ],
   "review_queue": [],
@@ -1248,7 +1257,7 @@
   "recommendations": [
     "S029 remains open: continue focused audits for rows still adapted or unsupported after the point/marker/segment/path/image/overlay promotion.",
     "Keep text, 2D mesh, colorbar, axes/guides, query payloads, and 3D previews as focused S029 follow-up audits with adapted or experimental status until proven.",
-    "Next S029 audits should focus on Datoviz text, mesh, color/colorbar, transform, and guide rows that remain adapted or unsupported after M113."
+    "Next S029 audits should focus on Datoviz text, mesh, transform, and guide rows that remain adapted or unsupported after M114."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1294,6 +1303,7 @@
     "M112 completed: added the S029 capability matrix schema, review-pack generator, Datoviz review-pack runtime wrapper, focused tests, and Mission Control opening records."
   ],
   "summaries": [
-    "M113 completed: audited Datoviz rendered point, marker, segment, path, image, and overlay rows; promoted only exact S029 rendered scopes to strict, kept text/mesh/color/transform adapted, and regenerated the S029 review pack."
+    "M113 completed: audited Datoviz rendered point, marker, segment, path, image, and overlay rows; promoted only exact S029 rendered scopes to strict, kept text/mesh/color/transform adapted, and regenerated the S029 review pack.",
+    "M114 completed: audited Datoviz color/colorbar rendered rows; promoted scalar image colorbar, scalar point gray range, and scalar marker fill alpha to strict rendering-only status, while preserving query_supported false."
   ]
 }

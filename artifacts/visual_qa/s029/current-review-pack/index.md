@@ -15,8 +15,8 @@ Suite: `s028`
 
 | Status | Count |
 |---|---:|
-| strict | 42 |
-| adapted | 14 |
+| strict | 45 |
+| adapted | 11 |
 | experimental | 0 |
 | unsupported | 2 |
 | disabled | 0 |

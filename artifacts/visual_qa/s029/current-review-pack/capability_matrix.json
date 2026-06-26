@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T17:22:59.660874+00:00",
+  "generated_at": "2026-06-26T18:23:33.359015+00:00",
   "rows": [
     {
       "backend": "matplotlib",
@@ -1027,12 +1027,11 @@
       ],
       "family": "color",
       "known_adaptations": [
-        "Datoviz rendering is reviewable but not yet promoted to strict"
+        "GSP CPU maps the scalar image through the canonical viridis ColorScale before Datoviz RGBA8 upload",
+        "Datoviz native colorbar rendering receives explicit GSP tick values and labels for the S029 case"
       ],
       "known_missing_semantics": [],
-      "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
-      ],
+      "promotion_blockers": [],
       "protocol_scope": [
         "image",
         "scalar",
@@ -1041,9 +1040,9 @@
         "viridis"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
-      "status": "adapted"
+      "status": "strict"
     },
     {
       "backend": "matplotlib",
@@ -1076,12 +1075,11 @@
       ],
       "family": "color",
       "known_adaptations": [
-        "Datoviz rendering is reviewable but not yet promoted to strict"
+        "GSP CPU maps scalar point values through the canonical gray ColorScale before Datoviz RGBA8 upload",
+        "S029 verifies under-range and over-range endpoint clipping for the rendered point scope"
       ],
       "known_missing_semantics": [],
-      "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
-      ],
+      "promotion_blockers": [],
       "protocol_scope": [
         "point",
         "scalar",
@@ -1089,9 +1087,9 @@
         "range-clipping"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
-      "status": "adapted"
+      "status": "strict"
     },
     {
       "backend": "matplotlib",
@@ -1124,12 +1122,11 @@
       ],
       "family": "color",
       "known_adaptations": [
-        "Datoviz rendering is reviewable but not yet promoted to strict"
+        "GSP CPU maps scalar marker fill values through the canonical magma ColorScale before Datoviz RGBA8 upload",
+        "S029 verifies scalar fill alpha with a constant marker stroke for the rendered marker scope"
       ],
       "known_missing_semantics": [],
-      "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
-      ],
+      "promotion_blockers": [],
       "protocol_scope": [
         "marker",
         "scalar",
@@ -1137,9 +1134,9 @@
         "alpha"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
-      "status": "adapted"
+      "status": "strict"
     },
     {
       "backend": "matplotlib",
@@ -1409,12 +1406,12 @@
   ],
   "suite": "s028",
   "summary": {
-    "adapted": 14,
+    "adapted": 11,
     "crashed": 0,
     "disabled": 0,
     "experimental": 0,
     "not_run": 0,
-    "strict": 42,
+    "strict": 45,
     "unsupported": 2
   }
 }

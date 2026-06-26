@@ -317,6 +317,33 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
                     "datoviz": {"status": "rendered"},
                 },
             },
+            {
+                "case_id": "color/point_scalar_gray_range",
+                "family": "color",
+                "required_features": ["point", "scalar", "colormap"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "color/marker_scalar_fill_alpha",
+                "family": "color",
+                "required_features": ["marker", "scalar", "fill", "alpha"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "text/basic_ndc",
+                "family": "text",
+                "required_features": ["text", "ndc", "rgba8"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
         ],
     }
 
@@ -333,10 +360,22 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
     assert "CPU maps scalar gray" in rows[
         ("datoviz", "image/scalar_gray_clim_ndc")
     ]["known_adaptations"][0]
-    assert rows[("datoviz", "color/scalar_image_viridis_colorbar")]["status"] == "adapted"
-    assert rows[("datoviz", "color/scalar_image_viridis_colorbar")][
-        "promotion_blockers"
-    ] == ["strict promotion requires a family-specific capability audit"]
+    assert rows[("datoviz", "color/scalar_image_viridis_colorbar")]["status"] == "strict"
+    assert "explicit GSP tick values" in rows[
+        ("datoviz", "color/scalar_image_viridis_colorbar")
+    ]["known_adaptations"][1]
+    assert rows[("datoviz", "color/point_scalar_gray_range")]["status"] == "strict"
+    assert "endpoint clipping" in rows[
+        ("datoviz", "color/point_scalar_gray_range")
+    ]["known_adaptations"][1]
+    assert rows[("datoviz", "color/marker_scalar_fill_alpha")]["status"] == "strict"
+    assert "scalar fill alpha" in rows[
+        ("datoviz", "color/marker_scalar_fill_alpha")
+    ]["known_adaptations"][1]
+    assert rows[("datoviz", "text/basic_ndc")]["status"] == "adapted"
+    assert rows[("datoviz", "text/basic_ndc")]["promotion_blockers"] == [
+        "strict promotion requires a family-specific capability audit"
+    ]
 
 
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:

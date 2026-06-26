@@ -47,11 +47,11 @@ Run id: `current-review-pack`
 | `mesh/indexed_square_per_face_ndc_2d` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
 | `mesh/indexed_square_per_face_ndc_2d` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
 | `color/scalar_image_viridis_colorbar` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `color/scalar_image_viridis_colorbar` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `color/scalar_image_viridis_colorbar` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `color/point_scalar_gray_range` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `color/point_scalar_gray_range` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `color/point_scalar_gray_range` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `color/marker_scalar_fill_alpha` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `color/marker_scalar_fill_alpha` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `color/marker_scalar_fill_alpha` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `transform/inline_named_equivalence` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
 | `transform/inline_named_equivalence` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
 | `transform/view2d_data_ndc_overlay` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |

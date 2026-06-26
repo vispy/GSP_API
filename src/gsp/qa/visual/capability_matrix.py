@@ -45,6 +45,18 @@ _DATOVIZ_S029_STRICT_RENDER_CASES = {
     "overlay/point_over_image_ndc": [
         "S029 verifies Datoviz point-over-image layering for the rendered NDC overlay scope"
     ],
+    "color/scalar_image_viridis_colorbar": [
+        "GSP CPU maps the scalar image through the canonical viridis ColorScale before Datoviz RGBA8 upload",
+        "Datoviz native colorbar rendering receives explicit GSP tick values and labels for the S029 case",
+    ],
+    "color/point_scalar_gray_range": [
+        "GSP CPU maps scalar point values through the canonical gray ColorScale before Datoviz RGBA8 upload",
+        "S029 verifies under-range and over-range endpoint clipping for the rendered point scope",
+    ],
+    "color/marker_scalar_fill_alpha": [
+        "GSP CPU maps scalar marker fill values through the canonical magma ColorScale before Datoviz RGBA8 upload",
+        "S029 verifies scalar fill alpha with a constant marker stroke for the rendered marker scope",
+    ],
 }
 
 
