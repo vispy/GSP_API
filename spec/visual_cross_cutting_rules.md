@@ -41,3 +41,14 @@ semantics.
 
 S026 defines shared color mapping resources and colorbar guides. Scalar color encodings are
 slot-specific alternatives to RGBA, not backend mappables or draw-call parameters.
+
+## S027 transform rules
+
+Visual transform bindings are positional only. A visual-local `AFFINE_2D` transform is applied to
+source/local positional coordinates before interpreting them in the visual's declared
+`CoordinateSpace`.
+
+Transforms affect point centers, marker anchors, segment endpoints, path vertices, text anchors, and
+strict 2D mesh vertices. They do not affect screen-pixel sizes, stroke widths, text font size,
+scalar color mapping, marker glyph shape, material attributes, or semantic guides. Arbitrary image
+rotation/skew is deferred; image placement remains axis-aligned via existing extent plus `View2D`.

@@ -106,6 +106,17 @@ Required parity targets:
 - misses, outside-panel, unsupported, stale/dropped async results, and backend failures must map to
   distinct GSP statuses without hit payload fields.
 
+## S027 transform/view capability target
+
+Datoviz transform support is capability-gated. The adapter may satisfy accepted S027 semantics with
+native GPU placement or explicit CPU adaptation for finite eager arrays, but it must report the
+placement/adaptation and must not silently materialize virtual or huge sources.
+
+Strict transform query support requires retained source coordinates and inverse reporting through
+`gsp.transform-query@0.1`. If Datoviz can render a transformed visual but cannot provide the inverse
+payload, the adapter must advertise render support separately from query inverse support and return a
+structured unsupported diagnostic for strict inverse requests.
+
 ## M024 capability parity slice
 
 The Datoviz adapter now translates `dvz_capability_snapshot()` into GSP `CapabilitySnapshot` when

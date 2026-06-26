@@ -39,3 +39,15 @@ They define:
 - an `InProcessTransport` contract for the local fast path.
 
 These models intentionally coexist beside the legacy object graph. Legacy renderers are not yet required to consume them directly.
+
+## S027 transform/view baseline
+
+`spec/transforms.md` is the authority for accepted S027 transform and view semantics. The public
+protocol accepts only finite invertible 2D affine transform resources or inline visual transform
+bindings, plus deterministic linear `View2D` state. Public 3D camera, projection, controller,
+navigation-event, transform-stack, and nonlinear transform semantics are reserved/deferred.
+
+Implementation work must add protocol-owned dataclasses/enums/validation for `AFFINE_2D`,
+`View2D`, visual transform bindings, placement capabilities, and transform query inverse payloads
+without exposing Matplotlib transform objects, Datoviz slots, backend shader handles, or native
+camera objects.

@@ -116,3 +116,11 @@ producer conveniences such as scalar `imshow(..., cmap=..., clim=...)`, point/ma
 values, and `colorbar(...)`, but it must emit explicit GSP color scales and must not expose
 Matplotlib `ScalarMappable` objects, Datoviz shader controls, backend colormap registries, or auto
 normalization as protocol semantics.
+
+## S027 transform/view direction
+
+S027 accepts producer conveniences for 2D affine transforms and deterministic view state, such as
+`affine2d(...)`, visual `transform=...`, and `set_view2d(...)`/existing x/y limit methods emitting
+`View2D`. These APIs must emit GSP protocol records and must not expose Matplotlib transform objects,
+Datoviz slots, shader handles, backend camera objects, or public controller event state. Public 3D
+camera/projection/navigation APIs remain deferred.

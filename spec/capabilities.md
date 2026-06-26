@@ -52,6 +52,26 @@ inferred from separate `data` and `guides` capabilities.
 Unsupported requested scope, hit policy, payload, extension payload, or ordering guarantee rejects
 planning with a diagnostic. Direct query execution must not silently return partial results.
 
+## S027 transform/view capabilities
+
+Transform capabilities must distinguish semantic support from placement. Accepted placement
+vocabulary is `GPU_BACKEND`, `CPU_ADAPTER`, `SERVER_SIDE`, `CLIENT_SIDE`, `MIXED`, and
+`UNSUPPORTED`. Placement is a reporting/adaptation property and must not change accepted semantics
+except within declared tolerance.
+
+Recommended S027 capability names include:
+
+- `gsp.transform.affine2d@0.1`;
+- `gsp.transform.inline-affine2d@0.1`;
+- `gsp.view2d.linear@0.1`;
+- `gsp.transform-query@0.1`;
+- visual-family placement/support capabilities such as `gsp.transform.point@0.1`,
+  `gsp.transform.path@0.1`, and `gsp.transform.mesh2d@0.1`.
+
+Datoviz CPU pre-transform adaptation is acceptable only for bounded finite eager arrays, must be
+reported, and must retain source coordinates if query inverse is advertised. Virtual or huge sources
+must not be silently materialized to satisfy transform support.
+
 S015 planner composition note: typed query capability support is necessary but not always sufficient.
 For guide and all-rendered queries, planning must intersect the global query capability with the
 selected axis/guide provider capability:

@@ -62,3 +62,10 @@ S026 adds shared scalar color semantics rather than a new visual family. Strict 
 `ScalarColorEncoding`, and semantic `ColorbarGuide` objects. Strict scalar slots are scalar
 `ImageVisual` texels, `PointVisual.color`, and `MarkerVisual.fill`; `MeshVisual.face_color` scalar
 encoding is capability-gated.
+
+## S027 transform/view addition
+
+S027 adds cross-family transform and view semantics rather than a new visual family. Strict v1
+accepts one optional 2D affine visual transform for positional geometry, deterministic linear
+`View2D` for DATA coordinates, and required query inverse payloads for strict transformed query
+support. Public 3D camera/projection/controller semantics remain deferred.

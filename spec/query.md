@@ -204,3 +204,15 @@ reports the semantic scalar source and displayed color:
 Colorbar ramp query uses extension payload kind `gsp.colorbar-query@0.1` when guide-query capability
 supports it. Framebuffer readback is not the authority for scalar semantics; exact results may be
 computed from protocol scene data.
+
+## S027 transformed query inverse payload
+
+Transformed visual hits use extension payload kind `gsp.transform-query@0.1` when the backend claims
+strict S027 transform query support. The payload reports the coordinate chain used for readback:
+panel/framebuffer coordinate, panel NDC, declared visual coordinate space, declared-space coordinate,
+source/local coordinate when invertible, DATA coordinate for DATA visuals, transform identity,
+`View2D` identity for DATA visuals, inverse status, and diagnostics.
+
+Strict support requires exact inverse semantics within numeric tolerance. A backend that can render a
+transform but cannot provide inverse coordinates must report `unsupported` or include
+`GSP_QUERY_INVERSE_UNSUPPORTED`; it must not silently return an untransformed coordinate.

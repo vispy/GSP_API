@@ -49,3 +49,13 @@ When a tiled-source viewport source rectangle is partially outside source bounds
 reference path renders only the clipped mosaic. The rendered `AxesImage` extent is clipped
 proportionally to match the clipped source rectangle, and `query_tiled_image_source()` uses the same
 clipped extent for hit testing and payload coordinates.
+
+## S027 transform/view reference target
+
+Matplotlib is the strict reference backend for accepted S027 semantics. It must implement finite
+invertible 2D affine visual transforms, deterministic linear `View2D`, reversed limits, DATA/NDC
+behavior, clipping after view mapping, accepted family-specific transform rules, and
+`gsp.transform-query@0.1` inverse payloads for the strict 2D subset.
+
+Matplotlib native transform objects are implementation details. They must not appear in protocol
+records, fixtures, query payloads, or VisPy2 public API.
