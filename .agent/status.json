@@ -173,7 +173,7 @@
       "id": "S029",
       "title": "Backend Capability Matrix and Visual Review Pack",
       "state": "in_progress",
-      "progress": 55
+      "progress": 65
     }
   ],
   "missions": [
@@ -1207,9 +1207,9 @@
       "id": "M116",
       "title": "S029 Datoviz mesh promotion audit",
       "stage": "S029",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 116
     },
     {
@@ -1300,9 +1300,9 @@
     }
   ],
   "recommendations": [
-    "Keep remaining text gaps, 2D mesh, axes/guides, query payloads, and 3D previews as focused S029 follow-up audits with adapted or experimental status until proven.",
-    "Next mission is M116: audit Datoviz mesh rows before transform/guide closeout.",
-    "Use M119 only after M116-M118 are completed or explicitly deferred."
+    "Keep remaining text gaps, axes/guides, query payloads, and 3D previews as focused S029 follow-up audits with adapted or experimental status until proven.",
+    "Next mission is M117: audit Datoviz transform rows before guide/View2D closeout.",
+    "Use M119 only after M117-M118 are completed or explicitly deferred."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",

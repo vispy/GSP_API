@@ -4,7 +4,7 @@ Updated: 2026-06-26
 
 ## Current State
 
-S029 is open at 55% after the Datoviz text promotion audit.
+S029 is open at 65% after the Datoviz mesh promotion audit.
 
 Completed S029 missions:
 
@@ -12,12 +12,13 @@ Completed S029 missions:
 - M113: Datoviz rendered-family promotion audit
 - M114: Datoviz color/colorbar promotion audit
 - M115: Datoviz text promotion audit
+- M116: Datoviz mesh promotion audit
 
 Current pushed GSP branch:
 
 - `agentic-gsp-vispy2`
-- Latest completed commit before M115: `5e09c58 Complete S029 Datoviz color audit`
-- M115 changes are recorded by the commit containing this handoff update.
+- Latest completed commits include M115 text audit, macOS review-pack regeneration, MoltenVK
+  launcher discovery, Datoviz binding regeneration note, and M116 mesh audit.
 
 Current pushed Datoviz branch:
 
@@ -36,10 +37,10 @@ Current pack:
 
 - `artifacts/visual_qa/s029/current-review-pack`
 
-Current matrix status after M115:
+Current matrix status after M116:
 
-- `strict`: 46
-- `adapted`: 10
+- `strict`: 49
+- `adapted`: 7
 - `unsupported`: 2
 - `crashed`: 0
 - `disabled`: 0
@@ -53,6 +54,9 @@ Strict Datoviz rendered rows now include:
 - `color/point_scalar_gray_range`
 - `color/marker_scalar_fill_alpha`
 - `text/rotation_alpha_ndc`
+- `mesh/single_triangle_uniform_ndc_2d`
+- `mesh/indexed_square_uniform_ndc_2d`
+- `mesh/indexed_square_per_face_ndc_2d`
 
 All promoted Datoviz rows remain rendering-only:
 
@@ -60,12 +64,11 @@ All promoted Datoviz rows remain rendering-only:
 
 ## Next Mission Batch
 
-The next batch is recorded as ready missions M116-M119:
+The next batch is recorded as ready missions M117-M119:
 
-1. M116 - S029 Datoviz mesh promotion audit
-2. M117 - S029 Datoviz transform promotion audit
-3. M118 - S029 Datoviz guide/View2D unsupported closure
-4. M119 - S029 review-pack closeout
+1. M117 - S029 Datoviz transform promotion audit
+2. M118 - S029 Datoviz guide/View2D unsupported closure
+3. M119 - S029 review-pack closeout
 
 Execute in order unless one mission exposes an upstream Datoviz blocker.
 
@@ -75,10 +78,10 @@ From the GSP repo:
 
 ```bash
 tools/agentctl next
-tools/agentctl mission show M116
+tools/agentctl mission show M117
 ```
 
-Then execute M116 locally or approve a bounded worker launch.
+Then execute M117 locally or approve a bounded worker launch.
 
 ## Validation Baseline
 
@@ -87,6 +90,10 @@ Latest completed validation before this handoff:
 - `PYTHONPATH=. uv run pytest tests/test_visual_qa_harness.py -q`: 23 passed
 - `PYTHONPATH=/Users/cyrille/GIT/Viz/datoviz:. uv run pytest tests/test_visual_qa_harness.py -q`:
   23 passed
+- `PYTHONPATH=/Users/cyrille/GIT/Viz/datoviz:. uv run pytest tests/test_visual_qa_harness.py tests/test_datoviz_v04_protocol_renderer.py -q`:
+  93 passed
+- `DATOVIZ_REPO=/Users/cyrille/GIT/Viz/datoviz tools/run_datoviz_visual_review_pack.sh --suite s028 --out artifacts/visual_qa/s029/current-review-pack --run-id current-review-pack --resolution 800x600`:
+  passed
 - S029 full review pack regenerated successfully on macOS after regenerating Datoviz ctypes wrappers.
 - `tools/run_datoviz_visual_review_pack.sh` smoke passed after teaching the launcher to discover
   `VK_ICD_FILENAMES`, VULKAN_SDK, and Homebrew MoltenVK locations.

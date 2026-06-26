@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T20:46:20.991770+00:00",
+  "generated_at": "2026-06-26T20:59:36.577030+00:00",
   "rows": [
     {
       "backend": "matplotlib",
@@ -876,12 +876,11 @@
       ],
       "family": "mesh",
       "known_adaptations": [
-        "Datoviz rendering is reviewable but not yet promoted to strict"
+        "Datoviz uses retained mesh position/index upload with z=0 adaptation for the bounded 2D NDC triangle scope",
+        "S029 verifies flat uniform RGBA rendering with depth testing disabled for the 2D ordered-rendering scope"
       ],
       "known_missing_semantics": [],
-      "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
-      ],
+      "promotion_blockers": [],
       "protocol_scope": [
         "mesh",
         "ndc",
@@ -890,9 +889,9 @@
         "2d"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
-      "status": "adapted"
+      "status": "strict"
     },
     {
       "backend": "matplotlib",
@@ -926,12 +925,11 @@
       ],
       "family": "mesh",
       "known_adaptations": [
-        "Datoviz rendering is reviewable but not yet promoted to strict"
+        "Datoviz preserves indexed 2D triangle geometry for the uniform-color square scope",
+        "S029 verifies the shared-vertex two-triangle square renders as one flat opaque RGBA mesh"
       ],
       "known_missing_semantics": [],
-      "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
-      ],
+      "promotion_blockers": [],
       "protocol_scope": [
         "mesh",
         "ndc",
@@ -940,9 +938,9 @@
         "2d"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
-      "status": "adapted"
+      "status": "strict"
     },
     {
       "backend": "matplotlib",
@@ -976,12 +974,11 @@
       ],
       "family": "mesh",
       "known_adaptations": [
-        "Datoviz rendering is reviewable but not yet promoted to strict"
+        "Datoviz adapts per-face RGBA to its per-vertex color mesh path by duplicating triangle vertices",
+        "S029 verifies the two original face colors and diagonal split for the bounded 2D NDC scope"
       ],
       "known_missing_semantics": [],
-      "promotion_blockers": [
-        "strict promotion requires a family-specific capability audit"
-      ],
+      "promotion_blockers": [],
       "protocol_scope": [
         "mesh",
         "ndc",
@@ -990,9 +987,9 @@
         "2d"
       ],
       "query_supported": false,
-      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
-      "status": "adapted"
+      "status": "strict"
     },
     {
       "backend": "matplotlib",
@@ -1405,12 +1402,12 @@
   ],
   "suite": "s028",
   "summary": {
-    "adapted": 10,
+    "adapted": 7,
     "crashed": 0,
     "disabled": 0,
     "experimental": 0,
     "not_run": 0,
-    "strict": 46,
+    "strict": 49,
     "unsupported": 2
   }
 }

@@ -41,11 +41,11 @@ Run id: `current-review-pack`
 | `text/multiline_unicode_smoke` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
 | `text/multiline_unicode_smoke` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
 | `mesh/single_triangle_uniform_ndc_2d` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `mesh/single_triangle_uniform_ndc_2d` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `mesh/single_triangle_uniform_ndc_2d` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `mesh/indexed_square_uniform_ndc_2d` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `mesh/indexed_square_uniform_ndc_2d` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `mesh/indexed_square_uniform_ndc_2d` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `mesh/indexed_square_per_face_ndc_2d` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `mesh/indexed_square_per_face_ndc_2d` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `mesh/indexed_square_per_face_ndc_2d` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `color/scalar_image_viridis_colorbar` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
 | `color/scalar_image_viridis_colorbar` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `color/point_scalar_gray_range` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |

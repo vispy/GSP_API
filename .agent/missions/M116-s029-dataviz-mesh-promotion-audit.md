@@ -6,7 +6,7 @@ S029 - Backend Capability Matrix and Visual Review Pack
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -40,3 +40,14 @@ Rendered Datoviz rows:
 Stop if strict promotion would require silently approximating indexing, face color, depth, 3D
 semantics, or query behavior.
 
+## Completion
+
+Completed on 2026-06-26 in the local Mission Control session.
+
+- Added `.agent/S029_DATOVIZ_MESH_AUDIT.md`.
+- Promoted `mesh/single_triangle_uniform_ndc_2d`, `mesh/indexed_square_uniform_ndc_2d`, and
+  `mesh/indexed_square_per_face_ndc_2d` to `strict` for rendering only.
+- Documented the exact 2D NDC mesh scopes, including Datoviz `z=0` upload, disabled depth testing,
+  preserved indexed uniform geometry, and per-face RGBA adaptation by triangle-vertex duplication.
+- Preserved `query_supported: false` for all mesh rows.
+- Regenerated `artifacts/visual_qa/s029/current-review-pack`.

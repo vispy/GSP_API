@@ -380,6 +380,33 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
                     "datoviz": {"status": "rendered"},
                 },
             },
+            {
+                "case_id": "mesh/single_triangle_uniform_ndc_2d",
+                "family": "mesh",
+                "required_features": ["mesh", "ndc", "uniform-rgba"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "mesh/indexed_square_uniform_ndc_2d",
+                "family": "mesh",
+                "required_features": ["mesh", "ndc", "indexed", "uniform-rgba"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "mesh/indexed_square_per_face_ndc_2d",
+                "family": "mesh",
+                "required_features": ["mesh", "ndc", "indexed", "face-rgba"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
         ],
     }
 
@@ -430,6 +457,24 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
     assert "Unicode fallback" in rows[
         ("datoviz", "text/multiline_unicode_smoke")
     ]["promotion_blockers"][0]
+    assert rows[("datoviz", "mesh/single_triangle_uniform_ndc_2d")]["status"] == "strict"
+    assert rows[("datoviz", "mesh/single_triangle_uniform_ndc_2d")][
+        "query_supported"
+    ] is False
+    assert "z=0 adaptation" in rows[
+        ("datoviz", "mesh/single_triangle_uniform_ndc_2d")
+    ]["known_adaptations"][0]
+    assert rows[("datoviz", "mesh/indexed_square_uniform_ndc_2d")]["status"] == "strict"
+    assert "shared-vertex" in rows[
+        ("datoviz", "mesh/indexed_square_uniform_ndc_2d")
+    ]["known_adaptations"][1]
+    assert rows[("datoviz", "mesh/indexed_square_per_face_ndc_2d")]["status"] == "strict"
+    assert rows[("datoviz", "mesh/indexed_square_per_face_ndc_2d")][
+        "query_supported"
+    ] is False
+    assert "duplicating triangle vertices" in rows[
+        ("datoviz", "mesh/indexed_square_per_face_ndc_2d")
+    ]["known_adaptations"][0]
 
 
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:

@@ -61,6 +61,18 @@ _DATOVIZ_S029_STRICT_RENDER_CASES = {
         "Datoviz retained text receives per-item NDC positions, UTF-8 ASCII strings, RGBA alpha, font size, center anchors, and rotation radians",
         "S029 verifies the rendered text draws above the orientation image with alpha blending and center-anchored rotation",
     ],
+    "mesh/single_triangle_uniform_ndc_2d": [
+        "Datoviz uses retained mesh position/index upload with z=0 adaptation for the bounded 2D NDC triangle scope",
+        "S029 verifies flat uniform RGBA rendering with depth testing disabled for the 2D ordered-rendering scope",
+    ],
+    "mesh/indexed_square_uniform_ndc_2d": [
+        "Datoviz preserves indexed 2D triangle geometry for the uniform-color square scope",
+        "S029 verifies the shared-vertex two-triangle square renders as one flat opaque RGBA mesh",
+    ],
+    "mesh/indexed_square_per_face_ndc_2d": [
+        "Datoviz adapts per-face RGBA to its per-vertex color mesh path by duplicating triangle vertices",
+        "S029 verifies the two original face colors and diagonal split for the bounded 2D NDC scope",
+    ],
 }
 
 _DATOVIZ_S029_RENDERED_BLOCKERS = {
