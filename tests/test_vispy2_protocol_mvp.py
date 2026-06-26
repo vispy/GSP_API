@@ -589,6 +589,44 @@ def test_vispy2_guide_apis_render_through_matplotlib_reference():
         plt.close(mpl_fig)
 
 
+def test_vispy2_reversed_view2d_guides_render_through_matplotlib_reference():
+    fig, ax = vp.subplots()
+    view = ax.set_view2d(xlim=(1.0, -1.0), ylim=(1.0, -1.0))
+    ax.set_xlabel("reversed x")
+    ax.set_ylabel("reversed y")
+    ax.set_title("Reversed guides")
+    ax.set_xticks([1.0, 0.0, -1.0], labels=["right", "center", "left"])
+    ax.set_yticks([1.0, 0.0, -1.0], labels=["top", "center", "bottom"])
+    ax.grid(True)
+    point = ax.scatter(np.array([[0.5, -0.5]], dtype=np.float32), id="visual:points")
+
+    mpl_fig, mpl_axes = fig.render_matplotlib()
+    try:
+        assert fig.visuals() == (point,)
+        assert fig.views() == (view,)
+        assert mpl_axes.get_xlim() == (1.0, -1.0)
+        assert mpl_axes.get_ylim() == (1.0, -1.0)
+        assert list(mpl_axes.get_xticks()) == [1.0, 0.0, -1.0]
+        assert list(mpl_axes.get_yticks()) == [1.0, 0.0, -1.0]
+        assert [label.get_text() for label in mpl_axes.get_xticklabels()] == [
+            "right",
+            "center",
+            "left",
+        ]
+        assert [label.get_text() for label in mpl_axes.get_yticklabels()] == [
+            "top",
+            "center",
+            "bottom",
+        ]
+        assert mpl_axes.get_xlabel() == "reversed x"
+        assert mpl_axes.get_ylabel() == "reversed y"
+        assert mpl_axes.get_title() == "Reversed guides"
+        assert any(line.get_visible() for line in mpl_axes.get_xgridlines())
+        assert any(line.get_visible() for line in mpl_axes.get_ygridlines())
+    finally:
+        plt.close(mpl_fig)
+
+
 def test_vispy2_guide_example_covers_public_guide_surface():
     namespace = runpy.run_path(str(Path("examples/vispy2_protocol_guides.py")))
     fig = namespace["fig"]

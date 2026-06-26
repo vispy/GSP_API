@@ -14,7 +14,14 @@ from gsp.protocol import (
     QueryStatus,
     TransformQueryPayload,
 )
-from gsp.qa.visual.cases import S024_SUITE, S026_SUITE, S027_SUITE, get_case, list_cases
+from gsp.qa.visual.cases import (
+    S024_SUITE,
+    S026_SUITE,
+    S027_SUITE,
+    S028_SUITE,
+    get_case,
+    list_cases,
+)
 from gsp.qa.visual.runner import run_visual_qa_suite
 from gsp_matplotlib.protocol_query import QueryVisualEntry, query_visuals
 
@@ -353,6 +360,51 @@ def test_s027_transform_query_fixture_reports_inverse_payload() -> None:
     )
     assert result.extension_payload.source_coord == pytest.approx((-0.28, 0.18))
     assert result.extension_payload.inline_transform_digest is not None
+
+
+def test_s028_case_registry_extends_s027_with_guide_view2d_cases() -> None:
+    """S028 adds deterministic guide/View2D QA cases after S027."""
+    case_ids = [case.case_id for case in list_cases(suite=S028_SUITE)]
+
+    assert case_ids[-2:] == [
+        "guide/view2d_auto_grid",
+        "guide/view2d_reversed_explicit",
+    ]
+
+
+def test_s028_guide_view2d_visual_qa_run_writes_matplotlib_artifacts(
+    tmp_path: Path,
+) -> None:
+    """S028 guide cases render and serialize semantic guide state."""
+    report = run_visual_qa_suite(
+        suite=S028_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=(
+            "guide/view2d_auto_grid",
+            "guide/view2d_reversed_explicit",
+        ),
+        run_id="test-s028-guides",
+        resolution=(360, 240),
+    )
+
+    assert report["stage"] == "S028"
+    assert (tmp_path / "contact_sheets" / "s028_all_cases.png").stat().st_size > 0
+    scene = json.loads(
+        (
+            tmp_path / "scenes" / "guide_view2d_reversed_explicit.scene.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert scene["views"][0]["x_range"] == [1.0, -1.0]
+    assert scene["axis_guides"][0]["tick_spec"]["explicit_labels"] == [
+        "right",
+        "center",
+        "left",
+    ]
+    assert scene["panel_text_guides"][0]["text"] == "S028 reversed guide View2D"
+    assert scene["visuals"][0]["family"] == "point"
+    for case in report["cases"]:
+        assert case["backends"]["matplotlib"]["status"] == "rendered"
 
 
 def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:

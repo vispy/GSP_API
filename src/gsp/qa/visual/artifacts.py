@@ -12,12 +12,14 @@ import numpy as np
 
 from gsp.protocol import (
     AffineTransform2DResource,
+    AxisGuide,
     ColorScale,
     ColorbarGuide,
     ImageVisual,
     InlineAffineTransform2D,
     MeshVisual,
     MarkerVisual,
+    PanelTextGuide,
     PathVisual,
     PointVisual,
     ScalarColorEncoding,
@@ -154,6 +156,10 @@ def _scene_json(scene: VisualQAScene) -> dict[str, object]:
         "schema_version": 1,
         "schema_kind": "gsp.visual_qa.scene",
         "case_id": scene.case_id,
+        "axis_guides": [_axis_guide_json(guide) for guide in scene.axis_guides],
+        "panel_text_guides": [
+            _panel_text_guide_json(guide) for guide in scene.panel_text_guides
+        ],
         "color_scales": [_color_scale_json(scale) for scale in scene.color_scales],
         "colorbar_guides": [
             _colorbar_guide_json(guide) for guide in scene.colorbar_guides
@@ -453,6 +459,38 @@ def _view2d_json(view: View2D) -> dict[str, object]:
         "y_range": list(view.y_range),
         "aspect_policy": view.aspect_policy.value,
         "clip": view.clip,
+    }
+
+
+def _axis_guide_json(guide: AxisGuide) -> dict[str, object]:
+    return {
+        "id": guide.id,
+        "view_id": guide.view_id,
+        "dimension": guide.dimension.value,
+        "side": guide.side.value,
+        "visible": guide.visible,
+        "label_text": guide.label_text,
+        "spine_visible": guide.spine_visible,
+        "grid_visible": guide.grid_visible,
+        "tick_spec": {
+            "kind": guide.tick_spec.kind.value,
+            "explicit_values": list(guide.tick_spec.explicit_values),
+            "explicit_labels": list(guide.tick_spec.explicit_labels)
+            if guide.tick_spec.explicit_labels is not None
+            else None,
+            "target_count": guide.tick_spec.target_count,
+        },
+        "query_policy": guide.query_policy.value,
+    }
+
+
+def _panel_text_guide_json(guide: PanelTextGuide) -> dict[str, object]:
+    return {
+        "id": guide.id,
+        "panel_id": guide.panel_id,
+        "role": guide.role.value,
+        "text": guide.text,
+        "query_policy": guide.query_policy.value,
     }
 
 

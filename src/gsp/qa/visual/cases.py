@@ -6,6 +6,9 @@ import numpy as np
 
 from gsp.protocol import (
     AffineTransform2DResource,
+    AxisDimension,
+    AxisGuide,
+    AxisSide,
     ColorMapId,
     ColorMapRef,
     ColorScale,
@@ -20,6 +23,8 @@ from gsp.protocol import (
     MeshVisual,
     MarkerShape,
     MarkerVisual,
+    PanelTextGuide,
+    PanelTextRole,
     PathVisual,
     PointVisual,
     LinearNormalize,
@@ -31,6 +36,8 @@ from gsp.protocol import (
     TextAnchorX,
     TextAnchorY,
     TextVisual,
+    TickSpec,
+    TickSpecKind,
     View2D,
     VisualTransformBinding,
 )
@@ -42,6 +49,7 @@ S024_SUITE = "s024"
 S025_SUITE = "s025"
 S026_SUITE = "s026"
 S027_SUITE = "s027"
+S028_SUITE = "s028"
 
 
 def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
@@ -66,6 +74,15 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
             + _s025_mesh_cases()
             + _s026_color_cases()
             + _s027_transform_cases()
+        )
+    if suite == S028_SUITE:
+        return (
+            _s023_cases()
+            + _s024_text_cases()
+            + _s025_mesh_cases()
+            + _s026_color_cases()
+            + _s027_transform_cases()
+            + _s028_guide_view2d_cases()
         )
     raise ValueError(f"unknown visual QA suite: {suite}")
 
@@ -311,6 +328,32 @@ def _s027_transform_cases() -> tuple[VisualQACase, ...]:
                 "view2d",
             ),
             builder=_transform_family_affine_view2d,
+        ),
+    )
+
+
+def _s028_guide_view2d_cases() -> tuple[VisualQACase, ...]:
+    return (
+        VisualQACase(
+            case_id="guide/view2d_auto_grid",
+            title="View2D guide auto ticks and grids",
+            family="guide",
+            required_features=("guide", "view2d", "auto-ticks", "grid", "labels"),
+            builder=_guide_view2d_auto_grid,
+        ),
+        VisualQACase(
+            case_id="guide/view2d_reversed_explicit",
+            title="Reversed View2D guide explicit ticks",
+            family="guide",
+            required_features=(
+                "guide",
+                "view2d",
+                "reversed-limits",
+                "explicit-ticks",
+                "grid",
+                "labels",
+            ),
+            builder=_guide_view2d_reversed_explicit,
         ),
     )
 
@@ -1388,6 +1431,156 @@ def _transform_family_affine_view2d() -> VisualQAScene:
         },
         notes=(
             "One named affine transform is shared across point, marker, segment, path, text anchor, and strict 2D mesh DATA visuals before View2D mapping.",
+        ),
+    )
+
+
+def _guide_view2d_auto_grid() -> VisualQAScene:
+    view = View2D(
+        id="view:s028-auto",
+        panel_id="panel:main",
+        x_range=(-2.0, 2.0),
+        y_range=(-1.0, 1.0),
+    )
+    positions = np.array(
+        [[-1.5, -0.5], [-0.5, 0.45], [0.5, -0.15], [1.5, 0.65]],
+        dtype=np.float32,
+    )
+    colors = np.array(
+        [
+            [33, 102, 172, 255],
+            [67, 147, 195, 255],
+            [244, 165, 130, 255],
+            [178, 24, 43, 255],
+        ],
+        dtype=np.uint8,
+    )
+    sizes = np.full(positions.shape[0], 42.0, dtype=np.float32)
+    visual = PointVisual(
+        id="visual:s028-auto-guide-points",
+        positions=positions,
+        colors=colors,
+        sizes=sizes,
+        coordinate_space=CoordinateSpace.DATA,
+    )
+    axis_guides = (
+        AxisGuide(
+            id="guide:s028-auto-x",
+            view_id=view.id,
+            dimension=AxisDimension.X,
+            side=AxisSide.BOTTOM,
+            label_text="auto x",
+            grid_visible=True,
+        ),
+        AxisGuide(
+            id="guide:s028-auto-y",
+            view_id=view.id,
+            dimension=AxisDimension.Y,
+            side=AxisSide.LEFT,
+            label_text="auto y",
+            grid_visible=True,
+        ),
+    )
+    title = PanelTextGuide(
+        id="guide:s028-auto-title",
+        panel_id=view.panel_id,
+        role=PanelTextRole.TITLE,
+        text="S028 auto guide View2D",
+    )
+    return VisualQAScene(
+        case_id="guide/view2d_auto_grid",
+        visuals=(visual,),
+        axis_guides=axis_guides,
+        panel_text_guides=(title,),
+        views=(view,),
+        arrays={
+            "point_positions": positions,
+            "point_colors": colors,
+            "point_sizes": sizes,
+        },
+        notes=(
+            "Auto x/y ticks and grid lines derive from the same View2D limits as the DATA points.",
+        ),
+    )
+
+
+def _guide_view2d_reversed_explicit() -> VisualQAScene:
+    view = View2D(
+        id="view:s028-reversed",
+        panel_id="panel:main",
+        x_range=(1.0, -1.0),
+        y_range=(1.0, -1.0),
+    )
+    positions = np.array(
+        [[1.0, 1.0], [0.0, 0.0], [-1.0, -1.0], [0.5, -0.5]],
+        dtype=np.float32,
+    )
+    colors = np.array(
+        [
+            [42, 157, 143, 255],
+            [38, 70, 83, 255],
+            [230, 57, 70, 255],
+            [251, 191, 36, 255],
+        ],
+        dtype=np.uint8,
+    )
+    sizes = np.array([48.0, 58.0, 48.0, 38.0], dtype=np.float32)
+    visual = PointVisual(
+        id="visual:s028-reversed-guide-points",
+        positions=positions,
+        colors=colors,
+        sizes=sizes,
+        coordinate_space=CoordinateSpace.DATA,
+    )
+    axis_guides = (
+        AxisGuide(
+            id="guide:s028-reversed-x",
+            view_id=view.id,
+            dimension=AxisDimension.X,
+            side=AxisSide.BOTTOM,
+            label_text="reversed x",
+            grid_visible=True,
+            tick_spec=TickSpec(
+                kind=TickSpecKind.EXPLICIT,
+                explicit_values=(1.0, 0.0, -1.0),
+                explicit_labels=("right", "center", "left"),
+                target_count=None,
+            ),
+        ),
+        AxisGuide(
+            id="guide:s028-reversed-y",
+            view_id=view.id,
+            dimension=AxisDimension.Y,
+            side=AxisSide.LEFT,
+            label_text="reversed y",
+            grid_visible=True,
+            tick_spec=TickSpec(
+                kind=TickSpecKind.EXPLICIT,
+                explicit_values=(1.0, 0.0, -1.0),
+                explicit_labels=("top", "center", "bottom"),
+                target_count=None,
+            ),
+        ),
+    )
+    title = PanelTextGuide(
+        id="guide:s028-reversed-title",
+        panel_id=view.panel_id,
+        role=PanelTextRole.TITLE,
+        text="S028 reversed guide View2D",
+    )
+    return VisualQAScene(
+        case_id="guide/view2d_reversed_explicit",
+        visuals=(visual,),
+        axis_guides=axis_guides,
+        panel_text_guides=(title,),
+        views=(view,),
+        arrays={
+            "point_positions": positions,
+            "point_colors": colors,
+            "point_sizes": sizes,
+        },
+        notes=(
+            "Explicit guide ticks and labels pass through exactly while reversed View2D limits flip the panel direction.",
         ),
     )
 

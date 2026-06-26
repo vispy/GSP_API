@@ -9,11 +9,13 @@ import numpy as np
 
 from gsp.protocol import (
     AffineTransform2DResource,
+    AxisGuide,
     ColorScale,
     ColorbarGuide,
     ImageVisual,
     MeshVisual,
     MarkerVisual,
+    PanelTextGuide,
     PathVisual,
     PointVisual,
     SegmentVisual,
@@ -40,6 +42,8 @@ class VisualQAScene:
     case_id: str
     visuals: tuple[ProtocolVisual, ...]
     arrays: dict[str, np.ndarray]
+    axis_guides: tuple[AxisGuide, ...] = ()
+    panel_text_guides: tuple[PanelTextGuide, ...] = ()
     color_scales: tuple[ColorScale, ...] = ()
     colorbar_guides: tuple[ColorbarGuide, ...] = ()
     transform_resources: tuple[AffineTransform2DResource, ...] = ()

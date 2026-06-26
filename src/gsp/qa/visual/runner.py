@@ -16,11 +16,13 @@ import matplotlib.pyplot as plt
 
 from gsp.protocol import (
     AffineTransform2DResource,
+    AxisGuide,
     ColorScale,
     ColorbarGuide,
     ImageVisual,
     MeshVisual,
     MarkerVisual,
+    PanelTextGuide,
     PathVisual,
     PointVisual,
     SegmentVisual,
@@ -49,6 +51,7 @@ from gsp.qa.visual.cases import (
     S025_SUITE,
     S026_SUITE,
     S027_SUITE,
+    S028_SUITE,
     case_slug,
     list_cases,
 )
@@ -69,6 +72,7 @@ from gsp_matplotlib.protocol_renderer import (
     render_segment_visual,
     render_text_visual,
 )
+from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 
 
 BackendStatus = Literal["rendered", "unsupported", "error"]
@@ -87,7 +91,14 @@ def run_visual_qa_suite(
     datoviz_color_pipeline: DatovizColorPipeline = "legacy_srgb_blend",
 ) -> dict[str, object]:
     """Run the visual QA suite and return its report."""
-    if suite not in (S023_SUITE, S024_SUITE, S025_SUITE, S026_SUITE, S027_SUITE):
+    if suite not in (
+        S023_SUITE,
+        S024_SUITE,
+        S025_SUITE,
+        S026_SUITE,
+        S027_SUITE,
+        S028_SUITE,
+    ):
         raise ValueError(f"unknown visual QA suite: {suite}")
     normalized_backends = _normalize_backends(backends)
     selected_cases = _select_cases(case_ids, suite=suite)
@@ -131,6 +142,8 @@ def run_visual_qa_suite(
                 scene.visuals,
                 resolution,
                 color_scales={scale.id: scale for scale in scene.color_scales},
+                axis_guides=scene.axis_guides,
+                panel_text_guides=scene.panel_text_guides,
                 colorbar_guides=scene.colorbar_guides,
                 view=view,
                 transform_resources=transform_resources,
@@ -213,6 +226,8 @@ def _run_matplotlib(
     resolution: tuple[int, int],
     *,
     color_scales: dict[str, ColorScale],
+    axis_guides: tuple[AxisGuide, ...],
+    panel_text_guides: tuple[PanelTextGuide, ...],
     colorbar_guides: tuple[ColorbarGuide, ...],
     view: View2D | None,
     transform_resources: dict[str, AffineTransform2DResource],
@@ -232,7 +247,10 @@ def _run_matplotlib(
         ax.set_xlim(-1.0, 1.0)
         ax.set_ylim(-1.0, 1.0)
         ax.set_aspect("equal", adjustable="box")
-        ax.set_axis_off()
+        if axis_guides or panel_text_guides:
+            ax.set_axis_on()
+        else:
+            ax.set_axis_off()
         for visual in visuals:
             _render_matplotlib_visual(
                 ax,
@@ -243,6 +261,10 @@ def _run_matplotlib(
             )
         for guide in colorbar_guides:
             render_colorbar_guide(ax, guide, color_scales=color_scales)
+        if view is not None and axis_guides:
+            render_axis_guides(ax, view, axis_guides)
+        if panel_text_guides:
+            render_panel_text_guides(ax, panel_text_guides)
         fig.savefig(artifact_path, dpi=100, facecolor=fig.get_facecolor())
         log_path.write_text("rendered\n", encoding="utf-8")
         return {

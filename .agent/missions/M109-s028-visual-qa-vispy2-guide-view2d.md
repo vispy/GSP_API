@@ -6,7 +6,7 @@ S028 - Guide and View2D Integration
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -28,3 +28,13 @@ implemented.
 ## Stop Condition
 
 Stop if QA requires layout/collision solving, equal aspect, or broader Matplotlib compatibility.
+
+## Result
+
+- Added S028 visual QA suite registration.
+- Extended visual QA scenes, JSON artifacts, and Matplotlib rendering to include semantic
+  `AxisGuide` and `PanelTextGuide` objects.
+- Added deterministic S028 QA cases for normal auto-tick/grid guide behavior and reversed explicit
+  guide ticks/labels under `View2D`.
+- Added VisPy2 reversed `set_view2d` guide rendering coverage through the Matplotlib reference path.
+- Validated focused QA/VisPy2 tests and nearby guide/query tests.

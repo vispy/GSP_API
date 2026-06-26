@@ -35,5 +35,5 @@ nonlinear axes, or expansion into public 3D camera/projection/controller behavio
 | M106 | completed | Reconciled specs around guide/tick/query consumption of `View2D`, including reversed axes. |
 | M107 | completed | Implemented deterministic reversed-`View2D` tick and Matplotlib guide rendering behavior. |
 | M108 | completed | Implemented guide query/readout parity for the same `View2D` snapshot after M106/M107. |
-| M109 | ready | Add visual QA and VisPy2 coverage for guide/View2D behavior. |
-| M110 | draft | Add Datoviz guide capability/unsupported reporting and close S028. |
+| M109 | completed | Added visual QA and VisPy2 coverage for guide/View2D behavior. |
+| M110 | ready | Add Datoviz guide capability/unsupported reporting and close S028. |
