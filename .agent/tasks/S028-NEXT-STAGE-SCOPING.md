@@ -32,8 +32,8 @@ nonlinear axes, or expansion into public 3D camera/projection/controller behavio
 | Mission | State | Purpose |
 |---|---|---|
 | M105 | completed | Audited guide/View2D authority, defined S028 implementation batch, and found no architecture blocker. |
-| M106 | ready | Reconcile specs around guide/tick/query consumption of `View2D`, including reversed axes. |
-| M107 | draft | Implement deterministic reversed-`View2D` tick and Matplotlib guide rendering behavior after M106. |
+| M106 | completed | Reconciled specs around guide/tick/query consumption of `View2D`, including reversed axes. |
+| M107 | ready | Implement deterministic reversed-`View2D` tick and Matplotlib guide rendering behavior after M106. |
 | M108 | draft | Implement guide query/readout parity for the same `View2D` snapshot after M106/M107. |
 | M109 | draft | Add visual QA and VisPy2 coverage for guide/View2D behavior. |
 | M110 | draft | Add Datoviz guide capability/unsupported reporting and close S028. |

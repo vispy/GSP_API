@@ -330,6 +330,12 @@ GSP models this as `datoviz.v04.panel_axis.wip`. The provider is capability-gate
 facade/raw binding symbols. Native backend auto ticks are adapted output unless Datoviz can accept
 GSP-resolved explicit ticks or an equivalent declared GSP policy.
 
+S028 guide/View2D support must remain capability-gated. Datoviz may claim strict guide support only
+when it can verify that panel axes consume the same `View2D` domain as data visuals, preserve
+explicit GSP tick values/labels, handle reversed finite limits consistently, and report guide query
+support from the same view snapshot. Otherwise it must report adapted or unsupported guide behavior
+with structured diagnostics.
+
 
 ## S025 MeshVisual target
 

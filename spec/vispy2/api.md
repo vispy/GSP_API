@@ -68,6 +68,11 @@ v0.4-dev panel axes. Generated primitive axes are backend artifacts and must not
 auto ticks. Explicit tick values and labels pass through exactly. Backends may use native auto ticks
 only as adapted output unless they render the GSP-resolved values and labels exactly.
 
+Reversed `View2D` limits from `set_xlim(right, left)`, `set_ylim(top, bottom)`, or `set_view2d(...)`
+are valid. They reverse axis direction while preserving semantic tick values. Auto ticks are resolved
+over the finite numeric interval spanned by the limits, then rendered/query-mapped through the
+original `View2D` orientation.
+
 The Matplotlib reference path realizes semantic `AxisGuide` objects with native Matplotlib axes
 artists, but tick values and labels still come from GSP-resolved semantics. `PanelTextGuide` title
 intent is rendered as a Matplotlib title.
@@ -88,8 +93,10 @@ These methods do not expose backend-provider details and do not append generated
 ## Guide query
 
 The reference Matplotlib path has bounded guide-query support for semantic axis tick/spine
-contributions. Guide-specific fields are carried in `GuideQueryPayload`. The broader query-scope
-model for `data`, `guides`, and `all-rendered` remains consultation-gated.
+contributions. Guide-specific fields are carried in `GuideQueryPayload`. Guide queries use the same
+`View2D` snapshot as guide rendering, including reversed axis direction. The broader query-scope
+model for `data`, `guides`, and `all-rendered` remains governed by the accepted S015 capability
+rules.
 
 ## Mesh producer API
 

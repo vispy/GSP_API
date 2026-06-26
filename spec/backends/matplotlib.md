@@ -59,3 +59,18 @@ behavior, clipping after view mapping, accepted family-specific transform rules,
 
 Matplotlib native transform objects are implementation details. They must not appear in protocol
 records, fixtures, query payloads, or VisPy2 public API.
+
+## S028 guide/View2D reference target
+
+Matplotlib is also the strict reference backend for semantic guide consumption of `View2D`.
+
+Reference guide rendering/query must:
+
+- resolve x guide ticks from `View2D.xlim` and y guide ticks from `View2D.ylim`;
+- accept reversed finite limits and render/query tick values through the original axis direction;
+- preserve explicit tick values and labels exactly;
+- use GSP deterministic auto ticks rather than Matplotlib locators as semantic authority;
+- use the same `View2D` snapshot for guide rendering, guide-scoped query, all-rendered query, and
+  data readouts.
+
+Matplotlib axis artists remain backend realization details, not public protocol objects.

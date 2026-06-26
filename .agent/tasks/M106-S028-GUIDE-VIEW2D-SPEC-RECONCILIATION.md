@@ -11,7 +11,7 @@ axes, before implementation missions run.
 
 ## Status
 
-Ready.
+Completed.
 
 ## Deliverables
 
@@ -29,3 +29,13 @@ Ready.
 
 - Stop on unresolved spec conflict.
 - Stop if a new public architecture decision is required.
+
+## Result
+
+- Specs now state that reversed `View2D` limits are valid guide domains.
+- Auto ticks resolve over the finite numeric interval spanned by the limits, while rendering/query
+  placement uses the original `View2D` orientation.
+- Explicit ticks and labels pass through exactly.
+- Guide rendering, guide query, all-rendered guide contributions, and readouts use the same
+  `View2D` snapshot.
+- M107 is unblocked for tick resolver and Matplotlib reference behavior implementation.

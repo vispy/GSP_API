@@ -100,3 +100,19 @@ Optional/capability-gated cases include Datoviz canonical LUT upload, Datoviz GP
 CPU pre-map diagnostics, colorbar unsupported diagnostics, strict 2D `MeshVisual` per-face scalar
 colors, and mesh face scalar query. Manual review checks canonical color placement, endpoint
 clipping, explicit colorbar ticks/labels, diagnostics, and scalar query payloads.
+
+## S028 guide/View2D QA plan
+
+Strict guide/View2D QA should cover deterministic semantic guide behavior against the Matplotlib
+reference backend:
+
+- normal and reversed x/y `View2D` limits;
+- explicit x/y ticks and labels under normal and reversed axes;
+- auto-linear-nice ticks under normal and reversed axes;
+- grid lines tied to resolved tick values;
+- guide labels and panel titles remaining semantic guides, not data visuals;
+- guide-scoped and all-rendered query payloads using the same `View2D` snapshot as rendering;
+- VisPy2 `set_xlim`, `set_ylim`, `set_view2d`, tick, label, and grid producer APIs.
+
+Datoviz guide/View2D QA remains capability-gated. Unsupported Datoviz guide, grid, reversed-axis, or
+guide-query behavior should appear as structured diagnostics rather than adapted visual success.

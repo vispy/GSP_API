@@ -123,6 +123,28 @@ gesture, wheel, inertia, linked-view, or controller event protocols.
 Semantic axis guides, grids, labels, and data readouts consume `View2D` limits. Physical placement,
 collision avoidance, margins, and publication styling are backend/layout policy.
 
+## S028 guide/View2D integration
+
+Semantic guides are not transformed as data visuals. They consume the panel `View2D` snapshot used
+for the corresponding data render/query operation.
+
+For a given axis guide:
+
+- the guide domain is the matching `View2D` limit pair: `xlim` for x guides and `ylim` for y guides;
+- reversed limits are valid and reverse the rendered axis direction;
+- explicit tick values and labels pass through exactly, including values outside the current domain;
+- deterministic auto ticks are resolved over the numeric interval spanned by the two finite limits,
+  independent of whether the limits are increasing or reversed;
+- rendered tick/grid positions are mapped through the original `View2D` limit pair, so a reversed
+  axis displays the same tick values in the opposite panel direction;
+- guide labels and panel titles are semantic guide state and are not public `TextVisual` objects;
+- data readouts and guide query payloads must identify the same `View2D` snapshot used to render
+  the data visuals and guides.
+
+S028 does not add public log, nonlinear, categorical, date/time, geospatial, equal-aspect,
+fixed-aspect, guide collision, automatic layout, 3D camera/projection, controller, gesture, or live
+navigation semantics.
+
 ## Query inverse
 
 Strict transformed query support uses extension payload kind `gsp.transform-query@0.1`.

@@ -6,7 +6,7 @@ S028 - Guide and View2D Integration
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -32,3 +32,16 @@ implementation work begins.
 
 Stop and create a ChatGPT Pro consultation packet if accepted guide authority conflicts with
 `spec/transforms.md`, or if S028 cannot stay limited to deterministic 2D guide/view semantics.
+
+## Result
+
+- Added focused S028 guide/View2D rules to `spec/transforms.md`.
+- Updated `spec/query.md` so guide-scoped and all-rendered guide queries consume the same `View2D`
+  snapshot as rendering and return `unsupported` when that snapshot is unavailable.
+- Updated `spec/vispy2/api.md` to accept reversed `set_xlim`, `set_ylim`, and `set_view2d` limits
+  while preserving semantic tick identity.
+- Updated Matplotlib and Datoviz backend specs for strict reference behavior and capability-gated
+  Datoviz reporting.
+- Updated visual QA guidance for reversed axes, grid lines, guide queries, and VisPy2 producer
+  coverage.
+- No ChatGPT Pro consultation was required. M107 is ready.

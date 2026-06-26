@@ -136,6 +136,23 @@ The Matplotlib/reference path routes scoped queries as follows:
 
 This is a reference/conformance route, not a claim that every backend can support `all-rendered`.
 
+## S028 guide query and View2D
+
+Guide-scoped query and guide contributions in `all-rendered` consume the same `View2D` snapshot as
+guide rendering:
+
+- x-axis guide ticks use the query/render snapshot's `xlim`;
+- y-axis guide ticks use the query/render snapshot's `ylim`;
+- reversed `View2D` limits are valid and reverse spatial placement, not tick identity;
+- auto tick values are generated over the finite numeric interval spanned by the limit pair;
+- explicit tick values and labels are preserved exactly;
+- hit payloads report semantic tick values and labels, not backend pixel labels or locator output;
+- a backend without the exact guide/View2D snapshot required for the query must return
+  `unsupported`, not `miss`.
+
+S028 does not change the S015 requirement that `all-rendered` support is explicit and not inferred
+from separate data and guide query capabilities.
+
 ## M023 scoped extension query payloads
 
 The Matplotlib/reference scoped query path also accepts data-scoped extension query entries. These
