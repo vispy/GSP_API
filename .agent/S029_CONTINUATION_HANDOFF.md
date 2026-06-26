@@ -93,3 +93,31 @@ Latest completed validation before this handoff:
 - Datoviz validation: `just ctypes-check` and `tools/bindings/array_facade_smoke.py` passed with
   the Datoviz `.venv` on `PATH`.
 - `git diff --check`: clean
+
+## Datoviz Binding Regeneration Note
+
+If Datoviz C headers/API change, or if GSP reports missing Datoviz facade symbols that are present
+in the C library, regenerate the Datoviz Python bindings before changing GSP adapter code.
+
+From `/Users/cyrille/GIT/Viz/datoviz`:
+
+```bash
+uv pip install -r requirements-dev.txt
+PATH=/Users/cyrille/GIT/Viz/datoviz/.venv/bin:$PATH just ctypes
+PATH=/Users/cyrille/GIT/Viz/datoviz/.venv/bin:$PATH just ctypes-check
+PATH=/Users/cyrille/GIT/Viz/datoviz/.venv/bin:$PATH PYTHONPATH=. python tools/bindings/array_facade_smoke.py
+```
+
+Then verify expected direct facade symbols from GSP, for example:
+
+```bash
+PYTHONPATH=/Users/cyrille/GIT/Viz/datoviz:. uv run python - <<'PY'
+import datoviz as dvz
+print(hasattr(dvz, "dvz_text_placement"))
+print(hasattr(dvz, "DvzColorbarTicks"))
+print(hasattr(dvz, "dvz_colorbar_set_ticks"))
+PY
+```
+
+Do not add GSP-side fallbacks for skipped/generated Datoviz ctypes helpers unless a spec/ADR
+explicitly accepts that adaptation. The intended S029 path is direct Datoviz facade support.
