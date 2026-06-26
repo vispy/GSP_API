@@ -53,11 +53,11 @@ Run id: `current-review-pack`
 | `color/marker_scalar_fill_alpha` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
 | `color/marker_scalar_fill_alpha` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `transform/inline_named_equivalence` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `transform/inline_named_equivalence` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `transform/inline_named_equivalence` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `transform/view2d_data_ndc_overlay` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `transform/view2d_data_ndc_overlay` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `transform/view2d_data_ndc_overlay` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `transform/family_affine_view2d` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
-| `transform/family_affine_view2d` | datoviz | adapted | `datoviz_rendered_pending_promotion_audit` | True | False |
+| `transform/family_affine_view2d` | datoviz | strict | `datoviz_rendered_strict_s029_family_audit` | True | False |
 | `guide/view2d_auto_grid` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |
 | `guide/view2d_auto_grid` | datoviz | unsupported | `datoviz_axis_guide_contract_unverified` | False | False |
 | `guide/view2d_reversed_explicit` | matplotlib | strict | `matplotlib_reference_rendered` | True | False |

@@ -73,6 +73,18 @@ _DATOVIZ_S029_STRICT_RENDER_CASES = {
         "Datoviz adapts per-face RGBA to its per-vertex color mesh path by duplicating triangle vertices",
         "S029 verifies the two original face colors and diagonal split for the bounded 2D NDC scope",
     ],
+    "transform/inline_named_equivalence": [
+        "Datoviz CPU-adapts finite eager point positions with the same affine matrix for inline and named AFFINE_2D bindings before upload",
+        "S029 verifies inline and resolved named transform positions coincide in the rendered NDC point scope",
+    ],
+    "transform/view2d_data_ndc_overlay": [
+        "Datoviz CPU-maps finite point DATA positions through the linear View2D range, including reversed x limits, before panel-NDC upload",
+        "S029 verifies DATA-mapped points align with explicit NDC overlay points for the rendered point scope",
+    ],
+    "transform/family_affine_view2d": [
+        "Datoviz resolves one named AFFINE_2D resource and CPU-adapts finite eager DATA positions before View2D mapping",
+        "S029 verifies the rendered bounded point, marker, segment, path, text-center-anchor, and 2D uniform-mesh transform scope",
+    ],
 }
 
 _DATOVIZ_S029_RENDERED_BLOCKERS = {

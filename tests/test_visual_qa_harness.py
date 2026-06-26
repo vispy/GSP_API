@@ -407,6 +407,46 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
                     "datoviz": {"status": "rendered"},
                 },
             },
+            {
+                "case_id": "transform/inline_named_equivalence",
+                "family": "transform",
+                "required_features": [
+                    "affine2d",
+                    "inline-transform",
+                    "named-transform",
+                ],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "transform/view2d_data_ndc_overlay",
+                "family": "transform",
+                "required_features": ["view2d", "data", "ndc", "reversed-limits"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
+            {
+                "case_id": "transform/family_affine_view2d",
+                "family": "transform",
+                "required_features": [
+                    "point",
+                    "marker",
+                    "segment",
+                    "path",
+                    "text",
+                    "mesh",
+                    "affine2d",
+                    "view2d",
+                ],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "rendered"},
+                },
+            },
         ],
     }
 
@@ -475,6 +515,36 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
     assert "duplicating triangle vertices" in rows[
         ("datoviz", "mesh/indexed_square_per_face_ndc_2d")
     ]["known_adaptations"][0]
+    assert (
+        rows[("datoviz", "transform/inline_named_equivalence")]["status"] == "strict"
+    )
+    assert rows[("datoviz", "transform/inline_named_equivalence")][
+        "query_supported"
+    ] is False
+    assert "inline and named AFFINE_2D" in rows[
+        ("datoviz", "transform/inline_named_equivalence")
+    ]["known_adaptations"][0]
+    assert rows[("datoviz", "transform/inline_named_equivalence")][
+        "promotion_blockers"
+    ] == []
+    assert (
+        rows[("datoviz", "transform/view2d_data_ndc_overlay")]["status"] == "strict"
+    )
+    assert "reversed x limits" in rows[
+        ("datoviz", "transform/view2d_data_ndc_overlay")
+    ]["known_adaptations"][0]
+    assert rows[("datoviz", "transform/view2d_data_ndc_overlay")][
+        "query_supported"
+    ] is False
+    assert (
+        rows[("datoviz", "transform/family_affine_view2d")]["status"] == "strict"
+    )
+    assert "point, marker, segment, path, text-center-anchor, and 2D uniform-mesh" in rows[
+        ("datoviz", "transform/family_affine_view2d")
+    ]["known_adaptations"][1]
+    assert rows[("datoviz", "transform/family_affine_view2d")][
+        "query_supported"
+    ] is False
 
 
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:
