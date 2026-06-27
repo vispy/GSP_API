@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ctypes
+import inspect
 import sys
 import types
 
@@ -51,6 +52,7 @@ from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
     DATOVIZ_V04_AXIS_PROVIDER,
     datoviz_v04_axis_provider_capability,
+    datoviz_v04_axis_symbols,
     datoviz_v04_capture_diagnostics,
     datoviz_v04_capture_ready,
     gsp_capability_snapshot_from_datoviz,
@@ -267,11 +269,21 @@ class FakeDatovizV04WithAxes(FakeDatovizV04):
 
     def dvz_panel_view2d(self):
         self.calls.append(("view2d",))
-        return "view2d"
+        return self.FakePanelView2D()
 
     def dvz_panel_set_view2d(self, panel, view):
         self.calls.append(("set_view2d", panel, view))
         return 0
+
+    def dvz_panel_visible_domain(self, panel, dim, out_min, out_max):
+        self.calls.append(("visible_domain", panel, dim, out_min, out_max))
+        return True
+
+    def dvz_panel_transform_point(
+        self, panel, from_space, to_space, in_point, out_point
+    ):
+        self.calls.append(("transform_point", panel, from_space, to_space))
+        return True
 
     def dvz_panel_axis(self, panel, dim):
         self.calls.append(("panel_axis", panel, dim))
@@ -1174,7 +1186,7 @@ def test_datoviz_axis_provider_is_capability_gated():
     assert explicit_supported.supports_explicit_ticks
     assert not supported.supports_guide_query
     assert "axis-guide-query-unsupported" in " ".join(supported.diagnostics)
-    assert "strict-reversed-view2d-unverified" in " ".join(supported.diagnostics)
+    assert "strict-guide-title-query-unverified" in " ".join(supported.diagnostics)
 
 
 def test_capability_snapshot_selects_datoviz_axis_provider_when_facade_exposes_symbols():
@@ -2378,11 +2390,15 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
         grid=True,
     )
 
-    assert _calls(fake, "set_domain") == [
-        ("set_domain", "panel", 0, -1.0, 2.0),
-        ("set_domain", "panel", 1, -3.0, 4.0),
-    ]
-    assert _calls(fake, "set_view2d")[-1] == ("set_view2d", "panel", "view2d")
+    assert _calls(fake, "set_domain") == []
+    view_call = _calls(fake, "set_view2d")[-1]
+    panel_view = view_call[2]
+    assert view_call[:2] == ("set_view2d", "panel")
+    assert panel_view.data_x.min == -1.0
+    assert panel_view.data_x.max == 2.0
+    assert panel_view.data_y.min == -3.0
+    assert panel_view.data_y.max == 4.0
+    assert panel_view.padding == 0.0
     assert _calls(fake, "panel_axis") == [
         ("panel_axis", "panel", 0),
         ("panel_axis", "panel", 1),
@@ -2399,6 +2415,38 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
         ("set_label", "axis:0", b"x"),
         ("set_label", "axis:1", b"y"),
     ]
+
+
+def test_apply_datoviz_data_view2d_preserves_reversed_ordered_endpoints():
+    fake = FakeDatovizV04WithAxes()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    panel_view = renderer.apply_datoviz_data_view2d(
+        View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(1.0, -1.0),
+            y_range=(2.0, -2.0),
+        )
+    )
+
+    assert _calls(fake, "set_domain") == []
+    assert panel_view.data_x.min == 1.0
+    assert panel_view.data_x.max == -1.0
+    assert panel_view.data_y.min == 2.0
+    assert panel_view.data_y.max == -2.0
+    assert _calls(fake, "set_view2d")[-1] == ("set_view2d", "panel", panel_view)
+
+
+def test_datoviz_axis_symbol_report_includes_latest_readback_helpers():
+    symbols = datoviz_v04_axis_symbols(FakeDatovizV04WithAxisTicks())
+
+    assert symbols["dvz_panel_view2d"]
+    assert symbols["dvz_panel_set_view2d"]
+    assert symbols["dvz_panel_visible_domain"]
+    assert symbols["dvz_panel_transform_point"]
+    assert symbols["dvz_axis_set_ticks"]
+    assert "dvz_panel_set_domain" not in symbols
 
 
 def test_configure_view2d_axes_rejects_unavailable_axis_symbols():
@@ -2450,6 +2498,35 @@ def test_imported_datoviz_binding_has_expected_v04_shape_when_available():
         pytest.skip("installed Datoviz binding is not the v0.4 facade")
 
     assert is_datoviz_v04_facade(dvz)
+
+
+def test_imported_datoviz_binding_exposes_view2d_and_axis_tick_contract_when_available():
+    dvz = pytest.importorskip("datoviz")
+    required = (
+        "dvz_panel_view2d",
+        "dvz_panel_set_view2d",
+        "dvz_panel_visible_domain",
+        "dvz_panel_transform_point",
+        "dvz_axis_set_ticks",
+    )
+    missing = [name for name in required if not hasattr(dvz, name)]
+    if missing:
+        pytest.skip(f"installed Datoviz binding is missing latest symbols: {missing}")
+
+    panel_view = dvz.dvz_panel_view2d()
+    panel_view.data_x.min = 1.0
+    panel_view.data_x.max = -1.0
+    panel_view.data_y.min = 2.0
+    panel_view.data_y.max = -2.0
+
+    assert panel_view.data_x.min == 1.0
+    assert panel_view.data_x.max == -1.0
+    assert panel_view.data_y.min == 2.0
+    assert panel_view.data_y.max == -2.0
+
+    signature = inspect.signature(dvz.dvz_axis_set_ticks)
+    assert tuple(signature.parameters) == ("axis", "values", "labels")
+    assert signature.parameters["labels"].default is None
 
 
 def test_import_datoviz_v04_wraps_facade_load_runtime_error(monkeypatch):
