@@ -107,17 +107,9 @@ class FakeDatovizV04:
         self.calls.append(("panel_full", figure))
         return "panel"
 
-    class FakeDataDomain:
-        min = 0.0
-        max = 0.0
-
     class FakePanelView2D:
         aspect = 0
         padding = 1.0
-
-        def __init__(self):
-            self.data_x = FakeDatovizV04.FakeDataDomain()
-            self.data_y = FakeDatovizV04.FakeDataDomain()
 
     def dvz_panel_view2d(self):
         self.calls.append(("panel_view2d",))
@@ -125,6 +117,10 @@ class FakeDatovizV04:
 
     def dvz_panel_set_view2d(self, panel, view):
         self.calls.append(("set_view2d", panel, view))
+        return 0
+
+    def dvz_panel_set_domain(self, panel, dim, minimum, maximum):
+        self.calls.append(("set_domain", panel, dim, minimum, maximum))
         return 0
 
     class DvzColor(ctypes.Structure):
@@ -262,10 +258,6 @@ class FakeDatovizV04WithAxes(FakeDatovizV04):
 
     DVZ_DIM_X = 0
     DVZ_DIM_Y = 1
-
-    def dvz_panel_set_domain(self, panel, dim, minimum, maximum):
-        self.calls.append(("set_domain", panel, dim, minimum, maximum))
-        return 0
 
     def dvz_panel_view2d(self):
         self.calls.append(("view2d",))
@@ -1600,10 +1592,10 @@ def test_renderer_configures_equal_aspect_ndc_panel_when_available():
     assert view_call[1] == "panel"
     assert view_call[2].aspect == 1
     assert view_call[2].padding == 0.0
-    assert view_call[2].data_x.min == -1.0
-    assert view_call[2].data_x.max == 1.0
-    assert view_call[2].data_y.min == -1.0
-    assert view_call[2].data_y.max == 1.0
+    assert _calls(fake, "set_domain") == [
+        ("set_domain", "panel", 0, -1.0, 1.0),
+        ("set_domain", "panel", 1, -1.0, 1.0),
+    ]
 
 
 def test_add_image_visual_uses_sampling_api_and_texture_upload():
@@ -2390,14 +2382,15 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
         grid=True,
     )
 
-    assert _calls(fake, "set_domain") == []
+    assert _calls(fake, "set_domain") == [
+        ("set_domain", "panel", 0, -1.0, 1.0),
+        ("set_domain", "panel", 1, -1.0, 1.0),
+        ("set_domain", "panel", 0, -1.0, 2.0),
+        ("set_domain", "panel", 1, -3.0, 4.0),
+    ]
     view_call = _calls(fake, "set_view2d")[-1]
     panel_view = view_call[2]
     assert view_call[:2] == ("set_view2d", "panel")
-    assert panel_view.data_x.min == -1.0
-    assert panel_view.data_x.max == 2.0
-    assert panel_view.data_y.min == -3.0
-    assert panel_view.data_y.max == 4.0
     assert panel_view.padding == 0.0
     assert _calls(fake, "panel_axis") == [
         ("panel_axis", "panel", 0),
@@ -2430,11 +2423,12 @@ def test_apply_datoviz_data_view2d_preserves_reversed_ordered_endpoints():
         )
     )
 
-    assert _calls(fake, "set_domain") == []
-    assert panel_view.data_x.min == 1.0
-    assert panel_view.data_x.max == -1.0
-    assert panel_view.data_y.min == 2.0
-    assert panel_view.data_y.max == -2.0
+    assert _calls(fake, "set_domain") == [
+        ("set_domain", "panel", 0, -1.0, 1.0),
+        ("set_domain", "panel", 1, -1.0, 1.0),
+        ("set_domain", "panel", 0, 1.0, -1.0),
+        ("set_domain", "panel", 1, 2.0, -2.0),
+    ]
     assert _calls(fake, "set_view2d")[-1] == ("set_view2d", "panel", panel_view)
 
 
@@ -2443,10 +2437,10 @@ def test_datoviz_axis_symbol_report_includes_latest_readback_helpers():
 
     assert symbols["dvz_panel_view2d"]
     assert symbols["dvz_panel_set_view2d"]
+    assert symbols["dvz_panel_set_domain"]
     assert symbols["dvz_panel_visible_domain"]
     assert symbols["dvz_panel_transform_point"]
     assert symbols["dvz_axis_set_ticks"]
-    assert "dvz_panel_set_domain" not in symbols
 
 
 def test_configure_view2d_axes_rejects_unavailable_axis_symbols():
@@ -2503,6 +2497,7 @@ def test_imported_datoviz_binding_has_expected_v04_shape_when_available():
 def test_imported_datoviz_binding_exposes_view2d_and_axis_tick_contract_when_available():
     dvz = pytest.importorskip("datoviz")
     required = (
+        "dvz_panel_set_domain",
         "dvz_panel_view2d",
         "dvz_panel_set_view2d",
         "dvz_panel_visible_domain",
@@ -2514,15 +2509,9 @@ def test_imported_datoviz_binding_exposes_view2d_and_axis_tick_contract_when_ava
         pytest.skip(f"installed Datoviz binding is missing latest symbols: {missing}")
 
     panel_view = dvz.dvz_panel_view2d()
-    panel_view.data_x.min = 1.0
-    panel_view.data_x.max = -1.0
-    panel_view.data_y.min = 2.0
-    panel_view.data_y.max = -2.0
-
-    assert panel_view.data_x.min == 1.0
-    assert panel_view.data_x.max == -1.0
-    assert panel_view.data_y.min == 2.0
-    assert panel_view.data_y.max == -2.0
+    if hasattr(panel_view, "padding"):
+        panel_view.padding = 0.0
+        assert panel_view.padding == 0.0
 
     signature = inspect.signature(dvz.dvz_axis_set_ticks)
     assert tuple(signature.parameters) == ("axis", "values", "labels")

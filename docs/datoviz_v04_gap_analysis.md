@@ -147,7 +147,9 @@ Gaps and adaptation:
 
 - Datoviz uses `"diameter"` in pixels. GSP must normalize `PointVisual.sizes` semantics before implementing Datoviz. M003 used Matplotlib marker area. A shared point-size semantic is needed before visual parity can be claimed.
 - Datoviz point colors accept RGBA8 or scalar float with a color scale. GSP first slice can use RGBA8 directly.
-- Datoviz positions are documented as `(N, 3)` normalized positions in quickstart. For GSP `DATA` coordinates, either bind a panel/controller transform or pre-transform with `dvz_panel_data_to_visual_positions()`.
+- Historical note: early v0.4 quickstarts used normalized positions. Current Datoviz retained
+  panel visuals can use DATA positions with `dvz_panel_set_domain()` and the default DATA
+  attachment. CPU pre-normalization is now a legacy adapter fallback, not the preferred path.
 - Query capability for point picking maps to `DVZ_QUERY_CAPABILITY_ITEM` and target `DVZ_SCENE_TARGET_ITEM`.
 
 ## Image Visual Mapping
@@ -170,7 +172,8 @@ Datoviz v0.4 image path:
 
 Gaps and adaptation:
 
-- GSP `extent` must be converted to four corner positions. Existing Datoviz examples use four data positions, transform them with `dvz_panel_data_to_visual_positions()`, and upload triangle-strip positions.
+- GSP `extent` must be converted to four DATA corner positions and uploaded with the default DATA
+  attachment. The current Datoviz panel domain/view policy performs the panel mapping.
 - GSP `origin` maps to texture coordinate ordering, not a one-flag Datoviz image property. The adapter must generate `texcoords` from origin.
 - GSP float scalar images should use sampled fields with scalar semantic and color scale, not the RGBA8 convenience wrapper.
 - `ImageInterpolation` mapping was not confirmed as a first-class sampled-field setting in the Python facade during M004. This needs implementation verification.

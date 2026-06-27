@@ -346,8 +346,8 @@ data-source Datoviz support as explicit follow-ups unless required for the query
 
 Datoviz v0.4-dev headers expose a native panel-axis candidate provider:
 
-- `dvz_panel_view2d()` / `dvz_panel_set_view2d()` with `DvzPanelView2D.data_x/data_y`
-  carrying GSP ordered `View2D` endpoints;
+- `dvz_panel_set_domain()` carrying ordered GSP `View2D` X/Y endpoints;
+- `dvz_panel_view2d()` / `dvz_panel_set_view2d()` carrying fitting/aspect/padding policy only;
 - `dvz_panel_axis()`;
 - `dvz_axis_set_label()`;
 - `dvz_axis_set_tick_policy()`;
@@ -359,9 +359,9 @@ facade/raw binding symbols. Native backend auto ticks are adapted output because
 GSP deterministic `AUTO_LINEAR_NICE_V0` tick policy. Explicit GSP tick values/labels can be rendered
 for review through `dvz_axis_set_ticks` when the binding exposes it.
 
-GSP must not enable a default `DvzPanelView2D` after only setting `dvz_panel_set_domain()`, because
-Datoviz resolves active data domains from `DvzPanelView2D.data_x/data_y` when View2D is enabled.
-The adapter populates the descriptor directly and preserves reversed endpoint order.
+GSP must set `dvz_panel_set_domain()` before enabling `DvzPanelView2D` policy, because current
+Datoviz treats `DvzPanelView2D` as policy-only and resolves source data limits from panel domains.
+The adapter preserves reversed endpoint order when setting those domains.
 
 S028 guide/View2D support must remain capability-gated. Datoviz may claim strict guide support only
 when it can verify that panel axes consume the same `View2D` domain as data visuals, preserve
@@ -378,7 +378,7 @@ S030 closeout status for the current GSP Datoviz adapter:
 | Explicit GSP tick values/labels | `adapted` review path | Requires `dvz_axis_set_ticks`; proven by S030 review artifacts. |
 | Grid lines | capability-gated/adapted | Requires `dvz_axis_set_grid`; alignment remains backend-native for auto ticks. |
 | Axis labels | capability-gated/adapted | Requires `dvz_axis_set_label`; title/panel text remains outside strict Datoviz S028 support. |
-| Reversed finite `View2D` axes | `adapted` guide review path; data-view promotion requires adapter/readback proof | Datoviz now supports ordered `DvzPanelView2D.data_x/data_y`; strict guide parity still excludes title/query. |
+| Reversed finite `View2D` axes | `adapted` guide review path; data-view promotion requires adapter/readback proof | Datoviz now supports ordered panel domains with policy-only `DvzPanelView2D`; strict guide parity still excludes title/query. |
 | Guide picking/query | intentionally deferred | `axis_guide_query_unsupported` |
 | `all-rendered` query with guides | unsupported | `all_rendered_guides_unsupported`; do not silently degrade to data-only. |
 

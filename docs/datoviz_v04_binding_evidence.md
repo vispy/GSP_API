@@ -48,7 +48,8 @@ Confirmed header symbols:
 - `dvz_axis_set_tick_policy()`
 - `dvz_axis_set_grid()`
 - `dvz_panel_visible_domain()`
-- `dvz_panel_data_to_visual_positions()`
+- `dvz_panel_transform_point()`
+- `dvz_panel_set_domain()`
 
 The current header `DvzQueryResult` struct includes the fields GSP needs for a bounded decoder:
 

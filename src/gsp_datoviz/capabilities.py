@@ -45,6 +45,7 @@ _DVZ_CAPTURE_RENDER_FUNCTIONS = (
 )
 
 _REQUIRED_DVZ_AXIS_FUNCTIONS = (
+    "dvz_panel_set_domain",
     "dvz_panel_view2d",
     "dvz_panel_set_view2d",
     "dvz_panel_axis",
@@ -62,7 +63,6 @@ _OPTIONAL_DVZ_AXIS_FUNCTIONS = (
     "dvz_panel_transform_point",
     "dvz_panel_position_to_data",
     "dvz_panel_data_to_position",
-    "dvz_panel_data_to_visual_positions",
 )
 
 _DVZ_CAPABILITY_FIELDS = (
@@ -351,7 +351,7 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
         supports_text_query=False,
         diagnostics=(
             "axis-provider-selected: datoviz.v04.panel_axis.wip",
-            "axis-provider-adapted: backend-native ticks remain adapted and strict guide promotion still excludes title/query semantics",
+            "axis-provider-adapted: panel DATA domains use dvz_panel_set_domain; backend-native ticks remain adapted and strict guide promotion still excludes title/query semantics",
             explicit_tick_diagnostic,
             "axis-guide-query-unsupported: guide picking is deferred for Datoviz v0.4 RC",
             "all-rendered-guides-unsupported: all-rendered guide contributions require guide query support",

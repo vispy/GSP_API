@@ -81,6 +81,7 @@ _REQUIRED_DVZ_V04_FUNCTIONS = (
     "dvz_figure",
     "dvz_panel_full",
     "dvz_panel_add_visual",
+    "dvz_panel_set_domain",
     "dvz_point",
     "dvz_image",
     "dvz_visual_set_data",
@@ -1214,10 +1215,14 @@ class DatovizV04ProtocolRenderer:
             self.dvz.dvz_axis_set_label(y_axis, y_label.encode("utf-8"))
 
     def apply_datoviz_data_view2d(self, view: View2D) -> Any:
-        """Apply GSP ordered data ranges to the active Datoviz View2D carrier."""
+        """Apply GSP ordered data ranges and Datoviz View2D policy."""
+        has_panel_domain = hasattr(self.dvz, "dvz_panel_set_domain")
+        if has_panel_domain:
+            _set_datoviz_panel_domains(self.dvz, self.panel, view.x_range, view.y_range)
         panel_view = self.dvz.dvz_panel_view2d()
-        _set_datoviz_data_domain(panel_view, "data_x", view.x_range)
-        _set_datoviz_data_domain(panel_view, "data_y", view.y_range)
+        if not has_panel_domain:
+            _set_datoviz_data_domain(panel_view, "data_x", view.x_range)
+            _set_datoviz_data_domain(panel_view, "data_y", view.y_range)
         if hasattr(panel_view, "padding"):
             panel_view.padding = 0.0
         result = self.dvz.dvz_panel_set_view2d(self.panel, panel_view)
@@ -1240,6 +1245,26 @@ def _set_datoviz_data_domain(
         )
     domain.min = float(limits[0])
     domain.max = float(limits[1])
+
+
+def _set_datoviz_panel_domains(
+    dvz: Any,
+    panel: Any,
+    x_range: tuple[float, float],
+    y_range: tuple[float, float],
+) -> None:
+    """Set ordered panel DATA domains through the current Datoviz v0.4 contract."""
+    setter = getattr(dvz, "dvz_panel_set_domain", None)
+    if setter is None:
+        raise DatovizV04Unsupported(
+            "Datoviz View2D data-domain setup failed: missing dvz_panel_set_domain"
+        )
+    dim_x = getattr(dvz, "DVZ_DIM_X", 0)
+    dim_y = getattr(dvz, "DVZ_DIM_Y", 1)
+    for dim, limits in ((dim_x, x_range), (dim_y, y_range)):
+        result = setter(panel, dim, float(limits[0]), float(limits[1]))
+        if result not in (0, None, True):
+            raise DatovizV04Unsupported("Datoviz panel data-domain setup failed")
 
 
 def _set_axis_ticks(
@@ -2193,19 +2218,22 @@ def _configure_ndc_panel_view2d(dvz: Any, panel: Any) -> None:
     view_setter = getattr(dvz, "dvz_panel_set_view2d", None)
     if view_factory is None or view_setter is None:
         return
+    if hasattr(dvz, "dvz_panel_set_domain"):
+        _set_datoviz_panel_domains(dvz, panel, (-1.0, 1.0), (-1.0, 1.0))
     view = view_factory()
     if hasattr(view, "aspect"):
         view.aspect = int(getattr(dvz, "DVZ_PANEL_VIEW2D_ASPECT_EQUAL", 1))
     if hasattr(view, "padding"):
         view.padding = 0.0
-    for field_name in ("data_x", "data_y"):
-        domain = getattr(view, field_name, None)
-        if domain is None:
-            continue
-        if hasattr(domain, "min"):
-            domain.min = -1.0
-        if hasattr(domain, "max"):
-            domain.max = 1.0
+    if not hasattr(dvz, "dvz_panel_set_domain"):
+        for field_name in ("data_x", "data_y"):
+            domain = getattr(view, field_name, None)
+            if domain is None:
+                continue
+            if hasattr(domain, "min"):
+                domain.min = -1.0
+            if hasattr(domain, "max"):
+                domain.max = 1.0
     result = view_setter(panel, view)
     if result not in (0, None, True):
         raise DatovizV04Unsupported("Datoviz NDC equal-aspect panel setup failed")
