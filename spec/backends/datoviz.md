@@ -333,7 +333,8 @@ The current GSP Datoviz adapter is still a slice, not parity:
   CPU-adapted named/inline affine transforms and DATA/View2D placement for finite eager visuals,
   v0.4-dev wheel-stage smoke harness;
 - not implemented: strict explicit colorbar ticks/labels, colorbar query, live GPU/headless query
-  execution validation, guide/all-rendered query scopes, scientific readback, tiled-source support.
+  execution validation, strict guide parity, guide/all-rendered query scopes, scientific readback,
+  tiled-source support.
 
 Recommended next mission: establish the Datoviz v0.4 Python facade/raw binding import path, then
 implement Datoviz query/capability parity. Scope implementation to translating
@@ -350,11 +351,13 @@ Datoviz v0.4-dev headers expose a native panel-axis candidate provider:
 - `dvz_panel_axis()`;
 - `dvz_axis_set_label()`;
 - `dvz_axis_set_tick_policy()`;
+- `dvz_axis_set_ticks()` when the facade exposes explicit tick values/labels;
 - optional grid/style/visible-domain helpers.
 
 GSP models this as `datoviz.v04.panel_axis.wip`. The provider is capability-gated on actual Python
-facade/raw binding symbols. Native backend auto ticks are adapted output unless Datoviz can accept
-GSP-resolved explicit ticks or an equivalent declared GSP policy.
+facade/raw binding symbols. Native backend auto ticks are adapted output because they are not the
+GSP deterministic `AUTO_LINEAR_NICE_V0` tick policy. Explicit GSP tick values/labels can be rendered
+for review through `dvz_axis_set_ticks` when the binding exposes it.
 
 S028 guide/View2D support must remain capability-gated. Datoviz may claim strict guide support only
 when it can verify that panel axes consume the same `View2D` domain as data visuals, preserve
@@ -362,23 +365,25 @@ explicit GSP tick values/labels, handle reversed finite limits consistently, and
 support from the same view snapshot. Otherwise it must report adapted or unsupported guide behavior
 with structured diagnostics.
 
-S028 closeout status for the current GSP Datoviz adapter:
+S030 closeout status for the current GSP Datoviz adapter:
 
 | Capability | GSP status | Diagnostic |
 |---|---|---|
 | Panel axis provider symbols | `adapted` when Python facade exposes required v0.4-dev symbols | `datoviz.v04.panel_axis.wip` |
 | Backend auto ticks | `adapted` | Datoviz-native ticks may render but are not GSP-resolved tick output. |
-| Explicit GSP tick values/labels | `unsupported` | `explicit_gsp_ticks_unsupported` |
-| Grid lines | capability-gated | Requires `dvz_axis_set_grid`; alignment remains backend-native until explicit ticks exist. |
+| Explicit GSP tick values/labels | `adapted` review path | Requires `dvz_axis_set_ticks`; proven by S030 review artifacts. |
+| Grid lines | capability-gated/adapted | Requires `dvz_axis_set_grid`; alignment remains backend-native for auto ticks. |
 | Axis labels | capability-gated/adapted | Requires `dvz_axis_set_label`; title/panel text remains outside strict Datoviz S028 support. |
-| Reversed finite `View2D` axes | unverified/adapted | `strict_reversed_view2d_axes_unverified` until Datoviz runtime proof lands. |
+| Reversed finite `View2D` axes | `adapted` review path | Proven rendered with native Datoviz panel domains in S030; strict parity still excludes title/query. |
 | Guide picking/query | intentionally deferred | `axis_guide_query_unsupported` |
 | `all-rendered` query with guides | unsupported | `all_rendered_guides_unsupported`; do not silently degrade to data-only. |
 
-This is sufficient for S028 closeout because Matplotlib is the strict reference path and the Datoviz
-adapter reports the missing guide semantics explicitly. Future Datoviz releases may promote the
-provider toward strict status after native explicit ticks/labels, reversed-domain proof, and query
-payload semantics are exposed and validated through the Python facade.
+This is sufficient for S030 closeout because Matplotlib remains the strict reference path and the
+Datoviz adapter reports the missing guide semantics explicitly. The final S030 review pack classifies
+`guide/view2d_auto_grid` and `guide/view2d_reversed_explicit` as rendered `adapted` rows, not strict
+rows. Future Datoviz releases may promote the provider toward strict status after title layout and
+guide-query payload semantics are exposed and validated through the Python facade, or after the GSP
+guide-row contract explicitly excludes those semantics.
 
 
 ## S025 MeshVisual target

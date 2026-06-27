@@ -294,6 +294,14 @@ class FakeDatovizV04WithAxes(FakeDatovizV04):
         return True
 
 
+class FakeDatovizV04WithAxisTicks(FakeDatovizV04WithAxes):
+    """Recorder exposing the explicit axis tick facade proven in S030."""
+
+    def dvz_axis_set_ticks(self, axis, values, labels=None):
+        self.calls.append(("set_ticks", axis, tuple(values), labels))
+        return True
+
+
 class FakeDvzCapabilitySnapshot:
     struct_size = 128
     flags = 0
@@ -1148,11 +1156,15 @@ def test_facade_shape_rejects_missing_v04_functions():
 def test_datoviz_axis_provider_is_capability_gated():
     unsupported = datoviz_v04_axis_provider_capability(FakeDatovizV04())
     supported = datoviz_v04_axis_provider_capability(FakeDatovizV04WithAxes())
+    explicit_supported = datoviz_v04_axis_provider_capability(
+        FakeDatovizV04WithAxisTicks()
+    )
 
     assert unsupported.provider_status == "unsupported"
     assert supported.provider_status == "adapted"
     assert supported.supports_backend_auto_ticks
     assert not supported.supports_explicit_ticks
+    assert explicit_supported.supports_explicit_ticks
     assert not supported.supports_guide_query
     assert "axis-guide-query-unsupported" in " ".join(supported.diagnostics)
     assert "strict-reversed-view2d-unverified" in " ".join(supported.diagnostics)
@@ -2347,7 +2359,27 @@ def test_configure_view2d_axes_rejects_unavailable_or_strict_explicit_ticks():
         DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithAxes()).configure_view2d_axes(
             View2D(id="view:main", panel_id="panel:main"),
             backend_auto_ticks=False,
+            x_tick_values=(0.0, 1.0),
         )
+
+
+def test_configure_view2d_axes_wires_explicit_ticks_when_binding_is_available():
+    fake = FakeDatovizV04WithAxisTicks()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    renderer.configure_view2d_axes(
+        View2D(id="view:main", panel_id="panel:main"),
+        backend_auto_ticks=False,
+        x_tick_values=(1.0, 0.0, -1.0),
+        x_tick_labels=("right", "center", "left"),
+        y_tick_values=(1.0, -1.0),
+        y_tick_labels=("top", "bottom"),
+    )
+
+    assert _calls(fake, "set_ticks") == [
+        ("set_ticks", "axis:0", (1.0, 0.0, -1.0), (b"right", b"center", b"left")),
+        ("set_ticks", "axis:1", (1.0, -1.0), (b"top", b"bottom")),
+    ]
 
 
 def test_imported_datoviz_binding_has_expected_v04_shape_when_available():

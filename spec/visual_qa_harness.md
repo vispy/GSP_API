@@ -174,5 +174,8 @@ reference backend:
 - guide-scoped and all-rendered query payloads using the same `View2D` snapshot as rendering;
 - VisPy2 `set_xlim`, `set_ylim`, `set_view2d`, tick, label, and grid producer APIs.
 
-Datoviz guide/View2D QA remains capability-gated. Unsupported Datoviz guide, grid, reversed-axis, or
-guide-query behavior should appear as structured diagnostics rather than adapted visual success.
+Datoviz guide/View2D QA remains capability-gated. Datoviz may render guide rows as `adapted` review
+artifacts when native axes consume the same `View2D` domains and any missing guide semantics are
+reported in structured diagnostics. Guide query, all-rendered guide contributions, and panel title
+layout must remain explicit missing semantics until the backend proves or the GSP contract excludes
+them.

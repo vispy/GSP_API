@@ -1,0 +1,422 @@
+{
+  "arrays": {
+    "affine_matrix": {
+      "dtype": "float64",
+      "key": "affine_matrix",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        3,
+        3
+      ]
+    },
+    "marker_colors": {
+      "dtype": "uint8",
+      "key": "marker_colors",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        2,
+        4
+      ]
+    },
+    "marker_positions": {
+      "dtype": "float32",
+      "key": "marker_positions",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "mesh_faces": {
+      "dtype": "uint32",
+      "key": "mesh_faces",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        1,
+        3
+      ]
+    },
+    "mesh_positions": {
+      "dtype": "float32",
+      "key": "mesh_positions",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "path_colors": {
+      "dtype": "uint8",
+      "key": "path_colors",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        1,
+        4
+      ]
+    },
+    "path_positions": {
+      "dtype": "float32",
+      "key": "path_positions",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "point_colors": {
+      "dtype": "uint8",
+      "key": "point_colors",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        3,
+        4
+      ]
+    },
+    "point_positions": {
+      "dtype": "float32",
+      "key": "point_positions",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "segment_colors": {
+      "dtype": "uint8",
+      "key": "segment_colors",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        2,
+        4
+      ]
+    },
+    "segment_ends": {
+      "dtype": "float32",
+      "key": "segment_ends",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "segment_starts": {
+      "dtype": "float32",
+      "key": "segment_starts",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "text_positions": {
+      "dtype": "float32",
+      "key": "text_positions",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "text_rgba": {
+      "dtype": "uint8",
+      "key": "text_rgba",
+      "path": "transform_family_affine_view2d.arrays.npz",
+      "shape": [
+        2,
+        4
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "transform/family_affine_view2d",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [
+    {
+      "id": "transform:s027-family-shear",
+      "kind": "affine-2d",
+      "label": "S027 family affine shear",
+      "matrix": [
+        [
+          1.0,
+          0.22,
+          0.36
+        ],
+        [
+          -0.18,
+          1.0,
+          -0.24
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ],
+  "views": [
+    {
+      "aspect_policy": "auto",
+      "clip": true,
+      "id": "view:s027-family",
+      "kind": "view2d-linear",
+      "panel_id": "panel:main",
+      "x_range": [
+        -1.5,
+        1.5
+      ],
+      "y_range": [
+        -1.2,
+        1.2
+      ]
+    }
+  ],
+  "visuals": [
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          3,
+          4
+        ]
+      },
+      "coordinate_space": "data",
+      "family": "point",
+      "id": "visual:s027-point-transform",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          3,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          3
+        ]
+      },
+      "transform": {
+        "ref": {
+          "id": "transform:s027-family-shear",
+          "required": true
+        }
+      }
+    },
+    {
+      "angle": {
+        "dtype": "float",
+        "shape": []
+      },
+      "coordinate_space": "data",
+      "family": "marker",
+      "fill_colors": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      "id": "visual:s027-marker-transform",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "shape": [
+        "diamond",
+        "triangle"
+      ],
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          2
+        ]
+      },
+      "stroke_color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "stroke_width": 3.0,
+      "transform": {
+        "ref": {
+          "id": "transform:s027-family-shear",
+          "required": true
+        }
+      }
+    },
+    {
+      "cap": "round",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      "coordinate_space": "data",
+      "end_positions": {
+        "dtype": "float32",
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "family": "segment",
+      "id": "visual:s027-segment-transform",
+      "start_positions": {
+        "dtype": "float32",
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "transform": {
+        "ref": {
+          "id": "transform:s027-family-shear",
+          "required": true
+        }
+      },
+      "widths": {
+        "dtype": "float32",
+        "shape": [
+          2
+        ]
+      }
+    },
+    {
+      "cap": "round",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          1,
+          4
+        ]
+      },
+      "coordinate_space": "data",
+      "family": "path",
+      "id": "visual:s027-path-transform",
+      "join": "round",
+      "miter_limit": 4.0,
+      "path_lengths": [
+        4
+      ],
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "transform": {
+        "ref": {
+          "id": "transform:s027-family-shear",
+          "required": true
+        }
+      },
+      "widths": {
+        "dtype": "float32",
+        "shape": [
+          1
+        ]
+      }
+    },
+    {
+      "anchor_x": [
+        "center",
+        "center"
+      ],
+      "anchor_y": [
+        "center",
+        "center"
+      ],
+      "coordinate_space": "data",
+      "family": "text",
+      "font_role": "default",
+      "font_size_px": {
+        "dtype": "float32",
+        "shape": [
+          2
+        ]
+      },
+      "id": "visual:s027-text-transform",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "rgba": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      "rotation_rad": {
+        "dtype": "float",
+        "shape": []
+      },
+      "texts": [
+        "View",
+        "Affine"
+      ],
+      "transform": {
+        "ref": {
+          "id": "transform:s027-family-shear",
+          "required": true
+        }
+      },
+      "z_order": 0
+    },
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "color_mode": "uniform",
+      "coordinate_space": "data",
+      "depth_test": "auto",
+      "depth_write": "auto",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          1,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "visual:s027-mesh-transform",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          3,
+          2
+        ]
+      },
+      "shading": "flat",
+      "transform": {
+        "ref": {
+          "id": "transform:s027-family-shear",
+          "required": true
+        }
+      }
+    }
+  ]
+}

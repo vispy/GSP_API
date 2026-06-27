@@ -16,6 +16,12 @@ This mission did not promote either row in the GSP capability matrix.
 - Runtime report: `artifacts/visual_qa/s030/datoviz-guide-axis-proof/report.json`
 - Auto/grid screenshot: `artifacts/visual_qa/s030/datoviz-guide-axis-proof/guide_view2d_auto_grid.png`
 - Reversed/explicit screenshot: `artifacts/visual_qa/s030/datoviz-guide-axis-proof/guide_view2d_reversed_explicit.png`
+- M121 review pack: `artifacts/visual_qa/s030/m121-guide-review-path/index.md`
+- M121 Datoviz auto/grid review artifact:
+  `artifacts/visual_qa/s030/m121-guide-review-path/backends/datoviz/guide_view2d_auto_grid.png`
+- M121 Datoviz reversed/explicit review artifact:
+  `artifacts/visual_qa/s030/m121-guide-review-path/backends/datoviz/guide_view2d_reversed_explicit.png`
+- M122 final review pack: `artifacts/visual_qa/s030/final-review-pack/index.md`
 
 ## Runtime Findings
 
@@ -27,16 +33,15 @@ This mission did not promote either row in the GSP capability matrix.
 | Reversed View2D domain API | Proven | `dvz_panel_set_domain` accepted `(1, -1)` ranges. |
 | Explicit tick values/labels | Proven at facade level | `dvz_axis_set_ticks(axis, values, labels)` returned true for both axes. |
 | Rendered tick/grid/label placement | Proven | `--capture` produced both guide screenshots with the MoltenVK runtime environment configured. |
-| Explicit ticks through GSP renderer | Blocked | `DatovizV04ProtocolRenderer.configure_view2d_axes(..., backend_auto_ticks=False)` still rejects explicit GSP ticks by contract. |
+| Explicit ticks through GSP renderer | Proven/adapted review | M121 wires explicit tick values/labels through `dvz_axis_set_ticks` and renders `guide/view2d_reversed_explicit` as an adapted review artifact. |
 | Panel title placement | Unsupported | The local facade exposes neither `dvz_panel_set_title` nor `dvz_panel_title`. |
 | Guide/all-rendered query | Unsupported | No Datoviz guide picking/query API was proven. |
 | Strict GSP auto tick identity | Adapted | Datoviz resolves native ticks; this is not the GSP `AUTO_LINEAR_NICE_V0` reference tick algorithm. |
 
-## Recommendation
+## Closeout
 
-Defer row promotion. M121 should only wire a Datoviz guide review path if it can
-surface the remaining gaps explicitly: native axes can render for review, but title
-layout and guide query behavior must stay unsupported, and explicit ticks require a
-renderer contract change before they can be considered for the reversed row.
+S030 is closed. Datoviz guide rows render for review and are classified as `adapted`, not `strict`,
+in the final S030 review pack. Native axes can render for review, including explicit ticks, but title
+layout and guide query behavior remain unsupported.
 
 Do not approximate the panel title with ad hoc text primitives in a strict guide row.

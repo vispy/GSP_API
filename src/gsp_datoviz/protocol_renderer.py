@@ -1149,6 +1149,10 @@ class DatovizV04ProtocolRenderer:
         y_label: str | None = None,
         grid: bool = False,
         backend_auto_ticks: bool = True,
+        x_tick_values: tuple[float, ...] = (),
+        x_tick_labels: tuple[str, ...] | None = None,
+        y_tick_values: tuple[float, ...] = (),
+        y_tick_labels: tuple[str, ...] | None = None,
     ) -> None:
         """Configure Datoviz v0.4-dev native panel domains and panel-owned axes.
 
@@ -1163,9 +1167,15 @@ class DatovizV04ProtocolRenderer:
                 else "Datoviz native axis provider is unavailable"
             )
             raise DatovizV04Unavailable(diagnostic)
-        if not backend_auto_ticks:
+        has_explicit_ticks = bool(x_tick_values or y_tick_values)
+        if not backend_auto_ticks and not has_explicit_ticks:
             raise DatovizV04Unsupported(
                 "Datoviz native axis provider cannot realize explicit GSP ticks in this slice"
+            )
+        if has_explicit_ticks and not hasattr(self.dvz, "dvz_axis_set_ticks"):
+            raise DatovizV04Unsupported(
+                "Datoviz native axis provider cannot realize explicit GSP ticks: "
+                "missing dvz_axis_set_ticks"
             )
 
         dim_x = getattr(self.dvz, "DVZ_DIM_X", 0)
@@ -1186,6 +1196,10 @@ class DatovizV04ProtocolRenderer:
         tick_policy = self.dvz.dvz_axis_tick_policy()
         self.dvz.dvz_axis_set_tick_policy(x_axis, tick_policy)
         self.dvz.dvz_axis_set_tick_policy(y_axis, tick_policy)
+        if x_tick_values:
+            _set_axis_ticks(self.dvz, x_axis, x_tick_values, x_tick_labels)
+        if y_tick_values:
+            _set_axis_ticks(self.dvz, y_axis, y_tick_values, y_tick_labels)
 
         if hasattr(self.dvz, "dvz_axis_set_grid"):
             self.dvz.dvz_axis_set_grid(x_axis, grid)
@@ -1195,6 +1209,22 @@ class DatovizV04ProtocolRenderer:
             self.dvz.dvz_axis_set_label(x_axis, x_label.encode("utf-8"))
         if y_label is not None:
             self.dvz.dvz_axis_set_label(y_axis, y_label.encode("utf-8"))
+
+
+def _set_axis_ticks(
+    dvz: Any,
+    axis: Any,
+    values: tuple[float, ...],
+    labels: tuple[str, ...] | None,
+) -> None:
+    tick_values = np.ascontiguousarray(np.asarray(values, dtype=np.float64))
+    if labels is None:
+        result = dvz.dvz_axis_set_ticks(axis, tick_values, None)
+    else:
+        encoded_labels = tuple(label.encode("utf-8") for label in labels)
+        result = dvz.dvz_axis_set_ticks(axis, tick_values, encoded_labels)
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz explicit axis tick configuration failed")
 
 
 def _positions_3d(

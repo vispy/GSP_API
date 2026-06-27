@@ -56,6 +56,7 @@ _REQUIRED_DVZ_AXIS_FUNCTIONS = (
 _OPTIONAL_DVZ_AXIS_FUNCTIONS = (
     "dvz_axis_set_visible",
     "dvz_axis_set_grid",
+    "dvz_axis_set_ticks",
     "dvz_axis_set_style",
     "dvz_axis_set_plot_margins",
     "dvz_panel_visible_domain",
@@ -323,11 +324,18 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
     if missing:
         return _unsupported(f"Datoviz Python binding is missing v0.4-dev axis symbols: {missing}")
 
+    supports_explicit_ticks = hasattr(dvz, "dvz_axis_set_ticks")
+    explicit_tick_diagnostic = (
+        "axis-provider-explicit-ticks: explicit GSP tick values and labels are wired through dvz_axis_set_ticks"
+        if supports_explicit_ticks
+        else "axis-provider-explicit-ticks-unsupported: missing dvz_axis_set_ticks"
+    )
+
     return AxisProviderCapability(
         provider_id=DATOVIZ_V04_AXIS_PROVIDER,
         backend_id="datoviz",
         provider_status="adapted",
-        supports_explicit_ticks=False,
+        supports_explicit_ticks=supports_explicit_ticks,
         supports_auto_ticks_gsp_policy=False,
         supports_backend_auto_ticks=True,
         supports_tick_labels=True,
@@ -340,7 +348,8 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
         supports_text_query=False,
         diagnostics=(
             "axis-provider-selected: datoviz.v04.panel_axis.wip",
-            "axis-provider-adapted: backend-native ticks used; explicit GSP ticks unsupported by verified binding",
+            "axis-provider-adapted: backend-native ticks remain adapted and strict guide promotion still excludes title/query semantics",
+            explicit_tick_diagnostic,
             "axis-guide-query-unsupported: guide picking is deferred for Datoviz v0.4 RC",
             "all-rendered-guides-unsupported: all-rendered guide contributions require guide query support",
             "strict-reversed-view2d-unverified: Datoviz reversed finite domains require runtime/backend proof before strict status",

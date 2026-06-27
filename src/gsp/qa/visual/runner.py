@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import datetime, timezone
 import os
 import traceback
@@ -16,6 +17,7 @@ import matplotlib.pyplot as plt
 
 from gsp.protocol import (
     AffineTransform2DResource,
+    AxisDimension,
     AxisGuide,
     ColorScale,
     ColorbarGuide,
@@ -27,6 +29,7 @@ from gsp.protocol import (
     PointVisual,
     SegmentVisual,
     TextVisual,
+    TickSpecKind,
     View2D,
 )
 from gsp.qa.visual.artifacts import (
@@ -77,6 +80,18 @@ from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 
 BackendStatus = Literal["rendered", "unsupported", "error"]
 DATOVIZ_QA_OFFSCREEN_ENV = "GSP_DATOVIZ_QA_ENABLE_OFFSCREEN"
+
+
+@dataclass(frozen=True, slots=True)
+class _DatovizGuideAxisConfiguration:
+    x_label: str | None
+    y_label: str | None
+    grid: bool
+    backend_auto_ticks: bool
+    x_tick_values: tuple[float, ...]
+    x_tick_labels: tuple[str, ...] | None
+    y_tick_values: tuple[float, ...]
+    y_tick_labels: tuple[str, ...] | None
 
 
 def run_visual_qa_suite(
@@ -333,47 +348,61 @@ def _run_datoviz(
             diagnostics={"env_var": DATOVIZ_QA_OFFSCREEN_ENV, "required_value": "1"},
             datoviz_color_pipeline=datoviz_color_pipeline,
         )
-    if axis_guides or panel_text_guides:
+    guide_diagnostics = _datoviz_guide_diagnostics(axis_guides, panel_text_guides, view)
+    guide_configuration = _datoviz_guide_axis_configuration(axis_guides, view)
+    if axis_guides and view is None:
         return _write_datoviz_unsupported(
             unsupported_path,
             log_path,
             case,
-            reason=(
-                "axis_guide_render_unsupported: Datoviz v0.4 axis guides and "
-                "panel text guides remain capability-gated until native axes, "
-                "explicit tick labels, title placement, and guide query semantics "
-                "are verified together"
-            ),
-            diagnostics={
-                "axis_guide_count": len(axis_guides),
-                "panel_text_guide_count": len(panel_text_guides),
-            },
+            reason="axis_guide_render_unsupported: Datoviz guide rendering requires a View2D",
+            diagnostics=guide_diagnostics,
             datoviz_color_pipeline=datoviz_color_pipeline,
         )
     width, height = resolution
     try:
+        renderer_view = None if guide_configuration is not None else view
         with DatovizV04ProtocolRenderer(
             width=width,
             height=height,
             color_pipeline=datoviz_color_pipeline,
             color_scales=color_scales,
-            view=view,
+            view=renderer_view,
             transform_resources=transform_resources,
         ) as renderer:
             for visual in visuals:
                 _render_datoviz_visual(renderer, visual)
             for guide in colorbar_guides:
                 renderer.add_colorbar_guide(guide)
+            if guide_configuration is not None:
+                if view is None:
+                    raise DatovizV04Unsupported(
+                        "axis_guide_render_unsupported: Datoviz guide rendering requires a View2D"
+                    )
+                renderer.configure_view2d_axes(
+                    view,
+                    x_label=guide_configuration.x_label,
+                    y_label=guide_configuration.y_label,
+                    grid=guide_configuration.grid,
+                    backend_auto_ticks=guide_configuration.backend_auto_ticks,
+                    x_tick_values=guide_configuration.x_tick_values,
+                    x_tick_labels=guide_configuration.x_tick_labels,
+                    y_tick_values=guide_configuration.y_tick_values,
+                    y_tick_labels=guide_configuration.y_tick_labels,
+                )
             png = renderer.capture_png_bytes()
         artifact_path.write_bytes(png)
         log_path.write_text("rendered\n", encoding="utf-8")
-        return {
+        report: dict[str, object] = {
             "backend_id": DATOVIZ_BACKEND_ID,
             "status": "rendered",
             "artifact_path": str(artifact_path),
             "log_path": str(log_path),
             "datoviz_color_pipeline": datoviz_color_pipeline,
         }
+        if guide_diagnostics:
+            report["guide_diagnostics"] = guide_diagnostics
+        return report
     except Exception as exc:  # noqa: BLE001 - local GPU/display/runtime failures are structured unsupported data.
         log_path.write_text(traceback.format_exc(), encoding="utf-8")
         return _write_datoviz_unsupported(
@@ -451,6 +480,75 @@ def _render_datoviz_visual(
         renderer.add_mesh_visual(visual)
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
+
+
+def _datoviz_guide_axis_configuration(
+    axis_guides: tuple[AxisGuide, ...],
+    view: View2D | None,
+) -> _DatovizGuideAxisConfiguration | None:
+    if not axis_guides:
+        return None
+    if view is None:
+        return None
+
+    x_guide = _axis_guide_for_dimension(axis_guides, AxisDimension.X)
+    y_guide = _axis_guide_for_dimension(axis_guides, AxisDimension.Y)
+    x_values, x_labels = _explicit_tick_payload(x_guide)
+    y_values, y_labels = _explicit_tick_payload(y_guide)
+    return _DatovizGuideAxisConfiguration(
+        x_label=x_guide.label_text if x_guide is not None else None,
+        y_label=y_guide.label_text if y_guide is not None else None,
+        grid=any(guide.grid_visible for guide in axis_guides),
+        backend_auto_ticks=not (x_values or y_values),
+        x_tick_values=x_values,
+        x_tick_labels=x_labels,
+        y_tick_values=y_values,
+        y_tick_labels=y_labels,
+    )
+
+
+def _axis_guide_for_dimension(
+    axis_guides: tuple[AxisGuide, ...],
+    dimension: AxisDimension,
+) -> AxisGuide | None:
+    matches = [guide for guide in axis_guides if guide.dimension is dimension]
+    if len(matches) > 1:
+        raise ValueError(f"visual QA Datoviz path supports one {dimension.value} guide")
+    return matches[0] if matches else None
+
+
+def _explicit_tick_payload(
+    guide: AxisGuide | None,
+) -> tuple[tuple[float, ...], tuple[str, ...] | None]:
+    if guide is None or guide.tick_spec.kind is not TickSpecKind.EXPLICIT:
+        return (), None
+    return guide.tick_spec.explicit_values, guide.tick_spec.explicit_labels
+
+
+def _datoviz_guide_diagnostics(
+    axis_guides: tuple[AxisGuide, ...],
+    panel_text_guides: tuple[PanelTextGuide, ...],
+    view: View2D | None,
+) -> dict[str, object]:
+    diagnostics: dict[str, object] = {}
+    if axis_guides:
+        diagnostics["axis_guide_count"] = len(axis_guides)
+        diagnostics["axis_provider"] = "datoviz.v04.panel_axis.wip"
+        diagnostics["axis_rendering"] = "adapted-review"
+        diagnostics["auto_ticks"] = "backend-native"
+        diagnostics["guide_query"] = "unsupported"
+        diagnostics["all_rendered_guide_query"] = "unsupported"
+        diagnostics["view2d_present"] = view is not None
+        if any(guide.tick_spec.kind is TickSpecKind.EXPLICIT for guide in axis_guides):
+            diagnostics["explicit_ticks"] = "dvz_axis_set_ticks"
+    if panel_text_guides:
+        diagnostics["panel_text_guide_count"] = len(panel_text_guides)
+        diagnostics["panel_title"] = "unsupported"
+        diagnostics["panel_text_guides_skipped"] = [
+            {"id": guide.id, "role": guide.role.value, "text": guide.text}
+            for guide in panel_text_guides
+        ]
+    return diagnostics
 
 
 def _scene_view(views: tuple[View2D, ...]) -> View2D | None:

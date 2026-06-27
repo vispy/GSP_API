@@ -1,0 +1,21 @@
+{
+  "backends": [
+    "matplotlib",
+    "datoviz"
+  ],
+  "case_ids": [
+    "guide/view2d_auto_grid",
+    "guide/view2d_reversed_explicit"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "resolution": [
+    800,
+    600
+  ],
+  "run_id": "m121-guide-review-path",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-06-27T06:33:09.046724+00:00",
+  "suite": "s028"
+}

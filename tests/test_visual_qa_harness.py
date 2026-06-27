@@ -619,6 +619,88 @@ def test_s029_datoviz_guide_view2d_rows_stay_unsupported_with_specific_blockers(
     ][1]
 
 
+def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
+    report = {
+        "suite": "s028",
+        "stage": "S030",
+        "run_id": "unit",
+        "cases": [
+            {
+                "case_id": "guide/view2d_auto_grid",
+                "family": "guide",
+                "required_features": ["guide", "view2d", "auto-ticks", "grid", "labels"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {
+                        "status": "rendered",
+                        "artifact_path": "backends/datoviz/guide_view2d_auto_grid.png",
+                        "log_path": "backends/datoviz/guide_view2d_auto_grid.log.txt",
+                        "guide_diagnostics": {
+                            "axis_rendering": "adapted-review",
+                            "panel_title": "unsupported",
+                            "guide_query": "unsupported",
+                        },
+                    },
+                },
+            },
+            {
+                "case_id": "guide/view2d_reversed_explicit",
+                "family": "guide",
+                "required_features": [
+                    "guide",
+                    "view2d",
+                    "reversed-limits",
+                    "explicit-ticks",
+                    "grid",
+                    "labels",
+                ],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {
+                        "status": "rendered",
+                        "artifact_path": (
+                            "backends/datoviz/guide_view2d_reversed_explicit.png"
+                        ),
+                        "log_path": (
+                            "backends/datoviz/guide_view2d_reversed_explicit.log.txt"
+                        ),
+                        "guide_diagnostics": {
+                            "axis_rendering": "adapted-review",
+                            "explicit_ticks": "dvz_axis_set_ticks",
+                            "panel_title": "unsupported",
+                            "guide_query": "unsupported",
+                        },
+                    },
+                },
+            },
+        ],
+    }
+
+    matrix = build_capability_matrix(report)
+    rows = {
+        row["case_id"]: row
+        for row in matrix["rows"]
+        if row["backend"] == "datoviz"
+    }
+
+    auto = rows["guide/view2d_auto_grid"]
+    assert auto["status"] == "adapted"
+    assert auto["rendering_supported"] is True
+    assert auto["query_supported"] is False
+    assert auto["reason_code"] == "datoviz_axis_guide_adapted_review"
+    assert "backend-native auto ticks" in auto["known_adaptations"][0]
+    assert "guide/all-rendered query" in auto["known_missing_semantics"][1]
+    assert auto["evidence_artifacts"] == [
+        "backends/datoviz/guide_view2d_auto_grid.png",
+        "backends/datoviz/guide_view2d_auto_grid.log.txt",
+    ]
+
+    reversed_explicit = rows["guide/view2d_reversed_explicit"]
+    assert reversed_explicit["status"] == "adapted"
+    assert "dvz_axis_set_ticks" in reversed_explicit["known_adaptations"][0]
+    assert "guide-query support" in reversed_explicit["promotion_blockers"][1]
+
+
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:
     """The S023 harness uses the v0.4 protocol renderer, not the legacy renderer package."""
     source_root = Path("src/gsp/qa/visual")

@@ -1,0 +1,22 @@
+{
+  "capability_matrix_path": "capability_matrix.json",
+  "case_count": 2,
+  "contact_sheets": [
+    "artifacts/visual_qa/s030/m121-guide-review-path/contact_sheets/guide_view2d_auto_grid.png",
+    "artifacts/visual_qa/s030/m121-guide-review-path/contact_sheets/guide_view2d_reversed_explicit.png",
+    "artifacts/visual_qa/s030/m121-guide-review-path/contact_sheets/s028_all_cases.png"
+  ],
+  "datoviz_status_counts": {
+    "adapted": 2,
+    "crashed": 0,
+    "disabled": 0,
+    "experimental": 0,
+    "not_run": 0,
+    "strict": 0,
+    "unsupported": 0
+  },
+  "run_id": "m121-guide-review-path",
+  "schema_kind": "gsp.visual_qa.review_summary",
+  "schema_version": 1,
+  "suite": "s028"
+}
