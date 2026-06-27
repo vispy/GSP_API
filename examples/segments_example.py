@@ -9,8 +9,6 @@ from gsp.core import Canvas, Viewport
 from gsp.visuals import Segments
 from gsp.types import Buffer, BufferType, CapStyle, JoinStyle
 from gsp.core import Camera
-from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.cmap_utils import CmapUtils
 from gsp.constants import Constants

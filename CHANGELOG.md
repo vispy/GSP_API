@@ -25,11 +25,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `examples/README.md` to list shipped public example scripts and to show the current
   `renderer.render(...)` API pattern.
 
+### Fixed
+- Fixed Matplotlib-only example execution so public examples no longer import optional legacy
+  Datoviz modules unless the `datoviz-v03` renderer path is selected.
+- Fixed `examples/protocol_live_window.py` so `GSP_TEST=True` closes the Matplotlib figure instead
+  of opening a blocking live window during batch example validation.
+
 ### Validation
 - `PYTHONPATH=. uv run mypy src/ --strict --show-error-codes`
 - `PYTHONPATH=. uv run pytest -q`
 - `uv run mkdocs build --strict`
 - `uv build`
+- `PYTHONPATH=. uv run python tools/run_all_examples.py`
+- `PYTHONPATH=. uv run python tools/check_expected_output.py`
+
+### Backend support
+- Matplotlib remains the required reference and release-readiness backend.
+- Legacy Datoviz wrapper support is optional through `pip install -e ".[datoviz-legacy]"` and the
+  `GSP_RENDERER=datoviz-v03` example path.
+- Datoviz v0.4 protocol adapter work remains capability-gated and is not declared as a package
+  dependency until compatible release artifacts exist.
+- The network renderer requires a separate server process and remote renderer configuration.
+
+### Known limitations
+- Datoviz v0.4 guide/View2D review rows are adapted, not strict: panel title and guide/all-rendered
+  query semantics remain unsupported.
+- Optional Datoviz, network, and session replay checks are outside the required release validation
+  path unless their exact environment is recorded separately.
 
 ## [0.1.0] - 2026-03-16
 

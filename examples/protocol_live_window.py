@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,7 +28,10 @@ def main() -> int:
         ax.set_title("GSP protocol scene - Matplotlib")
         for visual in visuals:
             render_point_visual(ax, visual)
-        plt.show()
+        if os.environ.get("GSP_TEST") == "True":
+            plt.close(fig)
+        else:
+            plt.show()
         return 0
 
     with DatovizV04ProtocolRenderer(width=900, height=650) as renderer:

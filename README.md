@@ -1,7 +1,8 @@
 # GSP_API
 Graphics Server Protocol Application User Interface
 
-A Python library that provides a unified API for scientific visualization across multiple renderers (Matplotlib, Datoviz).
+A Python library for backend-agnostic scientific visualization scenes and protocol records, with a
+Matplotlib reference backend plus optional Datoviz and network renderer paths.
 
 ---
 

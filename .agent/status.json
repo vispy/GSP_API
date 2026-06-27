@@ -1,5 +1,5 @@
 {
-  "current_stage": "S030",
+  "current_stage": "S031",
   "stages": [
     {
       "id": "S001",
@@ -178,6 +178,12 @@
     {
       "id": "S030",
       "title": "Datoviz Guide Axis Proof",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S031",
+      "title": "Release-Candidate Stabilization and Roadmap Reset",
       "state": "completed",
       "progress": 100
     }
@@ -1271,6 +1277,42 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 122
+    },
+    {
+      "id": "M123",
+      "title": "S031 release-candidate stabilization scoping",
+      "stage": "S031",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 123
+    },
+    {
+      "id": "M124",
+      "title": "S031 release validation baseline audit",
+      "stage": "S031",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 124
+    },
+    {
+      "id": "M125",
+      "title": "S031 release notes and backend-support wording audit",
+      "stage": "S031",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 125
+    },
+    {
+      "id": "M126",
+      "title": "S031 final review pack and release-candidate closeout",
+      "stage": "S031",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 126
     }
   ],
   "review_queue": [],
@@ -1333,9 +1375,9 @@
     }
   ],
   "recommendations": [
-    "S030 is closed: Datoviz guide/View2D rows now render as adapted review artifacts, including explicit ticks via dvz_axis_set_ticks, while panel title and guide/all-rendered query remain unsupported.",
-    "Final S030 review pack is available at artifacts/visual_qa/s030/final-review-pack with Datoviz strict=23, adapted=6, unsupported=0.",
-    "Next: ask Mission Control to scope the next stage; strict Datoviz guide parity should remain deferred unless title/query semantics are proven or excluded by an accepted contract."
+    "S031 is closed as a local release-candidate stabilization pass: required validation and optional Matplotlib-path example confidence checks pass.",
+    "No tag, version change, or publication was performed; those remain separate explicit user-approved release operations.",
+    "Keep Datoviz v0.4 support wording capability-gated; strict guide parity remains deferred unless title/query semantics are proven or excluded by an accepted contract."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1381,6 +1423,10 @@
     "M112 completed: added the S029 capability matrix schema, review-pack generator, Datoviz review-pack runtime wrapper, focused tests, and Mission Control opening records."
   ],
   "summaries": [
+    "M126 completed: added S031 closeout, marked the stage complete, and recorded the release-candidate decision without tagging, version changes, or publication.",
+    "M125 completed: added required Unreleased changelog sections for fixed items, backend support, and known limitations; tightened README backend wording; docs build, package build, import-surface tests, JSON validation, and diff whitespace checks passed.",
+    "M124 completed: required release validation passed; optional example confidence checks passed after lazy-loading optional Datoviz legacy imports in examples and making protocol_live_window honor GSP_TEST.",
+    "M123 completed: opened S031 as a release-candidate stabilization and roadmap reset stage, with M124 ready for release validation baseline audit and M125-M126 drafted for wording/review-pack closeout.",
     "M113 completed: audited Datoviz rendered point, marker, segment, path, image, and overlay rows; promoted only exact S029 rendered scopes to strict, kept text/mesh/color/transform adapted, and regenerated the S029 review pack.",
     "M114 completed: audited Datoviz color/colorbar rendered rows; promoted scalar image colorbar, scalar point gray range, and scalar marker fill alpha to strict rendering-only status, while preserving query_supported false.",
     "M117 completed: audited Datoviz transform rows; promoted inline/named affine equivalence, reversed View2D DATA-to-NDC overlay, and bounded cross-family affine+View2D rendering to strict while preserving query_supported false.",

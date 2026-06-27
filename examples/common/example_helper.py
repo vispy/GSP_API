@@ -15,17 +15,14 @@ from gsp.types.transbuf import TransBuf
 
 from gsp.types.renderer_base import RendererBase
 from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
 from gsp_network.renderer import NetworkRenderer
 
 from gsp.types.animator_base import AnimatorBase
-from gsp_datoviz.animator.animator_datoviz import AnimatorDatoviz
 from gsp_matplotlib.animator.animator_matplotlib import AnimatorMatplotlib
 from gsp_network.animator.animator_network import AnimatorNetwork
 
 from gsp.types.viewport_events_base import ViewportEventsBase
 from gsp_matplotlib.viewport_events.viewport_events_matplotlib import ViewportEventsMatplotlib
-from gsp_datoviz.viewport_events.viewport_events_datoviz import ViewportEventsDatoviz
 from gsp_network.viewport_events.viewport_events_network import ViewportEventsNetwork
 
 
@@ -66,6 +63,8 @@ class ExampleHelper:
         if renderer_name == "matplotlib":
             return MatplotlibRenderer(canvas)
         elif renderer_name == "datoviz-v03":
+            from gsp_datoviz.renderer import DatovizRenderer
+
             return DatovizRenderer(canvas)
         elif renderer_name == "network":
             remote_renderer_name = ExampleHelper.get_remote_renderer_name()
@@ -90,7 +89,10 @@ class ExampleHelper:
         # init the animator with the renderer
         if isinstance(renderer, MatplotlibRenderer):
             animator = AnimatorMatplotlib(typing.cast(MatplotlibRenderer, renderer))
-        elif isinstance(renderer, DatovizRenderer):
+        elif renderer.__class__.__module__.startswith("gsp_datoviz."):
+            from gsp_datoviz.animator.animator_datoviz import AnimatorDatoviz
+            from gsp_datoviz.renderer import DatovizRenderer
+
             animator = AnimatorDatoviz(typing.cast(DatovizRenderer, renderer))
         elif isinstance(renderer, NetworkRenderer):
             animator = AnimatorNetwork(typing.cast(NetworkRenderer, renderer))
@@ -114,7 +116,10 @@ class ExampleHelper:
         # init the animator with the renderer
         if isinstance(renderer, MatplotlibRenderer):
             animator = AnimatorMatplotlib(typing.cast(MatplotlibRenderer, renderer), fps=fps, video_duration=video_duration, video_path=video_path)
-        elif isinstance(renderer, DatovizRenderer):
+        elif renderer.__class__.__module__.startswith("gsp_datoviz."):
+            from gsp_datoviz.animator.animator_datoviz import AnimatorDatoviz
+            from gsp_datoviz.renderer import DatovizRenderer
+
             animator = AnimatorDatoviz(typing.cast(DatovizRenderer, renderer), fps=fps, video_duration=video_duration, video_path=video_path)
         elif isinstance(renderer, NetworkRenderer):
             animator = AnimatorNetwork(typing.cast(NetworkRenderer, renderer), fps=fps, video_duration=video_duration, video_path=video_path)
@@ -139,7 +144,10 @@ class ExampleHelper:
         """
         if isinstance(renderer, MatplotlibRenderer):
             return ViewportEventsMatplotlib(typing.cast(MatplotlibRenderer, renderer), viewport)
-        elif isinstance(renderer, DatovizRenderer):
+        elif renderer.__class__.__module__.startswith("gsp_datoviz."):
+            from gsp_datoviz.renderer import DatovizRenderer
+            from gsp_datoviz.viewport_events.viewport_events_datoviz import ViewportEventsDatoviz
+
             return ViewportEventsDatoviz(typing.cast(DatovizRenderer, renderer), viewport)
         elif isinstance(renderer, NetworkRenderer):
             return ViewportEventsNetwork(typing.cast(NetworkRenderer, renderer), viewport)

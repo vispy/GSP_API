@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import importlib
 import importlib.abc
+import importlib.util
 import json
+import pathlib
 import sys
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -37,6 +39,22 @@ def test_datoviz_protocol_modules_import_without_datoviz() -> None:
             datoviz_backend.register_renderer_datoviz()
         with pytest.raises(ModuleNotFoundError):
             datoviz_backend.register_renderer_datoviz_v03()
+
+
+def test_example_helper_imports_without_datoviz() -> None:
+    helper_path = pathlib.Path(__file__).resolve().parents[1] / "examples" / "common" / "example_helper.py"
+
+    with _blocked_datoviz_modules():
+        spec = importlib.util.spec_from_file_location("_gsp_example_helper_import_test", helper_path)
+        assert spec is not None
+        assert spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        try:
+            spec.loader.exec_module(module)
+            assert module.ExampleHelper.get_renderer_name() == "matplotlib"
+        finally:
+            sys.modules.pop(spec.name, None)
 
 
 def test_legacy_datoviz_registers_as_v03_when_available() -> None:

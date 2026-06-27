@@ -13,7 +13,6 @@ from gsp.types import Buffer, BufferType, TransBuf, CapStyle, Color
 from gsp.types.renderer_base import RendererBase
 from gsp.types.visual_base import VisualBase
 from gsp_matplotlib.renderer import MatplotlibRenderer
-from gsp_datoviz.renderer import DatovizRenderer
 from gsp_network.renderer import NetworkRenderer
 from gsp_extra.bufferx import Bufferx
 from gsp.utils import GroupUtils, UnitUtils, CmapUtils
@@ -210,6 +209,8 @@ class BigTesterRenderer:
             renderer = MatplotlibRenderer(canvas)
             return renderer
         elif renderer_name == "datoviz-v03":
+            from gsp_datoviz.renderer import DatovizRenderer
+
             renderer = DatovizRenderer(canvas)
             return renderer
         elif renderer_name == "network":
