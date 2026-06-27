@@ -1512,7 +1512,7 @@ def _guide_view2d_reversed_explicit() -> VisualQAScene:
         y_range=(1.0, -1.0),
     )
     positions = np.array(
-        [[1.0, 1.0], [0.0, 0.0], [-1.0, -1.0], [0.5, -0.5]],
+        [[0.85, 0.85], [0.0, 0.0], [-0.85, -0.85], [0.5, -0.5]],
         dtype=np.float32,
     )
     colors = np.array(

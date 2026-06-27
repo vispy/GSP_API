@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any
 
 import matplotlib.image as mpimg
+import numpy as np
 import pytest
 
 from gsp.protocol import (
@@ -23,7 +25,13 @@ from gsp.qa.visual.cases import (
     list_cases,
 )
 from gsp.qa.visual.capability_matrix import build_capability_matrix
+from gsp.qa.visual.datoviz_probe import (
+    DatovizV04ProbeReport,
+    ImportProbe,
+    MinimalPointProbe,
+)
 from gsp.qa.visual.review_pack import run_visual_review_pack
+import gsp.qa.visual.runner as visual_runner
 from gsp.qa.visual.runner import run_visual_qa_suite
 from gsp_matplotlib.protocol_query import QueryVisualEntry, query_visuals
 
@@ -905,6 +913,99 @@ def test_s028_guide_view2d_visual_qa_run_writes_matplotlib_artifacts(
         assert case["backends"]["matplotlib"]["status"] == "rendered"
 
 
+def test_s028_matplotlib_guide_artifacts_keep_layout_inside_canvas(
+    tmp_path: Path,
+) -> None:
+    """Guide title, ticks, and labels should not be clipped at image borders."""
+    report = run_visual_qa_suite(
+        suite=S028_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=("guide/view2d_auto_grid",),
+        run_id="test-s028-guide-layout",
+        resolution=(360, 240),
+    )
+
+    artifact_path = Path(
+        str(report["cases"][0]["backends"]["matplotlib"]["artifact_path"])
+    )
+    image = np.asarray(mpimg.imread(artifact_path)[..., :3], dtype=np.float64)
+
+    assert image.shape[:2] == (240, 360)
+    assert image[0, :, :].mean() > 0.98
+    assert image[-1, :, :].mean() > 0.98
+    assert image[:, 0, :].mean() > 0.98
+    assert image[:, -1, :].mean() > 0.98
+
+
+def test_s028_datoviz_guide_path_configures_view2d_before_data_visuals(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Datoviz guide review rows must attach DATA points after native View2D setup."""
+    captured: dict[str, Any] = {}
+
+    class FakeDatovizRenderer:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            captured["view"] = kwargs["view"]
+            captured["events"] = []
+            captured["point_positions"] = []
+
+        def __enter__(self) -> "FakeDatovizRenderer":
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            return None
+
+        def add_point_visual(self, visual: Any) -> None:
+            captured["events"].append("add_point")
+            positions = np.asarray(visual.positions, dtype=np.float64)
+            captured["point_positions"].append(positions)
+
+        def configure_view2d_axes(self, view: Any, **kwargs: Any) -> None:
+            captured["events"].append("configure_axes")
+            captured["axis_view"] = view
+
+        def capture_png_bytes(self) -> bytes:
+            return b"fake-png"
+
+    monkeypatch.setattr(
+        visual_runner, "probe_datoviz_v04", _supported_datoviz_probe_report
+    )
+    monkeypatch.setattr(
+        visual_runner, "DatovizV04ProtocolRenderer", FakeDatovizRenderer
+    )
+    monkeypatch.setenv(visual_runner.DATOVIZ_QA_OFFSCREEN_ENV, "1")
+
+    report = run_visual_qa_suite(
+        suite=S028_SUITE,
+        out_dir=tmp_path,
+        backends=("datoviz",),
+        case_ids=("guide/view2d_auto_grid",),
+        contact_sheet=False,
+        run_id="test-s028-dataviz-guide-view",
+        resolution=(96, 96),
+    )
+
+    assert report["cases"][0]["backends"]["datoviz"]["status"] == "rendered"
+    assert captured["view"] is None
+    assert captured["axis_view"].x_range == (-2.0, 2.0)
+    assert captured["axis_view"].y_range == (-1.0, 1.0)
+    assert captured["events"] == ["configure_axes", "add_point"]
+    np.testing.assert_allclose(
+        captured["point_positions"][0],
+        np.array(
+            [
+                [-1.5, -0.5],
+                [-0.5, 0.45],
+                [0.5, -0.15],
+                [1.5, 0.65],
+            ]
+        ),
+        atol=1e-6,
+    )
+
+
 def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
     """The v0.4 probe records retained mesh evidence separately from text evidence."""
     from types import SimpleNamespace
@@ -942,3 +1043,48 @@ def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
     )
     assert payload["mesh_capability_matrix"]["mesh.index.upload"]["supported"] is True
     assert payload["source_symbol_matrix"]["dvz_mesh"]
+
+
+def _supported_datoviz_probe_report() -> DatovizV04ProbeReport:
+    return DatovizV04ProbeReport(
+        installed_package={},
+        sibling_source={},
+        imports={
+            "datoviz": ImportProbe(
+                module="datoviz",
+                imported=True,
+                path=None,
+                error_type=None,
+                error_message=None,
+                traceback=None,
+            ),
+            "datoviz.raw": ImportProbe(
+                module="datoviz.raw",
+                imported=True,
+                path=None,
+                error_type=None,
+                error_message=None,
+                traceback=None,
+            ),
+        },
+        generated_files={},
+        facade_symbols={},
+        raw_symbols={},
+        capability_matrix={},
+        enum_style_symbols={},
+        text_symbols={},
+        text_capability_matrix={},
+        mesh_symbols={},
+        mesh_capability_matrix={},
+        color_mapping_symbols={},
+        color_mapping_capability_matrix={},
+        source_symbol_matrix={},
+        minimal_point_scene=MinimalPointProbe(
+            attempted=True,
+            supported=True,
+            reason=None,
+            calls_completed=("fake",),
+        ),
+        capture={},
+        banned_symbol_check={},
+    )

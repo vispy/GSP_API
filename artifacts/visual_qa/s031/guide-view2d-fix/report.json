@@ -1,0 +1,81 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s031/guide-view2d-fix/scenes/guide_view2d_auto_grid.arrays.npz",
+      "backends": {
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s031/guide-view2d-fix/backends/matplotlib/guide_view2d_auto_grid.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s031/guide-view2d-fix/backends/matplotlib/guide_view2d_auto_grid.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_auto_grid",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "auto-ticks",
+        "grid",
+        "labels"
+      ],
+      "scene_path": "artifacts/visual_qa/s031/guide-view2d-fix/scenes/guide_view2d_auto_grid.scene.json",
+      "title": "View2D guide auto ticks and grids"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s031/guide-view2d-fix/scenes/guide_view2d_reversed_explicit.arrays.npz",
+      "backends": {
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s031/guide-view2d-fix/backends/matplotlib/guide_view2d_reversed_explicit.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s031/guide-view2d-fix/backends/matplotlib/guide_view2d_reversed_explicit.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_reversed_explicit",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "reversed-limits",
+        "explicit-ticks",
+        "grid",
+        "labels"
+      ],
+      "scene_path": "artifacts/visual_qa/s031/guide-view2d-fix/scenes/guide_view2d_reversed_explicit.scene.json",
+      "title": "Reversed View2D guide explicit ticks"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s031/guide-view2d-fix/contact_sheets/guide_view2d_auto_grid.png",
+    "artifacts/visual_qa/s031/guide-view2d-fix/contact_sheets/guide_view2d_reversed_explicit.png",
+    "artifacts/visual_qa/s031/guide-view2d-fix/contact_sheets/s028_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "f0feeff43208dadc2cd98b3011ff49ac93ebab47",
+    "unexpected_banned_hits": 0
+  },
+  "environment_path": "artifacts/visual_qa/s031/guide-view2d-fix/environment.json",
+  "run_id": "guide-view2d-fix",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-06-27T07:25:36.516073+00:00",
+  "suite": "s028"
+}

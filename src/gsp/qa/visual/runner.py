@@ -264,7 +264,9 @@ def _run_matplotlib(
     try:
         fig.patch.set_facecolor("white")
         ax.set_facecolor("white")
-        ax.set_position((0.0, 0.0, 1.0, 1.0))
+        has_layout_guides = bool(axis_guides or panel_text_guides)
+        if not has_layout_guides:
+            ax.set_position((0.0, 0.0, 1.0, 1.0))
         ax.set_xlim(-1.0, 1.0)
         ax.set_ylim(-1.0, 1.0)
         ax.set_aspect("equal", adjustable="box")
@@ -286,6 +288,8 @@ def _run_matplotlib(
             render_axis_guides(ax, view, axis_guides)
         if panel_text_guides:
             render_panel_text_guides(ax, panel_text_guides)
+        if has_layout_guides:
+            fig.tight_layout(pad=0.8)
         fig.savefig(artifact_path, dpi=100, facecolor=fig.get_facecolor())
         log_path.write_text("rendered\n", encoding="utf-8")
         return {
@@ -370,10 +374,6 @@ def _run_datoviz(
             view=renderer_view,
             transform_resources=transform_resources,
         ) as renderer:
-            for visual in visuals:
-                _render_datoviz_visual(renderer, visual)
-            for guide in colorbar_guides:
-                renderer.add_colorbar_guide(guide)
             if guide_configuration is not None:
                 if view is None:
                     raise DatovizV04Unsupported(
@@ -390,6 +390,10 @@ def _run_datoviz(
                     y_tick_values=guide_configuration.y_tick_values,
                     y_tick_labels=guide_configuration.y_tick_labels,
                 )
+            for visual in visuals:
+                _render_datoviz_visual(renderer, visual)
+            for guide in colorbar_guides:
+                renderer.add_colorbar_guide(guide)
             png = renderer.capture_png_bytes()
         artifact_path.write_bytes(png)
         log_path.write_text("rendered\n", encoding="utf-8")
