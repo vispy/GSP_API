@@ -91,6 +91,9 @@ from gsp_datoviz.query import (
 class FakeDatovizV04:
     """Small recorder for the dvz_* facade used by the adapter."""
 
+    DVZ_COLOR_PIPELINE_LINEAR_SRGB = 10
+    DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND = 11
+
     def __init__(self):
         self.calls = []
         self.destroyed = False
@@ -102,6 +105,10 @@ class FakeDatovizV04:
     def dvz_figure(self, scene, width, height, flags):
         self.calls.append(("figure", scene, width, height, flags))
         return "figure"
+
+    def dvz_figure_set_color_pipeline(self, figure, pipeline):
+        self.calls.append(("figure_set_color_pipeline", figure, pipeline))
+        return None
 
     def dvz_panel_full(self, figure):
         self.calls.append(("panel_full", figure))
@@ -245,12 +252,14 @@ class FakeDatovizV04:
 
 
 class FakeDatovizV04WithColorPipeline(FakeDatovizV04):
-    DVZ_COLOR_PIPELINE_LINEAR_SRGB = 10
-    DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND = 11
+    pass
 
-    def dvz_figure_set_color_pipeline(self, figure, pipeline):
-        self.calls.append(("figure_set_color_pipeline", figure, pipeline))
-        return None
+
+class FakeDatovizV04WithoutColorPipeline(FakeDatovizV04):
+    def __getattribute__(self, name):
+        if name == "dvz_figure_set_color_pipeline":
+            raise AttributeError(name)
+        return super().__getattribute__(name)
 
 
 class FakeDatovizV04WithAxes(FakeDatovizV04):
@@ -797,20 +806,29 @@ def test_renderer_sets_datoviz_color_pipeline_when_binding_is_available():
     ]
 
 
-def test_renderer_defaults_to_linear_color_pipeline_when_binding_is_available():
+def test_renderer_defaults_to_legacy_color_pipeline_when_binding_is_available():
     fake = FakeDatovizV04WithColorPipeline()
 
     DatovizV04ProtocolRenderer(dvz=fake)
 
     assert _calls(fake, "figure_set_color_pipeline") == [
-        ("figure_set_color_pipeline", "figure", 10)
+        ("figure_set_color_pipeline", "figure", 11)
     ]
 
 
-def test_renderer_accepts_legacy_color_pipeline_without_datoviz_binding():
-    fake = FakeDatovizV04()
+def test_renderer_accepts_explicit_linear_color_pipeline_without_datoviz_binding():
+    fake = FakeDatovizV04WithoutColorPipeline()
 
-    DatovizV04ProtocolRenderer(dvz=fake, color_pipeline="legacy_srgb_blend")
+    DatovizV04ProtocolRenderer(dvz=fake, color_pipeline="linear_srgb")
+
+    assert _calls(fake, "figure_set_color_pipeline") == []
+
+
+def test_renderer_rejects_legacy_color_pipeline_without_datoviz_binding():
+    fake = FakeDatovizV04WithoutColorPipeline()
+
+    with pytest.raises(DatovizV04Unavailable, match="legacy sRGB blend mode"):
+        DatovizV04ProtocolRenderer(dvz=fake, color_pipeline="legacy_srgb_blend")
 
     assert _calls(fake, "figure_set_color_pipeline") == []
 

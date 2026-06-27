@@ -1,5 +1,5 @@
 {
-  "current_stage": "S032",
+  "current_stage": "S033",
   "stages": [
     {
       "id": "S001",
@@ -192,6 +192,12 @@
       "title": "Datoviz v0.4 Compatibility Refresh",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S033",
+      "title": "Datoviz Guide Strictness and Release Decision",
+      "state": "in_progress",
+      "progress": 67
     }
   ],
   "missions": [
@@ -1328,6 +1334,42 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 127
+    },
+    {
+      "id": "M128",
+      "title": "S033 guide strictness scoping and release decision plan",
+      "stage": "S033",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 128
+    },
+    {
+      "id": "M129",
+      "title": "Post-S032 release-preparation audit",
+      "stage": "S033",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 129
+    },
+    {
+      "id": "M130",
+      "title": "Optional Datoviz adapted-row strict promotion proof",
+      "stage": "S033",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 130
+    },
+    {
+      "id": "M131",
+      "title": "Explicit release operation",
+      "stage": "S033",
+      "state": "blocked",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 131
     }
   ],
   "review_queue": [],
@@ -1390,9 +1432,9 @@
     }
   ],
   "recommendations": [
-    "S032 is closed: GSP now uses Datoviz panel domains plus policy-only View2D for the v0.4-dev adapter.",
-    "Regenerated S031 legacy and linear review packs both report Datoviz unsupported=0, adapted=6, strict=23.",
-    "Keep Datoviz guide rows adapted until title layout and guide/all-rendered query semantics are strict."
+    "Post-S032 release preparation is complete; the default next action is human review of the latest all-cases sheet and explicit release approval if desired.",
+    "Use the regenerated S031 full-review-pack-legacy all-cases sheet as the primary visual review artifact; the linear pack is diagnostic only.",
+    "Do not run M131 release operations until the user explicitly approves target version, version update, tag creation, and publication target."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1438,6 +1480,10 @@
     "M112 completed: added the S029 capability matrix schema, review-pack generator, Datoviz review-pack runtime wrapper, focused tests, and Mission Control opening records."
   ],
   "summaries": [
+    "S033 correction: enforced Datoviz legacy_srgb_blend as the renderer and visual-QA comparison default, made missing legacy pipeline support fail loudly, and made the legacy all-cases sheet the primary review artifact.",
+    "M129 completed: updated release-facing limitations for adapted Datoviz text and guide rows, validated status JSON, diff whitespace, and strict MkDocs build, and left M131 blocked pending explicit release approval.",
+    "M128 completed: audited the six adapted Datoviz rows, chose release-preparation as the default branch, left strict promotion as optional M130, and blocked M131 release operations pending explicit approval.",
+    "S033 opened with M128 ready to scope Datoviz guide strictness and make the release-vs-hardening decision after the S032 compatibility refresh.",
     "M127 completed: updated Datoviz View2D/domain handling, switched visual uploads to native DATA domains where applicable, regenerated legacy and linear S031 review packs, and validated with full pytest, strict mypy, backend import smokes, and image review.",
     "M127 opened: refresh the Datoviz adapter for policy-only View2D, update stale tests/specs, and regenerate Matplotlib/Datoviz visual QA artifacts.",
     "M126 completed: added S031 closeout, marked the stage complete, and recorded the release-candidate decision without tagging, version changes, or publication.",

@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Clarified Datoviz packaging policy: legacy Datoviz wrapper support is optional, while Datoviz v0.4
   adapter work remains capability-gated until compatible release artifacts exist.
+- Enforced `legacy_srgb_blend` as the Datoviz v0.4 renderer and visual-QA default for
+  Matplotlib-parity comparisons; `linear_srgb` is now an explicit diagnostic option.
 - Updated README, MkDocs, and examples documentation to use `GSP_RENDERER` consistently and to
   distinguish Matplotlib, optional legacy Datoviz, network, and Datoviz v0.4 protocol surfaces.
 - Updated `examples/README.md` to list shipped public example scripts and to show the current
@@ -48,8 +50,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The network renderer requires a separate server process and remote renderer configuration.
 
 ### Known limitations
-- Datoviz v0.4 guide/View2D review rows are adapted, not strict: panel title and guide/all-rendered
-  query semantics remain unsupported.
+- Datoviz v0.4 text and guide/View2D review rows include adapted, not strict, cases: several text
+  anchor/placement/unicode semantics remain verification-gated, while guide panel-title and
+  guide/all-rendered query semantics remain unsupported.
 - Optional Datoviz, network, and session replay checks are outside the required release validation
   path unless their exact environment is recorded separately.
 

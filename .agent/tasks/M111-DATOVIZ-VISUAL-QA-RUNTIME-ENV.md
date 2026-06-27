@@ -11,9 +11,9 @@ requiring developers to remember transient environment variables.
 
 - Added `tools/run_datoviz_visual_qa.sh`, which opts into in-process offscreen QA, points Python at
   the sibling Datoviz checkout, and configures the bundled MoltenVK ICD on macOS.
-- Changed the visual QA Datoviz color-pipeline default to `linear_srgb`, matching the v0.4-dev
-  facade available today. `legacy_srgb_blend` remains explicit opt-in and still requires
-  `dvz_figure_set_color_pipeline`.
+- Superseded by S033: visual QA Datoviz comparison renders must default to `legacy_srgb_blend`.
+  `linear_srgb` is explicit diagnostic-only, and `legacy_srgb_blend` requires
+  `dvz_figure_set_color_pipeline` rather than silently falling back.
 - Updated the Datoviz backend and visual QA harness specs with the new runtime command and color
   pipeline policy.
 - Captured a full S028 Datoviz runtime-fixed visual QA artifact set for review.

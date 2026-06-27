@@ -385,7 +385,12 @@ def _set_figure_color_pipeline(
     value = _datoviz_color_pipeline_value(dvz, color_pipeline)
     setter = getattr(dvz, "dvz_figure_set_color_pipeline", None)
     if setter is None:
-        return
+        if color_pipeline == "linear_srgb":
+            return
+        raise DatovizV04Unavailable(
+            "Datoviz legacy sRGB blend mode is unavailable: "
+            "missing dvz_figure_set_color_pipeline"
+        )
     setter(figure, value)
 
 
@@ -411,7 +416,7 @@ class DatovizV04ProtocolRenderer:
     width: int = 800
     height: int = 600
     background_rgba8: tuple[int, int, int, int] = DEFAULT_BACKGROUND_RGBA8
-    color_pipeline: DatovizColorPipeline = "linear_srgb"
+    color_pipeline: DatovizColorPipeline = "legacy_srgb_blend"
     view: View2D | None = None
     transform_resources: Mapping[str, AffineTransform2DResource] | None = None
     scene: Any = field(init=False)

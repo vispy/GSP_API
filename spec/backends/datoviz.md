@@ -284,12 +284,12 @@ result. Treat that as the remaining Datoviz live payload parity gap.
 The Datoviz v0.4 adapter exposes a figure-wide color-pipeline option through
 `DatovizV04ProtocolRenderer(color_pipeline=...)`:
 
-- `linear_srgb` is the low-level renderer default and matches Datoviz's color-managed path:
-  authored semantic sRGB colors are converted to linear RGB before scene arithmetic and alpha
-  blending. This is the mathematically correct path.
-- `legacy_srgb_blend` is the visual-QA and Matplotlib-parity default. It intentionally reproduces
-  Matplotlib/Agg's legacy behavior: alpha is blended directly in display/sRGB values instead of in
-  linear light.
+- `linear_srgb` is an explicit diagnostic/Datoviz-native option and matches Datoviz's
+  color-managed path: authored semantic sRGB colors are converted to linear RGB before scene
+  arithmetic and alpha blending.
+- `legacy_srgb_blend` is the renderer, visual-QA, and Matplotlib-parity default. It intentionally
+  reproduces Matplotlib/Agg's legacy behavior: alpha is blended directly in display/sRGB values
+  instead of in linear light.
 
 `legacy_srgb_blend` requires a Datoviz binding with `dvz_figure_set_color_pipeline()` and
 `DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND`. If the binding is missing, GSP raises
@@ -297,8 +297,8 @@ The Datoviz v0.4 adapter exposes a figure-wide color-pipeline option through
 
 The visual-QA harness defaults Datoviz renders to `legacy_srgb_blend` so alpha-overlap cases compare
 against the Matplotlib reference's display-space blending behavior. Use
-`python -m gsp.qa.visual run --datoviz-color-pipeline linear_srgb ...` for Datoviz-correct
-linear-light comparisons.
+`python -m gsp.qa.visual run --datoviz-color-pipeline linear_srgb ...` only for explicit
+linear-light diagnostics.
 
 The current Python binding may expose `dvz_figure_set_color_pipeline()` without exporting enum
 constants; GSP therefore uses the documented v0.4 enum values

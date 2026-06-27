@@ -17,11 +17,11 @@ Implemented changes:
 
 ## Review Artifacts
 
-- Legacy review pack: `artifacts/visual_qa/s031/full-review-pack-legacy`
-- Legacy all-cases sheet:
+- Primary legacy-sRGB review pack: `artifacts/visual_qa/s031/full-review-pack-legacy`
+- Primary legacy-sRGB all-cases sheet:
   `artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/s028_all_cases.png`
-- Linear review pack: `artifacts/visual_qa/s031/full-review-pack-linear`
-- Linear all-cases sheet:
+- Linear-light diagnostic review pack: `artifacts/visual_qa/s031/full-review-pack-linear`
+- Linear-light diagnostic all-cases sheet:
   `artifacts/visual_qa/s031/full-review-pack-linear/contact_sheets/s028_all_cases.png`
 
 Both regenerated packs report Datoviz status counts:
