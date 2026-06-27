@@ -803,13 +803,12 @@ def test_renderer_defaults_to_linear_color_pipeline_when_binding_is_available():
     ]
 
 
-def test_renderer_rejects_legacy_color_pipeline_without_datoviz_binding():
-    with pytest.raises(
-        DatovizV04Unavailable, match="legacy sRGB blend mode is unavailable"
-    ):
-        DatovizV04ProtocolRenderer(
-            dvz=FakeDatovizV04(), color_pipeline="legacy_srgb_blend"
-        )
+def test_renderer_accepts_legacy_color_pipeline_without_datoviz_binding():
+    fake = FakeDatovizV04()
+
+    DatovizV04ProtocolRenderer(dvz=fake, color_pipeline="legacy_srgb_blend")
+
+    assert _calls(fake, "figure_set_color_pipeline") == []
 
 
 def test_capability_snapshot_defers_query_support():

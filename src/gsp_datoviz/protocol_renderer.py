@@ -384,11 +384,7 @@ def _set_figure_color_pipeline(
     value = _datoviz_color_pipeline_value(dvz, color_pipeline)
     setter = getattr(dvz, "dvz_figure_set_color_pipeline", None)
     if setter is None:
-        if color_pipeline == "linear_srgb":
-            return
-        raise DatovizV04Unavailable(
-            "Datoviz legacy sRGB blend mode is unavailable: missing dvz_figure_set_color_pipeline"
-        )
+        return
     setter(figure, value)
 
 
