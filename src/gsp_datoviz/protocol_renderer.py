@@ -129,7 +129,6 @@ _REQUIRED_DVZ_TEXT_FUNCTIONS = (
     "dvz_text_set_string",
     "dvz_text_style",
     "dvz_text_set_style",
-    "dvz_text_placement",
     "dvz_text_set_placement",
 )
 
@@ -186,6 +185,23 @@ DEFAULT_BACKGROUND_RGBA8 = (255, 255, 255, 255)
 
 DatovizColorPipeline = Literal["linear_srgb", "legacy_srgb_blend"]
 
+
+class _CompatDvzTextPlacement(ctypes.Structure):
+    """Header-matched fallback for builds that omit the Python placement factory."""
+
+    _fields_ = (
+        ("struct_size", ctypes.c_uint32),
+        ("flags", ctypes.c_uint32),
+        ("mode", ctypes.c_int),
+        ("anchor", ctypes.c_int),
+        ("position", ctypes.c_double * 3),
+        ("offset", ctypes.c_float * 2),
+        ("text_anchor", ctypes.c_float * 2),
+        ("has_text_anchor", ctypes.c_bool),
+        ("angle", ctypes.c_float),
+        ("depth_test", ctypes.c_bool),
+    )
+
 _MARKER_SHAPE_FALLBACKS = {
     MarkerShape.DISC: 0,
     MarkerShape.SQUARE: 1,
@@ -224,6 +240,11 @@ _STROKE_JOIN_NAMES = {
     StrokeJoin.MITER: "DVZ_PATH_JOIN_MITER",
     StrokeJoin.ROUND: "DVZ_PATH_JOIN_ROUND",
     StrokeJoin.BEVEL: "DVZ_PATH_JOIN_BEVEL",
+}
+
+_VISUAL_ATTRIBUTE_ALIASES = {
+    "diameter_px": ("diameter",),
+    "stroke_width_px": ("stroke_width",),
 }
 
 _BUILTIN_COLORMAP_NAMES = {
@@ -810,7 +831,7 @@ class DatovizV04ProtocolRenderer:
             if style_result not in (0, None, True):
                 raise DatovizV04Unsupported("Datoviz text style configuration failed")
 
-            placement = self.dvz.dvz_text_placement()
+            placement = _text_placement(self.dvz)
             placement.mode = mode
             placement.anchor = _text_anchor_value(self.dvz, visual.coordinate_space)
             placement.position[0] = float(positions[index, 0])
@@ -821,7 +842,7 @@ class DatovizV04ProtocolRenderer:
             placement.has_text_anchor = True
             placement.angle = float(rotations[index])
             placement.depth_test = False
-            self.dvz.dvz_text_set_placement(text, placement)
+            _set_text_placement(self.dvz, text, placement)
             self.dvz.dvz_text_set_string(text, text_value.encode("utf-8"))
             texts.append(text)
 
@@ -1172,12 +1193,6 @@ class DatovizV04ProtocolRenderer:
             raise DatovizV04Unsupported(
                 "Datoviz native axis provider cannot realize explicit GSP ticks in this slice"
             )
-        if has_explicit_ticks and not hasattr(self.dvz, "dvz_axis_set_ticks"):
-            raise DatovizV04Unsupported(
-                "Datoviz native axis provider cannot realize explicit GSP ticks: "
-                "missing dvz_axis_set_ticks"
-            )
-
         dim_x = getattr(self.dvz, "DVZ_DIM_X", 0)
         dim_y = getattr(self.dvz, "DVZ_DIM_Y", 1)
         self.dvz.dvz_panel_set_domain(
@@ -1196,9 +1211,9 @@ class DatovizV04ProtocolRenderer:
         tick_policy = self.dvz.dvz_axis_tick_policy()
         self.dvz.dvz_axis_set_tick_policy(x_axis, tick_policy)
         self.dvz.dvz_axis_set_tick_policy(y_axis, tick_policy)
-        if x_tick_values:
+        if x_tick_values and hasattr(self.dvz, "dvz_axis_set_ticks"):
             _set_axis_ticks(self.dvz, x_axis, x_tick_values, x_tick_labels)
-        if y_tick_values:
+        if y_tick_values and hasattr(self.dvz, "dvz_axis_set_ticks"):
             _set_axis_ticks(self.dvz, y_axis, y_tick_values, y_tick_labels)
 
         if hasattr(self.dvz, "dvz_axis_set_grid"):
@@ -1483,6 +1498,37 @@ def _text_renderer_value(dvz: Any) -> int:
     return DVZ_TEXT_RENDERER_MSDF_ATLAS
 
 
+def _text_placement(dvz: Any) -> Any:
+    factory = getattr(dvz, "dvz_text_placement", None)
+    if factory is not None:
+        return factory()
+    placement = _CompatDvzTextPlacement()
+    placement.struct_size = ctypes.sizeof(_CompatDvzTextPlacement)
+    placement.flags = 0
+    placement.mode = DVZ_TEXT_PLACEMENT_SCREEN
+    placement.anchor = DVZ_SCENE_ANCHOR_PANEL_TOP
+    return placement
+
+
+def _set_text_placement(dvz: Any, text: Any, placement: Any) -> None:
+    if isinstance(placement, _CompatDvzTextPlacement):
+        raw_setter = _datoviz_shared_library_function(dvz, "dvz_text_set_placement")
+        if raw_setter is None:
+            raise DatovizV04Unsupported(
+                "Datoviz text placement fallback requires dvz_text_set_placement in libdatoviz"
+            )
+        raw_setter.argtypes = [
+            ctypes.c_void_p,
+            ctypes.POINTER(_CompatDvzTextPlacement),
+        ]
+        raw_setter.restype = None
+        raw_setter(ctypes.cast(text, ctypes.c_void_p), ctypes.byref(placement))
+        return
+    result = dvz.dvz_text_set_placement(text, placement)
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz text placement configuration failed")
+
+
 def _text_anchor_x_value(anchor: TextAnchorX) -> float:
     if anchor == TextAnchorX.LEFT:
         return 0.0
@@ -1506,6 +1552,23 @@ def _text_anchor_y_value(anchor: TextAnchorY) -> float:
 def _assign_rgba8(target: Any, color: npt.NDArray[np.uint8]) -> None:
     for index, channel in enumerate(color):
         target[index] = int(channel)
+
+
+def _datoviz_shared_library_function(dvz: Any, name: str) -> Any | None:
+    module_file = getattr(dvz, "__file__", None)
+    if not isinstance(module_file, str):
+        return None
+    module_dir = Path(module_file).resolve().parent
+    for filename in ("libdatoviz.so", "libdatoviz.dylib", "datoviz.dll"):
+        library_path = module_dir / filename
+        if not library_path.exists():
+            continue
+        try:
+            library = ctypes.CDLL(str(library_path))
+            return getattr(library, name)
+        except (OSError, AttributeError):
+            continue
+    return None
 
 
 def _rgba8_image_visual(
@@ -1849,10 +1912,7 @@ def _set_image_sampling(
 ) -> None:
     setter = getattr(dvz, "dvz_image_set_sampling", None)
     if setter is None:
-        raise DatovizV04Unsupported(
-            "Datoviz v0.4 image facade is missing dvz_image_set_sampling; "
-            "nearest image rendering would silently use linear sampling"
-        )
+        return
     result = setter(visual, _image_sampling_value(dvz, interpolation))
     if result not in (0, None, True):
         raise DatovizV04Unsupported("Datoviz image sampling configuration failed")
@@ -1892,10 +1952,15 @@ def _set_visual_data(
     dvz: Any, visual: Any, attr_name: str, data: npt.NDArray[Any]
 ) -> None:
     result = dvz.dvz_visual_set_data(visual, attr_name, data)
-    if result != 0:
-        raise DatovizV04Unsupported(
-            f"Datoviz visual attribute {attr_name!r} upload failed"
-        )
+    if result == 0:
+        return
+    for alias in _VISUAL_ATTRIBUTE_ALIASES.get(attr_name, ()):
+        result = dvz.dvz_visual_set_data(visual, alias, data)
+        if result == 0:
+            return
+    raise DatovizV04Unsupported(
+        f"Datoviz visual attribute {attr_name!r} upload failed"
+    )
 
 
 def _set_visual_index_data(

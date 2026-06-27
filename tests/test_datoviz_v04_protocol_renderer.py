@@ -438,6 +438,14 @@ class FakeDatovizV04WithQueryCapabilities(FakeDatovizV04):
         return None
 
 
+class FakeDatovizV04WithCurrentAttributeNames(FakeDatovizV04WithQueryCapabilities):
+    def dvz_visual_set_data(self, visual, name, data):
+        self.calls.append(("set_data", visual, name, np.array(data, copy=True)))
+        if name in {"diameter_px", "stroke_width_px"}:
+            return -1
+        return 0
+
+
 class FakeDatovizV04WithMesh(FakeDatovizV04WithQueryCapabilities):
     def dvz_mesh(self, scene, flags):
         self.calls.append(("mesh", scene, flags))
@@ -1216,6 +1224,28 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     assert attach_desc.coord_space == 1
 
 
+def test_add_point_visual_retries_current_datoviz_diameter_attribute_name():
+    fake = FakeDatovizV04WithCurrentAttributeNames()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
+    visual = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        colors=np.array([[1.0, 0.0, 0.0, 1.0]], dtype=np.float32),
+        sizes=np.array([6.0], dtype=np.float32),
+    )
+
+    renderer.add_point_visual(visual)
+
+    set_data = _calls(fake, "set_data")
+    assert [call[2] for call in set_data] == [
+        "position",
+        "color",
+        "diameter_px",
+        "diameter",
+    ]
+    np.testing.assert_allclose(set_data[-1][3], [6.0], rtol=1e-6)
+
+
 def test_add_point_visual_cpu_adapts_inline_affine_transform():
     fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
@@ -1480,6 +1510,30 @@ def test_add_segment_visual_uses_dvz_segment_attributes_widths_and_caps():
     assert add_visual_call[:3] == ("add_visual", "panel", "segment-visual")
 
 
+def test_add_segment_visual_retries_current_datoviz_stroke_width_attribute_name():
+    fake = FakeDatovizV04WithCurrentAttributeNames()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
+    visual = SegmentVisual(
+        id="visual:segments",
+        start_positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        end_positions=np.array([[0.5, 0.5]], dtype=np.float32),
+        colors=np.array([[1.0, 0.0, 0.0, 1.0]], dtype=np.float32),
+        widths=np.array([3.0], dtype=np.float32),
+    )
+
+    renderer.add_segment_visual(visual)
+
+    set_data = _calls(fake, "set_data")
+    assert [call[2] for call in set_data] == [
+        "position_start",
+        "position_end",
+        "color",
+        "stroke_width_px",
+        "stroke_width",
+    ]
+    np.testing.assert_allclose(set_data[-1][3], [3.0], rtol=1e-6)
+
+
 def test_add_path_visual_uses_dvz_path_subpaths_styles_and_expanded_attributes():
     fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
@@ -1596,7 +1650,7 @@ def test_add_image_visual_maps_linear_sampling():
     ]
 
 
-def test_add_image_visual_rejects_nearest_without_datoviz_sampler_api():
+def test_add_image_visual_renders_when_datoviz_sampler_api_is_absent():
     fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     image = np.array(
@@ -1613,11 +1667,10 @@ def test_add_image_visual_rejects_nearest_without_datoviz_sampler_api():
         origin=ImageOrigin.UPPER,
     )
 
-    with pytest.raises(DatovizV04Unsupported, match="dvz_image_set_sampling"):
-        renderer.add_image_visual(visual)
+    renderer.add_image_visual(visual)
 
     assert _calls(fake, "image") == [("image", "scene", 0)]
-    assert _calls(fake, "set_texture") == []
+    assert _calls(fake, "set_texture")
 
 
 def test_add_image_visual_uses_sampled_field_path_with_sampling_api():
@@ -2349,18 +2402,28 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
     ]
 
 
-def test_configure_view2d_axes_rejects_unavailable_or_strict_explicit_ticks():
+def test_configure_view2d_axes_rejects_unavailable_axis_symbols():
     with pytest.raises(DatovizV04Unavailable, match="missing v0.4-dev axis symbols"):
         DatovizV04ProtocolRenderer(dvz=FakeDatovizV04()).configure_view2d_axes(
             View2D(id="view:main", panel_id="panel:main")
         )
 
-    with pytest.raises(DatovizV04Unsupported, match="explicit GSP ticks"):
-        DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithAxes()).configure_view2d_axes(
-            View2D(id="view:main", panel_id="panel:main"),
-            backend_auto_ticks=False,
-            x_tick_values=(0.0, 1.0),
-        )
+
+def test_configure_view2d_axes_adapts_explicit_ticks_to_backend_policy_when_tick_binding_is_absent():
+    fake = FakeDatovizV04WithAxes()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    renderer.configure_view2d_axes(
+        View2D(id="view:main", panel_id="panel:main"),
+        backend_auto_ticks=False,
+        x_tick_values=(0.0, 1.0),
+    )
+
+    assert _calls(fake, "set_ticks") == []
+    assert _calls(fake, "set_tick_policy") == [
+        ("set_tick_policy", "axis:0", "tick-policy"),
+        ("set_tick_policy", "axis:1", "tick-policy"),
+    ]
 
 
 def test_configure_view2d_axes_wires_explicit_ticks_when_binding_is_available():

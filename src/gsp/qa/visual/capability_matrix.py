@@ -143,10 +143,11 @@ _DATOVIZ_S030_RENDERED_GUIDE_ROWS = {
     },
     "guide/view2d_reversed_explicit": {
         "adaptations": [
-            "Datoviz native panel axes render this row for review with reversed View2D domains and explicit ticks via dvz_axis_set_ticks",
+            "Datoviz native panel axes render this row for review with reversed View2D domains; explicit GSP tick values/labels are applied when dvz_axis_set_ticks is exposed and otherwise adapt to the backend-native tick policy",
             "Panel title and guide query semantics remain excluded from the Datoviz rendered artifact",
         ],
         "missing": [
+            "strict explicit GSP tick identity is not claimed when the Datoviz binding omits dvz_axis_set_ticks",
             "panel title placement and guide/all-rendered query semantics are unsupported for this Datoviz slice",
         ],
         "blockers": [

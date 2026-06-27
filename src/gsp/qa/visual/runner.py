@@ -544,7 +544,7 @@ def _datoviz_guide_diagnostics(
         diagnostics["all_rendered_guide_query"] = "unsupported"
         diagnostics["view2d_present"] = view is not None
         if any(guide.tick_spec.kind is TickSpecKind.EXPLICIT for guide in axis_guides):
-            diagnostics["explicit_ticks"] = "dvz_axis_set_ticks"
+            diagnostics["explicit_ticks"] = "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise"
     if panel_text_guides:
         diagnostics["panel_text_guide_count"] = len(panel_text_guides)
         diagnostics["panel_title"] = "unsupported"

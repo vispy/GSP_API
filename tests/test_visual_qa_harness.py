@@ -674,7 +674,10 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
                         ),
                         "guide_diagnostics": {
                             "axis_rendering": "adapted-review",
-                            "explicit_ticks": "dvz_axis_set_ticks",
+                            "explicit_ticks": (
+                                "binding-dependent; dvz_axis_set_ticks when exposed, "
+                                "backend-native ticks otherwise"
+                            ),
                             "panel_title": "unsupported",
                             "guide_query": "unsupported",
                         },
@@ -706,6 +709,7 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
     reversed_explicit = rows["guide/view2d_reversed_explicit"]
     assert reversed_explicit["status"] == "adapted"
     assert "dvz_axis_set_ticks" in reversed_explicit["known_adaptations"][0]
+    assert "backend-native tick policy" in reversed_explicit["known_adaptations"][0]
     assert "guide-query support" in reversed_explicit["promotion_blockers"][1]
 
 
