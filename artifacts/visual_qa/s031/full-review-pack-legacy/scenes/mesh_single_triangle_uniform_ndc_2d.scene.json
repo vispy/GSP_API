@@ -1,0 +1,75 @@
+{
+  "arrays": {
+    "mesh_color": {
+      "dtype": "uint8",
+      "key": "mesh_color",
+      "path": "mesh_single_triangle_uniform_ndc_2d.arrays.npz",
+      "shape": [
+        4
+      ]
+    },
+    "mesh_faces": {
+      "dtype": "uint32",
+      "key": "mesh_faces",
+      "path": "mesh_single_triangle_uniform_ndc_2d.arrays.npz",
+      "shape": [
+        1,
+        3
+      ]
+    },
+    "mesh_positions": {
+      "dtype": "float32",
+      "key": "mesh_positions",
+      "path": "mesh_single_triangle_uniform_ndc_2d.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "mesh/single_triangle_uniform_ndc_2d",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [],
+  "views": [],
+  "visuals": [
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "color_mode": "uniform",
+      "coordinate_space": "ndc",
+      "depth_test": "auto",
+      "depth_write": "auto",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          1,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "visual:mesh-single-triangle",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          3,
+          2
+        ]
+      },
+      "shading": "flat"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "arrays": {
+    "text_positions": {
+      "dtype": "float32",
+      "key": "text_positions",
+      "path": "text_rotation_alpha_ndc.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "text_rgba": {
+      "dtype": "uint8",
+      "key": "text_rgba",
+      "path": "text_rotation_alpha_ndc.arrays.npz",
+      "shape": [
+        4,
+        4
+      ]
+    },
+    "text_rotation_rad": {
+      "dtype": "float32",
+      "key": "text_rotation_rad",
+      "path": "text_rotation_alpha_ndc.arrays.npz",
+      "shape": [
+        4
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "text/rotation_alpha_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [],
+  "views": [],
+  "visuals": [
+    {
+      "clim": null,
+      "color_scale_id": null,
+      "colormap": null,
+      "coordinate_space": "ndc",
+      "extent": [
+        -0.82,
+        0.82,
+        -0.42,
+        0.42
+      ],
+      "family": "image",
+      "id": "visual:text-alpha-background",
+      "image": {
+        "dtype": "uint8",
+        "shape": [
+          8,
+          8,
+          4
+        ]
+      },
+      "interpolation": "nearest",
+      "origin": "upper"
+    },
+    {
+      "anchor_x": "center",
+      "anchor_y": "center",
+      "coordinate_space": "ndc",
+      "family": "text",
+      "font_role": "default",
+      "font_size_px": {
+        "dtype": "float",
+        "shape": []
+      },
+      "id": "visual:text-rotation-alpha-ndc",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "rgba": {
+        "dtype": "uint8",
+        "shape": [
+          4,
+          4
+        ]
+      },
+      "rotation_rad": {
+        "dtype": "float32",
+        "shape": [
+          4
+        ]
+      },
+      "texts": [
+        "rotate",
+        "alpha",
+        "over",
+        "image"
+      ],
+      "z_order": 4
+    }
+  ]
+}
