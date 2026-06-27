@@ -1,0 +1,149 @@
+{
+  "arrays": {
+    "segment_colors": {
+      "dtype": "uint8",
+      "key": "segment_colors",
+      "path": "segment_alpha_order_ndc.arrays.npz",
+      "shape": [
+        3,
+        4
+      ]
+    },
+    "segment_end_positions": {
+      "dtype": "float32",
+      "key": "segment_end_positions",
+      "path": "segment_alpha_order_ndc.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "segment_start_positions": {
+      "dtype": "float32",
+      "key": "segment_start_positions",
+      "path": "segment_alpha_order_ndc.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "segment_widths": {
+      "dtype": "float32",
+      "key": "segment_widths",
+      "path": "segment_alpha_order_ndc.arrays.npz",
+      "shape": [
+        3
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "segment/alpha_order_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [],
+  "views": [],
+  "visuals": [
+    {
+      "cap": "round",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          1,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "end_positions": {
+        "dtype": "float32",
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "family": "segment",
+      "id": "visual:segment-alpha-order-0",
+      "start_positions": {
+        "dtype": "float32",
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "widths": {
+        "dtype": "float32",
+        "shape": [
+          1
+        ]
+      }
+    },
+    {
+      "cap": "round",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          1,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "end_positions": {
+        "dtype": "float32",
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "family": "segment",
+      "id": "visual:segment-alpha-order-1",
+      "start_positions": {
+        "dtype": "float32",
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "widths": {
+        "dtype": "float32",
+        "shape": [
+          1
+        ]
+      }
+    },
+    {
+      "cap": "round",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          1,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "end_positions": {
+        "dtype": "float32",
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "family": "segment",
+      "id": "visual:segment-alpha-order-2",
+      "start_positions": {
+        "dtype": "float32",
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "widths": {
+        "dtype": "float32",
+        "shape": [
+          1
+        ]
+      }
+    }
+  ]
+}

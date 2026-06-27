@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 394, in _run_datoviz
+    _render_datoviz_visual(renderer, visual)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 476, in _render_datoviz_visual
+    renderer.add_segment_visual(visual)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 615, in add_segment_visual
+    _set_visual_data(self.dvz, dvz_visual, "stroke_width_px", widths)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 1896, in _set_visual_data
+    raise DatovizV04Unsupported(
+        f"Datoviz visual attribute {attr_name!r} upload failed"
+    )
+gsp_datoviz.protocol_renderer.DatovizV04Unsupported: Datoviz visual attribute 'stroke_width_px' upload failed

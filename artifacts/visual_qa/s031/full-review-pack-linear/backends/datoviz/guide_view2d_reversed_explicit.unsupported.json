@@ -1,0 +1,13 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "guide/view2d_reversed_explicit",
+  "datoviz_color_pipeline": "linear_srgb",
+  "diagnostics": {
+    "exception_type": "DatovizV04Unsupported",
+    "message": "Datoviz native axis provider cannot realize explicit GSP ticks: missing dvz_axis_set_ticks"
+  },
+  "reason": "DatovizV04Unsupported: Datoviz native axis provider cannot realize explicit GSP ticks: missing dvz_axis_set_ticks",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

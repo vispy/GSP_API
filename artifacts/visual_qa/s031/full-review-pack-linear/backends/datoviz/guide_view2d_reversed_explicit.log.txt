@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 382, in _run_datoviz
+    renderer.configure_view2d_axes(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        view,
+        ^^^^^
+    ...<7 lines>...
+        y_tick_labels=guide_configuration.y_tick_labels,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 1176, in configure_view2d_axes
+    raise DatovizV04Unsupported(
+    ...<2 lines>...
+    )
+gsp_datoviz.protocol_renderer.DatovizV04Unsupported: Datoviz native axis provider cannot realize explicit GSP ticks: missing dvz_axis_set_ticks

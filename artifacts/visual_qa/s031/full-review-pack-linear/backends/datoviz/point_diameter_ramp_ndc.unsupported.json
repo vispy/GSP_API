@@ -1,0 +1,13 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "point/diameter_ramp_ndc",
+  "datoviz_color_pipeline": "linear_srgb",
+  "diagnostics": {
+    "exception_type": "DatovizV04Unsupported",
+    "message": "Datoviz visual attribute 'diameter_px' upload failed"
+  },
+  "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

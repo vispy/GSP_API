@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 394, in _run_datoviz
+    _render_datoviz_visual(renderer, visual)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 482, in _render_datoviz_visual
+    renderer.add_text_visual(visual)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 774, in add_text_visual
+    raise DatovizV04Unsupported(
+    ...<2 lines>...
+    )
+gsp_datoviz.protocol_renderer.DatovizV04Unsupported: Datoviz v0.4 TextVisual support is unavailable: missing dvz_text_placement

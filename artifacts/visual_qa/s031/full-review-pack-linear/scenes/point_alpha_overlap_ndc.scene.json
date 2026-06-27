@@ -1,0 +1,66 @@
+{
+  "arrays": {
+    "point_colors": {
+      "dtype": "uint8",
+      "key": "point_colors",
+      "path": "point_alpha_overlap_ndc.arrays.npz",
+      "shape": [
+        3,
+        4
+      ]
+    },
+    "point_positions": {
+      "dtype": "float32",
+      "key": "point_positions",
+      "path": "point_alpha_overlap_ndc.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "point_sizes": {
+      "dtype": "float32",
+      "key": "point_sizes",
+      "path": "point_alpha_overlap_ndc.arrays.npz",
+      "shape": [
+        3
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "point/alpha_overlap_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [],
+  "views": [],
+  "visuals": [
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          3,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "family": "point",
+      "id": "visual:point-alpha-overlap-ndc",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          3,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          3
+        ]
+      }
+    }
+  ]
+}
