@@ -4,7 +4,7 @@ Generated: 2026-06-27
 Updated: 2026-06-27 after Datoviz `v0.4-dev` commits through `4e5f6aec6`
 (`docs: document panel coordinate transforms`).
 
-This handoff incorporates the ChatGPT Pro answer saved locally as `./ANSWER` and is intended for another agent to pick up. It covers both repositories:
+This handoff is intended for another agent to pick up. It covers both repositories:
 
 - GSP_API: `/home/cyrille/GIT/Viz/GSP_API`
 - Datoviz: `/home/cyrille/GIT/Viz/datoviz`
