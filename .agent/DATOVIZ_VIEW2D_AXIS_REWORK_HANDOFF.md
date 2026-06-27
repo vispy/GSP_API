@@ -1,15 +1,19 @@
 # Datoviz / GSP View2D Axis Rework Handoff
 
 Generated: 2026-06-27
+Updated: 2026-06-27 after Datoviz `v0.4-dev` commits through `4e5f6aec6`
+(`docs: document panel coordinate transforms`).
 
 This handoff incorporates the ChatGPT Pro answer saved locally as `./ANSWER` and is intended for another agent to pick up. It covers both repositories:
 
 - GSP_API: `/home/cyrille/GIT/Viz/GSP_API`
 - Datoviz: `/home/cyrille/GIT/Viz/datoviz`
 
-## Verdict
+## Current Verdict
 
-The current S028 guide/View2D mismatch is primarily a GSP Datoviz adapter bug, exposed by a Datoviz API footgun.
+The current S028 guide/View2D mismatch is still primarily a GSP Datoviz adapter bug. The
+Datoviz-side API/documentation gap described in the original handoff has largely been addressed in
+the local Datoviz `v0.4-dev` branch.
 
 GSP currently sets panel domains and then enables a default Datoviz `DvzPanelView2D` whose embedded `data_x/data_y` are `[-1, +1]`. Once `view2d_enabled` is true, Datoviz resolves from `panel->view2d.data_x/data_y`, so the intended GSP ranges are effectively replaced with the Datoviz defaults.
 
@@ -18,7 +22,18 @@ This explains the visible failures:
 - `guide/view2d_auto_grid`: GSP intends `x=(-2, 2)`, `y=(-1, 1)`, but Datoviz behaves like `x=(-1, 1)`, clipping the outer points.
 - `guide/view2d_reversed_explicit`: GSP intends reversed ordered endpoints, but Datoviz behaves like default non-reversed ranges.
 
-Datoviz is not necessarily wrong at the renderer-behavior level, but the relationship between `dvz_panel_set_domain()`, `DvzPanelView2D.data_x/data_y`, and `dvz_panel_set_view2d()` needs stronger API/documentation support.
+Datoviz now documents and tests the relevant behavior:
+
+- `DvzPanelView2D.data_x/data_y` are accepted as ordered endpoints, including reversed endpoints.
+- `dvz_panel_visible_domain()` preserves active domain orientation.
+- `dvz_panel_data_to_visual_positions()` maps DATA to VIEW and is documented as only appropriate
+  for visuals attached with `DVZ_COORD_VIEW`.
+- `dvz_panel_transform_point()`, `dvz_panel_position_to_data()`, and
+  `dvz_panel_data_to_position()` are available as explicit coordinate conversion APIs.
+- `dvz_axis_set_ticks()` is now present in the local Datoviz public header and Python import path.
+
+Therefore the next GSP task should be the carrier fix and validation, not another Datoviz API
+consultation.
 
 ## Target Architecture
 
@@ -31,6 +46,9 @@ Required model:
 - `AxisGuideSpec`: provider-independent axis/grid/tick/label intent.
 - `AxisGuideRealization`: backend/provider-specific status and diagnostics.
 - `DatovizPanelView2D` or local adapter helper: backend carrier mapping `DataView2DSnapshot` into `DvzPanelView2D.data_x/data_y`.
+- Datoviz coordinate conversion helpers for runtime/readback checks:
+  `dvz_panel_transform_point()`, `dvz_panel_visible_domain()`,
+  `dvz_panel_data_to_visual_positions()`.
 
 Strict rule:
 
@@ -49,7 +67,8 @@ Files likely involved:
 
 Steps:
 
-1. Replace the current `configure_view2d_axes()` mixed responsibility with at least one internal helper:
+1. Add at least one internal helper so the View2D carrier can be tested independently of native
+   axis realization:
 
    ```python
    apply_datoviz_data_view2d(view_or_snapshot)
@@ -69,7 +88,9 @@ Steps:
 
 3. Preserve ordered endpoints exactly. Do not sort reversed ranges.
 
-4. Stop using `dvz_panel_set_domain()` as the primary GSP `DataView2D` carrier. If native axes still need it temporarily, isolate it in a compatibility helper and call it before `dvz_panel_set_view2d()` because `dvz_panel_set_domain()` disables `view2d_enabled`.
+4. Stop using `dvz_panel_set_domain()` as the primary GSP `DataView2D` carrier. If legacy panel
+   domain sync is retained temporarily, isolate it in a compatibility helper and call it before
+   `dvz_panel_set_view2d()` because `dvz_panel_set_domain()` disables `view2d_enabled`.
 
 5. Record diagnostics similar to:
 
@@ -79,6 +100,7 @@ Steps:
    reversed_x = ...
    reversed_y = ...
    legacy_panel_domain_sync = true|false
+   datoviz_visible_domain_readback = available|missing
    ```
 
 Acceptance:
@@ -121,13 +143,15 @@ Steps:
 
 4. Return or store a structured `AxisGuideRealization`-like diagnostic for each axis provider.
 
-5. Keep Datoviz native axes classified as adapted when explicit tick functions are missing.
+5. Keep Datoviz native axes classified as adapted even when explicit tick functions are present,
+   until title/query/all-rendered guide semantics are strict.
 
 Acceptance:
 
 - Tests prove view mapping can be configured without creating axes.
 - Tests prove axes consume the same snapshot as DATA visuals.
-- Capability matrix does not imply strict explicit tick support when `dvz_axis_set_ticks` is absent.
+- Capability matrix does not imply strict guide support just because `dvz_axis_set_ticks` is
+  present.
 
 ### GSP-3: Break/Rename Ambiguous View Types
 
@@ -173,13 +197,15 @@ Recommended capability names:
 - `axis_realized_tick_query`
 - `srgb_pipeline_control`
 
-Current expected Datoviz classification:
+Current expected Datoviz classification after the latest Datoviz commits:
 
-- `data_view2d_ordered_limits`: strict after carrier fix and tests.
-- `data_view2d_reversed_x/y`: strict only after tests prove Datoviz honors ordered endpoints.
+- `data_view2d_ordered_limits`: strict after the GSP carrier fix and tests.
+- `data_view2d_reversed_x/y`: Datoviz-native proof now exists; GSP can promote after adapter tests
+  confirm it populates `DvzPanelView2D.data_x/data_y` and readback agrees.
 - `axis_native_auto_ticks`: adapted.
-- `axis_explicit_ticks`: unsupported while `dvz_axis_set_ticks` is absent.
-- `axis_explicit_tick_labels`: unsupported/adapted until stable binding.
+- `axis_explicit_ticks`: adapted when `dvz_axis_set_ticks` is exposed; unsupported when absent.
+- `axis_explicit_tick_labels`: adapted until the Python binding wrapper shape is proven stable
+  against the C `DvzAxisTicks*` API.
 - `axis_realized_tick_query`: unsupported.
 - `srgb_pipeline_control`: adapted/no-op when `dvz_figure_set_color_pipeline` is absent.
 
@@ -209,7 +235,9 @@ Required tests:
    - `dvz_panel_set_domain()` is not used in the strict carrier path, or if temporary legacy sync is enabled it is called before `dvz_panel_set_view2d()`.
 
 4. Native transform integration test when available:
-   - Use `dvz_panel_data_to_visual_positions`.
+   - Prefer `dvz_panel_transform_point()` for point conversions.
+   - Use `dvz_panel_visible_domain()` for resolved ordered-domain readback.
+   - Keep `dvz_panel_data_to_visual_positions()` only for DATA-to-VIEW checks.
    - Normal range:
      - `(-2, -1) -> (-1, -1)`
      - `(0, 0) -> (0, 0)`
@@ -225,6 +253,11 @@ Required tests:
 
 6. Diagnostics:
    - Explicit tick case with missing `dvz_axis_set_ticks` must be adapted or unsupported, not strict.
+   - Explicit tick case with present `dvz_axis_set_ticks` remains adapted until guide title/query
+     semantics are strict.
+   - Add a binding-shape check for the Python `dvz_axis_set_ticks` wrapper. The C API takes
+     `const DvzAxisTicks*`; the current GSP adapter assumes a convenience wrapper accepting
+     values/labels.
 
 ### GSP-6: Regenerate Artifacts
 
@@ -280,7 +313,18 @@ Acceptance:
 
 Do not mix these changes with unrelated Datoviz work such as animation timer refactors. Coordinate branch ownership before editing `/home/cyrille/GIT/Viz/datoviz`.
 
-### DVZ-1: Document Domain Authority
+Current Datoviz status after commits `58b0b464b`, `3469a58f8`, and `4e5f6aec6`:
+
+| Area | Status | GSP impact |
+|---|---|---|
+| Domain/View2D authority docs | Mostly landed | GSP should consume the documented `DvzPanelView2D.data_x/data_y` carrier. |
+| Reversed `DvzPanelView2D` domains | Landed in native tests | GSP still needs adapter and visual QA proof. |
+| Visible-domain readback | Present | Prefer `dvz_panel_visible_domain()` for ordered endpoint assertions. |
+| Coordinate conversion | Present | Prefer `dvz_panel_transform_point()` for DATA/VIEW/pixel conversion checks. |
+| `dvz_axis_set_ticks()` | Present in local header/import path | Keep guide rows adapted until title/query semantics are strict. |
+| Safer one-shot View2D constructor/setter | Not present | Optional ergonomic follow-up, not blocking GSP carrier fix. |
+
+### DVZ-1: Document Domain Authority - mostly landed
 
 Files likely involved:
 
@@ -299,13 +343,19 @@ Clarify the relationship among:
 - native DATA attachments
 - native axes
 
-Required explicit statement:
+Status:
+
+- The public header now documents ordered domains, active visible-domain orientation, and coordinate
+  conversion helpers.
+- The GSP-relevant remaining check is whether Python docs/bindings expose the same wording clearly.
+
+Original required explicit statement:
 
 When `view2d_enabled` is true, `DvzPanelView2D.data_x/data_y` are the active data domains for data-to-visual mapping and visible-domain resolution.
 
 Also document that `dvz_panel_set_domain()` disables active View2D.
 
-### DVZ-2: Add Safer View2D Construction API
+### DVZ-2: Add Safer View2D Construction API - optional follow-up
 
 Add one of these APIs:
 
@@ -327,14 +377,24 @@ int dvz_panel_set_view2d_domain(
 
 Preferred property: callers cannot accidentally enable default `[-1, +1]` domains after setting non-default domains.
 
+This is no longer blocking GSP. The immediate GSP adapter fix can populate the existing
+`DvzPanelView2D.data_x/data_y` descriptor directly.
+
 Acceptance:
 
 - API accepts ordered endpoints, including reversed ranges, or clearly rejects them with a documented alternative.
 - Tests prove `x0=1, x1=-1` and `y0=1, y1=-1` preserve reversed mapping if that is intended support.
 
-### DVZ-3: Add Resolved Domain Getter
+### DVZ-3: Add Resolved Domain Getter - superseded by visible-domain/transform APIs for GSP
 
-Add a stable API for GSP tests/debugging:
+The originally requested exact API has not landed, but GSP now has enough public surface for the
+carrier fix:
+
+- `dvz_panel_visible_domain()` returns resolved visible ordered endpoints.
+- `dvz_panel_transform_point()` converts between DATA, VIEW, and pixel spaces.
+- `dvz_panel_data_to_visual_positions()` remains available for DATA-to-VIEW checks.
+
+An exact whole-view getter remains optional:
 
 ```c
 bool dvz_panel_get_resolved_data_domain(
@@ -350,9 +410,11 @@ Acceptance:
 - Returns the domains actually used by `dvz_panel_data_to_visual_positions()` after current panel/view state is resolved.
 - Preserves ordered endpoints.
 
-### DVZ-4: Clarify Or Rename Ordered Ranges
+### DVZ-4: Clarify Or Rename Ordered Ranges - mostly landed
 
 Current field names are `min` and `max`, but GSP requires ordered endpoints for reversed axes.
+Datoviz native tests now prove reversed `DvzPanelView2D.data_x/data_y` behavior. A future rename or
+ordered range type remains ergonomic, not a GSP blocker.
 
 Options:
 
@@ -369,7 +431,7 @@ Acceptance:
 
 - Datoviz docs and tests make reversed axis behavior unambiguous.
 
-### DVZ-5: Stabilize Python Bindings Needed By GSP Strict Support
+### DVZ-5: Stabilize Python Bindings Needed By GSP Strict Support - partially landed
 
 Required Python-visible APIs:
 
@@ -383,7 +445,8 @@ Panel/View2D:
 - writable `DvzPanelView2D.aspect`
 - writable `DvzPanelView2D.padding`
 - `dvz_panel_data_to_visual_positions`
-- resolved-domain getter once added
+- `dvz_panel_visible_domain`
+- `dvz_panel_transform_point`
 
 Axes/guides:
 
@@ -410,7 +473,15 @@ Acceptance:
 - GSP no longer needs broad alias fallbacks for functions that are meant to be stable.
 - GSP capability probe can distinguish absent experimental APIs from stable unsupported features.
 
-### DVZ-6: Add Native Tests
+Additional GSP-side verification now required:
+
+- Confirm the Python `dvz_axis_set_ticks` wrapper shape. The public C API takes
+  `const DvzAxisTicks*`, while the current GSP adapter assumes a convenience wrapper accepting
+  values/labels.
+- Confirm `DvzPanelView2D.data_x/data_y` fields are writable in the Python facade used by the
+  review pack.
+
+### DVZ-6: Add Native Tests - partially landed
 
 Add Datoviz C/Python tests for:
 
@@ -425,23 +496,37 @@ Acceptance:
 
 - The exact GSP S028 normal and reversed guide geometry can be reproduced in Datoviz-native tests without relying on GSP.
 
+Status:
+
+- Native reversed `DvzPanelView2D` visible-domain and DATA-to-VIEW tests exist.
+- Remaining Datoviz-native proof, if desired, is full native axis/grid geometry parity with the
+  exact GSP S028 guide cases.
+
 ## Cross-Repo Sequencing
 
 1. GSP first: implement `DvzPanelView2D.data_x/data_y` carrier patch and tests.
-2. GSP first: keep native Datoviz axes adapted for missing explicit ticks.
-3. Datoviz next: document and add safer APIs/getters.
-4. GSP after Datoviz API stabilization: remove temporary compatibility aliases and promote strict rows feature-by-feature.
+2. GSP first: verify Python binding shape for writable `DvzPanelView2D.data_x/data_y`,
+   `dvz_panel_visible_domain()`, `dvz_panel_transform_point()`, and `dvz_axis_set_ticks()`.
+3. GSP first: keep native Datoviz guide rows adapted even when explicit ticks render, until
+   title/query/all-rendered guide semantics are strict.
+4. Datoviz optional follow-up: add a safer one-shot View2D constructor/setter if the existing
+   descriptor API remains too easy to misuse.
+5. GSP after adapter validation: remove temporary compatibility aliases and promote strict
+   data-view rows feature-by-feature.
 
 ## Stop Conditions
 
 Stop and classify Datoviz rows as adapted or unsupported if any of these occur:
 
-- Datoviz cannot preserve ordered/reversed ranges.
+- The active Python binding cannot preserve ordered/reversed `DvzPanelView2D.data_x/data_y` ranges.
 - Native DATA attachments ignore `DvzPanelView2D.data_x/data_y`.
 - Native axes consume a different domain than DATA visuals.
 - Explicit ticks cannot be set but a strict explicit-tick row is requested.
+- `dvz_axis_set_ticks()` is present only as the C `DvzAxisTicks*` ABI and the Python wrapper needed
+  by GSP is not stable.
 - Binding instability prevents stable tests.
-- No resolved-state query exists for core semantic features and image-only evidence remains ambiguous.
+- `dvz_panel_visible_domain()` / `dvz_panel_transform_point()` are unavailable in the tested
+  binding and image-only evidence remains ambiguous.
 
 ## Deliverables For The Next Agent
 
@@ -449,16 +534,20 @@ Minimum GSP deliverables:
 
 - Patch `src/gsp_datoviz/protocol_renderer.py` so the active Datoviz View2D descriptor carries GSP ranges.
 - Add normal and reversed descriptor/call-order tests.
+- Add binding-shape/readback checks for writable `DvzPanelView2D`, `dvz_panel_visible_domain()`,
+  `dvz_panel_transform_point()`, and `dvz_axis_set_ticks()`.
 - Add or update visual QA assertions for the S028 guide rows.
 - Regenerate the legacy review pack.
 - Commit and push.
 
-Minimum Datoviz deliverables:
+Optional Datoviz follow-up deliverables:
 
-- Clarify View2D/domain authority in headers/docs.
-- Add or propose safe View2D domain constructor/setter.
-- Add or propose resolved-domain getter.
-- Stabilize Python binding surface needed for strict GSP support.
+- Add or propose safe View2D domain constructor/setter if direct descriptor mutation remains too
+  error-prone.
+- Add exact native axis/grid geometry tests for the GSP S028 guide cases if GSP visual QA remains
+  ambiguous.
+- Stabilize Python binding surface needed for strict GSP support, especially `dvz_axis_set_ticks()`
+  wrapper semantics.
 
-Do not promote Datoviz native explicit guide/tick rows to strict until explicit tick/label APIs and query semantics are stable.
-
+Do not promote Datoviz native guide/tick rows to strict until explicit tick/label APIs, title
+layout, guide query, and all-rendered guide semantics are stable and tested.
