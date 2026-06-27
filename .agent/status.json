@@ -1,5 +1,5 @@
 {
-  "current_stage": "S031",
+  "current_stage": "S032",
   "stages": [
     {
       "id": "S001",
@@ -186,6 +186,12 @@
       "title": "Release-Candidate Stabilization and Roadmap Reset",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S032",
+      "title": "Datoviz v0.4 Compatibility Refresh",
+      "state": "active",
+      "progress": 10
     }
   ],
   "missions": [
@@ -1313,6 +1319,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 126
+    },
+    {
+      "id": "M127",
+      "title": "Datoviz policy-only View2D compatibility",
+      "stage": "S032",
+      "state": "active",
+      "agent": "local-main-codex",
+      "progress": 10,
+      "priority": 127
     }
   ],
   "review_queue": [],
@@ -1375,9 +1390,9 @@
     }
   ],
   "recommendations": [
-    "S031 is closed as a local release-candidate stabilization pass: required validation and optional Matplotlib-path example confidence checks pass.",
-    "No tag, version change, or publication was performed; those remain separate explicit user-approved release operations.",
-    "Keep Datoviz v0.4 support wording capability-gated; strict guide parity remains deferred unless title/query semantics are proven or excluded by an accepted contract."
+    "S032 is active to refresh GSP against the latest Datoviz v0.4-dev policy-only View2D/domain contract.",
+    "Keep ../datoviz read-only during this pass; the sibling checkout currently has a dirty data gitlink.",
+    "Regenerate the visual QA all_cases contact sheet and review Datoviz unsupported/adapted counts before closing M127."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
@@ -1423,6 +1438,7 @@
     "M112 completed: added the S029 capability matrix schema, review-pack generator, Datoviz review-pack runtime wrapper, focused tests, and Mission Control opening records."
   ],
   "summaries": [
+    "M127 opened: refresh the Datoviz adapter for policy-only View2D, update stale tests/specs, and regenerate Matplotlib/Datoviz visual QA artifacts.",
     "M126 completed: added S031 closeout, marked the stage complete, and recorded the release-candidate decision without tagging, version changes, or publication.",
     "M125 completed: added required Unreleased changelog sections for fixed items, backend support, and known limitations; tightened README backend wording; docs build, package build, import-surface tests, JSON validation, and diff whitespace checks passed.",
     "M124 completed: required release validation passed; optional example confidence checks passed after lazy-loading optional Datoviz legacy imports in examples and making protocol_live_window honor GSP_TEST.",
