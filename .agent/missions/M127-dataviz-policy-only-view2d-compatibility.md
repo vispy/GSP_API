@@ -6,7 +6,7 @@ S032 - Datoviz v0.4 compatibility refresh
 
 ## Status
 
-Active under local-main-codex.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -24,6 +24,10 @@ regenerate review artifacts that demonstrate Matplotlib/Datoviz visual agreement
   contact sheet.
 - Validation notes recorded with unsupported/adapted Datoviz row counts and image-comparison
   observations.
+
+## Result
+
+Completed in S032. See `.agent/S032_CLOSEOUT.md`.
 
 ## Stop Condition
 
