@@ -1191,15 +1191,7 @@ class DatovizV04ProtocolRenderer:
             )
         dim_x = getattr(self.dvz, "DVZ_DIM_X", 0)
         dim_y = getattr(self.dvz, "DVZ_DIM_Y", 1)
-        self.dvz.dvz_panel_set_domain(
-            self.panel, dim_x, view.x_range[0], view.x_range[1]
-        )
-        self.dvz.dvz_panel_set_domain(
-            self.panel, dim_y, view.y_range[0], view.y_range[1]
-        )
-
-        panel_view = self.dvz.dvz_panel_view2d()
-        self.dvz.dvz_panel_set_view2d(self.panel, panel_view)
+        self.apply_datoviz_data_view2d(view)
 
         x_axis = self.dvz.dvz_panel_axis(self.panel, dim_x)
         y_axis = self.dvz.dvz_panel_axis(self.panel, dim_y)
@@ -1220,6 +1212,34 @@ class DatovizV04ProtocolRenderer:
             self.dvz.dvz_axis_set_label(x_axis, x_label.encode("utf-8"))
         if y_label is not None:
             self.dvz.dvz_axis_set_label(y_axis, y_label.encode("utf-8"))
+
+    def apply_datoviz_data_view2d(self, view: View2D) -> Any:
+        """Apply GSP ordered data ranges to the active Datoviz View2D carrier."""
+        panel_view = self.dvz.dvz_panel_view2d()
+        _set_datoviz_data_domain(panel_view, "data_x", view.x_range)
+        _set_datoviz_data_domain(panel_view, "data_y", view.y_range)
+        if hasattr(panel_view, "padding"):
+            panel_view.padding = 0.0
+        result = self.dvz.dvz_panel_set_view2d(self.panel, panel_view)
+        if result not in (0, None, True):
+            raise DatovizV04Unsupported("Datoviz View2D data-domain setup failed")
+        return panel_view
+
+
+def _set_datoviz_data_domain(
+    panel_view: Any, field_name: str, limits: tuple[float, float]
+) -> None:
+    domain = getattr(panel_view, field_name, None)
+    if domain is None:
+        raise DatovizV04Unsupported(
+            f"Datoviz View2D descriptor is missing {field_name}"
+        )
+    if not hasattr(domain, "min") or not hasattr(domain, "max"):
+        raise DatovizV04Unsupported(
+            f"Datoviz View2D descriptor {field_name} is not writable"
+        )
+    domain.min = float(limits[0])
+    domain.max = float(limits[1])
 
 
 def _set_axis_ticks(

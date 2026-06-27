@@ -45,7 +45,6 @@ _DVZ_CAPTURE_RENDER_FUNCTIONS = (
 )
 
 _REQUIRED_DVZ_AXIS_FUNCTIONS = (
-    "dvz_panel_set_domain",
     "dvz_panel_view2d",
     "dvz_panel_set_view2d",
     "dvz_panel_axis",
