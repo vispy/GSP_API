@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T07:43:01.030164+00:00",
+  "generated_at": "2026-06-27T19:15:38.058777+00:00",
   "rows": [
     {
       "backend": "matplotlib",
@@ -1210,8 +1210,8 @@
       ],
       "family": "transform",
       "known_adaptations": [
-        "Datoviz CPU-maps finite point DATA positions through the linear View2D range, including reversed x limits, before panel-NDC upload",
-        "S029 verifies DATA-mapped points align with explicit NDC overlay points for the rendered point scope"
+        "Datoviz uploads finite point DATA positions against native panel domains, including reversed x limits",
+        "S032 verifies native DATA-domain points align with explicit VIEW overlay points for the rendered point scope"
       ],
       "known_missing_semantics": [],
       "promotion_blockers": [],
@@ -1261,7 +1261,7 @@
       ],
       "family": "transform",
       "known_adaptations": [
-        "Datoviz resolves one named AFFINE_2D resource and CPU-adapts finite eager DATA positions before View2D mapping",
+        "Datoviz resolves one named AFFINE_2D resource and CPU-applies it to finite eager DATA positions before native panel-domain rendering",
         "S029 verifies the rendered bounded point, marker, segment, path, text-center-anchor, and 2D uniform-mesh transform scope"
       ],
       "known_missing_semantics": [],
