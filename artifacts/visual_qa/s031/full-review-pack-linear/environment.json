@@ -2,7 +2,7 @@
   "datoviz": {
     "imported": true,
     "minimal_point_supported": true,
-    "path": "/home/cyrille/GIT/Viz/datoviz/build/wheel-stage/datoviz/__init__.py",
+    "path": "/home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
     "raw_imported": true
   },
   "platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",

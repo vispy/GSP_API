@@ -4,12 +4,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/point_basic_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/point_basic_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/point_basic_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/point_basic_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/point_basic_ndc.png",
@@ -34,12 +33,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/point_diameter_ramp_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/point_diameter_ramp_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/point_diameter_ramp_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/point_diameter_ramp_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/point_diameter_ramp_ndc.png",
@@ -64,12 +62,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/point_alpha_overlap_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/point_alpha_overlap_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/point_alpha_overlap_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/point_alpha_overlap_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/point_alpha_overlap_ndc.png",
@@ -94,12 +91,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/marker_shapes_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/marker_shapes_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/marker_shapes_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/marker_shapes_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/marker_shapes_ndc.png",
@@ -125,12 +121,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/marker_angle_size_stroke_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/marker_angle_size_stroke_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/marker_angle_size_stroke_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/marker_angle_size_stroke_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/marker_angle_size_stroke_ndc.png",
@@ -157,12 +152,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/segment_width_cap_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/segment_width_cap_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/segment_width_cap_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'stroke_width_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/segment_width_cap_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/segment_width_cap_ndc.png",
@@ -188,12 +182,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/segment_alpha_order_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/segment_alpha_order_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/segment_alpha_order_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'stroke_width_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/segment_alpha_order_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/segment_alpha_order_ndc.png",
@@ -219,12 +212,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/path_subpaths_width_join_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/path_subpaths_width_join_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/path_subpaths_width_join_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'stroke_width_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/path_subpaths_width_join_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/path_subpaths_width_join_ndc.png",
@@ -252,12 +244,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/image_checker_nearest_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_checker_nearest_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_checker_nearest_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_checker_nearest_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/image_checker_nearest_ndc.png",
@@ -284,12 +275,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/image_origin_lower_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_origin_lower_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_origin_lower_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_origin_lower_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/image_origin_lower_ndc.png",
@@ -315,12 +305,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/image_scalar_gray_clim_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_scalar_gray_clim_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_scalar_gray_clim_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_scalar_gray_clim_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/image_scalar_gray_clim_ndc.png",
@@ -346,12 +335,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/image_rgba_alpha_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_rgba_alpha_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_rgba_alpha_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/image_rgba_alpha_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/image_rgba_alpha_ndc.png",
@@ -376,12 +364,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/overlay_point_over_image_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/overlay_point_over_image_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/overlay_point_over_image_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/overlay_point_over_image_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/overlay_point_over_image_ndc.png",
@@ -407,12 +394,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/text_basic_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_basic_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_basic_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 TextVisual support is unavailable: missing dvz_text_placement",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_basic_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/text_basic_ndc.png",
@@ -437,12 +423,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/text_anchor_grid_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_anchor_grid_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_anchor_grid_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 TextVisual support is unavailable: missing dvz_text_placement",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_anchor_grid_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/text_anchor_grid_ndc.png",
@@ -466,12 +451,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/text_rotation_alpha_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_rotation_alpha_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_rotation_alpha_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_rotation_alpha_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/text_rotation_alpha_ndc.png",
@@ -497,12 +481,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/text_data_vs_ndc.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_data_vs_ndc.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_data_vs_ndc.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 TextVisual support is unavailable: missing dvz_text_placement",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_data_vs_ndc.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/text_data_vs_ndc.png",
@@ -526,12 +509,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/text_multiline_unicode_smoke.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_multiline_unicode_smoke.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_multiline_unicode_smoke.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 TextVisual support is unavailable: missing dvz_text_placement",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/text_multiline_unicode_smoke.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/text_multiline_unicode_smoke.png",
@@ -645,12 +627,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/color_scalar_image_viridis_colorbar.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/color_scalar_image_viridis_colorbar.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/color_scalar_image_viridis_colorbar.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz v0.4 image facade is missing dvz_image_set_sampling; nearest image rendering would silently use linear sampling",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/color_scalar_image_viridis_colorbar.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/color_scalar_image_viridis_colorbar.png",
@@ -676,12 +657,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/color_point_scalar_gray_range.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/color_point_scalar_gray_range.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/color_point_scalar_gray_range.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/color_point_scalar_gray_range.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/color_point_scalar_gray_range.png",
@@ -706,12 +686,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/color_marker_scalar_fill_alpha.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/color_marker_scalar_fill_alpha.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/color_marker_scalar_fill_alpha.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/color_marker_scalar_fill_alpha.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/color_marker_scalar_fill_alpha.png",
@@ -736,12 +715,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/transform_inline_named_equivalence.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/transform_inline_named_equivalence.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/transform_inline_named_equivalence.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/transform_inline_named_equivalence.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/transform_inline_named_equivalence.png",
@@ -765,12 +743,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/transform_view2d_data_ndc_overlay.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/transform_view2d_data_ndc_overlay.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/transform_view2d_data_ndc_overlay.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/transform_view2d_data_ndc_overlay.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/transform_view2d_data_ndc_overlay.png",
@@ -795,12 +772,11 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/transform_family_affine_view2d.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/transform_family_affine_view2d.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/transform_family_affine_view2d.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/transform_family_affine_view2d.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/transform_family_affine_view2d.png",
@@ -829,12 +805,29 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/guide_view2d_auto_grid.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/guide_view2d_auto_grid.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
+          "guide_diagnostics": {
+            "all_rendered_guide_query": "unsupported",
+            "auto_ticks": "backend-native",
+            "axis_guide_count": 2,
+            "axis_provider": "datoviz.v04.panel_axis.wip",
+            "axis_rendering": "adapted-review",
+            "guide_query": "unsupported",
+            "panel_text_guide_count": 1,
+            "panel_text_guides_skipped": [
+              {
+                "id": "guide:s028-auto-title",
+                "role": "title",
+                "text": "S028 auto guide View2D"
+              }
+            ],
+            "panel_title": "unsupported",
+            "view2d_present": true
+          },
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/guide_view2d_auto_grid.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz visual attribute 'diameter_px' upload failed",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/guide_view2d_auto_grid.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/guide_view2d_auto_grid.png",
@@ -860,12 +853,30 @@
       "arrays_path": "artifacts/visual_qa/s031/full-review-pack-linear/scenes/guide_view2d_reversed_explicit.arrays.npz",
       "backends": {
         "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/guide_view2d_reversed_explicit.png",
           "backend_id": "datoviz",
           "datoviz_color_pipeline": "linear_srgb",
+          "guide_diagnostics": {
+            "all_rendered_guide_query": "unsupported",
+            "auto_ticks": "backend-native",
+            "axis_guide_count": 2,
+            "axis_provider": "datoviz.v04.panel_axis.wip",
+            "axis_rendering": "adapted-review",
+            "explicit_ticks": "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise",
+            "guide_query": "unsupported",
+            "panel_text_guide_count": 1,
+            "panel_text_guides_skipped": [
+              {
+                "id": "guide:s028-reversed-title",
+                "role": "title",
+                "text": "S028 reversed guide View2D"
+              }
+            ],
+            "panel_title": "unsupported",
+            "view2d_present": true
+          },
           "log_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/guide_view2d_reversed_explicit.log.txt",
-          "reason": "DatovizV04Unsupported: Datoviz native axis provider cannot realize explicit GSP ticks: missing dvz_axis_set_ticks",
-          "status": "unsupported",
-          "unsupported_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/datoviz/guide_view2d_reversed_explicit.unsupported.json"
+          "status": "rendered"
         },
         "matplotlib": {
           "artifact_path": "artifacts/visual_qa/s031/full-review-pack-linear/backends/matplotlib/guide_view2d_reversed_explicit.png",
@@ -931,7 +942,7 @@
     "facade_imported": true,
     "installed_package": {
       "imported": true,
-      "path": "/home/cyrille/GIT/Viz/datoviz/build/wheel-stage/datoviz/__init__.py",
+      "path": "/home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
       "version": null
     },
     "minimal_point_supported": true,
@@ -944,6 +955,6 @@
   "schema_kind": "gsp.visual_qa.report",
   "schema_version": 1,
   "stage": "S028",
-  "started_at": "2026-06-27T07:31:52.338974+00:00",
+  "started_at": "2026-06-27T07:42:49.940903+00:00",
   "suite": "s028"
 }

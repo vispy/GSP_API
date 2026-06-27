@@ -15,10 +15,10 @@ Suite: `s028`
 
 | Status | Count |
 |---|---:|
-| strict | 32 |
-| adapted | 0 |
+| strict | 52 |
+| adapted | 6 |
 | experimental | 0 |
-| unsupported | 26 |
+| unsupported | 0 |
 | disabled | 0 |
 | crashed | 0 |
 | not_run | 0 |
