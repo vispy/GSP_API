@@ -1224,7 +1224,7 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     attach_desc = add_visual_call[3]
     assert isinstance(attach_desc, FakeDatovizV04.DvzVisualAttachDesc)
     assert attach_desc.z_layer == 0
-    assert attach_desc.coord_space == 1
+    assert attach_desc.coord_space == 0
 
 
 def test_add_point_visual_retries_current_datoviz_diameter_attribute_name():
@@ -1319,7 +1319,7 @@ def test_add_point_visual_rejects_unresolved_named_transform_ref():
         renderer.add_point_visual(visual)
 
 
-def test_add_point_visual_maps_data_coordinates_through_view2d():
+def test_add_point_visual_keeps_data_coordinates_with_native_view2d_domain():
     fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(
         dvz=fake,
@@ -1343,9 +1343,17 @@ def test_add_point_visual_maps_data_coordinates_through_view2d():
     position_upload = _calls(fake, "set_data")[0]
     np.testing.assert_allclose(
         position_upload[3],
-        [[0.8, -0.8, 0.0], [0.0, 0.0, 0.0], [-0.8, 0.8, 0.0]],
+        [[-8.0, -4.0, 0.0], [0.0, 0.0, 0.0], [8.0, 4.0, 0.0]],
         atol=1e-6,
     )
+    assert _calls(fake, "set_domain")[:4] == [
+        ("set_domain", "panel", 0, -1.0, 1.0),
+        ("set_domain", "panel", 1, -1.0, 1.0),
+        ("set_domain", "panel", 0, 10.0, -10.0),
+        ("set_domain", "panel", 1, -5.0, 5.0),
+    ]
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[3].coord_space == 1
 
 
 def test_add_point_visual_cpu_premaps_scalar_color_encoding_to_canonical_rgba8():
@@ -2150,7 +2158,7 @@ def test_add_mesh_visual_accepts_default_data_domain_and_rejects_3d_before_diagn
         renderer.add_mesh_visual(mesh_3d)
 
 
-def test_add_mesh_visual_maps_data_coordinates_through_view2d():
+def test_add_mesh_visual_keeps_data_coordinates_with_native_view2d_domain():
     fake = FakeDatovizV04WithMesh()
     renderer = DatovizV04ProtocolRenderer(
         dvz=fake,
@@ -2174,8 +2182,16 @@ def test_add_mesh_visual_maps_data_coordinates_through_view2d():
     position_upload = _calls(fake, "set_data")[0]
     np.testing.assert_allclose(
         position_upload[3],
-        [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [-1.0, 1.0, 0.0]],
+        [[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
     )
+    assert _calls(fake, "set_domain")[:4] == [
+        ("set_domain", "panel", 0, -1.0, 1.0),
+        ("set_domain", "panel", 1, -1.0, 1.0),
+        ("set_domain", "panel", 0, 0.0, 10.0),
+        ("set_domain", "panel", 1, 0.0, 10.0),
+    ]
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[3].coord_space == 1
 
 
 def test_datoviz_mesh_diagnostics_name_missing_and_unverified_symbols():

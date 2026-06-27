@@ -452,6 +452,8 @@ class DatovizV04ProtocolRenderer:
         self.panel = self.dvz.dvz_panel_full(self.figure)
         _set_panel_background_color(self.dvz, self.panel, self.background_rgba8)
         _configure_ndc_panel_view2d(self.dvz, self.panel)
+        if self.view is not None:
+            self.apply_datoviz_data_view2d(self.view)
 
     def capabilities(self) -> CapabilitySnapshot:
         """Return the capability snapshot for this adapter slice."""
@@ -503,7 +505,11 @@ class DatovizV04ProtocolRenderer:
         self.dvz.dvz_panel_add_visual(
             self.panel,
             dvz_visual,
-            _visual_attach_desc(self.dvz, coord_space="data", z_layer=0),
+            _visual_attach_desc(
+                self.dvz,
+                coord_space=_datoviz_visual_coord_space(visual.coordinate_space),
+                z_layer=0,
+            ),
         )
         self.visuals[visual.id] = dvz_visual
         if visual.color_encoding is not None:
@@ -564,7 +570,11 @@ class DatovizV04ProtocolRenderer:
         self.dvz.dvz_panel_add_visual(
             self.panel,
             dvz_visual,
-            _visual_attach_desc(self.dvz, coord_space="data", z_layer=0),
+            _visual_attach_desc(
+                self.dvz,
+                coord_space=_datoviz_visual_coord_space(visual.coordinate_space),
+                z_layer=0,
+            ),
         )
         self.visuals[visual.id] = dvz_visual
         if visual.fill_color_encoding is not None:
@@ -634,7 +644,11 @@ class DatovizV04ProtocolRenderer:
         self.dvz.dvz_panel_add_visual(
             self.panel,
             dvz_visual,
-            _visual_attach_desc(self.dvz, coord_space="data", z_layer=0),
+            _visual_attach_desc(
+                self.dvz,
+                coord_space=_datoviz_visual_coord_space(visual.coordinate_space),
+                z_layer=0,
+            ),
         )
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
@@ -691,7 +705,11 @@ class DatovizV04ProtocolRenderer:
         self.dvz.dvz_panel_add_visual(
             self.panel,
             dvz_visual,
-            _visual_attach_desc(self.dvz, coord_space="data", z_layer=0),
+            _visual_attach_desc(
+                self.dvz,
+                coord_space=_datoviz_visual_coord_space(visual.coordinate_space),
+                z_layer=0,
+            ),
         )
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
@@ -726,7 +744,7 @@ class DatovizV04ProtocolRenderer:
         self.dvz.dvz_panel_add_visual(
             self.panel,
             dvz_visual,
-            _visual_attach_desc(self.dvz, coord_space="data", z_layer=0),
+            _visual_attach_desc(self.dvz, coord_space="view", z_layer=0),
         )
         self.visuals[visual.id] = dvz_visual
         if visual.color_scale_id is not None:
@@ -780,7 +798,11 @@ class DatovizV04ProtocolRenderer:
         self.dvz.dvz_panel_add_visual(
             self.panel,
             dvz_visual,
-            _visual_attach_desc(self.dvz, coord_space="data", z_layer=round(visual.order)),
+            _visual_attach_desc(
+                self.dvz,
+                coord_space=_datoviz_visual_coord_space(visual.coordinate_space),
+                z_layer=round(visual.order),
+            ),
         )
         self.visuals[visual.id] = dvz_visual
         return dvz_visual
@@ -1317,9 +1339,7 @@ def _adapt_visual_positions(
     if coordinate_space is CoordinateSpace.NDC:
         return transformed
     if coordinate_space is CoordinateSpace.DATA:
-        if view is None:
-            return transformed
-        return _data_positions_to_panel_ndc(transformed, view)
+        return transformed
     raise DatovizV04Unsupported(
         f"Datoviz visual coordinate space is unsupported: {coordinate_space.value}"
     )
@@ -1367,21 +1387,6 @@ def _transform_binding_matrix(
             f"could not resolve named transform resource {transform.ref.id!r}"
         )
     return np.asarray(transform_resources[transform.ref.id].matrix, dtype=np.float64)
-
-
-def _data_positions_to_panel_ndc(
-    positions: npt.NDArray[np.float32] | npt.NDArray[np.float64], view: View2D
-) -> npt.NDArray[np.float32] | npt.NDArray[np.float64]:
-    x0, x1 = view.xlim
-    y0, y1 = view.ylim
-    mapped = np.array(positions, dtype=np.float64, copy=True)
-    mapped[:, 0] = -1.0 + 2.0 * (mapped[:, 0] - x0) / (x1 - x0)
-    mapped[:, 1] = -1.0 + 2.0 * (mapped[:, 1] - y0) / (y1 - y0)
-    if not np.all(np.isfinite(mapped)):
-        raise DatovizV04Unsupported(
-            "GSP_VIEW2D_NONFINITE: View2D CPU adaptation produced non-finite positions"
-        )
-    return np.ascontiguousarray(mapped.astype(positions.dtype, copy=False))
 
 
 def _record_transform_adaptation(
@@ -1479,6 +1484,16 @@ def _visual_attach_desc(dvz: Any, *, coord_space: str, z_layer: int) -> Any:
     else:
         raise ValueError(f"unsupported Datoviz coordinate space: {coord_space}")
     return desc
+
+
+def _datoviz_visual_coord_space(coordinate_space: CoordinateSpace) -> str:
+    if coordinate_space is CoordinateSpace.NDC:
+        return "view"
+    if coordinate_space is CoordinateSpace.DATA:
+        return "data"
+    raise DatovizV04Unsupported(
+        f"Datoviz visual coordinate space is unsupported: {coordinate_space.value}"
+    )
 
 
 def _coord_space_value(dvz: Any, name: str, fallback: int) -> int:

@@ -78,11 +78,11 @@ _DATOVIZ_S029_STRICT_RENDER_CASES = {
         "S029 verifies inline and resolved named transform positions coincide in the rendered NDC point scope",
     ],
     "transform/view2d_data_ndc_overlay": [
-        "Datoviz CPU-maps finite point DATA positions through the linear View2D range, including reversed x limits, before panel-NDC upload",
-        "S029 verifies DATA-mapped points align with explicit NDC overlay points for the rendered point scope",
+        "Datoviz uploads finite point DATA positions against native panel domains, including reversed x limits",
+        "S032 verifies native DATA-domain points align with explicit VIEW overlay points for the rendered point scope",
     ],
     "transform/family_affine_view2d": [
-        "Datoviz resolves one named AFFINE_2D resource and CPU-adapts finite eager DATA positions before View2D mapping",
+        "Datoviz resolves one named AFFINE_2D resource and CPU-applies it to finite eager DATA positions before native panel-domain rendering",
         "S029 verifies the rendered bounded point, marker, segment, path, text-center-anchor, and 2D uniform-mesh transform scope",
     ],
 }
@@ -417,7 +417,7 @@ def _classify_datoviz_unsupported(reason: str) -> tuple[str, str, list[str]]:
         return (
             "datoviz_data_coordinates_unsupported",
             "unsupported",
-            ["DATA coordinates require a View2D for Datoviz CPU panel-NDC adaptation"],
+            ["DATA coordinates require a View2D/domain for Datoviz native panel mapping"],
         )
     return ("datoviz_adapter_unsupported", "unsupported", [reason] if reason else [])
 

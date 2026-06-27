@@ -394,7 +394,7 @@ guide-row contract explicitly excludes those semantics.
 
 S025 Datoviz work uses retained `dvz_mesh` support after the S029 capability probe. The adapter
 preserves the bounded review-pack slice for inline indexed 2D triangles, uniform RGBA, vertex RGBA,
-DATA/View2D placement through CPU panel-NDC adaptation, and per-face RGBA adapted by vertex
+DATA/View2D placement through native panel domains, and per-face RGBA adapted by vertex
 duplication. It still emits structured unsupported reports for face scalar colors, normals, shading,
 3D projection, and mesh query gaps. Public GSP fields must not expose Datoviz slot names, material
 structs, helper geometry loaders, or draw calls.
