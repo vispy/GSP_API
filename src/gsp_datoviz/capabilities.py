@@ -197,7 +197,7 @@ def gsp_capability_snapshot_from_datoviz(
             "panel_text_title": "adapted: panel_text_guide_as_screen_text",
             "axis_style_mapping": "partial" if dvz is not None and hasattr(dvz, "dvz_axis_set_style") else "unsupported",
             "axis_style_fields": DATOVIZ_S034_AXIS_STYLE_FIELDS,
-            "grid_clip_to_plot_rect": "unsupported_or_partial",
+            "grid_clip_to_plot_rect": "unsupported",
             "guide_query": False,
             "all_rendered_guides": False,
             "diagnostics": (
@@ -205,6 +205,7 @@ def gsp_capability_snapshot_from_datoviz(
                 "resolved_layout_snapshot_unsupported",
                 "axis_style_mapping_partial",
                 "grid_clip_not_enforced",
+                "grid_clip_native_api_unverified",
                 "guide_query_missing",
                 "all_rendered_guides_unsupported",
                 "font_metrics_parity_false",

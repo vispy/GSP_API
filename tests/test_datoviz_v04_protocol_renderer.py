@@ -924,7 +924,9 @@ def test_capability_snapshot_defers_query_support():
     assert audit["resolved_layout_produce"] == "none"
     assert audit["panel_text_title"] == "adapted: panel_text_guide_as_screen_text"
     assert audit["axis_style_fields"] == DATOVIZ_S034_AXIS_STYLE_FIELDS
+    assert audit["grid_clip_to_plot_rect"] == "unsupported"
     assert "grid_clip_not_enforced" in audit["diagnostics"]
+    assert "grid_clip_native_api_unverified" in audit["diagnostics"]
     assert (
         "axis_guide_query_unsupported" in caps.metadata["s028_guide_view2d_diagnostics"]
     )

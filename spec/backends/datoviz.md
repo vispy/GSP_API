@@ -399,14 +399,15 @@ Datoviz does not currently produce or consume `ResolvedLayoutSnapshot` records a
 - Native axis style mapping is partial and limited to exposed Datoviz fields such as
   `tick_size_px`, `label_size_px`, tick lengths/widths, label/tick gaps, grid width, and plot margin
   fields.
-- Grid clipping to `plot_rect_px` is unsupported or partial until proven by native API evidence.
+- Grid clipping to `plot_rect_px` is unsupported in the current audited slice; promotion requires
+  native API evidence that grid geometry is clipped to the resolved plot rectangle.
 - Guide query and all-rendered guide contributions are unsupported.
 - Font metrics and raster parity are backend-defined and must not be claimed as parity.
 
 Capability snapshots expose `s034_guide_layout_audit` metadata plus diagnostics including
 `panel_text_guide_as_screen_text`, `resolved_layout_snapshot_unsupported`,
-`axis_style_mapping_partial`, `grid_clip_not_enforced`, `guide_query_missing`,
-`all_rendered_guides_unsupported`, and `font_metrics_parity_false`.
+`axis_style_mapping_partial`, `grid_clip_not_enforced`, `grid_clip_native_api_unverified`,
+`guide_query_missing`, `all_rendered_guides_unsupported`, and `font_metrics_parity_false`.
 
 
 ## S025 MeshVisual target

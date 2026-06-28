@@ -45,7 +45,9 @@ remain classified as adapted.
    M135; full resolved style readback remains pending.
 3. Datoviz guide capability audit and diagnostics hardening. Completed in M136 for current
    conservative capability reporting; implementation proofs remain pending.
-4. Grid clipping proof or explicit unsupported diagnostic.
+4. Grid clipping proof or explicit unsupported diagnostic. Datoviz grid clipping is explicitly
+   unsupported in M145 pending native API proof; Matplotlib grid clip snapshot proof remains covered
+   by M134/M142/M143.
 5. Tiered visual QA fixtures and review report classification. Review classification fields
    completed in M137; initial S034 layout-specific Matplotlib fixtures and snapshot report fields
    completed in M142; resized viewport snapshot proof completed in M143; Matplotlib device-scale
