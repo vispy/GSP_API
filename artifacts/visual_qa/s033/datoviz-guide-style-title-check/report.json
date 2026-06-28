@@ -1,0 +1,132 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/scenes/guide_view2d_auto_grid.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/backends/datoviz/guide_view2d_auto_grid.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "all_rendered_guide_query": "unsupported",
+            "auto_ticks": "backend-native",
+            "axis_guide_count": 2,
+            "axis_provider": "datoviz.v04.panel_axis.wip",
+            "axis_rendering": "adapted-review",
+            "guide_query": "unsupported",
+            "panel_text_guide_count": 1,
+            "panel_text_guides": [
+              {
+                "id": "guide:s028-auto-title",
+                "role": "title",
+                "text": "S028 auto guide View2D"
+              }
+            ],
+            "panel_title": "adapted-review",
+            "view2d_present": true
+          },
+          "log_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/backends/datoviz/guide_view2d_auto_grid.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/backends/matplotlib/guide_view2d_auto_grid.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/backends/matplotlib/guide_view2d_auto_grid.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_auto_grid",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "auto-ticks",
+        "grid",
+        "labels"
+      ],
+      "scene_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/scenes/guide_view2d_auto_grid.scene.json",
+      "title": "View2D guide auto ticks and grids"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/scenes/guide_view2d_reversed_explicit.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/backends/datoviz/guide_view2d_reversed_explicit.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "all_rendered_guide_query": "unsupported",
+            "auto_ticks": "backend-native",
+            "axis_guide_count": 2,
+            "axis_provider": "datoviz.v04.panel_axis.wip",
+            "axis_rendering": "adapted-review",
+            "explicit_ticks": "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise",
+            "guide_query": "unsupported",
+            "panel_text_guide_count": 1,
+            "panel_text_guides": [
+              {
+                "id": "guide:s028-reversed-title",
+                "role": "title",
+                "text": "S028 reversed guide View2D"
+              }
+            ],
+            "panel_title": "adapted-review",
+            "view2d_present": true
+          },
+          "log_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/backends/datoviz/guide_view2d_reversed_explicit.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/backends/matplotlib/guide_view2d_reversed_explicit.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/backends/matplotlib/guide_view2d_reversed_explicit.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_reversed_explicit",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "reversed-limits",
+        "explicit-ticks",
+        "grid",
+        "labels"
+      ],
+      "scene_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/scenes/guide_view2d_reversed_explicit.scene.json",
+      "title": "Reversed View2D guide explicit ticks"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s033/datoviz-guide-style-title-check/contact_sheets/guide_view2d_auto_grid.png",
+    "artifacts/visual_qa/s033/datoviz-guide-style-title-check/contact_sheets/guide_view2d_reversed_explicit.png",
+    "artifacts/visual_qa/s033/datoviz-guide-style-title-check/contact_sheets/s028_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "41da0fdedfbfe9458a036f03ca2ec4d1260ddebe",
+    "unexpected_banned_hits": 0
+  },
+  "environment_path": "artifacts/visual_qa/s033/datoviz-guide-style-title-check/environment.json",
+  "run_id": "s033-dataviz-guide-style-title-check",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-06-27T20:28:43.357743+00:00",
+  "suite": "s028"
+}
