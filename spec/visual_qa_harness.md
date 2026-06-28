@@ -179,3 +179,18 @@ artifacts when native axes consume the same `View2D` domains and any missing gui
 reported in structured diagnostics. Guide query, all-rendered guide contributions, and panel title
 layout must remain explicit missing semantics until the backend proves or the GSP contract excludes
 them.
+
+## S029/S034 resolved layout QA
+
+Guide QA is split into four classifications:
+
+- semantic guide QA;
+- resolved layout QA;
+- raster tolerant QA;
+- adapted review artifacts.
+
+Resolved layout QA checks `plot_rect_px`, `title_rect_px`, `axis_label_rect_px`,
+`tick_label_rect_px`, `grid_clip_rect_px`, `data_to_screen_transform`, guide query contribution,
+all-rendered guide contribution, and `layout_snapshot_id` consistency. White overlay title bands or
+hand-tuned backend constants are review-only artifacts unless they are generated from a
+`ResolvedLayoutSnapshot` and participate in query/readback.

@@ -252,3 +252,11 @@ engines, equal-aspect layout, nonlinear/log/category/date/geospatial transforms,
 arbitrary Python callables, shader/material transforms, image rotation/skew/perspective, texture
 coordinate transforms, instancing, remote renderer scheduling, huge distributed source transforms,
 or hidden CPU materialization of virtual sources.
+
+## S029/S034 resolved layout boundary
+
+Resolved layout extends the S027/S028 boundary without changing `View2D` semantics. `View2D` remains
+the deterministic data-domain state. `ResolvedLayoutSnapshot` records how that data domain maps into
+logical pixels for one render target, including the plot rectangle, guide geometry, grid clipping,
+and data-to-screen transform. Reversed `View2D` limits remain semantic view state and are represented
+in the resolved transform.

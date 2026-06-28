@@ -2,7 +2,17 @@
 
 from __future__ import annotations
 
-from gsp.protocol import AxisProviderCapability, CapabilitySnapshot, TILED_IMAGE_EXTENSION_CAPABILITY, TransportKind
+from gsp.protocol import (
+    AxisProviderCapability,
+    CapabilitySnapshot,
+    FontLayoutCapability,
+    GuideLayoutCapability,
+    LayoutCapability,
+    QueryLayoutCapability,
+    RenderTargetCapability,
+    TILED_IMAGE_EXTENSION_CAPABILITY,
+    TransportKind,
+)
 
 
 MATPLOTLIB_NATIVE_AXIS_PROVIDER = "matplotlib.native.axes.v0"
@@ -51,4 +61,47 @@ def capability_snapshot() -> CapabilitySnapshot:
         max_mosaic_pixels=4096,
         deterministic=True,
         axis_providers=(matplotlib_axis_provider_capability(),),
+        layout_capability=LayoutCapability(
+            semantic_guides=True,
+            resolved_layout_produce="partial",
+            layout_strict=False,
+            diagnostics=("s029-layout-snapshot-schema-present-reference-implementation-pending",),
+        ),
+        guide_layout_capability=GuideLayoutCapability(
+            axis_native=True,
+            axis_explicit_ticks=True,
+            axis_deterministic_gsp_ticks=True,
+            axis_labels=True,
+            axis_grid=True,
+            axis_grid_clip_to_plot_rect=True,
+            axis_query=False,
+            panel_text_title="native",
+            panel_text_participates_in_layout=True,
+            panel_text_query=False,
+            colorbar="native",
+            colorbar_query=False,
+            legend="unsupported",
+            diagnostics=("guide-query-layout-snapshot-integration-pending",),
+        ),
+        font_layout_capability=FontLayoutCapability(
+            logical_font_size_px=True,
+            font_family_request=True,
+            font_fallback_report=False,
+            text_measurement="backend",
+            font_metrics_profile="backend_defined",
+        ),
+        render_target_capability=RenderTargetCapability(
+            logical_pixels=True,
+            device_scale=False,
+            dpi_metadata=True,
+            physical_framebuffer_scale=False,
+        ),
+        query_layout_capability=QueryLayoutCapability(
+            screen_logical_px=True,
+            data_readout_uses_view_snapshot=True,
+            guide_query=False,
+            all_rendered_guides=False,
+            reports_layout_snapshot_id=False,
+            diagnostics=("layout_snapshot_id-query-propagation-pending",),
+        ),
     )

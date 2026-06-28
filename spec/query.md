@@ -180,6 +180,14 @@ Text query/readback is item-level and capability-gated. A text hit payload uses 
 resolved anchors, `bounds_px`, `distance_px`, and `z_order`. Glyph-level hit testing is deferred.
 Guide labels and titles remain guide-query payloads, not public `TextVisual` hits.
 
+## S029/S034 layout snapshot identity
+
+Layout-aware guide query uses the same `ResolvedLayoutSnapshot` as rendering. Query requests and
+results may carry `layout_snapshot_id`; a backend that advertises layout-strict guide query or
+all-rendered guide contributions must report the snapshot used. If a backend renders native guide
+decorations but cannot query them or cannot report their layout snapshot, it must return an explicit
+unsupported/adapted diagnostic rather than silent misses.
+
 ## S025 MeshVisual query payload
 
 Mesh query/readback is face-level for the strict 2D reference subset. The Matplotlib/reference path

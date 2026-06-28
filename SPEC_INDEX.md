@@ -12,6 +12,7 @@ This file tells agents where to find authoritative design information.
 | Resources/buffers/textures | spec/resources.md |
 | Query/readback | spec/query.md |
 | Transform/view/query inverse | spec/transforms.md |
+| Resolved layout and guide geometry | spec/layout.md |
 | Resolved guide layout direction | .agent/decisions/S029_resolved_layout_contracts.md |
 | Conformance fixtures/schema | spec/conformance-fixtures.md |
 | Extensions | spec/extensions.md |

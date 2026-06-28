@@ -52,6 +52,27 @@ inferred from separate `data` and `guides` capabilities.
 Unsupported requested scope, hit policy, payload, extension payload, or ordering guarantee rejects
 planning with a diagnostic. Direct query execution must not silently return partial results.
 
+## S029/S034 resolved layout capabilities
+
+Capability snapshots must distinguish semantic guide support, resolved layout support, raster
+tolerance, and pixel parity. The layout capability surface includes:
+
+- `layout.semantic_guides`;
+- `layout.resolved_layout_produce`: `none | partial | full`;
+- `layout.resolved_layout_consume`: `none | partial | full`;
+- `layout.layout_strict`;
+- `layout.raster_pixel_parity`.
+
+Guide layout capabilities separately advertise native/resolved/adapted/unsupported behavior for
+axes, panel titles, colorbars, legends, grid clipping, guide query, and all-rendered guide
+contributions. Font capabilities separately advertise logical font pixels, font-family requests,
+fallback reporting, text measurement, metrics profile, and rasterization parity. Render-target
+capabilities separately advertise logical pixels, device scale, DPI metadata, and physical
+framebuffer scaling.
+
+Backends must reject unsupported layout tiers with diagnostics. They must not infer layout strictness
+from semantic guide support or from a visually similar raster artifact.
+
 ## S027 transform/view capabilities
 
 Transform capabilities must distinguish semantic support from placement. Accepted placement

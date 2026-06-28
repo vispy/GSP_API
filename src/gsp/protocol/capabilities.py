@@ -8,6 +8,7 @@ from collections.abc import Iterable
 from typing import Literal, TypeVar
 
 from .extensions import ExtensionManifest, validate_extension_manifest
+from .layout import ConformanceTier
 from .query import QueryCoordinateSpace, QueryHitPolicy, QueryPayload, QueryRequest, QueryScope
 from .transforms import TransformPlacement
 
@@ -174,6 +175,10 @@ AxisProviderPolicy = Literal[
 ]
 AxisTickAuthority = Literal["gsp_resolved", "backend_resolved", "explicit_only"]
 AxisQueryScopeRequirement = Literal["none", "data_only", "guides", "all_rendered"]
+LayoutSupportLevel = Literal["none", "partial", "full"]
+GuideRealizationStatus = Literal["native", "resolved", "adapted", "unsupported"]
+TextMeasurementMode = Literal["none", "backend", "reference"]
+FontMetricsProfile = Literal["none", "backend_defined", "gsp_reference"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -236,6 +241,125 @@ class QueryPlanningContext:
     selected_axis_provider: "AxisProviderCapability | None" = None
     guides_visible: bool = False
     text_query_required: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class LayoutCapability:
+    """Capability declaration for resolved layout support."""
+
+    semantic_guides: bool = False
+    resolved_layout_produce: LayoutSupportLevel = "none"
+    resolved_layout_consume: LayoutSupportLevel = "none"
+    layout_strict: bool = False
+    raster_pixel_parity: bool = False
+    diagnostics: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if self.resolved_layout_produce not in ("none", "partial", "full"):
+            raise ValueError("resolved_layout_produce must be none, partial, or full")
+        if self.resolved_layout_consume not in ("none", "partial", "full"):
+            raise ValueError("resolved_layout_consume must be none, partial, or full")
+        if self.layout_strict and self.resolved_layout_produce == "none" and self.resolved_layout_consume == "none":
+            raise ValueError("layout_strict requires producing or consuming resolved layout")
+        for diagnostic in self.diagnostics:
+            if not diagnostic:
+                raise ValueError("layout capability diagnostics must not contain empty strings")
+
+    def supports_tier(self, tier: ConformanceTier) -> bool:
+        """Return whether this layout capability can claim a conformance tier."""
+        if tier == ConformanceTier.SEMANTIC_STRICT:
+            return self.semantic_guides
+        if tier == ConformanceTier.LAYOUT_STRICT:
+            return self.layout_strict
+        if tier == ConformanceTier.RASTER_TOLERANT:
+            return self.layout_strict
+        if tier == ConformanceTier.PIXEL_PARITY:
+            return self.raster_pixel_parity
+        return False
+
+
+@dataclass(frozen=True, slots=True)
+class GuideLayoutCapability:
+    """Capability declaration for guide layout and guide query behavior."""
+
+    axis_native: bool = False
+    axis_explicit_ticks: bool = False
+    axis_deterministic_gsp_ticks: bool = False
+    axis_labels: bool = False
+    axis_grid: bool = False
+    axis_grid_clip_to_plot_rect: bool = False
+    axis_query: bool = False
+    panel_text_title: GuideRealizationStatus = "unsupported"
+    panel_text_participates_in_layout: bool = False
+    panel_text_query: bool = False
+    colorbar: GuideRealizationStatus = "unsupported"
+    colorbar_query: bool = False
+    legend: GuideRealizationStatus = "unsupported"
+    legend_query: bool = False
+    diagnostics: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        for value in (self.panel_text_title, self.colorbar, self.legend):
+            if value not in ("native", "resolved", "adapted", "unsupported"):
+                raise ValueError("guide realization status must be native, resolved, adapted, or unsupported")
+        for diagnostic in self.diagnostics:
+            if not diagnostic:
+                raise ValueError("guide layout diagnostics must not contain empty strings")
+
+
+@dataclass(frozen=True, slots=True)
+class FontLayoutCapability:
+    """Capability declaration for font sizing and metrics behavior."""
+
+    logical_font_size_px: bool = False
+    font_family_request: bool = False
+    font_fallback_report: bool = False
+    text_measurement: TextMeasurementMode = "none"
+    font_metrics_profile: FontMetricsProfile = "none"
+    rasterization_parity: bool = False
+    diagnostics: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if self.text_measurement not in ("none", "backend", "reference"):
+            raise ValueError("text_measurement must be none, backend, or reference")
+        if self.font_metrics_profile not in ("none", "backend_defined", "gsp_reference"):
+            raise ValueError("font_metrics_profile must be none, backend_defined, or gsp_reference")
+        for diagnostic in self.diagnostics:
+            if not diagnostic:
+                raise ValueError("font layout diagnostics must not contain empty strings")
+
+
+@dataclass(frozen=True, slots=True)
+class RenderTargetCapability:
+    """Capability declaration for render target interpretation."""
+
+    logical_pixels: bool = False
+    device_scale: bool = False
+    dpi_metadata: bool = False
+    physical_framebuffer_scale: bool = False
+    diagnostics: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        for diagnostic in self.diagnostics:
+            if not diagnostic:
+                raise ValueError("render target diagnostics must not contain empty strings")
+
+
+@dataclass(frozen=True, slots=True)
+class QueryLayoutCapability:
+    """Capability declaration for layout-aware query behavior."""
+
+    screen_logical_px: bool = False
+    data_readout_uses_view_snapshot: bool = False
+    guide_query: bool = False
+    all_rendered_guides: bool = False
+    reports_layout_snapshot_id: bool = False
+    diagnostics: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        for diagnostic in self.diagnostics:
+            if not diagnostic:
+                raise ValueError("query layout diagnostics must not contain empty strings")
 
 
 def query_scope_for_axis_requirement(requirement: AxisQueryScopeRequirement) -> QueryScope | None:
@@ -314,6 +438,11 @@ class CapabilitySnapshot:
     max_buffer_bytes: int | None = None
     deterministic: bool | None = None
     axis_providers: tuple[AxisProviderCapability, ...] = ()
+    layout_capability: LayoutCapability = field(default_factory=LayoutCapability)
+    guide_layout_capability: GuideLayoutCapability = field(default_factory=GuideLayoutCapability)
+    font_layout_capability: FontLayoutCapability = field(default_factory=FontLayoutCapability)
+    render_target_capability: RenderTargetCapability = field(default_factory=RenderTargetCapability)
+    query_layout_capability: QueryLayoutCapability = field(default_factory=QueryLayoutCapability)
     metadata: dict[str, object] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -354,6 +483,11 @@ class CapabilitySnapshot:
     def supports_transform_capability(self, capability: str) -> bool:
         """Return whether a semantic transform capability is advertised."""
         return capability in self.transform_capabilities
+
+    def supports_layout_tier(self, tier: ConformanceTier | str) -> bool:
+        """Return whether the renderer can claim a layout conformance tier."""
+        tier_value = tier if isinstance(tier, ConformanceTier) else ConformanceTier(tier)
+        return self.layout_capability.supports_tier(tier_value)
 
     def query_capability(self, scope: QueryScope) -> QueryScopeCapability | None:
         """Return an advertised typed query capability by scope."""
@@ -400,6 +534,16 @@ class CapabilitySnapshot:
         return AdaptationDecision(
             AdaptationOutcome.REJECT,
             f"transform capability {capability!r} is not supported by {self.server_name}",
+        )
+
+    def adapt_layout_tier(self, tier: ConformanceTier | str) -> AdaptationDecision:
+        """Return an adaptation decision for a requested layout conformance tier."""
+        tier_value = tier if isinstance(tier, ConformanceTier) else ConformanceTier(tier)
+        if self.supports_layout_tier(tier_value):
+            return AdaptationDecision(AdaptationOutcome.ACCEPT)
+        return AdaptationDecision(
+            AdaptationOutcome.REJECT,
+            f"layout conformance tier {tier_value.value!r} is not supported by {self.server_name}",
         )
 
     def adapt_query_request(self, request: QueryRequest) -> AdaptationDecision:

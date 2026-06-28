@@ -51,3 +51,14 @@ Implementation work must add protocol-owned dataclasses/enums/validation for `AF
 `View2D`, visual transform bindings, placement capabilities, and transform query inverse payloads
 without exposing Matplotlib transform objects, Datoviz slots, backend shader handles, or native
 camera objects.
+
+## S029/S034 resolved layout baseline
+
+`spec/layout.md` is the authority for resolved guide layout, logical pixels, render targets, layout
+snapshots, and layout conformance tiers. GSP guide records remain semantic protocol objects.
+`ResolvedLayoutSnapshot` is a derived artifact used when a backend advertises layout-strict render,
+query, readback, or all-rendered guide behavior.
+
+Render and query results must carry a matching `layout_snapshot_id` whenever layout strictness is
+claimed. Backend-native layout may remain an implementation mechanism, but it is not the protocol
+contract unless the resulting GSP layout snapshot is exposed.
