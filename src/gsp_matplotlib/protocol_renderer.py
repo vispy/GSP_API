@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
+from typing import cast
 
 import matplotlib.axes
 import matplotlib.colorbar
@@ -15,10 +17,21 @@ import matplotlib.path
 import matplotlib.patches
 import matplotlib.text
 import matplotlib.transforms
+import matplotlib.figure
 import numpy as np
 import numpy.typing as npt
 
-from gsp.protocol import AffineTransform2DResource, ColorScale, ColorbarGuide, View2D
+from gsp.protocol import (
+    AffineTransform2DResource,
+    AxisGuide,
+    ColorScale,
+    ColorbarGuide,
+    PanelTextGuide,
+    ResolvedLayoutSnapshot,
+    View2D,
+)
+from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
+from gsp_matplotlib.layout import resolve_matplotlib_layout_snapshot
 from gsp.protocol.visuals import (
     CoordinateSpace,
     FontRole,
@@ -92,6 +105,132 @@ _TEXT_ANCHOR_Y_MPL = {
     TextAnchorY.CENTER: "center",
     TextAnchorY.BOTTOM: "bottom",
 }
+
+
+ProtocolVisual = (
+    PointVisual
+    | MarkerVisual
+    | SegmentVisual
+    | PathVisual
+    | MeshVisual
+    | ImageVisual
+    | TextVisual
+)
+
+
+@dataclass(frozen=True, slots=True)
+class MatplotlibProtocolRenderResult:
+    """Matplotlib protocol render result with resolved layout identity."""
+
+    figure: matplotlib.figure.Figure
+    axes: matplotlib.axes.Axes
+    layout_snapshot: ResolvedLayoutSnapshot
+
+    @property
+    def layout_snapshot_id(self) -> str:
+        """Return the resolved layout snapshot id used by this render result."""
+        return self.layout_snapshot.snapshot_id
+
+
+def render_protocol_scene_with_layout(
+    *,
+    visuals: Iterable[ProtocolVisual],
+    view: View2D | None = None,
+    axis_guides: Iterable[AxisGuide] = (),
+    panel_text_guides: Iterable[PanelTextGuide] = (),
+    colorbar_guides: Iterable[ColorbarGuide] = (),
+    color_scales: Mapping[str, ColorScale] | None = None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
+    snapshot_id: str = "layout:matplotlib",
+    figure: matplotlib.figure.Figure | None = None,
+    axes: matplotlib.axes.Axes | None = None,
+) -> MatplotlibProtocolRenderResult:
+    """Render a protocol scene and report the resolved layout snapshot used."""
+    if axes is None:
+        import matplotlib.pyplot as plt
+
+        if figure is None:
+            figure, axes = plt.subplots()
+        else:
+            axes = figure.add_subplot()
+    elif figure is None:
+        figure = cast(matplotlib.figure.Figure, axes.figure)
+
+    color_scale_map = color_scales if color_scales is not None else {}
+    for visual in visuals:
+        _render_protocol_visual(
+            axes,
+            visual,
+            view=view,
+            color_scales=color_scale_map,
+            transform_resources=transform_resources,
+        )
+
+    axis_guide_tuple = tuple(axis_guides)
+    panel_text_guide_tuple = tuple(panel_text_guides)
+    if view is not None:
+        axes.set_xlim(view.x_range)
+        axes.set_ylim(view.y_range)
+        axes.set_aspect("equal" if view.aspect_policy.value == "equal" else "auto")
+        render_axis_guides(axes, view, axis_guide_tuple)
+    render_panel_text_guides(axes, panel_text_guide_tuple)
+    for guide in colorbar_guides:
+        render_colorbar_guide(axes, guide, color_scales=color_scale_map)
+
+    snapshot = resolve_matplotlib_layout_snapshot(
+        figure,
+        axes,
+        snapshot_id=snapshot_id,
+        view=view,
+        axis_guides=axis_guide_tuple,
+        panel_text_guides=panel_text_guide_tuple,
+    )
+    return MatplotlibProtocolRenderResult(figure, axes, snapshot)
+
+
+def _render_protocol_visual(
+    axes: matplotlib.axes.Axes,
+    visual: ProtocolVisual,
+    *,
+    view: View2D | None = None,
+    color_scales: Mapping[str, ColorScale] | None = None,
+    transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
+) -> object:
+    if isinstance(visual, ImageVisual):
+        return render_image_visual(axes, visual, color_scales=color_scales)
+    if isinstance(visual, MarkerVisual):
+        return render_marker_visual(
+            axes,
+            visual,
+            view=view,
+            color_scales=color_scales,
+            transform_resources=transform_resources,
+        )
+    if isinstance(visual, SegmentVisual):
+        return render_segment_visual(
+            axes, visual, view=view, transform_resources=transform_resources
+        )
+    if isinstance(visual, PathVisual):
+        return render_path_visual(
+            axes, visual, view=view, transform_resources=transform_resources
+        )
+    if isinstance(visual, MeshVisual):
+        return render_mesh_visual(
+            axes, visual, view=view, transform_resources=transform_resources
+        )
+    if isinstance(visual, PointVisual):
+        return render_point_visual(
+            axes,
+            visual,
+            view=view,
+            color_scales=color_scales,
+            transform_resources=transform_resources,
+        )
+    if isinstance(visual, TextVisual):
+        return render_text_visual(
+            axes, visual, view=view, transform_resources=transform_resources
+        )
+    raise TypeError(f"unsupported protocol visual: {type(visual)!r}")
 
 
 def _rgba_for_matplotlib(colors: np.ndarray) -> np.ndarray:

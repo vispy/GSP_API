@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from typing import cast
 
 import matplotlib.axes
+import matplotlib.backend_bases
 import matplotlib.figure
 import matplotlib.transforms
 import numpy as np
@@ -36,7 +38,10 @@ def resolve_matplotlib_layout_snapshot(
 ) -> ResolvedLayoutSnapshot:
     """Resolve a GSP layout snapshot from a drawn Matplotlib reference axes."""
     figure.canvas.draw()
-    renderer = figure.canvas.get_renderer()
+    renderer = cast(
+        matplotlib.backend_bases.RendererBase,
+        getattr(figure.canvas, "get_renderer")(),
+    )
     width = float(figure.bbox.width)
     height = float(figure.bbox.height)
     render_target = RenderTarget(
@@ -82,7 +87,7 @@ def _axis_label_boxes(
     axes: matplotlib.axes.Axes,
     guides: tuple[AxisGuide, ...],
     figure_height: float,
-    renderer: object,
+    renderer: matplotlib.backend_bases.RendererBase,
 ) -> tuple[ResolvedGuideBox, ...]:
     boxes: list[ResolvedGuideBox] = []
     for guide in guides:
@@ -105,7 +110,7 @@ def _tick_label_boxes(
     axes: matplotlib.axes.Axes,
     guides: tuple[AxisGuide, ...],
     figure_height: float,
-    renderer: object,
+    renderer: matplotlib.backend_bases.RendererBase,
 ) -> tuple[ResolvedGuideBox, ...]:
     boxes: list[ResolvedGuideBox] = []
     for guide in guides:
@@ -133,7 +138,7 @@ def _title_boxes(
     axes: matplotlib.axes.Axes,
     guides: tuple[PanelTextGuide, ...],
     figure_height: float,
-    renderer: object,
+    renderer: matplotlib.backend_bases.RendererBase,
 ) -> tuple[ResolvedGuideBox, ...]:
     boxes: list[ResolvedGuideBox] = []
     title_guides = tuple(guide for guide in guides if guide.role == PanelTextRole.TITLE)

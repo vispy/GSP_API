@@ -40,7 +40,7 @@ remain classified as adapted.
 ## Follow-Up Mission Batch
 
 1. Matplotlib resolved-layout reference implementation. Completed in M134 for snapshot production;
-   render API snapshot reporting and full guide-geometry query/readback remain pending.
+   lower-level render API snapshot reporting completed in M141; full readback remains pending.
 2. Guide style fields and resolved readback. Style fields and Matplotlib rendering completed in
    M135; full resolved style readback remains pending.
 3. Datoviz guide capability audit and diagnostics hardening. Completed in M136 for current
@@ -49,7 +49,8 @@ remain classified as adapted.
 5. Tiered visual QA fixtures and review report classification. Review classification fields
    completed in M137; additional layout-specific fixtures remain pending.
 6. Layout-aware guide query/readback. Matplotlib snapshot guide query completed in M138; full
-   scoped/all-rendered integration completed in M139; Datoviz guide query and render-result snapshot
-   reporting remain pending.
+   scoped/all-rendered integration completed in M139; Datoviz guide query and readback remain
+   pending.
 7. Render-result snapshot reporting. VisPy2 Matplotlib render result reporting completed in M140;
-   lower-level renderer/report plumbing remains pending for non-VisPy2 paths.
+   lower-level Matplotlib protocol render result reporting completed in M141. Non-Matplotlib paths
+   still report conservative unsupported/adapted layout posture.

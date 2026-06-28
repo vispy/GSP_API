@@ -9,6 +9,9 @@ import numpy as np
 import pytest
 
 from gsp.protocol import (
+    AxisDimension,
+    AxisGuide,
+    AxisSide,
     ColorMapId,
     ColorMapRef,
     ColorScale,
@@ -23,8 +26,14 @@ from gsp.protocol import (
     MarkerShape,
     MarkerVisual,
     LinearNormalize,
+    PanelTextGuide,
+    PanelTextRole,
     PathVisual,
     PointVisual,
+    QueryCoordinateSpace,
+    QueryRequest,
+    QueryScope,
+    QueryStatus,
     ScalarColorEncoding,
     ScalarColorSlot,
     SegmentVisual,
@@ -37,6 +46,7 @@ from gsp.protocol import (
     VisualTransformBinding,
 )
 from gsp_matplotlib.color_mapping import map_scalar_values
+from gsp_matplotlib.layout_query import query_resolved_layout_guides
 from gsp.protocol.visuals import ImageInterpolation
 from gsp_matplotlib.protocol_renderer import (
     _marker_areas_from_pixel_diameters,
@@ -47,6 +57,7 @@ from gsp_matplotlib.protocol_renderer import (
     render_mesh_visual,
     render_path_visual,
     render_point_visual,
+    render_protocol_scene_with_layout,
     render_segment_visual,
     render_text_visual,
 )
@@ -75,6 +86,76 @@ def test_render_point_visual_creates_path_collection():
         assert artist.get_gid() == "visual:points"
     finally:
         plt.close(fig)
+
+
+def test_render_protocol_scene_with_layout_reports_snapshot_id():
+    view = View2D(
+        id="view:main",
+        panel_id="panel:main",
+        x_range=(-1.0, 1.0),
+        y_range=(-1.0, 1.0),
+    )
+    point = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+        sizes=np.array([16.0], dtype=np.float32),
+    )
+    axis_guides = (
+        AxisGuide(
+            id="guide:x",
+            view_id=view.id,
+            dimension=AxisDimension.X,
+            side=AxisSide.BOTTOM,
+            label_text="x",
+        ),
+        AxisGuide(
+            id="guide:y",
+            view_id=view.id,
+            dimension=AxisDimension.Y,
+            side=AxisSide.LEFT,
+            label_text="y",
+        ),
+    )
+    title = PanelTextGuide(
+        id="guide:title",
+        panel_id=view.panel_id,
+        role=PanelTextRole.TITLE,
+        text="Scene layout",
+    )
+
+    result = render_protocol_scene_with_layout(
+        visuals=(point,),
+        view=view,
+        axis_guides=axis_guides,
+        panel_text_guides=(title,),
+        snapshot_id="layout:scene",
+    )
+    try:
+        assert result.layout_snapshot_id == "layout:scene"
+        assert result.layout_snapshot.view_id == view.id
+        assert result.layout_snapshot.plot_rect_px.width > 0.0
+        assert result.layout_snapshot.title_boxes[0].guide_id == title.id
+
+        title_rect = result.layout_snapshot.title_boxes[0].rect_px
+        query = query_resolved_layout_guides(
+            QueryRequest(
+                id="query:title",
+                panel_id=view.panel_id,
+                coordinate=(
+                    title_rect.x + title_rect.width / 2.0,
+                    title_rect.y + title_rect.height / 2.0,
+                ),
+                coordinate_space=QueryCoordinateSpace.PANEL,
+                scope=QueryScope.GUIDES,
+                layout_snapshot_id=result.layout_snapshot_id,
+            ),
+            result.layout_snapshot,
+        )
+        assert query.status == QueryStatus.HIT
+        assert query.layout_snapshot_id == result.layout_snapshot_id
+    finally:
+        plt.close(result.figure)
 
 
 def test_render_point_visual_converts_pixel_diameters_using_figure_dpi():

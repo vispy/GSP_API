@@ -65,7 +65,7 @@ def capability_snapshot() -> CapabilitySnapshot:
             semantic_guides=True,
             resolved_layout_produce="full",
             layout_strict=False,
-            diagnostics=("layout_strict-awaits-render-query-snapshot-contract",),
+            diagnostics=("layout_strict-awaits-readback-snapshot-contract",),
         ),
         guide_layout_capability=GuideLayoutCapability(
             axis_native=True,
@@ -81,7 +81,7 @@ def capability_snapshot() -> CapabilitySnapshot:
             colorbar="native",
             colorbar_query=False,
             legend="unsupported",
-            diagnostics=("render-api-layout-snapshot-reporting-pending",),
+            diagnostics=("layout-strict-promotion-pending",),
         ),
         font_layout_capability=FontLayoutCapability(
             logical_font_size_px=True,
@@ -102,6 +102,6 @@ def capability_snapshot() -> CapabilitySnapshot:
             guide_query=True,
             all_rendered_guides=True,
             reports_layout_snapshot_id=True,
-            diagnostics=("render-api-layout-snapshot-reporting-pending",),
+            diagnostics=("layout-strict-promotion-pending",),
         ),
     )

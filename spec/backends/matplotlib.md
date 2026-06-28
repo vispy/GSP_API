@@ -114,6 +114,9 @@ reports the snapshot id used. This covers resolved title, axis-label, tick-label
 colorbar boxes where present in the snapshot.
 
 This is the reference geometry-query path for layout snapshots. `query_scoped_scene()` can consume a
-resolved layout snapshot for guide-scope and all-rendered guide contributions. Matplotlib still does
-not claim full `layout_strict` because render APIs still need to report the snapshot id used end to
-end.
+resolved layout snapshot for guide-scope and all-rendered guide contributions.
+
+`gsp_matplotlib.protocol_renderer.render_protocol_scene_with_layout()` renders protocol visuals and
+semantic guides into a Matplotlib figure and returns the resolved layout snapshot plus
+`layout_snapshot_id`. Matplotlib still does not claim full `layout_strict`; readback and promotion
+criteria remain separate closure work.

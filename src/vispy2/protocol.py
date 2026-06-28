@@ -56,14 +56,15 @@ from gsp.protocol import (
     VisualTransformBinding,
 )
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
-from gsp_matplotlib.layout import resolve_matplotlib_layout_snapshot
 from gsp_matplotlib.protocol_renderer import (
+    MatplotlibProtocolRenderResult,
     render_colorbar_guide,
     render_image_visual,
     render_mesh_visual,
     render_marker_visual,
     render_path_visual,
     render_point_visual,
+    render_protocol_scene_with_layout,
     render_segment_visual,
     render_text_visual,
 )
@@ -71,20 +72,6 @@ from gsp_matplotlib.protocol_renderer import (
 
 _visual_counter = count(1)
 _scale_counter = count(1)
-
-
-@dataclass(frozen=True, slots=True)
-class MatplotlibRenderResult:
-    """Matplotlib reference render result with resolved layout identity."""
-
-    figure: Any
-    axes: Any
-    layout_snapshot: Any
-
-    @property
-    def layout_snapshot_id(self) -> str:
-        """Return the resolved layout snapshot id used by this render result."""
-        return str(self.layout_snapshot.snapshot_id)
 
 
 @dataclass(slots=True)
@@ -185,19 +172,18 @@ class Figure:
 
     def render_matplotlib_with_layout(
         self, *, snapshot_id: str = "layout:matplotlib"
-    ) -> MatplotlibRenderResult:
+    ) -> MatplotlibProtocolRenderResult:
         """Render through Matplotlib and return the resolved layout snapshot."""
-        fig, mpl_axes = self.render_matplotlib()
         axes_model = self.axes[0] if self.axes else None
-        snapshot = resolve_matplotlib_layout_snapshot(
-            fig,
-            mpl_axes,
+        return render_protocol_scene_with_layout(
+            visuals=self.visuals(),
             snapshot_id=snapshot_id,
             view=axes_model.view if axes_model is not None else None,
             axis_guides=tuple(axes_model.axis_guides) if axes_model is not None else (),
             panel_text_guides=tuple(axes_model.panel_text_guides) if axes_model is not None else (),
+            colorbar_guides=tuple(axes_model.colorbar_guides) if axes_model is not None else (),
+            color_scales={scale.id: scale for scale in self.color_scale_resources},
         )
-        return MatplotlibRenderResult(fig, mpl_axes, snapshot)
 
     def savefig(self, path: str | Path, **kwargs: Any) -> None:
         """Render through Matplotlib and save the result."""

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any, Literal
+
 import matplotlib.axes
 
 from gsp.protocol import (
@@ -29,7 +31,7 @@ def render_panel_text_guides(axes: matplotlib.axes.Axes, text_guides: tuple[Pane
     """Realize semantic panel text guides through Matplotlib native artists."""
     for guide in text_guides:
         if guide.role == PanelTextRole.TITLE:
-            kwargs: dict[str, float] = {}
+            kwargs: dict[str, Any] = {}
             if guide.style.title_font_size_px is not None:
                 kwargs["fontsize"] = _px_to_points(axes, guide.style.title_font_size_px)
             if guide.style.guide_margin_px is not None:
@@ -81,8 +83,8 @@ def _render_y_guide(axes: matplotlib.axes.Axes, view: View2D, guide: AxisGuide |
 
 def _axis_label_kwargs(
     axes: matplotlib.axes.Axes, style: AxisGuideStyle
-) -> dict[str, float]:
-    kwargs: dict[str, float] = {}
+) -> dict[str, Any]:
+    kwargs: dict[str, Any] = {}
     if style.axis_label_font_size_px is not None:
         kwargs["fontsize"] = _px_to_points(axes, style.axis_label_font_size_px)
     if style.axis_label_padding_px is not None:
@@ -91,9 +93,9 @@ def _axis_label_kwargs(
 
 
 def _apply_tick_style(
-    axes: matplotlib.axes.Axes, axis: str, style: AxisGuideStyle
+    axes: matplotlib.axes.Axes, axis: Literal["x", "y"], style: AxisGuideStyle
 ) -> None:
-    kwargs: dict[str, float] = {}
+    kwargs: dict[str, Any] = {}
     if style.tick_length_px is not None:
         kwargs["length"] = _px_to_points(axes, style.tick_length_px)
     if style.tick_width_px is not None:
@@ -108,7 +110,7 @@ def _apply_tick_style(
 
 def _grid_kwargs(
     axes: matplotlib.axes.Axes, style: AxisGuideStyle
-) -> dict[str, float]:
+) -> dict[str, Any]:
     if style.grid_width_px is None:
         return {}
     return {"linewidth": _px_to_points(axes, style.grid_width_px)}
