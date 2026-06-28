@@ -144,6 +144,7 @@ def render_protocol_scene_with_layout(
     snapshot_id: str = "layout:matplotlib",
     figure: matplotlib.figure.Figure | None = None,
     axes: matplotlib.axes.Axes | None = None,
+    device_scale: float = 1.0,
 ) -> MatplotlibProtocolRenderResult:
     """Render a protocol scene and report the resolved layout snapshot used."""
     if axes is None:
@@ -184,6 +185,7 @@ def render_protocol_scene_with_layout(
         view=view,
         axis_guides=axis_guide_tuple,
         panel_text_guides=panel_text_guide_tuple,
+        device_scale=device_scale,
     )
     return MatplotlibProtocolRenderResult(figure, axes, snapshot)
 

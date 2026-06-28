@@ -206,5 +206,6 @@ The initial S034 layout QA suite includes Matplotlib reference fixtures for scat
 geometry and reversed explicit tick-label layout. Matplotlib report rows for guide/layout scenes
 record `layout_snapshot_id` plus compact plot, grid-clip, title-box, axis-label-box, and tick-label
 box metadata. Resized viewport tests compare the reported render target and plot rectangle across
-output sizes. These artifacts support layout review but do not by themselves promote any backend to
-full `layout_strict`.
+output sizes. Device-scale tests verify that logical layout size remains stable while derived
+framebuffer dimensions are reported through `RenderTarget`. These artifacts support layout review
+but do not by themselves promote any backend to full `layout_strict`.

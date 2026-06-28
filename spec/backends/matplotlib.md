@@ -106,6 +106,11 @@ Supported style mappings include title font size and pad, axis label font size a
 label font size, tick length, tick width, tick-label padding, and grid line width. These are semantic
 GSP style hints; Matplotlib artist objects remain backend realization details.
 
+Matplotlib layout snapshots may carry an explicit `RenderTarget.device_scale` supplied by the caller.
+The logical figure size and guide rectangles remain in logical pixels; derived framebuffer dimensions
+come from `logical_*_px * device_scale`. This is metadata support and does not imply physical
+framebuffer-scale parity.
+
 ## S034 layout-aware guide query
 
 `gsp_matplotlib.layout_query.query_resolved_layout_guides()` can query guide boxes from a

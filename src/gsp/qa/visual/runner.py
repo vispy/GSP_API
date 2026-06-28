@@ -112,6 +112,7 @@ def run_visual_qa_suite(
     contact_sheet: bool = True,
     run_id: str | None = None,
     resolution: tuple[int, int] = (800, 600),
+    device_scale: float = 1.0,
     datoviz_color_pipeline: DatovizColorPipeline = "legacy_srgb_blend",
 ) -> dict[str, object]:
     """Run the visual QA suite and return its report."""
@@ -146,6 +147,7 @@ def run_visual_qa_suite(
             "backends": list(normalized_backends),
             "case_ids": [case.case_id for case in selected_cases],
             "resolution": list(resolution),
+            "device_scale": device_scale,
             "datoviz_color_pipeline": datoviz_color_pipeline,
         },
     )
@@ -172,6 +174,7 @@ def run_visual_qa_suite(
                 colorbar_guides=scene.colorbar_guides,
                 view=view,
                 transform_resources=transform_resources,
+                device_scale=device_scale,
             )
         if DATOVIZ_BACKEND_ID in normalized_backends:
             backend_reports[DATOVIZ_BACKEND_ID] = _run_datoviz(
@@ -218,6 +221,7 @@ def run_visual_qa_suite(
         "environment_path": str(out_dir / "environment.json"),
         "datoviz_probe_summary": _probe_summary(probe_report),
         "datoviz_color_pipeline": datoviz_color_pipeline,
+        "device_scale": device_scale,
         "contact_sheets": [str(path) for path in contact_paths],
         "cases": case_reports,
     }
@@ -262,6 +266,7 @@ def _run_matplotlib(
     colorbar_guides: tuple[ColorbarGuide, ...],
     view: View2D | None,
     transform_resources: dict[str, AffineTransform2DResource],
+    device_scale: float,
 ) -> dict[str, object]:
     artifact_path = (
         out_dir / "backends" / "matplotlib" / f"{case_slug(case.case_id)}.png"
@@ -308,6 +313,7 @@ def _run_matplotlib(
                 view=view,
                 axis_guides=axis_guides,
                 panel_text_guides=panel_text_guides,
+                device_scale=device_scale,
             )
         fig.savefig(artifact_path, dpi=100, facecolor=fig.get_facecolor())
         log_path.write_text("rendered\n", encoding="utf-8")
@@ -342,6 +348,8 @@ def _layout_snapshot_report(snapshot: ResolvedLayoutSnapshot) -> dict[str, objec
             "logical_width_px": snapshot.render_target.logical_width_px,
             "logical_height_px": snapshot.render_target.logical_height_px,
             "device_scale": snapshot.render_target.device_scale,
+            "framebuffer_width_px": snapshot.render_target.framebuffer_width_px,
+            "framebuffer_height_px": snapshot.render_target.framebuffer_height_px,
             "dpi": snapshot.render_target.dpi,
             "pixel_origin": snapshot.render_target.pixel_origin.value,
         },

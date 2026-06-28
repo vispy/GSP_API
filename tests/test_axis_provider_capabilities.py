@@ -35,6 +35,8 @@ def test_matplotlib_advertises_strict_native_axis_provider():
     assert caps.query_layout_capability.guide_query
     assert caps.query_layout_capability.all_rendered_guides
     assert caps.query_layout_capability.reports_layout_snapshot_id
+    assert caps.render_target_capability.device_scale
+    assert not caps.render_target_capability.physical_framebuffer_scale
     assert caps.supports_extension_manifests
     assert caps.supports_virtual_data_sources
     assert caps.supports_tiled_image_sources

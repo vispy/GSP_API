@@ -130,9 +130,11 @@ def test_render_protocol_scene_with_layout_reports_snapshot_id():
         axis_guides=axis_guides,
         panel_text_guides=(title,),
         snapshot_id="layout:scene",
+        device_scale=2.0,
     )
     try:
         assert result.layout_snapshot_id == "layout:scene"
+        assert result.layout_snapshot.render_target.device_scale == 2.0
         assert result.layout_snapshot.view_id == view.id
         assert result.layout_snapshot.plot_rect_px.width > 0.0
         assert result.layout_snapshot.title_boxes[0].guide_id == title.id

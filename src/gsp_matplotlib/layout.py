@@ -35,6 +35,7 @@ def resolve_matplotlib_layout_snapshot(
     view: View2D | None = None,
     axis_guides: Iterable[AxisGuide] = (),
     panel_text_guides: Iterable[PanelTextGuide] = (),
+    device_scale: float = 1.0,
 ) -> ResolvedLayoutSnapshot:
     """Resolve a GSP layout snapshot from a drawn Matplotlib reference axes."""
     figure.canvas.draw()
@@ -47,7 +48,7 @@ def resolve_matplotlib_layout_snapshot(
     render_target = RenderTarget(
         logical_width_px=width,
         logical_height_px=height,
-        device_scale=1.0,
+        device_scale=device_scale,
         dpi=float(figure.dpi),
         pixel_origin=PixelOrigin.TOP_LEFT,
         query_coordinate_space="panel",

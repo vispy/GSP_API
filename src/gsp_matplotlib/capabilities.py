@@ -92,7 +92,7 @@ def capability_snapshot() -> CapabilitySnapshot:
         ),
         render_target_capability=RenderTargetCapability(
             logical_pixels=True,
-            device_scale=False,
+            device_scale=True,
             dpi_metadata=True,
             physical_framebuffer_scale=False,
         ),

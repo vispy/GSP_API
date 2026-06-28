@@ -313,6 +313,25 @@ def test_resolve_matplotlib_layout_snapshot_exposes_native_guide_geometry():
         plt.close(fig)
 
 
+def test_resolve_matplotlib_layout_snapshot_records_device_scale_metadata():
+    fig, ax = plt.subplots(figsize=(3.2, 2.4), dpi=100)
+    try:
+        snapshot = resolve_matplotlib_layout_snapshot(
+            fig,
+            ax,
+            snapshot_id="layout:hidpi",
+            device_scale=2.0,
+        )
+
+        assert snapshot.render_target.logical_width_px == 320
+        assert snapshot.render_target.logical_height_px == 240
+        assert snapshot.render_target.device_scale == 2.0
+        assert snapshot.render_target.framebuffer_width_px == 640
+        assert snapshot.render_target.framebuffer_height_px == 480
+    finally:
+        plt.close(fig)
+
+
 def test_query_resolved_matplotlib_layout_guides_hits_title_box():
     fig, ax = plt.subplots(figsize=(6.4, 4.8), dpi=100)
     view = View2D(id="view:main", panel_id="panel:main")

@@ -1151,6 +1151,32 @@ def test_s034_layout_snapshots_track_resized_viewports(tmp_path: Path) -> None:
     assert large_snapshot["grid_clip_rect_px"] == large_snapshot["plot_rect_px"]
 
 
+def test_s034_layout_snapshot_reports_device_scale(tmp_path: Path) -> None:
+    """S034 layout QA preserves logical size while reporting physical scale metadata."""
+    report = run_visual_qa_suite(
+        suite=S034_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=("layout/scatter_title_axes_grid",),
+        contact_sheet=False,
+        run_id="test-s034-device-scale",
+        resolution=(320, 220),
+        device_scale=2.0,
+    )
+
+    backend = report["cases"][0]["backends"]["matplotlib"]
+    snapshot = backend["layout_snapshot"]
+    target = snapshot["render_target"]
+
+    assert report["device_scale"] == 2.0
+    assert target["logical_width_px"] == pytest.approx(320.0)
+    assert target["logical_height_px"] == pytest.approx(220.0)
+    assert target["device_scale"] == pytest.approx(2.0)
+    assert target["framebuffer_width_px"] == 640
+    assert target["framebuffer_height_px"] == 440
+    assert snapshot["grid_clip_rect_px"] == snapshot["plot_rect_px"]
+
+
 def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
     """The v0.4 probe records retained mesh evidence separately from text evidence."""
     from types import SimpleNamespace
