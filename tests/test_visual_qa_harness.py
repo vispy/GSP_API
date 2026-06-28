@@ -1117,6 +1117,40 @@ def test_s034_layout_visual_qa_run_reports_matplotlib_layout_snapshots(
         assert snapshot["tick_label_box_count"] > 0
 
 
+def test_s034_layout_snapshots_track_resized_viewports(tmp_path: Path) -> None:
+    """Resolved layout snapshot metadata follows the Matplotlib render target size."""
+    small = run_visual_qa_suite(
+        suite=S034_SUITE,
+        out_dir=tmp_path / "small",
+        backends=("matplotlib",),
+        case_ids=("layout/scatter_title_axes_grid",),
+        contact_sheet=False,
+        run_id="test-s034-layout-small",
+        resolution=(320, 220),
+    )
+    large = run_visual_qa_suite(
+        suite=S034_SUITE,
+        out_dir=tmp_path / "large",
+        backends=("matplotlib",),
+        case_ids=("layout/scatter_title_axes_grid",),
+        contact_sheet=False,
+        run_id="test-s034-layout-large",
+        resolution=(640, 360),
+    )
+
+    small_snapshot = small["cases"][0]["backends"]["matplotlib"]["layout_snapshot"]
+    large_snapshot = large["cases"][0]["backends"]["matplotlib"]["layout_snapshot"]
+
+    assert small_snapshot["render_target"]["logical_width_px"] == pytest.approx(320.0)
+    assert small_snapshot["render_target"]["logical_height_px"] == pytest.approx(220.0)
+    assert large_snapshot["render_target"]["logical_width_px"] == pytest.approx(640.0)
+    assert large_snapshot["render_target"]["logical_height_px"] == pytest.approx(360.0)
+    assert large_snapshot["plot_rect_px"]["width"] > small_snapshot["plot_rect_px"]["width"]
+    assert large_snapshot["plot_rect_px"]["height"] > small_snapshot["plot_rect_px"]["height"]
+    assert small_snapshot["grid_clip_rect_px"] == small_snapshot["plot_rect_px"]
+    assert large_snapshot["grid_clip_rect_px"] == large_snapshot["plot_rect_px"]
+
+
 def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
     """The v0.4 probe records retained mesh evidence separately from text evidence."""
     from types import SimpleNamespace
