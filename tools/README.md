@@ -18,5 +18,4 @@ tools/agentctl pro-packet
 ```
 
 The first version is intentionally simple and uses only Python standard library.
-- `compare-review-examples`: runs `examples/review/[0-9]*.py` through Matplotlib and Datoviz review paths and writes artifacts under `artifacts/example_review/`.
-
+- `compare-review-examples`: runs `examples/review/[0-9]*.py` through Matplotlib and Datoviz review paths. It opens live windows by default; pass `--offscreen` to write artifacts under `artifacts/example_review/`.

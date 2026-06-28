@@ -114,6 +114,16 @@ class FakeDatovizV04:
         self.calls.append(("panel_full", figure))
         return "panel"
 
+    class DvzPanelDesc:
+        x = 0.0
+        y = 0.0
+        width = 0.0
+        height = 0.0
+
+    def dvz_panel(self, figure, desc):
+        self.calls.append(("panel", figure, desc.x, desc.y, desc.width, desc.height))
+        return "panel"
+
     class FakePanelView2D:
         aspect = 0
         padding = 1.0
@@ -274,10 +284,23 @@ class FakeDatovizV04WithAxes(FakeDatovizV04):
             self.major_tick_width = 0.0
             self.minor_tick_width = 0.0
             self.grid_width = 0.0
+            self.major_tick_length = 0.0
+            self.minor_tick_length = 0.0
+            self.tick_gap_px = 0.0
+            self.label_gap_px = 0.0
+            self.tick_size_px = 0.0
+            self.label_size_px = 0.0
+            self.plot_margin_left = 0.0
+            self.plot_margin_right = 0.0
+            self.plot_margin_bottom = 0.0
+            self.plot_margin_top = 0.0
             self.spine_color = [0, 0, 0, 0]
             self.major_tick_color = [0, 0, 0, 0]
             self.minor_tick_color = [0, 0, 0, 0]
             self.grid_color = [0, 0, 0, 0]
+            self.show_spine = False
+            self.show_major_ticks = False
+            self.show_minor_ticks = False
 
     def dvz_panel_view2d(self):
         self.calls.append(("view2d",))
@@ -316,9 +339,14 @@ class FakeDatovizV04WithAxes(FakeDatovizV04):
                 axis,
                 style.spine_width,
                 style.major_tick_width,
+                style.major_tick_length,
+                style.tick_size_px,
+                style.label_size_px,
+                style.plot_margin_top,
                 tuple(style.spine_color),
                 tuple(style.major_tick_color),
                 tuple(style.grid_color),
+                style.show_major_ticks,
             )
         )
         return True
@@ -333,6 +361,10 @@ class FakeDatovizV04WithAxes(FakeDatovizV04):
 
     def dvz_axis_set_label(self, axis, label):
         self.calls.append(("set_label", axis, label))
+        return True
+
+    def dvz_axis_set_plot_margins(self, axis, left, right, bottom, top):
+        self.calls.append(("set_plot_margins", axis, left, right, bottom, top))
         return True
 
 
@@ -465,8 +497,8 @@ class FakeDatovizV04WithCapture(FakeDatovizV04):
 
 
 class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
-    def dvz_view(self, app, figure, desc):
-        self.calls.append(("view", app, figure, desc))
+    def dvz_view_glfw(self, app, figure, width, height, title):
+        self.calls.append(("view_glfw", app, figure, width, height, title))
         return "live-view"
 
     def dvz_app_run(self, app, frame_count):
@@ -833,6 +865,15 @@ def test_renderer_sets_datoviz_color_pipeline_when_binding_is_available():
     assert _calls(fake, "figure_set_color_pipeline") == [
         ("figure_set_color_pipeline", "figure", 11)
     ]
+
+
+def test_renderer_can_create_custom_panel_bounds_for_review_layout():
+    fake = FakeDatovizV04()
+
+    DatovizV04ProtocolRenderer(dvz=fake, panel_bounds=(0.0, 0.07, 1.0, 0.93))
+
+    assert _calls(fake, "panel") == [("panel", "figure", 0.0, 0.07, 1.0, 0.93)]
+    assert _calls(fake, "panel_full") == []
 
 
 def test_renderer_defaults_to_legacy_color_pipeline_when_binding_is_available():
@@ -2296,9 +2337,9 @@ def test_add_text_visual_uses_retained_text_style_placement_and_strings():
         (
             "text_set_placement",
             "text-1",
-            1,
-            10,
-            (-0.5, 0.25, 4.0),
+            0,
+            5,
+            (-200.0, -75.0, 1.0),
             (0.0, 0.0),
             True,
             0.0,
@@ -2307,9 +2348,9 @@ def test_add_text_visual_uses_retained_text_style_placement_and_strings():
         (
             "text_set_placement",
             "text-2",
-            1,
-            10,
-            (0.5, -0.25, 4.0),
+            0,
+            5,
+            (200.0, 75.0, 1.0),
             (1.0, 1.0),
             True,
             0.5,
@@ -2426,7 +2467,9 @@ def test_renderer_show_creates_live_view_and_runs_app():
     renderer.show(frame_count=1)
 
     assert _calls(fake, "app") == [("app", "scene")]
-    assert _calls(fake, "view") == [("view", "app", "figure", None)]
+    assert _calls(fake, "view_glfw") == [
+        ("view_glfw", "app", "figure", 800, 600, b"GSP Datoviz review")
+    ]
     assert _calls(fake, "app_run") == [("app_run", "app", 1)]
 
 
@@ -2477,19 +2520,33 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
             "axis:0",
             1.75,
             1.5,
+            7.0,
+            15.0,
+            17.0,
+            0.08,
             (32, 32, 32, 255),
             (32, 32, 32, 255),
             (150, 150, 150, 190),
+            True,
         ),
         (
             "set_style",
             "axis:1",
             1.75,
             1.5,
+            7.0,
+            15.0,
+            17.0,
+            0.08,
             (32, 32, 32, 255),
             (32, 32, 32, 255),
             (150, 150, 150, 190),
+            True,
         ),
+    ]
+    assert _calls(fake, "set_plot_margins") == [
+        ("set_plot_margins", "axis:0", 0.0, 0.0, 0.0, 0.08),
+        ("set_plot_margins", "axis:1", 0.0, 0.0, 0.0, 0.08),
     ]
     assert _calls(fake, "set_tick_policy") == [
         ("set_tick_policy", "axis:0", "tick-policy"),

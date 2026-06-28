@@ -154,15 +154,15 @@ python examples/example_name.py --help
 
 ### API Review Examples
 
-The `examples/review/` pack contains small protocol/API examples intended for human review and backend comparison. Each script supports `--backend matplotlib`, `--backend datoviz`, `--backend both`, and `--live`; artifacts are written to `artifacts/example_review/<example>/`.
+The `examples/review/` pack contains small protocol/API examples intended for human review and backend comparison. Each script supports `--backend matplotlib`, `--backend datoviz`, `--backend both`, and opens a live window by default. Pass `--offscreen` to write artifacts under `artifacts/example_review/<example>/`.
 
 ```bash
 uv run python examples/review/01_scatter_basic.py --backend matplotlib
-uv run python examples/review/01_scatter_basic.py --backend datoviz --live
-tools/compare-review-examples examples/review/01_scatter_basic.py
+uv run python examples/review/01_scatter_basic.py --backend datoviz
+tools/compare-review-examples examples/review/01_scatter_basic.py --offscreen
 ```
 
-See `examples/review/README.md` for the full list and Datoviz offscreen-capture notes.
+See `examples/review/README.md` for the full list and offscreen-capture notes.
 
 ### S023 Visual QA Pack
 

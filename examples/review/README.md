@@ -4,26 +4,27 @@ These examples are intentionally small and readable. Use them to review the GSP 
 
 ## Quick commands
 
-Run one example with Matplotlib capture:
+Open one example live with Matplotlib or Datoviz:
 
 ```bash
 uv run python examples/review/01_scatter_basic.py --backend matplotlib
+uv run python examples/review/01_scatter_basic.py --backend datoviz
 ```
 
-Open the same scene live in Matplotlib or Datoviz:
+Open both live windows sequentially:
 
 ```bash
-uv run python examples/review/01_scatter_basic.py --backend matplotlib --live
-uv run python examples/review/01_scatter_basic.py --backend datoviz --live
+uv run python examples/review/01_scatter_basic.py --backend both
 ```
 
-Compare captured outputs:
+Capture and compare offscreen outputs:
 
 ```bash
-tools/compare-review-examples examples/review/01_scatter_basic.py
+uv run python examples/review/01_scatter_basic.py --backend both --offscreen
+tools/compare-review-examples examples/review/01_scatter_basic.py --offscreen
 ```
 
-Artifacts are written under `artifacts/example_review/<example>/`.
+Offscreen artifacts are written under `artifacts/example_review/<example>/`.
 
 ## Examples
 
@@ -36,16 +37,16 @@ Artifacts are written under `artifacts/example_review/<example>/`.
 | `05_color_mapping_colorbar.py` | ColorScale, ScalarColorEncoding, named colormap, colorbar |
 | `06_text_labels.py` | TextVisual labels, anchors, z-order over points |
 
-## Datoviz capture note
+## Offscreen Capture Note
 
-Datoviz live mode is the recommended interactive review path. The v0.4 adapter automatically prefers a sibling `../datoviz` source checkout when present; set `GSP_DATOVIZ_SOURCE=/path/to/datoviz` to override, or `GSP_DATOVIZ_SOURCE=none` to disable this.
+Live mode is the default interactive review path. The Datoviz v0.4 adapter automatically prefers a sibling `../datoviz` source checkout when present; set `GSP_DATOVIZ_SOURCE=/path/to/datoviz` to override, or `GSP_DATOVIZ_SOURCE=none` to disable this.
 
-Offscreen PNG capture is opt-in because native offscreen creation can abort in some local GPU/display configurations:
+Offscreen PNG capture is opt-in for both Matplotlib and Datoviz:
 
 ```bash
-GSP_DATOVIZ_QA_ENABLE_OFFSCREEN=1 tools/compare-review-examples examples/review/01_scatter_basic.py
-# or
-uv run python examples/review/01_scatter_basic.py --backend datoviz --datoviz-offscreen
+uv run python examples/review/01_scatter_basic.py --backend matplotlib --offscreen
+uv run python examples/review/01_scatter_basic.py --backend datoviz --offscreen
+tools/compare-review-examples examples/review/01_scatter_basic.py --offscreen
 ```
 
-When Datoviz capture is not enabled or unsupported, the runner writes `datoviz.unsupported.json` rather than pretending parity.
+Datoviz offscreen creation can abort in some local GPU/display configurations. If Datoviz capture is unsupported, the runner writes `datoviz.unsupported.json` rather than pretending parity.

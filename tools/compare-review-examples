@@ -12,9 +12,11 @@ import sys
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("examples", nargs="*", type=Path, help="Review example files. Defaults to examples/review/[0-9]*.py.")
-    parser.add_argument("--live", action="store_true", help="Open live windows sequentially instead of capture mode.")
-    parser.add_argument("--datoviz-offscreen", action="store_true", help="Opt into Datoviz offscreen capture.")
+    parser.add_argument("--offscreen", action="store_true", help="Write PNG artifacts instead of opening live windows.")
+    parser.add_argument("--live", action="store_false", dest="offscreen", help="Open live windows sequentially. This is the default.")
+    parser.add_argument("--datoviz-offscreen", action="store_true", dest="offscreen", help="Deprecated alias for --offscreen.")
     parser.add_argument("--resolution", default="900x650")
+    parser.set_defaults(offscreen=False)
     args = parser.parse_args()
 
     examples = args.examples or sorted(Path("examples/review").glob("[0-9]*.py"))
@@ -37,10 +39,8 @@ def main() -> int:
             "--resolution",
             args.resolution,
         ]
-        if args.live:
-            cmd.append("--live")
-        if args.datoviz_offscreen:
-            cmd.append("--datoviz-offscreen")
+        if args.offscreen:
+            cmd.append("--offscreen")
         print(f"==> {example}", flush=True)
         result = subprocess.run(cmd, check=False)
         if result.returncode != 0:

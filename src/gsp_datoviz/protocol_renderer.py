@@ -179,11 +179,13 @@ DVZ_HORIZONTAL_ANCHOR_RIGHT = 2
 DVZ_VERTICAL_ANCHOR_CENTER = 1
 DVZ_SCENE_ANCHOR_PANEL_TOP = 2
 DVZ_SCENE_ANCHOR_PANEL_LEFT = 4
+DVZ_SCENE_ANCHOR_PANEL_CENTER = 5
 DVZ_SCENE_ANCHOR_PANEL_RIGHT = 6
 DVZ_SCENE_ANCHOR_PANEL_BOTTOM = 8
 DVZ_SCENE_ANCHOR_DATA = 10
 DVZ_TEXT_RENDERER_MSDF_ATLAS = 3
 DEFAULT_BACKGROUND_RGBA8 = (255, 255, 255, 255)
+DATOVIZ_REVIEW_PLOT_MARGINS = (0.0, 0.0, 0.0, 0.08)
 
 DatovizColorPipeline = Literal["linear_srgb", "legacy_srgb_blend"]
 
@@ -423,6 +425,7 @@ class DatovizV04ProtocolRenderer:
     color_pipeline: DatovizColorPipeline = "legacy_srgb_blend"
     view: View2D | None = None
     transform_resources: Mapping[str, AffineTransform2DResource] | None = None
+    panel_bounds: tuple[float, float, float, float] | None = None
     scene: Any = field(init=False)
     figure: Any = field(init=False)
     panel: Any = field(init=False)
@@ -460,7 +463,7 @@ class DatovizV04ProtocolRenderer:
         self.scene = self.dvz.dvz_scene()
         self.figure = self.dvz.dvz_figure(self.scene, self.width, self.height, 0)
         _set_figure_color_pipeline(self.dvz, self.figure, self.color_pipeline)
-        self.panel = self.dvz.dvz_panel_full(self.figure)
+        self.panel = _create_panel(self.dvz, self.figure, self.panel_bounds)
         _set_panel_background_color(self.dvz, self.panel, self.background_rgba8)
         _configure_ndc_panel_view2d(self.dvz, self.panel)
         if self.view is not None:
@@ -862,9 +865,14 @@ class DatovizV04ProtocolRenderer:
             placement = _text_placement(self.dvz)
             placement.mode = mode
             placement.anchor = _text_anchor_value(self.dvz, visual.coordinate_space)
-            placement.position[0] = float(positions[index, 0])
-            placement.position[1] = float(positions[index, 1])
-            placement.position[2] = float(visual.z_order)
+            position_x = float(positions[index, 0])
+            position_y = float(positions[index, 1])
+            if visual.coordinate_space is CoordinateSpace.NDC:
+                position_x *= 0.5 * self.width
+                position_y *= -0.5 * self.height
+            placement.position[0] = position_x
+            placement.position[1] = position_y
+            placement.position[2] = float(np.clip(visual.z_order, -1.0, 1.0))
             placement.text_anchor[0] = _text_anchor_x_value(anchor_x[index])
             placement.text_anchor[1] = _text_anchor_y_value(anchor_y[index])
             placement.has_text_anchor = True
@@ -1032,6 +1040,19 @@ class DatovizV04ProtocolRenderer:
             return self.live_view
 
         self._ensure_app("interactive")
+        view_glfw = getattr(self.dvz, "dvz_view_glfw", None)
+        if view_glfw is not None:
+            self.live_view = view_glfw(
+                self.app,
+                self.figure,
+                self.width,
+                self.height,
+                b"GSP Datoviz review",
+            )
+            if _is_null_handle(self.live_view):
+                raise DatovizV04Unavailable("Datoviz interactive GLFW view creation failed")
+            return self.live_view
+
         view = getattr(self.dvz, "dvz_view", None)
         if view is None:
             raise DatovizV04Unavailable(
@@ -1229,6 +1250,8 @@ class DatovizV04ProtocolRenderer:
 
         _configure_axis_review_style(self.dvz, x_axis)
         _configure_axis_review_style(self.dvz, y_axis)
+        _configure_axis_review_plot_margins(self.dvz, x_axis)
+        _configure_axis_review_plot_margins(self.dvz, y_axis)
 
         tick_policy = self.dvz.dvz_axis_tick_policy()
         self.dvz.dvz_axis_set_tick_policy(x_axis, tick_policy)
@@ -1278,6 +1301,32 @@ def _configure_axis_review_style(dvz: Any, axis: Any) -> None:
         style.minor_tick_width = 1.0
     if hasattr(style, "grid_width"):
         style.grid_width = 1.0
+    if hasattr(style, "major_tick_length"):
+        style.major_tick_length = 7.0
+    if hasattr(style, "minor_tick_length"):
+        style.minor_tick_length = 4.0
+    if hasattr(style, "tick_gap_px"):
+        style.tick_gap_px = 5.0
+    if hasattr(style, "label_gap_px"):
+        style.label_gap_px = 9.0
+    if hasattr(style, "tick_size_px"):
+        style.tick_size_px = 15.0
+    if hasattr(style, "label_size_px"):
+        style.label_size_px = 17.0
+    if hasattr(style, "plot_margin_left"):
+        style.plot_margin_left = DATOVIZ_REVIEW_PLOT_MARGINS[0]
+    if hasattr(style, "plot_margin_right"):
+        style.plot_margin_right = DATOVIZ_REVIEW_PLOT_MARGINS[1]
+    if hasattr(style, "plot_margin_bottom"):
+        style.plot_margin_bottom = DATOVIZ_REVIEW_PLOT_MARGINS[2]
+    if hasattr(style, "plot_margin_top"):
+        style.plot_margin_top = DATOVIZ_REVIEW_PLOT_MARGINS[3]
+    if hasattr(style, "show_spine"):
+        style.show_spine = True
+    if hasattr(style, "show_major_ticks"):
+        style.show_major_ticks = True
+    if hasattr(style, "show_minor_ticks"):
+        style.show_minor_ticks = True
     _assign_style_color(style, "spine_color", (32, 32, 32, 255))
     _assign_style_color(style, "major_tick_color", (32, 32, 32, 255))
     _assign_style_color(style, "minor_tick_color", (90, 90, 90, 220))
@@ -1285,6 +1334,15 @@ def _configure_axis_review_style(dvz: Any, axis: Any) -> None:
     result = style_setter(axis, style)
     if result not in (0, None, True):
         raise DatovizV04Unsupported("Datoviz axis style configuration failed")
+
+
+def _configure_axis_review_plot_margins(dvz: Any, axis: Any) -> None:
+    margin_setter = getattr(dvz, "dvz_axis_set_plot_margins", None)
+    if margin_setter is None:
+        return
+    result = margin_setter(axis, *DATOVIZ_REVIEW_PLOT_MARGINS)
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz axis plot margin configuration failed")
 
 
 def _assign_style_color(
@@ -1552,8 +1610,8 @@ def _coord_space_value(dvz: Any, name: str, fallback: int) -> int:
 
 def _text_placement_mode_value(dvz: Any, coordinate_space: CoordinateSpace) -> int:
     if coordinate_space == CoordinateSpace.NDC:
-        name = "DVZ_TEXT_PLACEMENT_DATA"
-        fallback = DVZ_TEXT_PLACEMENT_DATA
+        name = "DVZ_TEXT_PLACEMENT_SCREEN"
+        fallback = DVZ_TEXT_PLACEMENT_SCREEN
     elif coordinate_space == CoordinateSpace.DATA:
         name = "DVZ_TEXT_PLACEMENT_DATA"
         fallback = DVZ_TEXT_PLACEMENT_DATA
@@ -1571,7 +1629,10 @@ def _text_placement_mode_value(dvz: Any, coordinate_space: CoordinateSpace) -> i
 
 
 def _text_anchor_value(dvz: Any, coordinate_space: CoordinateSpace) -> int:
-    if coordinate_space in (CoordinateSpace.NDC, CoordinateSpace.DATA):
+    if coordinate_space == CoordinateSpace.NDC:
+        name = "DVZ_SCENE_ANCHOR_PANEL_CENTER"
+        fallback = DVZ_SCENE_ANCHOR_PANEL_CENTER
+    elif coordinate_space == CoordinateSpace.DATA:
         name = "DVZ_SCENE_ANCHOR_DATA"
         fallback = DVZ_SCENE_ANCHOR_DATA
     else:
@@ -1582,7 +1643,7 @@ def _text_anchor_value(dvz: Any, coordinate_space: CoordinateSpace) -> int:
     if value is not None:
         return int(value)
     enum_type = getattr(dvz, "DvzSceneAnchor", None)
-    if enum_type is not None:
+    if enum_type is not None and hasattr(enum_type, name):
         return int(getattr(enum_type, name))
     return fallback
 
@@ -2034,6 +2095,28 @@ def _set_panel_background_color(
         return
     color = _dvz_color(dvz, rgba)
     setter(panel, color)
+
+
+def _create_panel(
+    dvz: Any, figure: Any, bounds: tuple[float, float, float, float] | None
+) -> Any:
+    if bounds is None:
+        return dvz.dvz_panel_full(figure)
+    panel_factory = getattr(dvz, "dvz_panel", None)
+    desc_type = getattr(dvz, "DvzPanelDesc", None)
+    if panel_factory is None or desc_type is None:
+        return dvz.dvz_panel_full(figure)
+
+    x, y, width, height = bounds
+    desc = desc_type()
+    desc.x = float(x)
+    desc.y = float(y)
+    desc.width = float(width)
+    desc.height = float(height)
+    panel = panel_factory(figure, desc)
+    if _is_null_handle(panel):
+        raise DatovizV04Unavailable("Datoviz custom panel creation failed")
+    return panel
 
 
 def _dvz_color(dvz: Any, rgba: tuple[int, int, int, int]) -> Any:

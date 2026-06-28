@@ -77,21 +77,22 @@ def run_review(builder: SceneBuilder) -> int:
 
     backends = ("matplotlib", "datoviz") if args.backend == "both" else (args.backend,)
     statuses: list[dict[str, object]] = []
+    live = not args.offscreen
     for backend in backends:
         if backend == "matplotlib":
-            statuses.append(_run_matplotlib(scene, out_dir, args.resolution, live=args.live))
+            statuses.append(_run_matplotlib(scene, out_dir, args.resolution, live=live))
         else:
             statuses.append(
                 _run_datoviz(
                     scene,
                     out_dir,
                     args.resolution,
-                    live=args.live,
+                    live=live,
                     frames=args.frames,
-                    allow_offscreen=args.datoviz_offscreen,
+                    allow_offscreen=args.offscreen,
                 )
             )
-    if not args.live and len(statuses) > 1:
+    if args.offscreen and len(statuses) > 1:
         _write_compare(out_dir, statuses)
     (out_dir / "summary.json").write_text(json.dumps(statuses, indent=2) + "\n", encoding="utf-8")
     for status in statuses:
@@ -102,15 +103,18 @@ def run_review(builder: SceneBuilder) -> int:
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run a GSP API review example.")
     parser.add_argument("--backend", choices=("matplotlib", "datoviz", "both"), default="matplotlib")
-    parser.add_argument("--live", action="store_true", help="Open an interactive window instead of capture-only output.")
+    parser.add_argument("--offscreen", action="store_true", help="Write PNG artifacts instead of opening live windows.")
+    parser.add_argument("--live", action="store_false", dest="offscreen", help="Open live windows. This is the default.")
     parser.add_argument("--out-dir", type=Path, help="Artifact directory; defaults to artifacts/example_review/<example>.")
     parser.add_argument("--resolution", type=_parse_resolution, default=(900, 650), help="Capture/window size, e.g. 900x650.")
     parser.add_argument("--frames", type=int, default=0, help="Datoviz live frame count; 0 means run until close.")
     parser.add_argument(
         "--datoviz-offscreen",
         action="store_true",
-        help=f"Opt into Datoviz offscreen capture. Equivalent to setting {DATOVIZ_OFFSCREEN_ENV}=1.",
+        dest="offscreen",
+        help="Deprecated alias for --offscreen.",
     )
+    parser.set_defaults(offscreen=False)
     return parser.parse_args()
 
 
@@ -154,7 +158,10 @@ def _run_matplotlib(scene: ReviewScene, out_dir: Path, resolution: tuple[int, in
         else:
             fig.savefig(path, dpi=100, facecolor=fig.get_facecolor())
         log_path.write_text("rendered\n", encoding="utf-8")
-        return {"backend": "matplotlib", "status": "rendered", "path": str(path), "log_path": str(log_path)}
+        report = {"backend": "matplotlib", "status": "rendered", "log_path": str(log_path)}
+        if not live:
+            report["path"] = str(path)
+        return report
     except Exception as exc:  # noqa: BLE001 - examples should leave structured artifacts.
         log_path.write_text(traceback.format_exc(), encoding="utf-8")
         return {"backend": "matplotlib", "status": "error", "reason": f"{type(exc).__name__}: {exc}", "log_path": str(log_path)}
@@ -209,7 +216,7 @@ def _run_datoviz(
     unsupported_path = out_dir / "datoviz.unsupported.json"
     log_path = out_dir / "datoviz.log.txt"
     if not live and not (allow_offscreen or os.environ.get(DATOVIZ_OFFSCREEN_ENV) == "1"):
-        reason = f"Datoviz offscreen capture is opt-in; pass --datoviz-offscreen or set {DATOVIZ_OFFSCREEN_ENV}=1."
+        reason = f"Datoviz offscreen capture is opt-in; pass --offscreen or set {DATOVIZ_OFFSCREEN_ENV}=1."
         payload = {"backend": "datoviz", "status": "unsupported", "reason": reason}
         unsupported_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
         log_path.write_text(reason + "\n", encoding="utf-8")
@@ -218,13 +225,20 @@ def _run_datoviz(
         color_scales = {scale.id: scale for scale in scene.color_scales}
         axis_config = _axis_config(scene.axis_guides, scene.view)
         renderer_view = None if axis_config is not None else scene.view
-        with DatovizV04ProtocolRenderer(width=resolution[0], height=resolution[1], color_scales=color_scales, view=renderer_view) as renderer:
+        with DatovizV04ProtocolRenderer(
+            width=resolution[0],
+            height=resolution[1],
+            color_scales=color_scales,
+            view=renderer_view,
+        ) as renderer:
             if axis_config is not None and scene.view is not None:
                 renderer.configure_view2d_axes(scene.view, **axis_config)
             for visual in scene.visuals:
                 _render_datoviz_visual(renderer, visual)
             for guide in scene.colorbar_guides:
                 renderer.add_colorbar_guide(guide)
+            for visual in _panel_text_background_visuals(scene.panel_text_guides):
+                _render_datoviz_visual(renderer, visual)
             for visual in _panel_text_as_text_visuals(scene.panel_text_guides):
                 renderer.add_text_visual(visual)
             if live:
@@ -232,7 +246,13 @@ def _run_datoviz(
             else:
                 path.write_bytes(renderer.capture_png_bytes())
         log_path.write_text("rendered\n", encoding="utf-8")
-        report = {"backend": "datoviz", "status": "rendered", "log_path": str(log_path)}
+        report = {
+            "backend": "datoviz",
+            "status": "rendered",
+            "classification": "review.adapted",
+            "diagnostics": _datoviz_review_diagnostics(scene),
+            "log_path": str(log_path),
+        }
         if not live:
             report["path"] = str(path)
         return report
@@ -287,7 +307,7 @@ def _explicit_ticks(guide: AxisGuide | None) -> tuple[tuple[float, ...], tuple[s
 
 def _panel_text_as_text_visuals(guides: tuple[PanelTextGuide, ...]) -> tuple[TextVisual, ...]:
     visuals: list[TextVisual] = []
-    y = 0.94
+    y = 0.98
     for guide in guides:
         if guide.role is not PanelTextRole.TITLE:
             continue
@@ -298,7 +318,7 @@ def _panel_text_as_text_visuals(guides: tuple[PanelTextGuide, ...]) -> tuple[Tex
                 positions=np.array([[0.0, y]], dtype=np.float32),
                 coordinate_space=CoordinateSpace.NDC,
                 rgba=np.array([30, 30, 30, 255], dtype=np.uint8),
-                font_size_px=20.0,
+                font_size_px=24.0,
                 anchor_x=TextAnchorX.CENTER,
                 anchor_y=TextAnchorY.TOP,
                 z_order=10,
@@ -306,6 +326,58 @@ def _panel_text_as_text_visuals(guides: tuple[PanelTextGuide, ...]) -> tuple[Tex
         )
         y -= 0.07
     return tuple(visuals)
+
+
+def _panel_text_background_visuals(guides: tuple[PanelTextGuide, ...]) -> tuple[MeshVisual, ...]:
+    if not any(guide.role is PanelTextRole.TITLE for guide in guides):
+        return ()
+    return (
+        MeshVisual(
+            id="visual:datoviz-panel-title-background",
+            positions=np.array(
+                [[-1.0, 0.86], [1.0, 0.86], [1.0, 1.0], [-1.0, 1.0]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            order=8.0,
+        ),
+    )
+
+
+def _datoviz_review_diagnostics(scene: ReviewScene) -> list[dict[str, str]]:
+    diagnostics: list[dict[str, str]] = []
+    if any(guide.role is PanelTextRole.TITLE for guide in scene.panel_text_guides):
+        diagnostics.append(
+            {
+                "code": "panel_text_guide_as_screen_text",
+                "status": "adapted",
+                "message": (
+                    "PanelTextGuide TITLE rendered as adapted screen text; it does not "
+                    "participate in GSP layout strictness."
+                ),
+            }
+        )
+        diagnostics.append(
+            {
+                "code": "guide_query_missing",
+                "status": "unsupported",
+                "message": "Datoviz review title does not provide guide query geometry.",
+            }
+        )
+    if any(guide.grid_visible for guide in scene.axis_guides):
+        diagnostics.append(
+            {
+                "code": "grid_clip_not_enforced",
+                "status": "adapted",
+                "message": (
+                    "Datoviz review grid clipping is a review artifact and is not a "
+                    "layout-strict plot-rectangle guarantee."
+                ),
+            }
+        )
+    return diagnostics
 
 
 def _write_compare(out_dir: Path, statuses: list[dict[str, object]]) -> None:
