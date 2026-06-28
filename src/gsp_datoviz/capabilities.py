@@ -29,6 +29,21 @@ from gsp_datoviz.v04_import import bootstrap_datoviz_v04_source
 
 
 DATOVIZ_V04_AXIS_PROVIDER = "datoviz.v04.panel_axis.wip"
+DATOVIZ_S034_AXIS_STYLE_FIELDS = (
+    "tick_size_px",
+    "label_size_px",
+    "major_tick_length",
+    "minor_tick_length",
+    "major_tick_width",
+    "minor_tick_width",
+    "tick_gap_px",
+    "label_gap_px",
+    "grid_width",
+    "plot_margin_top",
+    "plot_margin_bottom",
+    "plot_margin_left",
+    "plot_margin_right",
+)
 S027_TRANSFORM_CAPABILITIES = (
     "gsp.transform.affine2d@0.1",
     "gsp.transform.inline-affine2d@0.1",
@@ -169,6 +184,32 @@ def gsp_capability_snapshot_from_datoviz(
             "all_rendered_guides_unsupported",
             "strict_guide_title_query_unverified",
         ),
+        "s034_layout_status": (
+            "Datoviz guide/layout behavior is semantic/adapted in this slice. "
+            "The adapter does not produce or consume ResolvedLayoutSnapshot, "
+            "does not provide guide query geometry, and must not claim layout_strict."
+        ),
+        "s034_guide_layout_audit": {
+            "semantic_guides": True,
+            "resolved_layout_produce": "none",
+            "resolved_layout_consume": "none",
+            "layout_strict": False,
+            "panel_text_title": "adapted: panel_text_guide_as_screen_text",
+            "axis_style_mapping": "partial" if dvz is not None and hasattr(dvz, "dvz_axis_set_style") else "unsupported",
+            "axis_style_fields": DATOVIZ_S034_AXIS_STYLE_FIELDS,
+            "grid_clip_to_plot_rect": "unsupported_or_partial",
+            "guide_query": False,
+            "all_rendered_guides": False,
+            "diagnostics": (
+                "panel_text_guide_as_screen_text",
+                "resolved_layout_snapshot_unsupported",
+                "axis_style_mapping_partial",
+                "grid_clip_not_enforced",
+                "guide_query_missing",
+                "all_rendered_guides_unsupported",
+                "font_metrics_parity_false",
+            ),
+        },
         "s026_scalar_color": (
             "finite eager scalar ImageVisual, PointVisual, and MarkerVisual fill "
             "data are CPU pre-mapped to canonical GSP RGBA8; point/image scalar "
@@ -284,6 +325,7 @@ def gsp_capability_snapshot_from_datoviz(
             diagnostics=(
                 "panel_text_guide_as_screen_text",
                 "resolved_layout_snapshot_unsupported",
+                "axis_style_mapping_partial",
                 "layout_strict_false",
             ),
         ),
@@ -302,6 +344,8 @@ def gsp_capability_snapshot_from_datoviz(
             colorbar_query=False,
             legend="unsupported",
             diagnostics=(
+                "panel_text_guide_as_screen_text",
+                "axis_style_mapping_partial",
                 "grid_clip_not_enforced",
                 "guide_query_missing",
                 "all_rendered_guides_unsupported",

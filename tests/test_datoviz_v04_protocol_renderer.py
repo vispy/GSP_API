@@ -50,6 +50,7 @@ from gsp.protocol import (
 )
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
+    DATOVIZ_S034_AXIS_STYLE_FIELDS,
     DATOVIZ_V04_AXIS_PROVIDER,
     datoviz_v04_axis_provider_capability,
     datoviz_v04_axis_symbols,
@@ -917,9 +918,18 @@ def test_capability_snapshot_defers_query_support():
     assert caps.supports_transform_capability("gsp.transform.affine2d@0.1")
     assert "s027_transform" in caps.metadata
     assert "s028_guide_view2d" in caps.metadata
+    assert "s034_guide_layout_audit" in caps.metadata
+    audit = caps.metadata["s034_guide_layout_audit"]
+    assert audit["layout_strict"] is False
+    assert audit["resolved_layout_produce"] == "none"
+    assert audit["panel_text_title"] == "adapted: panel_text_guide_as_screen_text"
+    assert audit["axis_style_fields"] == DATOVIZ_S034_AXIS_STYLE_FIELDS
+    assert "grid_clip_not_enforced" in audit["diagnostics"]
     assert (
         "axis_guide_query_unsupported" in caps.metadata["s028_guide_view2d_diagnostics"]
     )
+    assert "grid_clip_not_enforced" in caps.guide_layout_capability.diagnostics
+    assert "axis_style_mapping_partial" in caps.layout_capability.diagnostics
     assert caps.metadata["datoviz_api"] == "v0.4 dvz_* facade"
     assert caps.axis_providers[0].provider_id == DATOVIZ_V04_AXIS_PROVIDER
 
