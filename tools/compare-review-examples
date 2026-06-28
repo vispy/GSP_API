@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+"""Run API review examples through both review backends."""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+import subprocess
+import sys
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("examples", nargs="*", type=Path, help="Review example files. Defaults to examples/review/[0-9]*.py.")
+    parser.add_argument("--live", action="store_true", help="Open live windows sequentially instead of capture mode.")
+    parser.add_argument("--datoviz-offscreen", action="store_true", help="Opt into Datoviz offscreen capture.")
+    parser.add_argument("--resolution", default="900x650")
+    args = parser.parse_args()
+
+    examples = args.examples or sorted(Path("examples/review").glob("[0-9]*.py"))
+    if not examples:
+        print("No review examples found.", file=sys.stderr)
+        return 1
+
+    failures = 0
+    for example in examples:
+        out_dir = Path("artifacts/example_review") / example.stem
+        cmd = [
+            "uv",
+            "run",
+            "python",
+            str(example),
+            "--backend",
+            "both",
+            "--out-dir",
+            str(out_dir),
+            "--resolution",
+            args.resolution,
+        ]
+        if args.live:
+            cmd.append("--live")
+        if args.datoviz_offscreen:
+            cmd.append("--datoviz-offscreen")
+        print(f"==> {example}")
+        result = subprocess.run(cmd, check=False)
+        if result.returncode != 0:
+            failures += 1
+    return 1 if failures else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
