@@ -93,3 +93,15 @@ This is an extraction of the reference layout result, not a declaration that Mat
 implementation details are the protocol contract. The backend advertises full resolved-layout
 production but does not claim `layout_strict` until render, query, readback, and all-rendered guide
 contributions all report and consume the same `layout_snapshot_id`.
+
+## S034 guide style mapping
+
+Matplotlib maps accepted logical-pixel guide style hints to native artist properties using:
+
+```text
+points = logical_px * 72 / dpi
+```
+
+Supported style mappings include title font size and pad, axis label font size and label pad, tick
+label font size, tick length, tick width, tick-label padding, and grid line width. These are semantic
+GSP style hints; Matplotlib artist objects remain backend realization details.

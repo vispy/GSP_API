@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+import math
 
 from .ids import validate_id
 
@@ -46,6 +47,45 @@ class PanelTextRole(str, Enum):
 
 
 @dataclass(frozen=True, slots=True)
+class AxisGuideStyle:
+    """Logical-pixel style hints for axis guides."""
+
+    axis_label_font_size_px: float | None = None
+    tick_label_font_size_px: float | None = None
+    tick_length_px: float | None = None
+    tick_width_px: float | None = None
+    tick_label_padding_px: float | None = None
+    axis_label_padding_px: float | None = None
+    grid_width_px: float | None = None
+    guide_margin_px: float | None = None
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "axis_label_font_size_px",
+            "tick_label_font_size_px",
+            "tick_length_px",
+            "tick_width_px",
+            "tick_label_padding_px",
+            "axis_label_padding_px",
+            "grid_width_px",
+            "guide_margin_px",
+        ):
+            _validate_optional_nonnegative(field_name, getattr(self, field_name))
+
+
+@dataclass(frozen=True, slots=True)
+class PanelTextGuideStyle:
+    """Logical-pixel style hints for panel text guides."""
+
+    title_font_size_px: float | None = None
+    guide_margin_px: float | None = None
+
+    def __post_init__(self) -> None:
+        _validate_optional_nonnegative("title_font_size_px", self.title_font_size_px)
+        _validate_optional_nonnegative("guide_margin_px", self.guide_margin_px)
+
+
+@dataclass(frozen=True, slots=True)
 class TickSpec:
     """Semantic tick specification for an axis guide."""
 
@@ -78,10 +118,13 @@ class AxisGuide:
     grid_visible: bool = False
     tick_spec: TickSpec = field(default_factory=TickSpec)
     query_policy: GuideQueryPolicy = GuideQueryPolicy.NON_QUERYABLE
+    style: AxisGuideStyle = field(default_factory=AxisGuideStyle)
 
     def __post_init__(self) -> None:
         validate_id(self.id)
         validate_id(self.view_id)
+        if not isinstance(self.style, AxisGuideStyle):
+            raise TypeError("AxisGuide style must be an AxisGuideStyle")
         if self.dimension == AxisDimension.X and self.side != AxisSide.BOTTOM:
             raise ValueError("the first axis guide slice supports x guides on the bottom side only")
         if self.dimension == AxisDimension.Y and self.side != AxisSide.LEFT:
@@ -97,9 +140,21 @@ class PanelTextGuide:
     role: PanelTextRole
     text: str
     query_policy: GuideQueryPolicy = GuideQueryPolicy.NON_QUERYABLE
+    style: PanelTextGuideStyle = field(default_factory=PanelTextGuideStyle)
 
     def __post_init__(self) -> None:
         validate_id(self.id)
         validate_id(self.panel_id)
+        if not isinstance(self.style, PanelTextGuideStyle):
+            raise TypeError("PanelTextGuide style must be a PanelTextGuideStyle")
         if not self.text:
             raise ValueError("panel text guide text must not be empty")
+
+
+def _validate_optional_nonnegative(field_name: str, value: float | None) -> None:
+    if value is None:
+        return
+    if not math.isfinite(value):
+        raise ValueError(f"{field_name} must be finite")
+    if value < 0.0:
+        raise ValueError(f"{field_name} must be non-negative")

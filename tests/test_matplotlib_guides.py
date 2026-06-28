@@ -8,8 +8,21 @@ import matplotlib.pyplot as plt
 
 import numpy as np
 
+import pytest
 import vispy2 as vp
-from gsp.protocol import AxisDimension, AxisGuide, AxisSide, PanelTextGuide, PanelTextRole, TickSpec, TickSpecKind, View2D
+from gsp.protocol import (
+    AxisDimension,
+    AxisGuide,
+    AxisGuideStyle,
+    AxisSide,
+    PanelTextGuide,
+    PanelTextGuideStyle,
+    PanelTextRole,
+    TickSpec,
+    TickSpecKind,
+    View2D,
+    logical_px_to_points,
+)
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.layout import resolve_matplotlib_layout_snapshot
 
@@ -120,6 +133,51 @@ def test_render_panel_text_guide_sets_title():
         render_panel_text_guides(ax, (PanelTextGuide(id="guide:title", panel_id="panel:main", role=PanelTextRole.TITLE, text="Demo"),))
 
         assert ax.get_title() == "Demo"
+    finally:
+        plt.close(fig)
+
+
+def test_render_guides_maps_logical_pixel_style_to_matplotlib_points():
+    fig, ax = plt.subplots(dpi=100)
+    view = View2D(id="view:main", panel_id="panel:main")
+    guide = AxisGuide(
+        id="guide:x",
+        view_id=view.id,
+        dimension=AxisDimension.X,
+        side=AxisSide.BOTTOM,
+        label_text="time",
+        grid_visible=True,
+        style=AxisGuideStyle(
+            axis_label_font_size_px=16.0,
+            tick_label_font_size_px=12.0,
+            tick_length_px=6.0,
+            tick_width_px=2.0,
+            axis_label_padding_px=8.0,
+            tick_label_padding_px=4.0,
+            grid_width_px=1.5,
+        ),
+    )
+    title = PanelTextGuide(
+        id="guide:title",
+        panel_id="panel:main",
+        role=PanelTextRole.TITLE,
+        text="Styled",
+        style=PanelTextGuideStyle(title_font_size_px=20.0, guide_margin_px=10.0),
+    )
+
+    try:
+        render_axis_guides(ax, view, (guide,))
+        render_panel_text_guides(ax, (title,))
+        fig.canvas.draw()
+
+        assert ax.xaxis.label.get_fontsize() == pytest.approx(logical_px_to_points(16.0, 100.0))
+        assert ax.title.get_fontsize() == pytest.approx(logical_px_to_points(20.0, 100.0))
+        assert ax.xaxis.labelpad == pytest.approx(logical_px_to_points(8.0, 100.0))
+        first_tick = ax.xaxis.majorTicks[0]
+        assert first_tick.tick1line.get_markersize() == pytest.approx(logical_px_to_points(6.0, 100.0))
+        assert first_tick.tick1line.get_markeredgewidth() == pytest.approx(logical_px_to_points(2.0, 100.0))
+        assert ax.get_xticklabels()[0].get_fontsize() == pytest.approx(logical_px_to_points(12.0, 100.0))
+        assert ax.get_xgridlines()[0].get_linewidth() == pytest.approx(logical_px_to_points(1.5, 100.0))
     finally:
         plt.close(fig)
 

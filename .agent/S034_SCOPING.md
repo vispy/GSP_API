@@ -41,7 +41,8 @@ remain classified as adapted.
 
 1. Matplotlib resolved-layout reference implementation. Completed in M134 for snapshot production;
    render API snapshot reporting and full guide-geometry query/readback remain pending.
-2. Guide style fields and resolved readback.
+2. Guide style fields and resolved readback. Style fields and Matplotlib rendering completed in
+   M135; full resolved style readback remains pending.
 3. Datoviz guide capability audit and diagnostics hardening.
 4. Grid clipping proof or explicit unsupported diagnostic.
 5. Tiered visual QA fixtures and review report classification.

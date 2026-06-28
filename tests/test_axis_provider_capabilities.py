@@ -5,11 +5,13 @@ import pytest
 from gsp.protocol import (
     AxisDimension,
     AxisGuide,
+    AxisGuideStyle,
     AxisProviderRequest,
     AxisSide,
     CapabilitySnapshot,
     TILED_IMAGE_EXTENSION_CAPABILITY,
     PanelTextGuide,
+    PanelTextGuideStyle,
     PanelTextRole,
     TickSpec,
     TickSpecKind,
@@ -78,6 +80,44 @@ def test_semantic_axis_guide_intent_is_not_a_data_visual():
     assert guide.tick_spec.explicit_values == (0.0, 0.5, 1.0)
     assert guide.label_text == "time"
     assert title.text == "Demo"
+
+
+def test_guide_style_fields_are_logical_pixel_hints():
+    style = AxisGuideStyle(
+        axis_label_font_size_px=16.0,
+        tick_label_font_size_px=12.0,
+        tick_length_px=6.0,
+        tick_width_px=1.5,
+        tick_label_padding_px=4.0,
+        axis_label_padding_px=8.0,
+        grid_width_px=1.0,
+        guide_margin_px=10.0,
+    )
+    title_style = PanelTextGuideStyle(title_font_size_px=20.0, guide_margin_px=12.0)
+
+    guide = AxisGuide(
+        id="guide:styled-x",
+        view_id="view:main",
+        dimension=AxisDimension.X,
+        side=AxisSide.BOTTOM,
+        style=style,
+    )
+    title = PanelTextGuide(
+        id="guide:styled-title",
+        panel_id="panel:main",
+        role=PanelTextRole.TITLE,
+        text="Styled",
+        style=title_style,
+    )
+
+    assert guide.style.tick_width_px == 1.5
+    assert title.style.title_font_size_px == 20.0
+
+    with pytest.raises(ValueError, match="tick_width_px"):
+        AxisGuideStyle(tick_width_px=-1.0)
+
+    with pytest.raises(ValueError, match="title_font_size_px"):
+        PanelTextGuideStyle(title_font_size_px=float("nan"))
 
 
 def test_first_axis_guide_slice_rejects_unsupported_sides_and_bad_ticks():
