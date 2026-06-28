@@ -41,7 +41,7 @@ def main() -> int:
             cmd.append("--live")
         if args.datoviz_offscreen:
             cmd.append("--datoviz-offscreen")
-        print(f"==> {example}")
+        print(f"==> {example}", flush=True)
         result = subprocess.run(cmd, check=False)
         if result.returncode != 0:
             failures += 1
