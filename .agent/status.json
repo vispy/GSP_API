@@ -1370,6 +1370,15 @@
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 131
+    },
+    {
+      "id": "M132",
+      "title": "API review examples and backend comparison runner",
+      "stage": "S033",
+      "state": "in_progress",
+      "agent": "local-main-codex",
+      "progress": 10,
+      "priority": 132
     }
   ],
   "review_queue": [],
@@ -1432,7 +1441,7 @@
     }
   ],
   "recommendations": [
-    "Post-S032 release preparation is complete; the default next action is human review of the latest all-cases sheet and explicit release approval if desired.",
+    "M132 is in progress to create reviewable examples and backend comparison tooling before release.",
     "Use the regenerated S031 full-review-pack-legacy all-cases sheet as the primary visual review artifact; the linear pack is diagnostic only.",
     "Do not run M131 release operations until the user explicitly approves target version, version update, tag creation, and publication target."
   ],
