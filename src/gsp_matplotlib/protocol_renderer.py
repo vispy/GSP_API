@@ -666,7 +666,13 @@ def _linewidth_values_from_pixel_widths(
 
 
 def _pixel_to_point(axes: matplotlib.axes.Axes) -> float:
-    return 72.0 / float(axes.figure.dpi)
+    return 72.0 / _logical_figure_dpi(axes.figure)
+
+
+def _logical_figure_dpi(figure: object) -> float:
+    """Return the caller-requested DPI when GUI backends apply device scaling."""
+    dpi = getattr(figure, "_original_dpi", getattr(figure, "dpi"))
+    return float(dpi)
 
 
 def _marker_path(shape: MarkerShape, angle: float) -> matplotlib.path.Path:

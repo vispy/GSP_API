@@ -180,6 +180,27 @@ def test_render_point_visual_converts_pixel_diameters_using_figure_dpi():
         plt.close(fig)
 
 
+def test_render_point_visual_uses_logical_dpi_when_backend_device_scales():
+    """GUI backends may raise physical DPI while retaining the caller's logical DPI."""
+    fig, ax = plt.subplots(dpi=200)
+    try:
+        setattr(fig, "_original_dpi", 100.0)
+        visual = PointVisual(
+            id="visual:points",
+            positions=np.array([[0.0, 0.0]], dtype=np.float32),
+            colors=np.array([[255, 255, 255, 255]], dtype=np.uint8),
+            sizes=np.array([20.0], dtype=np.float32),
+        )
+
+        artist = render_point_visual(ax, visual)
+
+        np.testing.assert_allclose(
+            artist.get_sizes(), np.array([207.36], dtype=np.float32)
+        )
+    finally:
+        plt.close(fig)
+
+
 def test_render_point_visual_applies_inline_transform_and_view2d_mapping():
     """S027 DATA positions transform, then map through View2D to panel/axes coordinates."""
     fig, ax = plt.subplots()
