@@ -1,0 +1,119 @@
+# Viz workspace environment for direnv.
+#
+# Install this file as the parent workspace .envrc:
+#
+#   cp tools/viz-workspace.envrc.example ../.envrc
+#   direnv allow ..
+#
+# This makes GSP_API prefer a sibling Datoviz checkout and configures the local
+# Vulkan runtime enough for Datoviz review/live commands on common macOS/Linux
+# setups. Keep the installed ../.envrc local and machine-specific.
+
+export VIZ_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+export DATOVIZ_REPO="${DATOVIZ_REPO:-${VIZ_ROOT}/datoviz}"
+
+_viz_prepend_path_var() {
+    local var_name="$1"
+    local path_value="$2"
+    local current_value
+
+    [ -d "${path_value}" ] || return 0
+    current_value="$(eval "printf '%s' \"\${${var_name}:-}\"")"
+    case ":${current_value}:" in
+        *:"${path_value}":*) ;;
+        *)
+            if [ -n "${current_value}" ]; then
+                export "${var_name}=${path_value}:${current_value}"
+            else
+                export "${var_name}=${path_value}"
+            fi
+            ;;
+    esac
+}
+
+if [ -d "${DATOVIZ_REPO}" ]; then
+    export GSP_DATOVIZ_SOURCE="${DATOVIZ_REPO}"
+    _viz_prepend_path_var PYTHONPATH "${DATOVIZ_REPO}"
+fi
+
+if [[ "$(uname -s)" == "Darwin" && -d "${DATOVIZ_REPO}" ]]; then
+    # Avoid stale Vulkan overrides from older shells. Datoviz's own .envrc also
+    # avoids DYLD_LIBRARY_PATH because it can hide SDK validation layers.
+    unset VK_DRIVER_FILES
+    unset VK_ROOT
+    unset DYLD_LIBRARY_PATH
+
+    if [[ -z "${VULKAN_SDK:-}" || ! -d "${VULKAN_SDK}" ]]; then
+        _viz_candidate="$(ls -1d "${HOME}/VulkanSDK"/*/macOS 2>/dev/null | sort | tail -n 1)"
+        if [[ -n "${_viz_candidate}" ]]; then
+            export VULKAN_SDK="${_viz_candidate}"
+        fi
+    fi
+
+    if [[ -n "${VULKAN_SDK:-}" ]]; then
+        if [[ -d "${VULKAN_SDK}/share/vulkan/explicit_layer.d" ]]; then
+            export VK_LAYER_PATH="${VULKAN_SDK}/share/vulkan/explicit_layer.d"
+        elif [[ -d "${VULKAN_SDK}/etc/vulkan/explicit_layer.d" ]]; then
+            export VK_LAYER_PATH="${VULKAN_SDK}/etc/vulkan/explicit_layer.d"
+        fi
+    fi
+
+    _viz_datoviz_vulkan_dir="${DATOVIZ_REPO}/libs/vulkan/macos_arm64"
+    _viz_datoviz_icd="${_viz_datoviz_vulkan_dir}/MoltenVK_icd.json"
+    _viz_icd=""
+
+    if [[ -n "${VK_ICD_FILENAMES:-}" && -f "${VK_ICD_FILENAMES%%:*}" ]]; then
+        _viz_icd="${VK_ICD_FILENAMES%%:*}"
+    elif [[ -n "${VULKAN_SDK:-}" ]]; then
+        for _viz_candidate in \
+            "${VULKAN_SDK}/share/vulkan/icd.d/MoltenVK_icd.json" \
+            "${VULKAN_SDK}/etc/vulkan/icd.d/MoltenVK_icd.json"
+        do
+            if [[ -f "${_viz_candidate}" ]]; then
+                _viz_icd="${_viz_candidate}"
+                break
+            fi
+        done
+    fi
+
+    if [[ -z "${_viz_icd}" && -f "${_viz_datoviz_icd}" ]]; then
+        _viz_icd="${_viz_datoviz_icd}"
+    fi
+
+    if [[ -z "${_viz_icd}" ]]; then
+        for _viz_candidate in \
+            /opt/homebrew/share/vulkan/icd.d/MoltenVK_icd.json \
+            /opt/homebrew/etc/vulkan/icd.d/MoltenVK_icd.json \
+            /usr/local/share/vulkan/icd.d/MoltenVK_icd.json \
+            /usr/local/etc/vulkan/icd.d/MoltenVK_icd.json
+        do
+            if [[ -f "${_viz_candidate}" ]]; then
+                _viz_icd="${_viz_candidate}"
+                break
+            fi
+        done
+    fi
+
+    if [[ -n "${_viz_icd}" ]]; then
+        export VK_ICD_FILENAMES="${_viz_icd}"
+    fi
+
+    _viz_prepend_path_var DYLD_FALLBACK_LIBRARY_PATH "${_viz_datoviz_vulkan_dir}"
+    if [[ -n "${VULKAN_SDK:-}" ]]; then
+        _viz_prepend_path_var DYLD_FALLBACK_LIBRARY_PATH "${VULKAN_SDK}/lib"
+        _viz_prepend_path_var PATH "${VULKAN_SDK}/bin"
+    fi
+    _viz_prepend_path_var DYLD_FALLBACK_LIBRARY_PATH /opt/homebrew/lib
+    _viz_prepend_path_var DYLD_FALLBACK_LIBRARY_PATH /usr/local/lib
+fi
+
+if [[ "$(uname -s)" == "Linux" && -n "${VULKAN_SDK:-}" ]]; then
+    _viz_prepend_path_var LD_LIBRARY_PATH "${VULKAN_SDK}/lib"
+    _viz_prepend_path_var PATH "${VULKAN_SDK}/bin"
+fi
+
+unset -f _viz_prepend_path_var
+unset _viz_candidate
+unset _viz_datoviz_icd
+unset _viz_datoviz_vulkan_dir
+unset _viz_icd

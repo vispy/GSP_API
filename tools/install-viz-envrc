@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'USAGE'
+Usage: tools/install-viz-envrc [--force]
+
+Install the committed Viz workspace direnv template as ../.envrc and run
+direnv allow on the parent workspace. The real ../.envrc stays local.
+USAGE
+}
+
+force=0
+if [[ "${1:-}" == "--force" ]]; then
+  force=1
+  shift
+fi
+if [[ "$#" -ne 0 || "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  usage
+  exit 2
+fi
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+repo_root="$(cd "${script_dir}/.." && pwd -P)"
+workspace_root="$(cd "${repo_root}/.." && pwd -P)"
+template="${repo_root}/tools/viz-workspace.envrc.example"
+target="${workspace_root}/.envrc"
+
+if [[ ! -f "${template}" ]]; then
+  echo "Template not found: ${template}" >&2
+  exit 2
+fi
+
+if [[ -e "${target}" && "${force}" -ne 1 ]]; then
+  echo "Refusing to overwrite existing ${target}" >&2
+  echo "Rerun with --force after checking local customizations." >&2
+  exit 2
+fi
+
+cp "${template}" "${target}"
+echo "Installed ${target}"
+
+if command -v direnv >/dev/null 2>&1; then
+  direnv allow "${workspace_root}"
+  echo "Allowed direnv for ${workspace_root}"
+else
+  echo "direnv is not installed or not on PATH; run 'direnv allow ${workspace_root}' after installing it." >&2
+fi
