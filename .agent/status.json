@@ -1375,9 +1375,9 @@
       "id": "M132",
       "title": "API review examples and backend comparison runner",
       "stage": "S033",
-      "state": "in_progress",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 10,
+      "progress": 100,
       "priority": 132
     }
   ],
@@ -1441,8 +1441,8 @@
     }
   ],
   "recommendations": [
-    "M132 is in progress to create reviewable examples and backend comparison tooling before release.",
-    "Use the regenerated S031 full-review-pack-legacy all-cases sheet as the primary visual review artifact; the linear pack is diagnostic only.",
+    "Review `examples/review/README.md`, then run selected examples live with Matplotlib and Datoviz to give API feedback.",
+    "Use `tools/compare-review-examples examples/review/01_scatter_basic.py` for captured Matplotlib plus explicit Datoviz offscreen status artifacts.",
     "Do not run M131 release operations until the user explicitly approves target version, version update, tag creation, and publication target."
   ],
   "notes": [
