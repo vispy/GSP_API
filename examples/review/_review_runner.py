@@ -69,7 +69,6 @@ class ReviewScene:
 
 def run_review(builder: SceneBuilder) -> int:
     """Run an API review scene through one or both backends."""
-
     args = _parse_args()
     scene = builder()
     out_dir = args.out_dir or Path("artifacts/example_review") / Path(sys.argv[0]).stem

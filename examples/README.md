@@ -151,6 +151,19 @@ python examples/example_name.py --help
 ```
 
 
+
+### API Review Examples
+
+The `examples/review/` pack contains small protocol/API examples intended for human review and backend comparison. Each script supports `--backend matplotlib`, `--backend datoviz`, `--backend both`, and `--live`; artifacts are written to `artifacts/example_review/<example>/`.
+
+```bash
+uv run python examples/review/01_scatter_basic.py --backend matplotlib
+uv run python examples/review/01_scatter_basic.py --backend datoviz --live
+tools/compare-review-examples examples/review/01_scatter_basic.py
+```
+
+See `examples/review/README.md` for the full list and Datoviz offscreen-capture notes.
+
 ### S023 Visual QA Pack
 
 The S023 protocol visual-family review pack renders formal protocol scenes through Matplotlib and Datoviz v0.4 and writes contact sheets plus manual notes:
