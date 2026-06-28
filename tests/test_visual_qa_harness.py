@@ -466,6 +466,11 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
     }
 
     assert rows[("datoviz", "point/basic_ndc")]["status"] == "strict"
+    assert (
+        rows[("datoviz", "point/basic_ndc")]["review_classification"]
+        == "pass.semantic_strict"
+    )
+    assert matrix["review_classification_summary"]["pass.semantic_strict"] > 0
     assert rows[("datoviz", "point/basic_ndc")]["promotion_blockers"] == []
     assert rows[("datoviz", "image/scalar_gray_clim_ndc")]["status"] == "strict"
     assert (
@@ -727,12 +732,15 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
     }
 
     matrix = build_capability_matrix(report)
+    assert "review.adapted" in matrix["review_classification_taxonomy"]
+    assert matrix["review_classification_summary"]["review.adapted"] == 2
     rows = {
         row["case_id"]: row for row in matrix["rows"] if row["backend"] == "datoviz"
     }
 
     auto = rows["guide/view2d_auto_grid"]
     assert auto["status"] == "adapted"
+    assert auto["review_classification"] == "review.adapted"
     assert auto["rendering_supported"] is True
     assert auto["query_supported"] is False
     assert auto["reason_code"] == "datoviz_axis_guide_adapted_review"
@@ -745,6 +753,7 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
 
     reversed_explicit = rows["guide/view2d_reversed_explicit"]
     assert reversed_explicit["status"] == "adapted"
+    assert reversed_explicit["review_classification"] == "review.adapted"
     assert "dvz_axis_set_ticks" in reversed_explicit["known_adaptations"][0]
     assert "backend-native tick policy" in reversed_explicit["known_adaptations"][0]
     assert "guide-query support" in reversed_explicit["promotion_blockers"][1]

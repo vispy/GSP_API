@@ -194,3 +194,10 @@ Resolved layout QA checks `plot_rect_px`, `title_rect_px`, `axis_label_rect_px`,
 all-rendered guide contribution, and `layout_snapshot_id` consistency. White overlay title bands or
 hand-tuned backend constants are review-only artifacts unless they are generated from a
 `ResolvedLayoutSnapshot` and participate in query/readback.
+
+Review-pack capability matrices preserve the legacy coarse row `status` while also reporting
+`review_classification`. Initial classifications include `pass.semantic_strict`,
+`pass.layout_strict`, `pass.raster_tolerant`, `review.adapted`, `review.native_backend`,
+`fail.semantic`, `fail.layout`, `fail.query`, and `unsupported.capability`. Existing rendered
+strict rows classify as `pass.semantic_strict`; adapted Datoviz guide rows classify as
+`review.adapted` until layout snapshots and guide query/readback are implemented.

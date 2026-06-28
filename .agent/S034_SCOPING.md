@@ -46,5 +46,6 @@ remain classified as adapted.
 3. Datoviz guide capability audit and diagnostics hardening. Completed in M136 for current
    conservative capability reporting; implementation proofs remain pending.
 4. Grid clipping proof or explicit unsupported diagnostic.
-5. Tiered visual QA fixtures and review report classification.
+5. Tiered visual QA fixtures and review report classification. Review classification fields
+   completed in M137; additional layout-specific fixtures remain pending.
 6. Layout-aware guide query/readback.

@@ -21,6 +21,18 @@ CAPABILITY_STATUSES = (
     "not_run",
 )
 
+REVIEW_CLASSIFICATIONS = (
+    "pass.semantic_strict",
+    "pass.layout_strict",
+    "pass.raster_tolerant",
+    "review.adapted",
+    "review.native_backend",
+    "fail.semantic",
+    "fail.layout",
+    "fail.query",
+    "unsupported.capability",
+)
+
 _DATOVIZ_S029_STRICT_RENDER_CASES = {
     "point/basic_ndc": [],
     "point/diameter_ramp_ndc": [],
@@ -175,6 +187,7 @@ def build_capability_matrix(report: Mapping[str, object]) -> dict[str, object]:
         rows.append(_matrix_row(case, DATOVIZ_BACKEND_ID, backends))
 
     counts = Counter(str(row["status"]) for row in rows)
+    classification_counts = Counter(str(row["review_classification"]) for row in rows)
     summary = {status: counts.get(status, 0) for status in CAPABILITY_STATUSES}
     return {
         "schema_version": 1,
@@ -184,7 +197,12 @@ def build_capability_matrix(report: Mapping[str, object]) -> dict[str, object]:
         "run_id": report.get("run_id"),
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status_taxonomy": list(CAPABILITY_STATUSES),
+        "review_classification_taxonomy": list(REVIEW_CLASSIFICATIONS),
         "summary": summary,
+        "review_classification_summary": {
+            classification: classification_counts.get(classification, 0)
+            for classification in REVIEW_CLASSIFICATIONS
+        },
         "rows": rows,
     }
 
@@ -214,6 +232,7 @@ def _matrix_row(
     if not isinstance(backend_entry, Mapping):
         return _base_row(case, backend_id) | {
             "status": "not_run",
+            "review_classification": _review_classification("not_run", "backend_not_run"),
             "rendering_supported": False,
             "query_supported": False,
             "reason_code": "backend_not_run",
@@ -248,6 +267,7 @@ def _matplotlib_row(
         blockers = ["Matplotlib reference was not rendered"]
     return _base_row(case, MATPLOTLIB_BACKEND_ID) | {
         "status": status,
+        "review_classification": _review_classification(status, reason_code),
         "rendering_supported": backend_status == "rendered",
         "query_supported": False,
         "reason_code": reason_code,
@@ -304,6 +324,7 @@ def _datoviz_row(
 
     return _base_row(case, DATOVIZ_BACKEND_ID) | {
         "status": status,
+        "review_classification": _review_classification(status, reason_code),
         "rendering_supported": backend_status == "rendered",
         "query_supported": False,
         "reason_code": reason_code,
@@ -510,6 +531,10 @@ def _review_summary(
         "datoviz_status_counts": {
             status: datoviz_counts.get(status, 0) for status in CAPABILITY_STATUSES
         },
+        "datoviz_review_classification_counts": {
+            classification: Counter(str(row.get("review_classification")) for row in datoviz_rows).get(classification, 0)
+            for classification in REVIEW_CLASSIFICATIONS
+        },
         "capability_matrix_path": "capability_matrix.json",
         "contact_sheets": report.get("contact_sheets", []),
     }
@@ -533,7 +558,7 @@ def _matrix_markdown(matrix: Mapping[str, object]) -> str:
                 "| "
                 f"`{row.get('case_id')}` | "
                 f"{row.get('backend')} | "
-                f"{row.get('status')} | "
+                f"{row.get('status')} / {row.get('review_classification')} | "
                 f"`{row.get('reason_code')}` | "
                 f"{row.get('rendering_supported')} | "
                 f"{row.get('query_supported')} |"
@@ -566,3 +591,19 @@ def _index_markdown(report: Mapping[str, object], matrix: Mapping[str, object]) 
         for status in CAPABILITY_STATUSES:
             lines.append(f"| {status} | {summary.get(status, 0)} |")
     return "\n".join(lines) + "\n"
+
+
+def _review_classification(status: str, reason_code: str) -> str:
+    if status == "strict":
+        if "layout" in reason_code:
+            return "pass.layout_strict"
+        return "pass.semantic_strict"
+    if status == "adapted":
+        return "review.adapted"
+    if status == "experimental":
+        return "review.native_backend"
+    if status == "crashed":
+        return "fail.semantic"
+    if status in {"unsupported", "disabled", "not_run"}:
+        return "unsupported.capability"
+    return "unsupported.capability"
