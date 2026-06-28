@@ -12,6 +12,7 @@ This file tells agents where to find authoritative design information.
 | Resources/buffers/textures | spec/resources.md |
 | Query/readback | spec/query.md |
 | Transform/view/query inverse | spec/transforms.md |
+| Resolved guide layout direction | .agent/decisions/S029_resolved_layout_contracts.md |
 | Conformance fixtures/schema | spec/conformance-fixtures.md |
 | Extensions | spec/extensions.md |
 | Virtual data sources/LOD | spec/data_sources.md |
@@ -42,6 +43,8 @@ This file tells agents where to find authoritative design information.
 | MeshVisual v1 ADR | adr/ADR-0017-meshvisual-v1-triangle-mesh.md |
 | Color mapping/colorbars v1 ADR | adr/ADR-0018-color-mapping-colorbars-v1.md |
 | Transform/view/query inverse v1 ADR | adr/ADR-0019-transform-view-query-inverse-v1.md |
+| Guide layout semantics boundary ADR | adr/ADR-0020-gsp-guide-layout-semantics-boundary.md |
+| S029 resolved layout decision | .agent/decisions/S029_resolved_layout_contracts.md |
 | S027 transform/view decision | .agent/decisions/S027_transform_view_contracts.md |
 | S026 color mapping decision | .agent/decisions/S026_color_mapping_contracts.md |
 | S025 MeshVisual decision | .agent/decisions/S025_meshvisual_contracts.md |
