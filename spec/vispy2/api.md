@@ -131,3 +131,11 @@ S027 accepts producer conveniences for 2D affine transforms and deterministic vi
 `View2D`. These APIs must emit GSP protocol records and must not expose Matplotlib transform objects,
 Datoviz slots, shader handles, backend camera objects, or public controller event state. Public 3D
 camera/projection/navigation APIs remain deferred.
+
+## S034 Matplotlib layout render result
+
+`Figure.render_matplotlib()` preserves the legacy tuple return shape. Callers that need resolved
+layout identity can use `Figure.render_matplotlib_with_layout(snapshot_id=...)`, which returns a
+render result containing the Matplotlib figure, axes, `ResolvedLayoutSnapshot`, and
+`layout_snapshot_id`. This is the VisPy2-facing proof that a render result can report the layout
+snapshot used by the Matplotlib reference path.

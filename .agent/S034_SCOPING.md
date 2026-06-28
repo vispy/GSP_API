@@ -51,3 +51,5 @@ remain classified as adapted.
 6. Layout-aware guide query/readback. Matplotlib snapshot guide query completed in M138; full
    scoped/all-rendered integration completed in M139; Datoviz guide query and render-result snapshot
    reporting remain pending.
+7. Render-result snapshot reporting. VisPy2 Matplotlib render result reporting completed in M140;
+   lower-level renderer/report plumbing remains pending for non-VisPy2 paths.

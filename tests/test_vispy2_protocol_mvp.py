@@ -27,6 +27,10 @@ from gsp.protocol import (
     PanelTextRole,
     PathVisual,
     PointVisual,
+    QueryCoordinateSpace,
+    QueryRequest,
+    QueryScope,
+    QueryStatus,
     ScalarColorSlot,
     SegmentVisual,
     StrokeCap,
@@ -38,6 +42,7 @@ from gsp.protocol import (
     View2D,
     VisualTransformBinding,
 )
+from gsp_matplotlib.layout_query import query_resolved_layout_guides
 
 
 def test_subplots_scatter_emits_point_visual():
@@ -587,6 +592,45 @@ def test_vispy2_guide_apis_render_through_matplotlib_reference():
         assert any(line.get_visible() for line in mpl_axes.get_ygridlines())
     finally:
         plt.close(mpl_fig)
+
+
+def test_vispy2_matplotlib_render_can_report_resolved_layout_snapshot():
+    fig, ax = vp.subplots()
+    ax.set_title("Layout result")
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.scatter(np.array([[0.0, 0.0]], dtype=np.float32), id="visual:points")
+
+    result = fig.render_matplotlib_with_layout(snapshot_id="layout:vispy2")
+    try:
+        assert result.layout_snapshot_id == "layout:vispy2"
+        assert result.layout_snapshot.snapshot_id == "layout:vispy2"
+        assert result.layout_snapshot.view_id == fig.views()[0].id
+        assert result.layout_snapshot.plot_rect_px.width > 0
+        assert (
+            result.layout_snapshot.title_boxes[0].guide_id
+            == fig.panel_text_guides()[0].id
+        )
+
+        title_rect = result.layout_snapshot.title_boxes[0].rect_px
+        query = query_resolved_layout_guides(
+            QueryRequest(
+                id="query:title-layout",
+                panel_id=fig.panels()[0].id,
+                coordinate=(
+                    title_rect.x + title_rect.width / 2.0,
+                    title_rect.y + title_rect.height / 2.0,
+                ),
+                coordinate_space=QueryCoordinateSpace.PANEL,
+                scope=QueryScope.GUIDES,
+                layout_snapshot_id=result.layout_snapshot_id,
+            ),
+            result.layout_snapshot,
+        )
+        assert query.status == QueryStatus.HIT
+        assert query.layout_snapshot_id == result.layout_snapshot_id
+    finally:
+        plt.close(result.figure)
 
 
 def test_vispy2_reversed_view2d_guides_render_through_matplotlib_reference():
