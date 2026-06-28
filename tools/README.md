@@ -19,3 +19,4 @@ tools/agentctl pro-packet
 
 The first version is intentionally simple and uses only Python standard library.
 - `compare-review-examples`: runs `examples/review/[0-9]*.py` through Matplotlib and Datoviz review paths. It opens live windows by default; pass `--offscreen` to write artifacts under `artifacts/example_review/`.
+- `install-viz-envrc`: installs `tools/viz-workspace.envrc.example` as the parent Viz workspace `.envrc` so local review commands prefer the sibling `../datoviz` checkout and Vulkan SDK/MoltenVK paths.

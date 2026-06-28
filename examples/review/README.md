@@ -96,6 +96,14 @@ Defer release only for API-shape problems, broken Matplotlib reference behavior,
 
 Live mode is the default interactive review path. The Datoviz v0.4 adapter automatically prefers a sibling `../datoviz` source checkout when present; set `GSP_DATOVIZ_SOURCE=/path/to/datoviz` to override, or `GSP_DATOVIZ_SOURCE=none` to disable this.
 
+For a personal multi-machine Viz workspace, install the direnv template once:
+
+```bash
+tools/install-viz-envrc
+```
+
+This creates `../.envrc` from `tools/viz-workspace.envrc.example` and keeps the installed file local.
+
 Offscreen PNG capture is opt-in for both Matplotlib and Datoviz:
 
 ```bash
