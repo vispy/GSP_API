@@ -52,6 +52,7 @@ def query_axis_guides(
                 hit=True,
                 panel_coordinate=request.coordinate,
                 hits=tuple(hit.hits[0] for hit in hits),
+                layout_snapshot_id=request.layout_snapshot_id,
             )
         return hits[0]
     return QueryResult(
@@ -59,6 +60,7 @@ def query_axis_guides(
         status=QueryStatus.MISS,
         hit=False,
         panel_coordinate=request.coordinate,
+        layout_snapshot_id=request.layout_snapshot_id,
     )
 
 
@@ -120,6 +122,7 @@ def _hit(
         value=text_value if text_value is not None else tick_value,
         extension_payload_kind=GUIDE_QUERY_PAYLOAD_KIND,
         extension_payload=payload,
+        layout_snapshot_id=request.layout_snapshot_id,
     )
 
 

@@ -74,3 +74,22 @@ Reference guide rendering/query must:
   data readouts.
 
 Matplotlib axis artists remain backend realization details, not public protocol objects.
+
+## S029/S034 resolved layout reference
+
+Matplotlib can produce a `ResolvedLayoutSnapshot` from a drawn reference figure through
+`gsp_matplotlib.layout.resolve_matplotlib_layout_snapshot()`. The snapshot exposes the native
+Matplotlib artist geometry used for publication output as GSP logical-pixel rectangles:
+
+- render target and DPI metadata;
+- full panel rectangle;
+- axes plot rectangle;
+- title, axis-label, and tick-label boxes;
+- grid clip rectangle equal to the resolved plot rectangle;
+- affine data-to-logical-screen transform;
+- guide z/layer records.
+
+This is an extraction of the reference layout result, not a declaration that Matplotlib's
+implementation details are the protocol contract. The backend advertises full resolved-layout
+production but does not claim `layout_strict` until render, query, readback, and all-rendered guide
+contributions all report and consume the same `layout_snapshot_id`.

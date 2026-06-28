@@ -182,8 +182,9 @@ def test_backend_capability_postures_are_explicit_for_layout_work():
     dvz = gsp_capability_snapshot_from_datoviz(None, dvz=None)
 
     assert mpl.layout_capability.semantic_guides
-    assert mpl.layout_capability.resolved_layout_produce == "partial"
+    assert mpl.layout_capability.resolved_layout_produce == "full"
     assert not mpl.layout_capability.layout_strict
+    assert mpl.query_layout_capability.reports_layout_snapshot_id
     assert mpl.guide_layout_capability.panel_text_participates_in_layout
 
     assert dvz.layout_capability.semantic_guides

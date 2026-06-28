@@ -31,12 +31,18 @@ def test_query_axis_guides_hits_explicit_x_tick():
     )
 
     result = query_axis_guides(
-        QueryRequest(id="query:guide", panel_id="panel:main", coordinate=(0.5, -1.0)),
+        QueryRequest(
+            id="query:guide",
+            panel_id="panel:main",
+            coordinate=(0.5, -1.0),
+            layout_snapshot_id="layout:matplotlib",
+        ),
         view,
         (QueryGuideEntry(guide),),
     )
 
     assert result.status == QueryStatus.HIT
+    assert result.layout_snapshot_id == "layout:matplotlib"
     assert result.visual_id == "guide:x"
     assert result.item_id == 1
     assert result.extension_payload_kind == GUIDE_QUERY_PAYLOAD_KIND

@@ -63,9 +63,9 @@ def capability_snapshot() -> CapabilitySnapshot:
         axis_providers=(matplotlib_axis_provider_capability(),),
         layout_capability=LayoutCapability(
             semantic_guides=True,
-            resolved_layout_produce="partial",
+            resolved_layout_produce="full",
             layout_strict=False,
-            diagnostics=("s029-layout-snapshot-schema-present-reference-implementation-pending",),
+            diagnostics=("layout_strict-awaits-render-query-snapshot-contract",),
         ),
         guide_layout_capability=GuideLayoutCapability(
             axis_native=True,
@@ -101,7 +101,7 @@ def capability_snapshot() -> CapabilitySnapshot:
             data_readout_uses_view_snapshot=True,
             guide_query=False,
             all_rendered_guides=False,
-            reports_layout_snapshot_id=False,
-            diagnostics=("layout_snapshot_id-query-propagation-pending",),
+            reports_layout_snapshot_id=True,
+            diagnostics=("guide-geometry-query-still-bounded-to-semantic-axis-ticks",),
         ),
     )

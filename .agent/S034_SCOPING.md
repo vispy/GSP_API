@@ -39,7 +39,8 @@ remain classified as adapted.
 
 ## Follow-Up Mission Batch
 
-1. Matplotlib resolved-layout reference implementation.
+1. Matplotlib resolved-layout reference implementation. Completed in M134 for snapshot production;
+   render API snapshot reporting and full guide-geometry query/readback remain pending.
 2. Guide style fields and resolved readback.
 3. Datoviz guide capability audit and diagnostics hardening.
 4. Grid clipping proof or explicit unsupported diagnostic.

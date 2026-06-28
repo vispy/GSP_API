@@ -11,6 +11,7 @@ import numpy as np
 import vispy2 as vp
 from gsp.protocol import AxisDimension, AxisGuide, AxisSide, PanelTextGuide, PanelTextRole, TickSpec, TickSpecKind, View2D
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
+from gsp_matplotlib.layout import resolve_matplotlib_layout_snapshot
 
 
 def test_render_axis_guides_uses_explicit_gsp_ticks_and_labels():
@@ -178,3 +179,68 @@ def test_vispy2_matplotlib_render_realizes_default_guides_without_mutating_visua
         assert list(mpl_axes.get_xticks()) == [-1.0, -0.5, 0.0, 0.5, 1.0]
     finally:
         plt.close(mpl_fig)
+
+
+def test_resolve_matplotlib_layout_snapshot_exposes_native_guide_geometry():
+    fig, ax = plt.subplots(figsize=(6.4, 4.8), dpi=100)
+    view = View2D(id="view:main", panel_id="panel:main", x_range=(0.0, 1.0), y_range=(-1.0, 1.0))
+    axis_guides = (
+        AxisGuide(
+            id="guide:x",
+            view_id=view.id,
+            dimension=AxisDimension.X,
+            side=AxisSide.BOTTOM,
+            label_text="time",
+            tick_spec=TickSpec(
+                kind=TickSpecKind.EXPLICIT,
+                explicit_values=(0.0, 0.5, 1.0),
+                explicit_labels=("zero", "half", "one"),
+                target_count=None,
+            ),
+            grid_visible=True,
+        ),
+        AxisGuide(
+            id="guide:y",
+            view_id=view.id,
+            dimension=AxisDimension.Y,
+            side=AxisSide.LEFT,
+            label_text="value",
+            grid_visible=True,
+        ),
+    )
+    title = PanelTextGuide(
+        id="guide:title",
+        panel_id="panel:main",
+        role=PanelTextRole.TITLE,
+        text="Resolved layout",
+    )
+
+    try:
+        render_axis_guides(ax, view, axis_guides)
+        render_panel_text_guides(ax, (title,))
+        fig.tight_layout()
+
+        snapshot = resolve_matplotlib_layout_snapshot(
+            fig,
+            ax,
+            snapshot_id="layout:matplotlib",
+            view=view,
+            axis_guides=axis_guides,
+            panel_text_guides=(title,),
+        )
+
+        assert snapshot.render_target.logical_width_px == 640
+        assert snapshot.render_target.logical_height_px == 480
+        assert snapshot.view_id == "view:main"
+        assert snapshot.plot_rect_px.width > 0
+        assert snapshot.plot_rect_px.height > 0
+        assert snapshot.grid_clip_rect_px == snapshot.plot_rect_px
+        assert [box.kind for box in snapshot.title_boxes] == ["title"]
+        assert snapshot.title_boxes[0].rect_px.y < snapshot.plot_rect_px.y
+        assert any(box.role == "x_axis_label" for box in snapshot.axis_label_boxes)
+        assert any(box.role == "y_axis_label" for box in snapshot.axis_label_boxes)
+        assert any(box.role == "x_tick_label" for box in snapshot.tick_label_boxes)
+        assert any(box.role == "y_tick_label" for box in snapshot.tick_label_boxes)
+        assert len(snapshot.data_to_screen_transform) == 9
+    finally:
+        plt.close(fig)

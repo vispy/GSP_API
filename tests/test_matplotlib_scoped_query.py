@@ -123,13 +123,20 @@ def test_scoped_query_guides_ignores_overlapping_data():
 
 def test_scoped_query_all_rendered_returns_frontmost_by_reference_z_order():
     result = query_scoped_scene(
-        QueryRequest(id="query:all-rendered", panel_id="panel:main", coordinate=(0.5, -1.0), scope=QueryScope.ALL_RENDERED),
+        QueryRequest(
+            id="query:all-rendered",
+            panel_id="panel:main",
+            coordinate=(0.5, -1.0),
+            scope=QueryScope.ALL_RENDERED,
+            layout_snapshot_id="layout:matplotlib",
+        ),
         visual_entries=(QueryVisualEntry(_point(), z_order=0),),
         view=_view(),
         guide_entries=(QueryGuideEntry(_x_guide(), z_order=1),),
     )
 
     assert result.status == QueryStatus.HIT
+    assert result.layout_snapshot_id == "layout:matplotlib"
     assert result.visual_id == "guide:x"
     assert result.hits == result.hits[:1]
     assert result.hits[0].contribution_kind == QueryContributionKind.GUIDE

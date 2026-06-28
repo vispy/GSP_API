@@ -131,6 +131,7 @@ def _merge_ordered_results(
             status=QueryStatus.MISS,
             hit=False,
             panel_coordinate=request.coordinate,
+            layout_snapshot_id=request.layout_snapshot_id,
         )
 
     hits = tuple(item.hit for item in ordered_hits)
@@ -141,6 +142,7 @@ def _merge_ordered_results(
             hit=True,
             panel_coordinate=request.coordinate,
             hits=hits,
+            layout_snapshot_id=request.layout_snapshot_id,
         )
     return QueryResult(
         request_id=request.id,
@@ -148,6 +150,7 @@ def _merge_ordered_results(
         hit=True,
         panel_coordinate=request.coordinate,
         hits=(hits[0],),
+        layout_snapshot_id=request.layout_snapshot_id,
     )
 
 
@@ -177,6 +180,7 @@ def _query_data_scope(
             status=QueryStatus.OUTSIDE_PANEL,
             hit=False,
             panel_coordinate=request.coordinate,
+            layout_snapshot_id=request.layout_snapshot_id,
         )
     if request.requested_extension_payload_kinds and not _extension_entries_support(request, extension_entries):
         return unsupported_query_result(request, "data query cannot satisfy requested extension payloads")
@@ -204,6 +208,7 @@ def _query_data_scope(
             status=QueryStatus.MISS,
             hit=False,
             panel_coordinate=request.coordinate,
+            layout_snapshot_id=request.layout_snapshot_id,
         )
 
     hits = tuple(item.hit for item in ordered_hits)
@@ -214,6 +219,7 @@ def _query_data_scope(
             hit=True,
             panel_coordinate=request.coordinate,
             hits=hits,
+            layout_snapshot_id=request.layout_snapshot_id,
         )
     return QueryResult(
         request_id=request.id,
@@ -221,6 +227,7 @@ def _query_data_scope(
         hit=True,
         panel_coordinate=request.coordinate,
         hits=(hits[0],),
+        layout_snapshot_id=request.layout_snapshot_id,
     )
 
 
@@ -255,6 +262,7 @@ def _query_extension_hits(request: QueryRequest, entries: tuple[QueryExtensionEn
             status=QueryStatus.MISS,
             hit=False,
             panel_coordinate=request.coordinate,
+            layout_snapshot_id=request.layout_snapshot_id,
         )
     return QueryResult(
         request_id=request.id,
@@ -262,6 +270,7 @@ def _query_extension_hits(request: QueryRequest, entries: tuple[QueryExtensionEn
         hit=True,
         panel_coordinate=request.coordinate,
         hits=tuple(hits),
+        layout_snapshot_id=request.layout_snapshot_id,
     )
 
 
@@ -276,6 +285,7 @@ def _query_all_guide_hits(
             status=QueryStatus.MISS,
             hit=False,
             panel_coordinate=request.coordinate,
+            layout_snapshot_id=request.layout_snapshot_id,
         )
     if view is None:
         return unsupported_query_result(request, "all-rendered guide query requires a View2D")
@@ -324,6 +334,7 @@ def _miss_result(request: QueryRequest) -> QueryResult:
         status=QueryStatus.MISS,
         hit=False,
         panel_coordinate=request.coordinate,
+        layout_snapshot_id=request.layout_snapshot_id,
     )
 
 
@@ -346,4 +357,5 @@ def _with_hit_policy(request: QueryRequest, hit_policy: QueryHitPolicy) -> Query
         requested_payload=request.requested_payload,
         requested_extension_payload_kinds=request.requested_extension_payload_kinds,
         freshness_policy=request.freshness_policy,
+        layout_snapshot_id=request.layout_snapshot_id,
     )
