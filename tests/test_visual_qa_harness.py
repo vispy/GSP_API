@@ -468,94 +468,127 @@ def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None
     assert rows[("datoviz", "point/basic_ndc")]["status"] == "strict"
     assert rows[("datoviz", "point/basic_ndc")]["promotion_blockers"] == []
     assert rows[("datoviz", "image/scalar_gray_clim_ndc")]["status"] == "strict"
-    assert "CPU maps scalar gray" in rows[
-        ("datoviz", "image/scalar_gray_clim_ndc")
-    ]["known_adaptations"][0]
-    assert rows[("datoviz", "color/scalar_image_viridis_colorbar")]["status"] == "strict"
-    assert "explicit GSP tick values" in rows[
-        ("datoviz", "color/scalar_image_viridis_colorbar")
-    ]["known_adaptations"][1]
+    assert (
+        "CPU maps scalar gray"
+        in rows[("datoviz", "image/scalar_gray_clim_ndc")]["known_adaptations"][0]
+    )
+    assert (
+        rows[("datoviz", "color/scalar_image_viridis_colorbar")]["status"] == "strict"
+    )
+    assert (
+        "explicit GSP tick values"
+        in rows[("datoviz", "color/scalar_image_viridis_colorbar")][
+            "known_adaptations"
+        ][1]
+    )
     assert rows[("datoviz", "color/point_scalar_gray_range")]["status"] == "strict"
-    assert "endpoint clipping" in rows[
-        ("datoviz", "color/point_scalar_gray_range")
-    ]["known_adaptations"][1]
+    assert (
+        "endpoint clipping"
+        in rows[("datoviz", "color/point_scalar_gray_range")]["known_adaptations"][1]
+    )
     assert rows[("datoviz", "color/marker_scalar_fill_alpha")]["status"] == "strict"
-    assert "scalar fill alpha" in rows[
-        ("datoviz", "color/marker_scalar_fill_alpha")
-    ]["known_adaptations"][1]
+    assert (
+        "scalar fill alpha"
+        in rows[("datoviz", "color/marker_scalar_fill_alpha")]["known_adaptations"][1]
+    )
     assert rows[("datoviz", "text/basic_ndc")]["status"] == "adapted"
     assert rows[("datoviz", "text/basic_ndc")]["promotion_blockers"] == [
         "default BASELINE text-anchor semantics are not strictly verified by the Datoviz adapter"
     ]
     assert rows[("datoviz", "text/anchor_grid_ndc")]["status"] == "adapted"
-    assert "text-box anchors" in rows[
-        ("datoviz", "text/anchor_grid_ndc")
-    ]["promotion_blockers"][0]
+    assert (
+        "text-box anchors"
+        in rows[("datoviz", "text/anchor_grid_ndc")]["promotion_blockers"][0]
+    )
     assert rows[("datoviz", "text/rotation_alpha_ndc")]["status"] == "strict"
     assert rows[("datoviz", "text/rotation_alpha_ndc")]["query_supported"] is False
     assert rows[("datoviz", "text/rotation_alpha_ndc")]["promotion_blockers"] == []
-    assert "center-anchored rotation" in rows[
-        ("datoviz", "text/rotation_alpha_ndc")
-    ]["known_adaptations"][1]
+    assert (
+        "center-anchored rotation"
+        in rows[("datoviz", "text/rotation_alpha_ndc")]["known_adaptations"][1]
+    )
     assert rows[("datoviz", "text/data_vs_ndc")]["status"] == "adapted"
-    assert "identity [-1,+1]" in rows[
-        ("datoviz", "text/data_vs_ndc")
-    ]["promotion_blockers"][0]
+    assert (
+        "identity [-1,+1]"
+        in rows[("datoviz", "text/data_vs_ndc")]["promotion_blockers"][0]
+    )
     assert rows[("datoviz", "text/multiline_unicode_smoke")]["status"] == "adapted"
-    assert "Unicode fallback" in rows[
-        ("datoviz", "text/multiline_unicode_smoke")
-    ]["promotion_blockers"][0]
-    assert rows[("datoviz", "mesh/single_triangle_uniform_ndc_2d")]["status"] == "strict"
-    assert rows[("datoviz", "mesh/single_triangle_uniform_ndc_2d")][
-        "query_supported"
-    ] is False
-    assert "z=0 adaptation" in rows[
-        ("datoviz", "mesh/single_triangle_uniform_ndc_2d")
-    ]["known_adaptations"][0]
+    assert (
+        "Unicode fallback"
+        in rows[("datoviz", "text/multiline_unicode_smoke")]["promotion_blockers"][0]
+    )
+    assert (
+        rows[("datoviz", "mesh/single_triangle_uniform_ndc_2d")]["status"] == "strict"
+    )
+    assert (
+        rows[("datoviz", "mesh/single_triangle_uniform_ndc_2d")]["query_supported"]
+        is False
+    )
+    assert (
+        "z=0 adaptation"
+        in rows[("datoviz", "mesh/single_triangle_uniform_ndc_2d")][
+            "known_adaptations"
+        ][0]
+    )
     assert rows[("datoviz", "mesh/indexed_square_uniform_ndc_2d")]["status"] == "strict"
-    assert "shared-vertex" in rows[
-        ("datoviz", "mesh/indexed_square_uniform_ndc_2d")
-    ]["known_adaptations"][1]
-    assert rows[("datoviz", "mesh/indexed_square_per_face_ndc_2d")]["status"] == "strict"
-    assert rows[("datoviz", "mesh/indexed_square_per_face_ndc_2d")][
-        "query_supported"
-    ] is False
-    assert "duplicating triangle vertices" in rows[
-        ("datoviz", "mesh/indexed_square_per_face_ndc_2d")
-    ]["known_adaptations"][0]
     assert (
-        rows[("datoviz", "transform/inline_named_equivalence")]["status"] == "strict"
+        "shared-vertex"
+        in rows[("datoviz", "mesh/indexed_square_uniform_ndc_2d")]["known_adaptations"][
+            1
+        ]
     )
-    assert rows[("datoviz", "transform/inline_named_equivalence")][
-        "query_supported"
-    ] is False
-    assert "inline and named AFFINE_2D" in rows[
-        ("datoviz", "transform/inline_named_equivalence")
-    ]["known_adaptations"][0]
-    assert rows[("datoviz", "transform/inline_named_equivalence")][
-        "promotion_blockers"
-    ] == []
     assert (
-        rows[("datoviz", "transform/view2d_data_ndc_overlay")]["status"] == "strict"
+        rows[("datoviz", "mesh/indexed_square_per_face_ndc_2d")]["status"] == "strict"
     )
-    assert "reversed x limits" in rows[
-        ("datoviz", "transform/view2d_data_ndc_overlay")
-    ]["known_adaptations"][0]
-    assert rows[("datoviz", "transform/view2d_data_ndc_overlay")][
-        "query_supported"
-    ] is False
     assert (
-        rows[("datoviz", "transform/family_affine_view2d")]["status"] == "strict"
+        rows[("datoviz", "mesh/indexed_square_per_face_ndc_2d")]["query_supported"]
+        is False
     )
-    assert "point, marker, segment, path, text-center-anchor, and 2D uniform-mesh" in rows[
-        ("datoviz", "transform/family_affine_view2d")
-    ]["known_adaptations"][1]
-    assert rows[("datoviz", "transform/family_affine_view2d")][
-        "query_supported"
-    ] is False
+    assert (
+        "duplicating triangle vertices"
+        in rows[("datoviz", "mesh/indexed_square_per_face_ndc_2d")][
+            "known_adaptations"
+        ][0]
+    )
+    assert rows[("datoviz", "transform/inline_named_equivalence")]["status"] == "strict"
+    assert (
+        rows[("datoviz", "transform/inline_named_equivalence")]["query_supported"]
+        is False
+    )
+    assert (
+        "inline and named AFFINE_2D"
+        in rows[("datoviz", "transform/inline_named_equivalence")]["known_adaptations"][
+            0
+        ]
+    )
+    assert (
+        rows[("datoviz", "transform/inline_named_equivalence")]["promotion_blockers"]
+        == []
+    )
+    assert rows[("datoviz", "transform/view2d_data_ndc_overlay")]["status"] == "strict"
+    assert (
+        "reversed x limits"
+        in rows[("datoviz", "transform/view2d_data_ndc_overlay")]["known_adaptations"][
+            0
+        ]
+    )
+    assert (
+        rows[("datoviz", "transform/view2d_data_ndc_overlay")]["query_supported"]
+        is False
+    )
+    assert rows[("datoviz", "transform/family_affine_view2d")]["status"] == "strict"
+    assert (
+        "point, marker, segment, path, text-center-anchor, and 2D uniform-mesh"
+        in rows[("datoviz", "transform/family_affine_view2d")]["known_adaptations"][1]
+    )
+    assert (
+        rows[("datoviz", "transform/family_affine_view2d")]["query_supported"] is False
+    )
 
 
-def test_s029_datoviz_guide_view2d_rows_stay_unsupported_with_specific_blockers() -> None:
+def test_s029_datoviz_guide_view2d_rows_stay_unsupported_with_specific_blockers() -> (
+    None
+):
     reason = (
         "axis_guide_render_unsupported: Datoviz v0.4 axis guides and panel text "
         "guides remain capability-gated until native axes, explicit tick labels, "
@@ -602,9 +635,7 @@ def test_s029_datoviz_guide_view2d_rows_stay_unsupported_with_specific_blockers(
 
     matrix = build_capability_matrix(report)
     rows = {
-        row["case_id"]: row
-        for row in matrix["rows"]
-        if row["backend"] == "datoviz"
+        row["case_id"]: row for row in matrix["rows"] if row["backend"] == "datoviz"
     }
 
     auto = rows["guide/view2d_auto_grid"]
@@ -619,12 +650,14 @@ def test_s029_datoviz_guide_view2d_rows_stay_unsupported_with_specific_blockers(
     assert reversed_explicit["status"] == "unsupported"
     assert reversed_explicit["rendering_supported"] is False
     assert reversed_explicit["query_supported"] is False
-    assert "explicit GSP tick values and labels" in reversed_explicit[
-        "known_missing_semantics"
-    ][0]
-    assert "reversed View2D axis/grid placement" in reversed_explicit[
-        "promotion_blockers"
-    ][1]
+    assert (
+        "explicit GSP tick values and labels"
+        in reversed_explicit["known_missing_semantics"][0]
+    )
+    assert (
+        "reversed View2D axis/grid placement"
+        in reversed_explicit["promotion_blockers"][1]
+    )
 
 
 def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
@@ -636,7 +669,13 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
             {
                 "case_id": "guide/view2d_auto_grid",
                 "family": "guide",
-                "required_features": ["guide", "view2d", "auto-ticks", "grid", "labels"],
+                "required_features": [
+                    "guide",
+                    "view2d",
+                    "auto-ticks",
+                    "grid",
+                    "labels",
+                ],
                 "backends": {
                     "matplotlib": {"status": "rendered"},
                     "datoviz": {
@@ -689,9 +728,7 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
 
     matrix = build_capability_matrix(report)
     rows = {
-        row["case_id"]: row
-        for row in matrix["rows"]
-        if row["backend"] == "datoviz"
+        row["case_id"]: row for row in matrix["rows"] if row["backend"] == "datoviz"
     }
 
     auto = rows["guide/view2d_auto_grid"]
@@ -834,22 +871,22 @@ def test_s027_transform_visual_qa_run_writes_matplotlib_artifacts(
     assert report["stage"] == "S027"
     assert (tmp_path / "contact_sheets" / "s027_all_cases.png").stat().st_size > 0
     scene = json.loads(
-        (
-            tmp_path / "scenes" / "transform_family_affine_view2d.scene.json"
-        ).read_text(encoding="utf-8")
+        (tmp_path / "scenes" / "transform_family_affine_view2d.scene.json").read_text(
+            encoding="utf-8"
+        )
     )
     assert scene["transform_resources"][0]["id"] == "transform:s027-family-shear"
     assert scene["views"][0]["id"] == "view:s027-family"
-    assert scene["visuals"][0]["transform"]["ref"]["id"] == "transform:s027-family-shear"
+    assert (
+        scene["visuals"][0]["transform"]["ref"]["id"] == "transform:s027-family-shear"
+    )
     for case in report["cases"]:
         assert case["backends"]["matplotlib"]["status"] == "rendered"
 
 
 def test_s027_transform_query_fixture_reports_inverse_payload() -> None:
     """The S027 QA fixture supports strict transformed query inverse payloads."""
-    scene = get_case(
-        "transform/inline_named_equivalence", suite=S027_SUITE
-    ).build()
+    scene = get_case("transform/inline_named_equivalence", suite=S027_SUITE).build()
     resources = {resource.id: resource for resource in scene.transform_resources}
     result = query_visuals(
         QueryRequest(
@@ -901,9 +938,9 @@ def test_s028_guide_view2d_visual_qa_run_writes_matplotlib_artifacts(
     assert report["stage"] == "S028"
     assert (tmp_path / "contact_sheets" / "s028_all_cases.png").stat().st_size > 0
     scene = json.loads(
-        (
-            tmp_path / "scenes" / "guide_view2d_reversed_explicit.scene.json"
-        ).read_text(encoding="utf-8")
+        (tmp_path / "scenes" / "guide_view2d_reversed_explicit.scene.json").read_text(
+            encoding="utf-8"
+        )
     )
     assert scene["views"][0]["x_range"] == [1.0, -1.0]
     assert scene["axis_guides"][0]["tick_spec"]["explicit_labels"] == [
@@ -966,6 +1003,11 @@ def test_s028_datoviz_guide_path_configures_view2d_before_data_visuals(
             positions = np.asarray(visual.positions, dtype=np.float64)
             captured["point_positions"].append(positions)
 
+        def add_text_visual(self, visual: Any) -> None:
+            captured["events"].append("add_text")
+            captured["title_text"] = tuple(visual.texts)
+            captured["title_positions"] = np.asarray(visual.positions, dtype=np.float64)
+
         def configure_view2d_axes(self, view: Any, **kwargs: Any) -> None:
             captured["events"].append("configure_axes")
             captured["axis_view"] = view
@@ -992,10 +1034,15 @@ def test_s028_datoviz_guide_path_configures_view2d_before_data_visuals(
     )
 
     assert report["cases"][0]["backends"]["datoviz"]["status"] == "rendered"
+    diagnostics = report["cases"][0]["backends"]["datoviz"]["guide_diagnostics"]
+    assert diagnostics["panel_title"] == "adapted-review"
+    assert diagnostics["panel_text_adapter"] == "datoviz.ndc_text_visual"
     assert captured["view"] is None
     assert captured["axis_view"].x_range == (-2.0, 2.0)
     assert captured["axis_view"].y_range == (-1.0, 1.0)
-    assert captured["events"] == ["configure_axes", "add_point"]
+    assert captured["events"] == ["configure_axes", "add_point", "add_text"]
+    assert captured["title_text"] == ("S028 auto guide View2D",)
+    np.testing.assert_allclose(captured["title_positions"], [[0.0, 0.92]])
     np.testing.assert_allclose(
         captured["point_positions"][0],
         np.array(

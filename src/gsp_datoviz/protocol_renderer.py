@@ -203,6 +203,7 @@ class _CompatDvzTextPlacement(ctypes.Structure):
         ("depth_test", ctypes.c_bool),
     )
 
+
 _MARKER_SHAPE_FALLBACKS = {
     MarkerShape.DISC: 0,
     MarkerShape.SQUARE: 1,
@@ -338,6 +339,7 @@ def import_datoviz_v04() -> ModuleType:
     """Import Datoviz and validate the C-shaped v0.4 facade."""
     try:
         import datoviz as dvz
+
         if not is_datoviz_v04_facade(dvz):
             missing = [
                 name for name in _REQUIRED_DVZ_V04_FUNCTIONS if not hasattr(dvz, name)
@@ -430,7 +432,9 @@ class DatovizV04ProtocolRenderer:
     native_scales: dict[str, Any] = field(default_factory=dict, init=False)
     native_colormaps: dict[str, Any] = field(default_factory=dict, init=False)
     colorbars: dict[str, Any] = field(default_factory=dict, init=False)
-    scalar_visuals: dict[str, _ScalarVisualData] = field(default_factory=dict, init=False)
+    scalar_visuals: dict[str, _ScalarVisualData] = field(
+        default_factory=dict, init=False
+    )
     transform_adaptations: dict[str, tuple[str, ...]] = field(
         default_factory=dict, init=False
     )
@@ -591,9 +595,7 @@ class DatovizV04ProtocolRenderer:
                 visual_family="marker",
                 item_kind="marker",
                 color_slot=ScalarColorSlot.FILL,
-                values=np.asarray(
-                    visual.fill_color_encoding.values, dtype=np.float64
-                ),
+                values=np.asarray(visual.fill_color_encoding.values, dtype=np.float64),
                 color_scale=scale,
                 alpha=float(visual.fill_color_encoding.alpha),
             )
@@ -1128,8 +1130,7 @@ class DatovizV04ProtocolRenderer:
             return result
 
         wants_scalar_payload = (
-            SCALAR_COLOR_QUERY_PAYLOAD_KIND
-            in request.requested_extension_payload_kinds
+            SCALAR_COLOR_QUERY_PAYLOAD_KIND in request.requested_extension_payload_kinds
         )
         metadata = self._scalar_metadata_for_query_result(result)
         if metadata is None:
@@ -1224,6 +1225,9 @@ class DatovizV04ProtocolRenderer:
         x_axis = self.dvz.dvz_panel_axis(self.panel, dim_x)
         y_axis = self.dvz.dvz_panel_axis(self.panel, dim_y)
 
+        _configure_axis_review_style(self.dvz, x_axis)
+        _configure_axis_review_style(self.dvz, y_axis)
+
         tick_policy = self.dvz.dvz_axis_tick_policy()
         self.dvz.dvz_axis_set_tick_policy(x_axis, tick_policy)
         self.dvz.dvz_axis_set_tick_policy(y_axis, tick_policy)
@@ -1256,6 +1260,39 @@ class DatovizV04ProtocolRenderer:
         if result not in (0, None, True):
             raise DatovizV04Unsupported("Datoviz View2D data-domain setup failed")
         return panel_view
+
+
+def _configure_axis_review_style(dvz: Any, axis: Any) -> None:
+    style_factory = getattr(dvz, "dvz_axis_style", None)
+    style_setter = getattr(dvz, "dvz_axis_set_style", None)
+    if style_factory is None or style_setter is None:
+        return
+    style = style_factory()
+    if hasattr(style, "spine_width"):
+        style.spine_width = 1.75
+    if hasattr(style, "major_tick_width"):
+        style.major_tick_width = 1.5
+    if hasattr(style, "minor_tick_width"):
+        style.minor_tick_width = 1.0
+    if hasattr(style, "grid_width"):
+        style.grid_width = 1.0
+    _assign_style_color(style, "spine_color", (32, 32, 32, 255))
+    _assign_style_color(style, "major_tick_color", (32, 32, 32, 255))
+    _assign_style_color(style, "minor_tick_color", (90, 90, 90, 220))
+    _assign_style_color(style, "grid_color", (150, 150, 150, 190))
+    result = style_setter(axis, style)
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz axis style configuration failed")
+
+
+def _assign_style_color(
+    style: Any, field_name: str, color: tuple[int, int, int, int]
+) -> None:
+    target = getattr(style, field_name, None)
+    if target is None:
+        return
+    for index, channel in enumerate(color):
+        target[index] = channel
 
 
 def _set_datoviz_data_domain(
@@ -1710,9 +1747,7 @@ def _rgba8_scalar_values(
     values: npt.ArrayLike, scale: ColorScale, *, alpha: float
 ) -> npt.NDArray[np.uint8]:
     mapped = map_scalar_values(values, scale, alpha=alpha)
-    return np.ascontiguousarray(
-        np.rint(mapped * 255.0).clip(0, 255).astype(np.uint8)
-    )
+    return np.ascontiguousarray(np.rint(mapped * 255.0).clip(0, 255).astype(np.uint8))
 
 
 def _scalar_payload_for_query_result(
@@ -1812,9 +1847,7 @@ def _builtin_colormap_value(dvz: Any, colormap_id: ColorMapId) -> int:
     return _enum_value(dvz, "DvzBuiltinColormap", name, fallback)
 
 
-def _colorbar_orientation_value(
-    dvz: Any, orientation: ColorbarOrientation
-) -> int:
+def _colorbar_orientation_value(dvz: Any, orientation: ColorbarOrientation) -> int:
     if orientation is ColorbarOrientation.VERTICAL:
         return _enum_value(
             dvz,
@@ -1834,9 +1867,7 @@ def _colorbar_orientation_value(
     )
 
 
-def _colorbar_anchor_value(
-    dvz: Any, placement: ColorbarPlacement | None
-) -> int:
+def _colorbar_anchor_value(dvz: Any, placement: ColorbarPlacement | None) -> int:
     if placement is ColorbarPlacement.RIGHT or placement is None:
         return _enum_value(
             dvz,
@@ -1894,7 +1925,10 @@ def _configure_colorbar_layout(
         return
     if hasattr(placement, "space"):
         placement.space = _enum_value(
-            dvz, "DvzPlacementSpace", "DVZ_PLACEMENT_SPACE_PANEL", DVZ_PLACEMENT_SPACE_PANEL
+            dvz,
+            "DvzPlacementSpace",
+            "DVZ_PLACEMENT_SPACE_PANEL",
+            DVZ_PLACEMENT_SPACE_PANEL,
         )
     if hasattr(placement, "horizontal_anchor"):
         placement.horizontal_anchor = _enum_value(
@@ -1921,7 +1955,9 @@ def _configure_colorbar_layout(
 
 
 def _configure_colorbar_format(dvz: Any, colorbar: Any) -> None:
-    if not hasattr(dvz, "dvz_format_desc") or not hasattr(dvz, "dvz_colorbar_set_format"):
+    if not hasattr(dvz, "dvz_format_desc") or not hasattr(
+        dvz, "dvz_colorbar_set_format"
+    ):
         return
     fmt = dvz.dvz_format_desc()
     if hasattr(fmt, "precision"):
@@ -1944,7 +1980,9 @@ def _configure_colorbar_ticks(dvz: Any, colorbar: Any, guide: ColorbarGuide) -> 
     labels = list(guide.tick_labels) if guide.tick_labels else None
     result = setter(colorbar, values, labels)
     if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz colorbar explicit tick configuration failed")
+        raise DatovizV04Unsupported(
+            "Datoviz colorbar explicit tick configuration failed"
+        )
 
 
 def _image_sampling_value(dvz: Any, interpolation: ImageInterpolation) -> int:
@@ -2019,9 +2057,7 @@ def _set_visual_data(
         result = dvz.dvz_visual_set_data(visual, alias, data)
         if result == 0:
             return
-    raise DatovizV04Unsupported(
-        f"Datoviz visual attribute {attr_name!r} upload failed"
-    )
+    raise DatovizV04Unsupported(f"Datoviz visual attribute {attr_name!r} upload failed")
 
 
 def _set_visual_index_data(

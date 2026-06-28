@@ -14,6 +14,7 @@ import matplotlib
 matplotlib.use("Agg")
 from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
+import numpy as np
 
 from gsp.protocol import (
     AffineTransform2DResource,
@@ -21,6 +22,7 @@ from gsp.protocol import (
     AxisGuide,
     ColorScale,
     ColorbarGuide,
+    CoordinateSpace,
     ImageVisual,
     MeshVisual,
     MarkerVisual,
@@ -28,6 +30,8 @@ from gsp.protocol import (
     PathVisual,
     PointVisual,
     SegmentVisual,
+    TextAnchorX,
+    TextAnchorY,
     TextVisual,
     TickSpecKind,
     View2D,
@@ -394,6 +398,8 @@ def _run_datoviz(
                 _render_datoviz_visual(renderer, visual)
             for guide in colorbar_guides:
                 renderer.add_colorbar_guide(guide)
+            for title_visual in _datoviz_panel_text_visuals(panel_text_guides):
+                renderer.add_text_visual(title_visual)
             png = renderer.capture_png_bytes()
         artifact_path.write_bytes(png)
         log_path.write_text("rendered\n", encoding="utf-8")
@@ -544,15 +550,39 @@ def _datoviz_guide_diagnostics(
         diagnostics["all_rendered_guide_query"] = "unsupported"
         diagnostics["view2d_present"] = view is not None
         if any(guide.tick_spec.kind is TickSpecKind.EXPLICIT for guide in axis_guides):
-            diagnostics["explicit_ticks"] = "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise"
+            diagnostics["explicit_ticks"] = (
+                "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise"
+            )
     if panel_text_guides:
         diagnostics["panel_text_guide_count"] = len(panel_text_guides)
-        diagnostics["panel_title"] = "unsupported"
-        diagnostics["panel_text_guides_skipped"] = [
+        diagnostics["panel_title"] = "adapted-review"
+        diagnostics["panel_text_adapter"] = "datoviz.ndc_text_visual"
+        diagnostics["panel_text_guides_adapted"] = [
             {"id": guide.id, "role": guide.role.value, "text": guide.text}
             for guide in panel_text_guides
         ]
     return diagnostics
+
+
+def _datoviz_panel_text_visuals(
+    panel_text_guides: tuple[PanelTextGuide, ...],
+) -> tuple[TextVisual, ...]:
+    visuals: list[TextVisual] = []
+    for guide in panel_text_guides:
+        visuals.append(
+            TextVisual(
+                id=f"visual:{guide.id}:datoviz-adapted-title",
+                texts=(guide.text,),
+                positions=np.array([[0.0, 0.92]], dtype=np.float32),
+                coordinate_space=CoordinateSpace.NDC,
+                rgba=np.array([28, 28, 28, 255], dtype=np.uint8),
+                font_size_px=20.0,
+                anchor_x=TextAnchorX.CENTER,
+                anchor_y=TextAnchorY.TOP,
+                z_order=8,
+            )
+        )
+    return tuple(visuals)
 
 
 def _scene_view(views: tuple[View2D, ...]) -> View2D | None:

@@ -815,15 +815,16 @@
             "axis_provider": "datoviz.v04.panel_axis.wip",
             "axis_rendering": "adapted-review",
             "guide_query": "unsupported",
+            "panel_text_adapter": "datoviz.ndc_text_visual",
             "panel_text_guide_count": 1,
-            "panel_text_guides_skipped": [
+            "panel_text_guides_adapted": [
               {
                 "id": "guide:s028-auto-title",
                 "role": "title",
                 "text": "S028 auto guide View2D"
               }
             ],
-            "panel_title": "unsupported",
+            "panel_title": "adapted-review",
             "view2d_present": true
           },
           "log_path": "artifacts/visual_qa/s031/full-review-pack-legacy/backends/datoviz/guide_view2d_auto_grid.log.txt",
@@ -864,15 +865,16 @@
             "axis_rendering": "adapted-review",
             "explicit_ticks": "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise",
             "guide_query": "unsupported",
+            "panel_text_adapter": "datoviz.ndc_text_visual",
             "panel_text_guide_count": 1,
-            "panel_text_guides_skipped": [
+            "panel_text_guides_adapted": [
               {
                 "id": "guide:s028-reversed-title",
                 "role": "title",
                 "text": "S028 reversed guide View2D"
               }
             ],
-            "panel_title": "unsupported",
+            "panel_title": "adapted-review",
             "view2d_present": true
           },
           "log_path": "artifacts/visual_qa/s031/full-review-pack-legacy/backends/datoviz/guide_view2d_reversed_explicit.log.txt",
@@ -947,7 +949,7 @@
     },
     "minimal_point_supported": true,
     "raw_imported": true,
-    "source_revision": "78c6aa4adf5cb16db4ba477b115f4844edb5956b",
+    "source_revision": "b48b2e7b3b156a713f84eb39c29abe463952a2b8",
     "unexpected_banned_hits": 0
   },
   "environment_path": "artifacts/visual_qa/s031/full-review-pack-legacy/environment.json",
@@ -955,6 +957,6 @@
   "schema_kind": "gsp.visual_qa.report",
   "schema_version": 1,
   "stage": "S028",
-  "started_at": "2026-06-27T19:14:16.307871+00:00",
+  "started_at": "2026-06-28T08:15:21.724463+00:00",
   "suite": "s028"
 }

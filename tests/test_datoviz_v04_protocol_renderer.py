@@ -268,6 +268,17 @@ class FakeDatovizV04WithAxes(FakeDatovizV04):
     DVZ_DIM_X = 0
     DVZ_DIM_Y = 1
 
+    class FakeAxisStyle:
+        def __init__(self):
+            self.spine_width = 0.0
+            self.major_tick_width = 0.0
+            self.minor_tick_width = 0.0
+            self.grid_width = 0.0
+            self.spine_color = [0, 0, 0, 0]
+            self.major_tick_color = [0, 0, 0, 0]
+            self.minor_tick_color = [0, 0, 0, 0]
+            self.grid_color = [0, 0, 0, 0]
+
     def dvz_panel_view2d(self):
         self.calls.append(("view2d",))
         return self.FakePanelView2D()
@@ -293,6 +304,24 @@ class FakeDatovizV04WithAxes(FakeDatovizV04):
     def dvz_axis_tick_policy(self):
         self.calls.append(("tick_policy",))
         return "tick-policy"
+
+    def dvz_axis_style(self):
+        self.calls.append(("axis_style",))
+        return self.FakeAxisStyle()
+
+    def dvz_axis_set_style(self, axis, style):
+        self.calls.append(
+            (
+                "set_style",
+                axis,
+                style.spine_width,
+                style.major_tick_width,
+                tuple(style.spine_color),
+                tuple(style.major_tick_color),
+                tuple(style.grid_color),
+            )
+        )
+        return True
 
     def dvz_axis_set_tick_policy(self, axis, policy):
         self.calls.append(("set_tick_policy", axis, policy))
@@ -847,7 +876,9 @@ def test_capability_snapshot_defers_query_support():
     assert caps.supports_transform_capability("gsp.transform.affine2d@0.1")
     assert "s027_transform" in caps.metadata
     assert "s028_guide_view2d" in caps.metadata
-    assert "axis_guide_query_unsupported" in caps.metadata["s028_guide_view2d_diagnostics"]
+    assert (
+        "axis_guide_query_unsupported" in caps.metadata["s028_guide_view2d_diagnostics"]
+    )
     assert caps.metadata["datoviz_api"] == "v0.4 dvz_* facade"
     assert caps.axis_providers[0].provider_id == DATOVIZ_V04_AXIS_PROVIDER
 
@@ -1467,9 +1498,7 @@ def test_add_marker_visual_cpu_premaps_scalar_fill_to_canonical_rgba8():
 
     renderer.add_marker_visual(visual)
 
-    color_upload = [
-        call for call in _calls(fake, "set_data") if call[2] == "color"
-    ][0]
+    color_upload = [call for call in _calls(fake, "set_data") if call[2] == "color"][0]
     np.testing.assert_array_equal(
         color_upload[3], [[64, 64, 64, 128], [255, 255, 255, 128]]
     )
@@ -1925,20 +1954,32 @@ def test_add_colorbar_guide_creates_native_datoviz_scale_colormap_and_colorbar()
 
     assert colorbar == "colorbar"
     assert _calls(fake, "scale") == [("scale", "scene", 0, b"value")]
-    assert _calls(fake, "scale_set_domain") == [
-        ("scale_set_domain", "scale", 0.0, 1.0)
-    ]
+    assert _calls(fake, "scale_set_domain") == [("scale_set_domain", "scale", 0.0, 1.0)]
     assert _calls(fake, "scale_set_view_range") == [
         ("scale_set_view_range", "scale", 0.0, 1.0)
     ]
-    assert _calls(fake, "colormap_builtin") == [
-        ("colormap_builtin", "scene", 1)
-    ]
+    assert _calls(fake, "colormap_builtin") == [("colormap_builtin", "scene", 1)]
     assert _calls(fake, "scale_set_colormap") == [
         ("scale_set_colormap", "scale", "colormap")
     ]
     assert _calls(fake, "colorbar") == [
-        ("colorbar", "panel", "scale", 0, 1, 6, b"value", 18.0, 6.0, 6.0, 0, 2, 1, 18.0, 372.0)
+        (
+            "colorbar",
+            "panel",
+            "scale",
+            0,
+            1,
+            6,
+            b"value",
+            18.0,
+            6.0,
+            6.0,
+            0,
+            2,
+            1,
+            18.0,
+            372.0,
+        )
     ]
     assert _calls(fake, "colorbar_set_orientation") == [
         ("colorbar_set_orientation", "colorbar", 0)
@@ -2051,8 +2092,6 @@ def test_lower_origin_texcoords_are_not_flipped():
     )
 
 
-
-
 def test_add_mesh_visual_uploads_uniform_indexed_triangles():
     fake = FakeDatovizV04WithMesh()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
@@ -2160,7 +2199,9 @@ def test_add_mesh_visual_accepts_default_data_domain_and_rejects_3d_before_diagn
     )
     mesh_3d = MeshVisual(
         id="visual:mesh-3d",
-        positions=np.array([[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]], dtype=np.float32),
+        positions=np.array(
+            [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]], dtype=np.float32
+        ),
         faces=np.array([[0, 1, 2]], dtype=np.uint32),
         coordinate_space=CoordinateSpace.NDC,
         color=np.array([255, 255, 255, 255], dtype=np.uint8),
@@ -2429,6 +2470,26 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
     assert _calls(fake, "panel_axis") == [
         ("panel_axis", "panel", 0),
         ("panel_axis", "panel", 1),
+    ]
+    assert _calls(fake, "set_style") == [
+        (
+            "set_style",
+            "axis:0",
+            1.75,
+            1.5,
+            (32, 32, 32, 255),
+            (32, 32, 32, 255),
+            (150, 150, 150, 190),
+        ),
+        (
+            "set_style",
+            "axis:1",
+            1.75,
+            1.5,
+            (32, 32, 32, 255),
+            (32, 32, 32, 255),
+            (150, 150, 150, 190),
+        ),
     ]
     assert _calls(fake, "set_tick_policy") == [
         ("set_tick_policy", "axis:0", "tick-policy"),
