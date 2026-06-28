@@ -33,6 +33,7 @@ def test_matplotlib_advertises_strict_native_axis_provider():
     assert caps.supports_extension(TILED_IMAGE_EXTENSION_CAPABILITY)
     assert caps.guide_layout_capability.axis_query
     assert caps.query_layout_capability.guide_query
+    assert caps.query_layout_capability.all_rendered_guides
     assert caps.query_layout_capability.reports_layout_snapshot_id
     assert caps.supports_extension_manifests
     assert caps.supports_virtual_data_sources

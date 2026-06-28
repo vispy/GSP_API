@@ -81,7 +81,7 @@ def capability_snapshot() -> CapabilitySnapshot:
             colorbar="native",
             colorbar_query=False,
             legend="unsupported",
-            diagnostics=("all-rendered-guide-layout-query-pending",),
+            diagnostics=("render-api-layout-snapshot-reporting-pending",),
         ),
         font_layout_capability=FontLayoutCapability(
             logical_font_size_px=True,
@@ -100,8 +100,8 @@ def capability_snapshot() -> CapabilitySnapshot:
             screen_logical_px=True,
             data_readout_uses_view_snapshot=True,
             guide_query=True,
-            all_rendered_guides=False,
+            all_rendered_guides=True,
             reports_layout_snapshot_id=True,
-            diagnostics=("all-rendered-guide-layout-query-pending",),
+            diagnostics=("render-api-layout-snapshot-reporting-pending",),
         ),
     )

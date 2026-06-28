@@ -14,9 +14,11 @@ from gsp.protocol import (
     QueryResult,
     QueryScope,
     QueryStatus,
+    ResolvedLayoutSnapshot,
     View2D,
 )
 from gsp_matplotlib.guide_query import QueryGuideEntry, query_axis_guides
+from gsp_matplotlib.layout_query import query_resolved_layout_guides
 from gsp_matplotlib.protocol_query import QueryVisualEntry, query_visuals, unsupported_query_result
 
 
@@ -49,6 +51,7 @@ def query_scoped_scene(
     extension_entries: Iterable[QueryExtensionEntry] = (),
     view: View2D | None = None,
     guide_entries: tuple[QueryGuideEntry, ...] = (),
+    layout_snapshot: ResolvedLayoutSnapshot | None = None,
     panel_bounds: tuple[float, float, float, float] | None = None,
 ) -> QueryResult:
     """Route a reference query by GSP query scope.
@@ -61,15 +64,27 @@ def query_scoped_scene(
     if request.scope == QueryScope.DATA:
         return _query_data_scope(request, visual_entries, extension_entries, panel_bounds)
     if request.scope == QueryScope.GUIDES:
+        if layout_snapshot is not None:
+            if request.requested_extension_payload_kinds and not _guide_entries_support(request):
+                return unsupported_query_result(request, "guide query cannot satisfy requested extension payloads")
+            return query_resolved_layout_guides(request, layout_snapshot)
         if view is None:
             return unsupported_query_result(request, "guide query requires a View2D")
         if request.requested_extension_payload_kinds and not _guide_entries_support(request):
             return unsupported_query_result(request, "guide query cannot satisfy requested extension payloads")
         return query_axis_guides(request, view, guide_entries)
     if request.scope == QueryScope.ALL_RENDERED:
-        if guide_entries and view is None:
+        if guide_entries and view is None and layout_snapshot is None:
             return unsupported_query_result(request, "all-rendered query with guides requires a View2D")
-        return _query_all_rendered(request, visual_entries, extension_entries, view, guide_entries, panel_bounds)
+        return _query_all_rendered(
+            request,
+            visual_entries,
+            extension_entries,
+            view,
+            guide_entries,
+            layout_snapshot,
+            panel_bounds,
+        )
     return unsupported_query_result(request, f"query scope {request.scope.value!r} is not supported")
 
 
@@ -79,11 +94,12 @@ def _query_all_rendered(
     extension_entries: tuple[QueryExtensionEntry, ...],
     view: View2D | None,
     guide_entries: tuple[QueryGuideEntry, ...],
+    layout_snapshot: ResolvedLayoutSnapshot | None,
     panel_bounds: tuple[float, float, float, float] | None,
 ) -> QueryResult:
     if request.requested_extension_payload_kinds:
         data_supported = _extension_entries_support(request, extension_entries)
-        guide_supported = bool(guide_entries) and _guide_entries_support(request)
+        guide_supported = (layout_snapshot is not None or bool(guide_entries)) and _guide_entries_support(request)
         if not data_supported and not guide_supported:
             return unsupported_query_result(request, "all-rendered query cannot satisfy requested extension payloads")
         data_result = (
@@ -91,7 +107,11 @@ def _query_all_rendered(
             if data_supported
             else _miss_result(request)
         )
-        guide_result = _query_all_guide_hits(request, view, guide_entries) if guide_supported else _miss_result(request)
+        guide_result = (
+            _query_all_guide_hits(request, view, guide_entries, layout_snapshot)
+            if guide_supported
+            else _miss_result(request)
+        )
         if data_result.status == QueryStatus.OUTSIDE_PANEL:
             return data_result
         return _merge_ordered_results(request, data_result, guide_result, visual_entries, extension_entries, guide_entries)
@@ -99,7 +119,7 @@ def _query_all_rendered(
     data_result = _query_all_data_hits(request, visual_entries, extension_entries, panel_bounds)
     if data_result.status == QueryStatus.OUTSIDE_PANEL:
         return data_result
-    guide_result = _query_all_guide_hits(request, view, guide_entries)
+    guide_result = _query_all_guide_hits(request, view, guide_entries, layout_snapshot)
 
     return _merge_ordered_results(request, data_result, guide_result, visual_entries, extension_entries, guide_entries)
 
@@ -278,7 +298,12 @@ def _query_all_guide_hits(
     request: QueryRequest,
     view: View2D | None,
     guide_entries: tuple[QueryGuideEntry, ...],
+    layout_snapshot: ResolvedLayoutSnapshot | None = None,
 ) -> QueryResult:
+    if layout_snapshot is not None:
+        return query_resolved_layout_guides(
+            _with_hit_policy(request, QueryHitPolicy.ALL), layout_snapshot
+        )
     if not guide_entries:
         return QueryResult(
             request_id=request.id,

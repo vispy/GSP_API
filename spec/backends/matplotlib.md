@@ -113,6 +113,7 @@ GSP style hints; Matplotlib artist objects remain backend realization details.
 reports the snapshot id used. This covers resolved title, axis-label, tick-label, legend, and
 colorbar boxes where present in the snapshot.
 
-This is the reference geometry-query path for layout snapshots. It does not yet promote Matplotlib
-to full `layout_strict` because render APIs and all-rendered guide contributions still need to
-report and consume the same snapshot id end to end.
+This is the reference geometry-query path for layout snapshots. `query_scoped_scene()` can consume a
+resolved layout snapshot for guide-scope and all-rendered guide contributions. Matplotlib still does
+not claim full `layout_strict` because render APIs still need to report the snapshot id used end to
+end.

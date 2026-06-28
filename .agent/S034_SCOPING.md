@@ -49,4 +49,5 @@ remain classified as adapted.
 5. Tiered visual QA fixtures and review report classification. Review classification fields
    completed in M137; additional layout-specific fixtures remain pending.
 6. Layout-aware guide query/readback. Matplotlib snapshot guide query completed in M138; full
-   all-rendered integration and Datoviz guide query remain pending.
+   scoped/all-rendered integration completed in M139; Datoviz guide query and render-result snapshot
+   reporting remain pending.

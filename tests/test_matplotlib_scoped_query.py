@@ -8,12 +8,17 @@ from gsp.protocol import (
     AxisSide,
     FakeTiledImageProvider,
     GUIDE_QUERY_PAYLOAD_KIND,
+    LogicalPixelRect,
     PointVisual,
+    QueryCoordinateSpace,
     QueryContributionKind,
     QueryHitPolicy,
     QueryRequest,
     QueryScope,
     QueryStatus,
+    RenderTarget,
+    ResolvedGuideBox,
+    ResolvedLayoutSnapshot,
     TILED_IMAGE_QUERY_PAYLOAD_KIND,
     TiledImageQueryPayload,
     TiledImageSource,
@@ -77,6 +82,23 @@ def _tiled_source() -> TiledImageSource:
     )
 
 
+def _layout_snapshot() -> ResolvedLayoutSnapshot:
+    return ResolvedLayoutSnapshot(
+        snapshot_id="layout:main",
+        render_target=RenderTarget(logical_width_px=200, logical_height_px=120),
+        panel_rect_px=LogicalPixelRect(0, 0, 200, 120),
+        plot_rect_px=LogicalPixelRect(20, 30, 160, 70),
+        title_boxes=(
+            ResolvedGuideBox(
+                guide_id="guide:title",
+                kind="title",
+                role="title",
+                rect_px=LogicalPixelRect(60, 6, 80, 20),
+            ),
+        ),
+    )
+
+
 def _tiled_entry(*, z_order: int = 0) -> QueryExtensionEntry:
     source = _tiled_source()
     provider = FakeTiledImageProvider(source)
@@ -121,6 +143,27 @@ def test_scoped_query_guides_ignores_overlapping_data():
     assert result.extension_payload.tick_value == 0.5
 
 
+def test_scoped_query_guides_can_use_resolved_layout_snapshot():
+    result = query_scoped_scene(
+        QueryRequest(
+            id="query:layout-title",
+            panel_id="panel:main",
+            coordinate=(100, 16),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            scope=QueryScope.GUIDES,
+            layout_snapshot_id="layout:main",
+        ),
+        visual_entries=(QueryVisualEntry(_point(), z_order=2),),
+        layout_snapshot=_layout_snapshot(),
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.visual_id == "guide:title"
+    assert result.layout_snapshot_id == "layout:main"
+    assert result.extension_payload_kind == GUIDE_QUERY_PAYLOAD_KIND
+    assert result.extension_payload.role == "title"
+
+
 def test_scoped_query_all_rendered_returns_frontmost_by_reference_z_order():
     result = query_scoped_scene(
         QueryRequest(
@@ -139,6 +182,26 @@ def test_scoped_query_all_rendered_returns_frontmost_by_reference_z_order():
     assert result.layout_snapshot_id == "layout:matplotlib"
     assert result.visual_id == "guide:x"
     assert result.hits == result.hits[:1]
+    assert result.hits[0].contribution_kind == QueryContributionKind.GUIDE
+
+
+def test_scoped_query_all_rendered_can_merge_resolved_layout_guide_hits():
+    result = query_scoped_scene(
+        QueryRequest(
+            id="query:all-rendered-layout",
+            panel_id="panel:main",
+            coordinate=(100, 16),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            scope=QueryScope.ALL_RENDERED,
+            hit_policy=QueryHitPolicy.ALL,
+            layout_snapshot_id="layout:main",
+        ),
+        layout_snapshot=_layout_snapshot(),
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.layout_snapshot_id == "layout:main"
+    assert [hit.visual_id for hit in result.hits] == ["guide:title"]
     assert result.hits[0].contribution_kind == QueryContributionKind.GUIDE
 
 
