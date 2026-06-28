@@ -15,9 +15,17 @@ from gsp.protocol import (
     AxisGuide,
     AxisGuideStyle,
     AxisSide,
+    LogicalPixelRect,
     PanelTextGuide,
     PanelTextGuideStyle,
     PanelTextRole,
+    QueryCoordinateSpace,
+    QueryHitPolicy,
+    QueryRequest,
+    QueryStatus,
+    RenderTarget,
+    ResolvedGuideBox,
+    ResolvedLayoutSnapshot,
     TickSpec,
     TickSpecKind,
     View2D,
@@ -25,6 +33,7 @@ from gsp.protocol import (
 )
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.layout import resolve_matplotlib_layout_snapshot
+from gsp_matplotlib.layout_query import query_resolved_layout_guides
 
 
 def test_render_axis_guides_uses_explicit_gsp_ticks_and_labels():
@@ -302,3 +311,81 @@ def test_resolve_matplotlib_layout_snapshot_exposes_native_guide_geometry():
         assert len(snapshot.data_to_screen_transform) == 9
     finally:
         plt.close(fig)
+
+
+def test_query_resolved_matplotlib_layout_guides_hits_title_box():
+    fig, ax = plt.subplots(figsize=(6.4, 4.8), dpi=100)
+    view = View2D(id="view:main", panel_id="panel:main")
+    axis_guides = (
+        AxisGuide(id="guide:x", view_id=view.id, dimension=AxisDimension.X, side=AxisSide.BOTTOM, label_text="x"),
+        AxisGuide(id="guide:y", view_id=view.id, dimension=AxisDimension.Y, side=AxisSide.LEFT, label_text="y"),
+    )
+    title = PanelTextGuide(
+        id="guide:title",
+        panel_id="panel:main",
+        role=PanelTextRole.TITLE,
+        text="Queryable title",
+    )
+
+    try:
+        render_axis_guides(ax, view, axis_guides)
+        render_panel_text_guides(ax, (title,))
+        fig.tight_layout()
+        snapshot = resolve_matplotlib_layout_snapshot(
+            fig,
+            ax,
+            snapshot_id="layout:matplotlib",
+            view=view,
+            axis_guides=axis_guides,
+            panel_text_guides=(title,),
+        )
+        title_rect = snapshot.title_boxes[0].rect_px
+        result = query_resolved_layout_guides(
+            QueryRequest(
+                id="query:title",
+                panel_id="panel:main",
+                coordinate=(
+                    title_rect.x + title_rect.width / 2.0,
+                    title_rect.y + title_rect.height / 2.0,
+                ),
+                coordinate_space=QueryCoordinateSpace.PANEL,
+                layout_snapshot_id=snapshot.snapshot_id,
+            ),
+            snapshot,
+        )
+
+        assert result.status == QueryStatus.HIT
+        assert result.visual_id == "guide:title"
+        assert result.layout_snapshot_id == "layout:matplotlib"
+        assert result.extension_payload.guide_id == "guide:title"
+        assert result.extension_payload.role == "title"
+    finally:
+        plt.close(fig)
+
+
+def test_query_resolved_matplotlib_layout_guides_returns_all_overlapping_boxes():
+    synthetic = ResolvedLayoutSnapshot(
+        snapshot_id="layout:synthetic",
+        render_target=RenderTarget(logical_width_px=100, logical_height_px=100),
+        panel_rect_px=LogicalPixelRect(0, 0, 100, 100),
+        plot_rect_px=LogicalPixelRect(10, 10, 80, 80),
+        title_boxes=(
+            ResolvedGuideBox(guide_id="guide:title", kind="title", role="title", rect_px=LogicalPixelRect(20, 5, 60, 20)),
+        ),
+        axis_label_boxes=(
+            ResolvedGuideBox(guide_id="guide:x", kind="axis_label", role="x_axis_label", rect_px=LogicalPixelRect(20, 15, 60, 20)),
+        ),
+    )
+    result = query_resolved_layout_guides(
+        QueryRequest(
+            id="query:all-guides",
+            panel_id="panel:main",
+            coordinate=(50, 18),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            hit_policy=QueryHitPolicy.ALL,
+        ),
+        synthetic,
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert [hit.visual_id for hit in result.hits] == ["guide:title", "guide:x"]

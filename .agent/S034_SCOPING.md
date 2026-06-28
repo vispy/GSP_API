@@ -48,4 +48,5 @@ remain classified as adapted.
 4. Grid clipping proof or explicit unsupported diagnostic.
 5. Tiered visual QA fixtures and review report classification. Review classification fields
    completed in M137; additional layout-specific fixtures remain pending.
-6. Layout-aware guide query/readback.
+6. Layout-aware guide query/readback. Matplotlib snapshot guide query completed in M138; full
+   all-rendered integration and Datoviz guide query remain pending.

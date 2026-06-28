@@ -105,3 +105,14 @@ points = logical_px * 72 / dpi
 Supported style mappings include title font size and pad, axis label font size and label pad, tick
 label font size, tick length, tick width, tick-label padding, and grid line width. These are semantic
 GSP style hints; Matplotlib artist objects remain backend realization details.
+
+## S034 layout-aware guide query
+
+`gsp_matplotlib.layout_query.query_resolved_layout_guides()` can query guide boxes from a
+`ResolvedLayoutSnapshot` in logical panel-pixel coordinates. It returns `GuideQueryPayload` hits and
+reports the snapshot id used. This covers resolved title, axis-label, tick-label, legend, and
+colorbar boxes where present in the snapshot.
+
+This is the reference geometry-query path for layout snapshots. It does not yet promote Matplotlib
+to full `layout_strict` because render APIs and all-rendered guide contributions still need to
+report and consume the same snapshot id end to end.

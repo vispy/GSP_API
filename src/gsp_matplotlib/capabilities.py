@@ -32,7 +32,7 @@ def matplotlib_axis_provider_capability() -> AxisProviderCapability:
         supports_title=True,
         supports_grid=True,
         supports_style_basic=True,
-        supports_guide_query=False,
+        supports_guide_query=True,
         supports_text_query=False,
     )
 
@@ -74,14 +74,14 @@ def capability_snapshot() -> CapabilitySnapshot:
             axis_labels=True,
             axis_grid=True,
             axis_grid_clip_to_plot_rect=True,
-            axis_query=False,
+            axis_query=True,
             panel_text_title="native",
             panel_text_participates_in_layout=True,
-            panel_text_query=False,
+            panel_text_query=True,
             colorbar="native",
             colorbar_query=False,
             legend="unsupported",
-            diagnostics=("guide-query-layout-snapshot-integration-pending",),
+            diagnostics=("all-rendered-guide-layout-query-pending",),
         ),
         font_layout_capability=FontLayoutCapability(
             logical_font_size_px=True,
@@ -99,9 +99,9 @@ def capability_snapshot() -> CapabilitySnapshot:
         query_layout_capability=QueryLayoutCapability(
             screen_logical_px=True,
             data_readout_uses_view_snapshot=True,
-            guide_query=False,
+            guide_query=True,
             all_rendered_guides=False,
             reports_layout_snapshot_id=True,
-            diagnostics=("guide-geometry-query-still-bounded-to-semantic-axis-ticks",),
+            diagnostics=("all-rendered-guide-layout-query-pending",),
         ),
     )
