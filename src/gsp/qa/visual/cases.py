@@ -8,6 +8,7 @@ from gsp.protocol import (
     AffineTransform2DResource,
     AxisDimension,
     AxisGuide,
+    AxisGuideStyle,
     AxisSide,
     ColorMapId,
     ColorMapRef,
@@ -24,6 +25,7 @@ from gsp.protocol import (
     MarkerShape,
     MarkerVisual,
     PanelTextGuide,
+    PanelTextGuideStyle,
     PanelTextRole,
     PathVisual,
     PointVisual,
@@ -50,6 +52,7 @@ S025_SUITE = "s025"
 S026_SUITE = "s026"
 S027_SUITE = "s027"
 S028_SUITE = "s028"
+S034_SUITE = "s034"
 
 
 def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
@@ -83,6 +86,16 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
             + _s026_color_cases()
             + _s027_transform_cases()
             + _s028_guide_view2d_cases()
+        )
+    if suite == S034_SUITE:
+        return (
+            _s023_cases()
+            + _s024_text_cases()
+            + _s025_mesh_cases()
+            + _s026_color_cases()
+            + _s027_transform_cases()
+            + _s028_guide_view2d_cases()
+            + _s034_layout_cases()
         )
     raise ValueError(f"unknown visual QA suite: {suite}")
 
@@ -354,6 +367,37 @@ def _s028_guide_view2d_cases() -> tuple[VisualQACase, ...]:
                 "labels",
             ),
             builder=_guide_view2d_reversed_explicit,
+        ),
+    )
+
+
+def _s034_layout_cases() -> tuple[VisualQACase, ...]:
+    return (
+        VisualQACase(
+            case_id="layout/scatter_title_axes_grid",
+            title="Resolved layout scatter title axes and grid",
+            family="layout",
+            required_features=(
+                "resolved-layout",
+                "layout-snapshot-id",
+                "title-box",
+                "axis-label-box",
+                "grid-clip",
+            ),
+            builder=_layout_scatter_title_axes_grid,
+        ),
+        VisualQACase(
+            case_id="layout/reversed_explicit_tick_boxes",
+            title="Resolved layout reversed explicit tick boxes",
+            family="layout",
+            required_features=(
+                "resolved-layout",
+                "layout-snapshot-id",
+                "reversed-limits",
+                "explicit-ticks",
+                "tick-label-box",
+            ),
+            builder=_layout_reversed_explicit_tick_boxes,
         ),
     )
 
@@ -1581,6 +1625,181 @@ def _guide_view2d_reversed_explicit() -> VisualQAScene:
         },
         notes=(
             "Explicit guide ticks and labels pass through exactly while reversed View2D limits flip the panel direction.",
+        ),
+    )
+
+
+def _layout_scatter_title_axes_grid() -> VisualQAScene:
+    view = View2D(
+        id="view:s034-layout-scatter",
+        panel_id="panel:main",
+        x_range=(-2.5, 2.5),
+        y_range=(0.0, 2.2),
+    )
+    positions = np.array(
+        [[-2.0, 1.0], [-1.0, 0.2], [0.0, 1.4], [1.0, 0.4], [2.0, 1.8]],
+        dtype=np.float32,
+    )
+    colors = np.array(
+        [
+            [75, 162, 198, 220],
+            [255, 178, 45, 220],
+            [87, 198, 96, 220],
+            [232, 85, 88, 220],
+            [180, 145, 210, 220],
+        ],
+        dtype=np.uint8,
+    )
+    sizes = np.array([18.0, 36.0, 52.0, 68.0, 78.0], dtype=np.float32)
+    visual = PointVisual(
+        id="visual:s034-layout-scatter",
+        positions=positions,
+        colors=colors,
+        sizes=sizes,
+        coordinate_space=CoordinateSpace.DATA,
+    )
+    guide_style = AxisGuideStyle(
+        axis_label_font_size_px=15.0,
+        tick_label_font_size_px=12.0,
+        tick_length_px=5.0,
+        tick_width_px=1.2,
+        tick_label_padding_px=4.0,
+        axis_label_padding_px=8.0,
+        grid_width_px=1.0,
+    )
+    axis_guides = (
+        AxisGuide(
+            id="guide:s034-layout-x",
+            view_id=view.id,
+            dimension=AxisDimension.X,
+            side=AxisSide.BOTTOM,
+            label_text="x",
+            grid_visible=True,
+            style=guide_style,
+        ),
+        AxisGuide(
+            id="guide:s034-layout-y",
+            view_id=view.id,
+            dimension=AxisDimension.Y,
+            side=AxisSide.LEFT,
+            label_text="signal",
+            grid_visible=True,
+            style=guide_style,
+        ),
+    )
+    title = PanelTextGuide(
+        id="guide:s034-layout-title",
+        panel_id=view.panel_id,
+        role=PanelTextRole.TITLE,
+        text="S034 resolved layout scatter",
+        style=PanelTextGuideStyle(title_font_size_px=18.0, guide_margin_px=9.0),
+    )
+    return VisualQAScene(
+        case_id="layout/scatter_title_axes_grid",
+        visuals=(visual,),
+        axis_guides=axis_guides,
+        panel_text_guides=(title,),
+        views=(view,),
+        arrays={
+            "point_positions": positions,
+            "point_colors": colors,
+            "point_sizes": sizes,
+        },
+        notes=(
+            "The title, axis labels, tick labels, and grid clip rectangle must resolve outside the data plot rectangle using one layout snapshot.",
+        ),
+    )
+
+
+def _layout_reversed_explicit_tick_boxes() -> VisualQAScene:
+    view = View2D(
+        id="view:s034-layout-reversed",
+        panel_id="panel:main",
+        x_range=(1.0, -1.0),
+        y_range=(2.0, -2.0),
+    )
+    positions = np.array(
+        [[0.85, 1.6], [0.25, 0.4], [-0.15, -0.5], [-0.85, -1.4]],
+        dtype=np.float32,
+    )
+    colors = np.array(
+        [
+            [42, 157, 143, 255],
+            [38, 70, 83, 255],
+            [230, 57, 70, 255],
+            [251, 191, 36, 255],
+        ],
+        dtype=np.uint8,
+    )
+    sizes = np.array([42.0, 54.0, 54.0, 42.0], dtype=np.float32)
+    visual = PointVisual(
+        id="visual:s034-layout-reversed-points",
+        positions=positions,
+        colors=colors,
+        sizes=sizes,
+        coordinate_space=CoordinateSpace.DATA,
+    )
+    guide_style = AxisGuideStyle(
+        axis_label_font_size_px=14.0,
+        tick_label_font_size_px=11.0,
+        tick_length_px=5.0,
+        tick_width_px=1.0,
+        tick_label_padding_px=4.0,
+        axis_label_padding_px=7.0,
+        grid_width_px=0.9,
+    )
+    axis_guides = (
+        AxisGuide(
+            id="guide:s034-layout-reversed-x",
+            view_id=view.id,
+            dimension=AxisDimension.X,
+            side=AxisSide.BOTTOM,
+            label_text="reversed x",
+            grid_visible=True,
+            tick_spec=TickSpec(
+                kind=TickSpecKind.EXPLICIT,
+                explicit_values=(1.0, 0.0, -1.0),
+                explicit_labels=("right", "center", "left"),
+                target_count=None,
+            ),
+            style=guide_style,
+        ),
+        AxisGuide(
+            id="guide:s034-layout-reversed-y",
+            view_id=view.id,
+            dimension=AxisDimension.Y,
+            side=AxisSide.LEFT,
+            label_text="reversed y",
+            grid_visible=True,
+            tick_spec=TickSpec(
+                kind=TickSpecKind.EXPLICIT,
+                explicit_values=(2.0, 0.0, -2.0),
+                explicit_labels=("top", "center", "bottom"),
+                target_count=None,
+            ),
+            style=guide_style,
+        ),
+    )
+    title = PanelTextGuide(
+        id="guide:s034-layout-reversed-title",
+        panel_id=view.panel_id,
+        role=PanelTextRole.TITLE,
+        text="S034 reversed layout ticks",
+        style=PanelTextGuideStyle(title_font_size_px=17.0, guide_margin_px=8.0),
+    )
+    return VisualQAScene(
+        case_id="layout/reversed_explicit_tick_boxes",
+        visuals=(visual,),
+        axis_guides=axis_guides,
+        panel_text_guides=(title,),
+        views=(view,),
+        arrays={
+            "point_positions": positions,
+            "point_colors": colors,
+            "point_sizes": sizes,
+        },
+        notes=(
+            "Explicit reversed tick labels must preserve semantic values while their resolved label boxes carry the same layout snapshot id as the render.",
         ),
     )
 

@@ -47,7 +47,9 @@ remain classified as adapted.
    conservative capability reporting; implementation proofs remain pending.
 4. Grid clipping proof or explicit unsupported diagnostic.
 5. Tiered visual QA fixtures and review report classification. Review classification fields
-   completed in M137; additional layout-specific fixtures remain pending.
+   completed in M137; initial S034 layout-specific Matplotlib fixtures and snapshot report fields
+   completed in M142; resized viewport, device-scale, legend, and Datoviz-native layout proofs
+   remain pending.
 6. Layout-aware guide query/readback. Matplotlib snapshot guide query completed in M138; full
    scoped/all-rendered integration completed in M139; Datoviz guide query and readback remain
    pending.

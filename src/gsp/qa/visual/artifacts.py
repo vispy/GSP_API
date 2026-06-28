@@ -481,6 +481,16 @@ def _axis_guide_json(guide: AxisGuide) -> dict[str, object]:
             "target_count": guide.tick_spec.target_count,
         },
         "query_policy": guide.query_policy.value,
+        "style": {
+            "axis_label_font_size_px": guide.style.axis_label_font_size_px,
+            "tick_label_font_size_px": guide.style.tick_label_font_size_px,
+            "tick_length_px": guide.style.tick_length_px,
+            "tick_width_px": guide.style.tick_width_px,
+            "tick_label_padding_px": guide.style.tick_label_padding_px,
+            "axis_label_padding_px": guide.style.axis_label_padding_px,
+            "grid_width_px": guide.style.grid_width_px,
+            "guide_margin_px": guide.style.guide_margin_px,
+        },
     }
 
 
@@ -491,6 +501,10 @@ def _panel_text_guide_json(guide: PanelTextGuide) -> dict[str, object]:
         "role": guide.role.value,
         "text": guide.text,
         "query_policy": guide.query_policy.value,
+        "style": {
+            "title_font_size_px": guide.style.title_font_size_px,
+            "guide_margin_px": guide.style.guide_margin_px,
+        },
     }
 
 

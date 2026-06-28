@@ -201,3 +201,9 @@ Review-pack capability matrices preserve the legacy coarse row `status` while al
 `fail.semantic`, `fail.layout`, `fail.query`, and `unsupported.capability`. Existing rendered
 strict rows classify as `pass.semantic_strict`; adapted Datoviz guide rows classify as
 `review.adapted` until layout snapshots and guide query/readback are implemented.
+
+The initial S034 layout QA suite includes Matplotlib reference fixtures for scatter title/axis/grid
+geometry and reversed explicit tick-label layout. Matplotlib report rows for guide/layout scenes
+record `layout_snapshot_id` plus compact plot, grid-clip, title-box, axis-label-box, and tick-label
+box metadata. These artifacts support layout review but do not by themselves promote any backend to
+full `layout_strict`.

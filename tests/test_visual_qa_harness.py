@@ -21,6 +21,7 @@ from gsp.qa.visual.cases import (
     S026_SUITE,
     S027_SUITE,
     S028_SUITE,
+    S034_SUITE,
     get_case,
     list_cases,
 )
@@ -1064,6 +1065,56 @@ def test_s028_datoviz_guide_path_configures_view2d_before_data_visuals(
         ),
         atol=1e-6,
     )
+
+
+def test_s034_case_registry_extends_s028_with_layout_cases() -> None:
+    """S034 adds resolved-layout QA cases after S028 guide/View2D cases."""
+    case_ids = [case.case_id for case in list_cases(suite=S034_SUITE)]
+
+    assert case_ids[-2:] == [
+        "layout/scatter_title_axes_grid",
+        "layout/reversed_explicit_tick_boxes",
+    ]
+
+
+def test_s034_layout_visual_qa_run_reports_matplotlib_layout_snapshots(
+    tmp_path: Path,
+) -> None:
+    """S034 Matplotlib QA rows expose the resolved layout snapshot used by rendering."""
+    report = run_visual_qa_suite(
+        suite=S034_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=(
+            "layout/scatter_title_axes_grid",
+            "layout/reversed_explicit_tick_boxes",
+        ),
+        run_id="test-s034-layout",
+        resolution=(360, 240),
+    )
+
+    assert report["stage"] == "S034"
+    assert (tmp_path / "contact_sheets" / "s034_all_cases.png").stat().st_size > 0
+    scene = json.loads(
+        (tmp_path / "scenes" / "layout_scatter_title_axes_grid.scene.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert scene["views"][0]["x_range"] == [-2.5, 2.5]
+    assert scene["axis_guides"][0]["style"]["tick_label_font_size_px"] == 12.0
+    assert scene["panel_text_guides"][0]["style"]["title_font_size_px"] == 18.0
+
+    for case in report["cases"]:
+        backend = case["backends"]["matplotlib"]
+        assert backend["status"] == "rendered"
+        assert backend["layout_snapshot_id"].startswith("layout:")
+        snapshot = backend["layout_snapshot"]
+        assert snapshot["snapshot_id"] == backend["layout_snapshot_id"]
+        assert snapshot["plot_rect_px"]["width"] > 0.0
+        assert snapshot["grid_clip_rect_px"] == snapshot["plot_rect_px"]
+        assert snapshot["title_boxes"][0]["kind"] == "title"
+        assert len(snapshot["axis_label_boxes"]) == 2
+        assert snapshot["tick_label_box_count"] > 0
 
 
 def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:

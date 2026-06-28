@@ -24,6 +24,7 @@ from gsp.protocol import (
     ColorbarGuide,
     CoordinateSpace,
     ImageVisual,
+    LogicalPixelRect,
     MeshVisual,
     MarkerVisual,
     PanelTextGuide,
@@ -34,6 +35,8 @@ from gsp.protocol import (
     TextAnchorY,
     TextVisual,
     TickSpecKind,
+    ResolvedGuideBox,
+    ResolvedLayoutSnapshot,
     View2D,
 )
 from gsp.qa.visual.artifacts import (
@@ -59,6 +62,7 @@ from gsp.qa.visual.cases import (
     S026_SUITE,
     S027_SUITE,
     S028_SUITE,
+    S034_SUITE,
     case_slug,
     list_cases,
 )
@@ -80,6 +84,7 @@ from gsp_matplotlib.protocol_renderer import (
     render_text_visual,
 )
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
+from gsp_matplotlib.layout import resolve_matplotlib_layout_snapshot
 
 
 BackendStatus = Literal["rendered", "unsupported", "error"]
@@ -117,6 +122,7 @@ def run_visual_qa_suite(
         S026_SUITE,
         S027_SUITE,
         S028_SUITE,
+        S034_SUITE,
     ):
         raise ValueError(f"unknown visual QA suite: {suite}")
     normalized_backends = _normalize_backends(backends)
@@ -269,6 +275,7 @@ def _run_matplotlib(
         fig.patch.set_facecolor("white")
         ax.set_facecolor("white")
         has_layout_guides = bool(axis_guides or panel_text_guides)
+        layout_snapshot: ResolvedLayoutSnapshot | None = None
         if not has_layout_guides:
             ax.set_position((0.0, 0.0, 1.0, 1.0))
         ax.set_xlim(-1.0, 1.0)
@@ -294,14 +301,26 @@ def _run_matplotlib(
             render_panel_text_guides(ax, panel_text_guides)
         if has_layout_guides:
             fig.tight_layout(pad=0.8)
+            layout_snapshot = resolve_matplotlib_layout_snapshot(
+                fig,
+                ax,
+                snapshot_id=f"layout:{case_slug(case.case_id)}:matplotlib",
+                view=view,
+                axis_guides=axis_guides,
+                panel_text_guides=panel_text_guides,
+            )
         fig.savefig(artifact_path, dpi=100, facecolor=fig.get_facecolor())
         log_path.write_text("rendered\n", encoding="utf-8")
-        return {
+        report: dict[str, object] = {
             "backend_id": "matplotlib",
             "status": "rendered",
             "artifact_path": str(artifact_path),
             "log_path": str(log_path),
         }
+        if layout_snapshot is not None:
+            report["layout_snapshot_id"] = layout_snapshot.snapshot_id
+            report["layout_snapshot"] = _layout_snapshot_report(layout_snapshot)
+        return report
     except Exception as exc:  # noqa: BLE001 - report renderer failures as artifacts.
         log_path.write_text(traceback.format_exc(), encoding="utf-8")
         return {
@@ -313,6 +332,49 @@ def _run_matplotlib(
         }
     finally:
         plt.close(fig)
+
+
+def _layout_snapshot_report(snapshot: ResolvedLayoutSnapshot) -> dict[str, object]:
+    return {
+        "snapshot_id": snapshot.snapshot_id,
+        "view_id": snapshot.view_id,
+        "render_target": {
+            "logical_width_px": snapshot.render_target.logical_width_px,
+            "logical_height_px": snapshot.render_target.logical_height_px,
+            "device_scale": snapshot.render_target.device_scale,
+            "dpi": snapshot.render_target.dpi,
+            "pixel_origin": snapshot.render_target.pixel_origin.value,
+        },
+        "panel_rect_px": _rect_report(snapshot.panel_rect_px),
+        "plot_rect_px": _rect_report(snapshot.plot_rect_px),
+        "grid_clip_rect_px": (
+            _rect_report(snapshot.grid_clip_rect_px)
+            if snapshot.grid_clip_rect_px is not None
+            else None
+        ),
+        "title_boxes": [_guide_box_report(box) for box in snapshot.title_boxes],
+        "axis_label_boxes": [_guide_box_report(box) for box in snapshot.axis_label_boxes],
+        "tick_label_box_count": len(snapshot.tick_label_boxes),
+        "guide_box_count": len(snapshot.guide_boxes),
+    }
+
+
+def _guide_box_report(box: ResolvedGuideBox) -> dict[str, object]:
+    return {
+        "guide_id": box.guide_id,
+        "kind": box.kind,
+        "role": box.role,
+        "rect_px": _rect_report(box.rect_px),
+    }
+
+
+def _rect_report(rect: LogicalPixelRect) -> dict[str, float]:
+    return {
+        "x": rect.x,
+        "y": rect.y,
+        "width": rect.width,
+        "height": rect.height,
+    }
 
 
 def _run_datoviz(
