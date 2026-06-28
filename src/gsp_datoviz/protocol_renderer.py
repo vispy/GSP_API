@@ -63,6 +63,7 @@ from gsp.protocol.color_mapping import (
     resolve_color_scale,
 )
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
+from gsp_datoviz.v04_import import bootstrap_datoviz_v04_source
 from gsp_datoviz.capabilities import (
     datoviz_v04_axis_provider_capability,
     datoviz_v04_capability_snapshot,
@@ -337,6 +338,7 @@ def datoviz_v04_text_ready(module: ModuleType | Any) -> bool:
 
 def import_datoviz_v04() -> ModuleType:
     """Import Datoviz and validate the C-shaped v0.4 facade."""
+    bootstrap_datoviz_v04_source()
     try:
         import datoviz as dvz
 

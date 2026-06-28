@@ -58,3 +58,4 @@ Remaining review notes:
 
 - Datoviz live comparison should be reviewed manually with `--backend datoviz --live`.
 - Datoviz PNG capture remains opt-in via `--datoviz-offscreen` or `GSP_DATOVIZ_QA_ENABLE_OFFSCREEN=1` because native offscreen setup can be environment-sensitive.
+- Follow-up: v0.4 adapter import now auto-discovers the sibling `../datoviz` source checkout for review/live commands; override with `GSP_DATOVIZ_SOURCE`.

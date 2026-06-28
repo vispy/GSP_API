@@ -232,7 +232,10 @@ def _run_datoviz(
             else:
                 path.write_bytes(renderer.capture_png_bytes())
         log_path.write_text("rendered\n", encoding="utf-8")
-        return {"backend": "datoviz", "status": "rendered", "path": str(path), "log_path": str(log_path)}
+        report = {"backend": "datoviz", "status": "rendered", "log_path": str(log_path)}
+        if not live:
+            report["path"] = str(path)
+        return report
     except Exception as exc:  # noqa: BLE001 - local Datoviz availability varies.
         log_path.write_text(traceback.format_exc(), encoding="utf-8")
         payload = {"backend": "datoviz", "status": "unsupported", "reason": f"{type(exc).__name__}: {exc}", "log_path": str(log_path)}

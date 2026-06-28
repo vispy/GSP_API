@@ -38,7 +38,9 @@ Artifacts are written under `artifacts/example_review/<example>/`.
 
 ## Datoviz capture note
 
-Datoviz live mode is the recommended interactive review path. Offscreen PNG capture is opt-in because native offscreen creation can abort in some local GPU/display configurations:
+Datoviz live mode is the recommended interactive review path. The v0.4 adapter automatically prefers a sibling `../datoviz` source checkout when present; set `GSP_DATOVIZ_SOURCE=/path/to/datoviz` to override, or `GSP_DATOVIZ_SOURCE=none` to disable this.
+
+Offscreen PNG capture is opt-in because native offscreen creation can abort in some local GPU/display configurations:
 
 ```bash
 GSP_DATOVIZ_QA_ENABLE_OFFSCREEN=1 tools/compare-review-examples examples/review/01_scatter_basic.py

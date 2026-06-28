@@ -20,6 +20,7 @@ from gsp.protocol import (
     TransformPlacement,
 )
 from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics
+from gsp_datoviz.v04_import import bootstrap_datoviz_v04_source
 
 
 DATOVIZ_V04_AXIS_PROVIDER = "datoviz.v04.panel_axis.wip"
@@ -101,6 +102,7 @@ def datoviz_v04_capability_snapshot(dvz: ModuleType | Any | None = None) -> Capa
     diagnostics: tuple[str, ...] = ()
 
     if dvz is None:
+        bootstrap_datoviz_v04_source()
         try:
             import datoviz as imported_dvz
         except ModuleNotFoundError:
@@ -316,6 +318,7 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
     advertised only when the Python facade/raw binding exposes the verified symbols.
     """
     if dvz is None:
+        bootstrap_datoviz_v04_source()
         try:
             import datoviz as imported_dvz
         except ModuleNotFoundError:
