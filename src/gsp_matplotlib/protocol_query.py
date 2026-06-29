@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from math import sqrt
 from typing import Iterable
 
@@ -73,6 +73,8 @@ def query_visuals(
             status=QueryStatus.OUTSIDE_PANEL,
             hit=False,
             panel_coordinate=request.coordinate,
+            layout_snapshot_id=request.layout_snapshot_id,
+            view_snapshot_id=request.view_snapshot_id,
         )
 
     hits: list[QueryResult] = []
@@ -107,7 +109,7 @@ def query_visuals(
         else:
             hit = None
         if hit is not None:
-            hits.append(hit)
+            hits.append(_with_request_snapshots(hit, request))
 
     if not hits:
         return QueryResult(
@@ -115,6 +117,8 @@ def query_visuals(
             status=QueryStatus.MISS,
             hit=False,
             panel_coordinate=request.coordinate,
+            layout_snapshot_id=request.layout_snapshot_id,
+            view_snapshot_id=request.view_snapshot_id,
         )
     if request.hit_policy == QueryHitPolicy.ALL:
         return QueryResult(
@@ -123,6 +127,8 @@ def query_visuals(
             hit=True,
             panel_coordinate=request.coordinate,
             hits=tuple(hit.hits[0] for hit in hits),
+            layout_snapshot_id=request.layout_snapshot_id,
+            view_snapshot_id=request.view_snapshot_id,
         )
     return hits[0]
 
@@ -135,6 +141,8 @@ def unsupported_query_result(request: QueryRequest, diagnostic: str) -> QueryRes
         hit=False,
         panel_coordinate=request.coordinate,
         diagnostic=diagnostic,
+        layout_snapshot_id=request.layout_snapshot_id,
+        view_snapshot_id=request.view_snapshot_id,
     )
 
 
@@ -146,6 +154,16 @@ def failed_query_result(request: QueryRequest, diagnostic: str) -> QueryResult:
         hit=False,
         panel_coordinate=request.coordinate,
         diagnostic=diagnostic,
+        layout_snapshot_id=request.layout_snapshot_id,
+        view_snapshot_id=request.view_snapshot_id,
+    )
+
+
+def _with_request_snapshots(result: QueryResult, request: QueryRequest) -> QueryResult:
+    return replace(
+        result,
+        layout_snapshot_id=result.layout_snapshot_id or request.layout_snapshot_id,
+        view_snapshot_id=result.view_snapshot_id or request.view_snapshot_id,
     )
 
 

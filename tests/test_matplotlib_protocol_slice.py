@@ -23,11 +23,13 @@ from gsp.protocol import (
     ImageColormap,
     ImageOrigin,
     ImageVisual,
+    LogicalPixelRect,
     MeshColorMode,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
     LinearNormalize,
+    PanByAction,
     PanelTextGuide,
     PanelTextRole,
     PathVisual,
@@ -45,10 +47,13 @@ from gsp.protocol import (
     TextAnchorY,
     TextVisual,
     View2D,
+    View2DNavigationController,
     VisualTransformBinding,
 )
 from gsp_matplotlib.color_mapping import map_scalar_values
 from gsp_matplotlib.layout_query import query_resolved_layout_guides
+from gsp_matplotlib.navigation import apply_view2d_navigation_action
+from gsp_matplotlib.protocol_query import QueryVisualEntry, query_visuals
 from gsp.protocol.visuals import ImageInterpolation
 from gsp_matplotlib.protocol_renderer import (
     _marker_areas_from_pixel_diameters,
@@ -196,6 +201,108 @@ def test_render_protocol_scene_with_reference_canvas_resolves_matplotlib_size():
         )
     finally:
         plt.close(result.figure)
+
+
+def test_programmatic_navigation_render_and_query_share_view_snapshot():
+    view = View2D(
+        id="view:main",
+        panel_id="panel:main",
+        x_range=(0.0, 10.0),
+        y_range=(0.0, 10.0),
+    )
+    controller = View2DNavigationController(
+        id="nav:main",
+        panel_id=view.panel_id,
+        view_id=view.id,
+        current_view2d_revision="view-rev:1",
+        home_view=view,
+    )
+    panel_rect = LogicalPixelRect(x=0.0, y=0.0, width=1000.0, height=1000.0)
+    action = PanByAction(
+        controller_id=controller.id,
+        view2d_revision=controller.current_view2d_revision,
+        dx_px=100.0,
+        dy_px=0.0,
+        layout_snapshot_id="layout:nav",
+    )
+    point = PointVisual(
+        id="visual:points",
+        positions=np.array([[5.0, 5.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+        sizes=np.array([16.0], dtype=np.float32),
+        coordinate_space=CoordinateSpace.DATA,
+    )
+
+    navigation = apply_view2d_navigation_action(
+        controller,
+        view,
+        panel_rect,
+        action,
+        next_view2d_revision="view-rev:2",
+        view_snapshot_id="view-snapshot:2",
+        expected_layout_snapshot_id="layout:nav",
+    )
+
+    assert navigation.accepted
+    assert navigation.view is not None
+    assert navigation.view.x_range == pytest.approx((-1.0, 9.0))
+
+    render = render_protocol_scene_with_layout(
+        visuals=(point,),
+        view=navigation.view,
+        snapshot_id="layout:nav",
+        view_snapshot_id=navigation.view_snapshot_id,
+    )
+    try:
+        assert render.layout_snapshot_id == navigation.layout_snapshot_id
+        assert render.view_snapshot_id == navigation.view_snapshot_id
+        assert render.layout_snapshot.view_id == navigation.view.id
+        assert render.axes.get_xlim() == pytest.approx(navigation.view.x_range)
+
+        query = query_visuals(
+            QueryRequest(
+                id="query:nav-point",
+                panel_id=view.panel_id,
+                coordinate=(5.0, 5.0),
+                layout_snapshot_id=render.layout_snapshot_id,
+                view_snapshot_id=render.view_snapshot_id,
+            ),
+            [QueryVisualEntry(point)],
+            view=navigation.view,
+        )
+
+        assert query.status == QueryStatus.HIT
+        assert query.visual_id == point.id
+        assert query.layout_snapshot_id == render.layout_snapshot_id
+        assert query.view_snapshot_id == render.view_snapshot_id
+    finally:
+        plt.close(render.figure)
+
+
+def test_programmatic_navigation_rejects_stale_view_revision():
+    view = View2D(id="view:main", panel_id="panel:main")
+    controller = View2DNavigationController(
+        id="nav:main",
+        panel_id=view.panel_id,
+        view_id=view.id,
+        current_view2d_revision="view-rev:2",
+    )
+
+    result = apply_view2d_navigation_action(
+        controller,
+        view,
+        LogicalPixelRect(x=0.0, y=0.0, width=100.0, height=100.0),
+        PanByAction(
+            controller_id=controller.id,
+            view2d_revision="view-rev:1",
+            dx_px=1.0,
+            dy_px=0.0,
+        ),
+        next_view2d_revision="view-rev:3",
+    )
+
+    assert not result.accepted
+    assert "GSP_NAVIGATION_STALE_VIEW" in result.diagnostics[0]
 
 
 def test_render_point_visual_converts_pixel_diameters_using_figure_dpi():

@@ -245,6 +245,7 @@ class QueryRequest:
     requested_extension_payload_kinds: tuple[str, ...] = ()
     freshness_policy: str = "latest"
     layout_snapshot_id: str | None = None
+    view_snapshot_id: str | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.id)
@@ -254,6 +255,11 @@ class QueryRequest:
                 validate_id(self.layout_snapshot_id)
             except ValueError as exc:
                 raise ValueError(f"layout_snapshot_id invalid: {exc}") from exc
+        if self.view_snapshot_id is not None:
+            try:
+                validate_id(self.view_snapshot_id)
+            except ValueError as exc:
+                raise ValueError(f"view_snapshot_id invalid: {exc}") from exc
         if not self.requested_payload:
             raise ValueError("requested_payload must not be empty")
         for kind in self.requested_extension_payload_kinds:
@@ -311,6 +317,7 @@ class QueryResult:
     extension_payload: object | None = None
     diagnostic: str | None = None
     layout_snapshot_id: str | None = None
+    view_snapshot_id: str | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.request_id)
@@ -319,6 +326,11 @@ class QueryResult:
                 validate_id(self.layout_snapshot_id)
             except ValueError as exc:
                 raise ValueError(f"layout_snapshot_id invalid: {exc}") from exc
+        if self.view_snapshot_id is not None:
+            try:
+                validate_id(self.view_snapshot_id)
+            except ValueError as exc:
+                raise ValueError(f"view_snapshot_id invalid: {exc}") from exc
         if self.status == QueryStatus.HIT and not self.hit:
             raise ValueError("hit results must set hit=True")
         if self.status != QueryStatus.HIT and self.hit:

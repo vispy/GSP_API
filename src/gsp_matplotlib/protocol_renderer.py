@@ -129,6 +129,7 @@ class MatplotlibProtocolRenderResult:
     axes: matplotlib.axes.Axes
     layout_snapshot: ResolvedLayoutSnapshot
     resolved_canvas: ResolvedCanvas
+    view_snapshot_id: str | None = None
 
     @property
     def layout_snapshot_id(self) -> str:
@@ -151,6 +152,7 @@ def render_protocol_scene_with_layout(
     canvas_size: CanvasSize | None = None,
     output_dpi: float | None = None,
     device_scale: float = 1.0,
+    view_snapshot_id: str | None = None,
 ) -> MatplotlibProtocolRenderResult:
     """Render a protocol scene and report the resolved layout snapshot used."""
     if axes is None:
@@ -219,7 +221,13 @@ def render_protocol_scene_with_layout(
         panel_text_guides=panel_text_guide_tuple,
         device_scale=device_scale,
     )
-    return MatplotlibProtocolRenderResult(figure, axes, snapshot, resolved_canvas)
+    return MatplotlibProtocolRenderResult(
+        figure,
+        axes,
+        snapshot,
+        resolved_canvas,
+        view_snapshot_id=view_snapshot_id,
+    )
 
 
 def _render_protocol_visual(

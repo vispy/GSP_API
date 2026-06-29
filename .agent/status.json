@@ -209,7 +209,7 @@
       "id": "S035",
       "title": "Retained View2D Navigation and Pan/Zoom",
       "state": "in_progress",
-      "progress": 40
+      "progress": 60
     }
   ],
   "missions": [
@@ -1549,16 +1549,16 @@
       "id": "M150",
       "title": "S035 Matplotlib programmatic navigation reference",
       "stage": "S035",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 150
     },
     {
       "id": "M151",
       "title": "S035 Datoviz retained View2D proof",
       "stage": "S035",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 151
@@ -1642,9 +1642,9 @@
     }
   ],
   "recommendations": [
-    "Run M150 next: wire programmatic View2D navigation into the Matplotlib reference render/query path.",
-    "Keep live GUI adapters blocked until programmatic render/query coherence is proven.",
-    "For Datoviz, require retained panel/view/projection or uniform-state updates during pan/zoom and verify unchanged visual buffers are not re-uploaded."
+    "Run M151 next: prove Datoviz retained View2D pan/zoom updates panel/view state without visual buffer re-upload.",
+    "Keep live GUI adapters blocked until the Datoviz retained-update proof is complete.",
+    "Instrument Datoviz fake/runtime paths to verify unchanged point/image/mesh buffers are not re-uploaded during navigation."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",

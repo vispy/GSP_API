@@ -130,9 +130,11 @@ def test_query_request_and_result_can_identify_layout_snapshot():
         hit=False,
         panel_coordinate=(10, 20),
         layout_snapshot_id=request.layout_snapshot_id,
+        view_snapshot_id="view-snapshot:main",
     )
 
     assert result.layout_snapshot_id == "layout:main"
+    assert result.view_snapshot_id == "view-snapshot:main"
 
     with pytest.raises(ValueError, match="layout_snapshot_id"):
         QueryRequest(
@@ -140,6 +142,14 @@ def test_query_request_and_result_can_identify_layout_snapshot():
             panel_id="panel:main",
             coordinate=(0, 0),
             layout_snapshot_id="bad id",
+        )
+
+    with pytest.raises(ValueError, match="view_snapshot_id"):
+        QueryRequest(
+            id="query:bad",
+            panel_id="panel:main",
+            coordinate=(0, 0),
+            view_snapshot_id="bad id",
         )
 
 
@@ -186,6 +196,7 @@ def test_backend_capability_postures_are_explicit_for_layout_work():
     assert not mpl.layout_capability.layout_strict
     assert mpl.query_layout_capability.reports_layout_snapshot_id
     assert mpl.guide_layout_capability.panel_text_participates_in_layout
+    assert mpl.supports_navigation_capability("interaction.view2d.navigation.v1")
 
     assert dvz.layout_capability.semantic_guides
     assert dvz.layout_capability.resolved_layout_produce == "none"
