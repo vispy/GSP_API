@@ -98,6 +98,43 @@ Use this checklist before approving release preparation.
 
 Defer release only for API-shape problems, broken Matplotlib reference behavior, misleading docs/support claims, or Datoviz differences that contradict the advertised capability matrix. Local Datoviz offscreen capture being unsupported is not itself a release blocker.
 
+## Datoviz HiDPI Fix Acceptance
+
+Use this gate after the upstream Datoviz live high-DPI/text-anchor fix lands and the local Datoviz checkout is rebuilt.
+
+1. Confirm the review runner uses the fixed Datoviz checkout:
+
+   ```bash
+   GSP_DATOVIZ_SOURCE=/home/cyrille/GIT/Viz/datoviz tools/compare-review-examples --live-side-by-side examples/review/05_color_mapping_colorbar.py examples/review/06_text_labels.py
+   ```
+
+2. Run the focused offscreen review path:
+
+   ```bash
+   GSP_DATOVIZ_SOURCE=/home/cyrille/GIT/Viz/datoviz tools/compare-review-examples --offscreen examples/review/05_color_mapping_colorbar.py examples/review/06_text_labels.py
+   ```
+
+3. Accept the Datoviz fix only if all of these hold:
+
+   | Check | Required result |
+   |---|---|
+   | Live canvas size | Datoviz and Matplotlib have the same apparent logical canvas size for the same `--resolution`. |
+   | Datoviz metrics | A requested `900x650` live view keeps logical size `900x650` and reports a physical framebuffer close to `900 * device_scale` by `650 * device_scale`. |
+   | No GSP workaround | GSP does not pass a Datoviz-only live-size multiplier or alter requested resolution for Datoviz. |
+   | Example 05 | The Datoviz colorbar is readable and does not overlap the plotted visual. |
+   | Example 06 | Datoviz text labels match Matplotlib anchor semantics closely enough for visual review. |
+   | Offscreen path | Examples 05 and 06 render or produce explicit unsupported status artifacts; no silent parity claim is made. |
+
+4. Run the full local validation after the focused review passes:
+
+   ```bash
+   uv run pytest tests/ -q
+   uv run mypy src/ --strict --show-error-codes
+   tools/compare-review-examples --offscreen
+   ```
+
+Keep Datoviz release claims adapted until this gate passes against the fixed Datoviz checkout.
+
 ## Offscreen Capture Note
 
 Live mode is the default interactive review path. The Datoviz v0.4 adapter automatically prefers a sibling `../datoviz` source checkout when present; set `GSP_DATOVIZ_SOURCE=/path/to/datoviz` to override, or `GSP_DATOVIZ_SOURCE=none` to disable this.
