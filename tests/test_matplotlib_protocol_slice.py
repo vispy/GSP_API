@@ -17,6 +17,7 @@ from gsp.protocol import (
     ColorMapRef,
     ColorScale,
     ColorbarGuide,
+    ColorbarGuideStyle,
     CoordinateSpace,
     FontRole,
     ImageColormap,
@@ -455,12 +456,14 @@ def test_render_colorbar_guide_uses_semantic_scale_and_ticks():
             label="Intensity",
             ticks=(0.0, 0.5, 1.0),
             tick_labels=("low", "mid", "high"),
+            style=ColorbarGuideStyle(ramp_width_px=40.0),
         )
 
         colorbar = render_colorbar_guide(ax, guide, color_scales={scale.id: scale})
 
         assert colorbar.ax.get_gid() == "guide:colorbar"
         assert colorbar.ax.get_ylabel() == "Intensity"
+        np.testing.assert_allclose(colorbar.ax.get_position().width, 40.0 / 640.0)
         np.testing.assert_allclose(colorbar.get_ticks(), [0.0, 0.5, 1.0])
         assert [tick.get_text() for tick in colorbar.ax.get_yticklabels()] == [
             "low",

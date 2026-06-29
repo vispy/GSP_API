@@ -1046,7 +1046,14 @@ class DatovizV04ProtocolRenderer:
 
         native_scale = self._create_native_colorbar_scale(scale, guide)
         desc = self.dvz.dvz_colorbar_desc()
-        _configure_colorbar_layout(self.dvz, desc, guide, self.width, self.height)
+        _configure_colorbar_layout(
+            self.dvz,
+            desc,
+            guide,
+            self.width,
+            self.height,
+            canvas_px_scale=self._canvas_px_scale(),
+        )
         if hasattr(desc, "anchor"):
             desc.anchor = _colorbar_anchor_value(self.dvz, guide.placement)
         if hasattr(desc, "title"):
@@ -2143,9 +2150,19 @@ def _colorbar_anchor_value(dvz: Any, placement: ColorbarPlacement | None) -> int
 
 
 def _configure_colorbar_layout(
-    dvz: Any, desc: Any, guide: ColorbarGuide, width: int, height: int
+    dvz: Any,
+    desc: Any,
+    guide: ColorbarGuide,
+    width: int,
+    height: int,
+    *,
+    canvas_px_scale: float,
 ) -> None:
     """Use a bounded colorbar placement for visual QA captures."""
+    ramp_width_px = float(guide.style.ramp_width_px * canvas_px_scale)
+    tick_length_px = float(guide.style.tick_length_px * canvas_px_scale)
+    label_gap_px = float(guide.style.label_gap_px * canvas_px_scale)
+    min_length_px = float(guide.style.min_length_px * canvas_px_scale)
     if hasattr(desc, "orientation"):
         desc.orientation = _colorbar_orientation_value(dvz, guide.orientation)
     if hasattr(desc, "placement_mode"):
@@ -2156,11 +2173,11 @@ def _configure_colorbar_layout(
             DVZ_COLORBAR_PLACEMENT_DETACHED,
         )
     if hasattr(desc, "ramp_width_px"):
-        desc.ramp_width_px = 18.0
+        desc.ramp_width_px = ramp_width_px
     if hasattr(desc, "tick_length_px"):
-        desc.tick_length_px = 6.0
+        desc.tick_length_px = tick_length_px
     if hasattr(desc, "label_gap_px"):
-        desc.label_gap_px = 6.0
+        desc.label_gap_px = label_gap_px
     placement = getattr(desc, "placement", None)
     if placement is None:
         return
@@ -2190,9 +2207,11 @@ def _configure_colorbar_layout(
     if hasattr(placement, "offset_y_px"):
         placement.offset_y_px = 0.0
     if hasattr(placement, "width_px"):
-        placement.width_px = 18.0
+        placement.width_px = ramp_width_px
     if hasattr(placement, "height_px"):
-        placement.height_px = max(160.0, float(height) * 0.62)
+        placement.height_px = max(
+            min_length_px, float(height) * guide.style.length_fraction
+        )
 
 
 def _configure_colorbar_format(dvz: Any, colorbar: Any) -> None:

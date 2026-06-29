@@ -594,20 +594,39 @@ def render_colorbar_guide(
         cmap=listed_colormap_for_scale(scale),
     )
     axes_box = axes.get_position()
+    canvas_width_px, canvas_height_px = _figure_canvas_size_px(axes.figure)
     if guide.orientation.value == "vertical":
-        width = axes_box.width * 0.035
+        width = guide.style.ramp_width_px / canvas_width_px
+        height = min(
+            axes_box.height,
+            max(
+                guide.style.min_length_px / canvas_height_px,
+                axes_box.height * guide.style.length_fraction,
+            ),
+        )
+        gap = guide.style.label_gap_px / canvas_width_px
+        y0 = axes_box.y0 + max(0.0, (axes_box.height - height) / 2.0)
         cax_bounds = (
-            min(0.965 - width, axes_box.x1 + axes_box.width * 0.035),
-            axes_box.y0 + axes_box.height * 0.18,
+            min(0.965 - width, axes_box.x1 + gap),
+            y0,
             width,
-            axes_box.height * 0.64,
+            height,
         )
     else:
-        height = axes_box.height * 0.045
+        height = guide.style.ramp_width_px / canvas_height_px
+        width = min(
+            axes_box.width,
+            max(
+                guide.style.min_length_px / canvas_width_px,
+                axes_box.width * guide.style.length_fraction,
+            ),
+        )
+        gap = guide.style.label_gap_px / canvas_height_px
+        x0 = axes_box.x0 + max(0.0, (axes_box.width - width) / 2.0)
         cax_bounds = (
-            axes_box.x0 + axes_box.width * 0.18,
-            max(0.035, axes_box.y0 - axes_box.height * 0.080),
-            axes_box.width * 0.64,
+            x0,
+            max(0.035, axes_box.y0 - gap - height),
+            width,
             height,
         )
     cax = axes.figure.add_axes(cax_bounds)
@@ -626,6 +645,15 @@ def render_colorbar_guide(
     colorbar.ax.yaxis.label.set_fontsize(8)
     colorbar.ax.set_gid(guide.id)
     return colorbar
+
+
+def _figure_canvas_size_px(figure: matplotlib.figure.Figure) -> tuple[float, float]:
+    resolved = getattr(figure, "_gsp_resolved_canvas", None)
+    if isinstance(resolved, ResolvedCanvas):
+        return resolved.canvas_width_px, resolved.canvas_height_px
+    width_in, height_in = figure.get_size_inches()
+    dpi = _logical_figure_dpi(figure)
+    return float(width_in * dpi), float(height_in * dpi)
 
 
 def _path_subpath_arrays(

@@ -30,6 +30,7 @@ from gsp.protocol import (
     AxisProviderRequest,
     CanvasSize,
     ColorbarGuide,
+    ColorbarGuideStyle,
     ColorMapId,
     ColorMapRef,
     ColorScale,
@@ -2096,13 +2097,13 @@ def test_add_colorbar_guide_creates_native_datoviz_scale_colormap_and_colorbar()
             1,
             6,
             b"value",
-            18.0,
+            36.0,
             6.0,
             6.0,
             0,
             2,
             1,
-            18.0,
+            36.0,
             372.0,
         )
     ]
@@ -2125,6 +2126,30 @@ def test_add_colorbar_guide_creates_native_datoviz_scale_colormap_and_colorbar()
         ("colorbar_set_title", "colorbar", b"value")
     ]
     assert renderer.colorbars[guide.id] == "colorbar"
+
+
+def test_add_colorbar_guide_scales_style_width_for_datoviz_framebuffer():
+    fake = FakeDatovizV04WithColorbar()
+    scale = _test_color_scale(colormap_id=ColorMapId.VIRIDIS)
+    canvas_size = CanvasSize.reference_px(320, 240).with_requested_device_scale(2.0)
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=fake,
+        color_scales={scale.id: scale},
+        canvas_size=canvas_size,
+    )
+    guide = ColorbarGuide(
+        id="guide:colorbar",
+        panel_id="panel:main",
+        color_scale_id=scale.id,
+        style=ColorbarGuideStyle(ramp_width_px=22.0, min_length_px=80.0),
+    )
+
+    renderer.add_colorbar_guide(guide)
+
+    colorbar_call = _calls(fake, "colorbar")[0]
+    assert colorbar_call[7] == 44.0
+    assert colorbar_call[13] == 44.0
+    assert colorbar_call[14] == max(160.0, 480.0 * 0.62)
 
 
 def test_add_colorbar_guide_rejects_missing_explicit_tick_facade():
