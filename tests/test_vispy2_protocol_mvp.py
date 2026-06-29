@@ -224,6 +224,7 @@ def test_vispy2_colorbar_emits_semantic_guide_and_renders():
         ticks=[-1.0, 0.0, 1.0],
         tick_labels=["low", "zero", "high"],
         linked_visual_ids=["visual:image"],
+        ramp_width_px=44.0,
         id="guide:colorbar",
     )
 
@@ -231,6 +232,7 @@ def test_vispy2_colorbar_emits_semantic_guide_and_renders():
     assert guide.color_scale_id == "scale:cividis"
     assert guide.orientation == ColorbarOrientation.HORIZONTAL
     assert guide.linked_visual_ids == ("visual:image",)
+    assert guide.style.ramp_width_px == 44.0
 
     ax.imshow(
         np.array([[0.0, 1.0]], dtype=np.float32),

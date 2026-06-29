@@ -22,6 +22,7 @@ from gsp.protocol import (
     ColorMapRef,
     ColorScale,
     ColorbarGuide,
+    ColorbarGuideStyle,
     ColorbarOrientation,
     ColorbarPlacement,
     CoordinateSpace,
@@ -180,8 +181,12 @@ class Figure:
             snapshot_id=snapshot_id,
             view=axes_model.view if axes_model is not None else None,
             axis_guides=tuple(axes_model.axis_guides) if axes_model is not None else (),
-            panel_text_guides=tuple(axes_model.panel_text_guides) if axes_model is not None else (),
-            colorbar_guides=tuple(axes_model.colorbar_guides) if axes_model is not None else (),
+            panel_text_guides=tuple(axes_model.panel_text_guides)
+            if axes_model is not None
+            else (),
+            colorbar_guides=tuple(axes_model.colorbar_guides)
+            if axes_model is not None
+            else (),
             color_scales={scale.id: scale for scale in self.color_scale_resources},
         )
 
@@ -407,6 +412,12 @@ class Axes:
         ticks: npt.ArrayLike | None = None,
         tick_labels: tuple[str, ...] | list[str] | None = None,
         linked_visual_ids: tuple[str, ...] | list[str] = (),
+        style: ColorbarGuideStyle | None = None,
+        ramp_width_px: float | None = None,
+        tick_length_px: float | None = None,
+        label_gap_px: float | None = None,
+        min_length_px: float | None = None,
+        length_fraction: float | None = None,
         id: str | None = None,
     ) -> ColorbarGuide:
         """Create semantic colorbar guide intent for a color scale."""
@@ -420,6 +431,14 @@ class Axes:
             label=label,
             ticks=_tick_values(ticks) if ticks is not None else (),
             tick_labels=tuple(tick_labels) if tick_labels is not None else None,
+            style=_colorbar_style(
+                style,
+                ramp_width_px=ramp_width_px,
+                tick_length_px=tick_length_px,
+                label_gap_px=label_gap_px,
+                min_length_px=min_length_px,
+                length_fraction=length_fraction,
+            ),
         )
         self.colorbar_guides.append(guide)
         return guide
@@ -1003,6 +1022,29 @@ def _colorbar_placement(
     if value is None or isinstance(value, ColorbarPlacement):
         return value
     return ColorbarPlacement(value)
+
+
+def _colorbar_style(
+    style: ColorbarGuideStyle | None,
+    *,
+    ramp_width_px: float | None,
+    tick_length_px: float | None,
+    label_gap_px: float | None,
+    min_length_px: float | None,
+    length_fraction: float | None,
+) -> ColorbarGuideStyle:
+    base = style or ColorbarGuideStyle()
+    return ColorbarGuideStyle(
+        ramp_width_px=base.ramp_width_px if ramp_width_px is None else ramp_width_px,
+        tick_length_px=base.tick_length_px
+        if tick_length_px is None
+        else tick_length_px,
+        label_gap_px=base.label_gap_px if label_gap_px is None else label_gap_px,
+        min_length_px=base.min_length_px if min_length_px is None else min_length_px,
+        length_fraction=base.length_fraction
+        if length_fraction is None
+        else length_fraction,
+    )
 
 
 def _positions(x: npt.ArrayLike, y: npt.ArrayLike | None) -> npt.NDArray[np.float32]:

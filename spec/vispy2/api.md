@@ -124,6 +124,10 @@ values, and `colorbar(...)`, but it must emit explicit GSP color scales and must
 Matplotlib `ScalarMappable` objects, Datoviz shader controls, backend colormap registries, or auto
 normalization as protocol semantics.
 
+`colorbar(...)` may expose GSP style conveniences such as `ramp_width_px`, `tick_length_px`,
+`label_gap_px`, `min_length_px`, and `length_fraction`. These lower to `ColorbarGuideStyle`; they
+are canvas/reference-pixel semantics, not backend-native colorbar objects.
+
 ## S027 transform/view direction
 
 S027 accepts producer conveniences for 2D affine transforms and deterministic view state, such as
