@@ -531,18 +531,20 @@ def render_colorbar_guide(
     )
     axes_box = axes.get_position()
     if guide.orientation.value == "vertical":
+        width = axes_box.width * 0.035
         cax_bounds = (
-            axes_box.x0 + axes_box.width * 0.82,
+            min(0.965 - width, axes_box.x1 + axes_box.width * 0.035),
             axes_box.y0 + axes_box.height * 0.18,
-            axes_box.width * 0.035,
+            width,
             axes_box.height * 0.64,
         )
     else:
+        height = axes_box.height * 0.045
         cax_bounds = (
             axes_box.x0 + axes_box.width * 0.18,
-            axes_box.y0 + axes_box.height * 0.10,
+            max(0.035, axes_box.y0 - axes_box.height * 0.080),
             axes_box.width * 0.64,
-            axes_box.height * 0.045,
+            height,
         )
     cax = axes.figure.add_axes(cax_bounds)
     colorbar = axes.figure.colorbar(

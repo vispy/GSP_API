@@ -2008,7 +2008,7 @@ def _configure_colorbar_layout(
             DVZ_VERTICAL_ANCHOR_CENTER,
         )
     if hasattr(placement, "offset_x_px"):
-        placement.offset_x_px = -max(76.0, float(width) * 0.115)
+        placement.offset_x_px = -max(48.0, float(width) * 0.060)
     if hasattr(placement, "offset_y_px"):
         placement.offset_y_px = 0.0
     if hasattr(placement, "width_px"):

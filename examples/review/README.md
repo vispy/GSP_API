@@ -17,6 +17,12 @@ Open both live windows sequentially:
 uv run python examples/review/01_scatter_basic.py --backend both
 ```
 
+Open Matplotlib and Datoviz live windows at the same time:
+
+```bash
+tools/compare-review-examples --live-side-by-side examples/review/01_scatter_basic.py
+```
+
 Capture and compare offscreen outputs:
 
 ```bash
@@ -60,7 +66,7 @@ Use this checklist before approving release preparation.
 4. If Datoviz offscreen capture is unavailable, run the live review path:
 
    ```bash
-   tools/compare-review-examples --live
+   tools/compare-review-examples --live-side-by-side
    ```
 
 5. Compare each Matplotlib result with Datoviz where available:

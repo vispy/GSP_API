@@ -14,10 +14,18 @@ def main() -> int:
     parser.add_argument("examples", nargs="*", type=Path, help="Review example files. Defaults to examples/review/[0-9]*.py.")
     parser.add_argument("--offscreen", action="store_true", help="Write PNG artifacts instead of opening live windows.")
     parser.add_argument("--live", action="store_false", dest="offscreen", help="Open live windows sequentially. This is the default.")
+    parser.add_argument(
+        "--live-side-by-side",
+        "--parallel-live",
+        action="store_true",
+        help="Open Matplotlib and Datoviz live windows at the same time for each example.",
+    )
     parser.add_argument("--datoviz-offscreen", action="store_true", dest="offscreen", help="Deprecated alias for --offscreen.")
     parser.add_argument("--resolution", default="900x650")
     parser.set_defaults(offscreen=False)
     args = parser.parse_args()
+    if args.offscreen and args.live_side_by_side:
+        parser.error("--live-side-by-side cannot be combined with --offscreen")
 
     examples = args.examples or sorted(Path("examples/review").glob("[0-9]*.py"))
     if not examples:
@@ -27,6 +35,9 @@ def main() -> int:
     failures = 0
     for example in examples:
         out_dir = Path("artifacts/example_review") / example.stem
+        if args.live_side_by_side:
+            failures += _run_parallel_live(example, out_dir, args.resolution)
+            continue
         cmd = [
             "uv",
             "run",
@@ -46,6 +57,36 @@ def main() -> int:
         if result.returncode != 0:
             failures += 1
     return 1 if failures else 0
+
+
+def _run_parallel_live(example: Path, out_dir: Path, resolution: str) -> int:
+    """Run both live backends concurrently for one review example."""
+    processes: list[subprocess.Popen[bytes]] = []
+    for backend in ("matplotlib", "datoviz"):
+        backend_out_dir = out_dir / "live" / backend
+        cmd = [
+            "uv",
+            "run",
+            "python",
+            str(example),
+            "--backend",
+            backend,
+            "--out-dir",
+            str(backend_out_dir),
+            "--resolution",
+            resolution,
+        ]
+        processes.append(subprocess.Popen(cmd))
+
+    try:
+        returncodes = [process.wait() for process in processes]
+    except KeyboardInterrupt:
+        for process in processes:
+            process.terminate()
+        for process in processes:
+            process.wait()
+        raise
+    return sum(1 for returncode in returncodes if returncode != 0)
 
 
 if __name__ == "__main__":
