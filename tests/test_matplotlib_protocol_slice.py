@@ -12,6 +12,7 @@ from gsp.protocol import (
     AxisDimension,
     AxisGuide,
     AxisSide,
+    CanvasSize,
     ColorMapId,
     ColorMapRef,
     ColorScale,
@@ -156,6 +157,42 @@ def test_render_protocol_scene_with_layout_reports_snapshot_id():
         )
         assert query.status == QueryStatus.HIT
         assert query.layout_snapshot_id == result.layout_snapshot_id
+    finally:
+        plt.close(result.figure)
+
+
+def test_render_protocol_scene_with_reference_canvas_resolves_matplotlib_size():
+    view = View2D(
+        id="view:main",
+        panel_id="panel:main",
+        x_range=(-1.0, 1.0),
+        y_range=(-1.0, 1.0),
+    )
+    point = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        colors=np.array([[255, 255, 255, 255]], dtype=np.uint8),
+        sizes=np.array([20.0], dtype=np.float32),
+    )
+
+    result = render_protocol_scene_with_layout(
+        visuals=(point,),
+        view=view,
+        canvas_size=CanvasSize.reference_px(960, 540, reference_dpi=96),
+        output_dpi=144,
+    )
+    try:
+        assert result.resolved_canvas.canvas_width_px == 960.0
+        assert result.resolved_canvas.framebuffer_width == 1440
+        assert result.resolved_canvas.framebuffer_height == 810
+        assert result.resolved_canvas.framebuffer_per_canvas_px == 1.5
+        np.testing.assert_allclose(
+            result.figure.get_size_inches(), np.array([10.0, 5.625])
+        )
+        collection = result.axes.collections[0]
+        np.testing.assert_allclose(
+            collection.get_sizes(), np.array([225.0], dtype=np.float32)
+        )
     finally:
         plt.close(result.figure)
 

@@ -175,8 +175,12 @@ class CanvasSize:
             canvas_height = self.height
             target_width_mm = canvas_width / self.reference_dpi * MM_PER_INCH
             target_height_mm = canvas_height / self.reference_dpi * MM_PER_INCH
-            framebuffer_width = int(round(canvas_width * raster_dpi / self.reference_dpi))
-            framebuffer_height = int(round(canvas_height * raster_dpi / self.reference_dpi))
+            framebuffer_width = int(
+                round(canvas_width * raster_dpi / self.reference_dpi)
+            )
+            framebuffer_height = int(
+                round(canvas_height * raster_dpi / self.reference_dpi)
+            )
             host_width = max(1, int(round(framebuffer_width / content_scale)))
             host_height = max(1, int(round(framebuffer_height / content_scale)))
             exactness = CanvasResolveExactness.APPROXIMATE
@@ -185,8 +189,12 @@ class CanvasSize:
             target_height_mm = self.height
             canvas_width = target_width_mm / MM_PER_INCH * self.reference_dpi
             canvas_height = target_height_mm / MM_PER_INCH * self.reference_dpi
-            framebuffer_width = int(round(canvas_width * raster_dpi / self.reference_dpi))
-            framebuffer_height = int(round(canvas_height * raster_dpi / self.reference_dpi))
+            framebuffer_width = int(
+                round(canvas_width * raster_dpi / self.reference_dpi)
+            )
+            framebuffer_height = int(
+                round(canvas_height * raster_dpi / self.reference_dpi)
+            )
             host_width = max(1, int(round(framebuffer_width / content_scale)))
             host_height = max(1, int(round(framebuffer_height / content_scale)))
             exactness = CanvasResolveExactness.APPROXIMATE
@@ -206,7 +214,8 @@ class CanvasSize:
             canvas_to_host_scale_x=float(host_width) / float(canvas_width),
             canvas_to_host_scale_y=float(host_height) / float(canvas_height),
             framebuffer_per_canvas_px_x=float(framebuffer_width) / float(canvas_width),
-            framebuffer_per_canvas_px_y=float(framebuffer_height) / float(canvas_height),
+            framebuffer_per_canvas_px_y=float(framebuffer_height)
+            / float(canvas_height),
             target_width_mm=float(target_width_mm),
             target_height_mm=float(target_height_mm),
             estimated_width_mm=float(target_width_mm),

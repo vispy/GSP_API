@@ -24,9 +24,12 @@ import numpy.typing as npt
 from gsp.protocol import (
     AffineTransform2DResource,
     AxisGuide,
+    CanvasMetricsSource,
+    CanvasSize,
     ColorScale,
     ColorbarGuide,
     PanelTextGuide,
+    ResolvedCanvas,
     ResolvedLayoutSnapshot,
     View2D,
 )
@@ -125,6 +128,7 @@ class MatplotlibProtocolRenderResult:
     figure: matplotlib.figure.Figure
     axes: matplotlib.axes.Axes
     layout_snapshot: ResolvedLayoutSnapshot
+    resolved_canvas: ResolvedCanvas
 
     @property
     def layout_snapshot_id(self) -> str:
@@ -144,6 +148,8 @@ def render_protocol_scene_with_layout(
     snapshot_id: str = "layout:matplotlib",
     figure: matplotlib.figure.Figure | None = None,
     axes: matplotlib.axes.Axes | None = None,
+    canvas_size: CanvasSize | None = None,
+    output_dpi: float | None = None,
     device_scale: float = 1.0,
 ) -> MatplotlibProtocolRenderResult:
     """Render a protocol scene and report the resolved layout snapshot used."""
@@ -151,11 +157,37 @@ def render_protocol_scene_with_layout(
         import matplotlib.pyplot as plt
 
         if figure is None:
-            figure, axes = plt.subplots()
+            figure = plt.figure()
+            resolved_canvas = _configure_matplotlib_canvas(
+                figure,
+                canvas_size=canvas_size,
+                output_dpi=output_dpi,
+                device_scale=device_scale,
+            )
+            axes = figure.add_subplot()
         else:
+            resolved_canvas = _configure_matplotlib_canvas(
+                figure,
+                canvas_size=canvas_size,
+                output_dpi=output_dpi,
+                device_scale=device_scale,
+            )
             axes = figure.add_subplot()
     elif figure is None:
         figure = cast(matplotlib.figure.Figure, axes.figure)
+        resolved_canvas = _configure_matplotlib_canvas(
+            figure,
+            canvas_size=canvas_size,
+            output_dpi=output_dpi,
+            device_scale=device_scale,
+        )
+    else:
+        resolved_canvas = _configure_matplotlib_canvas(
+            figure,
+            canvas_size=canvas_size,
+            output_dpi=output_dpi,
+            device_scale=device_scale,
+        )
 
     color_scale_map = color_scales if color_scales is not None else {}
     for visual in visuals:
@@ -187,7 +219,7 @@ def render_protocol_scene_with_layout(
         panel_text_guides=panel_text_guide_tuple,
         device_scale=device_scale,
     )
-    return MatplotlibProtocolRenderResult(figure, axes, snapshot)
+    return MatplotlibProtocolRenderResult(figure, axes, snapshot, resolved_canvas)
 
 
 def _render_protocol_visual(
@@ -233,6 +265,40 @@ def _render_protocol_visual(
             axes, visual, view=view, transform_resources=transform_resources
         )
     raise TypeError(f"unsupported protocol visual: {type(visual)!r}")
+
+
+def _configure_matplotlib_canvas(
+    figure: matplotlib.figure.Figure,
+    *,
+    canvas_size: CanvasSize | None,
+    output_dpi: float | None,
+    device_scale: float,
+) -> ResolvedCanvas:
+    if canvas_size is None:
+        dpi = output_dpi if output_dpi is not None else _logical_figure_dpi(figure)
+        width_in, height_in = figure.get_size_inches()
+        requested = CanvasSize.pixel_exact(width_in * dpi, height_in * dpi)
+        resolved = requested.resolve(
+            output_dpi=dpi,
+            device_scale=device_scale,
+            metrics_source=CanvasMetricsSource.BACKEND_REPORTED,
+        )
+    else:
+        dpi = output_dpi if output_dpi is not None else canvas_size.reference_dpi
+        resolved = canvas_size.resolve(
+            output_dpi=dpi,
+            device_scale=device_scale,
+            metrics_source=CanvasMetricsSource.EXPLICIT,
+        )
+        figure.set_dpi(dpi)
+        figure.set_size_inches(
+            resolved.framebuffer_width / dpi,
+            resolved.framebuffer_height / dpi,
+            forward=True,
+        )
+
+    setattr(figure, "_gsp_resolved_canvas", resolved)
+    return resolved
 
 
 def _rgba_for_matplotlib(colors: np.ndarray) -> np.ndarray:
@@ -331,9 +397,7 @@ def render_segment_visual(
     end_positions, _ = _render_positions(
         axes, visual, visual.end_positions, view, transform_resources
     )
-    segments = np.stack(
-        [start_positions, end_positions], axis=1
-    )
+    segments = np.stack([start_positions, end_positions], axis=1)
     segment_list = [
         np.ascontiguousarray(segment, dtype=np.float32) for segment in segments
     ]
@@ -592,7 +656,10 @@ def _render_positions(
         positions, visual.transform, transform_resources
     )
     if view is None:
-        if isinstance(visual, TextVisual) and visual.coordinate_space == CoordinateSpace.NDC:
+        if (
+            isinstance(visual, TextVisual)
+            and visual.coordinate_space == CoordinateSpace.NDC
+        ):
             return panel_ndc_to_axes_fraction(transformed), axes.transAxes
         return transformed, axes.transData
     if visual.coordinate_space == CoordinateSpace.DATA:
@@ -668,6 +735,9 @@ def _linewidth_values_from_pixel_widths(
 
 
 def _pixel_to_point(axes: matplotlib.axes.Axes) -> float:
+    resolved = getattr(axes.figure, "_gsp_resolved_canvas", None)
+    if isinstance(resolved, ResolvedCanvas):
+        return resolved.framebuffer_per_canvas_px * 72.0 / resolved.output_dpi
     return 72.0 / _logical_figure_dpi(axes.figure)
 
 
