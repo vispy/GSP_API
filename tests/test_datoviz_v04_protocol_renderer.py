@@ -2797,6 +2797,43 @@ def test_datoviz_live_pointer_events_apply_retained_gsp_view2d_navigation():
     assert _calls(fake, "request_frame") == [("request_frame", "live-view")]
 
 
+def test_datoviz_live_pointer_y_coordinates_are_converted_from_window_origin():
+    fake = FakeDatovizV04WithInteractive()
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=fake, view=View2D(id="view:main", panel_id="panel:main")
+    )
+    renderer.enable_gsp_view2d_navigation()
+    assert fake.pointer_callback is not None
+
+    fake.pointer_callback(
+        "input-router",
+        FakePointerEventPtr(
+            FakePointerEvent(
+                fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+                350.0,
+                300.0,
+                button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
+            )
+        ),
+        None,
+    )
+    fake.pointer_callback(
+        "input-router",
+        FakePointerEventPtr(
+            FakePointerEvent(
+                fake.DvzPointerEventType.DVZ_POINTER_EVENT_MOVE,
+                350.0,
+                240.0,
+            )
+        ),
+        None,
+    )
+
+    assert renderer.view is not None
+    assert renderer.view.x_range == pytest.approx((-1.0, 1.0))
+    assert renderer.view.y_range == pytest.approx((-1.2, 0.8))
+
+
 def test_datoviz_live_navigation_unsubscribes_on_close():
     fake = FakeDatovizV04WithInteractive()
 

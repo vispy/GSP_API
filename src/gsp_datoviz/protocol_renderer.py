@@ -1688,7 +1688,7 @@ def _navigation_pointer_event_from_datoviz(
 ) -> NavigationPointerEvent | None:
     event_type = int(getattr(event, "type"))
     x_px = float(event.pos[0])
-    y_px = float(event.pos[1])
+    y_px = _datoviz_pointer_y_to_gsp_logical_px(event)
     if event_type == _enum_value(
         dvz,
         "DvzPointerEventType",
@@ -1738,6 +1738,15 @@ def _navigation_pointer_event_from_datoviz(
             scroll_steps=float(event.content.w.dir[1]),
         )
     return None
+
+
+def _datoviz_pointer_y_to_gsp_logical_px(event: Any) -> float:
+    window_size = getattr(event, "window_size", None)
+    if window_size is not None:
+        height = float(window_size[1])
+        if height > 0.0:
+            return height - float(event.pos[1])
+    return float(event.pos[1])
 
 
 def _apply_view2d_navigation_action(
