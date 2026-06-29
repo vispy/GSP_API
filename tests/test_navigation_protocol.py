@@ -9,14 +9,18 @@ from gsp.protocol import (
     NavigationActionKind,
     NavigationDiagnosticCode,
     NavigationPlacement,
+    NavigationPointerEvent,
+    NavigationPointerEventKind,
     NavigationResult,
     PanByAction,
     ResetViewAction,
     SetViewAction,
     TransportKind,
     View2D,
+    View2DNavigationInputAdapter,
     View2DNavigationController,
     ZoomAboutAction,
+    navigation_pointer_event_from_ndc,
     pan_view2d,
     zoom_view2d_about,
 )
@@ -238,3 +242,146 @@ def test_navigation_math_rejects_invalid_panel_rect():
         ValueError, match=NavigationDiagnosticCode.NAVIGATION_INVALID_PANEL_RECT.value
     ):
         pan_view2d(view, panel_rect, dx_px=1.0, dy_px=0.0)
+
+
+def test_navigation_input_adapter_emits_incremental_pan_actions():
+    adapter = View2DNavigationInputAdapter(
+        controller_id="nav:main",
+        view2d_revision="view-rev:1",
+        panel_rect=LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0),
+        layout_snapshot_id="layout:main",
+    )
+
+    assert (
+        adapter.handle_pointer_event(
+            NavigationPointerEvent(
+                kind=NavigationPointerEventKind.BUTTON_PRESS,
+                x_px=110.0,
+                y_px=120.0,
+                left_button=True,
+            )
+        )
+        is None
+    )
+    first_pan = adapter.handle_pointer_event(
+        NavigationPointerEvent(
+            kind=NavigationPointerEventKind.MOUSE_MOVE,
+            x_px=130.0,
+            y_px=115.0,
+        )
+    )
+    second_pan = adapter.handle_pointer_event(
+        NavigationPointerEvent(
+            kind=NavigationPointerEventKind.MOUSE_MOVE,
+            x_px=125.0,
+            y_px=135.0,
+        )
+    )
+
+    assert isinstance(first_pan, PanByAction)
+    assert first_pan.dx_px == pytest.approx(20.0)
+    assert first_pan.dy_px == pytest.approx(-5.0)
+    assert first_pan.view2d_revision == "view-rev:1"
+    assert first_pan.layout_snapshot_id == "layout:main"
+    assert isinstance(second_pan, PanByAction)
+    assert second_pan.dx_px == pytest.approx(-5.0)
+    assert second_pan.dy_px == pytest.approx(20.0)
+
+    assert (
+        adapter.handle_pointer_event(
+            NavigationPointerEvent(
+                kind=NavigationPointerEventKind.BUTTON_RELEASE,
+                x_px=125.0,
+                y_px=135.0,
+            )
+        )
+        is None
+    )
+    assert (
+        adapter.handle_pointer_event(
+            NavigationPointerEvent(
+                kind=NavigationPointerEventKind.MOUSE_MOVE,
+                x_px=150.0,
+                y_px=150.0,
+            )
+        )
+        is None
+    )
+
+
+def test_navigation_input_adapter_emits_wheel_zoom_and_tracks_accepted_revision():
+    adapter = View2DNavigationInputAdapter(
+        controller_id="nav:main",
+        view2d_revision="view-rev:1",
+        panel_rect=LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0),
+        zoom_base=1.2,
+    )
+
+    zoom = adapter.handle_pointer_event(
+        NavigationPointerEvent(
+            kind=NavigationPointerEventKind.WHEEL,
+            x_px=210.0,
+            y_px=120.0,
+            scroll_steps=2.0,
+        )
+    )
+
+    assert isinstance(zoom, ZoomAboutAction)
+    assert zoom.anchor_px == pytest.approx((210.0, 120.0))
+    assert zoom.factor_x == pytest.approx(1.44)
+    assert zoom.factor_y == pytest.approx(1.44)
+    assert zoom.view2d_revision == "view-rev:1"
+
+    result = NavigationResult(
+        accepted=True,
+        controller_id="nav:main",
+        old_view2d_revision="view-rev:1",
+        new_view2d_revision="view-rev:2",
+        view=View2D(id="view:main", panel_id="panel:main"),
+    )
+    adapter.accept_navigation_result(result)
+
+    next_zoom = adapter.handle_pointer_event(
+        NavigationPointerEvent(
+            kind=NavigationPointerEventKind.WHEEL,
+            x_px=210.0,
+            y_px=120.0,
+            scroll_steps=-1.0,
+        )
+    )
+    assert isinstance(next_zoom, ZoomAboutAction)
+    assert next_zoom.view2d_revision == "view-rev:2"
+    assert next_zoom.factor_x == pytest.approx(1.0 / 1.2)
+
+
+def test_navigation_pointer_event_from_ndc_resolves_logical_pixels():
+    panel_rect = LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0)
+
+    event = navigation_pointer_event_from_ndc(
+        kind=NavigationPointerEventKind.WHEEL,
+        x_ndc=-0.5,
+        y_ndc=0.25,
+        panel_rect=panel_rect,
+        scroll_steps=1.0,
+    )
+
+    assert event.x_px == pytest.approx(110.0)
+    assert event.y_px == pytest.approx(145.0)
+    assert event.scroll_steps == pytest.approx(1.0)
+
+
+def test_navigation_input_adapter_rejects_invalid_pointer_adapter_state():
+    with pytest.raises(ValueError, match="zoom_base"):
+        View2DNavigationInputAdapter(
+            controller_id="nav:main",
+            view2d_revision="view-rev:1",
+            panel_rect=LogicalPixelRect(x=0.0, y=0.0, width=100.0, height=100.0),
+            zoom_base=1.0,
+        )
+
+    with pytest.raises(TypeError, match="NavigationPointerEventKind"):
+        NavigationPointerEvent(
+            kind="wheel",  # type: ignore[arg-type]
+            x_px=0.0,
+            y_px=0.0,
+        )

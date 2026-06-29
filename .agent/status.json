@@ -209,7 +209,7 @@
       "id": "S035",
       "title": "Retained View2D Navigation and Pan/Zoom",
       "state": "in_progress",
-      "progress": 80
+      "progress": 95
     }
   ],
   "missions": [
@@ -1567,16 +1567,16 @@
       "id": "M152",
       "title": "S035 live review and performance smoke",
       "stage": "S035",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 152
     },
     {
       "id": "M153",
       "title": "S035 closeout",
       "stage": "S035",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 153
@@ -1642,9 +1642,9 @@
     }
   ],
   "recommendations": [
-    "Run M152 next: add live review and performance smoke coverage for S035 retained View2D navigation.",
-    "Keep native GUI event adapter claims scoped to supported backends until the live smoke verifies them.",
-    "Use the M151 retained Datoviz proof as the guardrail: navigation must update view/panel state without unchanged visual buffer re-upload."
+    "Run M153 next: close S035 with backend support wording, capability matrix notes, and follow-up stage recommendation.",
+    "Keep Datoviz v0.4 native pointer callbacks deferred until the protocol renderer has a real native event source.",
+    "Use the S035 smoke command as the retained-navigation guardrail: unchanged visual uploads must remain zero during navigation."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",

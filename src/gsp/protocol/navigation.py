@@ -44,6 +44,14 @@ class NavigationDiagnosticCode(str, Enum):
     NAVIGATION_RESET_UNAVAILABLE = "GSP_NAVIGATION_RESET_UNAVAILABLE"
 
 
+class NavigationPointerEventKind(str, Enum):
+    """Pointer events accepted by the optional S035 input adapter."""
+
+    BUTTON_PRESS = "button-press"
+    BUTTON_RELEASE = "button-release"
+    MOUSE_MOVE = "mouse-move"
+    WHEEL = "wheel"
+
 @dataclass(frozen=True, slots=True)
 class View2DNavigationController:
     """Controller metadata for one target panel/view pair."""
@@ -140,6 +148,9 @@ class ResetViewAction:
         _validate_kind(self.kind, NavigationActionKind.RESET_VIEW)
 
 
+NavigationAction = PanByAction | ZoomAboutAction | SetViewAction | ResetViewAction
+
+
 @dataclass(frozen=True, slots=True)
 class NavigationResult:
     """Result of applying a semantic navigation action."""
@@ -174,6 +185,134 @@ class NavigationResult:
                 raise TypeError("view must be a View2D")
         elif not self.diagnostics:
             raise ValueError("rejected navigation results require diagnostics")
+
+
+@dataclass(frozen=True, slots=True)
+class NavigationPointerEvent:
+    """Backend-neutral pointer event resolved to target-panel logical pixels."""
+
+    kind: NavigationPointerEventKind
+    x_px: float
+    y_px: float
+    left_button: bool = False
+    scroll_steps: float = 0.0
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.kind, NavigationPointerEventKind):
+            raise TypeError("kind must be a NavigationPointerEventKind")
+        _validate_finite("x_px", self.x_px)
+        _validate_finite("y_px", self.y_px)
+        if not isinstance(self.left_button, bool):
+            raise TypeError("left_button must be a bool")
+        _validate_finite("scroll_steps", self.scroll_steps)
+
+
+class View2DNavigationInputAdapter:
+    """Convert resolved pointer events into deterministic S035 navigation actions."""
+
+    __slots__ = (
+        "_controller_id",
+        "_drag_last_px",
+        "_layout_snapshot_id",
+        "_panel_rect",
+        "_view2d_revision",
+        "_zoom_base",
+    )
+
+    def __init__(
+        self,
+        *,
+        controller_id: str,
+        view2d_revision: str,
+        panel_rect: LogicalPixelRect,
+        layout_snapshot_id: str | None = None,
+        zoom_base: float = 1.1,
+    ) -> None:
+        validate_id(controller_id)
+        validate_id(view2d_revision)
+        if layout_snapshot_id is not None:
+            validate_id(layout_snapshot_id)
+        _validate_panel_rect(panel_rect)
+        _validate_finite("zoom_base", zoom_base)
+        if zoom_base <= 1.0:
+            raise ValueError("zoom_base must be greater than 1.0")
+        self._controller_id = controller_id
+        self._view2d_revision = view2d_revision
+        self._layout_snapshot_id = layout_snapshot_id
+        self._panel_rect = panel_rect
+        self._zoom_base = float(zoom_base)
+        self._drag_last_px: tuple[float, float] | None = None
+
+    @property
+    def view2d_revision(self) -> str:
+        """Return the revision token used for emitted actions."""
+        return self._view2d_revision
+
+    @property
+    def panel_rect(self) -> LogicalPixelRect:
+        """Return the current target-panel logical-pixel rectangle."""
+        return self._panel_rect
+
+    def set_panel_rect(self, panel_rect: LogicalPixelRect) -> None:
+        """Update the resolved panel rectangle used by helper coordinate conversions."""
+        _validate_panel_rect(panel_rect)
+        self._panel_rect = panel_rect
+
+    def update_view2d_revision(self, view2d_revision: str) -> None:
+        """Update the revision token used by subsequent emitted actions."""
+        validate_id(view2d_revision)
+        self._view2d_revision = view2d_revision
+
+    def accept_navigation_result(self, result: NavigationResult) -> None:
+        """Advance the adapter revision after an accepted navigation result."""
+        if result.controller_id != self._controller_id:
+            raise ValueError("navigation result targets a different controller")
+        if result.accepted and result.new_view2d_revision is not None:
+            self.update_view2d_revision(result.new_view2d_revision)
+
+    def handle_pointer_event(self, event: NavigationPointerEvent) -> NavigationAction | None:
+        """Return a semantic navigation action for one pointer event, if any."""
+        if event.kind is NavigationPointerEventKind.BUTTON_PRESS:
+            self._drag_last_px = (event.x_px, event.y_px) if event.left_button else None
+            return None
+        if event.kind is NavigationPointerEventKind.BUTTON_RELEASE:
+            self._drag_last_px = None
+            return None
+        if event.kind is NavigationPointerEventKind.MOUSE_MOVE:
+            return self._handle_mouse_move(event)
+        if event.kind is NavigationPointerEventKind.WHEEL:
+            return self._handle_wheel(event)
+        raise ValueError(f"unsupported pointer event kind: {event.kind!r}")
+
+    def _handle_mouse_move(self, event: NavigationPointerEvent) -> PanByAction | None:
+        if self._drag_last_px is None:
+            return None
+        last_x, last_y = self._drag_last_px
+        self._drag_last_px = (event.x_px, event.y_px)
+        dx_px = event.x_px - last_x
+        dy_px = event.y_px - last_y
+        if dx_px == 0.0 and dy_px == 0.0:
+            return None
+        return PanByAction(
+            controller_id=self._controller_id,
+            view2d_revision=self._view2d_revision,
+            dx_px=dx_px,
+            dy_px=dy_px,
+            layout_snapshot_id=self._layout_snapshot_id,
+        )
+
+    def _handle_wheel(self, event: NavigationPointerEvent) -> ZoomAboutAction | None:
+        if event.scroll_steps == 0.0:
+            return None
+        factor = self._zoom_base**event.scroll_steps
+        return ZoomAboutAction(
+            controller_id=self._controller_id,
+            view2d_revision=self._view2d_revision,
+            anchor_px=(event.x_px, event.y_px),
+            factor_x=factor,
+            factor_y=factor,
+            layout_snapshot_id=self._layout_snapshot_id,
+        )
 
 
 def pan_view2d(view: View2D, panel_rect: LogicalPixelRect, dx_px: float, dy_px: float) -> View2D:
@@ -224,6 +363,28 @@ def zoom_view2d_about(
         aspect_policy=view.aspect_policy,
         kind=view.kind,
         clip=view.clip,
+    )
+
+
+def navigation_pointer_event_from_ndc(
+    *,
+    kind: NavigationPointerEventKind,
+    x_ndc: float,
+    y_ndc: float,
+    panel_rect: LogicalPixelRect,
+    left_button: bool = False,
+    scroll_steps: float = 0.0,
+) -> NavigationPointerEvent:
+    """Create a pointer event from target-panel NDC coordinates."""
+    _validate_panel_rect(panel_rect)
+    _validate_finite("x_ndc", x_ndc)
+    _validate_finite("y_ndc", y_ndc)
+    return NavigationPointerEvent(
+        kind=kind,
+        x_px=panel_rect.x + (x_ndc + 1.0) * 0.5 * panel_rect.width,
+        y_px=panel_rect.y + (y_ndc + 1.0) * 0.5 * panel_rect.height,
+        left_button=left_button,
+        scroll_steps=scroll_steps,
     )
 
 

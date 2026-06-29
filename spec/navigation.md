@@ -158,6 +158,32 @@ advertised as the high-performance retained navigation path.
 VisPy2 producer APIs may expose convenient mouse/wheel adapters, but they must lower to S035
 navigation actions and `View2D` updates.
 
+## Input Adapter and Review Paths
+
+S035 includes a small backend-neutral pointer adapter for review and backend integration. The adapter
+accepts resolved target-panel logical-pixel pointer events and emits only semantic `pan_by` or
+`zoom_about` actions. Backends are still responsible for applying accepted results to their native
+view state.
+
+Supported in this stage:
+
+| Path | Status | Notes |
+|---|---:|---|
+| Matplotlib native drag/wheel review | supported | `examples/protocol_view2d_navigation.py --backend matplotlib` adapts Matplotlib mouse events to S035 actions. |
+| Matplotlib scripted smoke | supported | `examples/protocol_view2d_navigation.py --backend matplotlib --scripted-smoke` runs headless. |
+| Datoviz retained scripted smoke | supported | `tools/s035_navigation_smoke.py --backend datoviz-fake` verifies retained update calls and no unchanged visual-buffer reupload. |
+| Datoviz v0.4 native pointer callbacks | deferred | The v0.4 protocol renderer has a retained update path but no backend-native event source bound to this protocol adapter yet. |
+| Public cross-backend event system | deferred | S035 intentionally keeps raw input streams outside the public protocol. |
+
+Performance smoke command:
+
+```bash
+uv run python tools/s035_navigation_smoke.py --backend both --steps 40 --points 25000
+```
+
+The smoke report records navigation update count, frame/draw count where applicable, retained
+update calls, and visual upload/recreation calls observed after the initial scene upload.
+
 ## Deferred
 
 S035 defers raw event streams, key-binding tables, pointer capture, hover, selection, brushing,
