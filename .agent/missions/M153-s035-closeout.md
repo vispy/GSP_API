@@ -6,7 +6,7 @@ S035 - Retained View2D Navigation and Pan/Zoom
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -22,3 +22,16 @@ proof, and live review artifacts are complete.
 ## Stop Condition
 
 Stop before opening 3D implementation if S035 render/query/update coherence is unresolved.
+
+## Result
+
+Closed S035 with backend support wording, capability matrix notes, retained pan/zoom review commands,
+and a stage closeout record. The follow-up recommendation is to open S036 as a consultation-first
+stage for minimal `View3D`, camera, projection, and 3D navigation semantics before any public 3D API
+is implemented.
+
+## Validation
+
+- `uv run pytest tests/ -q`
+- `uv run python tools/s035_navigation_smoke.py --backend both --steps 40 --points 25000`
+- `python -m json.tool .agent/status.json`

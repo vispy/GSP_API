@@ -426,6 +426,34 @@ Capability snapshots expose `s034_guide_layout_audit` metadata plus diagnostics 
 `axis_style_mapping_partial`, `grid_clip_not_enforced`, `grid_clip_native_api_unverified`,
 `guide_query_missing`, `all_rendered_guides_unsupported`, and `font_metrics_parity_false`.
 
+## S035 retained View2D navigation
+
+The Datoviz v0.4 protocol renderer supports the retained target path for accepted S035 `View2D`
+navigation updates. `DatovizV04ProtocolRenderer.apply_retained_view2d_navigation()` replaces the
+canonical renderer view and reapplies the Datoviz panel domain/View2D state through
+`dvz_panel_set_domain()`, `dvz_panel_view2d()`, and `dvz_panel_set_view2d()`.
+
+The retained fast-path invariant is part of the backend contract: after the initial scene upload,
+pan/zoom must not call visual data upload, texture upload, index upload, sampled-field upload, or
+visual creation for unchanged visuals. The S035 smoke command verifies that invariant with a
+Datoviz fake facade:
+
+```bash
+uv run python tools/s035_navigation_smoke.py --backend datoviz-fake --steps 40 --points 25000
+```
+
+Current support status:
+
+| Capability | Status | Notes |
+|---|---:|---|
+| Programmatic retained `View2D` update | supported | Uses retained panel domain/View2D state. |
+| Visual buffer stability during navigation | supported by fake-facade smoke | Zero upload/recreation calls are expected after baseline scene creation. |
+| Datoviz v0.4 native pointer callbacks | deferred | The protocol renderer does not yet bind a native event source to the S035 input adapter. |
+| Live GPU runtime performance benchmark | deferred | Requires an active v0.4 runtime/event source beyond the fake-facade proof. |
+
+Do not claim full Datoviz live-interactive support until native pointer events are adapted into S035
+actions and exercised against a real v0.4 runtime. CPU remapping remains an adapted fallback only and
+must not be advertised as the retained fast path.
 
 ## S025 MeshVisual target
 

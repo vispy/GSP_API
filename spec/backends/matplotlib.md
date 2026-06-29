@@ -129,3 +129,22 @@ resolved layout snapshot for guide-scope and all-rendered guide contributions.
 semantic guides into a Matplotlib figure and returns the resolved layout snapshot plus
 `layout_snapshot_id`. Matplotlib still does not claim full `layout_strict`; readback and promotion
 criteria remain separate closure work.
+
+## S035 View2D navigation reference
+
+Matplotlib is the strict reference backend for S035 programmatic `View2D` navigation. The helper
+`gsp_matplotlib.navigation.apply_view2d_navigation_action()` applies accepted `pan_by`,
+`zoom_about`, `set_view`, and `reset_view` actions to a current `View2D`, validates controller
+revision/layout freshness, and returns a `NavigationResult` with the next explicit view.
+
+Matplotlib live review support is intentionally an adapter around that semantic path. The example
+`examples/protocol_view2d_navigation.py --backend matplotlib` converts native Matplotlib
+drag/wheel events into S035 pointer events and semantic actions, then updates axes limits from the
+accepted `View2D`. The scripted review command is:
+
+```bash
+uv run python examples/protocol_view2d_navigation.py --backend matplotlib --scripted-smoke
+```
+
+Matplotlib does not define public raw-event semantics for GSP. Its native callback ids, canvas
+events, and artist invalidation behavior remain backend implementation details.

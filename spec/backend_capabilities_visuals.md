@@ -93,3 +93,38 @@ Structured diagnostics include `unsupported_colormap_id`, `colormap_approximated
 `colorbar_render_unsupported`, `scalar_query_source_unavailable`,
 `scalar_query_normalized_unavailable`, `colorbar_query_unsupported`, `nonfinite_scalar_rejected`,
 and `invalid_color_scale_domain`.
+
+## S035 View2D navigation capability gates
+
+A backend may claim `interaction.view2d.navigation.v1` only when it accepts S035 semantic navigation
+actions and returns explicit `View2D` updates with revision/snapshot metadata. Raw native input
+events are backend or producer adapters; they are not public protocol semantics.
+
+Recommended placement values:
+
+| Placement | Meaning |
+|---|---|
+| `retained-gpu-state` | Accepted `View2D` updates lower to retained panel/view/projection or equivalent uniform/state updates. |
+| `cpu-remap` | Backend remaps finite eager arrays on the CPU; this is adapted and not the strict high-performance path. |
+| `client-side` | Client applies the semantic action and sends only accepted `View2D` state updates. |
+| `server-side` | Server owns action application and returns accepted `View2D` results. |
+| `unsupported` | Backend cannot apply the navigation capability. |
+
+Strict retained navigation requires unchanged visual buffers and visual objects to remain stable
+during pan/zoom. A backend must not re-upload point/image/mesh/path/segment/marker/text geometry
+buffers or recreate visuals in the strict fast path.
+
+Current S035 support summary:
+
+| Backend | Programmatic S035 actions | Native drag/wheel review | Retained fast-path proof | Notes |
+|---|---:|---:|---:|---|
+| Matplotlib | supported reference | supported in example review | not applicable | Reference implementation updates axes limits and redraws. |
+| Datoviz v0.4 protocol renderer | supported retained update target | deferred | supported by fake-facade smoke | The protocol renderer updates panel domains/View2D state and records zero visual upload calls during scripted navigation. |
+
+Review/smoke commands:
+
+```bash
+uv run python examples/protocol_view2d_navigation.py --backend matplotlib
+uv run python examples/protocol_view2d_navigation.py --backend matplotlib --scripted-smoke
+uv run python tools/s035_navigation_smoke.py --backend both --steps 40 --points 25000
+```

@@ -208,8 +208,8 @@
     {
       "id": "S035",
       "title": "Retained View2D Navigation and Pan/Zoom",
-      "state": "in_progress",
-      "progress": 95
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -1576,9 +1576,9 @@
       "id": "M153",
       "title": "S035 closeout",
       "stage": "S035",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 153
     }
   ],
@@ -1642,9 +1642,9 @@
     }
   ],
   "recommendations": [
-    "Run M153 next: close S035 with backend support wording, capability matrix notes, and follow-up stage recommendation.",
+    "Open S036 only after creating a ChatGPT Pro consultation packet for minimal View3D/camera/projection/navigation semantics.",
     "Keep Datoviz v0.4 native pointer callbacks deferred until the protocol renderer has a real native event source.",
-    "Use the S035 smoke command as the retained-navigation guardrail: unchanged visual uploads must remain zero during navigation."
+    "Keep using the S035 smoke command as the retained-navigation guardrail: unchanged visual uploads must remain zero during navigation."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
