@@ -40,6 +40,14 @@ from .color import (
     ScalarColorSlot,
     ScalarRangeClass,
 )
+from .canvas_size import (
+    DEFAULT_REFERENCE_DPI,
+    CanvasMetricsSource,
+    CanvasResolveExactness,
+    CanvasSize,
+    CanvasSizePolicy,
+    ResolvedCanvas,
+)
 from .data_sources import (
     CredentialPolicy,
     DataLocality,
@@ -217,6 +225,10 @@ __all__ = [
     "AxisGuideStyle",
     "AxisSide",
     "BufferResource",
+    "CanvasMetricsSource",
+    "CanvasResolveExactness",
+    "CanvasSize",
+    "CanvasSizePolicy",
     "CapabilitySnapshot",
     "CommandBatch",
     "CommandKind",
@@ -234,6 +246,7 @@ __all__ = [
     "DataLocality",
     "DataSourceDescriptor",
     "DataSourceKind",
+    "DEFAULT_REFERENCE_DPI",
     "FontLayoutCapability",
     "FontRole",
     "ImageColormap",
@@ -316,6 +329,7 @@ __all__ = [
     "ResourceMutability",
     "ResourceUsage",
     "ResolvedGuideBox",
+    "ResolvedCanvas",
     "ResolvedLayoutSnapshot",
     "ResolvedTicks",
     "S020_CREDENTIAL_POLICIES",

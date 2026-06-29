@@ -7,6 +7,7 @@ This file tells agents where to find authoritative design information.
 | Project goal | PROJECT_CHARTER.md |
 | Architecture | ARCHITECTURE.md |
 | Protocol/session model | spec/protocol.md |
+| Physical canvas sizing | spec/canvas_size.md |
 | Transports/local fast path | spec/transports.md |
 | Capabilities/adaptation | spec/capabilities.md |
 | Resources/buffers/textures | spec/resources.md |
@@ -45,6 +46,7 @@ This file tells agents where to find authoritative design information.
 | Color mapping/colorbars v1 ADR | adr/ADR-0018-color-mapping-colorbars-v1.md |
 | Transform/view/query inverse v1 ADR | adr/ADR-0019-transform-view-query-inverse-v1.md |
 | Guide layout semantics boundary ADR | adr/ADR-0020-gsp-guide-layout-semantics-boundary.md |
+| Physical canvas size policy ADR | adr/ADR-0021-physical-canvas-size-policies.md |
 | S029 resolved layout decision | .agent/decisions/S029_resolved_layout_contracts.md |
 | S027 transform/view decision | .agent/decisions/S027_transform_view_contracts.md |
 | S026 color mapping decision | .agent/decisions/S026_color_mapping_contracts.md |
