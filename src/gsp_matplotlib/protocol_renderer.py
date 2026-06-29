@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import cast
+from typing import Any, cast
 
 import matplotlib.axes
 import matplotlib.colorbar
@@ -647,7 +647,7 @@ def render_colorbar_guide(
     return colorbar
 
 
-def _figure_canvas_size_px(figure: matplotlib.figure.Figure) -> tuple[float, float]:
+def _figure_canvas_size_px(figure: Any) -> tuple[float, float]:
     resolved = getattr(figure, "_gsp_resolved_canvas", None)
     if isinstance(resolved, ResolvedCanvas):
         return resolved.canvas_width_px, resolved.canvas_height_px
