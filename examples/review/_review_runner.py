@@ -365,7 +365,7 @@ def _canvas_size_for_review(resolution: tuple[int, int], *, live: bool) -> Canva
 def _matplotlib_output_dpi_for_review(canvas_size: CanvasSize, *, live: bool) -> float:
     if not live:
         return REVIEW_OUTPUT_DPI
-    return canvas_size.monitor_dpi_override or canvas_size.reference_dpi
+    return canvas_size.reference_dpi
 
 
 def _review_reference_dpi() -> float:
