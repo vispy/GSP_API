@@ -119,7 +119,7 @@ Use this gate after the upstream Datoviz live high-DPI/text-anchor fix lands and
    | Check | Required result |
    |---|---|
    | Live canvas size | Datoviz and Matplotlib have the same apparent logical canvas size for the same `--resolution`. |
-   | Datoviz metrics | A requested `900x650` live view keeps logical size `900x650` and reports a physical framebuffer close to `900 * device_scale` by `650 * device_scale`. |
+   | Datoviz metrics | A requested `1280x720` live view keeps logical size `1280x720` and reports a physical framebuffer close to `1280 * device_scale` by `720 * device_scale`. |
    | No GSP workaround | GSP does not pass a Datoviz-only live-size multiplier or alter requested resolution for Datoviz. |
    | Example 05 | The Datoviz colorbar is readable and does not overlap the plotted visual. |
    | Example 06 | Datoviz text labels match Matplotlib anchor semantics closely enough for visual review. |

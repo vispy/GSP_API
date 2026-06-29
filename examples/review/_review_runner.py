@@ -51,6 +51,7 @@ from gsp_matplotlib.protocol_renderer import (
 Visual = PointVisual | MarkerVisual | SegmentVisual | ImageVisual | TextVisual | MeshVisual
 SceneBuilder = Callable[[], "ReviewScene"]
 DATOVIZ_OFFSCREEN_ENV = "GSP_DATOVIZ_QA_ENABLE_OFFSCREEN"
+REVIEW_DEFAULT_RESOLUTION = (1280, 720)
 
 
 @dataclass(frozen=True, slots=True)
@@ -106,7 +107,12 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--offscreen", action="store_true", help="Write PNG artifacts instead of opening live windows.")
     parser.add_argument("--live", action="store_false", dest="offscreen", help="Open live windows. This is the default.")
     parser.add_argument("--out-dir", type=Path, help="Artifact directory; defaults to artifacts/example_review/<example>.")
-    parser.add_argument("--resolution", type=_parse_resolution, default=(900, 650), help="Capture/window size, e.g. 900x650.")
+    parser.add_argument(
+        "--resolution",
+        type=_parse_resolution,
+        default=REVIEW_DEFAULT_RESOLUTION,
+        help="Capture/window size, e.g. 1280x720.",
+    )
     parser.add_argument("--frames", type=int, default=0, help="Datoviz live frame count; 0 means run until close.")
     parser.add_argument(
         "--datoviz-offscreen",

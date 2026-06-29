@@ -9,6 +9,9 @@ import subprocess
 import sys
 
 
+REVIEW_DEFAULT_RESOLUTION = "1280x720"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("examples", nargs="*", type=Path, help="Review example files. Defaults to examples/review/[0-9]*.py.")
@@ -21,7 +24,7 @@ def main() -> int:
         help="Open Matplotlib and Datoviz live windows at the same time for each example.",
     )
     parser.add_argument("--datoviz-offscreen", action="store_true", dest="offscreen", help="Deprecated alias for --offscreen.")
-    parser.add_argument("--resolution", default="900x650")
+    parser.add_argument("--resolution", default=REVIEW_DEFAULT_RESOLUTION)
     parser.set_defaults(offscreen=False)
     args = parser.parse_args()
     if args.offscreen and args.live_side_by_side:
