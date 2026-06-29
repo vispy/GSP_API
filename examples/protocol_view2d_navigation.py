@@ -86,6 +86,7 @@ def _run_datoviz(*, scripted_smoke: bool, frames: int) -> int:
     view = _initial_view()
     with DatovizV04ProtocolRenderer(canvas_size=LIVE_CANVAS_SIZE, view=view) as renderer:
         renderer.add_point_visual(visual)
+        renderer.configure_view2d_axes(view, x_label="x", y_label="y", grid=True)
         if scripted_smoke:
             smoke = _ScriptedNavigationSmoke(view)
             for next_view in smoke.run():
