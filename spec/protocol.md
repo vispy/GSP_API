@@ -62,3 +62,15 @@ query, readback, or all-rendered guide behavior.
 Render and query results must carry a matching `layout_snapshot_id` whenever layout strictness is
 claimed. Backend-native layout may remain an implementation mechanism, but it is not the protocol
 contract unless the resulting GSP layout snapshot is exposed.
+
+## S035 View2D navigation baseline
+
+`spec/navigation.md` is the authority for accepted S035 `View2D` navigation semantics. Public
+navigation is expressed as deterministic semantic actions such as `pan_by`, `zoom_about`, `set_view`,
+and `reset_view`; accepted actions produce explicit `View2D` updates and revision/snapshot
+identifiers.
+
+Raw mouse, wheel, keyboard, touch, toolkit, browser, Datoviz, Matplotlib, or VisPy event streams are
+backend or producer adapters, not public protocol semantics. Retained GPU backends must lower strict
+pan/zoom to panel view/projection or equivalent uniform/state updates for unchanged visuals rather
+than re-uploading visual geometry buffers.

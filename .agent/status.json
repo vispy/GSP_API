@@ -1,5 +1,5 @@
 {
-  "current_stage": "S033",
+  "current_stage": "S035",
   "stages": [
     {
       "id": "S001",
@@ -196,8 +196,20 @@
     {
       "id": "S033",
       "title": "Datoviz Guide Strictness and Release Decision",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S034",
+      "title": "Resolved Layout and Guide Geometry Foundation",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S035",
+      "title": "Retained View2D Navigation and Pan/Zoom",
       "state": "in_progress",
-      "progress": 67
+      "progress": 40
     }
   ],
   "missions": [
@@ -1357,7 +1369,7 @@
       "id": "M130",
       "title": "Optional Datoviz adapted-row strict promotion proof",
       "stage": "S033",
-      "state": "draft",
+      "state": "deferred",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 130
@@ -1366,7 +1378,7 @@
       "id": "M131",
       "title": "Explicit release operation",
       "stage": "S033",
-      "state": "blocked",
+      "state": "deferred",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 131
@@ -1379,6 +1391,195 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 132
+    },
+    {
+      "id": "M133",
+      "title": "S034 resolved layout protocol foundation",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 133
+    },
+    {
+      "id": "M134",
+      "title": "S034 Matplotlib resolved layout reference",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 134
+    },
+    {
+      "id": "M135",
+      "title": "S034 guide style fields",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 135
+    },
+    {
+      "id": "M136",
+      "title": "S034 Datoviz guide capability audit",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 136
+    },
+    {
+      "id": "M137",
+      "title": "S034 tiered review classification",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 137
+    },
+    {
+      "id": "M138",
+      "title": "S034 layout-aware guide query",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 138
+    },
+    {
+      "id": "M139",
+      "title": "S034 scoped layout query integration",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 139
+    },
+    {
+      "id": "M140",
+      "title": "S034 render result layout snapshot",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 140
+    },
+    {
+      "id": "M141",
+      "title": "S034 Matplotlib protocol render result",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 141
+    },
+    {
+      "id": "M142",
+      "title": "S034 layout visual QA fixtures",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 142
+    },
+    {
+      "id": "M143",
+      "title": "S034 resized layout snapshot proof",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 143
+    },
+    {
+      "id": "M144",
+      "title": "S034 device-scale layout metadata",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 144
+    },
+    {
+      "id": "M145",
+      "title": "S034 Datoviz grid clipping unsupported proof",
+      "stage": "S034",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 145
+    },
+    {
+      "id": "M146",
+      "title": "S035 View2D navigation scoping",
+      "stage": "S035",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 146
+    },
+    {
+      "id": "M147",
+      "title": "S035 navigation ADR/spec baseline",
+      "stage": "S035",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 147
+    },
+    {
+      "id": "M148",
+      "title": "S035 navigation protocol validation",
+      "stage": "S035",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 148
+    },
+    {
+      "id": "M149",
+      "title": "S035 navigation numeric fixtures",
+      "stage": "S035",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 149
+    },
+    {
+      "id": "M150",
+      "title": "S035 Matplotlib programmatic navigation reference",
+      "stage": "S035",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 150
+    },
+    {
+      "id": "M151",
+      "title": "S035 Datoviz retained View2D proof",
+      "stage": "S035",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 151
+    },
+    {
+      "id": "M152",
+      "title": "S035 live review and performance smoke",
+      "stage": "S035",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 152
+    },
+    {
+      "id": "M153",
+      "title": "S035 closeout",
+      "stage": "S035",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 153
     }
   ],
   "review_queue": [],
@@ -1441,9 +1642,9 @@
     }
   ],
   "recommendations": [
-    "Review `examples/review/README.md`, then run selected examples live with Matplotlib and Datoviz to give API feedback.",
-    "Use `tools/compare-review-examples examples/review/01_scatter_basic.py` for captured Matplotlib plus explicit Datoviz offscreen status artifacts.",
-    "Do not run M131 release operations until the user explicitly approves target version, version update, tag creation, and publication target."
+    "Run M150 next: wire programmatic View2D navigation into the Matplotlib reference render/query path.",
+    "Keep live GUI adapters blocked until programmatic render/query coherence is proven.",
+    "For Datoviz, require retained panel/view/projection or uniform-state updates during pan/zoom and verify unchanged visual buffers are not re-uploaded."
   ],
   "notes": [
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",

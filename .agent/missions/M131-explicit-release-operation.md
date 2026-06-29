@@ -6,12 +6,13 @@ S033 - Datoviz Guide Strictness and Release Decision
 
 ## Status
 
-Blocked pending explicit user approval.
+Deferred pending explicit release details.
 
 ## Summary
 
 Perform actual release mechanics only after the user explicitly approves the target version, package
-version update, tag creation, and publication target.
+version update, tag creation, and publication target. The user approved moving to S035 planning, but
+did not approve concrete release mechanics.
 
 ## Stop Condition
 

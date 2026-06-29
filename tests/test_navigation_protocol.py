@@ -1,0 +1,240 @@
+"""Tests for the accepted S035 View2D navigation protocol model."""
+
+import pytest
+
+from gsp.protocol import (
+    AdaptationOutcome,
+    CapabilitySnapshot,
+    LogicalPixelRect,
+    NavigationActionKind,
+    NavigationDiagnosticCode,
+    NavigationPlacement,
+    NavigationResult,
+    PanByAction,
+    ResetViewAction,
+    SetViewAction,
+    TransportKind,
+    View2D,
+    View2DNavigationController,
+    ZoomAboutAction,
+    pan_view2d,
+    zoom_view2d_about,
+)
+
+
+def test_view2d_navigation_controller_targets_one_panel_view_pair():
+    home = View2D(id="view:main", panel_id="panel:main", x_range=(-2.0, 2.0))
+    controller = View2DNavigationController(
+        id="nav:main",
+        panel_id="panel:main",
+        view_id="view:main",
+        current_view2d_revision="view-rev:1",
+        home_view=home,
+    )
+
+    assert controller.enabled is True
+    assert controller.home_view is home
+
+    with pytest.raises(ValueError, match="home_view id"):
+        View2DNavigationController(
+            id="nav:bad",
+            panel_id="panel:main",
+            view_id="view:main",
+            current_view2d_revision="view-rev:1",
+            home_view=View2D(id="view:other", panel_id="panel:main"),
+        )
+
+    with pytest.raises(TypeError, match="enabled"):
+        View2DNavigationController(
+            id="nav:bad",
+            panel_id="panel:main",
+            view_id="view:main",
+            current_view2d_revision="view-rev:1",
+            enabled="yes",  # type: ignore[arg-type]
+        )
+
+
+def test_pan_and_zoom_actions_validate_finite_values_and_positive_zoom():
+    pan = PanByAction(
+        controller_id="nav:main",
+        view2d_revision="view-rev:1",
+        dx_px=12.5,
+        dy_px=-4.0,
+        layout_snapshot_id="layout:main",
+    )
+    zoom = ZoomAboutAction(
+        controller_id="nav:main",
+        view2d_revision="view-rev:1",
+        anchor_px=(320.0, 240.0),
+        factor_x=1.2,
+        factor_y=0.8,
+    )
+
+    assert pan.kind is NavigationActionKind.PAN_BY
+    assert zoom.kind is NavigationActionKind.ZOOM_ABOUT
+
+    with pytest.raises(ValueError, match=NavigationDiagnosticCode.NAVIGATION_NONFINITE.value):
+        PanByAction(
+            controller_id="nav:main",
+            view2d_revision="view-rev:1",
+            dx_px=float("nan"),
+            dy_px=0.0,
+        )
+
+    with pytest.raises(
+        ValueError, match=NavigationDiagnosticCode.NAVIGATION_INVALID_ZOOM_FACTOR.value
+    ):
+        ZoomAboutAction(
+            controller_id="nav:main",
+            view2d_revision="view-rev:1",
+            anchor_px=(0.0, 0.0),
+            factor_x=0.0,
+            factor_y=1.0,
+        )
+
+
+def test_set_and_reset_view_actions_validate_view_and_revision_identity():
+    view = View2D(id="view:main", panel_id="panel:main")
+
+    set_view = SetViewAction(
+        controller_id="nav:main",
+        view2d_revision="view-rev:1",
+        view=view,
+    )
+    reset = ResetViewAction(controller_id="nav:main", view2d_revision="view-rev:1")
+
+    assert set_view.kind is NavigationActionKind.SET_VIEW
+    assert reset.kind is NavigationActionKind.RESET_VIEW
+
+    with pytest.raises(TypeError, match="view must be a View2D"):
+        SetViewAction(
+            controller_id="nav:main",
+            view2d_revision="view-rev:1",
+            view=object(),  # type: ignore[arg-type]
+        )
+
+    with pytest.raises(ValueError, match="invalid protocol id"):
+        ResetViewAction(controller_id="nav:main", view2d_revision="bad id")
+
+
+def test_navigation_result_requires_new_view_when_accepted_and_diagnostics_when_rejected():
+    view = View2D(id="view:main", panel_id="panel:main", x_range=(0.0, 10.0))
+    accepted = NavigationResult(
+        accepted=True,
+        controller_id="nav:main",
+        old_view2d_revision="view-rev:1",
+        new_view2d_revision="view-rev:2",
+        view=view,
+        view_snapshot_id="view-snapshot:2",
+        layout_snapshot_id="layout:main",
+    )
+
+    assert accepted.view is view
+    assert accepted.new_view2d_revision == "view-rev:2"
+
+    with pytest.raises(ValueError, match="accepted navigation results"):
+        NavigationResult(
+            accepted=True,
+            controller_id="nav:main",
+            old_view2d_revision="view-rev:1",
+        )
+
+    rejected = NavigationResult(
+        accepted=False,
+        controller_id="nav:main",
+        old_view2d_revision="view-rev:1",
+        diagnostics=(NavigationDiagnosticCode.NAVIGATION_STALE_VIEW.value,),
+    )
+    assert rejected.view is None
+
+    with pytest.raises(ValueError, match="rejected navigation results"):
+        NavigationResult(
+            accepted=False,
+            controller_id="nav:main",
+            old_view2d_revision="view-rev:1",
+        )
+
+
+def test_navigation_capabilities_adapt_semantic_support_and_placement():
+    caps = CapabilitySnapshot(
+        server_name="navigation-test",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        navigation_placements=(NavigationPlacement.RETAINED_GPU_STATE.value,),
+        navigation_capabilities=("interaction.view2d.navigation.v1",),
+    )
+
+    assert caps.supports_navigation_placement(NavigationPlacement.RETAINED_GPU_STATE)
+    assert caps.supports_navigation_capability("interaction.view2d.navigation.v1")
+    assert (
+        caps.adapt_navigation_capability("interaction.view2d.navigation.v1").outcome
+        == AdaptationOutcome.ACCEPT
+    )
+
+    rejected = caps.adapt_navigation_capability("interaction.view3d.navigation.v1")
+    assert rejected.outcome == AdaptationOutcome.REJECT
+    assert rejected.diagnostic is not None
+
+
+def test_pan_view2d_moves_limits_by_signed_data_span():
+    view = View2D(
+        id="view:main",
+        panel_id="panel:main",
+        x_range=(0.0, 100.0),
+        y_range=(50.0, -50.0),
+    )
+    panel_rect = LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0)
+
+    panned = pan_view2d(view, panel_rect, dx_px=40.0, dy_px=20.0)
+
+    assert panned.x_range == pytest.approx((-10.0, 90.0))
+    assert panned.y_range == pytest.approx((60.0, -40.0))
+    assert panned.id == view.id
+    assert panned.panel_id == view.panel_id
+
+
+def test_zoom_view2d_about_anchor_preserves_anchor_data_coordinate():
+    view = View2D(id="view:main", panel_id="panel:main", x_range=(0.0, 100.0), y_range=(0.0, 80.0))
+    panel_rect = LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0)
+
+    zoomed = zoom_view2d_about(
+        view,
+        panel_rect,
+        anchor_px=(110.0, 120.0),
+        factor_x=2.0,
+        factor_y=4.0,
+    )
+
+    assert zoomed.x_range == pytest.approx((12.5, 62.5))
+    assert zoomed.y_range == pytest.approx((30.0, 50.0))
+
+
+def test_zoom_view2d_about_preserves_reversed_limits():
+    view = View2D(
+        id="view:main",
+        panel_id="panel:main",
+        x_range=(100.0, 0.0),
+        y_range=(80.0, 0.0),
+    )
+    panel_rect = LogicalPixelRect(x=0.0, y=0.0, width=400.0, height=200.0)
+
+    zoomed = zoom_view2d_about(
+        view,
+        panel_rect,
+        anchor_px=(100.0, 100.0),
+        factor_x=2.0,
+        factor_y=2.0,
+    )
+
+    assert zoomed.x_range == pytest.approx((87.5, 37.5))
+    assert zoomed.y_range == pytest.approx((60.0, 20.0))
+
+
+def test_navigation_math_rejects_invalid_panel_rect():
+    view = View2D(id="view:main", panel_id="panel:main")
+    panel_rect = LogicalPixelRect(x=0.0, y=0.0, width=0.0, height=100.0)
+
+    with pytest.raises(
+        ValueError, match=NavigationDiagnosticCode.NAVIGATION_INVALID_PANEL_RECT.value
+    ):
+        pan_view2d(view, panel_rect, dx_px=1.0, dy_px=0.0)

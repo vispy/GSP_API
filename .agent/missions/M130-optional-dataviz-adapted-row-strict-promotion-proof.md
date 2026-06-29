@@ -6,12 +6,13 @@ S033 - Datoviz Guide Strictness and Release Decision
 
 ## Status
 
-Draft.
+Deferred by release/interactivity decision.
 
 ## Summary
 
-Optionally attempt to promote selected adapted Datoviz rows to strict. This is not the default path
-for S033 and should only run if the user chooses hardening before release preparation.
+Optionally attempt to promote selected adapted Datoviz rows to strict. This was not chosen as the
+default path for S033 after API review. Keep it available as a future hardening branch, but do not
+let it block release preparation or S035 `View2D` navigation work.
 
 ## Deliverables
 

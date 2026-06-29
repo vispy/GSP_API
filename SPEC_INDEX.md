@@ -13,6 +13,7 @@ This file tells agents where to find authoritative design information.
 | Resources/buffers/textures | spec/resources.md |
 | Query/readback | spec/query.md |
 | Transform/view/query inverse | spec/transforms.md |
+| View2D navigation actions | spec/navigation.md |
 | Resolved layout and guide geometry | spec/layout.md |
 | Resolved guide layout direction | .agent/decisions/S029_resolved_layout_contracts.md |
 | Conformance fixtures/schema | spec/conformance-fixtures.md |
@@ -47,6 +48,8 @@ This file tells agents where to find authoritative design information.
 | Transform/view/query inverse v1 ADR | adr/ADR-0019-transform-view-query-inverse-v1.md |
 | Guide layout semantics boundary ADR | adr/ADR-0020-gsp-guide-layout-semantics-boundary.md |
 | Physical canvas size policy ADR | adr/ADR-0021-physical-canvas-size-policies.md |
+| View2D navigation actions ADR | adr/ADR-0022-view2d-navigation-actions.md |
+| S035 View2D navigation decision | .agent/decisions/S035_view2d_navigation_contracts.md |
 | S029 resolved layout decision | .agent/decisions/S029_resolved_layout_contracts.md |
 | S027 transform/view decision | .agent/decisions/S027_transform_view_contracts.md |
 | S026 color mapping decision | .agent/decisions/S026_color_mapping_contracts.md |
