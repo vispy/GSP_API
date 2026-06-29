@@ -54,6 +54,8 @@ Visual = (
 )
 SceneBuilder = Callable[[], "ReviewScene"]
 DATOVIZ_OFFSCREEN_ENV = "GSP_DATOVIZ_QA_ENABLE_OFFSCREEN"
+REVIEW_REFERENCE_DPI_ENV = "GSP_REVIEW_REFERENCE_DPI"
+REVIEW_MONITOR_DPI_ENV = "GSP_REVIEW_MONITOR_DPI"
 REVIEW_DEFAULT_RESOLUTION = (1280, 720)
 REVIEW_REFERENCE_DPI = 96.0
 REVIEW_OUTPUT_DPI = 100.0
@@ -178,13 +180,14 @@ def _run_matplotlib(
     path = out_dir / "matplotlib.png"
     log_path = out_dir / "matplotlib.log.txt"
     canvas_size = _canvas_size_for_review(resolution, live=live)
-    resolved_canvas = canvas_size.resolve(output_dpi=REVIEW_OUTPUT_DPI)
+    output_dpi = _matplotlib_output_dpi_for_review(canvas_size, live=live)
+    resolved_canvas = canvas_size.resolve(output_dpi=output_dpi)
     fig, ax = plt.subplots(
         figsize=(
-            resolved_canvas.framebuffer_width / REVIEW_OUTPUT_DPI,
-            resolved_canvas.framebuffer_height / REVIEW_OUTPUT_DPI,
+            resolved_canvas.framebuffer_width / output_dpi,
+            resolved_canvas.framebuffer_height / output_dpi,
         ),
-        dpi=REVIEW_OUTPUT_DPI,
+        dpi=output_dpi,
     )
     setattr(fig, "_gsp_resolved_canvas", resolved_canvas)
     try:
@@ -347,12 +350,46 @@ def _run_datoviz(
 
 def _canvas_size_for_review(resolution: tuple[int, int], *, live: bool) -> CanvasSize:
     if live:
-        return CanvasSize.reference_px(
+        canvas_size = CanvasSize.reference_px(
             resolution[0],
             resolution[1],
-            reference_dpi=REVIEW_REFERENCE_DPI,
+            reference_dpi=_review_reference_dpi(),
         )
+        monitor_dpi = _review_monitor_dpi()
+        if monitor_dpi is not None:
+            canvas_size = canvas_size.with_monitor_dpi_override(monitor_dpi)
+        return canvas_size
     return CanvasSize.pixel_exact(resolution[0], resolution[1])
+
+
+def _matplotlib_output_dpi_for_review(canvas_size: CanvasSize, *, live: bool) -> float:
+    if not live:
+        return REVIEW_OUTPUT_DPI
+    return canvas_size.monitor_dpi_override or canvas_size.reference_dpi
+
+
+def _review_reference_dpi() -> float:
+    return _positive_float_env(REVIEW_REFERENCE_DPI_ENV, REVIEW_REFERENCE_DPI)
+
+
+def _review_monitor_dpi() -> float | None:
+    value = os.environ.get(REVIEW_MONITOR_DPI_ENV)
+    if value is None or not value.strip():
+        return None
+    return _positive_float_env(REVIEW_MONITOR_DPI_ENV, REVIEW_REFERENCE_DPI)
+
+
+def _positive_float_env(name: str, default: float) -> float:
+    value = os.environ.get(name)
+    if value is None or not value.strip():
+        return default
+    try:
+        parsed = float(value)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be a positive float") from exc
+    if parsed <= 0.0:
+        raise ValueError(f"{name} must be a positive float")
+    return parsed
 
 
 def _render_datoviz_visual(

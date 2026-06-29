@@ -38,6 +38,17 @@ Datoviz target comparable apparent physical size. Offscreen review uses
 `reference_dpi` in code when you need a setup-specific physical-size tweak; use visual style scale
 only for marker/text/stroke styling, not window sizing.
 
+For live review on a setup where the desktop toolkit and Datoviz disagree about physical DPI, set a
+semantic monitor-DPI override in your shell or `.envrc`:
+
+```bash
+export GSP_REVIEW_MONITOR_DPI=139.2  # equivalent to 96 * 1.45
+```
+
+This makes `reference_px(1280, 720, reference_dpi=96)` target a `1280 / 96` inch wide canvas using
+139.2 physical pixels per inch. Use `GSP_REVIEW_REFERENCE_DPI` only if you want to redefine the
+reference-pixel size itself.
+
 ## Examples
 
 | File | Reviews |

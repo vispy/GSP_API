@@ -441,10 +441,8 @@ def _datoviz_view_size_desc(dvz: Any, requested: CanvasSize) -> Any | None:
         desc, "requested_device_scale"
     ):
         desc.requested_device_scale = float(requested.requested_device_scale)
-    if requested.monitor_dpi_override is not None and hasattr(
-        desc, "monitor_dpi_override"
-    ):
-        desc.monitor_dpi_override = float(requested.monitor_dpi_override)
+    if requested.monitor_dpi_override is not None:
+        _set_datoviz_monitor_dpi_override(desc, float(requested.monitor_dpi_override))
     if hasattr(desc, "strict_framebuffer_size"):
         desc.strict_framebuffer_size = bool(requested.strict_framebuffer_size)
     return desc
@@ -454,6 +452,15 @@ def _datoviz_view_kind_value(dvz: Any, name: str) -> int:
     if name == "glfw":
         return int(getattr(dvz, "DVZ_VIEW_GLFW", 1))
     return int(getattr(dvz, "DVZ_VIEW_OFFSCREEN", 2))
+
+
+def _set_datoviz_monitor_dpi_override(desc: Any, dpi: float) -> None:
+    if hasattr(desc, "monitor_dpi_x_override"):
+        desc.monitor_dpi_x_override = dpi
+    if hasattr(desc, "monitor_dpi_y_override"):
+        desc.monitor_dpi_y_override = dpi
+    if hasattr(desc, "monitor_dpi_override"):
+        desc.monitor_dpi_override = dpi
 
 
 def _resolved_canvas_from_datoviz(requested: CanvasSize, native: Any) -> ResolvedCanvas:

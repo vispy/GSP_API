@@ -74,6 +74,7 @@ from gsp_datoviz.protocol_renderer import (
     import_datoviz_v04,
     is_datoviz_v04_facade,
     _image_texcoords,
+    _datoviz_view_size_desc,
     _resolved_canvas_from_datoviz,
 )
 from gsp_datoviz.query import (
@@ -1377,6 +1378,27 @@ def test_resolved_canvas_from_datoviz_fills_missing_physical_metrics():
     assert resolved.target_width_mm > 0.0
     assert resolved.estimated_width_mm == resolved.target_width_mm
     assert resolved.target_width_mm == pytest.approx(1280.0 / 96.0 * 25.4)
+
+
+def test_datoviz_view_size_desc_sets_current_monitor_dpi_override_fields():
+    class FakeDatovizWithSizeDesc:
+        class Desc:
+            monitor_dpi_x_override = 0.0
+            monitor_dpi_y_override = 0.0
+
+        def dvz_view_size_desc_reference_px(self, width, height, reference_dpi):
+            self.args = (width, height, reference_dpi)
+            return self.Desc()
+
+    fake = FakeDatovizWithSizeDesc()
+    canvas_size = CanvasSize.reference_px(1280, 720).with_monitor_dpi_override(139.2)
+
+    desc = _datoviz_view_size_desc(fake, canvas_size)
+
+    assert fake.args == (1280, 720, 96.0)
+    assert desc is not None
+    assert desc.monitor_dpi_x_override == 139.2
+    assert desc.monitor_dpi_y_override == 139.2
 
 
 def test_add_point_visual_retries_current_datoviz_diameter_attribute_name():
