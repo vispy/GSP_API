@@ -27,6 +27,7 @@ from gsp.protocol import (
 from gsp.protocol import (
     AffineTransform2DResource,
     AxisProviderRequest,
+    CanvasSize,
     ColorbarGuide,
     ColorMapId,
     ColorMapRef,
@@ -1329,6 +1330,26 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     assert attach_desc.coord_space == 0
 
 
+def test_add_point_visual_scales_canvas_pixels_for_resolved_datoviz_framebuffer():
+    fake = FakeDatovizV04WithQueryCapabilities()
+    canvas_size = CanvasSize.reference_px(320, 240).with_requested_device_scale(2.0)
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, canvas_size=canvas_size)
+    visual = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 0.0]], dtype=np.float32),
+        colors=np.array([[255, 255, 255, 255]], dtype=np.uint8),
+        sizes=np.array([12.0], dtype=np.float32),
+    )
+
+    renderer.add_point_visual(visual)
+
+    assert renderer.resolved_canvas.canvas_width_px == 320.0
+    assert renderer.resolved_canvas.framebuffer_width == 640
+    assert _calls(fake, "figure") == [("figure", "scene", 640, 480, 0)]
+    set_data = _calls(fake, "set_data")
+    np.testing.assert_allclose(set_data[2][3], [24.0], rtol=1e-6)
+
+
 def test_add_point_visual_retries_current_datoviz_diameter_attribute_name():
     fake = FakeDatovizV04WithCurrentAttributeNames()
     renderer = DatovizV04ProtocolRenderer(dvz=fake, width=320, height=240)
@@ -2483,6 +2504,18 @@ def test_renderer_show_creates_live_view_and_runs_app():
         ("view_glfw", "app", "figure", 800, 600, b"GSP Datoviz review")
     ]
     assert _calls(fake, "app_run") == [("app_run", "app", 1)]
+
+
+def test_renderer_show_uses_resolved_host_logical_size_for_reference_canvas():
+    fake = FakeDatovizV04WithInteractive()
+    canvas_size = CanvasSize.reference_px(320, 240).with_requested_device_scale(2.0)
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, canvas_size=canvas_size)
+
+    renderer.show(frame_count=1)
+
+    assert _calls(fake, "view_glfw") == [
+        ("view_glfw", "app", "figure", 320, 240, b"GSP Datoviz review")
+    ]
 
 
 def test_renderer_show_returns_in_test_mode(monkeypatch):

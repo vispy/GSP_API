@@ -23,6 +23,8 @@ import numpy.typing as npt
 
 from gsp.protocol import (
     AffineTransform2DResource,
+    CanvasMetricsSource,
+    CanvasSize,
     CapabilitySnapshot,
     ColorMapId,
     ColorScale,
@@ -49,6 +51,7 @@ from gsp.protocol import (
     QueryResult,
     QueryScope,
     QueryStatus,
+    ResolvedCanvas,
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     ScalarColorQueryPayload,
     ScalarColorSlot,
@@ -400,6 +403,92 @@ def _set_figure_color_pipeline(
     setter(figure, value)
 
 
+def _resolve_datoviz_canvas_size(dvz: Any, requested: CanvasSize) -> ResolvedCanvas:
+    desc = _datoviz_view_size_desc(dvz, requested)
+    resolver = getattr(dvz, "dvz_view_size_resolve", None)
+    if desc is not None and resolver is not None:
+        try:
+            native = resolver(desc, _datoviz_view_kind_value(dvz, "glfw"))
+        except (ctypes.ArgumentError, TypeError, ValueError):
+            native = None
+        if native is not None:
+            return _resolved_canvas_from_datoviz(requested, native)
+
+    scale = requested.requested_device_scale or 1.0
+    output_dpi = requested.reference_dpi * scale
+    return requested.resolve(
+        output_dpi=output_dpi,
+        device_scale=scale,
+        metrics_source=CanvasMetricsSource.BACKEND_DEFAULT,
+    )
+
+
+def _datoviz_view_size_desc(dvz: Any, requested: CanvasSize) -> Any | None:
+    factory_name = {
+        "pixel_exact": "dvz_view_size_desc_framebuffer_px",
+        "host_logical_px": "dvz_view_size_desc_host_logical_px",
+        "reference_px": "dvz_view_size_desc_reference_px",
+        "physical_mm": "dvz_view_size_desc_physical_mm",
+    }[requested.policy.value]
+    factory = getattr(dvz, factory_name, None)
+    if factory is None:
+        return None
+    if requested.policy.value in {"reference_px", "physical_mm"}:
+        desc = factory(requested.width, requested.height, requested.reference_dpi)
+    else:
+        desc = factory(requested.width, requested.height)
+    if requested.requested_device_scale is not None and hasattr(
+        desc, "requested_device_scale"
+    ):
+        desc.requested_device_scale = float(requested.requested_device_scale)
+    if requested.monitor_dpi_override is not None and hasattr(
+        desc, "monitor_dpi_override"
+    ):
+        desc.monitor_dpi_override = float(requested.monitor_dpi_override)
+    if hasattr(desc, "strict_framebuffer_size"):
+        desc.strict_framebuffer_size = bool(requested.strict_framebuffer_size)
+    return desc
+
+
+def _datoviz_view_kind_value(dvz: Any, name: str) -> int:
+    if name == "glfw":
+        return int(getattr(dvz, "DVZ_VIEW_GLFW", 1))
+    return int(getattr(dvz, "DVZ_VIEW_OFFSCREEN", 2))
+
+
+def _resolved_canvas_from_datoviz(requested: CanvasSize, native: Any) -> ResolvedCanvas:
+    return ResolvedCanvas(
+        requested_size=requested,
+        canvas_width_px=float(getattr(native, "canvas_width_px")),
+        canvas_height_px=float(getattr(native, "canvas_height_px")),
+        host_logical_width=int(getattr(native, "host_logical_width")),
+        host_logical_height=int(getattr(native, "host_logical_height")),
+        framebuffer_width=int(getattr(native, "framebuffer_width")),
+        framebuffer_height=int(getattr(native, "framebuffer_height")),
+        device_scale_x=float(getattr(native, "device_scale_x", 1.0)),
+        device_scale_y=float(getattr(native, "device_scale_y", 1.0)),
+        canvas_to_host_scale_x=float(getattr(native, "canvas_to_host_scale_x", 1.0)),
+        canvas_to_host_scale_y=float(getattr(native, "canvas_to_host_scale_y", 1.0)),
+        framebuffer_per_canvas_px_x=float(
+            getattr(native, "framebuffer_per_canvas_px_x", 1.0)
+        ),
+        framebuffer_per_canvas_px_y=float(
+            getattr(native, "framebuffer_per_canvas_px_y", 1.0)
+        ),
+        target_width_mm=float(getattr(native, "target_width_mm")),
+        target_height_mm=float(getattr(native, "target_height_mm")),
+        estimated_width_mm=float(getattr(native, "estimated_width_mm")),
+        estimated_height_mm=float(getattr(native, "estimated_height_mm")),
+        output_dpi=float(
+            requested.reference_dpi
+            * getattr(native, "framebuffer_per_canvas_px_x", 1.0)
+        ),
+        metrics_source=CanvasMetricsSource.BACKEND_REPORTED,
+        exactness=requested.resolve().exactness,
+        strict_framebuffer_size=bool(requested.strict_framebuffer_size),
+    )
+
+
 @dataclass
 class _ScalarVisualData:
     """Scene-owned scalar color data retained for semantic query payloads."""
@@ -421,6 +510,7 @@ class DatovizV04ProtocolRenderer:
     color_scales: Mapping[str, ColorScale] | None = None
     width: int = 800
     height: int = 600
+    canvas_size: CanvasSize | None = None
     background_rgba8: tuple[int, int, int, int] = DEFAULT_BACKGROUND_RGBA8
     color_pipeline: DatovizColorPipeline = "legacy_srgb_blend"
     view: View2D | None = None
@@ -437,6 +527,7 @@ class DatovizV04ProtocolRenderer:
     native_scales: dict[str, Any] = field(default_factory=dict, init=False)
     native_colormaps: dict[str, Any] = field(default_factory=dict, init=False)
     colorbars: dict[str, Any] = field(default_factory=dict, init=False)
+    resolved_canvas: ResolvedCanvas = field(init=False)
     scalar_visuals: dict[str, _ScalarVisualData] = field(
         default_factory=dict, init=False
     )
@@ -460,6 +551,13 @@ class DatovizV04ProtocolRenderer:
                 f"Datoviz facade is missing v0.4 functions: {missing}"
             )
 
+        requested_size = self.canvas_size or CanvasSize.pixel_exact(
+            self.width, self.height
+        )
+        self.resolved_canvas = _resolve_datoviz_canvas_size(self.dvz, requested_size)
+        self.width = self.resolved_canvas.framebuffer_width
+        self.height = self.resolved_canvas.framebuffer_height
+
         self.scene = self.dvz.dvz_scene()
         self.figure = self.dvz.dvz_figure(self.scene, self.width, self.height, 0)
         _set_figure_color_pipeline(self.dvz, self.figure, self.color_pipeline)
@@ -472,6 +570,19 @@ class DatovizV04ProtocolRenderer:
     def capabilities(self) -> CapabilitySnapshot:
         """Return the capability snapshot for this adapter slice."""
         return datoviz_v04_capability_snapshot(self.dvz)
+
+    def _canvas_px_scale(self) -> float:
+        return self.resolved_canvas.framebuffer_per_canvas_px
+
+    def _scale_canvas_px_array(
+        self, values: npt.NDArray[np.float32]
+    ) -> npt.NDArray[np.float32]:
+        return np.ascontiguousarray(
+            values.astype(np.float32, copy=False) * np.float32(self._canvas_px_scale())
+        )
+
+    def _scale_canvas_px(self, value: float) -> float:
+        return float(value * self._canvas_px_scale())
 
     def close(self) -> None:
         """Destroy the scene when the facade exposes a destroy helper."""
@@ -507,7 +618,9 @@ class DatovizV04ProtocolRenderer:
             self.transform_adaptations, visual.id, visual.transform
         )
         colors = _point_colors(visual, color_scales=self.color_scales)
-        diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
+        diameters = self._scale_canvas_px_array(
+            _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
+        )
 
         dvz_visual = self.dvz.dvz_point(self.scene, 0)
         _set_filled_point_style(self.dvz, dvz_visual)
@@ -563,7 +676,9 @@ class DatovizV04ProtocolRenderer:
             self.transform_adaptations, visual.id, visual.transform
         )
         fill_colors = _marker_fill_colors(visual, color_scales=self.color_scales)
-        diameters = _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
+        diameters = self._scale_canvas_px_array(
+            _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
+        )
         shape_values = visual.shape_values()
         angles = np.ascontiguousarray(visual.angle_values())
         shapes = _marker_shapes(self.dvz, shape_values)
@@ -572,7 +687,10 @@ class DatovizV04ProtocolRenderer:
         if dvz_visual is None:
             raise DatovizV04Unsupported("Datoviz marker visual allocation failed")
         _set_marker_style(
-            self.dvz, dvz_visual, visual.stroke_color, visual.stroke_width
+            self.dvz,
+            dvz_visual,
+            visual.stroke_color,
+            self._scale_canvas_px(visual.stroke_width),
         )
         _set_alpha_mode_if_translucent(self.dvz, dvz_visual, fill_colors)
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
@@ -638,7 +756,9 @@ class DatovizV04ProtocolRenderer:
             self.transform_adaptations, visual.id, visual.transform
         )
         colors = _rgba8(visual.colors)
-        widths = np.ascontiguousarray(visual.width_values())
+        widths = self._scale_canvas_px_array(
+            np.ascontiguousarray(visual.width_values())
+        )
 
         dvz_visual = self.dvz.dvz_segment(self.scene, 0)
         if dvz_visual is None:
@@ -687,7 +807,7 @@ class DatovizV04ProtocolRenderer:
             self.transform_adaptations, visual.id, visual.transform
         )
         colors = _expand_path_colors(visual)
-        widths = _expand_path_widths(visual)
+        widths = self._scale_canvas_px_array(_expand_path_widths(visual))
         subpaths = np.ascontiguousarray(np.array(visual.path_lengths, dtype=np.uint32))
 
         dvz_visual = self.dvz.dvz_path(self.scene, 0)
@@ -842,7 +962,7 @@ class DatovizV04ProtocolRenderer:
             self.transform_adaptations, visual.id, visual.transform
         )
         colors = _rgba8(visual.rgba_values())
-        sizes = visual.font_size_values()
+        sizes = self._scale_canvas_px_array(visual.font_size_values())
         rotations = visual.rotation_values()
         anchor_x = visual.anchor_x_values()
         anchor_y = visual.anchor_y_values()
@@ -1033,7 +1153,10 @@ class DatovizV04ProtocolRenderer:
 
         self._ensure_app("offscreen")
         self.offscreen_view = self.dvz.dvz_view_offscreen(
-            self.app, self.figure, self.width, self.height
+            self.app,
+            self.figure,
+            self.resolved_canvas.framebuffer_width,
+            self.resolved_canvas.framebuffer_height,
         )
         if _is_null_handle(self.offscreen_view):
             raise DatovizV04Unavailable("Datoviz offscreen view creation failed")
@@ -1050,12 +1173,14 @@ class DatovizV04ProtocolRenderer:
             self.live_view = view_glfw(
                 self.app,
                 self.figure,
-                self.width,
-                self.height,
+                self.resolved_canvas.host_logical_width,
+                self.resolved_canvas.host_logical_height,
                 b"GSP Datoviz review",
             )
             if _is_null_handle(self.live_view):
-                raise DatovizV04Unavailable("Datoviz interactive GLFW view creation failed")
+                raise DatovizV04Unavailable(
+                    "Datoviz interactive GLFW view creation failed"
+                )
             return self.live_view
 
         view = getattr(self.dvz, "dvz_view", None)
