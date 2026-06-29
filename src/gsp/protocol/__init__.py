@@ -27,6 +27,7 @@ from .capabilities import (
 from .commands import CommandBatch, CommandKind, ProtocolCommand
 from .color import (
     ColorbarGuide,
+    ColorbarGuideStyle,
     ColorbarOrientation,
     ColorbarPlacement,
     ColorMapId,
@@ -234,6 +235,7 @@ __all__ = [
     "CommandKind",
     "CommandResult",
     "ColorbarGuide",
+    "ColorbarGuideStyle",
     "ColorbarOrientation",
     "ColorbarPlacement",
     "ColorMapId",

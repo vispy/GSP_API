@@ -159,6 +159,26 @@ class ScalarColorEncoding:
 
 
 @dataclass(frozen=True, slots=True)
+class ColorbarGuideStyle:
+    """Canvas-pixel colorbar style hints shared by backend lowerings."""
+
+    ramp_width_px: float = 36.0
+    tick_length_px: float = 6.0
+    label_gap_px: float = 6.0
+    min_length_px: float = 160.0
+    length_fraction: float = 0.62
+
+    def __post_init__(self) -> None:
+        _validate_positive_finite("ramp_width_px", self.ramp_width_px)
+        _validate_positive_finite("tick_length_px", self.tick_length_px)
+        _validate_positive_finite("label_gap_px", self.label_gap_px)
+        _validate_positive_finite("min_length_px", self.min_length_px)
+        _validate_positive_finite("length_fraction", self.length_fraction)
+        if self.length_fraction > 1.0:
+            raise ValueError("length_fraction must be <= 1")
+
+
+@dataclass(frozen=True, slots=True)
 class ColorbarGuide:
     """Semantic guide representing a color scale in a panel."""
 
@@ -171,6 +191,7 @@ class ColorbarGuide:
     label: str = ""
     ticks: tuple[float, ...] = ()
     tick_labels: tuple[str, ...] | None = None
+    style: ColorbarGuideStyle = field(default_factory=ColorbarGuideStyle)
 
     def __post_init__(self) -> None:
         validate_id(self.id)
@@ -187,6 +208,8 @@ class ColorbarGuide:
         object.__setattr__(self, "placement", placement)
         if not isinstance(self.label, str):
             raise TypeError("label must be a string")
+        if not isinstance(self.style, ColorbarGuideStyle):
+            raise TypeError("style must be a ColorbarGuideStyle")
         if any(not np.isfinite(tick) for tick in self.ticks):
             raise ValueError("ticks must be finite")
         if self.tick_labels is not None:
@@ -205,6 +228,11 @@ def _validate_scalar_values(values: ScalarArray, *, field_name: str) -> None:
         raise ValueError(f"{field_name} must not be empty")
     if not np.all(np.isfinite(values)):
         raise ValueError(f"{field_name} must be finite")
+
+
+def _validate_positive_finite(field_name: str, value: float) -> None:
+    if not np.isfinite(value) or value <= 0.0:
+        raise ValueError(f"{field_name} must be positive and finite")
 
 
 def _default_colorbar_placement(

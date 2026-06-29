@@ -17,6 +17,7 @@ S026 defines a small public scalar color system.
 | `LinearNormalize` | yes | Explicit finite linear `vmin`/`vmax` normalization with clipping. |
 | `ScalarColorEncoding` | yes for scalar visual slots | Slot-specific scalar values linked to a `ColorScale`. |
 | `ColorbarGuide` | optional | Semantic guide representing a `ColorScale` in a panel/view. |
+| `ColorbarGuideStyle` | no | Canvas-pixel colorbar style hints shared by backend lowerings. |
 
 `ColorScale` fields:
 
@@ -66,6 +67,17 @@ S026 defines a small public scalar color system.
 | `label` | string | no | Optional label. ASCII required for strict output. |
 | `ticks` | finite float tuple | no | Explicit scalar-domain tick values. |
 | `tick_labels` | tuple of strings | no | Same length as `ticks` when provided. |
+| `style` | `ColorbarGuideStyle` | no | Explicit colorbar ramp/tick/gap sizing in canvas/reference pixels. |
+
+`ColorbarGuideStyle` fields:
+
+| Field | Type | Default | Semantics |
+|---|---|---:|---|
+| `ramp_width_px` | positive finite float | `36.0` | Color ramp thickness in canvas/reference pixels. |
+| `tick_length_px` | positive finite float | `6.0` | Tick length in canvas/reference pixels. |
+| `label_gap_px` | positive finite float | `6.0` | Gap between ramp/ticks and label in canvas/reference pixels. |
+| `min_length_px` | positive finite float | `160.0` | Minimum ramp length in canvas/reference pixels. |
+| `length_fraction` | positive finite float `<= 1` | `0.62` | Fraction of panel/canvas length used for the ramp. |
 
 Colorbars are guides, not visuals. They are not Matplotlib axes, backend mappables, image ramps, or
 layout objects in the public protocol.

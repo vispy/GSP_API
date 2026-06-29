@@ -5,6 +5,7 @@ import pytest
 
 from gsp.protocol import (
     ColorbarGuide,
+    ColorbarGuideStyle,
     ColorbarOrientation,
     ColorbarPlacement,
     ColorMapId,
@@ -92,6 +93,25 @@ def test_colorbar_guide_accepts_explicit_ticks_and_defaults_placement():
 
     assert guide.orientation == ColorbarOrientation.VERTICAL
     assert guide.placement == ColorbarPlacement.RIGHT
+    assert guide.style.ramp_width_px == 36.0
+
+
+def test_colorbar_guide_style_validates_positive_canvas_pixel_values():
+    style = ColorbarGuideStyle(
+        ramp_width_px=42.0,
+        tick_length_px=7.0,
+        label_gap_px=8.0,
+        min_length_px=180.0,
+        length_fraction=0.75,
+    )
+
+    assert style.ramp_width_px == 42.0
+    assert style.length_fraction == 0.75
+
+    with pytest.raises(ValueError, match="ramp_width_px"):
+        ColorbarGuideStyle(ramp_width_px=0.0)
+    with pytest.raises(ValueError, match="length_fraction"):
+        ColorbarGuideStyle(length_fraction=1.5)
 
 
 def test_colorbar_guide_rejects_bad_tick_labels_and_placement():
