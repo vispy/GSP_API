@@ -28,6 +28,10 @@ Screen-space visual fields ending in `_px` are canvas/reference pixels. Before u
 multiplies point/marker diameters, text sizes, segment/path widths, and marker stroke widths by
 `ResolvedCanvas.framebuffer_per_canvas_px`.
 
+`ColorbarGuideStyle` values are lowered through the same resolved canvas scale before setting
+Datoviz colorbar descriptor fields such as `ramp_width_px`, `tick_length_px`, `label_gap_px`, and
+placement width/height.
+
 `DVZ_WINDOW_SIZE_SCALE` is not part of the Datoviz or GSP contract. Use `reference_px` for live
 physical-size comparability and `pixel_exact` for deterministic captures.
 

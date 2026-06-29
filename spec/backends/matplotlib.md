@@ -107,6 +107,10 @@ Supported style mappings include title font size and pad, axis label font size a
 label font size, tick length, tick width, tick-label padding, and grid line width. These are semantic
 GSP style hints; Matplotlib artist objects remain backend realization details.
 
+`ColorbarGuideStyle.ramp_width_px` is lowered to colorbar axes thickness as a fraction of the
+resolved canvas width or height. Colorbar guide thickness is GSP-owned style, not a Matplotlib
+locator/layout default.
+
 Matplotlib layout snapshots may carry an explicit `RenderTarget.device_scale` supplied by the caller.
 The logical figure size and guide rectangles remain in canvas/reference pixels; derived framebuffer
 dimensions come from the resolved canvas contract.
