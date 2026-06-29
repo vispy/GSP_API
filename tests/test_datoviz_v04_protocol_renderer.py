@@ -69,6 +69,8 @@ from gsp_datoviz.protocol_renderer import (
     DatovizV04Unavailable,
     DatovizV04Unsupported,
     capability_snapshot,
+    datoviz_v04_live_input_diagnostics,
+    datoviz_v04_live_input_ready,
     datoviz_v04_mesh_diagnostics,
     datoviz_v04_mesh_ready,
     datoviz_v04_sampled_field_diagnostics,
@@ -506,10 +508,35 @@ class FakeDatovizV04WithCapture(FakeDatovizV04):
 
 
 class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
+    class DvzPointerEventType:
+        DVZ_POINTER_EVENT_RELEASE = 0
+        DVZ_POINTER_EVENT_PRESS = 1
+        DVZ_POINTER_EVENT_MOVE = 2
+        DVZ_POINTER_EVENT_WHEEL = 20
+
+    class DvzPointerButton:
+        DVZ_POINTER_BUTTON_LEFT = 1
+
+    class DvzPointerEvent:
+        def __init__(self):
+            self.window_size = [0.0, 0.0]
+
+    class DvzInputEvent:
+        def __init__(self):
+            self.content = SimpleNamespace()
+
+    class DvzInputEventContent:
+        pointer = None
+
     class FakePanzoomDesc:
         width = 0.0
         height = 0.0
         controller_flags = 0
+
+    def __init__(self):
+        super().__init__()
+        self.pointer_callback = None
+        self.pointer_user_data = None
 
     def dvz_view_glfw(self, app, figure, width, height, title):
         self.calls.append(("view_glfw", app, figure, width, height, title))
@@ -526,6 +553,48 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
     def dvz_view_panzoom(self, view, panel, desc):
         self.calls.append(("view_panzoom", view, panel, desc.width, desc.height))
         return "panzoom"
+
+    def dvz_view_input(self, view):
+        self.calls.append(("view_input", view))
+        return "input-router"
+
+    def dvz_input_subscribe_pointer(self, router, callback, user_data):
+        self.calls.append(("subscribe_pointer", router, user_data))
+        self.pointer_callback = callback
+        self.pointer_user_data = user_data
+        return None
+
+    def dvz_input_unsubscribe_pointer(self, router, callback, user_data):
+        self.calls.append(("unsubscribe_pointer", router, callback, user_data))
+        if callback == self.pointer_callback:
+            self.pointer_callback = None
+        return None
+
+    def dvz_view_request_frame(self, view):
+        self.calls.append(("request_frame", view))
+        return None
+
+
+class FakePointerEvent:
+    def __init__(
+        self,
+        event_type,
+        x,
+        y,
+        *,
+        button=0,
+        wheel_y=0.0,
+    ):
+        self.type = event_type
+        self.pos = [float(x), float(y)]
+        self.button = button
+        self.window_size = [800.0, 600.0]
+        self.content = SimpleNamespace(w=SimpleNamespace(dir=[0.0, float(wheel_y)]))
+
+
+class FakePointerEventPtr:
+    def __init__(self, event):
+        self.contents = event
 
 
 class FakeDatovizV04WithQueryCapabilities(FakeDatovizV04):
@@ -2666,6 +2735,80 @@ def test_renderer_enable_native_panzoom_creates_live_view_and_controller():
     ]
 
 
+def test_datoviz_live_input_readiness_requires_correct_binding_layout():
+    assert datoviz_v04_live_input_ready(FakeDatovizV04WithInteractive())
+
+    diagnostics = datoviz_v04_live_input_diagnostics(FakeDatovizV04())
+
+    assert "missing DvzInputEventContent" in diagnostics
+
+
+def test_renderer_enable_gsp_view2d_navigation_subscribes_to_live_pointer_input():
+    fake = FakeDatovizV04WithInteractive()
+    view = View2D(id="view:main", panel_id="panel:main")
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view=view)
+
+    session = renderer.enable_gsp_view2d_navigation()
+
+    assert session.view == view
+    assert _calls(fake, "view_input") == [("view_input", "live-view")]
+    assert _calls(fake, "subscribe_pointer") == [
+        ("subscribe_pointer", "input-router", None)
+    ]
+    assert fake.pointer_callback == session.handle_pointer_event
+
+
+def test_datoviz_live_pointer_events_apply_retained_gsp_view2d_navigation():
+    fake = FakeDatovizV04WithInteractive()
+    view = View2D(id="view:main", panel_id="panel:main")
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view=view)
+    renderer.enable_gsp_view2d_navigation()
+    assert fake.pointer_callback is not None
+
+    fake.pointer_callback(
+        "input-router",
+        FakePointerEventPtr(
+            FakePointerEvent(
+                fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+                350.0,
+                300.0,
+                button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
+            )
+        ),
+        None,
+    )
+    fake.pointer_callback(
+        "input-router",
+        FakePointerEventPtr(
+            FakePointerEvent(
+                fake.DvzPointerEventType.DVZ_POINTER_EVENT_MOVE, 430.0, 300.0
+            )
+        ),
+        None,
+    )
+
+    assert renderer.view is not None
+    assert renderer.view.x_range == pytest.approx((-1.2, 0.8))
+    assert renderer.view.y_range == pytest.approx((-1.0, 1.0))
+    assert _calls(fake, "set_domain")[-2:] == [
+        ("set_domain", "panel", 0, -1.2, 0.8),
+        ("set_domain", "panel", 1, -1.0, 1.0),
+    ]
+    assert _calls(fake, "request_frame") == [("request_frame", "live-view")]
+
+
+def test_datoviz_live_navigation_unsubscribes_on_close():
+    fake = FakeDatovizV04WithInteractive()
+
+    with DatovizV04ProtocolRenderer(
+        dvz=fake, view=View2D(id="view:main", panel_id="panel:main")
+    ) as renderer:
+        renderer.enable_gsp_view2d_navigation()
+
+    assert _calls(fake, "unsubscribe_pointer")
+    assert fake.pointer_callback is None
+
+
 def test_renderer_show_uses_resolved_host_logical_size_for_reference_canvas():
     fake = FakeDatovizV04WithInteractive()
     canvas_size = CanvasSize.reference_px(320, 240).with_requested_device_scale(2.0)
@@ -2873,6 +3016,16 @@ def test_imported_datoviz_binding_exposes_view2d_and_axis_tick_contract_when_ava
     signature = inspect.signature(dvz.dvz_axis_set_ticks)
     assert tuple(signature.parameters) == ("axis", "values", "labels")
     assert signature.parameters["labels"].default is None
+
+
+def test_imported_datoviz_binding_exposes_live_input_contract_when_available():
+    dvz = pytest.importorskip("datoviz")
+    if not is_datoviz_v04_facade(dvz):
+        pytest.skip("installed Datoviz binding is not the v0.4 facade")
+
+    diagnostics = datoviz_v04_live_input_diagnostics(dvz)
+
+    assert diagnostics == ()
 
 
 def test_import_datoviz_v04_wraps_facade_load_runtime_error(monkeypatch):

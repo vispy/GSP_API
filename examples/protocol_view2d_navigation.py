@@ -93,8 +93,8 @@ def _run_datoviz(*, scripted_smoke: bool, frames: int) -> int:
                 renderer.apply_retained_view2d_navigation(next_view)
             print(f"datoviz retained scripted smoke: view={renderer.view.x_range},{renderer.view.y_range}")
             return 0
-        renderer.enable_native_panzoom()
-        print("Datoviz v0.4 native panzoom enabled: drag to pan, wheel to zoom.")
+        renderer.enable_gsp_view2d_navigation()
+        print("Datoviz v0.4 GSP navigation enabled: drag to pan, wheel to zoom.")
         renderer.show(frame_count=frames)
     return 0
 

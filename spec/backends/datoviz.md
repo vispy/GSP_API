@@ -448,12 +448,13 @@ Current support status:
 |---|---:|---|
 | Programmatic retained `View2D` update | supported | Uses retained panel domain/View2D state. |
 | Visual buffer stability during navigation | supported by fake-facade smoke | Zero upload/recreation calls are expected after baseline scene creation. |
-| Datoviz v0.4 native pointer callbacks | deferred | The protocol renderer does not yet bind a native event source to the S035 input adapter. |
-| Live GPU runtime performance benchmark | deferred | Requires an active v0.4 runtime/event source beyond the fake-facade proof. |
+| Datoviz v0.4 pointer callback adapter | supported | Datoviz pointer callbacks are normalized into S035 pointer events, then accepted actions update canonical `View2D`. |
+| Datoviz native panzoom controller | native-only demo | `dvz_view_panzoom()` is not strict GSP navigation unless synchronized back into canonical `View2D`. |
+| Live GPU runtime performance benchmark | deferred | Requires a bounded benchmark beyond the fake-facade retained-update proof and one-frame live launch. |
 
-Do not claim full Datoviz live-interactive support until native pointer events are adapted into S035
-actions and exercised against a real v0.4 runtime. CPU remapping remains an adapted fallback only and
-must not be advertised as the retained fast path.
+Strict Datoviz live navigation is the GSP action path: native pointer events are adapted into S035
+actions and accepted `View2D` updates are applied through retained panel state. CPU remapping remains
+an adapted fallback only and must not be advertised as the retained fast path.
 
 ## S025 MeshVisual target
 

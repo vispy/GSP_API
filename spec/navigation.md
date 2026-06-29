@@ -172,7 +172,8 @@ Supported in this stage:
 | Matplotlib native drag/wheel review | supported | `examples/protocol_view2d_navigation.py --backend matplotlib` adapts Matplotlib mouse events to S035 actions. |
 | Matplotlib scripted smoke | supported | `examples/protocol_view2d_navigation.py --backend matplotlib --scripted-smoke` runs headless. |
 | Datoviz retained scripted smoke | supported | `tools/s035_navigation_smoke.py --backend datoviz-fake` verifies retained update calls and no unchanged visual-buffer reupload. |
-| Datoviz v0.4 native pointer callbacks | deferred | The v0.4 protocol renderer has a retained update path but no backend-native event source bound to this protocol adapter yet. |
+| Datoviz v0.4 pointer callback review | supported | `examples/protocol_view2d_navigation.py --backend datoviz` adapts Datoviz pointer events to S035 actions, then applies accepted `View2D` updates through the retained panel path. |
+| Datoviz native panzoom controller | native-only demo | `dvz_view_panzoom()` may be used for backend-native experiments, but it is not strict GSP navigation unless its state is synchronized back into canonical `View2D`. |
 | Public cross-backend event system | deferred | S035 intentionally keeps raw input streams outside the public protocol. |
 
 Performance smoke command:

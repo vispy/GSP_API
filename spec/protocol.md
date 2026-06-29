@@ -77,5 +77,7 @@ than re-uploading visual geometry buffers.
 
 S035 includes a small backend-neutral pointer adapter for review/integration, but the public
 protocol boundary remains the semantic action/result model. Current reviewed paths are Matplotlib
-native drag/wheel review and Datoviz retained scripted smoke; Datoviz v0.4 native pointer callbacks
-remain deferred until the protocol renderer has a real native event source.
+native drag/wheel review, Datoviz retained scripted smoke, and Datoviz v0.4 pointer callbacks
+adapted into GSP semantic navigation actions. Backend-native controllers such as Datoviz
+`dvz_view_panzoom()` are not strict GSP navigation unless their resulting state is synchronized back
+to canonical `View2D`.

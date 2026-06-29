@@ -33,13 +33,21 @@ from gsp.protocol import (
     ColorbarPlacement,
     ImageOrigin,
     ImageVisual,
+    LogicalPixelRect,
     MeshColorMode,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
+    NavigationDiagnosticCode,
+    NavigationPointerEvent,
+    NavigationPointerEventKind,
+    NavigationResult,
     PathVisual,
+    PanByAction,
     PointVisual,
+    ResetViewAction,
     SegmentVisual,
+    SetViewAction,
     TextVisual,
     TextAnchorX,
     TextAnchorY,
@@ -57,8 +65,13 @@ from gsp.protocol import (
     ScalarColorSlot,
     TRANSFORM_QUERY_PAYLOAD_KIND,
     View2D,
+    View2DNavigationController,
+    View2DNavigationInputAdapter,
     VisualFamily,
     VisualTransformBinding,
+    ZoomAboutAction,
+    pan_view2d,
+    zoom_view2d_about,
 )
 from gsp.protocol.color_mapping import (
     map_scalar_value,
@@ -138,6 +151,12 @@ _REQUIRED_DVZ_TEXT_FUNCTIONS = (
 )
 
 _OPTIONAL_UNVERIFIED_DVZ_TEXT_FUNCTIONS: tuple[str, ...] = ()
+
+DVZ_POINTER_EVENT_RELEASE = 0
+DVZ_POINTER_EVENT_PRESS = 1
+DVZ_POINTER_EVENT_MOVE = 2
+DVZ_POINTER_EVENT_WHEEL = 20
+DVZ_POINTER_BUTTON_LEFT = 1
 
 DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
@@ -299,6 +318,49 @@ def datoviz_v04_sampled_field_diagnostics(module: ModuleType | Any) -> tuple[str
         for name in _REQUIRED_DVZ_SAMPLED_FIELD_FUNCTIONS
         if not hasattr(module, name)
     )
+
+
+def datoviz_v04_live_input_ready(module: ModuleType | Any) -> bool:
+    """Return whether the Datoviz facade exposes the S035 live input substrate."""
+    return not datoviz_v04_live_input_diagnostics(module)
+
+
+def datoviz_v04_live_input_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
+    """Return why Datoviz live pointer input is unavailable for GSP navigation."""
+    diagnostics = [
+        f"missing {name}"
+        for name in (
+            "dvz_view_input",
+            "dvz_input_subscribe_pointer",
+            "dvz_input_unsubscribe_pointer",
+            "DvzPointerEvent",
+            "DvzInputEvent",
+            "DvzInputEventContent",
+        )
+        if not hasattr(module, name)
+    ]
+    pointer_event_type = getattr(module, "DvzPointerEvent", None)
+    if pointer_event_type is not None:
+        try:
+            pointer_event = pointer_event_type()
+        except TypeError:
+            pointer_event = None
+        if pointer_event is None or not hasattr(pointer_event, "window_size"):
+            diagnostics.append("DvzPointerEvent missing window_size field")
+    input_event_type = getattr(module, "DvzInputEvent", None)
+    if input_event_type is not None:
+        try:
+            input_event = input_event_type()
+        except TypeError:
+            input_event = None
+        if input_event is None or not hasattr(input_event, "content"):
+            diagnostics.append("DvzInputEvent missing content union")
+    input_event_content_type = getattr(module, "DvzInputEventContent", None)
+    if input_event_content_type is not None and not hasattr(
+        input_event_content_type, "pointer"
+    ):
+        diagnostics.append("DvzInputEventContent missing pointer field")
+    return tuple(diagnostics)
 
 
 def datoviz_v04_mesh_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
@@ -547,6 +609,9 @@ class DatovizV04ProtocolRenderer:
     offscreen_view: Any | None = field(default=None, init=False)
     live_view: Any | None = field(default=None, init=False)
     native_panzoom: Any | None = field(default=None, init=False)
+    live_navigation: "_DatovizLiveView2DNavigation | None" = field(
+        default=None, init=False
+    )
     visuals: dict[str, Any] = field(default_factory=dict, init=False)
     sampled_fields: dict[str, Any] = field(default_factory=dict, init=False)
     native_scales: dict[str, Any] = field(default_factory=dict, init=False)
@@ -613,6 +678,9 @@ class DatovizV04ProtocolRenderer:
         """Destroy the scene when the facade exposes a destroy helper."""
         if self._closed:
             return
+        if self.live_navigation is not None:
+            self.live_navigation.close()
+            self.live_navigation = None
         destroy_app = getattr(self.dvz, "dvz_app_destroy", None)
         if destroy_app is not None and self.app is not None:
             destroy_app(self.app)
@@ -1155,6 +1223,43 @@ class DatovizV04ProtocolRenderer:
             raise DatovizV04Unavailable("Datoviz native panzoom creation failed")
         return self.native_panzoom
 
+    def enable_gsp_view2d_navigation(
+        self,
+        view: View2D | None = None,
+        *,
+        controller_id: str = "nav:datoviz-live",
+        layout_snapshot_id: str = "layout:datoviz-live",
+    ) -> "_DatovizLiveView2DNavigation":
+        """Enable Datoviz pointer input as canonical S035 View2D navigation."""
+        diagnostics = datoviz_v04_live_input_diagnostics(self.dvz)
+        if diagnostics:
+            raise DatovizV04Unavailable(
+                "Datoviz live input binding is unavailable: " + "; ".join(diagnostics)
+            )
+        target_view = view or self.view
+        if target_view is None:
+            raise DatovizV04Unavailable(
+                "Datoviz GSP navigation requires an initial View2D"
+            )
+        live_view = self._ensure_live_view()
+        router = self.dvz.dvz_view_input(live_view)
+        if _is_null_handle(router):
+            raise DatovizV04Unavailable("Datoviz live input router is unavailable")
+        if self.live_navigation is not None:
+            self.live_navigation.close()
+        self.live_navigation = _DatovizLiveView2DNavigation(
+            renderer=self,
+            router=router,
+            live_view=live_view,
+            view=target_view,
+            controller_id=controller_id,
+            layout_snapshot_id=layout_snapshot_id,
+        )
+        self.dvz.dvz_input_subscribe_pointer(
+            router, self.live_navigation.handle_pointer_event, None
+        )
+        return self.live_navigation
+
     def _create_rgba8_sampled_field(
         self, pixels: npt.NDArray[np.uint8], width: int, height: int
     ) -> Any:
@@ -1477,6 +1582,240 @@ class DatovizV04ProtocolRenderer:
         """Apply an accepted S035 navigation View2D as a retained panel update."""
         self.view = view
         return self.apply_datoviz_data_view2d(view)
+
+
+NavigationAction = PanByAction | ZoomAboutAction | SetViewAction | ResetViewAction
+
+
+class _DatovizLiveView2DNavigation:
+    """Translate Datoviz pointer callbacks into S035 semantic navigation."""
+
+    def __init__(
+        self,
+        *,
+        renderer: DatovizV04ProtocolRenderer,
+        router: Any,
+        live_view: Any,
+        view: View2D,
+        controller_id: str,
+        layout_snapshot_id: str,
+    ) -> None:
+        self.renderer = renderer
+        self.router = router
+        self.live_view = live_view
+        self.view = view
+        self.revision_index = 1
+        self.layout_snapshot_id = layout_snapshot_id
+        self.controller = View2DNavigationController(
+            id=controller_id,
+            panel_id=view.panel_id,
+            view_id=view.id,
+            current_view2d_revision="view-rev:datoviz-live-1",
+            home_view=view,
+        )
+        self.adapter = View2DNavigationInputAdapter(
+            controller_id=self.controller.id,
+            view2d_revision=self.controller.current_view2d_revision,
+            panel_rect=self.panel_rect,
+            layout_snapshot_id=layout_snapshot_id,
+        )
+        self._closed = False
+
+    @property
+    def panel_rect(self) -> LogicalPixelRect:
+        """Return the live Datoviz panel rectangle in host logical pixels."""
+        return LogicalPixelRect(
+            x=0.0,
+            y=0.0,
+            width=float(self.renderer.resolved_canvas.host_logical_width),
+            height=float(self.renderer.resolved_canvas.host_logical_height),
+        )
+
+    def close(self) -> None:
+        """Unsubscribe from Datoviz pointer callbacks."""
+        if self._closed:
+            return
+        unsubscribe = getattr(self.renderer.dvz, "dvz_input_unsubscribe_pointer", None)
+        if unsubscribe is not None:
+            unsubscribe(self.router, self.handle_pointer_event, None)
+        self._closed = True
+
+    def handle_pointer_event(
+        self, _router: Any, event_ptr: Any, _user_data: Any
+    ) -> None:
+        """Handle one raw Datoviz pointer callback."""
+        event = getattr(event_ptr, "contents", event_ptr)
+        pointer_event = _navigation_pointer_event_from_datoviz(
+            self.renderer.dvz, event
+        )
+        if pointer_event is None:
+            return
+        self._apply_event(pointer_event)
+
+    def _apply_event(self, event: NavigationPointerEvent) -> None:
+        self.adapter.set_panel_rect(self.panel_rect)
+        action = self.adapter.handle_pointer_event(event)
+        if action is None:
+            return
+        result = _apply_view2d_navigation_action(
+            self.controller,
+            self.view,
+            self.adapter.panel_rect,
+            action,
+            next_view2d_revision=self._next_revision(),
+            view_snapshot_id=f"view-snapshot:datoviz-live-{self.revision_index}",
+            expected_layout_snapshot_id=self.layout_snapshot_id,
+        )
+        if not result.accepted or result.view is None or result.new_view2d_revision is None:
+            return
+        self.view = result.view
+        self.controller = replace(
+            self.controller, current_view2d_revision=result.new_view2d_revision
+        )
+        self.adapter.accept_navigation_result(result)
+        self.renderer.apply_retained_view2d_navigation(result.view)
+        request_frame = getattr(self.renderer.dvz, "dvz_view_request_frame", None)
+        if request_frame is not None:
+            request_frame(self.live_view)
+
+    def _next_revision(self) -> str:
+        self.revision_index += 1
+        return f"view-rev:datoviz-live-{self.revision_index}"
+
+
+def _navigation_pointer_event_from_datoviz(
+    dvz: Any, event: Any
+) -> NavigationPointerEvent | None:
+    event_type = int(getattr(event, "type"))
+    x_px = float(event.pos[0])
+    y_px = float(event.pos[1])
+    if event_type == _enum_value(
+        dvz,
+        "DvzPointerEventType",
+        "DVZ_POINTER_EVENT_PRESS",
+        DVZ_POINTER_EVENT_PRESS,
+    ):
+        left_button = int(getattr(event, "button", 0)) == _enum_value(
+            dvz,
+            "DvzPointerButton",
+            "DVZ_POINTER_BUTTON_LEFT",
+            DVZ_POINTER_BUTTON_LEFT,
+        )
+        return NavigationPointerEvent(
+            NavigationPointerEventKind.BUTTON_PRESS,
+            x_px,
+            y_px,
+            left_button=left_button,
+        )
+    if event_type == _enum_value(
+        dvz,
+        "DvzPointerEventType",
+        "DVZ_POINTER_EVENT_RELEASE",
+        DVZ_POINTER_EVENT_RELEASE,
+    ):
+        return NavigationPointerEvent(
+            NavigationPointerEventKind.BUTTON_RELEASE, x_px, y_px
+        )
+    if event_type == _enum_value(
+        dvz,
+        "DvzPointerEventType",
+        "DVZ_POINTER_EVENT_MOVE",
+        DVZ_POINTER_EVENT_MOVE,
+    ):
+        return NavigationPointerEvent(
+            NavigationPointerEventKind.MOUSE_MOVE, x_px, y_px
+        )
+    if event_type == _enum_value(
+        dvz,
+        "DvzPointerEventType",
+        "DVZ_POINTER_EVENT_WHEEL",
+        DVZ_POINTER_EVENT_WHEEL,
+    ):
+        return NavigationPointerEvent(
+            NavigationPointerEventKind.WHEEL,
+            x_px,
+            y_px,
+            scroll_steps=float(event.content.w.dir[1]),
+        )
+    return None
+
+
+def _apply_view2d_navigation_action(
+    controller: View2DNavigationController,
+    current_view: View2D,
+    panel_rect: LogicalPixelRect,
+    action: NavigationAction,
+    *,
+    next_view2d_revision: str,
+    view_snapshot_id: str | None,
+    expected_layout_snapshot_id: str,
+) -> NavigationResult:
+    if action.controller_id != controller.id:
+        return _reject_navigation_action(
+            controller,
+            action,
+            NavigationDiagnosticCode.NAVIGATION_UNSUPPORTED,
+            "navigation action targets a different controller",
+        )
+    if action.view2d_revision != controller.current_view2d_revision:
+        return _reject_navigation_action(
+            controller,
+            action,
+            NavigationDiagnosticCode.NAVIGATION_STALE_VIEW,
+            "navigation action references a stale View2D revision",
+        )
+    if action.layout_snapshot_id not in (None, expected_layout_snapshot_id):
+        return _reject_navigation_action(
+            controller,
+            action,
+            NavigationDiagnosticCode.NAVIGATION_STALE_LAYOUT,
+            "navigation action references a stale layout snapshot",
+        )
+    if isinstance(action, PanByAction):
+        next_view = pan_view2d(current_view, panel_rect, action.dx_px, action.dy_px)
+    elif isinstance(action, ZoomAboutAction):
+        next_view = zoom_view2d_about(
+            current_view,
+            panel_rect,
+            action.anchor_px,
+            action.factor_x,
+            action.factor_y,
+        )
+    elif isinstance(action, SetViewAction):
+        next_view = action.view
+    elif isinstance(action, ResetViewAction) and controller.home_view is not None:
+        next_view = controller.home_view
+    else:
+        return _reject_navigation_action(
+            controller,
+            action,
+            NavigationDiagnosticCode.NAVIGATION_UNSUPPORTED,
+            "unsupported navigation action",
+        )
+    return NavigationResult(
+        accepted=True,
+        controller_id=controller.id,
+        old_view2d_revision=controller.current_view2d_revision,
+        new_view2d_revision=next_view2d_revision,
+        view=next_view,
+        view_snapshot_id=view_snapshot_id,
+        layout_snapshot_id=action.layout_snapshot_id or expected_layout_snapshot_id,
+    )
+
+
+def _reject_navigation_action(
+    controller: View2DNavigationController,
+    action: NavigationAction,
+    code: NavigationDiagnosticCode,
+    message: str,
+) -> NavigationResult:
+    return NavigationResult(
+        accepted=False,
+        controller_id=controller.id,
+        old_view2d_revision=action.view2d_revision,
+        diagnostics=(f"{code.value}: {message}",),
+        layout_snapshot_id=action.layout_snapshot_id,
+    )
 
 
 def _configure_axis_review_style(dvz: Any, axis: Any) -> None:
