@@ -20,6 +20,7 @@ from gsp.protocol import (
     AffineTransform2DResource,
     AxisDimension,
     AxisGuide,
+    CanvasSize,
     ColorScale,
     ColorbarGuide,
     CoordinateSpace,
@@ -274,8 +275,16 @@ def _run_matplotlib(
     log_path = (
         out_dir / "backends" / "matplotlib" / f"{case_slug(case.case_id)}.log.txt"
     )
-    width, height = resolution
-    fig, ax = plt.subplots(figsize=(width / 100.0, height / 100.0), dpi=100)
+    canvas_size = CanvasSize.pixel_exact(resolution[0], resolution[1])
+    resolved_canvas = canvas_size.resolve(output_dpi=100.0, device_scale=device_scale)
+    fig, ax = plt.subplots(
+        figsize=(
+            resolved_canvas.framebuffer_width / resolved_canvas.output_dpi,
+            resolved_canvas.framebuffer_height / resolved_canvas.output_dpi,
+        ),
+        dpi=resolved_canvas.output_dpi,
+    )
+    setattr(fig, "_gsp_resolved_canvas", resolved_canvas)
     try:
         fig.patch.set_facecolor("white")
         ax.set_facecolor("white")
@@ -315,7 +324,9 @@ def _run_matplotlib(
                 panel_text_guides=panel_text_guides,
                 device_scale=device_scale,
             )
-        fig.savefig(artifact_path, dpi=100, facecolor=fig.get_facecolor())
+        fig.savefig(
+            artifact_path, dpi=resolved_canvas.output_dpi, facecolor=fig.get_facecolor()
+        )
         log_path.write_text("rendered\n", encoding="utf-8")
         report: dict[str, object] = {
             "backend_id": "matplotlib",
@@ -361,7 +372,9 @@ def _layout_snapshot_report(snapshot: ResolvedLayoutSnapshot) -> dict[str, objec
             else None
         ),
         "title_boxes": [_guide_box_report(box) for box in snapshot.title_boxes],
-        "axis_label_boxes": [_guide_box_report(box) for box in snapshot.axis_label_boxes],
+        "axis_label_boxes": [
+            _guide_box_report(box) for box in snapshot.axis_label_boxes
+        ],
         "tick_label_box_count": len(snapshot.tick_label_boxes),
         "guide_box_count": len(snapshot.guide_boxes),
     }
@@ -437,12 +450,11 @@ def _run_datoviz(
             diagnostics=guide_diagnostics,
             datoviz_color_pipeline=datoviz_color_pipeline,
         )
-    width, height = resolution
+    canvas_size = CanvasSize.pixel_exact(resolution[0], resolution[1])
     try:
         renderer_view = None if guide_configuration is not None else view
         with DatovizV04ProtocolRenderer(
-            width=width,
-            height=height,
+            canvas_size=canvas_size,
             color_pipeline=datoviz_color_pipeline,
             color_scales=color_scales,
             view=renderer_view,

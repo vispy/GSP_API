@@ -32,6 +32,12 @@ tools/compare-review-examples examples/review/01_scatter_basic.py --offscreen
 
 Offscreen artifacts are written under `artifacts/example_review/<example>/`.
 
+Live review uses `CanvasSize.reference_px(<resolution>, reference_dpi=96)` so Matplotlib and
+Datoviz target comparable apparent physical size. Offscreen review uses
+`CanvasSize.pixel_exact(<resolution>)` so captured PNG dimensions remain deterministic. Change
+`reference_dpi` in code when you need a setup-specific physical-size tweak; use visual style scale
+only for marker/text/stroke styling, not window sizing.
+
 ## Examples
 
 | File | Reviews |
@@ -118,9 +124,9 @@ Use this gate after the upstream Datoviz live high-DPI/text-anchor fix lands and
 
    | Check | Required result |
    |---|---|
-   | Live canvas size | Datoviz and Matplotlib have the same apparent logical canvas size for the same `--resolution`. |
-   | Datoviz metrics | A requested `1280x720` live view keeps logical size `1280x720` and reports a physical framebuffer close to `1280 * device_scale` by `720 * device_scale`. |
-   | No GSP workaround | GSP does not pass a Datoviz-only live-size multiplier or alter requested resolution for Datoviz. |
+   | Live canvas size | Datoviz and Matplotlib have comparable apparent physical canvas size for the same `reference_px` request. |
+   | Datoviz metrics | A requested `1280x720` reference canvas reports resolved host, framebuffer, and framebuffer-per-canvas metrics. |
+   | No GSP workaround | GSP does not pass `DVZ_WINDOW_SIZE_SCALE` or any Datoviz-only live-size multiplier. |
    | Example 05 | The Datoviz colorbar is readable and does not overlap the plotted visual. |
    | Example 06 | Datoviz text labels match Matplotlib anchor semantics closely enough for visual review. |
    | Offscreen path | Examples 05 and 06 render or produce explicit unsupported status artifacts; no silent parity claim is made. |

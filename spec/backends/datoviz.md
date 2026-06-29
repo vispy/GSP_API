@@ -18,6 +18,19 @@ Target mapping:
 
 M004 must identify exact API gaps before implementation.
 
+## S035 canvas size policies
+
+The Datoviz adapter accepts `CanvasSize` requests. It maps them to Datoviz view-size descriptors when
+the v0.4 facade exposes that API, otherwise it falls back to GSP-side resolution. Live GLFW views use
+resolved host logical dimensions; offscreen views and figures use resolved framebuffer dimensions.
+
+Screen-space visual fields ending in `_px` are canvas/reference pixels. Before upload, the adapter
+multiplies point/marker diameters, text sizes, segment/path widths, and marker stroke widths by
+`ResolvedCanvas.framebuffer_per_canvas_px`.
+
+`DVZ_WINDOW_SIZE_SCALE` is not part of the Datoviz or GSP contract. Use `reference_px` for live
+physical-size comparability and `pixel_exact` for deterministic captures.
+
 ## M004 assessment result
 
 Detailed assessment lives in `docs/datoviz_v04_gap_analysis.md`.

@@ -31,10 +31,11 @@ It requires:
 
 ## M066 size-unit decision
 
-`PointVisual.sizes` is protocol-owned and means rendered screen-pixel diameter. Backends must not
+`PointVisual.sizes` is protocol-owned and means canvas/reference-pixel diameter. Backends must not
 expose their native marker-size units through this field. The Matplotlib reference renderer converts
-diameter pixels to `scatter(s=...)` area units using the active figure DPI. The Datoviz v0.4 adapter
-uploads the same values directly to the point visual's `diameter_px` attribute.
+diameter pixels to `scatter(s=...)` area units using the resolved canvas contract. The Datoviz v0.4
+adapter scales values by `ResolvedCanvas.framebuffer_per_canvas_px` before uploading to the point
+visual's `diameter_px` attribute.
 
 Point positions must be finite float32/float64 arrays with shape `(N, 2)` or `(N, 3)`. Sizes must be
 finite, non-negative float32/float64 values, either scalar or per-point. Colors are per-point RGBA,

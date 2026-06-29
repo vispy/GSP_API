@@ -164,6 +164,11 @@ tools/compare-review-examples examples/review/01_scatter_basic.py --offscreen
 
 See `examples/review/README.md` for the full list and offscreen-capture notes.
 
+Live review examples request `CanvasSize.reference_px(..., reference_dpi=96)` for comparable
+apparent physical size across platforms. Offscreen review examples use `CanvasSize.pixel_exact(...)`
+for deterministic PNG dimensions. Use `reference_dpi` to tune physical size on a setup; use style
+scale only to change visual sizes inside the canvas.
+
 ### S023 Visual QA Pack
 
 The S023 protocol visual-family review pack renders formal protocol scenes through Matplotlib and Datoviz v0.4 and writes contact sheets plus manual notes:

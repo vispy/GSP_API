@@ -6,6 +6,10 @@ plan accepted.
 The S023 visual QA harness lives under `gsp.qa.visual` and provides deterministic scene generation,
 backend rendering, contact-sheet generation, reports, and manual review templates.
 
+Visual QA captures use `CanvasSize.pixel_exact(<resolution>)` so PNG dimensions remain
+deterministic. Use review-example live mode, not visual QA captures, for physical live-window
+comparison.
+
 Run with both S023 backends when Datoviz v0.4 is active. On macOS, prefer the wrapper so the sibling
 Datoviz checkout and bundled MoltenVK ICD are configured consistently:
 

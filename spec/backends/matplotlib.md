@@ -25,16 +25,17 @@ This is a narrow conformance slice beside the legacy renderer. The legacy `Matpl
 
 For `ImageVisual`, scalar images use the bounded v1 scalar mapping: gray colormap by default, optional explicit `clim`, explicit `origin`, and explicit `extent`. RGB/RGBA images bypass scalar colormap/clim.
 
-For `MarkerVisual`, protocol sizes are screen-pixel diameters and are converted to Matplotlib scatter
-area units with the active figure DPI, matching `PointVisual`. Marker `stroke_width` is also a
-protocol pixel width and is converted to Matplotlib point linewidth using the active figure DPI. The
-reference path supports the conservative v1 shapes `disc`, `square`, `triangle`, `diamond`, and
-`cross`, plus scalar or per-marker angles in radians.
+For `MarkerVisual`, protocol sizes are canvas/reference-pixel diameters and are converted to
+Matplotlib scatter area units through the resolved canvas contract, matching `PointVisual`. Marker
+`stroke_width` is also a canvas/reference-pixel width and is converted to Matplotlib point linewidth
+with `canvas_px * framebuffer_per_canvas_px * 72 / output_dpi`. The reference path supports the
+conservative v1 shapes `disc`, `square`, `triangle`, `diamond`, and `cross`, plus scalar or
+per-marker angles in radians.
 
-For `PathVisual`, protocol widths are screen-pixel stroke widths and are converted to Matplotlib
-point linewidths using the active figure DPI. Each subpath is rendered as an open path patch so
-Matplotlib can preserve cap and join styles without treating path interiors as independent
-segments.
+For `PathVisual`, protocol widths are canvas/reference-pixel stroke widths and are converted to
+Matplotlib point linewidths through the same resolved canvas formula. Each subpath is rendered as an
+open path patch so Matplotlib can preserve cap and join styles without treating path interiors as
+independent segments.
 
 ## M011 tiled-source reference proof
 
@@ -99,7 +100,7 @@ contributions all report and consume the same `layout_snapshot_id`.
 Matplotlib maps accepted logical-pixel guide style hints to native artist properties using:
 
 ```text
-points = logical_px * 72 / dpi
+points = canvas_px * framebuffer_per_canvas_px * 72 / output_dpi
 ```
 
 Supported style mappings include title font size and pad, axis label font size and label pad, tick
@@ -107,9 +108,8 @@ label font size, tick length, tick width, tick-label padding, and grid line widt
 GSP style hints; Matplotlib artist objects remain backend realization details.
 
 Matplotlib layout snapshots may carry an explicit `RenderTarget.device_scale` supplied by the caller.
-The logical figure size and guide rectangles remain in logical pixels; derived framebuffer dimensions
-come from `logical_*_px * device_scale`. This is metadata support and does not imply physical
-framebuffer-scale parity.
+The logical figure size and guide rectangles remain in canvas/reference pixels; derived framebuffer
+dimensions come from the resolved canvas contract.
 
 ## S034 layout-aware guide query
 

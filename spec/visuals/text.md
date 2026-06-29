@@ -70,8 +70,8 @@ Glyph-level query is deferred.
 ## Backend mapping
 
 Matplotlib is the reference renderer. It maps `font_size_px` to points as
-`font_size_px * 72 / output_dpi`, maps anchors to `ha`/`va`, converts `rotation_rad` to degrees, and
-uses anchor-preserving rotation.
+`font_size_px * framebuffer_per_canvas_px * 72 / output_dpi`, maps anchors to `ha`/`va`, converts
+`rotation_rad` to degrees, and uses anchor-preserving rotation.
 
 Datoviz v0.4 support must be based only on verified retained v0.4 APIs. If text/glyph APIs,
 font-size mapping, anchors, baseline, rotation, atlas creation, or per-item styles cannot be verified,
