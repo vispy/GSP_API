@@ -456,6 +456,10 @@ Strict Datoviz live navigation is the GSP action path: native pointer events are
 actions and accepted `View2D` updates are applied through retained panel state. CPU remapping remains
 an adapted fallback only and must not be advertised as the retained fast path.
 
+Datoviz may continue to provide native interaction systems such as `dvz_view_panzoom()` for direct
+Datoviz users and native demos. GSP does not reuse those systems for strict behavior unless their
+resulting state is synchronized into canonical GSP `View2D` state and covered by conformance tests.
+
 ## S025 MeshVisual target
 
 S025 Datoviz work uses retained `dvz_mesh` support after the S029 capability probe. The adapter

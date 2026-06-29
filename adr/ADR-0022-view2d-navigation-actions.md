@@ -34,6 +34,25 @@ S035 accepts a narrow `View2D` navigation action model:
   equivalent uniform/state data for unchanged visuals. Re-uploading unchanged visual buffers during
   pan/zoom is an adapted fallback, not the strict high-performance path.
 
+## Boundary with backend-native interaction systems
+
+Backend-native interaction implementations may exist independently of GSP. Datoviz, Matplotlib,
+VisPy, and future backends may expose their own native pan/zoom, camera, picking, selection,
+brushing, or gesture systems for direct backend users and backend-native demos.
+
+Those native implementations are not the source of truth for strict GSP semantics. Strict GSP
+navigation uses backend input only as an event source: backend adapters normalize event type,
+coordinates, buttons, modifiers, wheel deltas, device scale, and coordinate-origin conventions,
+then submit semantic events or actions to the GSP navigation controller. The accepted GSP `View2D`
+state remains canonical.
+
+This means some interaction behavior may intentionally exist in both a backend project and GSP.
+That duplication is acceptable across project boundaries when the two systems serve different API
+contracts: backend-native interaction serves native backend users, while GSP interaction serves
+backend-neutral protocol consistency. It is not acceptable for strict GSP behavior to depend on
+hidden backend-native state unless that state is synchronized back into canonical GSP state and
+covered by conformance tests.
+
 ## Consequences
 
 Workers can add useful live pan/zoom while preserving deterministic replay. A recorded action

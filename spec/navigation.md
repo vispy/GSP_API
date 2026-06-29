@@ -155,6 +155,11 @@ pan/zoom.
 CPU remapping of finite eager arrays is allowed only as an explicit adapted fallback and must not be
 advertised as the high-performance retained navigation path.
 
+Backend-native interaction systems may exist for direct backend users, but they are not strict GSP
+navigation unless their resulting state is synchronized into canonical `View2D` and covered by
+conformance tests. Strict GSP backends adapt native input events into semantic navigation actions and
+apply accepted GSP view updates. ADR-0022 defines this boundary.
+
 VisPy2 producer APIs may expose convenient mouse/wheel adapters, but they must lower to S035
 navigation actions and `View2D` updates.
 
