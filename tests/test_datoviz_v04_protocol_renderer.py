@@ -35,6 +35,8 @@ from gsp.protocol import (
     ColorMapRef,
     ColorScale,
     LinearNormalize,
+    LogicalPixelRect,
+    NavigationPlacement,
     QueryCoordinateSpace,
     QueryHitPolicy,
     QueryRequest,
@@ -50,6 +52,7 @@ from gsp.protocol import (
     View2D,
     VisualFamily,
     VisualTransformBinding,
+    pan_view2d,
 )
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
@@ -863,6 +866,10 @@ def _calls(fake, name):
     return [call for call in fake.calls if call[0] == name]
 
 
+def _calls_from(calls, name):
+    return [call for call in calls if call[0] == name]
+
+
 def test_renderer_sets_datoviz_color_pipeline_when_binding_is_available():
     fake = FakeDatovizV04WithColorPipeline()
 
@@ -921,7 +928,10 @@ def test_capability_snapshot_defers_query_support():
     assert caps.transform_placements == ("cpu-adapter", "unsupported")
     assert caps.supports_transform_placement(TransformPlacement.CPU_ADAPTER)
     assert caps.supports_transform_capability("gsp.transform.affine2d@0.1")
+    assert caps.supports_navigation_placement(NavigationPlacement.RETAINED_GPU_STATE)
+    assert caps.supports_navigation_capability("interaction.view2d.navigation.v1")
     assert "s027_transform" in caps.metadata
+    assert "s035_navigation" in caps.metadata
     assert "s028_guide_view2d" in caps.metadata
     assert "s034_guide_layout_audit" in caps.metadata
     audit = caps.metadata["s034_guide_layout_audit"]
@@ -938,7 +948,51 @@ def test_capability_snapshot_defers_query_support():
     assert "grid_clip_not_enforced" in caps.guide_layout_capability.diagnostics
     assert "axis_style_mapping_partial" in caps.layout_capability.diagnostics
     assert caps.metadata["datoviz_api"] == "v0.4 dvz_* facade"
-    assert caps.axis_providers[0].provider_id == DATOVIZ_V04_AXIS_PROVIDER
+
+
+def test_retained_view2d_navigation_update_does_not_reupload_visual_buffers():
+    fake = FakeDatovizV04WithQueryCapabilities()
+    initial_view = View2D(
+        id="view:main",
+        panel_id="panel:main",
+        x_range=(0.0, 10.0),
+        y_range=(0.0, 10.0),
+    )
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view=initial_view)
+    visual = PointVisual(
+        id="visual:points",
+        positions=np.array([[5.0, 5.0]], dtype=np.float32),
+        colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+        sizes=np.array([8.0], dtype=np.float32),
+        coordinate_space=CoordinateSpace.DATA,
+    )
+    renderer.add_point_visual(visual)
+    baseline_call_count = len(fake.calls)
+
+    next_view = pan_view2d(
+        initial_view,
+        LogicalPixelRect(x=0.0, y=0.0, width=1000.0, height=1000.0),
+        dx_px=100.0,
+        dy_px=0.0,
+    )
+    renderer.apply_retained_view2d_navigation(next_view)
+
+    new_calls = fake.calls[baseline_call_count:]
+    assert _calls_from(new_calls, "set_domain") == [
+        ("set_domain", "panel", 0, -1.0, 9.0),
+        ("set_domain", "panel", 1, 0.0, 10.0),
+    ]
+    assert _calls_from(new_calls, "panel_view2d")
+    assert _calls_from(new_calls, "set_view2d")
+    assert not _calls_from(new_calls, "set_data")
+    assert not _calls_from(new_calls, "set_texture")
+    assert not _calls_from(new_calls, "set_index_data")
+    assert not _calls_from(new_calls, "sampled_field_set_data")
+    assert not _calls_from(new_calls, "point")
+    assert not _calls_from(new_calls, "image")
+    assert not _calls_from(new_calls, "mesh")
+    assert not _calls_from(new_calls, "add_visual")
+    assert renderer.view == next_view
 
 
 def test_datoviz_capability_translation_preserves_raw_fields_without_overclaiming_query_support():

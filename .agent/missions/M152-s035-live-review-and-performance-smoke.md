@@ -6,7 +6,7 @@ S035 - Retained View2D Navigation and Pan/Zoom
 
 ## Status
 
-Draft.
+Ready.
 
 ## Summary
 

@@ -11,6 +11,7 @@ from gsp.protocol import (
     FontLayoutCapability,
     GuideLayoutCapability,
     LayoutCapability,
+    NavigationPlacement,
     QueryCoordinateSpace,
     QueryHitPolicy,
     QueryLayoutCapability,
@@ -259,6 +260,16 @@ def gsp_capability_snapshot_from_datoviz(
             "GSP_TRANSFORM_VIRTUAL_SOURCE_DEFERRED",
             "GSP_CAMERA3D_DEFERRED",
         ),
+        "s035_navigation": (
+            "programmatic View2D navigation updates use retained Datoviz panel "
+            "domain/View2D state via dvz_panel_set_domain and dvz_panel_set_view2d; "
+            "unchanged visual buffers must not be re-uploaded for the retained fast path"
+        ),
+        "s035_navigation_diagnostics": (
+            "retained_view2d_update_only",
+            "live_native_input_adapter_deferred",
+            "view_snapshot_query_binding_deferred",
+        ),
     }
     if raw_fields:
         metadata["datoviz_raw_capabilities"] = raw_fields
@@ -309,6 +320,8 @@ def gsp_capability_snapshot_from_datoviz(
             TransformPlacement.UNSUPPORTED.value,
         ),
         transform_capabilities=S027_TRANSFORM_CAPABILITIES,
+        navigation_placements=(NavigationPlacement.RETAINED_GPU_STATE.value,),
+        navigation_capabilities=("interaction.view2d.navigation.v1",),
         query_modes=query_modes,
         query_capabilities=query_capabilities,
         output_formats=output_formats,

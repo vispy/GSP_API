@@ -1447,6 +1447,11 @@ class DatovizV04ProtocolRenderer:
             raise DatovizV04Unsupported("Datoviz View2D data-domain setup failed")
         return panel_view
 
+    def apply_retained_view2d_navigation(self, view: View2D) -> Any:
+        """Apply an accepted S035 navigation View2D as a retained panel update."""
+        self.view = view
+        return self.apply_datoviz_data_view2d(view)
+
 
 def _configure_axis_review_style(dvz: Any, axis: Any) -> None:
     style_factory = getattr(dvz, "dvz_axis_style", None)
