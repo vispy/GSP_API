@@ -506,6 +506,11 @@ class FakeDatovizV04WithCapture(FakeDatovizV04):
 
 
 class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
+    class FakePanzoomDesc:
+        width = 0.0
+        height = 0.0
+        controller_flags = 0
+
     def dvz_view_glfw(self, app, figure, width, height, title):
         self.calls.append(("view_glfw", app, figure, width, height, title))
         return "live-view"
@@ -513,6 +518,14 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
     def dvz_app_run(self, app, frame_count):
         self.calls.append(("app_run", app, frame_count))
         return None
+
+    def dvz_panzoom_desc(self):
+        self.calls.append(("panzoom_desc",))
+        return self.FakePanzoomDesc()
+
+    def dvz_view_panzoom(self, view, panel, desc):
+        self.calls.append(("view_panzoom", view, panel, desc.width, desc.height))
+        return "panzoom"
 
 
 class FakeDatovizV04WithQueryCapabilities(FakeDatovizV04):
@@ -2634,6 +2647,23 @@ def test_renderer_show_creates_live_view_and_runs_app():
         ("view_glfw", "app", "figure", 800, 600, b"GSP Datoviz review")
     ]
     assert _calls(fake, "app_run") == [("app_run", "app", 1)]
+
+
+def test_renderer_enable_native_panzoom_creates_live_view_and_controller():
+    fake = FakeDatovizV04WithInteractive()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    panzoom = renderer.enable_native_panzoom()
+
+    assert panzoom == "panzoom"
+    assert renderer.native_panzoom == "panzoom"
+    assert _calls(fake, "view_glfw") == [
+        ("view_glfw", "app", "figure", 800, 600, b"GSP Datoviz review")
+    ]
+    assert _calls(fake, "panzoom_desc") == [("panzoom_desc",)]
+    assert _calls(fake, "view_panzoom") == [
+        ("view_panzoom", "live-view", "panel", 800.0, 600.0)
+    ]
 
 
 def test_renderer_show_uses_resolved_host_logical_size_for_reference_canvas():

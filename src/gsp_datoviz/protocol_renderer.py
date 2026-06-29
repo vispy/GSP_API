@@ -546,6 +546,7 @@ class DatovizV04ProtocolRenderer:
     app: Any | None = field(default=None, init=False)
     offscreen_view: Any | None = field(default=None, init=False)
     live_view: Any | None = field(default=None, init=False)
+    native_panzoom: Any | None = field(default=None, init=False)
     visuals: dict[str, Any] = field(default_factory=dict, init=False)
     sampled_fields: dict[str, Any] = field(default_factory=dict, init=False)
     native_scales: dict[str, Any] = field(default_factory=dict, init=False)
@@ -1128,6 +1129,31 @@ class DatovizV04ProtocolRenderer:
                 "Datoviz interactive app run is unavailable: missing dvz_app_run"
             )
         app_run(self.app, frame_count)
+
+    def enable_native_panzoom(self) -> Any:
+        """Enable Datoviz v0.4 native pan/zoom on the renderer's live panel."""
+        view_panzoom = getattr(self.dvz, "dvz_view_panzoom", None)
+        if view_panzoom is None:
+            raise DatovizV04Unavailable(
+                "Datoviz native panzoom is unavailable: missing dvz_view_panzoom"
+            )
+        live_view = self._ensure_live_view()
+        desc = None
+        desc_factory = getattr(self.dvz, "dvz_panzoom_desc", None)
+        if desc_factory is not None:
+            desc = desc_factory()
+            if hasattr(desc, "width"):
+                desc.width = float(self.resolved_canvas.host_logical_width)
+            if hasattr(desc, "height"):
+                desc.height = float(self.resolved_canvas.host_logical_height)
+        self.native_panzoom = view_panzoom(
+            live_view,
+            self.panel,
+            _ctypes_pointer_arg(desc) if desc is not None else None,
+        )
+        if _is_null_handle(self.native_panzoom):
+            raise DatovizV04Unavailable("Datoviz native panzoom creation failed")
+        return self.native_panzoom
 
     def _create_rgba8_sampled_field(
         self, pixels: npt.NDArray[np.uint8], width: int, height: int

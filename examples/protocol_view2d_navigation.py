@@ -27,7 +27,6 @@ from gsp.protocol import (
 )
 from gsp_datoviz.protocol_renderer import DatovizV04ProtocolRenderer
 from gsp_matplotlib.navigation import apply_view2d_navigation_action
-from gsp_matplotlib.protocol_renderer import render_point_visual
 
 LIVE_CANVAS_SIZE = CanvasSize.reference_px(900, 650, reference_dpi=96.0)
 MATPLOTLIB_LIVE_DPI = 120.0
@@ -65,7 +64,7 @@ def _run_matplotlib(*, scripted_smoke: bool) -> int:
     )
     setattr(fig, "_gsp_resolved_canvas", resolved)
     _configure_axes(ax, view)
-    render_point_visual(ax, visual, view=view)
+    _render_matplotlib_live_points(ax, visual)
     session = _MatplotlibNavigationSession(fig, ax, view)
 
     if scripted_smoke:
@@ -93,7 +92,8 @@ def _run_datoviz(*, scripted_smoke: bool, frames: int) -> int:
                 renderer.apply_retained_view2d_navigation(next_view)
             print(f"datoviz retained scripted smoke: view={renderer.view.x_range},{renderer.view.y_range}")
             return 0
-        print("Datoviz v0.4 protocol renderer: native live pointer adapter is deferred; opening static retained scene.")
+        renderer.enable_native_panzoom()
+        print("Datoviz v0.4 native panzoom enabled: drag to pan, wheel to zoom.")
         renderer.show(frame_count=frames)
     return 0
 
@@ -268,6 +268,16 @@ def _configure_axes(ax, view: View2D) -> None:
     ax.set_xlim(view.x_range)
     ax.set_ylim(view.y_range)
     ax.grid(True, alpha=0.25)
+
+
+def _render_matplotlib_live_points(ax, visual: PointVisual) -> None:
+    colors = visual.colors.astype(np.float32) / 255.0
+    ax.scatter(
+        visual.positions[:, 0],
+        visual.positions[:, 1],
+        s=np.square(visual.sizes.astype(np.float32)),
+        c=colors,
+    )
 
 
 def _initial_view() -> View2D:
