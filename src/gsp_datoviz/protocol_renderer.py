@@ -865,11 +865,16 @@ class DatovizV04ProtocolRenderer:
             placement = _text_placement(self.dvz)
             placement.mode = mode
             placement.anchor = _text_anchor_value(self.dvz, visual.coordinate_space)
-            position_x = float(positions[index, 0])
-            position_y = float(positions[index, 1])
             if visual.coordinate_space is CoordinateSpace.NDC:
-                position_x *= 0.5 * self.width
-                position_y *= -0.5 * self.height
+                position_x, position_y = _ndc_text_screen_position(
+                    positions[index],
+                    self.width,
+                    self.height,
+                    self.panel_bounds,
+                )
+            else:
+                position_x = float(positions[index, 0])
+                position_y = float(positions[index, 1])
             placement.position[0] = position_x
             placement.position[1] = position_y
             placement.position[2] = float(np.clip(visual.z_order, -1.0, 1.0))
@@ -1646,6 +1651,30 @@ def _text_anchor_value(dvz: Any, coordinate_space: CoordinateSpace) -> int:
     if enum_type is not None and hasattr(enum_type, name):
         return int(getattr(enum_type, name))
     return fallback
+
+
+def _ndc_text_screen_position(
+    position: npt.NDArray[np.float32] | npt.NDArray[np.float64],
+    width: int,
+    height: int,
+    panel_bounds: tuple[float, float, float, float] | None,
+) -> tuple[float, float]:
+    panel_width, panel_height = _panel_pixel_size(width, height, panel_bounds)
+    scale = 0.5 * min(panel_width, panel_height)
+    return float(position[0]) * scale, -float(position[1]) * scale
+
+
+def _panel_pixel_size(
+    width: int,
+    height: int,
+    panel_bounds: tuple[float, float, float, float] | None,
+) -> tuple[float, float]:
+    if panel_bounds is None:
+        return float(width), float(height)
+    _x, _y, panel_width, panel_height = panel_bounds
+    if 0.0 < panel_width <= 1.0 and 0.0 < panel_height <= 1.0:
+        return float(width) * panel_width, float(height) * panel_height
+    return panel_width, panel_height
 
 
 def _text_renderer_value(dvz: Any) -> int:
