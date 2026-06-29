@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ctypes
 import inspect
+from types import SimpleNamespace
 import sys
 import types
 
@@ -73,6 +74,7 @@ from gsp_datoviz.protocol_renderer import (
     import_datoviz_v04,
     is_datoviz_v04_facade,
     _image_texcoords,
+    _resolved_canvas_from_datoviz,
 )
 from gsp_datoviz.query import (
     DVZ_QUERY_STATUS_DECODE_FAILED,
@@ -1348,6 +1350,33 @@ def test_add_point_visual_scales_canvas_pixels_for_resolved_datoviz_framebuffer(
     assert _calls(fake, "figure") == [("figure", "scene", 640, 480, 0)]
     set_data = _calls(fake, "set_data")
     np.testing.assert_allclose(set_data[2][3], [24.0], rtol=1e-6)
+
+
+def test_resolved_canvas_from_datoviz_fills_missing_physical_metrics():
+    native = SimpleNamespace(
+        canvas_width_px=1280.0,
+        canvas_height_px=720.0,
+        host_logical_width=1280,
+        host_logical_height=720,
+        framebuffer_width=1280,
+        framebuffer_height=720,
+        device_scale_x=1.0,
+        device_scale_y=1.0,
+        canvas_to_host_scale_x=1.0,
+        canvas_to_host_scale_y=1.0,
+        framebuffer_per_canvas_px_x=1.0,
+        framebuffer_per_canvas_px_y=1.0,
+        target_width_mm=0.0,
+        target_height_mm=0.0,
+        estimated_width_mm=0.0,
+        estimated_height_mm=0.0,
+    )
+
+    resolved = _resolved_canvas_from_datoviz(CanvasSize.pixel_exact(1280, 720), native)
+
+    assert resolved.target_width_mm > 0.0
+    assert resolved.estimated_width_mm == resolved.target_width_mm
+    assert resolved.target_width_mm == pytest.approx(1280.0 / 96.0 * 25.4)
 
 
 def test_add_point_visual_retries_current_datoviz_diameter_attribute_name():

@@ -457,6 +457,25 @@ def _datoviz_view_kind_value(dvz: Any, name: str) -> int:
 
 
 def _resolved_canvas_from_datoviz(requested: CanvasSize, native: Any) -> ResolvedCanvas:
+    fallback = requested.resolve()
+    framebuffer_per_canvas_px_x = float(
+        getattr(native, "framebuffer_per_canvas_px_x", 1.0)
+    )
+    framebuffer_per_canvas_px_y = float(
+        getattr(native, "framebuffer_per_canvas_px_y", 1.0)
+    )
+    target_width_mm = _positive_native_float(
+        native, "target_width_mm", fallback.target_width_mm
+    )
+    target_height_mm = _positive_native_float(
+        native, "target_height_mm", fallback.target_height_mm
+    )
+    estimated_width_mm = _positive_native_float(
+        native, "estimated_width_mm", target_width_mm
+    )
+    estimated_height_mm = _positive_native_float(
+        native, "estimated_height_mm", target_height_mm
+    )
     return ResolvedCanvas(
         requested_size=requested,
         canvas_width_px=float(getattr(native, "canvas_width_px")),
@@ -469,24 +488,22 @@ def _resolved_canvas_from_datoviz(requested: CanvasSize, native: Any) -> Resolve
         device_scale_y=float(getattr(native, "device_scale_y", 1.0)),
         canvas_to_host_scale_x=float(getattr(native, "canvas_to_host_scale_x", 1.0)),
         canvas_to_host_scale_y=float(getattr(native, "canvas_to_host_scale_y", 1.0)),
-        framebuffer_per_canvas_px_x=float(
-            getattr(native, "framebuffer_per_canvas_px_x", 1.0)
-        ),
-        framebuffer_per_canvas_px_y=float(
-            getattr(native, "framebuffer_per_canvas_px_y", 1.0)
-        ),
-        target_width_mm=float(getattr(native, "target_width_mm")),
-        target_height_mm=float(getattr(native, "target_height_mm")),
-        estimated_width_mm=float(getattr(native, "estimated_width_mm")),
-        estimated_height_mm=float(getattr(native, "estimated_height_mm")),
-        output_dpi=float(
-            requested.reference_dpi
-            * getattr(native, "framebuffer_per_canvas_px_x", 1.0)
-        ),
+        framebuffer_per_canvas_px_x=framebuffer_per_canvas_px_x,
+        framebuffer_per_canvas_px_y=framebuffer_per_canvas_px_y,
+        target_width_mm=target_width_mm,
+        target_height_mm=target_height_mm,
+        estimated_width_mm=estimated_width_mm,
+        estimated_height_mm=estimated_height_mm,
+        output_dpi=float(requested.reference_dpi * framebuffer_per_canvas_px_x),
         metrics_source=CanvasMetricsSource.BACKEND_REPORTED,
-        exactness=requested.resolve().exactness,
+        exactness=fallback.exactness,
         strict_framebuffer_size=bool(requested.strict_framebuffer_size),
     )
+
+
+def _positive_native_float(native: Any, field_name: str, fallback: float) -> float:
+    value = float(getattr(native, field_name, fallback))
+    return value if value > 0.0 else fallback
 
 
 @dataclass
