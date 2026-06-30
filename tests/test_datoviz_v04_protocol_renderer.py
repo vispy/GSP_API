@@ -50,6 +50,7 @@ from gsp.protocol import (
     TextAnchorY,
     TransformPlacement,
     View2D,
+    View3DDiagnosticCode,
     VisualFamily,
     VisualTransformBinding,
     pan_view2d,
@@ -2474,7 +2475,7 @@ def test_add_mesh_visual_duplicates_face_colors_for_datoviz_vertex_color_mesh():
     )
 
 
-def test_add_mesh_visual_accepts_default_data_domain_and_rejects_3d_before_diagnostics():
+def test_add_mesh_visual_accepts_default_data_domain_and_rejects_3d_with_diagnostic():
     renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh())
     data_visual = MeshVisual(
         id="visual:data-mesh",
@@ -2499,7 +2500,10 @@ def test_add_mesh_visual_accepts_default_data_domain_and_rejects_3d_before_diagn
         position_upload[3],
         [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]],
     )
-    with pytest.raises(DatovizV04Unsupported, match="2D positions"):
+    with pytest.raises(
+        DatovizV04Unsupported,
+        match=View3DDiagnosticCode.MESH3D_COORDINATE_SPACE_UNSUPPORTED.value,
+    ):
         renderer.add_mesh_visual(mesh_3d)
 
 

@@ -32,6 +32,9 @@ from gsp.protocol import (
     ResolvedCanvas,
     ResolvedLayoutSnapshot,
     View2D,
+    View3D,
+    View3DDiagnosticCode,
+    project_view3d_data_point,
 )
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.layout import resolve_matplotlib_layout_snapshot
@@ -141,6 +144,7 @@ def render_protocol_scene_with_layout(
     *,
     visuals: Iterable[ProtocolVisual],
     view: View2D | None = None,
+    view3d: View3D | None = None,
     axis_guides: Iterable[AxisGuide] = (),
     panel_text_guides: Iterable[PanelTextGuide] = (),
     colorbar_guides: Iterable[ColorbarGuide] = (),
@@ -199,6 +203,7 @@ def render_protocol_scene_with_layout(
             view=view,
             color_scales=color_scale_map,
             transform_resources=transform_resources,
+            view3d=view3d,
         )
 
     axis_guide_tuple = tuple(axis_guides)
@@ -237,6 +242,7 @@ def _render_protocol_visual(
     view: View2D | None = None,
     color_scales: Mapping[str, ColorScale] | None = None,
     transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
+    view3d: View3D | None = None,
 ) -> object:
     if isinstance(visual, ImageVisual):
         return render_image_visual(axes, visual, color_scales=color_scales)
@@ -258,7 +264,11 @@ def _render_protocol_visual(
         )
     if isinstance(visual, MeshVisual):
         return render_mesh_visual(
-            axes, visual, view=view, transform_resources=transform_resources
+            axes,
+            visual,
+            view=view,
+            view3d=view3d,
+            transform_resources=transform_resources,
         )
     if isinstance(visual, PointVisual):
         return render_point_visual(
@@ -469,16 +479,13 @@ def render_mesh_visual(
     visual: MeshVisual,
     *,
     view: View2D | None = None,
+    view3d: View3D | None = None,
     transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
 ) -> matplotlib.collections.PolyCollection:
-    """Render the strict 2D MeshVisual subset into a Matplotlib axes."""
+    """Render the bounded MeshVisual reference subset into a Matplotlib axes."""
     if visual.face_color_encoding is not None:
         raise NotImplementedError(
             "Matplotlib MeshVisual scalar face colors are capability-gated"
-        )
-    if visual.positions.shape[1] != 2:
-        raise NotImplementedError(
-            "Matplotlib MeshVisual reference supports 2D positions only"
         )
     color_mode = visual.resolved_color_mode()
     if color_mode is MeshColorMode.VERTEX:
@@ -489,9 +496,12 @@ def render_mesh_visual(
         raise ValueError("MeshVisual color is required for Matplotlib rendering")
     mesh_color = visual.color
 
-    positions, transform = _render_positions(
-        axes, visual, visual.positions, view, transform_resources
-    )
+    if visual.positions.shape[1] == 3:
+        positions, transform = _render_mesh3d_positions(axes, visual, view3d=view3d)
+    else:
+        positions, transform = _render_positions(
+            axes, visual, visual.positions, view, transform_resources
+        )
     triangles = positions[visual.faces]
     if color_mode is MeshColorMode.UNIFORM:
         facecolors = np.repeat(mesh_color[np.newaxis, :], visual.faces.shape[0], axis=0)
@@ -709,6 +719,38 @@ def _render_positions(
     else:
         raise ValueError(f"unsupported coordinate_space: {visual.coordinate_space!r}")
     return panel_ndc_to_axes_fraction(panel_ndc), axes.transAxes
+
+
+def _render_mesh3d_positions(
+    axes: matplotlib.axes.Axes,
+    visual: MeshVisual,
+    *,
+    view3d: View3D | None,
+) -> tuple[npt.NDArray[np.float64], matplotlib.transforms.Transform]:
+    if visual.transform is not None:
+        raise NotImplementedError(
+            f"{View3DDiagnosticCode.MESH3D_TRANSFORM_UNSUPPORTED.value}: "
+            "Matplotlib MeshVisual 3D path does not apply 2D affine transforms"
+        )
+    source = np.asarray(visual.positions, dtype=np.float64)
+    if visual.coordinate_space == CoordinateSpace.DATA:
+        if view3d is None:
+            raise NotImplementedError(
+                f"{View3DDiagnosticCode.MESH3D_REQUIRES_VIEW3D.value}: "
+                "Matplotlib MeshVisual DATA positions3d require View3D"
+            )
+        panel_ndc3 = np.asarray(
+            [project_view3d_data_point(view3d, tuple(point)) for point in source],
+            dtype=np.float64,
+        )
+    elif visual.coordinate_space == CoordinateSpace.NDC:
+        panel_ndc3 = source
+    else:
+        raise NotImplementedError(
+            f"{View3DDiagnosticCode.MESH3D_COORDINATE_SPACE_UNSUPPORTED.value}: "
+            f"unsupported MeshVisual 3D coordinate_space {visual.coordinate_space!r}"
+        )
+    return panel_ndc_to_axes_fraction(panel_ndc3[:, :2]), axes.transAxes
 
 
 def _marker_area_values(

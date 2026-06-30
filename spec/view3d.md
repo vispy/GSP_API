@@ -160,6 +160,14 @@ to `(N, 3)` geometry in S036.
 Backends without compatible support must report structured unsupported diagnostics rather than
 silently flattening z.
 
+The Matplotlib reference renderer accepts `(N, 3)` `MeshVisual` inputs for the projection slice:
+DATA vertices require an explicit `View3D`, while NDC vertices use x/y as panel NDC directly. This
+path does not advertise strict opaque-depth support; S036 depth conformance remains capability-gated.
+
+The Datoviz v0.4 adapter continues to reject `(N, 3)` `MeshVisual` inputs with
+`mesh3d_coordinate_space_unsupported` until a public View3D camera binding is implemented for the
+retained adapter.
+
 ## Capabilities
 
 Recommended capability names:

@@ -148,3 +148,20 @@ uv run python examples/protocol_view2d_navigation.py --backend matplotlib --scri
 
 Matplotlib does not define public raw-event semantics for GSP. Its native callback ids, canvas
 events, and artist invalidation behavior remain backend implementation details.
+
+## S036 View3D projection reference
+
+Matplotlib is the reference backend for S036 static orthographic projection math.
+`render_mesh_visual()` accepts `(N, 3)` `MeshVisual` positions for the projection subset:
+
+- DATA positions require a `View3D` and are projected through `Camera3D` plus
+  `OrthographicProjection3D` into panel NDC;
+- NDC positions are interpreted as panel NDC3, with x/y lowered to axes-fraction coordinates;
+- existing `(N, 2)` mesh behavior remains unchanged;
+- existing 2D affine visual transforms on `(N, 3)` mesh geometry are rejected with
+  `mesh3d_transform_unsupported`;
+- DATA `(N, 3)` meshes without a `View3D` are rejected with `mesh3d_requires_view3d`.
+
+This path provides projection/rendering coverage only. It must not be advertised as strict
+`meshvisual.positions3d.opaque_depth.v1` support until S036 depth fixtures prove the accepted opaque
+depth semantics.

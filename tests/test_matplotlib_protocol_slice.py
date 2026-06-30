@@ -12,6 +12,7 @@ from gsp.protocol import (
     AxisDimension,
     AxisGuide,
     AxisSide,
+    Camera3D,
     CanvasSize,
     ColorMapId,
     ColorMapRef,
@@ -29,6 +30,7 @@ from gsp.protocol import (
     MarkerShape,
     MarkerVisual,
     LinearNormalize,
+    OrthographicProjection3D,
     PanByAction,
     PanelTextGuide,
     PanelTextRole,
@@ -47,6 +49,8 @@ from gsp.protocol import (
     TextAnchorY,
     TextVisual,
     View2D,
+    View3D,
+    View3DDiagnosticCode,
     View2DNavigationController,
     VisualTransformBinding,
 )
@@ -163,6 +167,45 @@ def test_render_protocol_scene_with_layout_reports_snapshot_id():
         )
         assert query.status == QueryStatus.HIT
         assert query.layout_snapshot_id == result.layout_snapshot_id
+    finally:
+        plt.close(result.figure)
+
+
+def test_render_protocol_scene_with_layout_accepts_view3d_mesh():
+    view3d = View3D(
+        id="view:main",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 1.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-1.0, 1.0),
+            ylim=(-1.0, 1.0),
+            near_far=(0.0, 2.0),
+        ),
+    )
+    mesh = MeshVisual(
+        id="visual:mesh",
+        positions=np.array(
+            [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [-1.0, 1.0, 0.0]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    result = render_protocol_scene_with_layout(visuals=(mesh,), view3d=view3d)
+
+    try:
+        assert len(result.axes.collections) == 1
+        artist = result.axes.collections[0]
+        np.testing.assert_allclose(
+            artist.get_paths()[0].vertices[:3],
+            np.array([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]]),
+        )
     finally:
         plt.close(result.figure)
 
@@ -816,8 +859,8 @@ def test_render_mesh_visual_applies_view2d_mapping():
         plt.close(fig)
 
 
-def test_render_mesh_visual_rejects_3d_reference_path():
-    """S025 Matplotlib strict reference is 2D only."""
+def test_render_mesh_visual_3d_data_requires_view3d():
+    """DATA MeshVisual positions3d require an explicit View3D."""
     fig, ax = plt.subplots()
     try:
         visual = MeshVisual(
@@ -828,7 +871,101 @@ def test_render_mesh_visual_rejects_3d_reference_path():
             color=np.array([255, 255, 255, 255], dtype=np.uint8),
         )
 
-        with pytest.raises(NotImplementedError, match="2D positions"):
+        with pytest.raises(
+            NotImplementedError,
+            match=View3DDiagnosticCode.MESH3D_REQUIRES_VIEW3D.value,
+        ):
+            render_mesh_visual(ax, visual)
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_3d_data_projects_through_view3d():
+    """DATA MeshVisual positions3d project through the S036 orthographic View3D."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [[0.0, 0.0, 0.0], [2.0, 0.0, 0.0], [0.0, 2.0, 0.0]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.DATA,
+            color=np.array([255, 0, 0, 255], dtype=np.uint8),
+        )
+        view3d = View3D(
+            id="view:main",
+            panel_id="panel:main",
+            camera=Camera3D(
+                eye=(0.0, 0.0, 1.0),
+                target=(0.0, 0.0, 0.0),
+                up=(0.0, 1.0, 0.0),
+            ),
+            projection=OrthographicProjection3D(
+                xlim=(0.0, 4.0),
+                ylim=(0.0, 4.0),
+                near_far=(0.0, 2.0),
+            ),
+        )
+
+        artist = render_mesh_visual(ax, visual, view3d=view3d)
+
+        np.testing.assert_allclose(
+            artist.get_paths()[0].vertices[:3],
+            np.array([[0.0, 0.0], [0.5, 0.0], [0.0, 0.5]]),
+        )
+        assert artist.get_transform() == ax.transAxes
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_3d_ndc_uses_panel_xy_directly():
+    """NDC MeshVisual positions3d use panel NDC x/y directly."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.5], [-1.0, 1.0, 1.0]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 0, 0, 255], dtype=np.uint8),
+        )
+
+        artist = render_mesh_visual(ax, visual)
+
+        np.testing.assert_allclose(
+            artist.get_paths()[0].vertices[:3],
+            np.array([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]]),
+        )
+        assert artist.get_transform() == ax.transAxes
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_3d_rejects_2d_affine_transform():
+    """S036 does not apply existing 2D visual transforms to 3D mesh geometry."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [-1.0, 1.0, 0.0]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 0, 0, 255], dtype=np.uint8),
+            transform=VisualTransformBinding.inline_affine(np.eye(3, dtype=np.float32)),
+        )
+
+        with pytest.raises(
+            NotImplementedError,
+            match=View3DDiagnosticCode.MESH3D_TRANSFORM_UNSUPPORTED.value,
+        ):
             render_mesh_visual(ax, visual)
     finally:
         plt.close(fig)

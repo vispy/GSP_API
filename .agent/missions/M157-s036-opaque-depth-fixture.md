@@ -6,7 +6,7 @@ S036 - Static View3D, Orthographic Projection, and 3D Mesh Baseline
 
 ## Status
 
-Draft; depends on M156.
+Ready; depends on completed M156.
 
 ## Summary
 
@@ -23,4 +23,3 @@ Establish the minimal strict 3D depth contract for opaque meshes.
 
 Stop if strict depth cannot be implemented or reported without exposing backend depth-buffer state as
 public protocol.
-

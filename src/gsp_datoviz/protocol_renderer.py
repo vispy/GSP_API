@@ -67,6 +67,7 @@ from gsp.protocol import (
     View2D,
     View2DNavigationController,
     View2DNavigationInputAdapter,
+    View3DDiagnosticCode,
     VisualFamily,
     VisualTransformBinding,
     ZoomAboutAction,
@@ -988,8 +989,9 @@ class DatovizV04ProtocolRenderer:
         """Create and attach a bounded Datoviz triangle mesh visual."""
         if visual.positions.shape[1] != 2:
             raise DatovizV04Unsupported(
+                f"{View3DDiagnosticCode.MESH3D_COORDINATE_SPACE_UNSUPPORTED.value}: "
                 "Datoviz v0.4 MeshVisual strict adapter is limited to 2D positions "
-                "until 3D camera semantics are accepted"
+                "until public View3D camera binding is implemented"
             )
         diagnostics = datoviz_v04_mesh_diagnostics(self.dvz)
         if diagnostics:

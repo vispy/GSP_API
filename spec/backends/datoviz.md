@@ -468,3 +468,8 @@ DATA/View2D placement through native panel domains, and per-face RGBA adapted by
 duplication. It still emits structured unsupported reports for face scalar colors, normals, shading,
 3D projection, and mesh query gaps. Public GSP fields must not expose Datoviz slot names, material
 structs, helper geometry loaders, or draw calls.
+
+For S036, `(N, 3)` `MeshVisual` inputs remain unsupported in the retained v0.4 adapter even though
+the lower payload helper can format 3D positions. The adapter has no accepted public `View3D` camera
+binding yet, so it rejects the public visual with `mesh3d_coordinate_space_unsupported` rather than
+silently flattening z or exposing backend-native camera/draw-state names.
