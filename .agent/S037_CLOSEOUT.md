@@ -52,7 +52,7 @@ binding evidence is sufficient; that is the expected S037 outcome.
 
 Do not claim Datoviz public 3D support in release notes yet. The next actionable work is either:
 
-- an upstream/binding fix exposing safe Datoviz camera descriptor fields/factories plus orthographic
-  x/y bounds parity evidence; or
+- an upstream Datoviz fix exposing safe camera ctypes fields/factories plus a public camera-level
+  explicit orthographic-bounds API, as detailed in `.agent/consultations/P022-response.md`; or
 - S038 material/light pre-design if 3D visual appearance should be expanded independent of Datoviz
   binding.

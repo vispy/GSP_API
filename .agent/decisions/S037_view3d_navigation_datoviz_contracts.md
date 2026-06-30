@@ -17,6 +17,12 @@ Status: accepted by M162 from P021 response.
   state; public API must not expose Datoviz camera, controller, draw-state, or material names.
 - Datoviz must keep reporting `mesh3d_coordinate_space_unsupported` until retained `(N, 3)` DATA and
   NDC3 rendering are proven through public `View3D` semantics without z flattening.
+- P022 refines the Datoviz prerequisite: strict support requires both safe Python camera ctypes
+  layouts and a Datoviz camera-level explicit orthographic-bounds API. Binding-only support is not
+  sufficient.
+- Datoviz explicit orthographic bounds should accept ordered GSP `xlim`/`ylim` directly, including
+  reversed x/y bounds. GSP should not normalize reversed bounds and compensate with hidden
+  CPU/model transforms for strict support.
 - Matplotlib `(N, 3)` mesh rendering remains adapted: CPU projection to 2D plus far-to-near face
   sorting for opaque, non-intersecting triangles.
 - Legacy Matplotlib projection/depth/culling/normal helper techniques may be reused internally.
@@ -51,3 +57,5 @@ Future material/light/texture capability names are reserved only for later specs
 
 `.agent/consultations/P021-response.md` converted into ADR-0024 and
 `spec/view3d_navigation.md`.
+
+`.agent/consultations/P022-response.md` refines the Datoviz v0.4 camera binding/API prerequisite.
