@@ -8,17 +8,30 @@ from gsp.protocol import (
     CapabilitySnapshot,
     DepthMode3D,
     MESH3D_DATA_VIEW3D_CAPABILITY,
+    Orbit3DPayload,
     OrthographicProjection3D,
+    Pan3DPayload,
     Projection3DKind,
     QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
+    ResetView3DPayload,
+    SetCamera3DPayload,
+    SetProjection3DPayload,
     TransportKind,
     VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
+    VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
     View3D,
     View3DDiagnosticCode,
+    View3DNavigationAction,
+    View3DNavigationActionKind,
     ViewKind,
+    Zoom3DPayload,
+    apply_view3d_navigation_action,
+    orbit_view3d,
+    pan_view3d,
     project_view3d_data_point,
     resolve_view3d_projection_snapshot,
     unproject_view3d_panel_ndc_point,
+    zoom_view3d,
 )
 
 
@@ -144,6 +157,7 @@ def test_view3d_capabilities_adapt_semantic_support():
             VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
             MESH3D_DATA_VIEW3D_CAPABILITY,
             QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
+            VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
         ),
     )
 
@@ -156,6 +170,203 @@ def test_view3d_capabilities_adapt_semantic_support():
     rejected = caps.adapt_view3d_capability("view3d.perspective.v1")
     assert rejected.outcome == AdaptationOutcome.REJECT
     assert rejected.diagnostic is not None
+
+
+def test_view3d_navigation_action_validates_payload_kind():
+    view = _canonical_view3d(revision=2)
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+
+    action = View3DNavigationAction(
+        kind=View3DNavigationActionKind.PAN,
+        view_id=view.id,
+        base_view_revision=view.revision,
+        base_view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+        payload=Pan3DPayload(delta_view_right=1.0, delta_view_up=-0.5),
+        base_layout_snapshot_id=snapshot.layout_snapshot_id,
+    )
+
+    assert action.kind is View3DNavigationActionKind.PAN
+    assert action.base_view_revision == 2
+
+    with pytest.raises(TypeError, match="pan"):
+        View3DNavigationAction(
+            kind=View3DNavigationActionKind.PAN,
+            view_id=view.id,
+            base_view_revision=view.revision,
+            base_view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+            payload=Zoom3DPayload(scale=2.0),
+        )
+
+    with pytest.raises(
+        ValueError,
+        match=View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_ZOOM.value,
+    ):
+        Zoom3DPayload(scale=0.0)
+
+
+def test_view3d_navigation_reducers_pan_zoom_and_orbit():
+    view = _canonical_view3d()
+
+    panned = pan_view3d(view, Pan3DPayload(delta_view_right=1.5, delta_view_up=-0.5))
+    assert panned.revision == view.revision + 1
+    assert panned.camera.eye == pytest.approx((1.5, -0.5, 5.0))
+    assert panned.camera.target == pytest.approx((1.5, -0.5, 0.0))
+
+    zoomed = zoom_view3d(view, Zoom3DPayload(scale=2.0))
+    assert zoomed.revision == view.revision + 1
+    assert zoomed.projection.xlim == pytest.approx((-1.0, 1.0))
+    assert zoomed.projection.ylim == pytest.approx((-1.0, 1.0))
+
+    anchored = zoom_view3d(
+        view, Zoom3DPayload(scale=2.0, anchor_panel_ndc_xy=(-1.0, -1.0))
+    )
+    assert anchored.projection.xlim == pytest.approx((-2.0, 0.0))
+    assert anchored.projection.ylim == pytest.approx((-2.0, 0.0))
+
+    orbited = orbit_view3d(
+        view,
+        Orbit3DPayload(
+            delta_yaw_radians=3.141592653589793 / 2.0,
+            delta_pitch_radians=0.0,
+        ),
+    )
+    assert orbited.revision == view.revision + 1
+    assert orbited.camera.eye == pytest.approx((5.0, 0.0, 0.0))
+    assert orbited.camera.target == pytest.approx(view.camera.target)
+
+
+def test_apply_view3d_navigation_action_accepts_and_refreshes_snapshot():
+    view = _canonical_view3d(revision=3)
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    action = View3DNavigationAction(
+        kind=View3DNavigationActionKind.ZOOM,
+        view_id=view.id,
+        base_view_revision=view.revision,
+        base_view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+        payload=Zoom3DPayload(scale=2.0),
+        base_layout_snapshot_id=snapshot.layout_snapshot_id,
+    )
+
+    result = apply_view3d_navigation_action(
+        view, action, layout_snapshot_id="layout:main"
+    )
+
+    assert result.accepted
+    assert result.old_revision == 3
+    assert result.new_revision == 4
+    assert result.view is not None
+    assert result.view.revision == 4
+    assert result.projection is not None
+    assert result.projection.xlim == pytest.approx((-1.0, 1.0))
+    assert result.view_projection_snapshot_id != snapshot.view_projection_snapshot_id
+
+
+def test_apply_view3d_navigation_action_rejects_stale_state():
+    view = _canonical_view3d(revision=3)
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    stale_action = View3DNavigationAction(
+        kind=View3DNavigationActionKind.PAN,
+        view_id=view.id,
+        base_view_revision=2,
+        base_view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+        payload=Pan3DPayload(delta_view_right=1.0, delta_view_up=0.0),
+        base_layout_snapshot_id=snapshot.layout_snapshot_id,
+    )
+
+    result = apply_view3d_navigation_action(
+        view, stale_action, layout_snapshot_id="layout:main"
+    )
+
+    assert not result.accepted
+    assert result.view is None
+    assert result.new_revision is None
+    assert View3DDiagnosticCode.VIEW3D_NAVIGATION_SNAPSHOT_MISMATCH.value in result.diagnostics[0]
+
+
+def test_apply_view3d_navigation_action_supports_setters_and_reset():
+    view = _canonical_view3d(revision=1)
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    camera = Camera3D(
+        eye=(1.0, 2.0, 6.0),
+        target=(1.0, 2.0, 0.0),
+        up=(0.0, 1.0, 0.0),
+    )
+    set_camera = View3DNavigationAction(
+        kind=View3DNavigationActionKind.SET_CAMERA,
+        view_id=view.id,
+        base_view_revision=view.revision,
+        base_view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+        payload=SetCamera3DPayload(camera=camera),
+    )
+
+    result = apply_view3d_navigation_action(
+        view, set_camera, layout_snapshot_id="layout:main"
+    )
+    assert result.accepted
+    assert result.camera == camera
+
+    updated = result.view
+    assert updated is not None
+    updated_snapshot = resolve_view3d_projection_snapshot(
+        updated, layout_snapshot_id="layout:main"
+    )
+    projection = OrthographicProjection3D(xlim=(-4.0, 4.0), near_far=(1.0, 12.0))
+    reset_action = View3DNavigationAction(
+        kind=View3DNavigationActionKind.RESET,
+        view_id=updated.id,
+        base_view_revision=updated.revision,
+        base_view_projection_snapshot_id=updated_snapshot.view_projection_snapshot_id,
+        payload=ResetView3DPayload(camera=view.camera, projection=projection),
+    )
+
+    reset = apply_view3d_navigation_action(
+        updated, reset_action, layout_snapshot_id="layout:main"
+    )
+    assert reset.accepted
+    assert reset.camera == view.camera
+    assert reset.projection == projection
+
+    projection_snapshot = resolve_view3d_projection_snapshot(
+        reset.view, layout_snapshot_id="layout:main"
+    )
+    set_projection = View3DNavigationAction(
+        kind=View3DNavigationActionKind.SET_PROJECTION,
+        view_id=reset.view.id,
+        base_view_revision=reset.view.revision,
+        base_view_projection_snapshot_id=projection_snapshot.view_projection_snapshot_id,
+        payload=SetProjection3DPayload(projection=view.projection),
+    )
+    set_projection_result = apply_view3d_navigation_action(
+        reset.view, set_projection, layout_snapshot_id="layout:main"
+    )
+    assert set_projection_result.accepted
+    assert set_projection_result.projection == view.projection
+
+
+def _canonical_view3d(*, revision: int = 0) -> View3D:
+    return View3D(
+        id="view:nav3d",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 5.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-2.0, 2.0),
+            ylim=(-2.0, 2.0),
+            near_far=(1.0, 10.0),
+        ),
+        revision=revision,
+    )
 
 
 def test_view3d_projects_canonical_cube_vertices_to_ndc3():

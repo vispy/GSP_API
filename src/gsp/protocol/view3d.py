@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 import hashlib
 import math
+from typing import Any, TypeVar
 
 from .ids import validate_id
 from .transforms import ViewKind
@@ -17,9 +18,11 @@ MESH3D_DATA_VIEW3D_CAPABILITY = "meshvisual.positions3d.data.view3d.v1"
 MESH3D_NDC_CAPABILITY = "meshvisual.positions3d.ndc.v1"
 MESH3D_OPAQUE_DEPTH_CAPABILITY = "meshvisual.positions3d.opaque_depth.v1"
 QUERY_VIEW3D_RAY_READBACK_CAPABILITY = "query.view3d.ray_readback.v1"
+VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY = "view3d.navigation.orbit_pan_zoom.v1"
 
 Float2 = tuple[float, float]
 Float3 = tuple[float, float, float]
+_PayloadT = TypeVar("_PayloadT")
 
 
 class Projection3DKind(str, Enum):
@@ -50,6 +53,23 @@ class View3DDiagnosticCode(str, Enum):
     MESH3D_CLIPPING_ADAPTED = "mesh3d_clipping_adapted"
     QUERY_3D_VISUAL_HIT_DEFERRED = "query_3d_visual_hit_deferred"
     QUERY_3D_SNAPSHOT_MISMATCH = "query_3d_snapshot_mismatch"
+    VIEW3D_NAVIGATION_UNSUPPORTED = "view3d_navigation_unsupported"
+    VIEW3D_NAVIGATION_ACTION_UNSUPPORTED = "view3d_navigation_action_unsupported"
+    VIEW3D_NAVIGATION_SNAPSHOT_MISMATCH = "view3d_navigation_snapshot_mismatch"
+    VIEW3D_NAVIGATION_INVALID_DELTA = "view3d_navigation_invalid_delta"
+    VIEW3D_NAVIGATION_INVALID_ZOOM = "view3d_navigation_invalid_zoom"
+    VIEW3D_NAVIGATION_INVALID_RESULT = "view3d_navigation_invalid_result"
+
+
+class View3DNavigationActionKind(str, Enum):
+    """Accepted S037 backend-neutral View3D navigation actions."""
+
+    ORBIT = "orbit"
+    PAN = "pan"
+    ZOOM = "zoom"
+    SET_CAMERA = "set_camera"
+    SET_PROJECTION = "set_projection"
+    RESET = "reset"
 
 
 @dataclass(frozen=True, slots=True)
@@ -87,6 +107,213 @@ class View3DProjectionSnapshot:
         validate_id(self.view_projection_snapshot_id)
         if self.view_revision < 0:
             raise ValueError("view_revision must be non-negative")
+
+
+@dataclass(frozen=True, slots=True)
+class Orbit3DPayload:
+    """Rotate camera eye around the target while preserving radius."""
+
+    delta_yaw_radians: float
+    delta_pitch_radians: float
+    pivot: str = "target"
+    radius_policy: str = "preserve"
+
+    def __post_init__(self) -> None:
+        _validate_finite(
+            "delta_yaw_radians",
+            self.delta_yaw_radians,
+            View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_DELTA,
+        )
+        _validate_finite(
+            "delta_pitch_radians",
+            self.delta_pitch_radians,
+            View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_DELTA,
+        )
+        if self.pivot != "target":
+            raise ValueError(
+                f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value}: "
+                "only target pivot is accepted in S037"
+            )
+        if self.radius_policy != "preserve":
+            raise ValueError(
+                f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value}: "
+                "only preserve radius policy is accepted in S037"
+            )
+
+
+@dataclass(frozen=True, slots=True)
+class Pan3DPayload:
+    """Translate camera eye and target in the view right/up plane."""
+
+    delta_view_right: float
+    delta_view_up: float
+    units: str = "data"
+
+    def __post_init__(self) -> None:
+        _validate_finite(
+            "delta_view_right",
+            self.delta_view_right,
+            View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_DELTA,
+        )
+        _validate_finite(
+            "delta_view_up",
+            self.delta_view_up,
+            View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_DELTA,
+        )
+        if self.units != "data":
+            raise ValueError(
+                f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value}: "
+                "only data pan units are accepted in S037"
+            )
+
+
+@dataclass(frozen=True, slots=True)
+class Zoom3DPayload:
+    """Scale orthographic projection bounds."""
+
+    scale: float
+    anchor_panel_ndc_xy: Float2 | None = None
+
+    def __post_init__(self) -> None:
+        _validate_finite(
+            "scale",
+            self.scale,
+            View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_ZOOM,
+        )
+        if self.scale <= 0.0:
+            raise ValueError(
+                f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_ZOOM.value}: "
+                "scale must be positive"
+            )
+        if self.anchor_panel_ndc_xy is not None:
+            _validate_float2(
+                "anchor_panel_ndc_xy",
+                self.anchor_panel_ndc_xy,
+                View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_ZOOM,
+            )
+
+
+@dataclass(frozen=True, slots=True)
+class SetCamera3DPayload:
+    """Replace canonical View3D camera state."""
+
+    camera: Camera3D
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.camera, Camera3D):
+            raise TypeError("camera must be a Camera3D")
+
+
+@dataclass(frozen=True, slots=True)
+class SetProjection3DPayload:
+    """Replace canonical View3D projection state."""
+
+    projection: OrthographicProjection3D
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.projection, OrthographicProjection3D):
+            raise TypeError("projection must be an OrthographicProjection3D")
+
+
+@dataclass(frozen=True, slots=True)
+class ResetView3DPayload:
+    """Restore explicit home camera/projection state."""
+
+    camera: Camera3D
+    projection: OrthographicProjection3D
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.camera, Camera3D):
+            raise TypeError("camera must be a Camera3D")
+        if not isinstance(self.projection, OrthographicProjection3D):
+            raise TypeError("projection must be an OrthographicProjection3D")
+
+
+View3DNavigationPayload = (
+    Orbit3DPayload
+    | Pan3DPayload
+    | Zoom3DPayload
+    | SetCamera3DPayload
+    | SetProjection3DPayload
+    | ResetView3DPayload
+)
+
+
+@dataclass(frozen=True, slots=True)
+class View3DNavigationAction:
+    """Backend-neutral S037 navigation action over canonical View3D state."""
+
+    kind: View3DNavigationActionKind
+    view_id: str
+    base_view_revision: int
+    base_view_projection_snapshot_id: str
+    payload: View3DNavigationPayload
+    base_layout_snapshot_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.kind, View3DNavigationActionKind):
+            raise TypeError("kind must be a View3DNavigationActionKind")
+        validate_id(self.view_id)
+        if not isinstance(self.base_view_revision, int) or self.base_view_revision < 0:
+            raise ValueError("base_view_revision must be a non-negative integer")
+        validate_id(self.base_view_projection_snapshot_id)
+        if self.base_layout_snapshot_id is not None:
+            validate_id(self.base_layout_snapshot_id)
+        _validate_navigation_payload_kind(self.kind, self.payload)
+
+
+@dataclass(frozen=True, slots=True)
+class View3DNavigationResult:
+    """Result of applying one S037 View3D navigation action."""
+
+    accepted: bool
+    view_id: str
+    old_revision: int
+    action_kind: View3DNavigationActionKind
+    diagnostics: tuple[str, ...] = ()
+    new_revision: int | None = None
+    camera: Camera3D | None = None
+    projection: OrthographicProjection3D | None = None
+    view: View3D | None = None
+    layout_snapshot_id: str | None = None
+    view_projection_snapshot_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.accepted, bool):
+            raise TypeError("accepted must be a bool")
+        validate_id(self.view_id)
+        if not isinstance(self.old_revision, int) or self.old_revision < 0:
+            raise ValueError("old_revision must be a non-negative integer")
+        if not isinstance(self.action_kind, View3DNavigationActionKind):
+            raise TypeError("action_kind must be a View3DNavigationActionKind")
+        if self.new_revision is not None and self.new_revision < 0:
+            raise ValueError("new_revision must be non-negative")
+        if self.camera is not None and not isinstance(self.camera, Camera3D):
+            raise TypeError("camera must be a Camera3D")
+        if self.projection is not None and not isinstance(
+            self.projection, OrthographicProjection3D
+        ):
+            raise TypeError("projection must be an OrthographicProjection3D")
+        if self.view is not None and not isinstance(self.view, View3D):
+            raise TypeError("view must be a View3D")
+        if self.layout_snapshot_id is not None:
+            validate_id(self.layout_snapshot_id)
+        if self.view_projection_snapshot_id is not None:
+            validate_id(self.view_projection_snapshot_id)
+        for diagnostic in self.diagnostics:
+            if not diagnostic:
+                raise ValueError("View3D navigation diagnostics must not be empty")
+        if self.accepted:
+            if (
+                self.new_revision is None
+                or self.camera is None
+                or self.projection is None
+                or self.view is None
+                or self.view_projection_snapshot_id is None
+            ):
+                raise ValueError("accepted View3D navigation results require updated state")
+        elif not self.diagnostics:
+            raise ValueError("rejected View3D navigation results require diagnostics")
 
 
 @dataclass(frozen=True, slots=True)
@@ -238,6 +465,167 @@ def resolve_view3d_projection_snapshot(
     )
 
 
+def orbit_view3d(view: View3D, payload: Orbit3DPayload) -> View3D:
+    """Return the View3D produced by an S037 orbit payload."""
+    if not isinstance(view, View3D):
+        raise TypeError("view must be a View3D")
+    if not isinstance(payload, Orbit3DPayload):
+        raise TypeError("payload must be an Orbit3DPayload")
+    basis = view.camera.basis()
+    eye_from_target = _sub3(view.camera.eye, view.camera.target)
+    yawed_eye = _rotate3(
+        eye_from_target, basis.true_up, payload.delta_yaw_radians
+    )
+    yawed_right = _rotate3(basis.right, basis.true_up, payload.delta_yaw_radians)
+    pitched_eye = _rotate3(
+        yawed_eye, yawed_right, payload.delta_pitch_radians
+    )
+    return _replace_view3d(
+        view,
+        camera=Camera3D(
+            eye=_add3(view.camera.target, pitched_eye),
+            target=view.camera.target,
+            up=view.camera.up,
+        ),
+    )
+
+
+def pan_view3d(view: View3D, payload: Pan3DPayload) -> View3D:
+    """Return the View3D produced by an S037 pan payload."""
+    if not isinstance(view, View3D):
+        raise TypeError("view must be a View3D")
+    if not isinstance(payload, Pan3DPayload):
+        raise TypeError("payload must be a Pan3DPayload")
+    basis = view.camera.basis()
+    offset = _add3(
+        _scale3(basis.right, payload.delta_view_right),
+        _scale3(basis.true_up, payload.delta_view_up),
+    )
+    return _replace_view3d(
+        view,
+        camera=Camera3D(
+            eye=_add3(view.camera.eye, offset),
+            target=_add3(view.camera.target, offset),
+            up=view.camera.up,
+        ),
+    )
+
+
+def zoom_view3d(view: View3D, payload: Zoom3DPayload) -> View3D:
+    """Return the View3D produced by an S037 orthographic zoom payload."""
+    if not isinstance(view, View3D):
+        raise TypeError("view must be a View3D")
+    if not isinstance(payload, Zoom3DPayload):
+        raise TypeError("payload must be a Zoom3DPayload")
+    if payload.anchor_panel_ndc_xy is None:
+        x_anchor_t = 0.5
+        y_anchor_t = 0.5
+    else:
+        x_anchor_t = (payload.anchor_panel_ndc_xy[0] + 1.0) * 0.5
+        y_anchor_t = (payload.anchor_panel_ndc_xy[1] + 1.0) * 0.5
+
+    x0, x1 = view.projection.xlim
+    y0, y1 = view.projection.ylim
+    x_anchor = x0 + x_anchor_t * (x1 - x0)
+    y_anchor = y0 + y_anchor_t * (y1 - y0)
+    new_x_span = (x1 - x0) / payload.scale
+    new_y_span = (y1 - y0) / payload.scale
+    projection = OrthographicProjection3D(
+        xlim=(
+            x_anchor - x_anchor_t * new_x_span,
+            x_anchor + (1.0 - x_anchor_t) * new_x_span,
+        ),
+        ylim=(
+            y_anchor - y_anchor_t * new_y_span,
+            y_anchor + (1.0 - y_anchor_t) * new_y_span,
+        ),
+        near_far=view.projection.near_far,
+        kind=view.projection.kind,
+    )
+    return _replace_view3d(view, projection=projection)
+
+
+def apply_view3d_navigation_action(
+    view: View3D,
+    action: View3DNavigationAction,
+    *,
+    layout_snapshot_id: str,
+) -> View3DNavigationResult:
+    """Apply one S037 navigation action with strict revision/snapshot freshness."""
+    if not isinstance(view, View3D):
+        raise TypeError("view must be a View3D")
+    if not isinstance(action, View3DNavigationAction):
+        raise TypeError("action must be a View3DNavigationAction")
+    validate_id(layout_snapshot_id)
+    current_snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id=layout_snapshot_id
+    )
+    mismatch_diagnostic = View3DDiagnosticCode.VIEW3D_NAVIGATION_SNAPSHOT_MISMATCH.value
+    if action.view_id != view.id:
+        return _reject_view3d_navigation(
+            view,
+            action,
+            layout_snapshot_id=layout_snapshot_id,
+            diagnostics=(f"{mismatch_diagnostic}: action view_id does not match",),
+        )
+    if action.base_view_revision != view.revision:
+        return _reject_view3d_navigation(
+            view,
+            action,
+            layout_snapshot_id=layout_snapshot_id,
+            diagnostics=(f"{mismatch_diagnostic}: stale view revision",),
+        )
+    if (
+        action.base_view_projection_snapshot_id
+        != current_snapshot.view_projection_snapshot_id
+    ):
+        return _reject_view3d_navigation(
+            view,
+            action,
+            layout_snapshot_id=layout_snapshot_id,
+            diagnostics=(f"{mismatch_diagnostic}: stale projection snapshot",),
+        )
+    if (
+        action.base_layout_snapshot_id is not None
+        and action.base_layout_snapshot_id != layout_snapshot_id
+    ):
+        return _reject_view3d_navigation(
+            view,
+            action,
+            layout_snapshot_id=layout_snapshot_id,
+            diagnostics=(f"{mismatch_diagnostic}: stale layout snapshot",),
+        )
+
+    try:
+        updated = _apply_fresh_view3d_navigation_action(view, action)
+    except (TypeError, ValueError) as error:
+        return _reject_view3d_navigation(
+            view,
+            action,
+            layout_snapshot_id=layout_snapshot_id,
+            diagnostics=(
+                f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_RESULT.value}: "
+                f"{error}",
+            ),
+        )
+
+    updated_snapshot = resolve_view3d_projection_snapshot(
+        updated, layout_snapshot_id=layout_snapshot_id
+    )
+    return View3DNavigationResult(
+        accepted=True,
+        view_id=view.id,
+        old_revision=view.revision,
+        new_revision=updated.revision,
+        camera=updated.camera,
+        projection=updated.projection,
+        view=updated,
+        layout_snapshot_id=layout_snapshot_id,
+        view_projection_snapshot_id=updated_snapshot.view_projection_snapshot_id,
+        action_kind=action.kind,
+    )
+
+
 def validate_projection3d_range(
     name: str, limits: Float2, *, allow_reversed: bool
 ) -> None:
@@ -262,6 +650,106 @@ def validate_projection3d_range(
         )
 
 
+def _apply_fresh_view3d_navigation_action(
+    view: View3D, action: View3DNavigationAction
+) -> View3D:
+    if action.kind is View3DNavigationActionKind.ORBIT:
+        return orbit_view3d(view, _expect_payload(action.payload, Orbit3DPayload))
+    if action.kind is View3DNavigationActionKind.PAN:
+        return pan_view3d(view, _expect_payload(action.payload, Pan3DPayload))
+    if action.kind is View3DNavigationActionKind.ZOOM:
+        return zoom_view3d(view, _expect_payload(action.payload, Zoom3DPayload))
+    if action.kind is View3DNavigationActionKind.SET_CAMERA:
+        camera_payload = _expect_payload(action.payload, SetCamera3DPayload)
+        return _replace_view3d(view, camera=camera_payload.camera)
+    if action.kind is View3DNavigationActionKind.SET_PROJECTION:
+        projection_payload = _expect_payload(action.payload, SetProjection3DPayload)
+        return _replace_view3d(view, projection=projection_payload.projection)
+    if action.kind is View3DNavigationActionKind.RESET:
+        reset_payload = _expect_payload(action.payload, ResetView3DPayload)
+        return _replace_view3d(
+            view, camera=reset_payload.camera, projection=reset_payload.projection
+        )
+    raise ValueError(
+        f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value}: "
+        f"unsupported action kind {action.kind!r}"
+    )
+
+
+def _reject_view3d_navigation(
+    view: View3D,
+    action: View3DNavigationAction,
+    *,
+    layout_snapshot_id: str,
+    diagnostics: tuple[str, ...],
+) -> View3DNavigationResult:
+    return View3DNavigationResult(
+        accepted=False,
+        view_id=action.view_id,
+        old_revision=view.revision,
+        action_kind=action.kind,
+        diagnostics=diagnostics,
+        layout_snapshot_id=layout_snapshot_id,
+    )
+
+
+def _replace_view3d(
+    view: View3D,
+    *,
+    camera: Camera3D | None = None,
+    projection: OrthographicProjection3D | None = None,
+) -> View3D:
+    return View3D(
+        id=view.id,
+        panel_id=view.panel_id,
+        camera=view.camera if camera is None else camera,
+        projection=view.projection if projection is None else projection,
+        depth_mode=view.depth_mode,
+        kind=view.kind,
+        revision=view.revision + 1,
+    )
+
+
+def _validate_navigation_payload_kind(
+    kind: View3DNavigationActionKind, payload: View3DNavigationPayload
+) -> None:
+    expected: type[Any]
+    if kind is View3DNavigationActionKind.ORBIT:
+        expected = Orbit3DPayload
+    elif kind is View3DNavigationActionKind.PAN:
+        expected = Pan3DPayload
+    elif kind is View3DNavigationActionKind.ZOOM:
+        expected = Zoom3DPayload
+    elif kind is View3DNavigationActionKind.SET_CAMERA:
+        expected = SetCamera3DPayload
+    elif kind is View3DNavigationActionKind.SET_PROJECTION:
+        expected = SetProjection3DPayload
+    elif kind is View3DNavigationActionKind.RESET:
+        expected = ResetView3DPayload
+    else:
+        raise ValueError(
+            f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value}: "
+            f"unsupported action kind {kind!r}"
+        )
+    if not isinstance(payload, expected):
+        raise TypeError(f"{kind.value} action payload must be {expected.__name__}")
+
+
+def _expect_payload(payload: View3DNavigationPayload, expected: type[_PayloadT]) -> _PayloadT:
+    if not isinstance(payload, expected):
+        raise TypeError(f"payload must be {expected.__name__}")
+    return payload
+
+
+def _validate_float2(
+    name: str, value: Float2, diagnostic: View3DDiagnosticCode
+) -> None:
+    if len(value) != 2:
+        raise ValueError(f"{name} must contain two values")
+    _validate_finite(f"{name}[0]", value[0], diagnostic)
+    _validate_finite(f"{name}[1]", value[1], diagnostic)
+
+
 def _validate_float3(name: str, value: Float3) -> None:
     if len(value) != 3:
         raise ValueError(f"{name} must contain three values")
@@ -270,6 +758,13 @@ def _validate_float3(name: str, value: Float3) -> None:
             f"{View3DDiagnosticCode.VIEW3D_INVALID_CAMERA_DEGENERATE.value}: "
             f"{name} values must be finite"
         )
+
+
+def _validate_finite(
+    name: str, value: float, diagnostic: View3DDiagnosticCode
+) -> None:
+    if not math.isfinite(value):
+        raise ValueError(f"{diagnostic.value}: {name} must be finite")
 
 
 def _sub3(left: Float3, right: Float3) -> Float3:
@@ -308,6 +803,18 @@ def _normalize3(value: Float3, message: str) -> Float3:
             f"{message}"
         )
     return (value[0] / norm, value[1] / norm, value[2] / norm)
+
+
+def _rotate3(value: Float3, axis: Float3, angle_radians: float) -> Float3:
+    axis_normalized = _normalize3(axis, "rotation axis must be nonzero")
+    cos_angle = math.cos(angle_radians)
+    sin_angle = math.sin(angle_radians)
+    cross = _cross3(axis_normalized, value)
+    dot = _dot3(axis_normalized, value)
+    return _add3(
+        _add3(_scale3(value, cos_angle), _scale3(cross, sin_angle)),
+        _scale3(axis_normalized, dot * (1.0 - cos_angle)),
+    )
 
 
 def _projection_snapshot_id(
