@@ -6,7 +6,7 @@ S039 - Lambert Normals Pre-Design
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -30,3 +30,8 @@ implemented, otherwise adapted/unsupported with structured diagnostics.
 
 Stop if strict Datoviz Lambert would require native semantics that differ from S039 or public exposure
 of Datoviz-native material/shader state.
+
+## Result
+
+Completed. Datoviz now rejects S039 `flat_lambert` explicitly with `flat_lambert_unsupported` until
+strict support exists, and capability snapshots do not advertise S039 Lambert support.

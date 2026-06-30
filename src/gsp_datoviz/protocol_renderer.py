@@ -35,6 +35,7 @@ from gsp.protocol import (
     ImageVisual,
     LogicalPixelRect,
     MeshColorMode,
+    MeshShading,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -2139,6 +2140,12 @@ def _record_transform_adaptation(
 
 
 def _validate_datoviz_mesh3d_visual(visual: MeshVisual, view3d: View3D | None) -> None:
+    if visual.canonical_shading() is MeshShading.FLAT_LAMBERT:
+        raise DatovizV04Unsupported(
+            "flat_lambert_unsupported: Datoviz v0.4 strict S039 flat Lambert "
+            "support is not implemented; native material semantics are not "
+            "accepted as protocol evidence"
+        )
     if visual.transform is not None:
         raise DatovizV04Unsupported(
             f"{View3DDiagnosticCode.MESH3D_TRANSFORM_UNSUPPORTED.value}: "
