@@ -1738,7 +1738,7 @@
       "id": "M169",
       "title": "S038 materials and lights ADR",
       "stage": "S038",
-      "state": "draft",
+      "state": "blocked",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 169
@@ -1814,9 +1814,10 @@
     "S037 Datoviz static View3D rendering is now implemented for local v0.4-dev builds with the P022 camera ctypes layouts and explicit orthographic-bounds API.",
     "Datoviz query.view3d.ray_readback.v1 is implemented for canonical ray-context payloads; GPU 3D visual picking remains separate.",
     "Keep materials/lights/textures deferred to future S038/S039/S040 specs; review-only demos must not be capability evidence.",
-    "Recommended next planning step is M169/S038 materials and lights ADR unless you want a separate Datoviz GPU 3D visual picking proof first."
+    "M169/S038 materials and lights ADR requires ChatGPT Pro consultation P023 before dependent spec implementation."
   ],
   "notes": [
+    "M169 blocked pending P023: created .agent/consultations/P023-materials-lights-s038.md for the public material/light/texture architecture decision.",
     "M167 completed: added Datoviz canonical View3D ray-context payload generation, renderer integration, capability gating for query.view3d.ray_readback.v1, and parity tests against the Matplotlib/S036 CPU reference.",
     "M166 completed after Datoviz v0.4-dev added P022 camera prerequisites (explicit orthographic bounds and camera ctypes layouts) and GSP commit 38362fc enabled Datoviz static View3D mesh rendering.",
     "M168 completed: updated public review docs, Matplotlib/Datoviz backend specs, SPEC_INDEX, and added S037 closeout; later Datoviz P022 prerequisite commits unblocked M166 while M167 remains the next query-parity gap.",
