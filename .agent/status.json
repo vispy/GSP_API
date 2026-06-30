@@ -1,5 +1,5 @@
 {
-  "current_stage": "S040",
+  "current_stage": "S041",
   "stages": [
     {
       "id": "S001",
@@ -240,6 +240,12 @@
       "title": "Datoviz Strict Flat Lambert Promotion",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S041",
+      "title": "3D Manual Review Pack",
+      "state": "draft",
+      "progress": 10
     }
   ],
   "missions": [
@@ -1835,6 +1841,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 178
+    },
+    {
+      "id": "M179",
+      "title": "S041 3D manual review pack",
+      "stage": "S041",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 179
     }
   ],
   "review_queue": [],
@@ -1927,9 +1942,11 @@
     "M174 completed Datoviz S039 Lambert capability gates and structured unsupported behavior.",
     "S039 completed the minimal flat Lambert face-normal slice; Datoviz strict Lambert remains unsupported until exact S039 semantics are implemented.",
     "S040 accepts CPU-resolved exact per-face colors as the only Datoviz strict S039 flat Lambert route; native Datoviz lighting remains out of scope.",
-    "S040 completed Datoviz CPU-resolved flat Lambert upload, capability gates, and focused fixtures."
+    "S040 completed Datoviz CPU-resolved flat Lambert upload, capability gates, and focused fixtures.",
+    "S041 is open to add manual Matplotlib-vs-Dataviz 3D review coverage for lit meshes and arcball-style View3D navigation."
   ],
   "notes": [
+    "M179 opened: add a focused 3D manual review pack for Matplotlib/Datoviz lit mesh comparison and public orbit navigation review.",
     "M178 completed: implemented Datoviz CPU-resolved S039 flat Lambert face colors, triangle-expanded constant face-color upload, capability promotion, focused tests, and S040 closeout.",
     "M177 completed: archived P025 response, accepted CPU-resolved exact per-face colors for Datoviz S040, added ADR-0027 and S040 decision/backend-spec updates, and opened M178.",
     "M176 completed: opened S040, created P025 Datoviz strict flat Lambert promotion consultation, and blocked M177 pending the response.",
