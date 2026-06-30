@@ -1794,6 +1794,7 @@
   "notes": [
     "S037 opened with P021 as a ChatGPT Pro gate for public View3D navigation, legacy 3D reuse, Datoviz View3D binding, and material/light/texture scope.",
     "M161 completed: added P021 consultation packet, S037 scoping note, and blocked dependent S037 missions pending the P021 response.",
+    "S037 legacy audit recorded safe internal reuse candidates: projection/depth/culling/normal helpers; legacy camera/material/light/texture public models remain gated by P021.",
     "S036 opened from P020: static camera-parameter-first View3D, orthographic projection, MeshVisual (N,3) DATA/NDC integration, opaque depth capability, ray readback, and public 3D navigation deferred to a later stage.",
     "M154 completed: converted P020 into ADR-0023, spec/view3d.md, S036 decision records, protocol View3D dataclasses/enums/diagnostics/capabilities, and focused validation tests; M155 is ready.",
     "M155 completed: added deterministic View3D DATA projection, projection snapshot identity, and numeric fixtures for canonical cube projection, reversed bounds, off-axis bounds, and snapshot changes; M156 is ready.",

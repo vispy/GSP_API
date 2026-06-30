@@ -11,6 +11,8 @@ engine affordances into unstable public API.
 The stage is gated by `.agent/consultations/P021-view3d-legacy-3d-dataviz-navigation-materials.md`.
 Dependent implementation must wait until the P021 answer is pasted or committed.
 
+The non-public legacy implementation audit is recorded in `.agent/S037_LEGACY_3D_AUDIT.md`.
+
 ## Current Baseline
 
 S036 provides:

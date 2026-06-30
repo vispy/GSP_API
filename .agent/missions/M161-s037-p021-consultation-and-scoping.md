@@ -29,5 +29,5 @@ Datoviz `View3D` binding, public 3D navigation, and possible material/light/text
 
 ## Result
 
-Completed. Added `.agent/consultations/P021-view3d-legacy-3d-dataviz-navigation-materials.md` and
-`.agent/S037_SCOPING.md`.
+Completed. Added `.agent/consultations/P021-view3d-legacy-3d-dataviz-navigation-materials.md`,
+`.agent/S037_SCOPING.md`, and `.agent/S037_LEGACY_3D_AUDIT.md`.
