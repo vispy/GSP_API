@@ -1711,14 +1711,19 @@
     }
   ],
   "recommendations": [
-    "Execute M156 next: add capability-gated MeshVisual positions3d DATA/NDC rendering behavior or exact unsupported evidence.",
-    "Keep S036 static and orthographic-only; defer public View3D navigation, perspective, materials/lights, scene graph, and 3D picking.",
-    "For Datoviz, require capability-gated retained View3D/mesh paths or exact unsupported evidence; do not expose backend-native camera/draw-state names."
+    "S036 is complete; do not open public View3D navigation without a new ChatGPT Pro consultation.",
+    "Recommended S037 scope: public View3D navigation contract, snapshot freshness, and backend-retained camera-state semantics.",
+    "Keep perspective, materials/lights, scene graph, and 3D mesh picking deferred until separate accepted specs exist."
   ],
   "notes": [
     "S036 opened from P020: static camera-parameter-first View3D, orthographic projection, MeshVisual (N,3) DATA/NDC integration, opaque depth capability, ray readback, and public 3D navigation deferred to a later stage.",
     "M154 completed: converted P020 into ADR-0023, spec/view3d.md, S036 decision records, protocol View3D dataclasses/enums/diagnostics/capabilities, and focused validation tests; M155 is ready.",
     "M155 completed: added deterministic View3D DATA projection, projection snapshot identity, and numeric fixtures for canonical cube projection, reversed bounds, off-axis bounds, and snapshot changes; M156 is ready.",
+    "M156 completed: added Matplotlib (N,3) MeshVisual DATA/NDC projection rendering, Datoviz structured unsupported diagnostics, backend specs, and focused tests.",
+    "M157 completed: added the adapted Matplotlib opaque face-depth fixture boundary, alpha-not-strict diagnostics, clipping documentation, and focused tests.",
+    "M158 completed: added View3D ray query payload/readback, stale snapshot diagnostics, and deferred 3D mesh picking diagnostics.",
+    "M159 completed: added static View3D review examples for cube, terrain, and NDC depth, plus the alpha-not-strict negative example.",
+    "M160 completed: added S036 closeout, updated capability matrix/docs, and marked S036 completed.",
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
     "M076 implemented Matplotlib TextVisual reference rendering and focused tests.",
     "M077 added S024 TextVisual QA cases, Matplotlib artifact generation, and Datoviz structured unsupported reporting for text pending M078/M079.",
