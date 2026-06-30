@@ -409,6 +409,7 @@ class CapabilitySnapshot:
     visual_families: tuple[str, ...] = ()
     transform_placements: tuple[str, ...] = ()
     transform_capabilities: tuple[str, ...] = ()
+    view3d_capabilities: tuple[str, ...] = ()
     navigation_placements: tuple[str, ...] = ()
     navigation_capabilities: tuple[str, ...] = ()
     query_modes: tuple[str, ...] = ()
@@ -487,6 +488,10 @@ class CapabilitySnapshot:
         """Return whether a semantic transform capability is advertised."""
         return capability in self.transform_capabilities
 
+    def supports_view3d_capability(self, capability: str) -> bool:
+        """Return whether a semantic View3D capability is advertised."""
+        return capability in self.view3d_capabilities
+
     def supports_navigation_placement(self, placement: NavigationPlacement | str) -> bool:
         """Return whether a navigation update placement is advertised."""
         value = placement.value if isinstance(placement, NavigationPlacement) else placement
@@ -546,6 +551,15 @@ class CapabilitySnapshot:
         return AdaptationDecision(
             AdaptationOutcome.REJECT,
             f"transform capability {capability!r} is not supported by {self.server_name}",
+        )
+
+    def adapt_view3d_capability(self, capability: str) -> AdaptationDecision:
+        """Return a minimal adaptation decision for a semantic View3D capability."""
+        if self.supports_view3d_capability(capability):
+            return AdaptationDecision(AdaptationOutcome.ACCEPT)
+        return AdaptationDecision(
+            AdaptationOutcome.REJECT,
+            f"View3D capability {capability!r} is not supported by {self.server_name}",
         )
 
     def adapt_navigation_capability(self, capability: str) -> AdaptationDecision:

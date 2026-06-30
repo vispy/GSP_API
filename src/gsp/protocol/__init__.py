@@ -136,6 +136,22 @@ from .navigation import (
     zoom_view2d_about,
 )
 from .panels import AspectPolicy, Panel, View2D, VisualAttachment, VisualCoordinateSpace
+from .view3d import (
+    CAMERA3D_EPSILON,
+    MESH3D_DATA_VIEW3D_CAPABILITY,
+    MESH3D_NDC_CAPABILITY,
+    MESH3D_OPAQUE_DEPTH_CAPABILITY,
+    QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
+    VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
+    Camera3D,
+    Camera3DBasis,
+    DepthMode3D,
+    OrthographicProjection3D,
+    Projection3DKind,
+    View3D,
+    View3DDiagnosticCode,
+    validate_projection3d_range,
+)
 from .query import (
     GUIDE_QUERY_PAYLOAD_KIND,
     MESH_QUERY_PAYLOAD_KIND,

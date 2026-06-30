@@ -6,7 +6,7 @@ S036 - Static View3D, Orthographic Projection, and 3D Mesh Baseline
 
 ## Status
 
-Ready for local-main-codex.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -39,3 +39,18 @@ validation baseline for static orthographic `View3D`.
 Stop if the ADR/spec would require public Datoviz camera objects, public perspective semantics,
 matrix-first authoring, or changes to existing `(N, 2)` mesh/`View2D` semantics.
 
+## Result
+
+Completed. Added ADR-0023, `spec/view3d.md`, S036 decision notes, SPEC_INDEX entries, and the S036
+protocol validation baseline in `src/gsp/protocol/view3d.py`.
+
+The accepted baseline keeps S036 static and orthographic-only, uses camera-parameter-first public
+state, keeps `DATA`/`NDC` as the only public coordinate spaces, and defers public `View3D`
+navigation, perspective, matrix-first authoring, materials/lights, scene graph, and 3D picking.
+
+Validation performed:
+
+- `uv run pytest tests/test_view3d_protocol.py tests/test_transform_protocol.py tests/test_navigation_protocol.py tests/test_import_surface.py -q`
+- `uv run ruff check src/gsp/protocol/view3d.py src/gsp/protocol/__init__.py src/gsp/protocol/capabilities.py tests/test_view3d_protocol.py`
+- `uv run mypy src/gsp/protocol/ --strict --show-error-codes`
+- `python -m json.tool .agent/status.json >/dev/null`

@@ -1,7 +1,8 @@
 # Transform, View, and Query Inverse - Accepted S027 Baseline
 
 Status: accepted S027 baseline; protocol, Matplotlib reference behavior, Datoviz gates, VisPy2
-producer API, and deterministic QA coverage are implemented.
+producer API, and deterministic QA coverage are implemented. Public static `View3D` orthographic
+semantics are defined separately by S036 in `spec/view3d.md`.
 
 Semantic purpose: define deterministic 2D visual transforms, panel view state, and transformed
 query/readback fields without accepting public 3D camera or controller semantics.
@@ -18,7 +19,7 @@ S027 is 2D-first. It accepts:
 | `VisualTransformBinding` | accepted | Optional transform binding on visuals with positional geometry. |
 | `View2D` | accepted | Panel-level linear mapping from DATA coordinates to panel NDC. |
 | Query inverse payload | accepted | Required for strict transformed query support. |
-| 3D camera/projection/controller | deferred | Reserved vocabulary and diagnostics only. |
+| 3D camera/projection/controller | partly advanced by S036 | Static orthographic `View3D` is accepted in `spec/view3d.md`; public 3D navigation/controller semantics remain deferred. |
 
 `CoordinateSpace.DATA` and `CoordinateSpace.NDC` remain the only accepted public visual coordinate
 spaces. Do not add `LOCAL`, `MODEL`, `WORLD`, `SCREEN`, `PIXEL`, `CAMERA`, `CLIP`, `AXES`, or

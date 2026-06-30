@@ -1,6 +1,7 @@
 # Mesh Visual - Accepted S025 Baseline
 
-Status: accepted protocol baseline for S025; implementation pending.
+Status: accepted protocol baseline for S025. Static orthographic `View3D` semantics for `(N,3)`
+mesh rendering are accepted separately by S036 in `spec/view3d.md`.
 
 Semantic purpose: render explicit user-provided triangular meshes for filled 2D panel geometry and
 capability-gated 3D geometry. S025 does not define a surface, volume, material, texture, instancing,
@@ -78,9 +79,9 @@ and must not introduce public light, specular, shininess, or backend material-st
 
 `MeshVisual` does not define a camera or mesh-local transform. `(N,2)` positions are interpreted as
 2D panel geometry in NDC or DATA and are the strict Matplotlib reference path. `(N,3)` positions are
-valid protocol data but require an accepted 3D panel/view projection capability for rendering and
-query. QA may use a fixed internal 3D camera fixture for contact sheets, but that is not protocol
-authority.
+valid protocol data and require an accepted 3D panel/view projection capability for rendering and
+query. S036 defines the first accepted public 3D panel/view projection capability: static
+orthographic `View3D`.
 
 `depth_test=AUTO` should behave like ordered 2D rendering for 2D meshes and use depth for 3D meshes
 when the view/backend supports it. Explicit unsupported depth or culling requests require structured
