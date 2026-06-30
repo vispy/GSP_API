@@ -21,12 +21,16 @@ from gsp.protocol import (
     ColorbarGuideStyle,
     CoordinateSpace,
     DepthMode,
+    DirectionalLight3D,
     FontRole,
     ImageColormap,
     ImageOrigin,
     ImageVisual,
     LogicalPixelRect,
     MeshColorMode,
+    MeshNormalGeneration,
+    MeshNormalMode,
+    MeshShading,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -917,6 +921,151 @@ def test_render_mesh_visual_3d_data_projects_through_view3d():
             np.array([[0.0, 0.0], [0.5, 0.0], [0.0, 0.5]]),
         )
         assert artist.get_transform() == ax.transAxes
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_s039_flat_lambert_explicit_normals():
+    """Matplotlib resolves S039 flat Lambert material math before 3D adaptation."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [
+                    [0.0, 0.0, 0.0],
+                    [1.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 0.0],
+                    [1.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                ],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2], [3, 4, 5]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.DATA,
+            color=np.array(
+                [[255, 128, 0, 255], [255, 128, 0, 255]],
+                dtype=np.uint8,
+            ),
+            color_mode=MeshColorMode.FACE,
+            shading=MeshShading.FLAT_LAMBERT,
+            normals=np.array([[0.0, 0.0, 2.0], [0.0, 0.0, -1.0]], dtype=np.float32),
+            normal_mode=MeshNormalMode.FACE,
+            depth_test=DepthMode.DISABLED,
+        )
+        view3d = View3D(
+            id="view:main",
+            panel_id="panel:main",
+            camera=Camera3D(
+                eye=(0.0, 0.0, 2.0),
+                target=(0.0, 0.0, 0.0),
+                up=(0.0, 1.0, 0.0),
+            ),
+            projection=OrthographicProjection3D(
+                xlim=(-1.0, 2.0),
+                ylim=(-1.0, 2.0),
+                near_far=(0.0, 4.0),
+            ),
+            ambient_light_intensity=0.25,
+            directional_light=DirectionalLight3D(
+                direction_to_light=(0.0, 0.0, 1.0),
+                intensity=0.5,
+            ),
+        )
+
+        artist = render_mesh_visual(ax, visual, view3d=view3d)
+
+        np.testing.assert_allclose(
+            artist.get_facecolors(),
+            np.array(
+                [
+                    [0.75, (128 / 255.0) * 0.75, 0.0, 1.0],
+                    [0.25, (128 / 255.0) * 0.25, 0.0, 1.0],
+                ],
+                dtype=np.float32,
+            ),
+            rtol=1.0e-6,
+            atol=1.0e-6,
+        )
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_s039_generated_normals_follow_winding():
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 2, 1]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.DATA,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            shading=MeshShading.FLAT_LAMBERT,
+            normal_mode=MeshNormalMode.FACE,
+            normal_generation=MeshNormalGeneration.FACE_FLAT,
+        )
+        view3d = View3D(
+            id="view:main",
+            panel_id="panel:main",
+            camera=Camera3D(
+                eye=(0.0, 0.0, 2.0),
+                target=(0.0, 0.0, 0.0),
+                up=(0.0, 1.0, 0.0),
+            ),
+            projection=OrthographicProjection3D(near_far=(0.0, 4.0)),
+            ambient_light_intensity=0.2,
+            directional_light=DirectionalLight3D(
+                direction_to_light=(0.0, 0.0, 1.0),
+                intensity=0.8,
+            ),
+        )
+
+        artist = render_mesh_visual(ax, visual, view3d=view3d)
+
+        np.testing.assert_allclose(
+            artist.get_facecolors()[0],
+            np.array([0.2, 0.2, 0.2, 1.0], dtype=np.float32),
+            rtol=1.0e-6,
+            atol=1.0e-6,
+        )
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_s039_flat_lambert_alpha_remains_non_strict():
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=np.float32),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.DATA,
+            color=np.array([255, 255, 255, 128], dtype=np.uint8),
+            shading=MeshShading.FLAT_LAMBERT,
+            normal_mode=MeshNormalMode.FACE,
+            normal_generation=MeshNormalGeneration.FACE_FLAT,
+        )
+        view3d = View3D(
+            id="view:main",
+            panel_id="panel:main",
+            camera=Camera3D(
+                eye=(0.0, 0.0, 2.0),
+                target=(0.0, 0.0, 0.0),
+                up=(0.0, 1.0, 0.0),
+            ),
+            projection=OrthographicProjection3D(near_far=(0.0, 4.0)),
+            directional_light=DirectionalLight3D(direction_to_light=(0.0, 0.0, 1.0)),
+        )
+
+        with pytest.raises(
+            NotImplementedError,
+            match=View3DDiagnosticCode.MESH3D_ALPHA_NOT_STRICT.value,
+        ):
+            render_mesh_visual(ax, visual, view3d=view3d)
     finally:
         plt.close(fig)
 

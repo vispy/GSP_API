@@ -6,7 +6,7 @@ S039 - Lambert Normals Pre-Design
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -31,3 +31,9 @@ strict GPU-style 3D raster conformance.
 
 Stop if implementing Matplotlib Lambert requires changing accepted public protocol fields or reviving
 legacy public material/light classes.
+
+## Result
+
+Completed. Matplotlib now resolves S039 flat Lambert face colors from canonical protocol fields and
+passes them through the existing adapted mesh path. Added tests for explicit normals, generated
+normals, winding behavior, lighting math, and alpha non-strict diagnostics.

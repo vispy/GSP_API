@@ -35,6 +35,7 @@ from gsp.protocol import (
     View3D,
     View3DDiagnosticCode,
     project_view3d_data_point,
+    validate_mesh_visual_flat_lambert,
 )
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.layout import resolve_matplotlib_layout_snapshot
@@ -45,6 +46,7 @@ from gsp.protocol.visuals import (
     ImageInterpolation,
     ImageVisual,
     MeshColorMode,
+    MeshShading,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -514,6 +516,13 @@ def render_mesh_visual(
     else:
         raise NotImplementedError(f"unsupported mesh color mode: {color_mode.value}")
 
+    if visual.canonical_shading() is MeshShading.FLAT_LAMBERT:
+        facecolors = _resolve_flat_lambert_facecolors(
+            visual,
+            facecolors,
+            view3d=view3d,
+        )
+
     if vertex_depth is not None:
         _validate_mesh3d_opaque_colors(facecolors)
         if visual.depth_test is not DepthMode.DISABLED:
@@ -782,6 +791,39 @@ def _mesh3d_face_depth_order(
 ) -> npt.NDArray[np.int64]:
     face_depth = np.mean(vertex_depth[faces], axis=1)
     return np.argsort(-face_depth, kind="stable")
+
+
+def _resolve_flat_lambert_facecolors(
+    visual: MeshVisual,
+    facecolors: npt.NDArray[Any],
+    *,
+    view3d: View3D | None,
+) -> npt.NDArray[np.float32]:
+    validate_mesh_visual_flat_lambert(visual, view3d=view3d)
+    if view3d is None:
+        raise ValueError("flat_lambert requires View3D")
+    base = np.asarray(_rgba_for_matplotlib(facecolors), dtype=np.float32)
+    normals = np.asarray(visual.normalized_face_normals(), dtype=np.float64)
+    light_factor = np.full(
+        (normals.shape[0],),
+        float(view3d.ambient_light_intensity),
+        dtype=np.float64,
+    )
+    if view3d.directional_light is not None:
+        light_direction = np.asarray(
+            view3d.directional_light.direction_to_light,
+            dtype=np.float64,
+        )
+        light_direction = light_direction / np.linalg.norm(light_direction)
+        lambert = np.maximum(0.0, normals @ light_direction)
+        light_factor = light_factor + (
+            float(view3d.directional_light.intensity) * lambert
+        )
+    light_factor = np.clip(light_factor, 0.0, 1.0)
+    resolved = base.copy()
+    resolved[:, :3] = np.clip(base[:, :3] * light_factor[:, np.newaxis], 0.0, 1.0)
+    resolved[:, 3] = base[:, 3]
+    return np.ascontiguousarray(resolved, dtype=np.float32)
 
 
 def _marker_area_values(
