@@ -244,8 +244,8 @@
     {
       "id": "S041",
       "title": "3D Manual Review Pack",
-      "state": "draft",
-      "progress": 10
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -1846,9 +1846,9 @@
       "id": "M179",
       "title": "S041 3D manual review pack",
       "stage": "S041",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 179
     }
   ],
@@ -1943,9 +1943,10 @@
     "S039 completed the minimal flat Lambert face-normal slice; Datoviz strict Lambert remains unsupported until exact S039 semantics are implemented.",
     "S040 accepts CPU-resolved exact per-face colors as the only Datoviz strict S039 flat Lambert route; native Datoviz lighting remains out of scope.",
     "S040 completed Datoviz CPU-resolved flat Lambert upload, capability gates, and focused fixtures.",
-    "S041 is open to add manual Matplotlib-vs-Dataviz 3D review coverage for lit meshes and arcball-style View3D navigation."
+    "S041 completed manual Matplotlib-vs-Dataviz 3D review coverage for lit meshes and arcball-style View3D navigation."
   ],
   "notes": [
+    "M179 completed: added lit View3D mesh review example, updated 3D review docs, and validated Matplotlib rendering plus Datoviz structured unsupported status for the local camera-binding gap.",
     "M179 opened: add a focused 3D manual review pack for Matplotlib/Datoviz lit mesh comparison and public orbit navigation review.",
     "M178 completed: implemented Datoviz CPU-resolved S039 flat Lambert face colors, triangle-expanded constant face-color upload, capability promotion, focused tests, and S040 closeout.",
     "M177 completed: archived P025 response, accepted CPU-resolved exact per-face colors for Datoviz S040, added ADR-0027 and S040 decision/backend-spec updates, and opened M178.",

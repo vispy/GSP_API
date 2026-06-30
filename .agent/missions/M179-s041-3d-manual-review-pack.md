@@ -6,7 +6,7 @@ S041 - 3D Manual Review Pack
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -32,3 +32,9 @@ stack, including lit meshes and Matplotlib arcball-style View3D navigation.
 
 Stop if the review pack would require exposing native Datoviz arcball or lighting APIs as public GSP
 semantics.
+
+## Result
+
+Completed. Added the lit View3D mesh review example, updated S040 Lambert review wording, documented
+3D side-by-side and arcball-style Matplotlib review commands, and recorded the local Datoviz camera
+binding gap as structured unsupported review status.

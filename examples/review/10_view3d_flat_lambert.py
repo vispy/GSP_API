@@ -80,7 +80,7 @@ def build_scene() -> ReviewScene:
         ),
         notes=(
             "Reviews flat Lambert face-normal material math resolved from canonical protocol fields.",
-            "Matplotlib resolves face colors on CPU; Datoviz v0.4 reports unsupported until strict S039 support exists.",
+            "Matplotlib resolves face colors on CPU; Datoviz v0.4 uses the S040 CPU-resolved strict path.",
         ),
     )
 

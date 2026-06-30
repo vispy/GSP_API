@@ -29,6 +29,7 @@ Open a live example with GSP navigation:
 uv run python examples/review/01_scatter_basic.py --backend matplotlib --interactive-navigation
 uv run python examples/review/01_scatter_basic.py --backend datoviz --interactive-navigation
 uv run python examples/review/07_view3d_cube.py --backend matplotlib --interactive-navigation
+uv run python examples/review/11_view3d_lit_mesh_arcball.py --backend matplotlib --interactive-navigation
 ```
 
 Open all numbered review examples with GSP interactivity where a `View2D` or `View3D` is present,
@@ -49,6 +50,18 @@ still opens as a normal live review window and prints a message that GSP navigat
 Matplotlib remains the strict interactive review path for S037 `View3D` navigation.
 Datoviz View3D examples require a local v0.4 build with camera bounds and input-event ctypes
 bindings.
+
+For 3D material review, compare the Matplotlib and Datoviz windows side by side:
+
+```bash
+tools/compare-review-examples --live-side-by-side examples/review/10_view3d_flat_lambert.py
+tools/compare-review-examples --live-side-by-side --interactive-navigation examples/review/11_view3d_lit_mesh_arcball.py
+```
+
+The second command enables Matplotlib's canonical GSP orbit/pan/zoom controls for arcball-style
+manual inspection. Datoviz renders the public static `View3D` camera and S040 CPU-resolved Lambert
+mesh; native Datoviz `panel.arcball()` demos are legacy/evidence-only until a public GSP bridge is
+designed.
 
 Capture and compare offscreen outputs:
 
@@ -89,10 +102,13 @@ inch. Matplotlib live review keeps using the reference DPI for its figure size; 
 | `07_view3d_cube.py` | Static `(N,3)` DATA cube projected through `View3D` |
 | `08_view3d_terrain.py` | Static terrain-like `(N,3)` DATA mesh with per-face colors |
 | `09_view3d_ndc_depth.py` | `(N,3)` NDC mesh with adapted opaque face-depth ordering |
+| `10_view3d_flat_lambert.py` | S039/S040 flat Lambert face-normal mesh shading |
+| `11_view3d_lit_mesh_arcball.py` | Lit faceted View3D mesh and Matplotlib arcball-style orbit review |
 
 With `--interactive-navigation`, Matplotlib `View3D` examples support S037 review navigation:
 left-drag orbit, right/middle-drag pan, wheel zoom, and `r` reset. Datoviz `View3D` examples render
-the static camera state; live Datoviz View3D navigation is still not implemented.
+the static public camera state; live Datoviz View3D navigation and native arcball bridging are still
+not implemented.
 
 The non-default `s036_alpha_not_strict_negative.py` script checks that translucent 3D mesh colors
 raise `mesh3d_alpha_not_strict` in the opaque-depth path.
@@ -136,6 +152,8 @@ Use this checklist before approving release preparation.
    | `07_view3d_cube.py` | Matplotlib shows a projected cube; interactive navigation changes the canonical `View3D`. Datoviz renders the static native camera. |
    | `08_view3d_terrain.py` | Matplotlib terrain projection and per-face colors are coherent; Datoviz renders the static native camera. |
    | `09_view3d_ndc_depth.py` | Opaque NDC3 depth ordering is visible in both backends. |
+   | `10_view3d_flat_lambert.py` | Flat Lambert face colors are visibly lit in both backends when Datoviz S040 support is available. |
+   | `11_view3d_lit_mesh_arcball.py` | Matplotlib arcball-style orbit changes the lit mesh projection; Datoviz static view matches the same public camera and CPU-resolved Lambert colors. |
 
 6. Record the review result in this form:
 

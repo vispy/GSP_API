@@ -60,6 +60,7 @@ This file tells agents where to find authoritative design information.
 | Datoviz flat Lambert CPU resolve ADR | adr/ADR-0027-dataviz-flat-lambert-cpu-resolve.md |
 | S040 Datoviz flat Lambert promotion decision | .agent/decisions/S040_datoviz_flat_lambert_promotion.md |
 | S040 closeout | .agent/S040_CLOSEOUT.md |
+| S041 closeout | .agent/S041_CLOSEOUT.md |
 | S039 flat Lambert normals decision | .agent/decisions/S039_flat_lambert_normals.md |
 | S039 closeout | .agent/S039_CLOSEOUT.md |
 | S038 mesh material boundary decision | .agent/decisions/S038_mesh_material_boundary.md |
