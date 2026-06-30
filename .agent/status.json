@@ -232,8 +232,8 @@
     {
       "id": "S039",
       "title": "Lambert Normals Pre-Design",
-      "state": "draft",
-      "progress": 90
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -1798,9 +1798,9 @@
       "id": "M175",
       "title": "S039 producer docs QA and closeout",
       "stage": "S039",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 175
     }
   ],
@@ -1885,9 +1885,10 @@
     "M172 completed S039 protocol dataclasses, validation, capability names, diagnostics, and focused tests.",
     "M173 completed Matplotlib/reference flat Lambert material math without widening public protocol scope.",
     "M174 completed Datoviz S039 Lambert capability gates and structured unsupported behavior.",
-    "M175 is ready to finish S039 producer/docs/QA coverage and closeout."
+    "S039 completed the minimal flat Lambert face-normal slice; Datoviz strict Lambert remains unsupported until exact S039 semantics are implemented."
   ],
   "notes": [
+    "M175 completed: added VisPy2-style producer fields for S039 mesh shading/normals, flat Lambert review example, and S039 closeout.",
     "M174 completed: Datoviz rejects flat_lambert explicitly until strict S039 support exists and does not advertise meshvisual.material.flat_lambert.v1.",
     "M173 completed: Matplotlib resolves S039 flat Lambert face colors through canonical protocol fields and keeps the adapted 3D mesh raster boundary.",
     "M172 completed: added S039 protocol surface for flat_lambert, face normals, generated face normals, DirectionalLight3D, View3D light validation, and focused tests.",

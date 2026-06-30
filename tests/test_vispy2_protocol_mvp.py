@@ -21,6 +21,9 @@ from gsp.protocol import (
     ImageOrigin,
     ImageVisual,
     MeshColorMode,
+    MeshNormalGeneration,
+    MeshNormalMode,
+    MeshShading,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -520,6 +523,39 @@ def test_top_level_helpers_emit_protocol_visuals():
     assert isinstance(image, ImageVisual)
     assert isinstance(label, TextVisual)
     assert isinstance(mesh, MeshVisual)
+
+
+def test_vispy2_mesh_helper_emits_s039_flat_lambert_fields():
+    _, ax = vp.subplots()
+
+    visual = ax.mesh(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]],
+        [[0, 1, 2]],
+        color=[255, 255, 255, 255],
+        shading="flat_lambert",
+        normal_mode="face",
+        normal_generation="face_flat",
+    )
+
+    assert visual.shading is MeshShading.FLAT_LAMBERT
+    assert visual.normal_mode is MeshNormalMode.FACE
+    assert visual.normal_generation is MeshNormalGeneration.FACE_FLAT
+    np.testing.assert_allclose(visual.normalized_face_normals(), [[0.0, 0.0, 1.0]])
+
+
+def test_vispy2_mesh_helper_emits_s039_explicit_face_normals():
+    visual = vp.mesh(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]],
+        [[0, 1, 2]],
+        color=[255, 255, 255, 255],
+        shading=MeshShading.FLAT_LAMBERT,
+        normal_mode=MeshNormalMode.FACE,
+        normals=[[0.0, 0.0, 2.0]],
+    )
+
+    assert visual.shading is MeshShading.FLAT_LAMBERT
+    assert visual.normal_mode is MeshNormalMode.FACE
+    np.testing.assert_allclose(visual.normalized_face_normals(), [[0.0, 0.0, 1.0]])
 
 
 def test_vispy2_guide_apis_emit_semantic_protocol_guides():

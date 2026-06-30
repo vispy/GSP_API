@@ -33,6 +33,9 @@ from gsp.protocol import (
     ImageVisual,
     LinearNormalize,
     MeshColorMode,
+    MeshNormalGeneration,
+    MeshNormalMode,
+    MeshShading,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -694,6 +697,10 @@ class Axes:
         color: npt.ArrayLike,
         color_mode: str | MeshColorMode | None = None,
         coordinate_space: str | CoordinateSpace = CoordinateSpace.DATA,
+        shading: str | MeshShading = MeshShading.UNLIT_RGBA,
+        normal_mode: str | MeshNormalMode | None = None,
+        normals: npt.ArrayLike | None = None,
+        normal_generation: str | MeshNormalGeneration = MeshNormalGeneration.NONE,
         order: float = 0.0,
         transform: npt.ArrayLike | VisualTransformBinding | None = None,
         id: str | None = None,
@@ -708,6 +715,10 @@ class Axes:
             coordinate_space=_coordinate_space(coordinate_space),
             color=_mesh_color(color),
             color_mode=_mesh_color_mode(color_mode),
+            shading=_mesh_shading(shading),
+            normal_mode=_mesh_normal_mode(normal_mode),
+            normals=_mesh_normals(normals),
+            normal_generation=_mesh_normal_generation(normal_generation),
             order=float(order),
             transform=_visual_transform(transform),
         )
@@ -1091,6 +1102,35 @@ def _mesh_color_mode(value: str | MeshColorMode | None) -> MeshColorMode | None:
     if value is None or isinstance(value, MeshColorMode):
         return value
     return MeshColorMode(value)
+
+
+def _mesh_normal_mode(value: str | MeshNormalMode | None) -> MeshNormalMode | None:
+    if value is None or isinstance(value, MeshNormalMode):
+        return value
+    return MeshNormalMode(value)
+
+
+def _mesh_normal_generation(
+    value: str | MeshNormalGeneration,
+) -> MeshNormalGeneration:
+    if isinstance(value, MeshNormalGeneration):
+        return value
+    return MeshNormalGeneration(value)
+
+
+def _mesh_shading(value: str | MeshShading) -> MeshShading:
+    if isinstance(value, MeshShading):
+        return value
+    return MeshShading(value)
+
+
+def _mesh_normals(value: npt.ArrayLike | None) -> npt.NDArray[np.float32] | None:
+    if value is None:
+        return None
+    array = np.asarray(value, dtype=np.float32)
+    if array.ndim != 2 or array.shape[1] != 3:
+        raise ValueError("mesh normals must have shape (F, 3) or (N, 3)")
+    return np.ascontiguousarray(array)
 
 
 def _mesh_color(

@@ -6,7 +6,7 @@ S039 - Lambert Normals Pre-Design
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -28,3 +28,8 @@ status for the accepted flat Lambert face-normal slice.
 ## Stop Condition
 
 Stop if closeout requires adding new material semantics beyond ADR-0026.
+
+## Result
+
+Completed. Added VisPy2-style producer support for canonical S039 mesh fields, focused producer
+tests, a flat Lambert review example, S039 closeout documentation, and final Mission Control status.
