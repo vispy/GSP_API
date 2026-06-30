@@ -6,7 +6,7 @@ S037 - Legacy 3D Reuse, Datoviz View3D Binding, and Public 3D Interaction
 
 ## Status
 
-Deferred, pending Datoviz camera binding and orthographic-bounds API.
+Completed.
 
 ## Summary
 
@@ -56,3 +56,25 @@ cannot prove public GSP `View3D` semantics.
 ## Source
 
 `.agent/consultations/P022-response.md`.
+
+## Completion
+
+Completed after the local Datoviz `v0.4-dev` branch added the P022 prerequisites:
+
+- `dvz_camera_set_orthographic_bounds()` and `dvz_camera_get_orthographic_bounds()`;
+- ABI-valid Python ctypes layouts for `DvzCameraView`, `DvzCameraProjection`, and
+  `DvzCameraDesc`;
+- smoke coverage for `DvzInputEventContent` union layout.
+
+GSP commit `38362fc` added the Datoviz retained `(N, 3)` `MeshVisual` path:
+
+- `View3D` panel camera setup through `dvz_panel_set_camera()`;
+- direct lowering of `OrthographicProjection3D.xlim`, `.ylim`, and `.near_far` to Datoviz
+  explicit orthographic bounds;
+- DATA and NDC3 mesh upload without z flattening;
+- depth-test enablement for 3D meshes;
+- strict rejections for missing `View3D`, 2D transforms on 3D meshes, and translucent 3D colors.
+
+Validation included `tools/probe_datoviz_view3d.py` returning `status: ready`, the full
+`tests/test_datoviz_v04_protocol_renderer.py` file, and Datoviz offscreen renders for
+`07_view3d_cube.py`, `08_view3d_terrain.py`, and `09_view3d_ndc_depth.py`.

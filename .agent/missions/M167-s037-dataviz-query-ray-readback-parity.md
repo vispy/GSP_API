@@ -6,7 +6,7 @@ S037 - Legacy 3D Reuse, Datoviz View3D Binding, and Public 3D Interaction
 
 ## Status
 
-Deferred, pending M166 Datoviz retained View3D render support.
+Unblocked by M166; implementation in progress.
 
 ## Summary
 
@@ -24,8 +24,9 @@ orthographic-bounds upgrade.
 ## Acceptance
 
 - Datoviz query payload fields match S036 semantics, or the capability remains unclaimed.
-- `query.view3d.ray_readback.v1` remains unavailable until M166 has proven strict Datoviz
-  `view3d.static.orthographic.v1` and `meshvisual.positions3d.data.view3d.v1` support.
+- `query.view3d.ray_readback.v1` may be claimed only for canonical ray-context payload generation.
+  GPU visual hit picking remains outside this mission unless a separate Datoviz readback proof is
+  added.
 
 ## Stop Condition
 

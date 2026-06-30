@@ -1,6 +1,7 @@
 # S037 Datoviz View3D Evidence
 
-Status: M165 completed; Datoviz public `(N, 3)` `MeshVisual` support remains unsupported.
+Status: M166 completed; Datoviz static public `(N, 3)` `MeshVisual` rendering is implemented for
+local `v0.4-dev` builds that expose the P022 camera bindings.
 
 ## Probe Command
 
@@ -8,90 +9,56 @@ Status: M165 completed; Datoviz public `(N, 3)` `MeshVisual` support remains uns
 tools/probe_datoviz_view3d.py
 ```
 
-## Observed Environment
-
 The active import resolved to the local Datoviz checkout:
 
 ```text
 /home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py
 ```
 
-The module exposes several promising v0.4 camera and depth symbols, including:
+The probe now reports `status: ready` when the local Datoviz branch contains:
 
-- `DvzCamera`
-- `DvzCameraProjection`
-- `dvz_camera_create`
-- `dvz_camera_set_view`
-- `dvz_camera_set_orthographic`
-- `dvz_camera_mvp`
-- `dvz_panel_set_camera`
-- `dvz_panel_camera`
-- `dvz_mesh`
-- `dvz_visual_set_depth_test`
+- `DvzCameraView` with `eye`, `target`, and `up` ctypes fields;
+- `DvzCameraDesc` with `view` and `projection` ctypes fields;
+- `DvzCameraProjection` with `type`, `near_clip`, `far_clip`, and `ortho_height`;
+- `dvz_camera_desc()`;
+- `dvz_panel_set_camera()`;
+- `dvz_camera_set_orthographic_bounds()` and `dvz_camera_get_orthographic_bounds()`;
+- mesh upload and depth-test symbols.
 
-Header evidence under `/home/cyrille/GIT/Viz/datoviz/include/datoviz/` confirms that C headers
-define `DvzCameraView`, `DvzCameraProjection`, `DvzCameraDesc`, panel-owned cameras, and retained
-visual depth-test APIs.
+## Datoviz Prerequisite Commits
 
-## Blocking Binding Gaps
+The P022 prerequisites were added on Datoviz `v0.4-dev`:
 
-The Python-visible binding is not sufficient to implement public GSP `View3D` semantics safely yet:
+- `83c1c8616 Add explicit orthographic camera bounds`
+- `aeb8ecfe2 Expose camera ctypes layouts`
+- `76b063d58 Guard input event ctypes layout`
 
-| Evidence | Status | Impact |
-|---|---:|---|
-| `DvzCameraView` eye/target/up fields | missing from Python `_fields_` | Cannot safely lower canonical `Camera3D(eye, target, up)` into Datoviz. |
-| `DvzCameraDesc` view/projection fields | missing from Python `_fields_` | Cannot safely create or set a panel camera from public GSP state. |
-| `dvz_camera_view()` default factory | not exposed | No safe Python-side default constructor for `DvzCameraView`. |
-| `dvz_camera_desc()` default factory | not exposed | No safe Python-side default constructor for `DvzCameraDesc`. |
-| Orthographic x/y bounds | Datoviz camera API exposes height/near/far | S036 requires explicit `xlim`, `ylim`, reversed x/y bounds, off-axis bounds, and deterministic panel-NDC3 parity. |
-| `dvz_camera_set_orthographic_bounds()` | missing | P022 concludes binding-only support is insufficient without a public camera-level explicit bounds API. |
-| Runtime DATA/NDC3/depth screenshots | not proven | Cannot claim retained `(N, 3)` support or opaque-depth capability. |
+## GSP Support Claim
 
-`DvzCameraProjection` does expose fields including `type`, `near_clip`, `far_clip`, and
-`ortho_height`, but that is not enough to encode the accepted S036 projection contract.
+GSP commit `38362fc Enable Datoviz View3D mesh rendering` implements the private lowering layer:
 
-## Decision
+- `View3D.camera` lowers into Datoviz panel-owned camera state;
+- `OrthographicProjection3D.xlim`, `.ylim`, and `.near_far` lower directly to explicit Datoviz
+  orthographic bounds, including reversed x/y bounds;
+- DATA `(N, 3)` meshes require `View3D`;
+- NDC `(N, 3)` meshes are uploaded as panel NDC3;
+- 3D meshes enable Datoviz depth testing;
+- translucent 3D colors and 2D affine transforms on 3D meshes remain structured unsupported.
 
-Keep the current Datoviz diagnostic for public `(N, 3)` meshes:
+Validated examples:
 
-```text
-mesh3d_coordinate_space_unsupported: Datoviz v0.4 MeshVisual strict adapter is limited to 2D positions until public View3D camera binding is implemented
+```bash
+uv run python examples/review/07_view3d_cube.py --backend datoviz --offscreen
+uv run python examples/review/08_view3d_terrain.py --backend datoviz --offscreen
+uv run python examples/review/09_view3d_ndc_depth.py --backend datoviz --offscreen
 ```
 
-P022 supersedes the broad "either fields/factories or equivalent binding" ambiguity with a narrower
-Datoviz-side requirement:
+## Still Deferred
 
-- upgrade raw ctypes layout support for `DvzCameraView`, `DvzCameraDesc`, and related fixed math
-  aliases;
-- expose `dvz_camera_view()` and `dvz_camera_desc()` only after those by-value return structs are
-  ABI-valid in Python;
-- add a camera-level `dvz_camera_set_orthographic_bounds(left, right, bottom, top, near, far)` API
-  that accepts ordered bounds directly, including reversed x/y bounds;
-- preserve existing centered `dvz_camera_set_orthographic(height, near, far)` behavior;
-- do not use a projection-matrix API, panel-level `DvzView3DDesc`, or CPU/model-transform workaround
-  as the basis for strict support.
+- Datoviz live `View3D` orbit/pan/zoom navigation.
+- Datoviz GPU visual hit picking for 3D meshes.
+- Public material, light, texture, UV, sampler, culling, perspective, and strict fragment-clipping
+  semantics.
 
-Do not proceed to M166 implementation until Datoviz exposes either:
-
-- Python-visible `DvzCameraView` and `DvzCameraDesc` fields/factories sufficient to set
-  `eye`, `target`, `up`, and panel camera state; and
-- a public camera-level explicit orthographic-bounds setter that can lower canonical
-  `OrthographicProjection3D.xlim`, `.ylim`, and `.near_far` without normalization.
-
-## Evidence Needed Before Support Claim
-
-- Runtime probe verifies `dvz_camera_set_orthographic_bounds` is present.
-- DATA `(N, 3)` retained mesh moves correctly when canonical camera/projection changes.
-- NDC `(N, 3)` retained mesh is interpreted directly as panel NDC3, not camera-projected DATA.
-- Opaque nearer triangles win independent of submission order.
-- Off-axis and reversed x/y orthographic bounds match GSP projection snapshots.
-- Projection snapshot ids match canonical S036 state changes.
-- Query ray-readback payloads match canonical S036 CPU snapshot semantics before
-  `query.view3d.ray_readback.v1` is claimed.
-- Public API remains free of Datoviz camera, controller, draw-state, and material names.
-
-## P022 Source
-
-`.agent/consultations/P022-response.md` records the accepted ChatGPT Pro recommendation: binding-only
-is necessary but insufficient; the smallest correct Datoviz upgrade is targeted ctypes math-struct
-support plus a camera-level orthographic-bounds API.
+`query.view3d.ray_readback.v1` may be claimed only for canonical ray-context payload generation
+after M167 adds parity tests against the S036 CPU semantics.

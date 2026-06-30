@@ -167,12 +167,14 @@ adapted: DATA meshes are projected by canonical CPU `View3D` math and rendered a
 2D path. Matplotlib opaque-depth behavior is adapted for opaque, non-intersecting triangles by
 sorting faces far-to-near by average panel-NDC z. This is not strict GPU fragment-depth semantics.
 
-Datoviz v0.4 must not claim `view3d.static.orthographic.v1`,
-`meshvisual.positions3d.data.view3d.v1`, `meshvisual.positions3d.ndc.v1`,
-`meshvisual.positions3d.opaque_depth.v1`, or `query.view3d.ray_readback.v1` for public `(N, 3)`
-`MeshVisual` until public `View3D` binding evidence passes. Before that evidence exists, it must
-continue reporting `mesh3d_coordinate_space_unsupported` rather than silently flattening z or
-exposing backend-native camera objects.
+Datoviz v0.4 may claim `view3d.static.orthographic.v1`,
+`meshvisual.positions3d.data.view3d.v1`, `meshvisual.positions3d.ndc.v1`, and
+`meshvisual.positions3d.opaque_depth.v1` only for local builds with the P022 camera ctypes layouts
+and explicit orthographic-bounds API. Older builds must continue reporting structured unsupported
+diagnostics rather than silently flattening z or exposing backend-native camera objects.
+
+Datoviz must not claim `query.view3d.ray_readback.v1` until query payload fields match the
+canonical S036 CPU snapshot semantics.
 
 Future lighting and texture capability names are reserved, not claimed in S037:
 
