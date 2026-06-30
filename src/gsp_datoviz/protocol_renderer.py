@@ -61,6 +61,7 @@ from gsp.protocol import (
     QueryScope,
     QueryStatus,
     ResolvedCanvas,
+    resolve_view3d_projection_snapshot,
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     ScalarColorQueryPayload,
     ScalarColorSlot,
@@ -89,6 +90,7 @@ from gsp_datoviz.capabilities import (
     datoviz_v04_capture_ready,
 )
 from gsp_datoviz.query import (
+    datoviz_query_view3d_ray_context,
     decode_dvz_query_result,
     datoviz_v04_query_binding_diagnostics,
     datoviz_v04_query_binding_ready,
@@ -1498,6 +1500,37 @@ class DatovizV04ProtocolRenderer:
         decoded = replace(decode_dvz_query_result(raw_result), request_id=request.id)
         return self._decorate_scalar_query_result(decoded, request)
 
+    def query_view3d_ray_context(
+        self, request: QueryRequest, *, layout_snapshot_id: str
+    ) -> QueryResult:
+        """Return a canonical View3D ray-context payload for the current Datoviz panel."""
+        if self.view3d is None:
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.UNSUPPORTED,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic=(
+                    f"{View3DDiagnosticCode.VIEW3D_NOT_SUPPORTED.value}: "
+                    "Datoviz View3D ray readback requires a renderer View3D"
+                ),
+                layout_snapshot_id=request.layout_snapshot_id,
+                view_snapshot_id=request.view_snapshot_id,
+            )
+        snapshot = resolve_view3d_projection_snapshot(
+            self.view3d, layout_snapshot_id=layout_snapshot_id
+        )
+        return datoviz_query_view3d_ray_context(
+            request,
+            self.view3d,
+            snapshot,
+            panel_bounds=_datoviz_query_panel_bounds(
+                self.resolved_canvas.framebuffer_width,
+                self.resolved_canvas.framebuffer_height,
+                self.panel_bounds,
+            ),
+        )
+
     def _decorate_scalar_query_result(
         self, result: QueryResult, request: QueryRequest
     ) -> QueryResult:
@@ -2297,6 +2330,15 @@ def _panel_pixel_size(
     if 0.0 < panel_width <= 1.0 and 0.0 < panel_height <= 1.0:
         return float(width) * panel_width, float(height) * panel_height
     return panel_width, panel_height
+
+
+def _datoviz_query_panel_bounds(
+    width: int,
+    height: int,
+    panel_bounds: tuple[float, float, float, float] | None,
+) -> tuple[float, float, float, float]:
+    panel_width, panel_height = _panel_pixel_size(width, height, panel_bounds)
+    return (0.0, panel_width, 0.0, panel_height)
 
 
 def _text_renderer_value(dvz: Any) -> int:

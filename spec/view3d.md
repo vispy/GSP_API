@@ -170,9 +170,9 @@ that path with `mesh3d_alpha_not_strict`; `depth_test=disabled` preserves declar
 Partially clipped 3D triangles are not a strict S036 fixture yet and must be reported as adapted or
 unsupported by backends that cannot prove exact clip semantics.
 
-The Datoviz v0.4 adapter continues to reject `(N, 3)` `MeshVisual` inputs with
-`mesh3d_coordinate_space_unsupported` until a public View3D camera binding is implemented for the
-retained adapter.
+The Datoviz v0.4 adapter accepts `(N, 3)` `MeshVisual` inputs when the local binding exposes the
+P022 camera ctypes layouts and explicit orthographic-bounds API. Older bindings continue to reject
+the same inputs with structured unsupported diagnostics.
 
 ## Capabilities
 

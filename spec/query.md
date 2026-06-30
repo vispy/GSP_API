@@ -259,4 +259,6 @@ uses extension payload kind `gsp.view3d-query@0.1` and carries:
 The query consumes panel coordinates and the current `View3DProjectionSnapshot`. If a request names
 a stale `layout_snapshot_id` or `view_snapshot_id`, the result is `stale` with
 `query_3d_snapshot_mismatch`. `MeshVisual` face picking for `(N, 3)` positions remains deferred and
-returns `unsupported` with `query_3d_visual_hit_deferred`.
+returns `unsupported` with `query_3d_visual_hit_deferred`. Datoviz v0.4 support for
+`query.view3d.ray_readback.v1` is canonical ray-context payload generation from public `View3D`
+state, not GPU visual hit picking for 3D meshes.

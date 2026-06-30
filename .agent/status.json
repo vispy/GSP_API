@@ -1720,9 +1720,9 @@
       "id": "M167",
       "title": "S037 Datoviz query ray readback parity",
       "stage": "S037",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 167
     },
     {
@@ -1812,14 +1812,15 @@
   ],
   "recommendations": [
     "S037 Datoviz static View3D rendering is now implemented for local v0.4-dev builds with the P022 camera ctypes layouts and explicit orthographic-bounds API.",
-    "Next GSP-side capability gap is M167 Datoviz query.view3d.ray_readback.v1 parity for canonical ray-context payloads; GPU 3D visual picking remains separate.",
+    "Datoviz query.view3d.ray_readback.v1 is implemented for canonical ray-context payloads; GPU 3D visual picking remains separate.",
     "Keep materials/lights/textures deferred to future S038/S039/S040 specs; review-only demos must not be capability evidence.",
-    "Recommended planning step after M167 is M169/S038 materials and lights ADR if you want to expand 3D appearance semantics next."
+    "Recommended next planning step is M169/S038 materials and lights ADR unless you want a separate Datoviz GPU 3D visual picking proof first."
   ],
   "notes": [
+    "M167 completed: added Datoviz canonical View3D ray-context payload generation, renderer integration, capability gating for query.view3d.ray_readback.v1, and parity tests against the Matplotlib/S036 CPU reference.",
     "M166 completed after Datoviz v0.4-dev added P022 camera prerequisites (explicit orthographic bounds and camera ctypes layouts) and GSP commit 38362fc enabled Datoviz static View3D mesh rendering.",
     "M168 completed: updated public review docs, Matplotlib/Datoviz backend specs, SPEC_INDEX, and added S037 closeout; later Datoviz P022 prerequisite commits unblocked M166 while M167 remains the next query-parity gap.",
-    "M165 completed: Datoviz exposes promising camera/depth symbols but lacks Python-bindable DvzCameraView/DvzCameraDesc fields/factories and full S036 x/y orthographic bounds evidence; M166/M167 deferred.",
+    "M165 completed with the original finding that Datoviz lacked Python-bindable camera fields and explicit x/y orthographic bounds; later Datoviz P022 prerequisite commits resolved that blocker for M166/M167.",
     "M164 completed: added Matplotlib live review View3D navigation adapter using canonical S037 actions/results; left-drag orbit, right/middle-drag pan, wheel zoom, and r reset.",
     "M163 completed: added protocol-only View3D navigation action/result dataclasses, orbit/pan/zoom/set/reset reducers, snapshot freshness enforcement, exports, and focused tests.",
     "M162 completed: archived P021 response, accepted S037 as View3D navigation plus Datoviz View3D binding, added ADR-0024, S037 decision record, View3D navigation spec, and capability wording updates.",

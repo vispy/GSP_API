@@ -6,7 +6,7 @@ S037 - Legacy 3D Reuse, Datoviz View3D Binding, and Public 3D Interaction
 
 ## Status
 
-Unblocked by M166; implementation in progress.
+Completed for canonical ray-context payload generation.
 
 ## Summary
 
@@ -35,3 +35,19 @@ Stop if query payloads cannot be tied to canonical `View3D` revision and project
 ## Source
 
 `.agent/consultations/P022-response.md`.
+
+## Completion
+
+Completed by adding Datoviz-side canonical S036 ray-context generation:
+
+- `gsp_datoviz.query.datoviz_query_view3d_ray_context()` returns
+  `gsp.view3d-query@0.1` payloads from `QueryRequest`, `View3D`, and
+  `View3DProjectionSnapshot`;
+- `DatovizV04ProtocolRenderer.query_view3d_ray_context()` derives the current panel-local bounds
+  and snapshot from the renderer's `View3D`;
+- stale `layout_snapshot_id` / `view_snapshot_id` requests return
+  `query_3d_snapshot_mismatch`;
+- Datoviz capability snapshots advertise `query.view3d.ray_readback.v1` and `view3d-ray` only when
+  the P022 camera binding is present.
+
+The implementation intentionally does not claim Datoviz GPU visual hit picking for 3D meshes.

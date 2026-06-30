@@ -2,9 +2,22 @@
 
 from __future__ import annotations
 
+from math import sqrt
 from typing import Any, cast
 
-from gsp.protocol import QueryResult, QueryStatus, VisualFamily
+from gsp.protocol import (
+    QueryCoordinateSpace,
+    QueryRequest,
+    QueryResult,
+    QueryStatus,
+    VIEW3D_QUERY_PAYLOAD_KIND,
+    View3D,
+    View3DDiagnosticCode,
+    View3DProjectionSnapshot,
+    View3DQueryPayload,
+    VisualFamily,
+    unproject_view3d_panel_ndc_point,
+)
 
 
 DVZ_QUERY_STATUS_UNKNOWN = 0
@@ -112,6 +125,113 @@ def decode_dvz_query_result(raw: Any) -> QueryResult:
         panel_coordinate=panel_coordinate,
         diagnostic=f"Datoviz query returned unknown status {status}",
     )
+
+
+def datoviz_query_view3d_ray_context(
+    request: QueryRequest,
+    view: View3D,
+    snapshot: View3DProjectionSnapshot,
+    *,
+    panel_bounds: tuple[float, float, float, float],
+) -> QueryResult:
+    """Return a canonical S036 View3D ray context for the Datoviz adapter.
+
+    This is projection-inverse readback from public GSP state. It does not claim Datoviz GPU visual
+    hit picking for 3D meshes.
+    """
+    if request.coordinate_space is not QueryCoordinateSpace.PANEL:
+        return _unsupported_query_result(
+            request,
+            f"{View3DDiagnosticCode.QUERY_3D_VISUAL_HIT_DEFERRED.value}: "
+            "Datoviz View3D ray readback requires panel coordinates",
+        )
+    if (
+        request.layout_snapshot_id is not None
+        and request.layout_snapshot_id != snapshot.layout_snapshot_id
+    ) or (
+        request.view_snapshot_id is not None
+        and request.view_snapshot_id != snapshot.view_projection_snapshot_id
+    ):
+        return QueryResult(
+            request_id=request.id,
+            status=QueryStatus.STALE,
+            hit=False,
+            panel_coordinate=request.coordinate,
+            diagnostic=View3DDiagnosticCode.QUERY_3D_SNAPSHOT_MISMATCH.value,
+            layout_snapshot_id=snapshot.layout_snapshot_id,
+            view_snapshot_id=snapshot.view_projection_snapshot_id,
+        )
+
+    panel_ndc = _panel_coordinate_to_ndc(request.coordinate, panel_bounds)
+    near = unproject_view3d_panel_ndc_point(view, (panel_ndc[0], panel_ndc[1], -1.0))
+    far = unproject_view3d_panel_ndc_point(view, (panel_ndc[0], panel_ndc[1], 1.0))
+    ray_direction = _normalized3(_sub3(far, near))
+    payload = View3DQueryPayload(
+        view_id=snapshot.view_id,
+        view_revision=snapshot.view_revision,
+        layout_snapshot_id=snapshot.layout_snapshot_id,
+        view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+        panel_xy=request.coordinate,
+        panel_ndc=panel_ndc,
+        near_data_point=near,
+        far_data_point=far,
+        ray_direction=ray_direction,
+    )
+    return QueryResult(
+        request_id=request.id,
+        status=QueryStatus.HIT,
+        hit=True,
+        panel_coordinate=request.coordinate,
+        visual_coordinate=panel_ndc,
+        data_coordinate=(near[0], near[1]),
+        value={
+            "kind": "view3d-ray",
+            "view_id": snapshot.view_id,
+            "view_projection_snapshot_id": snapshot.view_projection_snapshot_id,
+        },
+        extension_payload_kind=VIEW3D_QUERY_PAYLOAD_KIND,
+        extension_payload=payload,
+        layout_snapshot_id=snapshot.layout_snapshot_id,
+        view_snapshot_id=snapshot.view_projection_snapshot_id,
+    )
+
+
+def _unsupported_query_result(request: QueryRequest, diagnostic: str) -> QueryResult:
+    return QueryResult(
+        request_id=request.id,
+        status=QueryStatus.UNSUPPORTED,
+        hit=False,
+        panel_coordinate=request.coordinate,
+        diagnostic=diagnostic,
+        layout_snapshot_id=request.layout_snapshot_id,
+        view_snapshot_id=request.view_snapshot_id,
+    )
+
+
+def _panel_coordinate_to_ndc(
+    coordinate: tuple[float, float], bounds: tuple[float, float, float, float]
+) -> tuple[float, float]:
+    left, right, bottom, top = bounds
+    if right == left or top == bottom:
+        raise ValueError("panel_bounds must be non-degenerate")
+    x, y = coordinate
+    return (
+        -1.0 + 2.0 * (x - left) / (right - left),
+        -1.0 + 2.0 * (y - bottom) / (top - bottom),
+    )
+
+
+def _sub3(
+    left: tuple[float, float, float], right: tuple[float, float, float]
+) -> tuple[float, float, float]:
+    return (left[0] - right[0], left[1] - right[1], left[2] - right[2])
+
+
+def _normalized3(value: tuple[float, float, float]) -> tuple[float, float, float]:
+    norm = sqrt(value[0] * value[0] + value[1] * value[1] + value[2] * value[2])
+    if norm == 0.0:
+        raise ValueError("ray direction is degenerate")
+    return (value[0] / norm, value[1] / norm, value[2] / norm)
 
 
 def _decode_hit(raw: Any, request_id: str, panel_coordinate: tuple[float, float]) -> QueryResult:

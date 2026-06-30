@@ -44,6 +44,8 @@ from gsp.protocol import (
     QueryScope,
     QueryStatus,
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
+    VIEW3D_QUERY_PAYLOAD_KIND,
+    QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
     ScalarColorEncoding,
     ScalarColorSlot,
     TRANSFORM_QUERY_PAYLOAD_KIND,
@@ -53,10 +55,12 @@ from gsp.protocol import (
     View2D,
     View3D,
     View3DDiagnosticCode,
+    VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
     OrthographicProjection3D,
     VisualFamily,
     VisualTransformBinding,
     pan_view2d,
+    resolve_view3d_projection_snapshot,
 )
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
@@ -81,6 +85,7 @@ from gsp_datoviz.protocol_renderer import (
     datoviz_v04_sampled_field_ready,
     datoviz_v04_text_diagnostics,
     datoviz_v04_text_ready,
+    datoviz_v04_view3d_camera_diagnostics,
     import_datoviz_v04,
     is_datoviz_v04_facade,
     _image_texcoords,
@@ -100,7 +105,9 @@ from gsp_datoviz.query import (
     decode_dvz_query_result,
     datoviz_v04_query_binding_diagnostics,
     datoviz_v04_query_binding_ready,
+    datoviz_query_view3d_ray_context,
 )
+from gsp_matplotlib.protocol_query import query_view3d_ray_context
 
 
 class FakeDatovizV04:
@@ -1010,6 +1017,23 @@ def _calls_from(calls, name):
     return [call for call in calls if call[0] == name]
 
 
+def _canonical_view3d_for_datoviz_query() -> View3D:
+    return View3D(
+        id="view:main",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 1.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-1.0, 1.0),
+            ylim=(-1.0, 1.0),
+            near_far=(0.0, 2.0),
+        ),
+    )
+
+
 def test_renderer_sets_datoviz_color_pipeline_when_binding_is_available():
     fake = FakeDatovizV04WithColorPipeline()
 
@@ -1213,6 +1237,19 @@ def test_datoviz_capabilities_promote_panel_query_only_when_query_binding_is_rea
     assert "datoviz_query_binding_diagnostics" not in promoted.metadata
     assert unpromoted.query_modes == ()
     assert "datoviz_query_binding_diagnostics" in unpromoted.metadata
+
+
+def test_datoviz_capabilities_promote_view3d_ray_when_camera_binding_is_ready():
+    promoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh()).capabilities()
+    unpromoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04()).capabilities()
+
+    assert promoted.query_modes == ("view3d-ray",)
+    assert promoted.supports_view3d_capability(VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY)
+    assert promoted.supports_view3d_capability(QUERY_VIEW3D_RAY_READBACK_CAPABILITY)
+    assert promoted.adapt_query_mode("view3d-ray").outcome.value == "accept"
+    assert "datoviz_view3d_binding_diagnostics" not in promoted.metadata
+    assert "view3d-ray" not in unpromoted.query_modes
+    assert "datoviz_view3d_binding_diagnostics" in unpromoted.metadata
 
 
 def test_decode_datoviz_query_statuses_to_gsp_statuses():
@@ -1453,6 +1490,97 @@ def test_query_panel_rejects_unadvertised_scopes_and_policies():
 
     assert transform_payload.status == QueryStatus.UNSUPPORTED
     assert "GSP_QUERY_INVERSE_UNSUPPORTED" in str(transform_payload.diagnostic)
+
+
+def test_datoviz_view3d_ray_context_matches_matplotlib_reference():
+    view = _canonical_view3d_for_datoviz_query()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    request = QueryRequest(
+        id="query:ray",
+        panel_id="panel:main",
+        coordinate=(75.0, 25.0),
+        coordinate_space=QueryCoordinateSpace.PANEL,
+        layout_snapshot_id=snapshot.layout_snapshot_id,
+        view_snapshot_id=snapshot.view_projection_snapshot_id,
+    )
+
+    datoviz_result = datoviz_query_view3d_ray_context(
+        request,
+        view,
+        snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+    matplotlib_result = query_view3d_ray_context(
+        request,
+        view,
+        snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+
+    assert datoviz_result == matplotlib_result
+    assert datoviz_result.extension_payload_kind == VIEW3D_QUERY_PAYLOAD_KIND
+
+
+def test_datoviz_renderer_view3d_ray_context_uses_current_view_and_bounds():
+    view = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithMesh(),
+        width=200,
+        height=100,
+        panel_bounds=(0.0, 0.0, 0.5, 1.0),
+        view3d=view,
+    )
+
+    result = renderer.query_view3d_ray_context(
+        QueryRequest(
+            id="query:ray",
+            panel_id="panel:main",
+            coordinate=(50.0, 50.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+        ),
+        layout_snapshot_id="layout:datoviz",
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.extension_payload_kind == VIEW3D_QUERY_PAYLOAD_KIND
+    assert result.visual_coordinate == (0.0, 0.0)
+    assert result.layout_snapshot_id == "layout:datoviz"
+    assert result.view_snapshot_id is not None
+    assert result.view_snapshot_id.startswith("view3d-projection:")
+
+
+def test_datoviz_renderer_view3d_ray_context_rejects_missing_or_stale_view():
+    no_view = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithQueryCapabilities())
+
+    unsupported = no_view.query_view3d_ray_context(
+        QueryRequest(
+            id="query:ray",
+            panel_id="panel:main",
+            coordinate=(0.0, 0.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+        ),
+        layout_snapshot_id="layout:datoviz",
+    )
+
+    view = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh(), view3d=view)
+    stale = renderer.query_view3d_ray_context(
+        QueryRequest(
+            id="query:stale",
+            panel_id="panel:main",
+            coordinate=(0.0, 0.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            layout_snapshot_id="layout:stale",
+        ),
+        layout_snapshot_id="layout:datoviz",
+    )
+
+    assert unsupported.status == QueryStatus.UNSUPPORTED
+    assert View3DDiagnosticCode.VIEW3D_NOT_SUPPORTED.value in str(unsupported.diagnostic)
+    assert stale.status == QueryStatus.STALE
+    assert stale.diagnostic == View3DDiagnosticCode.QUERY_3D_SNAPSHOT_MISMATCH.value
 
 
 def test_facade_shape_rejects_missing_v04_functions():
@@ -3199,10 +3327,12 @@ def test_imported_datoviz_capability_snapshot_translates_when_available():
 
     assert caps.server_name == "datoviz-v0.4-protocol-slice"
     assert "datoviz_raw_capabilities" in caps.metadata
+    expected_modes: tuple[str, ...] = ()
     if datoviz_v04_query_binding_ready(dvz):
-        assert caps.query_modes == ("panel-query", "point-item", "image-texel")
-    else:
-        assert caps.query_modes == ()
+        expected_modes = ("panel-query", "point-item", "image-texel")
+    if not datoviz_v04_view3d_camera_diagnostics(dvz):
+        expected_modes = (*expected_modes, "view3d-ray")
+    assert caps.query_modes == expected_modes
 
 
 def test_imported_datoviz_query_result_binding_is_decodable_when_available():

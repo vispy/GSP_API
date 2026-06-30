@@ -11,7 +11,11 @@ from gsp.protocol import (
     FontLayoutCapability,
     GuideLayoutCapability,
     LayoutCapability,
+    MESH3D_DATA_VIEW3D_CAPABILITY,
+    MESH3D_NDC_CAPABILITY,
+    MESH3D_OPAQUE_DEPTH_CAPABILITY,
     NavigationPlacement,
+    QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
     QueryCoordinateSpace,
     QueryHitPolicy,
     QueryLayoutCapability,
@@ -24,6 +28,7 @@ from gsp.protocol import (
     RenderTargetCapability,
     TransportKind,
     TransformPlacement,
+    VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
 )
 from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics
 from gsp_datoviz.v04_import import bootstrap_datoviz_v04_source
@@ -64,6 +69,15 @@ _DVZ_CAPTURE_RENDER_FUNCTIONS = (
     "dvz_view_render_once",
     "dvz_app_render_once",
     "dvz_app_run",
+)
+
+_REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS = (
+    "DvzCameraDesc",
+    "DvzCameraView",
+    "DvzCameraProjection",
+    "dvz_camera_desc",
+    "dvz_panel_set_camera",
+    "dvz_camera_set_orthographic_bounds",
 )
 
 _REQUIRED_DVZ_AXIS_FUNCTIONS = (
@@ -308,6 +322,23 @@ def gsp_capability_snapshot_from_datoviz(
         query_capabilities = (_datoviz_data_query_capability(),)
         metadata["query_support"] = "data-scope point/image query queue, poll, and decode binding available"
 
+    view3d_diagnostics = _datoviz_v04_view3d_binding_diagnostics(dvz)
+    view3d_capabilities: tuple[str, ...] = ()
+    if view3d_diagnostics:
+        metadata["datoviz_view3d_binding_diagnostics"] = view3d_diagnostics
+    else:
+        view3d_capabilities = (
+            VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
+            MESH3D_DATA_VIEW3D_CAPABILITY,
+            MESH3D_NDC_CAPABILITY,
+            MESH3D_OPAQUE_DEPTH_CAPABILITY,
+            QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
+        )
+        query_modes = (*query_modes, "view3d-ray")
+        metadata["view3d_support"] = (
+            "static orthographic View3D mesh rendering and canonical ray-context payloads"
+        )
+
     return CapabilitySnapshot(
         server_name="datoviz-v0.4-protocol-slice",
         protocol_versions=("0.1",),
@@ -324,6 +355,7 @@ def gsp_capability_snapshot_from_datoviz(
         navigation_capabilities=("interaction.view2d.navigation.v1",),
         query_modes=query_modes,
         query_capabilities=query_capabilities,
+        view3d_capabilities=view3d_capabilities,
         output_formats=output_formats,
         supported_data_source_localities=(),
         supported_credential_policies=("none",),
@@ -416,6 +448,16 @@ def _datoviz_data_query_capability() -> QueryScopeCapability:
             ),
         ),
         diagnostics=("Datoviz v0.4 data query supports frontmost panel-coordinate requests only in this slice",),
+    )
+
+
+def _datoviz_v04_view3d_binding_diagnostics(dvz: ModuleType | Any | None) -> tuple[str, ...]:
+    if dvz is None:
+        return ("Datoviz is not importable",)
+    return tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS
+        if not hasattr(dvz, name)
     )
 
 

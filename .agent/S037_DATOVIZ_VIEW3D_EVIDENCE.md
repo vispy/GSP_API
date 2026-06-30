@@ -60,5 +60,6 @@ uv run python examples/review/09_view3d_ndc_depth.py --backend datoviz --offscre
 - Public material, light, texture, UV, sampler, culling, perspective, and strict fragment-clipping
   semantics.
 
-`query.view3d.ray_readback.v1` may be claimed only for canonical ray-context payload generation
-after M167 adds parity tests against the S036 CPU semantics.
+M167 adds `query.view3d.ray_readback.v1` for canonical ray-context payload generation. This uses
+public `View3D` state and projection snapshots; it does not claim Datoviz GPU visual hit picking for
+3D meshes.

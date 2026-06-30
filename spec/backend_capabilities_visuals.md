@@ -146,7 +146,7 @@ Current S036 support summary:
 | Backend | Static View3D projection | `(N,3)` MeshVisual render | Opaque depth | Ray readback | 3D picking |
 |---|---:|---:|---:|---:|---:|
 | Matplotlib | reference | adapted reference | adapted face order only | reference | deferred |
-| Datoviz v0.4 protocol renderer | unsupported | unsupported with `mesh3d_coordinate_space_unsupported` | unsupported | unsupported | deferred |
+| Datoviz v0.4 protocol renderer | supported with P022 bindings | supported with P022 bindings | supported with P022 bindings | ray context only | deferred |
 | VisPy2 producer API | deferred | deferred | deferred | deferred | deferred |
 
 Structured diagnostics include `view3d_not_supported`, `mesh3d_requires_view3d`,
@@ -173,8 +173,9 @@ Datoviz v0.4 may claim `view3d.static.orthographic.v1`,
 and explicit orthographic-bounds API. Older builds must continue reporting structured unsupported
 diagnostics rather than silently flattening z or exposing backend-native camera objects.
 
-Datoviz must not claim `query.view3d.ray_readback.v1` until query payload fields match the
-canonical S036 CPU snapshot semantics.
+Datoviz may claim `query.view3d.ray_readback.v1` for canonical ray-context payload generation when
+the same P022 camera binding is available. This capability does not imply GPU visual hit picking for
+3D meshes.
 
 Future lighting and texture capability names are reserved, not claimed in S037:
 

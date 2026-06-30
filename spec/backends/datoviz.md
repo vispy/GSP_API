@@ -87,7 +87,7 @@ Current supported surface:
 | Path visual | `dvz_path()` + `position`, `color`, `stroke_width_px`, subpaths, caps, joins | implemented when path facade symbols are exposed |
 | Image visual | `dvz_image()` + `position`, `texcoords`, sampled field or texture fallback | implemented for scalar gray and RGB/RGBA NDC images |
 | Image scalar fields | sampled-field path | deferred to `DATOVIZ-V04-IMAGE-FIELD-CONTRACT` |
-| Queries | Datoviz panel query APIs | not advertised; deferred to `DATOVIZ-V04-QUERY-BINDING` |
+| Queries | Datoviz panel query APIs plus View3D ray-context payloads | point/image query advertised when `DvzQueryResult` is bindable; `view3d-ray` advertised with P022 camera binding |
 
 The adapter raises explicit unsupported errors for semantics not locked in this slice:
 
@@ -117,14 +117,15 @@ Evidence required for the support claim:
 - opaque less-depth behavior is proven independent of submission order before
   `meshvisual.positions3d.opaque_depth.v1` is claimed;
 - projection snapshot ids match canonical S036 state changes;
-- query ray-readback payloads must match canonical S036 CPU snapshot semantics before
-  `query.view3d.ray_readback.v1` is claimed by M167;
+- query ray-readback payloads match canonical S036 CPU snapshot semantics for
+  `query.view3d.ray_readback.v1`;
 - public API does not expose Datoviz camera, controller, draw-state, or material names.
 
 GSP lowers `View3D.camera` through `dvz_panel_set_camera()` and lowers
 `OrthographicProjection3D.xlim`, `.ylim`, and `.near_far` directly through
-`dvz_camera_set_orthographic_bounds()`. Datoviz live `View3D` navigation, GPU 3D visual picking,
-materials, lights, textures, perspective, and culling remain deferred.
+`dvz_camera_set_orthographic_bounds()`. Datoviz `query.view3d.ray_readback.v1` returns canonical
+ray-context payloads from public `View3D` state and snapshot ids. Datoviz live `View3D` navigation,
+GPU 3D visual picking, materials, lights, textures, perspective, and culling remain deferred.
 
 ## M066 PointVisual retained path
 
@@ -173,8 +174,10 @@ the active Python facade exposes it. The translation is intentionally conservati
 - readback flags stay in raw metadata until capture/offscreen parity is implemented;
 - raw Datoviz capability fields are preserved in `metadata["datoviz_raw_capabilities"]`;
 - shader formats and query profile bits are preserved as metadata;
-- `query_modes` and typed query capabilities remain empty until `DvzQueryResult` decoding and
-  status/payload mapping are implemented and tested.
+- point/image data query modes are advertised when `DvzQueryResult` queue/poll/decode bindings are
+  available;
+- `view3d-ray` is advertised when the P022 camera binding is present and returns canonical
+  `gsp.view3d-query@0.1` payloads.
 
 If `dvz_capability_snapshot()` is unavailable, the adapter falls back to the conservative static
 GSP slice and records a diagnostic in metadata. Real runtime smoke tests skip cleanly when the
