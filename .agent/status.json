@@ -233,7 +233,7 @@
       "id": "S039",
       "title": "Lambert Normals Pre-Design",
       "state": "draft",
-      "progress": 0
+      "progress": 45
     }
   ],
   "missions": [
@@ -1762,10 +1762,19 @@
       "id": "M171",
       "title": "S039 Lambert normals ADR",
       "stage": "S039",
-      "state": "blocked",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 171
+    },
+    {
+      "id": "M172",
+      "title": "S039 protocol dataclasses and validation",
+      "stage": "S039",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
-      "priority": 171
+      "priority": 172
     }
   ],
   "review_queue": [],
@@ -1835,21 +1844,22 @@
     },
     {
       "id": "Q120-LAMBERT-NORMALS-SEMANTICS",
-      "summary": "Open for P024: decide whether S039 should accept Lambert-with-normals and define normal, light-space, material, color-combination, diagnostics, capability, and fixture semantics.",
+      "summary": "Resolved by P024 response: S039 accepts only flat Lambert for opaque DATA-space 3D meshes with face normals, scalar ambient, and one DATA-space directional light; vertex normals, Phong, textures, and material objects remain deferred.",
       "requires_human": false,
       "requires_chatgpt_pro": true,
-      "state": "open"
+      "state": "closed"
     }
   ],
   "recommendations": [
     "S037 Datoviz static View3D rendering is now implemented for local v0.4-dev builds with the P022 camera ctypes layouts and explicit orthographic-bounds API.",
     "Datoviz query.view3d.ray_readback.v1 is implemented for canonical ray-context payloads; GPU 3D visual picking remains separate.",
     "S038 accepts only implicit meshvisual.material.unlit_rgba.v1 semantics for existing MeshVisual RGBA colors; review-only material/light/texture demos must not be capability evidence.",
-    "S039 is open as Lambert-with-normals pre-design; M171 is blocked pending ChatGPT Pro consultation P024.",
-    "Do not implement public normals, Lambert materials, or View3D lights until P024 is accepted into ADR/spec authority."
+    "S039 accepts flat Lambert face-normal shading for opaque DATA-space 3D MeshVisuals with scalar ambient and one DATA-space directional light.",
+    "M172 is ready to implement S039 protocol dataclasses, validation, capability names, diagnostics, and focused tests."
   ],
   "notes": [
-    "M170 completed: opened S039 Lambert normals pre-design and created .agent/consultations/P024-lambert-normals-s039.md; M171 remains blocked pending P024.",
+    "M171 completed: archived P024 response, accepted S039 flat Lambert face-normal semantics, added ADR-0026 plus spec/visuals/mesh_flat_lambert_s039.md, and opened M172 for protocol validation.",
+    "M170 completed: opened S039 Lambert normals pre-design and created .agent/consultations/P024-lambert-normals-s039.md.",
     "M169 completed: archived P023 response, accepted implicit unlit_rgba mesh material semantics, deferred material objects/normals/lights/textures/UVs, and added ADR-0025 plus spec/visuals/mesh_materials_s038.md.",
     "M167 completed: added Datoviz canonical View3D ray-context payload generation, renderer integration, capability gating for query.view3d.ray_readback.v1, and parity tests against the Matplotlib/S036 CPU reference.",
     "M166 completed after Datoviz v0.4-dev added P022 camera prerequisites (explicit orthographic bounds and camera ctypes layouts) and GSP commit 38362fc enabled Datoviz static View3D mesh rendering.",

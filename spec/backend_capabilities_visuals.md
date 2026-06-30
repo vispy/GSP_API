@@ -177,7 +177,7 @@ Datoviz may claim `query.view3d.ray_readback.v1` for canonical ray-context paylo
 the same P022 camera binding is available. This capability does not imply GPU visual hit picking for
 3D meshes.
 
-## S038 MeshVisual material boundary
+## S038 MeshVisual material boundary and S039 Lambert extension
 
 S038 accepts only implicit unlit RGBA material semantics for existing `MeshVisual` colors:
 
@@ -190,13 +190,26 @@ without lighting, normals, texture sampling, view-dependent color changes, or ba
 tinting. Opaque alpha only is strict; non-opaque 3D mesh alpha remains non-strict via
 `mesh3d_alpha_not_strict`.
 
-The following lighting and texture capability names remain reserved/deferred, not claimed in S038:
+S039 additionally accepts flat Lambert face-normal shading for DATA-space 3D meshes:
 
 ```text
 meshvisual.material.flat_lambert.v1
-meshvisual.material.flat_phong.v1
+meshvisual.normals.face3d.v1
+meshvisual.normal_generation.face_flat.v1
 view3d.light.ambient.v1
 view3d.light.directional.v1
+```
+
+Strict S039 support requires `(N,3)` DATA positions, a resolved `View3D`, explicit or generated face
+normals, scalar ambient and at most one DATA-space directional light, and the exact formula in
+`spec/visuals/mesh_flat_lambert_s039.md`.
+
+The following lighting and texture capability names remain reserved/deferred after S039:
+
+```text
+meshvisual.normals.vertex3d.v1
+meshvisual.material.smooth_lambert.v1
+meshvisual.material.flat_phong.v1
 texture2d.rgba8.v1
 meshvisual.uv.vertex2d.v1
 meshvisual.material.texture2d_unlit.v1

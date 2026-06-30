@@ -17,6 +17,7 @@ This file tells agents where to find authoritative design information.
 | Static View3D/camera/projection | spec/view3d.md |
 | View3D navigation actions | spec/view3d_navigation.md |
 | Mesh material boundary | spec/visuals/mesh_materials_s038.md |
+| Mesh flat Lambert shading | spec/visuals/mesh_flat_lambert_s039.md |
 | Resolved layout and guide geometry | spec/layout.md |
 | Resolved guide layout direction | .agent/decisions/S029_resolved_layout_contracts.md |
 | Conformance fixtures/schema | spec/conformance-fixtures.md |
@@ -55,6 +56,8 @@ This file tells agents where to find authoritative design information.
 | Static View3D orthographic ADR | adr/ADR-0023-static-view3d-orthographic-baseline.md |
 | View3D navigation and Datoviz binding ADR | adr/ADR-0024-view3d-navigation-dataviz-binding.md |
 | MeshVisual unlit RGBA material boundary ADR | adr/ADR-0025-meshvisual-unlit-rgba-material-boundary.md |
+| MeshVisual flat Lambert shading ADR | adr/ADR-0026-minimal-flat-lambert-mesh-shading.md |
+| S039 flat Lambert normals decision | .agent/decisions/S039_flat_lambert_normals.md |
 | S038 mesh material boundary decision | .agent/decisions/S038_mesh_material_boundary.md |
 | S038 closeout | .agent/S038_CLOSEOUT.md |
 | S037 View3D navigation/Datoviz decision | .agent/decisions/S037_view3d_navigation_datoviz_contracts.md |

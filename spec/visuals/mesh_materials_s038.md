@@ -1,6 +1,7 @@
 # MeshVisual Materials - S038 Unlit RGBA Boundary
 
-Status: accepted S038 protocol boundary.
+Status: accepted S038 protocol boundary. S039 extends this boundary with
+`spec/visuals/mesh_flat_lambert_s039.md` for flat Lambert face-normal shading only.
 
 Semantic purpose: name the material behavior already required by accepted `MeshVisual` RGBA color
 rendering without accepting a public material object, lighting model, normal model, texture model, or
@@ -150,9 +151,9 @@ remain unaffected.
 
 ## Deferred Work
 
-Deferred concepts include normals, generated normals, Lambert, ambient/directional lights, Phong,
-specular, shininess, textures, UVs, samplers, transparency sorting, culling expansion, shadows, PBR,
-model loading, instancing, and scene graph semantics.
+S039 accepts a narrow flat Lambert face-normal extension. Concepts still deferred after S039 include
+vertex normals, smooth Lambert, Phong, specular, shininess, textures, UVs, samplers, transparency
+sorting, culling expansion, shadows, PBR, model loading, instancing, and scene graph semantics.
 
 The next material expansion must be a separate evidence-backed ADR for either Lambert-with-normals or
 unlit-texture-with-UVs, not both in the same stage.

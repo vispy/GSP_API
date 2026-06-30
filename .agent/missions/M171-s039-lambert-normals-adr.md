@@ -6,14 +6,14 @@ S039 - Lambert Normals Pre-Design
 
 ## Status
 
-Blocked pending ChatGPT Pro consultation P024.
+Completed by local-main-codex.
 
 ## Summary
 
 Convert the P024 response into durable S039 ADR/spec authority, or explicitly defer Lambert if the
 response recommends against accepting it now.
 
-## Candidate Deliverables
+## Deliverables
 
 - ADR/spec for the accepted normal, Lambert material, light, alpha, color-space, diagnostic, and
   fixture boundary.
@@ -25,10 +25,9 @@ response recommends against accepting it now.
 
 Stop if material/light/normal implementation is requested before an accepted S039 spec exists.
 
-## Consultation
+## Result
 
-Created `.agent/consultations/P024-lambert-normals-s039.md`.
-
-Dependent ADR/spec implementation should wait until the P024 answer is available because S039 is an
-architecture/spec decision about public normals, Lambert lighting, material/light fields, color
-combination, diagnostics, capabilities, and conformance fixtures.
+Completed. Archived the pasted answer as `.agent/consultations/P024-response.md`, accepted S039 as a
+narrow flat Lambert face-normal extension, and added ADR-0026,
+`spec/visuals/mesh_flat_lambert_s039.md`, `.agent/decisions/S039_flat_lambert_normals.md`,
+capability wording, and M172 as the next ready implementation mission.
