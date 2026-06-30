@@ -1,5 +1,5 @@
 {
-  "current_stage": "S039",
+  "current_stage": "S040",
   "stages": [
     {
       "id": "S001",
@@ -234,6 +234,12 @@
       "title": "Lambert Normals Pre-Design",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S040",
+      "title": "Datoviz Strict Flat Lambert Promotion",
+      "state": "draft",
+      "progress": 10
     }
   ],
   "missions": [
@@ -1802,6 +1808,24 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 175
+    },
+    {
+      "id": "M176",
+      "title": "S040 Datoviz Lambert strict promotion scoping",
+      "stage": "S040",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 176
+    },
+    {
+      "id": "M177",
+      "title": "S040 P025 response integration",
+      "stage": "S040",
+      "state": "blocked",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 177
     }
   ],
   "review_queue": [],
@@ -1875,6 +1899,13 @@
       "requires_human": false,
       "requires_chatgpt_pro": true,
       "state": "closed"
+    },
+    {
+      "id": "Q130-DATOVIZ-S039-LAMBERT-STRICT-PROMOTION",
+      "summary": "Open for P025: decide whether Datoviz v0.4 should promote strict S039 flat Lambert support via CPU-resolved exact face colors, native lighting, hybrid, or keep unsupported.",
+      "requires_human": true,
+      "requires_chatgpt_pro": true,
+      "state": "open"
     }
   ],
   "recommendations": [
@@ -1885,9 +1916,11 @@
     "M172 completed S039 protocol dataclasses, validation, capability names, diagnostics, and focused tests.",
     "M173 completed Matplotlib/reference flat Lambert material math without widening public protocol scope.",
     "M174 completed Datoviz S039 Lambert capability gates and structured unsupported behavior.",
-    "S039 completed the minimal flat Lambert face-normal slice; Datoviz strict Lambert remains unsupported until exact S039 semantics are implemented."
+    "S039 completed the minimal flat Lambert face-normal slice; Datoviz strict Lambert remains unsupported until exact S039 semantics are implemented.",
+    "S040 is open for Datoviz strict S039 flat Lambert promotion; M177 is blocked pending P025 ChatGPT Pro consultation."
   ],
   "notes": [
+    "M176 completed: opened S040, created P025 Datoviz strict flat Lambert promotion consultation, and blocked M177 pending the response.",
     "M175 completed: added VisPy2-style producer fields for S039 mesh shading/normals, flat Lambert review example, and S039 closeout.",
     "M174 completed: Datoviz rejects flat_lambert explicitly until strict S039 support exists and does not advertise meshvisual.material.flat_lambert.v1.",
     "M173 completed: Matplotlib resolves S039 flat Lambert face colors through canonical protocol fields and keeps the adapted 3D mesh raster boundary.",
