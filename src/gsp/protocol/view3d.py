@@ -19,6 +19,8 @@ MESH3D_NDC_CAPABILITY = "meshvisual.positions3d.ndc.v1"
 MESH3D_OPAQUE_DEPTH_CAPABILITY = "meshvisual.positions3d.opaque_depth.v1"
 QUERY_VIEW3D_RAY_READBACK_CAPABILITY = "query.view3d.ray_readback.v1"
 VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY = "view3d.navigation.orbit_pan_zoom.v1"
+VIEW3D_LIGHT_AMBIENT_CAPABILITY = "view3d.light.ambient.v1"
+VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY = "view3d.light.directional.v1"
 
 Float2 = tuple[float, float]
 Float3 = tuple[float, float, float]
@@ -59,6 +61,9 @@ class View3DDiagnosticCode(str, Enum):
     VIEW3D_NAVIGATION_INVALID_DELTA = "view3d_navigation_invalid_delta"
     VIEW3D_NAVIGATION_INVALID_ZOOM = "view3d_navigation_invalid_zoom"
     VIEW3D_NAVIGATION_INVALID_RESULT = "view3d_navigation_invalid_result"
+    AMBIENT_LIGHT_INVALID = "ambient_light_invalid"
+    DIRECTIONAL_LIGHT_DIRECTION_INVALID = "directional_light_direction_invalid"
+    DIRECTIONAL_LIGHT_INTENSITY_INVALID = "directional_light_intensity_invalid"
 
 
 class View3DNavigationActionKind(str, Enum):
@@ -371,6 +376,31 @@ class OrthographicProjection3D:
 
 
 @dataclass(frozen=True, slots=True)
+class DirectionalLight3D:
+    """S039 scalar white DATA-space directional light."""
+
+    direction_to_light: Float3
+    intensity: float = 1.0
+
+    def __post_init__(self) -> None:
+        _validate_float3_with_diagnostic(
+            "direction_to_light",
+            self.direction_to_light,
+            View3DDiagnosticCode.DIRECTIONAL_LIGHT_DIRECTION_INVALID,
+        )
+        _normalize3_with_diagnostic(
+            self.direction_to_light,
+            "direction_to_light must be nonzero",
+            View3DDiagnosticCode.DIRECTIONAL_LIGHT_DIRECTION_INVALID,
+        )
+        _validate_unit_interval(
+            "intensity",
+            self.intensity,
+            View3DDiagnosticCode.DIRECTIONAL_LIGHT_INTENSITY_INVALID,
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class View3D:
     """Static S036 3D view attached to one panel."""
 
@@ -379,6 +409,8 @@ class View3D:
     camera: Camera3D
     projection: OrthographicProjection3D
     depth_mode: DepthMode3D = DepthMode3D.OPAQUE_LESS
+    ambient_light_intensity: float = 0.0
+    directional_light: DirectionalLight3D | None = None
     kind: ViewKind = ViewKind.VIEW3D_CAMERA
     revision: int = 0
 
@@ -391,6 +423,15 @@ class View3D:
             raise TypeError("projection must be an OrthographicProjection3D")
         if self.depth_mode is not DepthMode3D.OPAQUE_LESS:
             raise ValueError("only OPAQUE_LESS depth is accepted in S036")
+        _validate_unit_interval(
+            "ambient_light_intensity",
+            self.ambient_light_intensity,
+            View3DDiagnosticCode.AMBIENT_LIGHT_INVALID,
+        )
+        if self.directional_light is not None and not isinstance(
+            self.directional_light, DirectionalLight3D
+        ):
+            raise TypeError("directional_light must be a DirectionalLight3D")
         if self.kind is not ViewKind.VIEW3D_CAMERA:
             raise ValueError("only VIEW3D_CAMERA views are accepted in S036")
         if not isinstance(self.revision, int) or self.revision < 0:
@@ -705,6 +746,8 @@ def _replace_view3d(
         camera=view.camera if camera is None else camera,
         projection=view.projection if projection is None else projection,
         depth_mode=view.depth_mode,
+        ambient_light_intensity=view.ambient_light_intensity,
+        directional_light=view.directional_light,
         kind=view.kind,
         revision=view.revision + 1,
     )
@@ -751,13 +794,20 @@ def _validate_float2(
 
 
 def _validate_float3(name: str, value: Float3) -> None:
+    _validate_float3_with_diagnostic(
+        name,
+        value,
+        View3DDiagnosticCode.VIEW3D_INVALID_CAMERA_DEGENERATE,
+    )
+
+
+def _validate_float3_with_diagnostic(
+    name: str, value: Float3, diagnostic: View3DDiagnosticCode
+) -> None:
     if len(value) != 3:
         raise ValueError(f"{name} must contain three values")
     if not all(math.isfinite(component) for component in value):
-        raise ValueError(
-            f"{View3DDiagnosticCode.VIEW3D_INVALID_CAMERA_DEGENERATE.value}: "
-            f"{name} values must be finite"
-        )
+        raise ValueError(f"{diagnostic.value}: {name} values must be finite")
 
 
 def _validate_finite(
@@ -765,6 +815,14 @@ def _validate_finite(
 ) -> None:
     if not math.isfinite(value):
         raise ValueError(f"{diagnostic.value}: {name} must be finite")
+
+
+def _validate_unit_interval(
+    name: str, value: float, diagnostic: View3DDiagnosticCode
+) -> None:
+    _validate_finite(name, value, diagnostic)
+    if value < 0.0 or value > 1.0:
+        raise ValueError(f"{diagnostic.value}: {name} must be within [0, 1]")
 
 
 def _sub3(left: Float3, right: Float3) -> Float3:
@@ -796,12 +854,19 @@ def _norm3(value: Float3) -> float:
 
 
 def _normalize3(value: Float3, message: str) -> Float3:
+    return _normalize3_with_diagnostic(
+        value,
+        message,
+        View3DDiagnosticCode.VIEW3D_INVALID_CAMERA_DEGENERATE,
+    )
+
+
+def _normalize3_with_diagnostic(
+    value: Float3, message: str, diagnostic: View3DDiagnosticCode
+) -> Float3:
     norm = _norm3(value)
     if norm <= CAMERA3D_EPSILON:
-        raise ValueError(
-            f"{View3DDiagnosticCode.VIEW3D_INVALID_CAMERA_DEGENERATE.value}: "
-            f"{message}"
-        )
+        raise ValueError(f"{diagnostic.value}: {message}")
     return (value[0] / norm, value[1] / norm, value[2] / norm)
 
 

@@ -7,6 +7,7 @@ from gsp.protocol import (
     Camera3D,
     CapabilitySnapshot,
     DepthMode3D,
+    DirectionalLight3D,
     MESH3D_DATA_VIEW3D_CAPABILITY,
     Orbit3DPayload,
     OrthographicProjection3D,
@@ -116,11 +117,19 @@ def test_view3d_targets_one_panel_and_validates_runtime_fields():
         camera=camera,
         projection=projection,
         revision=2,
+        ambient_light_intensity=0.25,
+        directional_light=DirectionalLight3D(
+            direction_to_light=(0.0, 0.0, 1.0),
+            intensity=0.75,
+        ),
     )
 
     assert view.kind is ViewKind.VIEW3D_CAMERA
     assert view.depth_mode is DepthMode3D.OPAQUE_LESS
     assert view.revision == 2
+    assert view.ambient_light_intensity == 0.25
+    assert view.directional_light is not None
+    assert view.directional_light.intensity == 0.75
 
     with pytest.raises(TypeError, match="camera"):
         View3D(
@@ -145,6 +154,46 @@ def test_view3d_targets_one_panel_and_validates_runtime_fields():
             camera=camera,
             projection=projection,
             revision=-1,
+        )
+
+
+def test_directional_light3d_validates_s039_fields():
+    light = DirectionalLight3D(direction_to_light=(0.0, 0.0, 2.0), intensity=0.5)
+
+    assert light.direction_to_light == (0.0, 0.0, 2.0)
+    assert light.intensity == 0.5
+
+    with pytest.raises(ValueError, match="directional_light_direction_invalid"):
+        DirectionalLight3D(direction_to_light=(0.0, 0.0, 0.0))
+    with pytest.raises(ValueError, match="directional_light_direction_invalid"):
+        DirectionalLight3D(direction_to_light=(float("nan"), 0.0, 1.0))
+    with pytest.raises(ValueError, match="directional_light_intensity_invalid"):
+        DirectionalLight3D(direction_to_light=(0.0, 0.0, 1.0), intensity=1.5)
+
+
+def test_view3d_rejects_invalid_s039_lighting_fields():
+    camera = Camera3D(
+        eye=(0.0, 0.0, 5.0),
+        target=(0.0, 0.0, 0.0),
+        up=(0.0, 1.0, 0.0),
+    )
+    projection = OrthographicProjection3D(near_far=(1.0, 10.0))
+
+    with pytest.raises(ValueError, match="ambient_light_invalid"):
+        View3D(
+            id="view:bad",
+            panel_id="panel:main",
+            camera=camera,
+            projection=projection,
+            ambient_light_intensity=-0.1,
+        )
+    with pytest.raises(TypeError, match="directional_light"):
+        View3D(
+            id="view:bad",
+            panel_id="panel:main",
+            camera=camera,
+            projection=projection,
+            directional_light=object(),  # type: ignore[arg-type]
         )
 
 

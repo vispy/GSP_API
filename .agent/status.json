@@ -233,7 +233,7 @@
       "id": "S039",
       "title": "Lambert Normals Pre-Design",
       "state": "draft",
-      "progress": 45
+      "progress": 65
     }
   ],
   "missions": [
@@ -1771,10 +1771,19 @@
       "id": "M172",
       "title": "S039 protocol dataclasses and validation",
       "stage": "S039",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 172
+    },
+    {
+      "id": "M173",
+      "title": "S039 Matplotlib Lambert reference behavior",
+      "stage": "S039",
       "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
-      "priority": 172
+      "priority": 173
     }
   ],
   "review_queue": [],
@@ -1855,9 +1864,11 @@
     "Datoviz query.view3d.ray_readback.v1 is implemented for canonical ray-context payloads; GPU 3D visual picking remains separate.",
     "S038 accepts only implicit meshvisual.material.unlit_rgba.v1 semantics for existing MeshVisual RGBA colors; review-only material/light/texture demos must not be capability evidence.",
     "S039 accepts flat Lambert face-normal shading for opaque DATA-space 3D MeshVisuals with scalar ambient and one DATA-space directional light.",
-    "M172 is ready to implement S039 protocol dataclasses, validation, capability names, diagnostics, and focused tests."
+    "M172 completed S039 protocol dataclasses, validation, capability names, diagnostics, and focused tests.",
+    "M173 is ready to implement Matplotlib/reference flat Lambert material math without widening public protocol scope."
   ],
   "notes": [
+    "M172 completed: added S039 protocol surface for flat_lambert, face normals, generated face normals, DirectionalLight3D, View3D light validation, and focused tests.",
     "M171 completed: archived P024 response, accepted S039 flat Lambert face-normal semantics, added ADR-0026 plus spec/visuals/mesh_flat_lambert_s039.md, and opened M172 for protocol validation.",
     "M170 completed: opened S039 Lambert normals pre-design and created .agent/consultations/P024-lambert-normals-s039.md.",
     "M169 completed: archived P023 response, accepted implicit unlit_rgba mesh material semantics, deferred material objects/normals/lights/textures/UVs, and added ADR-0025 plus spec/visuals/mesh_materials_s038.md.",

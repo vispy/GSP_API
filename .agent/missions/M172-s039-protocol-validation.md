@@ -6,7 +6,7 @@ S039 - Lambert Normals Pre-Design
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -33,3 +33,9 @@ shading.
 
 Stop if code changes would require widening S039 beyond flat face-normal Lambert or exposing backend
 native material/light semantics.
+
+## Result
+
+Completed. Added canonical S039 mesh shading values, face-normal capabilities, `DirectionalLight3D`,
+View3D ambient/directional light validation, flat-Lambert mesh/view validation, normalized/generated
+face-normal helpers, public exports, and focused protocol tests.

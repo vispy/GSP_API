@@ -125,6 +125,8 @@ class MeshNormalGeneration(str, Enum):
 class MeshShading(str, Enum):
     """Mesh shading semantics."""
 
+    UNLIT_RGBA = "unlit_rgba"
+    FLAT_LAMBERT = "flat_lambert"
     FLAT = "flat"
     LAMBERT = "lambert"
 
@@ -158,6 +160,13 @@ IndexArray = npt.NDArray[np.integer]
 MarkerShapeTuple = tuple[MarkerShape, ...]
 TextAnchorXTuple = tuple[TextAnchorX, ...]
 TextAnchorYTuple = tuple[TextAnchorY, ...]
+
+MESH_MATERIAL_UNLIT_RGBA_CAPABILITY = "meshvisual.material.unlit_rgba.v1"
+MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY = "meshvisual.material.flat_lambert.v1"
+MESH_NORMALS_FACE3D_CAPABILITY = "meshvisual.normals.face3d.v1"
+MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY = (
+    "meshvisual.normal_generation.face_flat.v1"
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -370,7 +379,7 @@ class MeshVisual:
     normal_mode: MeshNormalMode | None = None
     normals: FloatArray | None = None
     normal_generation: MeshNormalGeneration = MeshNormalGeneration.NONE
-    shading: MeshShading = MeshShading.FLAT
+    shading: MeshShading = MeshShading.UNLIT_RGBA
     face_culling: FaceCulling = FaceCulling.NONE
     depth_test: DepthMode = DepthMode.AUTO
     depth_write: DepthMode = DepthMode.AUTO
@@ -410,16 +419,22 @@ class MeshVisual:
                 domain=ScalarColorDomain.FACE,
             )
 
-        resolved_normal_mode = _resolve_mesh_normal_mode(
-            self.normals, self.normal_mode, vertex_count, face_count
-        )
         if not isinstance(self.normal_generation, MeshNormalGeneration):
             raise TypeError("normal_generation must be a MeshNormalGeneration")
+        resolved_normal_mode = _resolve_mesh_normal_mode(
+            self.normals,
+            self.normal_mode,
+            vertex_count,
+            face_count,
+            self.normal_generation,
+        )
         if (
             self.normal_generation is not MeshNormalGeneration.NONE
             and self.normals is not None
         ):
-            raise ValueError("normal_generation requires normals to be omitted")
+            raise ValueError(
+                "normal_source_conflict: normal_generation requires normals to be omitted"
+            )
         if (
             self.normal_generation is MeshNormalGeneration.FACE_FLAT
             and self.positions.shape[1] != 3
@@ -432,6 +447,19 @@ class MeshVisual:
 
         if not isinstance(self.shading, MeshShading):
             raise TypeError("shading must be a MeshShading")
+        if self.shading is MeshShading.LAMBERT:
+            raise ValueError(
+                'legacy_lambert_shading_not_canonical: use shading="flat_lambert"'
+            )
+        if self.canonical_shading() is MeshShading.FLAT_LAMBERT:
+            _validate_mesh_flat_lambert_intrinsic(
+                positions=self.positions,
+                coordinate_space=self.coordinate_space,
+                normals=self.normals,
+                normal_mode=self.normal_mode,
+                normal_generation=self.normal_generation,
+                resolved_normal_mode=resolved_normal_mode,
+            )
         if not isinstance(self.face_culling, FaceCulling):
             raise TypeError("face_culling must be a FaceCulling")
         if not isinstance(self.depth_test, DepthMode):
@@ -456,8 +484,26 @@ class MeshVisual:
     def resolved_normal_mode(self) -> MeshNormalMode:
         """Return the explicit or inferred normal association mode."""
         return _resolve_mesh_normal_mode(
-            self.normals, self.normal_mode, self.positions.shape[0], self.faces.shape[0]
+            self.normals,
+            self.normal_mode,
+            self.positions.shape[0],
+            self.faces.shape[0],
+            self.normal_generation,
         )
+
+    def canonical_shading(self) -> MeshShading:
+        """Return the canonical S038/S039 shading selector."""
+        if self.shading is MeshShading.FLAT:
+            return MeshShading.UNLIT_RGBA
+        return self.shading
+
+    def normalized_face_normals(self) -> FloatArray:
+        """Return explicit or generated S039 DATA-space face normals."""
+        if self.canonical_shading() is not MeshShading.FLAT_LAMBERT:
+            raise ValueError("normalized_face_normals requires flat_lambert shading")
+        if self.normals is not None:
+            return _normalize_mesh_normal_array(self.normals, "face normals")
+        return _generate_flat_face_normals(self.positions, self.faces)
 
 
 @dataclass(frozen=True, slots=True)
@@ -683,10 +729,17 @@ def _resolve_mesh_normal_mode(
     normal_mode: MeshNormalMode | None,
     vertex_count: int,
     face_count: int,
+    normal_generation: MeshNormalGeneration = MeshNormalGeneration.NONE,
 ) -> MeshNormalMode:
     if normal_mode is not None and not isinstance(normal_mode, MeshNormalMode):
         raise TypeError("normal_mode must be a MeshNormalMode")
+    if not isinstance(normal_generation, MeshNormalGeneration):
+        raise TypeError("normal_generation must be a MeshNormalGeneration")
     if normals is None:
+        if normal_generation is MeshNormalGeneration.FACE_FLAT:
+            if normal_mode in (None, MeshNormalMode.FACE):
+                return MeshNormalMode.FACE
+            raise ValueError("normal_mode must be face for face_flat normal generation")
         if normal_mode not in (None, MeshNormalMode.NONE):
             raise ValueError("normal_mode requires normals")
         return MeshNormalMode.NONE
@@ -720,6 +773,85 @@ def _validate_mesh_normals(
         raise ValueError("normals must be finite")
     if np.any(np.linalg.norm(normals, axis=1) == 0):
         raise ValueError("normals must be nonzero")
+
+
+def _validate_mesh_flat_lambert_intrinsic(
+    *,
+    positions: FloatArray,
+    coordinate_space: CoordinateSpace,
+    normals: FloatArray | None,
+    normal_mode: MeshNormalMode | None,
+    normal_generation: MeshNormalGeneration,
+    resolved_normal_mode: MeshNormalMode,
+) -> None:
+    if positions.shape[1] != 3 or coordinate_space is not CoordinateSpace.DATA:
+        raise ValueError(
+            "flat_lambert_requires_data3d_positions: flat_lambert requires "
+            "MeshVisual.positions with shape (N,3) in CoordinateSpace.DATA"
+        )
+    if normal_mode is not MeshNormalMode.FACE:
+        raise ValueError(
+            "flat_lambert_requires_face_normals: flat_lambert requires "
+            'normal_mode="face"'
+        )
+    if resolved_normal_mode is not MeshNormalMode.FACE:
+        raise ValueError("flat_lambert_requires_face_normals")
+    if normals is None:
+        if normal_generation is not MeshNormalGeneration.FACE_FLAT:
+            raise ValueError(
+                "flat_lambert_requires_face_normals: flat_lambert requires "
+                "face normals or deterministic face_flat normal generation"
+            )
+        return
+    if normal_generation is not MeshNormalGeneration.NONE:
+        raise ValueError(
+            "normal_source_conflict: specify either explicit face normals or "
+            "face_flat normal generation, not both"
+        )
+
+
+def _normalize_mesh_normal_array(normals: FloatArray, field_name: str) -> FloatArray:
+    lengths = np.linalg.norm(normals, axis=1)
+    if not np.all(np.isfinite(lengths)):
+        raise ValueError(f"{field_name} lengths must be finite")
+    if np.any(lengths == 0.0):
+        raise ValueError(f"{field_name} must be nonzero")
+    normalized = normals / lengths[:, np.newaxis]
+    return cast(FloatArray, np.ascontiguousarray(normalized, dtype=normals.dtype))
+
+
+def _generate_flat_face_normals(positions: FloatArray, faces: IndexArray) -> FloatArray:
+    if positions.shape[1] != 3:
+        raise ValueError("face_flat normal generation requires 3D positions")
+    triangles = positions[faces]
+    edge_a = triangles[:, 1, :] - triangles[:, 0, :]
+    edge_b = triangles[:, 2, :] - triangles[:, 0, :]
+    raw = np.cross(edge_a, edge_b)
+    if not np.all(np.isfinite(raw)):
+        raise ValueError("face_normal_generation_degenerate: generated normals must be finite")
+    lengths = np.linalg.norm(raw, axis=1)
+    if not np.all(np.isfinite(lengths)) or np.any(lengths == 0.0):
+        raise ValueError(
+            "face_normal_generation_degenerate: cannot generate a face normal "
+            "for a degenerate or non-finite triangle"
+        )
+    normalized = raw / lengths[:, np.newaxis]
+    return cast(FloatArray, np.ascontiguousarray(normalized, dtype=positions.dtype))
+
+
+def validate_mesh_visual_flat_lambert(
+    visual: MeshVisual, *, view3d: object | None
+) -> None:
+    """Validate one mesh/view pair against the accepted S039 Lambert boundary."""
+    from .view3d import View3D
+
+    if not isinstance(visual, MeshVisual):
+        raise TypeError("visual must be a MeshVisual")
+    if visual.canonical_shading() is not MeshShading.FLAT_LAMBERT:
+        raise ValueError("validate_mesh_visual_flat_lambert requires flat_lambert shading")
+    if not isinstance(view3d, View3D):
+        raise ValueError("flat_lambert_requires_view3d: flat_lambert requires a View3D")
+    visual.normalized_face_normals()
 
 
 def _validate_shapes(shape: MarkerShape | MarkerShapeTuple, count: int) -> None:
