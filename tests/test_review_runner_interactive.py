@@ -9,7 +9,15 @@ from typing import Any
 
 import numpy as np
 
-from gsp.protocol import CoordinateSpace, PointVisual, View2D
+from gsp.protocol import (
+    Camera3D,
+    CoordinateSpace,
+    MeshVisual,
+    OrthographicProjection3D,
+    PointVisual,
+    View2D,
+    View3D,
+)
 from gsp_datoviz.protocol_renderer import DatovizV04Unavailable
 
 REVIEW_DIR = Path(__file__).resolve().parents[1] / "examples" / "review"
@@ -41,6 +49,37 @@ def _point_scene() -> review_runner.ReviewScene:
     )
 
 
+def _view3d_scene() -> review_runner.ReviewScene:
+    view3d = View3D(
+        id="view:review-3d",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 5.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-2.0, 2.0),
+            ylim=(-2.0, 2.0),
+            near_far=(1.0, 10.0),
+        ),
+    )
+    return review_runner.ReviewScene(
+        title="interactive 3d test",
+        view3d=view3d,
+        visuals=(
+            MeshVisual(
+                id="visual:triangle3d",
+                positions=np.array(
+                    [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [0.0, 1.0, 0.0]],
+                    dtype=np.float32,
+                ),
+                faces=np.array([[0, 1, 2]], dtype=np.uint32),
+                coordinate_space=CoordinateSpace.DATA,
+                color=np.array([40, 120, 220, 255], dtype=np.uint8),
+            ),
+        ),
+    )
 def test_matplotlib_interactive_navigation_rerenders_data_visual_positions() -> None:
     import matplotlib
 
@@ -75,6 +114,54 @@ def test_matplotlib_interactive_navigation_rerenders_data_visual_positions() -> 
 
         updated_offset = np.array(ax.collections[0].get_offsets()[0], dtype=np.float64)
         assert updated_offset[0] != initial_offset[0]
+    finally:
+        plt.close(fig)
+
+
+def test_matplotlib_interactive_view3d_navigation_rerenders_mesh() -> None:
+    import matplotlib
+
+    matplotlib.use("Agg", force=True)
+    import matplotlib.pyplot as plt
+
+    scene = _view3d_scene()
+    fig, ax = plt.subplots()
+    try:
+        review_runner._render_matplotlib_scene(fig, ax, scene, color_scales={})
+        initial_vertices = ax.collections[0].get_paths()[0].vertices.copy()
+
+        session = review_runner._MatplotlibReviewView3DNavigationSession(
+            fig, ax, scene, color_scales={}
+        )
+        rect = session._panel_rect()
+        session.on_button_press(
+            SimpleNamespace(
+                inaxes=ax,
+                x=rect.x + rect.width * 0.5,
+                y=rect.y + rect.height * 0.5,
+                button=1,
+            )
+        )
+        session.on_motion(
+            SimpleNamespace(
+                inaxes=ax,
+                x=rect.x + rect.width * 0.6,
+                y=rect.y + rect.height * 0.5,
+            )
+        )
+
+        assert session.view3d.revision == 1
+        updated_vertices = ax.collections[0].get_paths()[0].vertices.copy()
+        assert not np.allclose(updated_vertices, initial_vertices)
+
+        session.on_scroll(SimpleNamespace(inaxes=ax, step=1.0))
+        assert session.view3d.revision == 2
+        assert session.view3d.projection.xlim != scene.view3d.projection.xlim
+
+        session.on_key_press(SimpleNamespace(key="r"))
+        assert session.view3d.revision == 3
+        assert session.view3d.camera == scene.view3d.camera
+        assert session.view3d.projection == scene.view3d.projection
     finally:
         plt.close(fig)
 
@@ -123,4 +210,3 @@ def test_datoviz_live_input_unavailable_still_opens_static_live_window(
     assert result["status"] == "rendered"
     assert instances[0].show_calls == 1
     assert "opening static live window" in capsys.readouterr().out
-

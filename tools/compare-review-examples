@@ -28,7 +28,7 @@ def main() -> int:
     parser.add_argument(
         "--interactive-navigation",
         action="store_true",
-        help="In live mode, enable S035 View2D drag-to-pan and wheel-to-zoom.",
+        help="In live mode, enable GSP navigation for View2D or View3D review scenes.",
     )
     parser.set_defaults(offscreen=False)
     args = parser.parse_args()

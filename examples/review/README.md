@@ -30,8 +30,8 @@ uv run python examples/review/01_scatter_basic.py --backend matplotlib --interac
 uv run python examples/review/01_scatter_basic.py --backend datoviz --interactive-navigation
 ```
 
-Open all numbered review examples with 2D interactivity where a `View2D` is present, one example
-after another:
+Open all numbered review examples with GSP interactivity where a `View2D` or `View3D` is present,
+one example after another:
 
 ```bash
 tools/compare-review-examples --interactive-navigation
@@ -45,8 +45,8 @@ tools/compare-review-examples --live-side-by-side --interactive-navigation examp
 
 If the local Datoviz v0.4 build does not expose the live pointer-input binding, the Datoviz window
 still opens as a normal live review window and prints a message that GSP navigation is unavailable.
-Matplotlib remains the strict interactive review path for 2D `View2D` examples. S036 View3D
-examples are static; this flag does not introduce public 3D navigation semantics.
+Matplotlib remains the strict interactive review path for `View2D` and S037 `View3D` examples.
+Datoviz View3D examples still report unsupported until the public View3D binding evidence passes.
 
 Capture and compare offscreen outputs:
 

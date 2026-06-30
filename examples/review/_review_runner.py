@@ -42,6 +42,14 @@ from gsp.protocol import (
     View2DNavigationController,
     View2DNavigationInputAdapter,
     View3D,
+    Orbit3DPayload,
+    Pan3DPayload,
+    ResetView3DPayload,
+    View3DNavigationAction,
+    View3DNavigationActionKind,
+    Zoom3DPayload,
+    apply_view3d_navigation_action,
+    resolve_view3d_projection_snapshot,
 )
 from gsp_datoviz.protocol_renderer import DatovizV04ProtocolRenderer, DatovizV04Unavailable
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
@@ -171,7 +179,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--interactive-navigation",
         action="store_true",
-        help="In live mode, enable S035 View2D drag-to-pan and wheel-to-zoom when the scene has a View2D.",
+        help="In live mode, enable GSP navigation for View2D or View3D review scenes.",
     )
     parser.set_defaults(offscreen=False)
     args = parser.parse_args()
@@ -224,14 +232,23 @@ def _run_matplotlib(
         color_scales = {scale.id: scale for scale in scene.color_scales}
         _render_matplotlib_scene(fig, ax, scene, color_scales=color_scales)
         if live:
-            if interactive_navigation and scene.view is not None:
-                session = _MatplotlibReviewNavigationSession(
-                    fig, ax, scene, color_scales=color_scales
-                )
-                session.connect()
-                print(
-                    "Matplotlib GSP navigation enabled: drag to pan, wheel to zoom."
-                )
+            if interactive_navigation:
+                if scene.view is not None:
+                    session = _MatplotlibReviewNavigationSession(
+                        fig, ax, scene, color_scales=color_scales
+                    )
+                    session.connect()
+                    print(
+                        "Matplotlib GSP View2D navigation enabled: drag to pan, wheel to zoom."
+                    )
+                elif scene.view3d is not None:
+                    view3d_session = _MatplotlibReviewView3DNavigationSession(
+                        fig, ax, scene, color_scales=color_scales
+                    )
+                    view3d_session.connect()
+                    print(
+                        "Matplotlib GSP View3D navigation enabled: drag to orbit, right-drag to pan, wheel to zoom, r to reset."
+                    )
             plt.show()
         else:
             fig.savefig(
@@ -446,6 +463,151 @@ class _MatplotlibReviewNavigationSession:
     def _next_revision(self) -> str:
         self.revision_index += 1
         return f"view-rev:{self.revision_index}"
+
+    def _panel_rect(self) -> LogicalPixelRect:
+        self.fig.canvas.draw()
+        bbox = self.ax.bbox
+        return LogicalPixelRect(
+            x=float(bbox.x0),
+            y=float(bbox.y0),
+            width=float(bbox.width),
+            height=float(bbox.height),
+        )
+
+
+class _MatplotlibReviewView3DNavigationSession:
+    """Attach S037 View3D navigation to a live Matplotlib review scene."""
+
+    def __init__(
+        self,
+        fig: Any,
+        ax: Any,
+        scene: ReviewScene,
+        *,
+        color_scales: dict[str, ColorScale],
+    ) -> None:
+        if scene.view3d is None:
+            raise ValueError("View3D interactive navigation requires a View3D")
+        self.fig = fig
+        self.ax = ax
+        self.scene = scene
+        self.color_scales = color_scales
+        self.view3d = scene.view3d
+        self.home_view3d = scene.view3d
+        self.layout_snapshot_id = "layout:matplotlib-review-live"
+        self._drag_last_px: tuple[float, float] | None = None
+        self._drag_button: int | None = None
+
+    def connect(self) -> None:
+        self.fig.canvas.mpl_connect("button_press_event", self.on_button_press)
+        self.fig.canvas.mpl_connect("button_release_event", self.on_button_release)
+        self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
+        self.fig.canvas.mpl_connect("scroll_event", self.on_scroll)
+        self.fig.canvas.mpl_connect("key_press_event", self.on_key_press)
+
+    def on_button_press(self, event: Any) -> None:
+        if event.inaxes is not self.ax or event.x is None or event.y is None:
+            return
+        if event.button not in (1, 2, 3):
+            return
+        self._drag_last_px = (float(event.x), float(event.y))
+        self._drag_button = int(event.button)
+
+    def on_button_release(self, event: Any) -> None:
+        self._drag_last_px = None
+        self._drag_button = None
+
+    def on_motion(self, event: Any) -> None:
+        if (
+            event.inaxes is not self.ax
+            or event.x is None
+            or event.y is None
+            or self._drag_last_px is None
+            or self._drag_button is None
+        ):
+            return
+        last_x, last_y = self._drag_last_px
+        self._drag_last_px = (float(event.x), float(event.y))
+        dx_px = float(event.x) - last_x
+        dy_px = float(event.y) - last_y
+        if dx_px == 0.0 and dy_px == 0.0:
+            return
+        if self._drag_button == 1:
+            self._apply_payload(
+                View3DNavigationActionKind.ORBIT,
+                self._orbit_payload_from_pixels(dx_px, dy_px),
+            )
+        else:
+            self._apply_payload(
+                View3DNavigationActionKind.PAN,
+                self._pan_payload_from_pixels(dx_px, dy_px),
+            )
+
+    def on_scroll(self, event: Any) -> None:
+        if event.inaxes is not self.ax or event.step == 0:
+            return
+        self._apply_payload(
+            View3DNavigationActionKind.ZOOM,
+            Zoom3DPayload(scale=1.1 ** float(event.step)),
+        )
+
+    def on_key_press(self, event: Any) -> None:
+        if getattr(event, "key", None) != "r":
+            return
+        self._apply_payload(
+            View3DNavigationActionKind.RESET,
+            ResetView3DPayload(
+                camera=self.home_view3d.camera,
+                projection=self.home_view3d.projection,
+            ),
+        )
+
+    def _apply_payload(
+        self,
+        kind: View3DNavigationActionKind,
+        payload: Orbit3DPayload | Pan3DPayload | Zoom3DPayload | ResetView3DPayload,
+    ) -> None:
+        snapshot = resolve_view3d_projection_snapshot(
+            self.view3d, layout_snapshot_id=self.layout_snapshot_id
+        )
+        action = View3DNavigationAction(
+            kind=kind,
+            view_id=self.view3d.id,
+            base_view_revision=self.view3d.revision,
+            base_view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+            payload=payload,
+            base_layout_snapshot_id=self.layout_snapshot_id,
+        )
+        result = apply_view3d_navigation_action(
+            self.view3d,
+            action,
+            layout_snapshot_id=self.layout_snapshot_id,
+        )
+        if not result.accepted or result.view is None:
+            print(f"View3D navigation rejected: {result.diagnostics}")
+            return
+        self.view3d = result.view
+        self.scene = replace(self.scene, view3d=self.view3d)
+        _render_matplotlib_scene(
+            self.fig, self.ax, self.scene, color_scales=self.color_scales
+        )
+        self.fig.canvas.draw_idle()
+
+    def _orbit_payload_from_pixels(self, dx_px: float, dy_px: float) -> Orbit3DPayload:
+        rect = self._panel_rect()
+        return Orbit3DPayload(
+            delta_yaw_radians=-dx_px / rect.width * np.pi,
+            delta_pitch_radians=-dy_px / rect.height * np.pi,
+        )
+
+    def _pan_payload_from_pixels(self, dx_px: float, dy_px: float) -> Pan3DPayload:
+        rect = self._panel_rect()
+        x0, x1 = self.view3d.projection.xlim
+        y0, y1 = self.view3d.projection.ylim
+        return Pan3DPayload(
+            delta_view_right=-dx_px / rect.width * (x1 - x0),
+            delta_view_up=-dy_px / rect.height * (y1 - y0),
+        )
 
     def _panel_rect(self) -> LogicalPixelRect:
         self.fig.canvas.draw()
