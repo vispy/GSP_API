@@ -1,5 +1,5 @@
 {
-  "current_stage": "S036",
+  "current_stage": "S037",
   "stages": [
     {
       "id": "S001",
@@ -216,6 +216,12 @@
       "title": "Static View3D, Orthographic Projection, and 3D Mesh Baseline",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S037",
+      "title": "Legacy 3D Reuse, Datoviz View3D Binding, and Public 3D Interaction",
+      "state": "active",
+      "progress": 5
     }
   ],
   "missions": [
@@ -1649,6 +1655,69 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 160
+    },
+    {
+      "id": "M161",
+      "title": "S037 P021 consultation and scoping",
+      "stage": "S037",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 161
+    },
+    {
+      "id": "M162",
+      "title": "S037 P021 response integration",
+      "stage": "S037",
+      "state": "blocked",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 162
+    },
+    {
+      "id": "M163",
+      "title": "S037 legacy Matplotlib 3D helper extraction",
+      "stage": "S037",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 163
+    },
+    {
+      "id": "M164",
+      "title": "S037 Datoviz View3D binding probe",
+      "stage": "S037",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 164
+    },
+    {
+      "id": "M165",
+      "title": "S037 public View3D navigation",
+      "stage": "S037",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 165
+    },
+    {
+      "id": "M166",
+      "title": "S037 material, light, and texture decision",
+      "stage": "S037",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 166
+    },
+    {
+      "id": "M167",
+      "title": "S037 examples, validation, and closeout",
+      "stage": "S037",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 167
     }
   ],
   "review_queue": [],
@@ -1708,14 +1777,23 @@
       "requires_human": false,
       "requires_chatgpt_pro": true,
       "state": "closed"
+    },
+    {
+      "id": "Q110-VIEW3D-LEGACY-DATOVIZ-NAVIGATION-MATERIALS",
+      "summary": "P021 asks ChatGPT Pro to decide S037 public View3D navigation, legacy 3D helper reuse, Datoviz v0.4 View3D binding strategy, and whether materials/lights/textures remain deferred.",
+      "requires_human": true,
+      "requires_chatgpt_pro": true,
+      "state": "open"
     }
   ],
   "recommendations": [
-    "S036 is complete; do not open public View3D navigation without a new ChatGPT Pro consultation.",
-    "Recommended S037 scope: public View3D navigation contract, snapshot freshness, and backend-retained camera-state semantics.",
-    "Keep perspective, materials/lights, scene graph, and 3D mesh picking deferred until separate accepted specs exist."
+    "Paste or commit the P021 ChatGPT Pro response, then run M162 to integrate accepted decisions.",
+    "Do not implement public View3D navigation, Datoviz View3D binding, or material/light/texture semantics before M162.",
+    "Non-public audit work may continue only if it does not change public API or backend capability claims."
   ],
   "notes": [
+    "S037 opened with P021 as a ChatGPT Pro gate for public View3D navigation, legacy 3D reuse, Datoviz View3D binding, and material/light/texture scope.",
+    "M161 completed: added P021 consultation packet, S037 scoping note, and blocked dependent S037 missions pending the P021 response.",
     "S036 opened from P020: static camera-parameter-first View3D, orthographic projection, MeshVisual (N,3) DATA/NDC integration, opaque depth capability, ray readback, and public 3D navigation deferred to a later stage.",
     "M154 completed: converted P020 into ADR-0023, spec/view3d.md, S036 decision records, protocol View3D dataclasses/enums/diagnostics/capabilities, and focused validation tests; M155 is ready.",
     "M155 completed: added deterministic View3D DATA projection, projection snapshot identity, and numeric fixtures for canonical cube projection, reversed bounds, off-axis bounds, and snapshot changes; M156 is ready.",
