@@ -6,7 +6,7 @@ S040 - Datoviz Strict Flat Lambert Promotion
 
 ## Status
 
-Blocked pending ChatGPT Pro response P025.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -31,3 +31,9 @@ mission for Datoviz strict S039 flat Lambert support.
 
 Stop if P025 does not provide enough evidence to choose between CPU-resolved colors, native Datoviz
 lighting, or continued unsupported behavior.
+
+## Result
+
+Completed. Archived `.agent/consultations/P025-response.md`, accepted CPU-resolved exact per-face
+colors as the S040 Datoviz strict route, added ADR-0027 and S040 decision/backend-spec updates, and
+opened M178 for implementation.

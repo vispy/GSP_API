@@ -127,6 +127,33 @@ GSP lowers `View3D.camera` through `dvz_panel_set_camera()` and lowers
 ray-context payloads from public `View3D` state and snapshot ids. Datoviz live `View3D` navigation,
 GPU 3D visual picking, materials, lights, textures, perspective, and culling remain deferred.
 
+## S040 flat Lambert CPU resolve
+
+Datoviz strict S039 flat Lambert support must use CPU-resolved exact per-face colors, not native
+Datoviz lighting/material controls.
+
+The strict route is:
+
+- validate `MeshVisual.shading="flat_lambert"` with the accepted S039 protocol validation path;
+- resolve explicit or generated face normals in DATA coordinates using protocol code;
+- compute one RGBA value per canonical face using `spec/visuals/mesh_flat_lambert_s039.md`;
+- upload an unlit Datoviz mesh payload that preserves one constant color per face;
+- preserve the existing View3D DATA-space orthographic and opaque-depth prerequisites.
+
+Triangle-expanded upload is the preferred representation. Each canonical triangle contributes three
+uploaded vertices and all three vertices receive the same resolved RGBA value. This prevents
+Datoviz vertex-color interpolation from changing S039 face-level color semantics.
+
+Native Datoviz normals, lighting, material diffuse/specular/emission controls, shader slots, and
+draw-state names are not public GSP semantics and are not strict S040 evidence. They must remain
+unused, disabled, or proven inert for the CPU-resolved route.
+
+Datoviz may advertise `meshvisual.material.flat_lambert.v1`,
+`meshvisual.normals.face3d.v1`, `meshvisual.normal_generation.face_flat.v1`,
+`view3d.light.ambient.v1`, and `view3d.light.directional.v1` only after the CPU-resolved path and
+its View3D/depth/unlit prerequisites are fixture-backed. Non-opaque 3D mesh alpha remains
+non-strict via `mesh3d_alpha_not_strict`.
+
 ## M066 PointVisual retained path
 
 Point visuals are attached with an explicit `DvzVisualAttachDesc` instead of relying on a NULL

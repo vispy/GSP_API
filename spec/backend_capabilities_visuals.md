@@ -204,6 +204,13 @@ Strict S039 support requires `(N,3)` DATA positions, a resolved `View3D`, explic
 normals, scalar ambient and at most one DATA-space directional light, and the exact formula in
 `spec/visuals/mesh_flat_lambert_s039.md`.
 
+For Datoviz, S040 accepts only a CPU-resolved strict route for S039 flat Lambert promotion. The
+adapter may advertise S039 Lambert, face-normal, generated-normal, ambient-light, and
+directional-light capabilities only after it resolves exact per-face colors before upload, preserves
+constant color per canonical face, keeps native Datoviz lighting/material controls unused, and
+passes fixture-backed View3D/depth/unlit prerequisites. Native Datoviz lighting API availability is
+not strict GSP S039 evidence.
+
 The following lighting and texture capability names remain reserved/deferred after S039:
 
 ```text

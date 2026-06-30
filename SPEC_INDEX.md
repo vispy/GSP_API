@@ -57,6 +57,8 @@ This file tells agents where to find authoritative design information.
 | View3D navigation and Datoviz binding ADR | adr/ADR-0024-view3d-navigation-dataviz-binding.md |
 | MeshVisual unlit RGBA material boundary ADR | adr/ADR-0025-meshvisual-unlit-rgba-material-boundary.md |
 | MeshVisual flat Lambert shading ADR | adr/ADR-0026-minimal-flat-lambert-mesh-shading.md |
+| Datoviz flat Lambert CPU resolve ADR | adr/ADR-0027-dataviz-flat-lambert-cpu-resolve.md |
+| S040 Datoviz flat Lambert promotion decision | .agent/decisions/S040_datoviz_flat_lambert_promotion.md |
 | S039 flat Lambert normals decision | .agent/decisions/S039_flat_lambert_normals.md |
 | S039 closeout | .agent/S039_CLOSEOUT.md |
 | S038 mesh material boundary decision | .agent/decisions/S038_mesh_material_boundary.md |
