@@ -6,7 +6,7 @@ S036 - Static View3D, Orthographic Projection, and 3D Mesh Baseline
 
 ## Status
 
-Draft; depends on M155.
+Ready; depends on completed M157.
 
 ## Summary
 
@@ -24,4 +24,3 @@ Add strict `View3D` projection-inverse query context while keeping 3D visual pic
 
 Stop if the query model starts requiring ray-triangle picking, depth-buffer readback, barycentric
 attributes, or multi-hit stack semantics.
-

@@ -162,6 +162,12 @@ Matplotlib is the reference backend for S036 static orthographic projection math
   `mesh3d_transform_unsupported`;
 - DATA `(N, 3)` meshes without a `View3D` are rejected with `mesh3d_requires_view3d`.
 
-This path provides projection/rendering coverage only. It must not be advertised as strict
-`meshvisual.positions3d.opaque_depth.v1` support until S036 depth fixtures prove the accepted opaque
-depth semantics.
+For opaque, non-intersecting fixture triangles, Matplotlib sorts projected faces far-to-near by
+average panel-NDC z so nearer faces are drawn last. `FaceCulling.NONE` leaves reversed-winding faces
+visible. `depth_test=disabled` preserves declared face order, and translucent 3D mesh colors are
+rejected with `mesh3d_alpha_not_strict`. Partially clipped 3D triangles remain adapted/unverified
+and are not part of the strict M157 fixture.
+
+This path provides projection/rendering coverage and an adapted face-order fixture only. It must not
+be advertised as strict `meshvisual.positions3d.opaque_depth.v1` support until S036 depth fixtures
+prove accepted fragment-depth semantics.

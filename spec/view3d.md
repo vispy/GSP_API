@@ -163,6 +163,11 @@ silently flattening z.
 The Matplotlib reference renderer accepts `(N, 3)` `MeshVisual` inputs for the projection slice:
 DATA vertices require an explicit `View3D`, while NDC vertices use x/y as panel NDC directly. This
 path does not advertise strict opaque-depth support; S036 depth conformance remains capability-gated.
+For opaque, non-intersecting fixture triangles, Matplotlib orders projected faces far-to-near by
+average panel-NDC z as an adapted reference check. Partially transparent 3D meshes are rejected from
+that path with `mesh3d_alpha_not_strict`; `depth_test=disabled` preserves declared face order.
+Partially clipped 3D triangles are not a strict S036 fixture yet and must be reported as adapted or
+unsupported by backends that cannot prove exact clip semantics.
 
 The Datoviz v0.4 adapter continues to reject `(N, 3)` `MeshVisual` inputs with
 `mesh3d_coordinate_space_unsupported` until a public View3D camera binding is implemented for the

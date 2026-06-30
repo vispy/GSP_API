@@ -40,6 +40,7 @@ from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
 from gsp_matplotlib.layout import resolve_matplotlib_layout_snapshot
 from gsp.protocol.visuals import (
     CoordinateSpace,
+    DepthMode,
     FontRole,
     ImageInterpolation,
     ImageVisual,
@@ -496,8 +497,11 @@ def render_mesh_visual(
         raise ValueError("MeshVisual color is required for Matplotlib rendering")
     mesh_color = visual.color
 
+    vertex_depth: npt.NDArray[np.float64] | None = None
     if visual.positions.shape[1] == 3:
-        positions, transform = _render_mesh3d_positions(axes, visual, view3d=view3d)
+        positions, transform, vertex_depth = _render_mesh3d_positions(
+            axes, visual, view3d=view3d
+        )
     else:
         positions, transform = _render_positions(
             axes, visual, visual.positions, view, transform_resources
@@ -509,6 +513,13 @@ def render_mesh_visual(
         facecolors = mesh_color
     else:
         raise NotImplementedError(f"unsupported mesh color mode: {color_mode.value}")
+
+    if vertex_depth is not None:
+        _validate_mesh3d_opaque_colors(facecolors)
+        if visual.depth_test is not DepthMode.DISABLED:
+            face_order = _mesh3d_face_depth_order(vertex_depth, visual.faces)
+            triangles = triangles[face_order]
+            facecolors = facecolors[face_order]
 
     collection = matplotlib.collections.PolyCollection(
         [np.ascontiguousarray(triangle, dtype=np.float32) for triangle in triangles],
@@ -726,7 +737,7 @@ def _render_mesh3d_positions(
     visual: MeshVisual,
     *,
     view3d: View3D | None,
-) -> tuple[npt.NDArray[np.float64], matplotlib.transforms.Transform]:
+) -> tuple[npt.NDArray[np.float64], matplotlib.transforms.Transform, npt.NDArray[np.float64]]:
     if visual.transform is not None:
         raise NotImplementedError(
             f"{View3DDiagnosticCode.MESH3D_TRANSFORM_UNSUPPORTED.value}: "
@@ -750,7 +761,27 @@ def _render_mesh3d_positions(
             f"{View3DDiagnosticCode.MESH3D_COORDINATE_SPACE_UNSUPPORTED.value}: "
             f"unsupported MeshVisual 3D coordinate_space {visual.coordinate_space!r}"
         )
-    return panel_ndc_to_axes_fraction(panel_ndc3[:, :2]), axes.transAxes
+    return panel_ndc_to_axes_fraction(panel_ndc3[:, :2]), axes.transAxes, panel_ndc3[:, 2]
+
+
+def _validate_mesh3d_opaque_colors(colors: npt.NDArray[Any]) -> None:
+    alpha = np.asarray(colors)[:, 3]
+    if colors.dtype == np.dtype(np.uint8):
+        translucent = bool(np.any(alpha < 255))
+    else:
+        translucent = bool(np.any(alpha < 1.0))
+    if translucent:
+        raise NotImplementedError(
+            f"{View3DDiagnosticCode.MESH3D_ALPHA_NOT_STRICT.value}: "
+            "Matplotlib MeshVisual 3D depth path requires opaque face colors"
+        )
+
+
+def _mesh3d_face_depth_order(
+    vertex_depth: npt.NDArray[np.float64], faces: npt.NDArray[np.integer]
+) -> npt.NDArray[np.int64]:
+    face_depth = np.mean(vertex_depth[faces], axis=1)
+    return np.argsort(-face_depth, kind="stable")
 
 
 def _marker_area_values(

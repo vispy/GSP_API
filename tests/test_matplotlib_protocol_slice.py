@@ -20,6 +20,7 @@ from gsp.protocol import (
     ColorbarGuide,
     ColorbarGuideStyle,
     CoordinateSpace,
+    DepthMode,
     FontRole,
     ImageColormap,
     ImageOrigin,
@@ -942,6 +943,127 @@ def test_render_mesh_visual_3d_ndc_uses_panel_xy_directly():
             np.array([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]]),
         )
         assert artist.get_transform() == ax.transAxes
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_3d_orders_opaque_faces_far_to_near():
+    """Opaque 3D MeshVisual faces are ordered so nearer faces are drawn last."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [
+                    [-1.0, -1.0, 0.0],
+                    [1.0, -1.0, 0.0],
+                    [-1.0, 1.0, 0.0],
+                    [-1.0, -1.0, 0.8],
+                    [1.0, -1.0, 0.8],
+                    [-1.0, 1.0, 0.8],
+                ],
+                dtype=np.float32,
+            ),
+            faces=np.array([[3, 4, 5], [0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array(
+                [[0, 0, 255, 255], [255, 0, 0, 255]],
+                dtype=np.uint8,
+            ),
+        )
+
+        artist = render_mesh_visual(ax, visual)
+
+        np.testing.assert_allclose(
+            artist.get_facecolors(),
+            np.array([[0.0, 0.0, 1.0, 1.0], [1.0, 0.0, 0.0, 1.0]]),
+        )
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_3d_depth_disabled_preserves_face_order():
+    """Disabled depth uses declared face order for 3D MeshVisual rendering."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [
+                    [-1.0, -1.0, 0.0],
+                    [1.0, -1.0, 0.0],
+                    [-1.0, 1.0, 0.0],
+                    [-1.0, -1.0, 0.8],
+                    [1.0, -1.0, 0.8],
+                    [-1.0, 1.0, 0.8],
+                ],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2], [3, 4, 5]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array(
+                [[255, 0, 0, 255], [0, 0, 255, 255]],
+                dtype=np.uint8,
+            ),
+            depth_test=DepthMode.DISABLED,
+        )
+
+        artist = render_mesh_visual(ax, visual)
+
+        np.testing.assert_allclose(
+            artist.get_facecolors(),
+            np.array([[1.0, 0.0, 0.0, 1.0], [0.0, 0.0, 1.0, 1.0]]),
+        )
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_3d_keeps_reversed_winding_visible_without_culling():
+    """FaceCulling.NONE keeps reversed-winding 3D faces visible."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [-1.0, 1.0, 0.0]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 2, 1]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 0, 0, 255], dtype=np.uint8),
+        )
+
+        artist = render_mesh_visual(ax, visual)
+
+        assert len(artist.get_paths()) == 1
+        np.testing.assert_allclose(
+            artist.get_paths()[0].vertices[:3],
+            np.array([[0.0, 0.0], [0.0, 1.0], [1.0, 0.0]]),
+        )
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_3d_rejects_alpha_for_strict_depth_path():
+    """Translucent 3D mesh colors are not strict opaque-depth fixtures."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [-1.0, 1.0, 0.0]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 0, 0, 128], dtype=np.uint8),
+        )
+
+        with pytest.raises(
+            NotImplementedError,
+            match=View3DDiagnosticCode.MESH3D_ALPHA_NOT_STRICT.value,
+        ):
+            render_mesh_visual(ax, visual)
     finally:
         plt.close(fig)
 
