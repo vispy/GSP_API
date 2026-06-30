@@ -6,7 +6,7 @@ S040 - Datoviz Strict Flat Lambert Promotion
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -34,3 +34,9 @@ capability promotion.
 
 Stop if the existing Datoviz mesh facade cannot preserve constant per-face colors through triangle
 expansion or an equivalent representation.
+
+## Result
+
+Completed. Implemented CPU-resolved S039 flat Lambert colors in the Datoviz adapter, reused
+triangle-expanded per-face upload for constant face colors, promoted S040 capability metadata, added
+focused tests, and closed S040.

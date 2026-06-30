@@ -75,6 +75,7 @@ from gsp.protocol import (
     VisualTransformBinding,
     ZoomAboutAction,
     pan_view2d,
+    validate_mesh_visual_flat_lambert,
     zoom_view2d_about,
 )
 from gsp.protocol.color_mapping import (
@@ -1073,7 +1074,11 @@ class DatovizV04ProtocolRenderer:
         _record_transform_adaptation(
             self.transform_adaptations, visual.id, visual.transform
         )
-        positions, colors, indices = _datoviz_mesh_payload(visual, adapted_positions)
+        positions, colors, indices = _datoviz_mesh_payload(
+            visual,
+            adapted_positions,
+            view3d=self.view3d,
+        )
         dvz_visual = self.dvz.dvz_mesh(self.scene, 0)
         if dvz_visual is None:
             raise DatovizV04Unsupported("Datoviz mesh visual allocation failed")
@@ -2141,11 +2146,10 @@ def _record_transform_adaptation(
 
 def _validate_datoviz_mesh3d_visual(visual: MeshVisual, view3d: View3D | None) -> None:
     if visual.canonical_shading() is MeshShading.FLAT_LAMBERT:
-        raise DatovizV04Unsupported(
-            "flat_lambert_unsupported: Datoviz v0.4 strict S039 flat Lambert "
-            "support is not implemented; native material semantics are not "
-            "accepted as protocol evidence"
-        )
+        try:
+            validate_mesh_visual_flat_lambert(visual, view3d=view3d)
+        except ValueError as exc:
+            raise DatovizV04Unsupported(str(exc)) from exc
     if visual.transform is not None:
         raise DatovizV04Unsupported(
             f"{View3DDiagnosticCode.MESH3D_TRANSFORM_UNSUPPORTED.value}: "
@@ -2182,6 +2186,8 @@ def _rgba8(colors: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:
 def _datoviz_mesh_payload(
     visual: MeshVisual,
     positions: npt.NDArray[np.float32] | npt.NDArray[np.float64],
+    *,
+    view3d: View3D | None = None,
 ) -> tuple[npt.NDArray[np.float32], npt.NDArray[np.uint8], npt.NDArray[np.uint32]]:
     if visual.face_color_encoding is not None:
         raise DatovizV04Unsupported(
@@ -2193,6 +2199,15 @@ def _datoviz_mesh_payload(
     positions = np.asarray(positions, dtype=np.float32)
     faces = np.asarray(visual.faces, dtype=np.uint32)
     colors = _rgba8(np.asarray(visual.color))
+
+    if visual.canonical_shading() is MeshShading.FLAT_LAMBERT:
+        colors = _resolve_datoviz_flat_lambert_facecolors(
+            visual,
+            np.asarray(visual.color),
+            color_mode=color_mode,
+            view3d=view3d,
+        )
+        color_mode = MeshColorMode.FACE
 
     if color_mode is MeshColorMode.UNIFORM:
         rgba = np.asarray(colors, dtype=np.uint8).reshape(1, 4)
@@ -2218,6 +2233,64 @@ def _datoviz_mesh_payload(
             np.ascontiguousarray(triangle_indices),
         )
     raise DatovizV04Unsupported(f"unsupported mesh color mode: {color_mode}")
+
+
+def _resolve_datoviz_flat_lambert_facecolors(
+    visual: MeshVisual,
+    colors: npt.NDArray[Any],
+    *,
+    color_mode: MeshColorMode,
+    view3d: View3D | None,
+) -> npt.NDArray[np.uint8]:
+    try:
+        validate_mesh_visual_flat_lambert(visual, view3d=view3d)
+    except ValueError as exc:
+        raise DatovizV04Unsupported(str(exc)) from exc
+    if view3d is None:
+        raise DatovizV04Unsupported(
+            "flat_lambert_requires_view3d: flat_lambert requires a View3D"
+        )
+    if color_mode is MeshColorMode.UNIFORM:
+        facecolors = np.repeat(
+            np.asarray(colors).reshape(1, 4),
+            visual.faces.shape[0],
+            axis=0,
+        )
+    elif color_mode is MeshColorMode.FACE:
+        facecolors = np.asarray(colors).reshape(visual.faces.shape[0], 4)
+    else:
+        raise DatovizV04Unsupported(
+            "flat_lambert_unsupported: Datoviz S040 flat Lambert requires "
+            "uniform or per-face RGBA base colors"
+        )
+
+    if facecolors.dtype == np.dtype(np.uint8):
+        base = np.asarray(facecolors, dtype=np.float64) / 255.0
+    else:
+        base = np.clip(np.asarray(facecolors, dtype=np.float64), 0.0, 1.0)
+    normals = np.asarray(visual.normalized_face_normals(), dtype=np.float64)
+    light_factor = np.full(
+        (normals.shape[0],),
+        float(view3d.ambient_light_intensity),
+        dtype=np.float64,
+    )
+    if view3d.directional_light is not None:
+        light_direction = np.asarray(
+            view3d.directional_light.direction_to_light,
+            dtype=np.float64,
+        )
+        light_direction = light_direction / np.linalg.norm(light_direction)
+        lambert = np.maximum(0.0, normals @ light_direction)
+        light_factor = light_factor + (
+            float(view3d.directional_light.intensity) * lambert
+        )
+    light_factor = np.clip(light_factor, 0.0, 1.0)
+    resolved = base.copy()
+    resolved[:, :3] = np.clip(base[:, :3] * light_factor[:, np.newaxis], 0.0, 1.0)
+    resolved[:, 3] = base[:, 3]
+    return np.ascontiguousarray(
+        np.rint(resolved * 255.0).clip(0, 255).astype(np.uint8)
+    )
 
 
 def _diameters_from_pixel_diameters(

@@ -15,6 +15,8 @@ from gsp.protocol import (
     ImageOrigin,
     ImageVisual,
     MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY,
+    MESH_NORMALS_FACE3D_CAPABILITY,
+    MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY,
     MeshColorMode,
     MeshNormalGeneration,
     MeshNormalMode,
@@ -49,6 +51,8 @@ from gsp.protocol import (
     QueryStatus,
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     VIEW3D_QUERY_PAYLOAD_KIND,
+    VIEW3D_LIGHT_AMBIENT_CAPABILITY,
+    VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY,
     QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
     ScalarColorEncoding,
     ScalarColorSlot,
@@ -60,6 +64,7 @@ from gsp.protocol import (
     View3D,
     View3DDiagnosticCode,
     VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
+    DirectionalLight3D,
     OrthographicProjection3D,
     VisualFamily,
     VisualTransformBinding,
@@ -2749,7 +2754,7 @@ def test_add_mesh_visual_configures_native_view3d_camera_for_data_positions3d():
     assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", True)]
 
 
-def test_add_mesh_visual_rejects_s039_flat_lambert_until_strict_support_exists():
+def test_add_mesh_visual_cpu_resolves_s039_flat_lambert_face_colors():
     fake = FakeDatovizV04WithMesh()
     view3d = View3D(
         id="view:main",
@@ -2760,30 +2765,120 @@ def test_add_mesh_visual_rejects_s039_flat_lambert_until_strict_support_exists()
             up=(0.0, 1.0, 0.0),
         ),
         projection=OrthographicProjection3D(near_far=(0.0, 4.0)),
+        ambient_light_intensity=0.25,
+        directional_light=DirectionalLight3D(
+            direction_to_light=(0.0, 0.0, 1.0),
+            intensity=0.5,
+        ),
     )
     renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
     visual = MeshVisual(
         id="visual:mesh-lambert",
+        positions=np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [0.5, 0.0, 0.0],
+                [0.0, 0.5, 0.0],
+                [0.0, 0.0, 0.5],
+                [0.0, 0.5, 0.5],
+                [0.5, 0.0, 0.5],
+            ],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2], [3, 4, 5]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([[200, 100, 50, 255], [40, 80, 120, 255]], dtype=np.uint8),
+        color_mode=MeshColorMode.FACE,
+        shading=MeshShading.FLAT_LAMBERT,
+        normal_mode=MeshNormalMode.FACE,
+        normal_generation=MeshNormalGeneration.FACE_FLAT,
+    )
+
+    renderer.add_mesh_visual(visual)
+
+    set_data = _calls(fake, "set_data")
+    np.testing.assert_allclose(
+        set_data[0][3],
+        [
+            [0.0, 0.0, 0.0],
+            [0.5, 0.0, 0.0],
+            [0.0, 0.5, 0.0],
+            [0.0, 0.0, 0.5],
+            [0.0, 0.5, 0.5],
+            [0.5, 0.0, 0.5],
+        ],
+    )
+    np.testing.assert_array_equal(
+        set_data[1][3],
+        np.array(
+            [
+                [150, 75, 38, 255],
+                [150, 75, 38, 255],
+                [150, 75, 38, 255],
+                [10, 20, 30, 255],
+                [10, 20, 30, 255],
+                [10, 20, 30, 255],
+            ],
+            dtype=np.uint8,
+        ),
+    )
+    np.testing.assert_array_equal(
+        _calls(fake, "set_index_data")[0][2],
+        np.arange(6, dtype=np.uint32),
+    )
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", True)]
+
+
+def test_add_mesh_visual_rejects_s039_flat_lambert_alpha_as_non_strict():
+    fake = FakeDatovizV04WithMesh()
+    view3d = View3D(
+        id="view:main",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 2.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(near_far=(0.0, 4.0)),
+        ambient_light_intensity=1.0,
+    )
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
+    visual = MeshVisual(
+        id="visual:mesh-lambert-alpha",
         positions=np.array(
             [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]],
             dtype=np.float32,
         ),
         faces=np.array([[0, 1, 2]], dtype=np.uint32),
         coordinate_space=CoordinateSpace.DATA,
-        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        color=np.array([255, 255, 255, 128], dtype=np.uint8),
         shading=MeshShading.FLAT_LAMBERT,
         normal_mode=MeshNormalMode.FACE,
         normal_generation=MeshNormalGeneration.FACE_FLAT,
     )
 
-    with pytest.raises(DatovizV04Unsupported, match="flat_lambert_unsupported"):
+    with pytest.raises(
+        DatovizV04Unsupported,
+        match=View3DDiagnosticCode.MESH3D_ALPHA_NOT_STRICT.value,
+    ):
         renderer.add_mesh_visual(visual)
 
     assert _calls(fake, "mesh") == []
 
 
-def test_datoviz_capabilities_do_not_advertise_s039_lambert_without_strict_support():
-    caps = gsp_capability_snapshot_from_datoviz(FakeDatovizV04WithMesh())
+def test_datoviz_capabilities_advertise_s040_lambert_cpu_resolve_when_view3d_ready():
+    caps = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh()).capabilities()
+
+    assert MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY in caps.view3d_capabilities
+    assert MESH_NORMALS_FACE3D_CAPABILITY in caps.view3d_capabilities
+    assert MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY in caps.view3d_capabilities
+    assert VIEW3D_LIGHT_AMBIENT_CAPABILITY in caps.view3d_capabilities
+    assert VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY in caps.view3d_capabilities
+    assert "flat_lambert_cpu_resolved_strict" in caps.metadata["s040_flat_lambert"]
+
+
+def test_datoviz_capabilities_do_not_advertise_s040_lambert_without_view3d_binding():
+    caps = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04()).capabilities()
 
     assert MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY not in caps.view3d_capabilities
 

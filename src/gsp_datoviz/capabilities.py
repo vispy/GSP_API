@@ -14,6 +14,9 @@ from gsp.protocol import (
     MESH3D_DATA_VIEW3D_CAPABILITY,
     MESH3D_NDC_CAPABILITY,
     MESH3D_OPAQUE_DEPTH_CAPABILITY,
+    MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY,
+    MESH_NORMALS_FACE3D_CAPABILITY,
+    MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY,
     NavigationPlacement,
     QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
     QueryCoordinateSpace,
@@ -28,6 +31,8 @@ from gsp.protocol import (
     RenderTargetCapability,
     TransportKind,
     TransformPlacement,
+    VIEW3D_LIGHT_AMBIENT_CAPABILITY,
+    VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY,
     VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
 )
 from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics
@@ -333,10 +338,19 @@ def gsp_capability_snapshot_from_datoviz(
             MESH3D_NDC_CAPABILITY,
             MESH3D_OPAQUE_DEPTH_CAPABILITY,
             QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
+            MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY,
+            MESH_NORMALS_FACE3D_CAPABILITY,
+            MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY,
+            VIEW3D_LIGHT_AMBIENT_CAPABILITY,
+            VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY,
         )
         query_modes = (*query_modes, "view3d-ray")
         metadata["view3d_support"] = (
             "static orthographic View3D mesh rendering and canonical ray-context payloads"
+        )
+        metadata["s040_flat_lambert"] = (
+            "flat_lambert_cpu_resolved_strict: Datoviz S039 flat Lambert "
+            "is resolved by protocol CPU face colors; native Datoviz lighting is not used"
         )
 
     return CapabilitySnapshot(

@@ -238,8 +238,8 @@
     {
       "id": "S040",
       "title": "Datoviz Strict Flat Lambert Promotion",
-      "state": "draft",
-      "progress": 35
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -1831,9 +1831,9 @@
       "id": "M178",
       "title": "S040 Datoviz Lambert CPU resolve implementation",
       "stage": "S040",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 178
     }
   ],
@@ -1927,9 +1927,10 @@
     "M174 completed Datoviz S039 Lambert capability gates and structured unsupported behavior.",
     "S039 completed the minimal flat Lambert face-normal slice; Datoviz strict Lambert remains unsupported until exact S039 semantics are implemented.",
     "S040 accepts CPU-resolved exact per-face colors as the only Datoviz strict S039 flat Lambert route; native Datoviz lighting remains out of scope.",
-    "M178 is ready to implement Datoviz CPU-resolved flat Lambert upload, capability gates, and fixtures."
+    "S040 completed Datoviz CPU-resolved flat Lambert upload, capability gates, and focused fixtures."
   ],
   "notes": [
+    "M178 completed: implemented Datoviz CPU-resolved S039 flat Lambert face colors, triangle-expanded constant face-color upload, capability promotion, focused tests, and S040 closeout.",
     "M177 completed: archived P025 response, accepted CPU-resolved exact per-face colors for Datoviz S040, added ADR-0027 and S040 decision/backend-spec updates, and opened M178.",
     "M176 completed: opened S040, created P025 Datoviz strict flat Lambert promotion consultation, and blocked M177 pending the response.",
     "M175 completed: added VisPy2-style producer fields for S039 mesh shading/normals, flat Lambert review example, and S039 closeout.",
