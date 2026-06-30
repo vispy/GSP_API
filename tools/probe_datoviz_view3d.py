@@ -16,6 +16,8 @@ REQUIRED_CAMERA_SYMBOLS = (
     "dvz_camera_create",
     "dvz_camera_set_view",
     "dvz_camera_set_orthographic",
+    "dvz_camera_set_orthographic_bounds",
+    "dvz_camera_get_orthographic_bounds",
     "dvz_camera_mvp",
     "dvz_panel_set_camera",
     "dvz_panel_camera",
@@ -70,12 +72,6 @@ def probe_datoviz_view3d(dvz: ModuleType | Any) -> dict[str, object]:
         set(camera_projection_fields)
     ):
         missing_evidence.append("DvzCameraProjection fields are incomplete")
-
-    orthographic_contract_gap = (
-        "Datoviz camera orthographic binding exposes height/near/far; S036 requires explicit "
-        "xlim/ylim, reversed x/y bounds, off-axis bounds, and deterministic panel-NDC3 parity."
-    )
-    missing_evidence.append(orthographic_contract_gap)
 
     status = "ready" if not missing_evidence else "partial"
     if any(item.startswith("DvzCameraView") or item.startswith("DvzCameraDesc") for item in missing_evidence):

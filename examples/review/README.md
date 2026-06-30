@@ -46,8 +46,9 @@ tools/compare-review-examples --live-side-by-side --interactive-navigation examp
 
 If the local Datoviz v0.4 build does not expose the live pointer-input binding, the Datoviz window
 still opens as a normal live review window and prints a message that GSP navigation is unavailable.
-Matplotlib remains the strict interactive review path for `View2D` and S037 `View3D` examples.
-Datoviz View3D examples still report unsupported until the public View3D binding evidence passes.
+Matplotlib remains the strict interactive review path for S037 `View3D` navigation.
+Datoviz View3D examples require a local v0.4 build with camera bounds and input-event ctypes
+bindings.
 
 Capture and compare offscreen outputs:
 
@@ -90,8 +91,8 @@ inch. Matplotlib live review keeps using the reference DPI for its figure size; 
 | `09_view3d_ndc_depth.py` | `(N,3)` NDC mesh with adapted opaque face-depth ordering |
 
 With `--interactive-navigation`, Matplotlib `View3D` examples support S037 review navigation:
-left-drag orbit, right/middle-drag pan, wheel zoom, and `r` reset. Datoviz `View3D` examples remain
-structured unsupported until the public View3D camera binding evidence passes.
+left-drag orbit, right/middle-drag pan, wheel zoom, and `r` reset. Datoviz `View3D` examples render
+the static camera state; live Datoviz View3D navigation is still not implemented.
 
 The non-default `s036_alpha_not_strict_negative.py` script checks that translucent 3D mesh colors
 raise `mesh3d_alpha_not_strict` in the opaque-depth path.
@@ -132,9 +133,9 @@ Use this checklist before approving release preparation.
    | `04_guides_axes_ticks.py` | Explicit ticks, tick labels, axis labels, grid, and title are readable. |
    | `05_color_mapping_colorbar.py` | Colors match scalar values and colorbar semantics are clear. |
    | `06_text_labels.py` | Labels are placed correctly, anchored reasonably, and drawn above points. |
-   | `07_view3d_cube.py` | Matplotlib shows a projected cube; interactive navigation changes the canonical `View3D`. Datoviz may report `mesh3d_coordinate_space_unsupported`. |
-   | `08_view3d_terrain.py` | Matplotlib terrain projection and per-face colors are coherent; Datoviz may report unsupported. |
-   | `09_view3d_ndc_depth.py` | Matplotlib adapted far-to-near ordering is visible for opaque triangles; Datoviz may report unsupported. |
+   | `07_view3d_cube.py` | Matplotlib shows a projected cube; interactive navigation changes the canonical `View3D`. Datoviz renders the static native camera. |
+   | `08_view3d_terrain.py` | Matplotlib terrain projection and per-face colors are coherent; Datoviz renders the static native camera. |
+   | `09_view3d_ndc_depth.py` | Opaque NDC3 depth ordering is visible in both backends. |
 
 6. Record the review result in this form:
 

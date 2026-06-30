@@ -101,7 +101,7 @@ def build_scene() -> ReviewScene:
         ),
         notes=(
             "Reviews (N,3) MeshVisual DATA positions projected through Camera3D and OrthographicProjection3D.",
-            "Datoviz v0.4 is expected to report mesh3d_coordinate_space_unsupported until View3D binding exists.",
+            "Datoviz v0.4 renders this with the native panel camera when camera bounds bindings are available.",
         ),
     )
 

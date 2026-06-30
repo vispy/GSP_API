@@ -657,6 +657,7 @@ def _run_datoviz(
             canvas_size=canvas_size,
             color_scales=color_scales,
             view=renderer_view,
+            view3d=scene.view3d,
         ) as renderer:
             if axis_config is not None and scene.view is not None:
                 renderer.configure_view2d_axes(scene.view, **axis_config)

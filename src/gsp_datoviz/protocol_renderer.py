@@ -53,6 +53,7 @@ from gsp.protocol import (
     TextAnchorY,
     StrokeCap,
     StrokeJoin,
+    View3D,
     QueryCoordinateSpace,
     QueryHitPolicy,
     QueryRequest,
@@ -142,6 +143,15 @@ _REQUIRED_DVZ_MESH_FUNCTIONS = (
 
 _OPTIONAL_UNVERIFIED_DVZ_MESH_FUNCTIONS: tuple[str, ...] = ()
 
+_REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS = (
+    "DvzCameraDesc",
+    "DvzCameraView",
+    "DvzCameraProjection",
+    "dvz_camera_desc",
+    "dvz_panel_set_camera",
+    "dvz_camera_set_orthographic_bounds",
+)
+
 
 _REQUIRED_DVZ_TEXT_FUNCTIONS = (
     "dvz_text",
@@ -169,6 +179,7 @@ DVZ_QUERY_HIT_FRONTMOST = 0
 DVZ_QUERY_PROFILE_UNSUPPORTED = 0
 DVZ_QUERY_CAPABILITY_ITEM = 0x02
 DVZ_QUERY_CAPABILITY_PIXEL = 0x10
+DVZ_CAMERA_ORTHOGRAPHIC = 1
 DVZ_COORD_VIEW = 0
 DVZ_COORD_DATA = 1
 DVZ_SHAPE_ASPECT_FILLED = 0
@@ -384,6 +395,15 @@ def datoviz_v04_mesh_ready(module: ModuleType | Any) -> bool:
     return not datoviz_v04_mesh_diagnostics(module)
 
 
+def datoviz_v04_view3d_camera_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
+    """Return why Datoviz View3D camera binding is unavailable."""
+    return tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS
+        if not hasattr(module, name)
+    )
+
+
 def datoviz_v04_text_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
     """Return why Datoviz TextVisual rendering is disabled for this slice."""
     diagnostics = [
@@ -464,6 +484,43 @@ def _set_figure_color_pipeline(
             "missing dvz_figure_set_color_pipeline"
         )
     setter(figure, value)
+
+
+def _configure_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> Any:
+    diagnostics = datoviz_v04_view3d_camera_diagnostics(dvz)
+    if diagnostics:
+        raise DatovizV04Unavailable(
+            "Datoviz View3D camera binding is unavailable: " + "; ".join(diagnostics)
+        )
+
+    desc = dvz.dvz_camera_desc()
+    for index, value in enumerate(view3d.camera.eye):
+        desc.view.eye[index] = float(value)
+    for index, value in enumerate(view3d.camera.target):
+        desc.view.target[index] = float(value)
+    for index, value in enumerate(view3d.camera.up):
+        desc.view.up[index] = float(value)
+    desc.projection.type = _enum_value(
+        dvz, "DvzCameraType", "DVZ_CAMERA_ORTHOGRAPHIC", DVZ_CAMERA_ORTHOGRAPHIC
+    )
+    desc.projection.near_clip = float(view3d.projection.near_far[0])
+    desc.projection.far_clip = float(view3d.projection.near_far[1])
+    desc.projection.ortho_height = float(
+        abs(view3d.projection.ylim[1] - view3d.projection.ylim[0])
+    )
+
+    camera = dvz.dvz_panel_set_camera(panel, _ctypes_pointer_arg(desc))
+    if _is_null_handle(camera):
+        raise DatovizV04Unsupported("Datoviz View3D panel camera allocation failed")
+    x0, x1 = view3d.projection.xlim
+    y0, y1 = view3d.projection.ylim
+    near, far = view3d.projection.near_far
+    result = dvz.dvz_camera_set_orthographic_bounds(
+        camera, float(x0), float(x1), float(y0), float(y1), float(near), float(far)
+    )
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz View3D orthographic bounds setup failed")
+    return camera
 
 
 def _resolve_datoviz_canvas_size(dvz: Any, requested: CanvasSize) -> ResolvedCanvas:
@@ -601,6 +658,7 @@ class DatovizV04ProtocolRenderer:
     background_rgba8: tuple[int, int, int, int] = DEFAULT_BACKGROUND_RGBA8
     color_pipeline: DatovizColorPipeline = "legacy_srgb_blend"
     view: View2D | None = None
+    view3d: View3D | None = None
     transform_resources: Mapping[str, AffineTransform2DResource] | None = None
     panel_bounds: tuple[float, float, float, float] | None = None
     scene: Any = field(init=False)
@@ -630,6 +688,8 @@ class DatovizV04ProtocolRenderer:
     def __post_init__(self) -> None:
         if self.width <= 0 or self.height <= 0:
             raise ValueError("width and height must be positive")
+        if self.view is not None and self.view3d is not None:
+            raise ValueError("Datoviz renderer accepts either view or view3d, not both")
         if self.dvz is None:
             self.dvz = import_datoviz_v04()
         elif not is_datoviz_v04_facade(self.dvz):
@@ -657,6 +717,8 @@ class DatovizV04ProtocolRenderer:
         _configure_ndc_panel_view2d(self.dvz, self.panel)
         if self.view is not None:
             self.apply_datoviz_data_view2d(self.view)
+        if self.view3d is not None:
+            _configure_datoviz_view3d_camera(self.dvz, self.panel, self.view3d)
 
     def capabilities(self) -> CapabilitySnapshot:
         """Return the capability snapshot for this adapter slice."""
@@ -987,12 +1049,9 @@ class DatovizV04ProtocolRenderer:
 
     def add_mesh_visual(self, visual: MeshVisual) -> Any:
         """Create and attach a bounded Datoviz triangle mesh visual."""
-        if visual.positions.shape[1] != 2:
-            raise DatovizV04Unsupported(
-                f"{View3DDiagnosticCode.MESH3D_COORDINATE_SPACE_UNSUPPORTED.value}: "
-                "Datoviz v0.4 MeshVisual strict adapter is limited to 2D positions "
-                "until public View3D camera binding is implemented"
-            )
+        is_3d_mesh = visual.positions.shape[1] == 3
+        if is_3d_mesh:
+            _validate_datoviz_mesh3d_visual(visual, self.view3d)
         diagnostics = datoviz_v04_mesh_diagnostics(self.dvz)
         if diagnostics:
             raise DatovizV04Unsupported(
@@ -1018,9 +1077,9 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
         _set_visual_index_data(self.dvz, dvz_visual, indices)
-        result = self.dvz.dvz_visual_set_depth_test(dvz_visual, False)
+        result = self.dvz.dvz_visual_set_depth_test(dvz_visual, is_3d_mesh)
         if result not in (0, None, True):
-            raise DatovizV04Unsupported("Datoviz mesh depth-test disable failed")
+            raise DatovizV04Unsupported("Datoviz mesh depth-test configuration failed")
         _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
         self.dvz.dvz_panel_add_visual(
             self.panel,
@@ -2044,6 +2103,32 @@ def _record_transform_adaptation(
         "cpu_adapter_affine2d_eager_ndc",
         "query_inverse_unsupported",
     )
+
+
+def _validate_datoviz_mesh3d_visual(visual: MeshVisual, view3d: View3D | None) -> None:
+    if visual.transform is not None:
+        raise DatovizV04Unsupported(
+            f"{View3DDiagnosticCode.MESH3D_TRANSFORM_UNSUPPORTED.value}: "
+            "Datoviz MeshVisual 3D path does not apply 2D affine transforms"
+        )
+    if visual.coordinate_space is CoordinateSpace.DATA and view3d is None:
+        raise DatovizV04Unsupported(
+            f"{View3DDiagnosticCode.MESH3D_REQUIRES_VIEW3D.value}: "
+            "Datoviz MeshVisual DATA positions3d require View3D"
+        )
+    if visual.coordinate_space not in {CoordinateSpace.DATA, CoordinateSpace.NDC}:
+        raise DatovizV04Unsupported(
+            f"{View3DDiagnosticCode.MESH3D_COORDINATE_SPACE_UNSUPPORTED.value}: "
+            f"unsupported MeshVisual 3D coordinate_space {visual.coordinate_space!r}"
+        )
+    if visual.color is None:
+        return
+    colors = _rgba8(np.asarray(visual.color))
+    if bool(np.any(colors.reshape(-1, 4)[:, 3] < 255)):
+        raise DatovizV04Unsupported(
+            f"{View3DDiagnosticCode.MESH3D_ALPHA_NOT_STRICT.value}: "
+            "Datoviz MeshVisual 3D depth path requires opaque colors"
+        )
 
 
 def _rgba8(colors: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:

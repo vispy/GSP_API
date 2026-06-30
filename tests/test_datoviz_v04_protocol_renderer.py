@@ -28,6 +28,7 @@ from gsp.protocol import (
 from gsp.protocol import (
     AffineTransform2DResource,
     AxisProviderRequest,
+    Camera3D,
     CanvasSize,
     ColorbarGuide,
     ColorbarGuideStyle,
@@ -50,7 +51,9 @@ from gsp.protocol import (
     TextAnchorY,
     TransformPlacement,
     View2D,
+    View3D,
     View3DDiagnosticCode,
+    OrthographicProjection3D,
     VisualFamily,
     VisualTransformBinding,
     pan_view2d,
@@ -613,6 +616,60 @@ class FakeDatovizV04WithCurrentAttributeNames(FakeDatovizV04WithQueryCapabilitie
 
 
 class FakeDatovizV04WithMesh(FakeDatovizV04WithQueryCapabilities):
+    DvzCameraDesc = object
+    DvzCameraView = object
+    DvzCameraProjection = object
+    DVZ_CAMERA_ORTHOGRAPHIC = 1
+
+    def dvz_camera_desc(self):
+        self.calls.append(("camera_desc",))
+        return SimpleNamespace(
+            view=SimpleNamespace(
+                eye=[0.0, 0.0, 0.0],
+                target=[0.0, 0.0, 0.0],
+                up=[0.0, 1.0, 0.0],
+            ),
+            projection=SimpleNamespace(
+                type=0,
+                near_clip=0.0,
+                far_clip=1.0,
+                ortho_height=2.0,
+            ),
+        )
+
+    def dvz_panel_set_camera(self, panel, desc):
+        self.calls.append(
+            (
+                "panel_set_camera",
+                panel,
+                tuple(desc.view.eye),
+                tuple(desc.view.target),
+                tuple(desc.view.up),
+                desc.projection.type,
+                desc.projection.near_clip,
+                desc.projection.far_clip,
+                desc.projection.ortho_height,
+            )
+        )
+        return "panel-camera"
+
+    def dvz_camera_set_orthographic_bounds(
+        self, camera, left, right, bottom, top, near, far
+    ):
+        self.calls.append(
+            (
+                "camera_set_orthographic_bounds",
+                camera,
+                left,
+                right,
+                bottom,
+                top,
+                near,
+                far,
+            )
+        )
+        return 0
+
     def dvz_mesh(self, scene, flags):
         self.calls.append(("mesh", scene, flags))
         return "mesh-visual"
@@ -2475,7 +2532,7 @@ def test_add_mesh_visual_duplicates_face_colors_for_datoviz_vertex_color_mesh():
     )
 
 
-def test_add_mesh_visual_accepts_default_data_domain_and_rejects_3d_with_diagnostic():
+def test_add_mesh_visual_accepts_default_data_domain_and_requires_view3d_for_data3d():
     renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh())
     data_visual = MeshVisual(
         id="visual:data-mesh",
@@ -2490,7 +2547,7 @@ def test_add_mesh_visual_accepts_default_data_domain_and_rejects_3d_with_diagnos
             [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]], dtype=np.float32
         ),
         faces=np.array([[0, 1, 2]], dtype=np.uint32),
-        coordinate_space=CoordinateSpace.NDC,
+        coordinate_space=CoordinateSpace.DATA,
         color=np.array([255, 255, 255, 255], dtype=np.uint8),
     )
 
@@ -2502,9 +2559,62 @@ def test_add_mesh_visual_accepts_default_data_domain_and_rejects_3d_with_diagnos
     )
     with pytest.raises(
         DatovizV04Unsupported,
-        match=View3DDiagnosticCode.MESH3D_COORDINATE_SPACE_UNSUPPORTED.value,
+        match=View3DDiagnosticCode.MESH3D_REQUIRES_VIEW3D.value,
     ):
         renderer.add_mesh_visual(mesh_3d)
+
+
+def test_add_mesh_visual_configures_native_view3d_camera_for_data_positions3d():
+    fake = FakeDatovizV04WithMesh()
+    view3d = View3D(
+        id="view:main",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(1.0, 2.0, 3.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(2.0, -2.0),
+            ylim=(-1.0, 3.0),
+            near_far=(0.1, 100.0),
+        ),
+    )
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
+    visual = MeshVisual(
+        id="visual:mesh-3d",
+        positions=np.array(
+            [[0.0, 0.0, 0.0], [0.5, 0.0, 0.25], [0.0, 0.5, 0.5]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+    )
+
+    renderer.add_mesh_visual(visual)
+
+    assert _calls(fake, "panel_set_camera") == [
+        (
+            "panel_set_camera",
+            "panel",
+            (1.0, 2.0, 3.0),
+            (0.0, 0.0, 0.0),
+            (0.0, 1.0, 0.0),
+            1,
+            0.1,
+            100.0,
+            4.0,
+        )
+    ]
+    assert _calls(fake, "camera_set_orthographic_bounds") == [
+        ("camera_set_orthographic_bounds", "panel-camera", 2.0, -2.0, -1.0, 3.0, 0.1, 100.0)
+    ]
+    np.testing.assert_allclose(
+        _calls(fake, "set_data")[0][3],
+        [[0.0, 0.0, 0.0], [0.5, 0.0, 0.25], [0.0, 0.5, 0.5]],
+    )
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", True)]
 
 
 def test_add_mesh_visual_keeps_data_coordinates_with_native_view2d_domain():
