@@ -115,6 +115,25 @@ ndc_z = -1 + 2 * (camera_z - near) / (far - near)
 Derived matrices may be reported later in snapshots for diagnostics and fixtures. They are not
 public authoring input in S036.
 
+## Projection Snapshot
+
+Strict S036 projection support uses a resolved projection snapshot for one `View3D` and one layout
+snapshot. The snapshot records:
+
+- view id;
+- panel id;
+- view revision;
+- layout snapshot id;
+- view/projection snapshot id;
+- camera `eye` and `target`;
+- derived `right`, `true_up`, and `forward` basis vectors;
+- projection `xlim`, `ylim`, and `near_far`;
+- depth mode.
+
+The `view_projection_snapshot_id` must change when canonical projection inputs change, including
+camera state, projection bounds, view revision, layout snapshot id, or depth mode. It must remain
+stable for repeated resolution of the same state.
+
 ## MeshVisual Integration
 
 For `MeshVisual.positions.shape == (N, 3)` and `coordinate_space == DATA`:
@@ -208,4 +227,3 @@ leak Datoviz camera, material, slot, draw-state, or controller names into public
 
 VisPy2 may provide ergonomic constructors/helpers that emit canonical `View3D` state. It must not
 expose a public 3D navigation controller in S036.
-

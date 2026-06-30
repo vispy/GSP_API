@@ -150,6 +150,9 @@ from .view3d import (
     Projection3DKind,
     View3D,
     View3DDiagnosticCode,
+    View3DProjectionSnapshot,
+    project_view3d_data_point,
+    resolve_view3d_projection_snapshot,
     validate_projection3d_range,
 )
 from .query import (

@@ -16,6 +16,8 @@ from gsp.protocol import (
     View3D,
     View3DDiagnosticCode,
     ViewKind,
+    project_view3d_data_point,
+    resolve_view3d_projection_snapshot,
 )
 
 
@@ -154,3 +156,118 @@ def test_view3d_capabilities_adapt_semantic_support():
     assert rejected.outcome == AdaptationOutcome.REJECT
     assert rejected.diagnostic is not None
 
+
+def test_view3d_projects_canonical_cube_vertices_to_ndc3():
+    view = View3D(
+        id="view:cube",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 5.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-2.0, 2.0),
+            ylim=(-2.0, 2.0),
+            near_far=(1.0, 10.0),
+        ),
+    )
+
+    assert project_view3d_data_point(view, (-2.0, -2.0, 4.0)) == pytest.approx(
+        (-1.0, -1.0, -1.0)
+    )
+    assert project_view3d_data_point(view, (2.0, 2.0, -5.0)) == pytest.approx(
+        (1.0, 1.0, 1.0)
+    )
+    assert project_view3d_data_point(view, (0.0, 0.0, -0.5)) == pytest.approx(
+        (0.0, 0.0, 0.0)
+    )
+
+
+def test_view3d_projection_preserves_reversed_xy_bounds():
+    view = View3D(
+        id="view:reversed",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 5.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(2.0, -2.0),
+            ylim=(2.0, -2.0),
+            near_far=(1.0, 10.0),
+        ),
+    )
+
+    assert project_view3d_data_point(view, (-2.0, -2.0, 4.0)) == pytest.approx(
+        (1.0, 1.0, -1.0)
+    )
+
+
+def test_view3d_projection_uses_explicit_off_axis_bounds():
+    view = View3D(
+        id="view:offaxis",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 5.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(0.0, 4.0),
+            ylim=(-1.0, 3.0),
+            near_far=(1.0, 10.0),
+        ),
+    )
+
+    assert project_view3d_data_point(view, (0.0, 0.0, 4.0)) == pytest.approx(
+        (-1.0, -0.5, -1.0)
+    )
+
+
+def test_view3d_projection_snapshot_identity_tracks_view_and_layout_state():
+    view = View3D(
+        id="view:snapshot",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 5.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-2.0, 2.0),
+            ylim=(-2.0, 2.0),
+            near_far=(1.0, 10.0),
+        ),
+        revision=3,
+    )
+
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    same = resolve_view3d_projection_snapshot(view, layout_snapshot_id="layout:main")
+    different_layout = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:other"
+    )
+    updated_view = View3D(
+        id=view.id,
+        panel_id=view.panel_id,
+        camera=Camera3D(
+            eye=(1.0, 0.0, 5.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=view.projection,
+        revision=4,
+    )
+    updated = resolve_view3d_projection_snapshot(
+        updated_view, layout_snapshot_id="layout:main"
+    )
+
+    assert snapshot.view_projection_snapshot_id.startswith("view3d-projection:")
+    assert snapshot.view_projection_snapshot_id == same.view_projection_snapshot_id
+    assert snapshot.view_projection_snapshot_id != different_layout.view_projection_snapshot_id
+    assert snapshot.view_projection_snapshot_id != updated.view_projection_snapshot_id
+    assert snapshot.view_revision == 3
+    assert snapshot.forward == pytest.approx((0.0, 0.0, -1.0))

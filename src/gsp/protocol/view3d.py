@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+import hashlib
 import math
 
 from .ids import validate_id
@@ -58,6 +59,34 @@ class Camera3DBasis:
     forward: Float3
     right: Float3
     true_up: Float3
+
+
+@dataclass(frozen=True, slots=True)
+class View3DProjectionSnapshot:
+    """Resolved S036 camera/projection snapshot identity."""
+
+    view_id: str
+    panel_id: str
+    view_revision: int
+    layout_snapshot_id: str
+    view_projection_snapshot_id: str
+    eye: Float3
+    target: Float3
+    right: Float3
+    true_up: Float3
+    forward: Float3
+    xlim: Float2
+    ylim: Float2
+    near_far: Float2
+    depth_mode: DepthMode3D
+
+    def __post_init__(self) -> None:
+        validate_id(self.view_id)
+        validate_id(self.panel_id)
+        validate_id(self.layout_snapshot_id)
+        validate_id(self.view_projection_snapshot_id)
+        if self.view_revision < 0:
+            raise ValueError("view_revision must be non-negative")
 
 
 @dataclass(frozen=True, slots=True)
@@ -141,6 +170,53 @@ class View3D:
             raise ValueError("revision must be a non-negative integer")
 
 
+def project_view3d_data_point(view: View3D, point: Float3) -> Float3:
+    """Project one DATA-space point into GSP panel NDC3."""
+    if not isinstance(view, View3D):
+        raise TypeError("view must be a View3D")
+    _validate_float3("point", point)
+    basis = view.camera.basis()
+    relative = _sub3(point, view.camera.eye)
+    camera_x = _dot3(relative, basis.right)
+    camera_y = _dot3(relative, basis.true_up)
+    camera_z = _dot3(relative, basis.forward)
+    x0, x1 = view.projection.xlim
+    y0, y1 = view.projection.ylim
+    near, far = view.projection.near_far
+    return (
+        -1.0 + 2.0 * (camera_x - x0) / (x1 - x0),
+        -1.0 + 2.0 * (camera_y - y0) / (y1 - y0),
+        -1.0 + 2.0 * (camera_z - near) / (far - near),
+    )
+
+
+def resolve_view3d_projection_snapshot(
+    view: View3D, *, layout_snapshot_id: str
+) -> View3DProjectionSnapshot:
+    """Return a deterministic S036 projection snapshot for one view/layout pair."""
+    if not isinstance(view, View3D):
+        raise TypeError("view must be a View3D")
+    validate_id(layout_snapshot_id)
+    basis = view.camera.basis()
+    snapshot_id = _projection_snapshot_id(view, layout_snapshot_id, basis)
+    return View3DProjectionSnapshot(
+        view_id=view.id,
+        panel_id=view.panel_id,
+        view_revision=view.revision,
+        layout_snapshot_id=layout_snapshot_id,
+        view_projection_snapshot_id=snapshot_id,
+        eye=view.camera.eye,
+        target=view.camera.target,
+        right=basis.right,
+        true_up=basis.true_up,
+        forward=basis.forward,
+        xlim=view.projection.xlim,
+        ylim=view.projection.ylim,
+        near_far=view.projection.near_far,
+        depth_mode=view.depth_mode,
+    )
+
+
 def validate_projection3d_range(
     name: str, limits: Float2, *, allow_reversed: bool
 ) -> None:
@@ -187,6 +263,10 @@ def _cross3(left: Float3, right: Float3) -> Float3:
     )
 
 
+def _dot3(left: Float3, right: Float3) -> float:
+    return left[0] * right[0] + left[1] * right[1] + left[2] * right[2]
+
+
 def _norm3(value: Float3) -> float:
     return math.sqrt(value[0] * value[0] + value[1] * value[1] + value[2] * value[2])
 
@@ -200,3 +280,33 @@ def _normalize3(value: Float3, message: str) -> Float3:
         )
     return (value[0] / norm, value[1] / norm, value[2] / norm)
 
+
+def _projection_snapshot_id(
+    view: View3D, layout_snapshot_id: str, basis: Camera3DBasis
+) -> str:
+    parts = (
+        view.id,
+        view.panel_id,
+        str(view.revision),
+        layout_snapshot_id,
+        _format_float3(view.camera.eye),
+        _format_float3(view.camera.target),
+        _format_float3(view.camera.up),
+        _format_float3(basis.right),
+        _format_float3(basis.true_up),
+        _format_float3(basis.forward),
+        _format_float2(view.projection.xlim),
+        _format_float2(view.projection.ylim),
+        _format_float2(view.projection.near_far),
+        view.depth_mode.value,
+    )
+    digest = hashlib.sha256("|".join(parts).encode("ascii")).hexdigest()[:16]
+    return f"view3d-projection:{digest}"
+
+
+def _format_float2(value: Float2) -> str:
+    return ",".join(f"{component:.17g}" for component in value)
+
+
+def _format_float3(value: Float3) -> str:
+    return ",".join(f"{component:.17g}" for component in value)

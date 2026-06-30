@@ -215,7 +215,7 @@
       "id": "S036",
       "title": "Static View3D, Orthographic Projection, and 3D Mesh Baseline",
       "state": "active",
-      "progress": 15
+      "progress": 30
     }
   ],
   "missions": [
@@ -1600,16 +1600,16 @@
       "id": "M155",
       "title": "S036 projection and snapshot conformance",
       "stage": "S036",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 155
     },
     {
       "id": "M156",
       "title": "S036 MeshVisual positions3d DATA/NDC rendering path",
       "stage": "S036",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 156
@@ -1711,13 +1711,14 @@
     }
   ],
   "recommendations": [
-    "Execute M155 next: implement deterministic View3D projection math and snapshot conformance fixtures.",
+    "Execute M156 next: add capability-gated MeshVisual positions3d DATA/NDC rendering behavior or exact unsupported evidence.",
     "Keep S036 static and orthographic-only; defer public View3D navigation, perspective, materials/lights, scene graph, and 3D picking.",
     "For Datoviz, require capability-gated retained View3D/mesh paths or exact unsupported evidence; do not expose backend-native camera/draw-state names."
   ],
   "notes": [
     "S036 opened from P020: static camera-parameter-first View3D, orthographic projection, MeshVisual (N,3) DATA/NDC integration, opaque depth capability, ray readback, and public 3D navigation deferred to a later stage.",
     "M154 completed: converted P020 into ADR-0023, spec/view3d.md, S036 decision records, protocol View3D dataclasses/enums/diagnostics/capabilities, and focused validation tests; M155 is ready.",
+    "M155 completed: added deterministic View3D DATA projection, projection snapshot identity, and numeric fixtures for canonical cube projection, reversed bounds, off-axis bounds, and snapshot changes; M156 is ready.",
     "M075 implemented TextVisual protocol dataclass/enums/validation and focused tests in commit f0ff72b.",
     "M076 implemented Matplotlib TextVisual reference rendering and focused tests.",
     "M077 added S024 TextVisual QA cases, Matplotlib artifact generation, and Datoviz structured unsupported reporting for text pending M078/M079.",
