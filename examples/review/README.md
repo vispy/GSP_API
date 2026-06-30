@@ -23,11 +23,12 @@ Open Matplotlib and Datoviz live windows at the same time:
 tools/compare-review-examples --live-side-by-side examples/review/01_scatter_basic.py
 ```
 
-Open a live example with S035 View2D drag-to-pan and wheel-to-zoom:
+Open a live example with GSP navigation:
 
 ```bash
 uv run python examples/review/01_scatter_basic.py --backend matplotlib --interactive-navigation
 uv run python examples/review/01_scatter_basic.py --backend datoviz --interactive-navigation
+uv run python examples/review/07_view3d_cube.py --backend matplotlib --interactive-navigation
 ```
 
 Open all numbered review examples with GSP interactivity where a `View2D` or `View3D` is present,
@@ -88,6 +89,10 @@ inch. Matplotlib live review keeps using the reference DPI for its figure size; 
 | `08_view3d_terrain.py` | Static terrain-like `(N,3)` DATA mesh with per-face colors |
 | `09_view3d_ndc_depth.py` | `(N,3)` NDC mesh with adapted opaque face-depth ordering |
 
+With `--interactive-navigation`, Matplotlib `View3D` examples support S037 review navigation:
+left-drag orbit, right/middle-drag pan, wheel zoom, and `r` reset. Datoviz `View3D` examples remain
+structured unsupported until the public View3D camera binding evidence passes.
+
 The non-default `s036_alpha_not_strict_negative.py` script checks that translucent 3D mesh colors
 raise `mesh3d_alpha_not_strict` in the opaque-depth path.
 
@@ -127,6 +132,9 @@ Use this checklist before approving release preparation.
    | `04_guides_axes_ticks.py` | Explicit ticks, tick labels, axis labels, grid, and title are readable. |
    | `05_color_mapping_colorbar.py` | Colors match scalar values and colorbar semantics are clear. |
    | `06_text_labels.py` | Labels are placed correctly, anchored reasonably, and drawn above points. |
+   | `07_view3d_cube.py` | Matplotlib shows a projected cube; interactive navigation changes the canonical `View3D`. Datoviz may report `mesh3d_coordinate_space_unsupported`. |
+   | `08_view3d_terrain.py` | Matplotlib terrain projection and per-face colors are coherent; Datoviz may report unsupported. |
+   | `09_view3d_ndc_depth.py` | Matplotlib adapted far-to-near ordering is visible for opaque triangles; Datoviz may report unsupported. |
 
 6. Record the review result in this form:
 

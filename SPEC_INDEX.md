@@ -54,6 +54,8 @@ This file tells agents where to find authoritative design information.
 | Static View3D orthographic ADR | adr/ADR-0023-static-view3d-orthographic-baseline.md |
 | View3D navigation and Datoviz binding ADR | adr/ADR-0024-view3d-navigation-dataviz-binding.md |
 | S037 View3D navigation/Datoviz decision | .agent/decisions/S037_view3d_navigation_datoviz_contracts.md |
+| S037 Datoviz View3D evidence | .agent/S037_DATOVIZ_VIEW3D_EVIDENCE.md |
+| S037 closeout | .agent/S037_CLOSEOUT.md |
 | S036 View3D decision | .agent/decisions/S036_view3d_contracts.md |
 | S036 closeout | .agent/S036_CLOSEOUT.md |
 | S035 View2D navigation decision | .agent/decisions/S035_view2d_navigation_contracts.md |

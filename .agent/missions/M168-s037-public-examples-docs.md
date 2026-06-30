@@ -6,7 +6,7 @@ S037 - Legacy 3D Reuse, Datoviz View3D Binding, and Public 3D Interaction
 
 ## Status
 
-Draft, pending M163-M167.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -27,3 +27,11 @@ Publish only examples and docs backed by accepted S037 capabilities.
 ## Stop Condition
 
 Stop if examples outrun capability evidence.
+
+## Result
+
+Completed. Updated review-example docs, Matplotlib/Datoviz backend specs, SPEC_INDEX, and added
+`.agent/S037_CLOSEOUT.md`.
+
+S037 now closes with Matplotlib View3D review navigation supported through canonical actions and
+Datoviz public `(N, 3)` View3D meshes still unsupported with documented evidence.

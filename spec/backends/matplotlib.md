@@ -176,3 +176,22 @@ prove accepted fragment-depth semantics.
 projection-inverse query path. It returns `gsp.view3d-query@0.1` payloads for panel coordinates,
 reports `query_3d_snapshot_mismatch` for stale layout/view-projection snapshots, and keeps `(N, 3)`
 `MeshVisual` face picking deferred with `query_3d_visual_hit_deferred`.
+
+## S037 View3D navigation review adapter
+
+Matplotlib consumes the backend-neutral S037 `View3DNavigationAction` protocol for live review
+examples. `examples/review/_review_runner.py --interactive-navigation` adapts native Matplotlib
+events privately:
+
+- left-drag -> `orbit`;
+- right/middle-drag -> `pan`;
+- wheel -> `zoom`;
+- `r` -> `reset`.
+
+The adapter applies actions through `apply_view3d_navigation_action()`, receives a canonical
+`View3DNavigationResult`, and re-renders the scene with the new canonical `View3D`. Matplotlib
+callback ids, canvas events, axes, artists, and drag/wheel constants are implementation details, not
+public GSP API.
+
+This does not change Matplotlib's adapted 3D rendering claim: `(N, 3)` meshes are still CPU-projected
+to 2D `PolyCollection` faces and sorted by average panel-NDC z for the adapted opaque fixture path.

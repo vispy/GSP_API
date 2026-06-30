@@ -121,6 +121,14 @@ Required evidence before Datoviz claims 3D support:
   `query.view3d.ray_readback.v1` is claimed;
 - public API does not expose Datoviz camera, controller, draw-state, or material names.
 
+M165 evidence currently blocks implementation. The local v0.4 Python binding exposes promising
+camera/depth symbols, but `DvzCameraView` and `DvzCameraDesc` do not expose Python `_fields_` for
+`eye`, `target`, `up`, `view`, or `projection`, and the default `dvz_camera_view()` /
+`dvz_camera_desc()` factories are not exposed. The visible orthographic API exposes
+height/near/far, while S036 requires explicit `xlim`, `ylim`, reversed x/y bounds, off-axis bounds,
+and deterministic panel-NDC3 parity. Keep `mesh3d_coordinate_space_unsupported` until this evidence
+is resolved.
+
 ## M066 PointVisual retained path
 
 Point visuals are attached with an explicit `DvzVisualAttachDesc` instead of relying on a NULL

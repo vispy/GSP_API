@@ -220,8 +220,8 @@
     {
       "id": "S037",
       "title": "Legacy 3D Reuse, Datoviz View3D Binding, and Public 3D Interaction",
-      "state": "active",
-      "progress": 45
+      "state": "completed",
+      "progress": 100
     },
     {
       "id": "S038",
@@ -1711,7 +1711,7 @@
       "id": "M166",
       "title": "S037 Datoviz static View3D mesh binding",
       "stage": "S037",
-      "state": "blocked",
+      "state": "deferred",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 166
@@ -1720,7 +1720,7 @@
       "id": "M167",
       "title": "S037 Datoviz query ray readback parity",
       "stage": "S037",
-      "state": "blocked",
+      "state": "deferred",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 167
@@ -1729,9 +1729,9 @@
       "id": "M168",
       "title": "S037 public examples and docs",
       "stage": "S037",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 168
     },
     {
@@ -1811,12 +1811,13 @@
     }
   ],
   "recommendations": [
-    "Run M168 next: update public examples/docs and close out S037 around Matplotlib View3D navigation plus Datoviz unsupported evidence.",
+    "S037 is complete; keep Datoviz View3D binding deferred until Python-bindable camera descriptor evidence exists.",
     "Keep materials/lights/textures deferred to future S038/S039/S040 specs; review-only demos must not be capability evidence.",
-    "Keep M166/M167 blocked until Datoviz exposes Python-bindable Camera3D-equivalent fields/factories and retained View3D DATA/NDC3/depth evidence passes."
+    "Recommended next planning step is M169/S038 materials and lights ADR only if you want to expand 3D appearance semantics next."
   ],
   "notes": [
-    "M165 completed: Datoviz exposes promising camera/depth symbols but lacks Python-bindable DvzCameraView/DvzCameraDesc fields/factories and full S036 x/y orthographic bounds evidence; M166/M167 remain blocked.",
+    "M168 completed: updated public review docs, Matplotlib/Datoviz backend specs, SPEC_INDEX, and added S037 closeout; S037 marked completed with M166/M167 deferred by Datoviz binding evidence.",
+    "M165 completed: Datoviz exposes promising camera/depth symbols but lacks Python-bindable DvzCameraView/DvzCameraDesc fields/factories and full S036 x/y orthographic bounds evidence; M166/M167 deferred.",
     "M164 completed: added Matplotlib live review View3D navigation adapter using canonical S037 actions/results; left-drag orbit, right/middle-drag pan, wheel zoom, and r reset.",
     "M163 completed: added protocol-only View3D navigation action/result dataclasses, orbit/pan/zoom/set/reset reducers, snapshot freshness enforcement, exports, and focused tests.",
     "M162 completed: archived P021 response, accepted S037 as View3D navigation plus Datoviz View3D binding, added ADR-0024, S037 decision record, View3D navigation spec, and capability wording updates.",
