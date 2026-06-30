@@ -6,26 +6,27 @@ S038 - Materials, Lights, and Textures Pre-Design
 
 ## Status
 
-Blocked pending ChatGPT Pro consultation P023.
+Completed by local-main-codex.
 
 ## Summary
 
 Decide the minimal public material/light model after S037. This is not part of S037 implementation.
 
-## Candidate Deliverables
+## Deliverables
 
-- ADR/spec for `MeshMaterial3D`, unlit color clarification, flat Lambert directional lighting, and
-  diagnostics.
+- Archived P023 response.
+- ADR/spec for implicit `unlit_rgba` material semantics.
 - Reserved capability names and strict/adapted wording.
-- Explicit deferral or separate plan for Phong and texture/UV semantics.
+- Explicit deferral for public `MeshMaterial3D`, normals, Lambert, Phong, lights, textures, UVs, and
+  samplers.
 
 ## Stop Condition
 
 Stop if material/light implementation is requested before an accepted S038 spec exists.
 
-## Consultation
+## Result
 
-Created `.agent/consultations/P023-materials-lights-s038.md`.
-
-Dependent ADR/spec implementation should wait until the P023 answer is available because S038 is an
-architecture/spec decision about public material, light, normal, texture, and capability semantics.
+Completed. Archived the pasted answer as `.agent/consultations/P023-response.md`, accepted
+`meshvisual.material.unlit_rgba.v1` as the only S038 material capability, and added ADR-0025,
+`spec/visuals/mesh_materials_s038.md`, `.agent/decisions/S038_mesh_material_boundary.md`, capability
+wording, and S038 closeout documentation.

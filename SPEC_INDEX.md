@@ -16,6 +16,7 @@ This file tells agents where to find authoritative design information.
 | View2D navigation actions | spec/navigation.md |
 | Static View3D/camera/projection | spec/view3d.md |
 | View3D navigation actions | spec/view3d_navigation.md |
+| Mesh material boundary | spec/visuals/mesh_materials_s038.md |
 | Resolved layout and guide geometry | spec/layout.md |
 | Resolved guide layout direction | .agent/decisions/S029_resolved_layout_contracts.md |
 | Conformance fixtures/schema | spec/conformance-fixtures.md |
@@ -53,6 +54,9 @@ This file tells agents where to find authoritative design information.
 | View2D navigation actions ADR | adr/ADR-0022-view2d-navigation-actions.md |
 | Static View3D orthographic ADR | adr/ADR-0023-static-view3d-orthographic-baseline.md |
 | View3D navigation and Datoviz binding ADR | adr/ADR-0024-view3d-navigation-dataviz-binding.md |
+| MeshVisual unlit RGBA material boundary ADR | adr/ADR-0025-meshvisual-unlit-rgba-material-boundary.md |
+| S038 mesh material boundary decision | .agent/decisions/S038_mesh_material_boundary.md |
+| S038 closeout | .agent/S038_CLOSEOUT.md |
 | S037 View3D navigation/Datoviz decision | .agent/decisions/S037_view3d_navigation_datoviz_contracts.md |
 | S037 Datoviz View3D evidence | .agent/S037_DATOVIZ_VIEW3D_EVIDENCE.md |
 | S037 closeout | .agent/S037_CLOSEOUT.md |

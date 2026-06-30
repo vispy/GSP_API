@@ -1,7 +1,9 @@
 # Mesh Visual - Accepted S025 Baseline
 
 Status: accepted protocol baseline for S025. Static orthographic `View3D` semantics for `(N,3)`
-mesh rendering are accepted separately by S036 in `spec/view3d.md`.
+mesh rendering are accepted separately by S036 in `spec/view3d.md`. S038 supersedes the optional
+S025 material/shading notes: accepted public mesh material semantics are limited to implicit
+`unlit_rgba` in `spec/visuals/mesh_materials_s038.md`.
 
 Semantic purpose: render explicit user-provided triangular meshes for filled 2D panel geometry and
 capability-gated 3D geometry. S025 does not define a surface, volume, material, texture, instancing,
@@ -19,10 +21,10 @@ S025 defines `MeshVisual` only. Geometry is inline and indexed.
 | `coordinate_space` | `CoordinateSpace.NDC` or `.DATA` | yes | none | Existing coordinate-space semantics. |
 | `color_mode` | `MeshColorMode` | no | inferred only when unambiguous | `uniform`, `face`, or optional `vertex`. |
 | `color` | RGBA `(4,)`, `(M,4)`, or `(N,4)` | yes | none | Uniform, per-face, or per-vertex color according to `color_mode`. |
-| `normal_mode` | `MeshNormalMode` | no | `none` | `none`, `face`, or `vertex`; only meaningful for capability-gated shading/query. |
-| `normals` | float32/float64 `(M,3)` or `(N,3)` | no | none | Optional face or vertex normals. |
-| `normal_generation` | `MeshNormalGeneration` | no | `none` | Optional explicit `face_flat` generation for 3D positions only. |
-| `shading` | `MeshShading` | no | `flat` | `flat` is strict v1; `lambert` is optional/capability-gated. |
+| `normal_mode` | `MeshNormalMode` | no | `none` | Historical optional field. Not accepted S038 material support; reserved/experimental until a later normal/material ADR. |
+| `normals` | float32/float64 `(M,3)` or `(N,3)` | no | none | Historical optional field. Public S038 material semantics do not consume normals. |
+| `normal_generation` | `MeshNormalGeneration` | no | `none` | Historical optional field. Backend-generated normals are deferred for public material semantics. |
+| `shading` | `MeshShading` | no | `flat` | Historical optional field. Accepted S038 semantics are implicit `unlit_rgba`; Lambert remains deferred. |
 | `face_culling` | `FaceCulling` | no | `none` | `none`, optional `back`/`front`. |
 | `depth_test` | `DepthMode` | no | `auto` | `auto`, `disabled`, or `enabled`. |
 | `depth_write` | `DepthMode` | no | `auto` | `auto`, `disabled`, or `enabled`. |
@@ -36,9 +38,12 @@ model files.
 ## Enums
 
 - `MeshColorMode`: `UNIFORM`, `FACE`; optional/capability-gated `VERTEX`.
-- `MeshNormalMode`: `NONE`, `FACE`, `VERTEX`.
-- `MeshNormalGeneration`: `NONE`, `FACE_FLAT`.
-- `MeshShading`: `FLAT`; optional/capability-gated `LAMBERT`.
+- `MeshNormalMode`: `NONE`, `FACE`, `VERTEX` as historical optional surface; not accepted S038
+  material support.
+- `MeshNormalGeneration`: `NONE`, `FACE_FLAT` as historical optional surface; not accepted S038
+  material support.
+- `MeshShading`: `FLAT`; `LAMBERT` is deferred by S038 and must not be advertised as accepted public
+  material support.
 - `FaceCulling`: `NONE`, optional/capability-gated `BACK`, `FRONT`.
 - `DepthMode`: `AUTO`, `DISABLED`, `ENABLED`.
 - `OpacityPolicy`: `ORDINARY_ALPHA`.
@@ -57,9 +62,10 @@ No Datoviz slot names, material structs, or backend draw-state names are public 
   diagnostic.
 - RGBA follows existing validation: uint8 `[0,255]` or finite float `[0,1]`.
 - `UNIFORM` color requires shape `(4,)`; `FACE` requires `(M,4)`; `VERTEX` requires `(N,4)`.
-- Normals must be finite shape `(M,3)` for face mode or `(N,3)` for vertex mode. Missing normals do
-  not trigger hidden backend lighting or normal generation.
-- `FACE_FLAT` normal generation is explicit, deterministic, and requires 3D positions.
+- Normals, when accepted by legacy or experimental code paths, must be finite shape `(M,3)` for face
+  mode or `(N,3)` for vertex mode. They are not consumed by accepted S038 public material semantics.
+- `FACE_FLAT` normal generation is legacy/experimental and is deferred for public S038 material
+  support.
 - `order` is a finite dimensionless visual-order scalar.
 
 ## Geometry, color, and material policy
@@ -72,8 +78,11 @@ Alpha is accepted through RGBA, but strict QA should use opaque colors. Partiall
 use ordinary backend alpha blending where supported; order-independent transparency, intersecting
 transparent triangle correctness, and automatic face sorting are not guaranteed.
 
-There is no public material or lighting system in S025. Optional `LAMBERT` must be capability-gated
-and must not introduce public light, specular, shininess, or backend material-struct fields.
+There is no public material or lighting system in S025. S038 names the only accepted material
+boundary: existing RGBA mesh colors are implicit `unlit_rgba`, with `output.rgb = base.rgb` and
+`output.a = base.a`. Optional `LAMBERT`, normals, generated normals, public lights, material objects,
+textures, UVs, samplers, specular, shininess, and backend material-struct fields are deferred unless
+a later ADR/spec accepts them.
 
 ## Transform, camera, and depth policy
 
@@ -131,7 +140,8 @@ Hidden lighting/material defaults must not alter strict flat RGBA semantics.
 - `mesh_query_face_2d`.
 
 Optional/capability-gated cases: vertex color interpolation, 3D cube depth/culling, alpha overlap,
-normals/flat shading, optional Lambert demonstration, 3D face query, and wireframe if later accepted.
+3D face query, and wireframe if later accepted. Normals, generated normals, Lambert, Phong, and
+texture demonstrations are private/experimental until a later material or texture ADR accepts them.
 
 ## Deferred
 

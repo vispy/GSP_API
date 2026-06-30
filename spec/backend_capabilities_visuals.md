@@ -177,10 +177,22 @@ Datoviz may claim `query.view3d.ray_readback.v1` for canonical ray-context paylo
 the same P022 camera binding is available. This capability does not imply GPU visual hit picking for
 3D meshes.
 
-Future lighting and texture capability names are reserved, not claimed in S037:
+## S038 MeshVisual material boundary
+
+S038 accepts only implicit unlit RGBA material semantics for existing `MeshVisual` colors:
 
 ```text
 meshvisual.material.unlit_rgba.v1
+```
+
+A backend may claim this capability only when accepted `MeshVisual` RGBA color sources are rendered
+without lighting, normals, texture sampling, view-dependent color changes, or backend material
+tinting. Opaque alpha only is strict; non-opaque 3D mesh alpha remains non-strict via
+`mesh3d_alpha_not_strict`.
+
+The following lighting and texture capability names remain reserved/deferred, not claimed in S038:
+
+```text
 meshvisual.material.flat_lambert.v1
 meshvisual.material.flat_phong.v1
 view3d.light.ambient.v1
@@ -190,7 +202,7 @@ meshvisual.uv.vertex2d.v1
 meshvisual.material.texture2d_unlit.v1
 ```
 
-Lighting or textured mesh support is strict only after public material, normal, light-space,
-texture, UV, sampler, color-space, alpha, and color-combination rules are accepted and evidence
-backed. Legacy Matplotlib Phong or per-triangle affine texture output is experimental/adapted until
-a public cross-backend contract exists.
+Lighting or textured mesh support is strict only after public normal, light-space, texture, UV,
+sampler, color-space, alpha, and color-combination rules are accepted and evidence backed. Legacy
+Matplotlib Phong or per-triangle affine texture output is experimental/adapted until a public
+cross-backend contract exists.
