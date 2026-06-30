@@ -64,17 +64,19 @@ Do not reuse as public authority before P021:
 - perspective semantics;
 - scene graph/model loader semantics.
 
-## Proposed Mission Stack
+## Accepted Mission Stack
 
 | Mission | State | Purpose |
 |---|---|---|
 | M161 | completed | Create P021 consultation packet and S037 scoping baseline. |
-| M162 | blocked | Integrate P021 answer into accepted decisions, ADR/spec updates, and revised mission acceptance. |
-| M163 | draft | Extract safe legacy Matplotlib 3D helpers after the accepted decision clarifies scope. |
-| M164 | draft | Probe Datoviz v0.4 public View3D/camera binding options and update capability gates. |
-| M165 | draft | Implement public View3D navigation only if accepted by P021. |
-| M166 | draft | Decide material/light/texture scope and add only the accepted minimal slice. |
-| M167 | draft | Add examples, review cases, validation, and closeout for the accepted S037 scope. |
+| M162 | completed | Integrate P021 answer into accepted decisions, ADR/spec updates, and revised mission acceptance. |
+| M163 | ready | Implement public View3D navigation protocol dataclasses and pure reducers. |
+| M164 | draft | Wire accepted View3D navigation actions to Matplotlib review interaction. |
+| M165 | draft | Probe Datoviz v0.4 public View3D/camera binding evidence. |
+| M166 | draft | Implement Datoviz static View3D mesh binding only if M165 passes. |
+| M167 | draft | Add or verify Datoviz View3D query ray-readback parity. |
+| M168 | draft | Add public examples/docs backed by accepted capabilities. |
+| M169 | draft | Future S038 materials/lights ADR; not part of S037 implementation. |
 
 ## Stop Conditions
 

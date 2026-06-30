@@ -152,3 +152,42 @@ Current S036 support summary:
 Structured diagnostics include `view3d_not_supported`, `mesh3d_requires_view3d`,
 `mesh3d_coordinate_space_unsupported`, `mesh3d_alpha_not_strict`,
 `query_3d_visual_hit_deferred`, and `query_3d_snapshot_mismatch`.
+
+## S037 View3D navigation and Datoviz binding capability gates
+
+A backend may claim `view3d.navigation.orbit_pan_zoom.v1` only when it accepts backend-neutral
+`View3DNavigationAction` values for orbit, pan, zoom, reset, set-camera, and set-projection;
+validates base revisions and projection snapshot ids; and returns a new canonical `View3D` state
+with a fresh revision and projection snapshot id. Native backend controller objects are not public
+API.
+
+Matplotlib supports S036 static projection and ray readback strictly, but `(N, 3)` mesh rendering is
+adapted: DATA meshes are projected by canonical CPU `View3D` math and rendered as 2D
+`PolyCollection` faces; NDC3 meshes are interpreted as panel NDC3 and then rendered through the same
+2D path. Matplotlib opaque-depth behavior is adapted for opaque, non-intersecting triangles by
+sorting faces far-to-near by average panel-NDC z. This is not strict GPU fragment-depth semantics.
+
+Datoviz v0.4 must not claim `view3d.static.orthographic.v1`,
+`meshvisual.positions3d.data.view3d.v1`, `meshvisual.positions3d.ndc.v1`,
+`meshvisual.positions3d.opaque_depth.v1`, or `query.view3d.ray_readback.v1` for public `(N, 3)`
+`MeshVisual` until public `View3D` binding evidence passes. Before that evidence exists, it must
+continue reporting `mesh3d_coordinate_space_unsupported` rather than silently flattening z or
+exposing backend-native camera objects.
+
+Future lighting and texture capability names are reserved, not claimed in S037:
+
+```text
+meshvisual.material.unlit_rgba.v1
+meshvisual.material.flat_lambert.v1
+meshvisual.material.flat_phong.v1
+view3d.light.ambient.v1
+view3d.light.directional.v1
+texture2d.rgba8.v1
+meshvisual.uv.vertex2d.v1
+meshvisual.material.texture2d_unlit.v1
+```
+
+Lighting or textured mesh support is strict only after public material, normal, light-space,
+texture, UV, sampler, color-space, alpha, and color-combination rules are accepted and evidence
+backed. Legacy Matplotlib Phong or per-triangle affine texture output is experimental/adapted until
+a public cross-backend contract exists.

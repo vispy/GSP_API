@@ -6,7 +6,7 @@ S037 - Legacy 3D Reuse, Datoviz View3D Binding, and Public 3D Interaction
 
 ## Status
 
-Blocked pending P021 response.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -31,3 +31,10 @@ Datoviz View3D binding behavior, or material/light/texture semantics.
 ## Stop Condition
 
 Stop if the response is ambiguous about public API shape or would conflict with S036 authority.
+
+## Result
+
+Completed. Archived the pasted answer as `.agent/consultations/P021-response.md`, accepted S037 as
+View3D navigation plus Datoviz View3D binding, deferred public materials/lights/textures, and added
+ADR-0024, `.agent/decisions/S037_view3d_navigation_datoviz_contracts.md`,
+`spec/view3d_navigation.md`, and backend capability wording updates.

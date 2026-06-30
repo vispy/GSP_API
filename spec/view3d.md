@@ -22,10 +22,11 @@ Accepted S036 concepts:
 | Ray readback | accepted target | Query returns projection-inverse ray context. |
 | 3D visual picking | deferred | Query hit identity for 3D mesh faces is unsupported in S036. |
 
-Deferred concepts include public 3D navigation, perspective projection, matrix-first authoring,
-materials/lights/normals, scene graphs, mesh-local 3D transforms, transparency sorting, strict
-clipping of partially clipped triangles, external model loading, instancing, and non-mesh 3D visual
-families.
+S037 accepts backend-neutral public navigation actions in `spec/view3d_navigation.md`. Deferred
+concepts still include perspective projection, matrix-first authoring, materials/lights/normals,
+scene graphs, mesh-local 3D transforms, transparency sorting, strict clipping of partially clipped
+triangles, external model loading, instancing, backend-native public controllers, and non-mesh 3D
+visual families.
 
 ## Public Model
 
@@ -239,5 +240,6 @@ unless it satisfies the accepted S036 depth rules.
 Datoviz is the intended first runtime 3D backend, but support must be capability-gated. It must not
 leak Datoviz camera, material, slot, draw-state, or controller names into public protocol fields.
 
-VisPy2 may provide ergonomic constructors/helpers that emit canonical `View3D` state. It must not
-expose a public 3D navigation controller in S036.
+VisPy2 may provide ergonomic constructors/helpers that emit canonical `View3D` state. S037 public
+navigation, where implemented, must emit backend-neutral `View3DNavigationAction` values and consume
+canonical navigation results rather than exposing backend-native controller objects.

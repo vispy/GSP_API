@@ -97,6 +97,30 @@ The adapter raises explicit unsupported errors for semantics not locked in this 
 - missing image sampling controls for requested interpolation;
 - query/readback support.
 
+## S037 View3D binding target
+
+Datoviz v0.4 public `(N, 3)` `MeshVisual` support remains unsupported until a private
+`View3D` binding layer is proven. The adapter must continue reporting
+`mesh3d_coordinate_space_unsupported` for public 3D meshes rather than flattening z or exposing
+Datoviz-native camera/controller objects.
+
+The future private binding layer may accept only public GSP state:
+
+- `View3D.id`, `panel_id`, `camera`, `projection`, `depth_mode`, and `revision`;
+- `MeshVisual.positions`, faces/indices, colors, depth mode, and coordinate space;
+- `CoordinateSpace.DATA` and `CoordinateSpace.NDC`.
+
+Required evidence before Datoviz claims 3D support:
+
+- DATA `(N, 3)` meshes move correctly when canonical camera/projection changes;
+- NDC `(N, 3)` meshes are interpreted directly as panel NDC3;
+- opaque less-depth behavior is proven independent of submission order before
+  `meshvisual.positions3d.opaque_depth.v1` is claimed;
+- projection snapshot ids match canonical S036 state changes;
+- query ray-readback payloads match canonical S036 CPU snapshot semantics before
+  `query.view3d.ray_readback.v1` is claimed;
+- public API does not expose Datoviz camera, controller, draw-state, or material names.
+
 ## M066 PointVisual retained path
 
 Point visuals are attached with an explicit `DvzVisualAttachDesc` instead of relying on a NULL

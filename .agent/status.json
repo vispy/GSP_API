@@ -221,7 +221,13 @@
       "id": "S037",
       "title": "Legacy 3D Reuse, Datoviz View3D Binding, and Public 3D Interaction",
       "state": "active",
-      "progress": 5
+      "progress": 15
+    },
+    {
+      "id": "S038",
+      "title": "Materials, Lights, and Textures Pre-Design",
+      "state": "draft",
+      "progress": 0
     }
   ],
   "missions": [
@@ -1669,23 +1675,23 @@
       "id": "M162",
       "title": "S037 P021 response integration",
       "stage": "S037",
-      "state": "blocked",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 162
     },
     {
       "id": "M163",
-      "title": "S037 legacy Matplotlib 3D helper extraction",
+      "title": "S037 View3D navigation spec",
       "stage": "S037",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 163
     },
     {
       "id": "M164",
-      "title": "S037 Datoviz View3D binding probe",
+      "title": "S037 Matplotlib navigation adapter",
       "stage": "S037",
       "state": "draft",
       "agent": "local-main-codex",
@@ -1694,7 +1700,7 @@
     },
     {
       "id": "M165",
-      "title": "S037 public View3D navigation",
+      "title": "S037 Datoviz View3D evidence spike",
       "stage": "S037",
       "state": "draft",
       "agent": "local-main-codex",
@@ -1703,7 +1709,7 @@
     },
     {
       "id": "M166",
-      "title": "S037 material, light, and texture decision",
+      "title": "S037 Datoviz static View3D mesh binding",
       "stage": "S037",
       "state": "draft",
       "agent": "local-main-codex",
@@ -1712,12 +1718,30 @@
     },
     {
       "id": "M167",
-      "title": "S037 examples, validation, and closeout",
+      "title": "S037 Datoviz query ray readback parity",
       "stage": "S037",
       "state": "draft",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 167
+    },
+    {
+      "id": "M168",
+      "title": "S037 public examples and docs",
+      "stage": "S037",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 168
+    },
+    {
+      "id": "M169",
+      "title": "S038 materials and lights ADR",
+      "stage": "S038",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 169
     }
   ],
   "review_queue": [],
@@ -1780,18 +1804,19 @@
     },
     {
       "id": "Q110-VIEW3D-LEGACY-DATOVIZ-NAVIGATION-MATERIALS",
-      "summary": "P021 asks ChatGPT Pro to decide S037 public View3D navigation, legacy 3D helper reuse, Datoviz v0.4 View3D binding strategy, and whether materials/lights/textures remain deferred.",
-      "requires_human": true,
+      "summary": "Resolved by P021 response: S037 is View3D navigation plus Datoviz View3D binding; materials/lights/textures remain deferred; legacy 3D math is internal-only reuse.",
+      "requires_human": false,
       "requires_chatgpt_pro": true,
-      "state": "open"
+      "state": "closed"
     }
   ],
   "recommendations": [
-    "Paste or commit the P021 ChatGPT Pro response, then run M162 to integrate accepted decisions.",
-    "Do not implement public View3D navigation, Datoviz View3D binding, or material/light/texture semantics before M162.",
-    "Non-public audit work may continue only if it does not change public API or backend capability claims."
+    "Run M163 next: implement View3D navigation protocol dataclasses and pure reducers.",
+    "Keep materials/lights/textures deferred to future S038/S039/S040 specs; review-only demos must not be capability evidence.",
+    "Do not claim Datoviz public 3D support until M165/M166 evidence proves retained View3D DATA/NDC3/depth semantics."
   ],
   "notes": [
+    "M162 completed: archived P021 response, accepted S037 as View3D navigation plus Datoviz View3D binding, added ADR-0024, S037 decision record, View3D navigation spec, and capability wording updates.",
     "S037 opened with P021 as a ChatGPT Pro gate for public View3D navigation, legacy 3D reuse, Datoviz View3D binding, and material/light/texture scope.",
     "M161 completed: added P021 consultation packet, S037 scoping note, and blocked dependent S037 missions pending the P021 response.",
     "S037 legacy audit recorded safe internal reuse candidates: projection/depth/culling/normal helpers; legacy camera/material/light/texture public models remain gated by P021.",
