@@ -15,6 +15,7 @@ from gsp.protocol.query import (
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     TEXT_QUERY_PAYLOAD_KIND,
     TRANSFORM_QUERY_PAYLOAD_KIND,
+    VIEW3D_QUERY_PAYLOAD_KIND,
     MeshQueryPayload,
     QueryHitPolicy,
     QueryRequest,
@@ -22,9 +23,20 @@ from gsp.protocol.query import (
     QueryStatus,
     ScalarColorQueryPayload,
     TransformQueryPayload,
+    View3DQueryPayload,
     VisualFamily,
 )
-from gsp.protocol import AffineTransform2DResource, CoordinateSpace, InverseStatus, View2D
+from gsp.protocol import (
+    AffineTransform2DResource,
+    CoordinateSpace,
+    InverseStatus,
+    QueryCoordinateSpace,
+    View2D,
+    View3D,
+    View3DDiagnosticCode,
+    View3DProjectionSnapshot,
+    unproject_view3d_panel_ndc_point,
+)
 from gsp.protocol.visuals import (
     ImageOrigin,
     ImageVisual,
@@ -109,7 +121,10 @@ def query_visuals(
         else:
             hit = None
         if hit is not None:
-            hits.append(_with_request_snapshots(hit, request))
+            result = _with_request_snapshots(hit, request)
+            if result.status != QueryStatus.HIT:
+                return result
+            hits.append(result)
 
     if not hits:
         return QueryResult(
@@ -156,6 +171,70 @@ def failed_query_result(request: QueryRequest, diagnostic: str) -> QueryResult:
         diagnostic=diagnostic,
         layout_snapshot_id=request.layout_snapshot_id,
         view_snapshot_id=request.view_snapshot_id,
+    )
+
+
+def query_view3d_ray_context(
+    request: QueryRequest,
+    view: View3D,
+    snapshot: View3DProjectionSnapshot,
+    *,
+    panel_bounds: tuple[float, float, float, float],
+) -> QueryResult:
+    """Return a S036 projection-inverse ray context without visual picking."""
+    if request.coordinate_space is not QueryCoordinateSpace.PANEL:
+        return unsupported_query_result(
+            request,
+            f"{View3DDiagnosticCode.QUERY_3D_VISUAL_HIT_DEFERRED.value}: "
+            "View3D ray readback requires panel coordinates",
+        )
+    if (
+        request.layout_snapshot_id is not None
+        and request.layout_snapshot_id != snapshot.layout_snapshot_id
+    ) or (
+        request.view_snapshot_id is not None
+        and request.view_snapshot_id != snapshot.view_projection_snapshot_id
+    ):
+        return QueryResult(
+            request_id=request.id,
+            status=QueryStatus.STALE,
+            hit=False,
+            panel_coordinate=request.coordinate,
+            diagnostic=View3DDiagnosticCode.QUERY_3D_SNAPSHOT_MISMATCH.value,
+            layout_snapshot_id=snapshot.layout_snapshot_id,
+            view_snapshot_id=snapshot.view_projection_snapshot_id,
+        )
+    panel_ndc = _panel_coordinate_to_ndc(request.coordinate, panel_bounds)
+    near = unproject_view3d_panel_ndc_point(view, (panel_ndc[0], panel_ndc[1], -1.0))
+    far = unproject_view3d_panel_ndc_point(view, (panel_ndc[0], panel_ndc[1], 1.0))
+    ray_direction = _normalized3(_sub3(far, near))
+    payload = View3DQueryPayload(
+        view_id=snapshot.view_id,
+        view_revision=snapshot.view_revision,
+        layout_snapshot_id=snapshot.layout_snapshot_id,
+        view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+        panel_xy=request.coordinate,
+        panel_ndc=panel_ndc,
+        near_data_point=near,
+        far_data_point=far,
+        ray_direction=ray_direction,
+    )
+    return QueryResult(
+        request_id=request.id,
+        status=QueryStatus.HIT,
+        hit=True,
+        panel_coordinate=request.coordinate,
+        visual_coordinate=panel_ndc,
+        data_coordinate=(near[0], near[1]),
+        value={
+            "kind": "view3d-ray",
+            "view_id": snapshot.view_id,
+            "view_projection_snapshot_id": snapshot.view_projection_snapshot_id,
+        },
+        extension_payload_kind=VIEW3D_QUERY_PAYLOAD_KIND,
+        extension_payload=payload,
+        layout_snapshot_id=snapshot.layout_snapshot_id,
+        view_snapshot_id=snapshot.view_projection_snapshot_id,
     )
 
 
@@ -425,7 +504,11 @@ def _query_mesh_visual(
     transform_resources: Mapping[str, AffineTransform2DResource] | None,
 ) -> QueryResult | None:
     if visual.positions.shape[1] != 2:
-        return None
+        return unsupported_query_result(
+            request,
+            f"{View3DDiagnosticCode.QUERY_3D_VISUAL_HIT_DEFERRED.value}: "
+            "3D MeshVisual face picking is deferred in S036",
+        )
     color_mode = visual.resolved_color_mode()
     if color_mode is MeshColorMode.VERTEX:
         return None
@@ -545,6 +628,32 @@ def _point_in_triangle(point: np.ndarray, triangle: np.ndarray) -> bool:
     v = (dot00 * dot12 - dot01 * dot02) * inv_denominator
     epsilon = 1e-12
     return u >= -epsilon and v >= -epsilon and (u + v) <= 1.0 + epsilon
+
+
+def _panel_coordinate_to_ndc(
+    coordinate: tuple[float, float], bounds: tuple[float, float, float, float]
+) -> tuple[float, float]:
+    left, right, bottom, top = bounds
+    if right == left or top == bottom:
+        raise ValueError("panel_bounds must be non-degenerate")
+    x, y = coordinate
+    return (
+        -1.0 + 2.0 * (x - left) / (right - left),
+        -1.0 + 2.0 * (y - bottom) / (top - bottom),
+    )
+
+
+def _sub3(
+    left: tuple[float, float, float], right: tuple[float, float, float]
+) -> tuple[float, float, float]:
+    return (left[0] - right[0], left[1] - right[1], left[2] - right[2])
+
+
+def _normalized3(value: tuple[float, float, float]) -> tuple[float, float, float]:
+    norm = sqrt(value[0] * value[0] + value[1] * value[1] + value[2] * value[2])
+    if norm == 0.0:
+        raise ValueError("ray direction is degenerate")
+    return (value[0] / norm, value[1] / norm, value[2] / norm)
 
 
 def _mesh_face_rgba(

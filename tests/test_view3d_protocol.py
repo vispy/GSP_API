@@ -18,6 +18,7 @@ from gsp.protocol import (
     ViewKind,
     project_view3d_data_point,
     resolve_view3d_projection_snapshot,
+    unproject_view3d_panel_ndc_point,
 )
 
 
@@ -181,6 +182,30 @@ def test_view3d_projects_canonical_cube_vertices_to_ndc3():
     )
     assert project_view3d_data_point(view, (0.0, 0.0, -0.5)) == pytest.approx(
         (0.0, 0.0, 0.0)
+    )
+
+
+def test_view3d_unprojects_panel_ndc3_to_data_space():
+    view = View3D(
+        id="view:unproject",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 5.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-2.0, 2.0),
+            ylim=(-2.0, 2.0),
+            near_far=(1.0, 10.0),
+        ),
+    )
+
+    assert unproject_view3d_panel_ndc_point(view, (-1.0, -1.0, -1.0)) == pytest.approx(
+        (-2.0, -2.0, 4.0)
+    )
+    assert unproject_view3d_panel_ndc_point(view, (1.0, 1.0, 1.0)) == pytest.approx(
+        (2.0, 2.0, -5.0)
     )
 
 

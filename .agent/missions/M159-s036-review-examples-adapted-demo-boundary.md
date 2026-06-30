@@ -6,7 +6,7 @@ S036 - Static View3D, Orthographic Projection, and 3D Mesh Baseline
 
 ## Status
 
-Draft; depends on M154-M158.
+Ready; depends on completed M154-M158.
 
 ## Summary
 
@@ -27,4 +27,3 @@ navigation semantics.
 
 Stop if examples require public `View3DNavigationController`, perspective, materials/lights, or
 backend-native controller objects.
-

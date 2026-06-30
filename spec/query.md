@@ -241,3 +241,22 @@ source/local coordinate when invertible, DATA coordinate for DATA visuals, trans
 Strict support requires exact inverse semantics within numeric tolerance. A backend that can render a
 transform but cannot provide inverse coordinates must report `unsupported` or include
 `GSP_QUERY_INVERSE_UNSUPPORTED`; it must not silently return an untransformed coordinate.
+
+## S036 View3D ray payload
+
+S036 adds projection-inverse View3D ray readback without 3D visual picking. A successful ray context
+uses extension payload kind `gsp.view3d-query@0.1` and carries:
+
+- `view_id`;
+- `view_revision`;
+- `layout_snapshot_id`;
+- `view_projection_snapshot_id`;
+- panel logical `panel_xy`;
+- panel NDC `panel_ndc`;
+- near and far DATA points;
+- normalized DATA-space `ray_direction`.
+
+The query consumes panel coordinates and the current `View3DProjectionSnapshot`. If a request names
+a stale `layout_snapshot_id` or `view_snapshot_id`, the result is `stale` with
+`query_3d_snapshot_mismatch`. `MeshVisual` face picking for `(N, 3)` positions remains deferred and
+returns `unsupported` with `query_3d_visual_hit_deferred`.

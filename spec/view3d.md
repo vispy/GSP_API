@@ -217,7 +217,8 @@ Accepted S036 diagnostic vocabulary:
 
 ## Query Boundary
 
-S036 query/readback should return a deterministic projection-inverse ray context:
+S036 query/readback should return a deterministic projection-inverse ray context using payload kind
+`gsp.view3d-query@0.1`:
 
 - panel logical coordinate;
 - panel NDC coordinate;

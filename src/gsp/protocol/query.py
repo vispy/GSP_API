@@ -77,6 +77,7 @@ TEXT_QUERY_PAYLOAD_KIND = "gsp.text-query@0.1"
 MESH_QUERY_PAYLOAD_KIND = "gsp.mesh-query@0.1"
 SCALAR_COLOR_QUERY_PAYLOAD_KIND = "gsp.scalar-color-query@0.1"
 TRANSFORM_QUERY_PAYLOAD_KIND = "gsp.transform-query@0.1"
+VIEW3D_QUERY_PAYLOAD_KIND = "gsp.view3d-query@0.1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -224,6 +225,36 @@ class TransformQueryPayload:
         for diagnostic in self.diagnostics:
             if not diagnostic:
                 raise ValueError("diagnostics must not contain empty strings")
+
+
+@dataclass(frozen=True, slots=True)
+class View3DQueryPayload:
+    """S036 projection-inverse ray context for one View3D panel query."""
+
+    view_id: str
+    view_revision: int
+    layout_snapshot_id: str
+    view_projection_snapshot_id: str
+    panel_xy: tuple[float, float]
+    panel_ndc: tuple[float, float]
+    near_data_point: tuple[float, float, float]
+    far_data_point: tuple[float, float, float]
+    ray_direction: tuple[float, float, float]
+
+    def __post_init__(self) -> None:
+        validate_id(self.view_id)
+        validate_id(self.layout_snapshot_id)
+        validate_id(self.view_projection_snapshot_id)
+        if self.view_revision < 0:
+            raise ValueError("view_revision must be non-negative")
+        _validate_finite_pair("panel_xy", self.panel_xy)
+        _validate_finite_pair("panel_ndc", self.panel_ndc)
+        _validate_finite_triple("near_data_point", self.near_data_point)
+        _validate_finite_triple("far_data_point", self.far_data_point)
+        _validate_finite_triple("ray_direction", self.ray_direction)
+        norm = float(np.linalg.norm(np.asarray(self.ray_direction, dtype=np.float64)))
+        if not np.isclose(norm, 1.0):
+            raise ValueError("ray_direction must be normalized")
 
 
 @dataclass(frozen=True, slots=True)
@@ -416,6 +447,11 @@ def _set_if_none(result: QueryResult, field_name: str, value: object | None) -> 
 def _validate_finite_pair(name: str, value: tuple[float, float]) -> None:
     if len(value) != 2 or not all(np.isfinite(component) for component in value):
         raise ValueError(f"{name} must contain two finite values")
+
+
+def _validate_finite_triple(name: str, value: tuple[float, float, float]) -> None:
+    if len(value) != 3 or not all(np.isfinite(component) for component in value):
+        raise ValueError(f"{name} must contain three finite values")
 
 
 def _validate_optional_finite_pair(

@@ -153,6 +153,7 @@ from .view3d import (
     View3DProjectionSnapshot,
     project_view3d_data_point,
     resolve_view3d_projection_snapshot,
+    unproject_view3d_panel_ndc_point,
     validate_projection3d_range,
 )
 from .query import (
@@ -161,6 +162,7 @@ from .query import (
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     TEXT_QUERY_PAYLOAD_KIND,
     TRANSFORM_QUERY_PAYLOAD_KIND,
+    VIEW3D_QUERY_PAYLOAD_KIND,
     GuideQueryPayload,
     MeshQueryPayload,
     QueryContributionKind,
@@ -174,6 +176,7 @@ from .query import (
     QueryStatus,
     ScalarColorQueryPayload,
     TransformQueryPayload,
+    View3DQueryPayload,
     VisualFamily,
 )
 from .resources import (
@@ -436,10 +439,12 @@ __all__ = [
     "View3D",
     "View3DDiagnosticCode",
     "View3DProjectionSnapshot",
+    "VIEW3D_QUERY_PAYLOAD_KIND",
     "VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY",
     "View2DNavigationController",
     "View2DNavigationInputAdapter",
     "ViewKind",
+    "View3DQueryPayload",
     "ViewportMosaicResult",
     "ViewportTileRequest",
     "VisualAttachment",
@@ -463,6 +468,7 @@ __all__ = [
     "validate_extension_manifest",
     "validate_id",
     "validate_projection3d_range",
+    "unproject_view3d_panel_ndc_point",
     "validate_affine_2d_matrix",
     "validate_no_network_source_descriptor",
     "validate_s022_npy_decoder_payload",

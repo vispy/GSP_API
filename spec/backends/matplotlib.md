@@ -171,3 +171,8 @@ and are not part of the strict M157 fixture.
 This path provides projection/rendering coverage and an adapted face-order fixture only. It must not
 be advertised as strict `meshvisual.positions3d.opaque_depth.v1` support until S036 depth fixtures
 prove accepted fragment-depth semantics.
+
+`gsp_matplotlib.protocol_query.query_view3d_ray_context()` provides the S036 reference
+projection-inverse query path. It returns `gsp.view3d-query@0.1` payloads for panel coordinates,
+reports `query_3d_snapshot_mismatch` for stale layout/view-projection snapshots, and keeps `(N, 3)`
+`MeshVisual` face picking deferred with `query_3d_visual_hit_deferred`.

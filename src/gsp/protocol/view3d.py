@@ -190,6 +190,27 @@ def project_view3d_data_point(view: View3D, point: Float3) -> Float3:
     )
 
 
+def unproject_view3d_panel_ndc_point(view: View3D, point: Float3) -> Float3:
+    """Unproject one panel NDC3 point into DATA space."""
+    if not isinstance(view, View3D):
+        raise TypeError("view must be a View3D")
+    _validate_float3("point", point)
+    basis = view.camera.basis()
+    x0, x1 = view.projection.xlim
+    y0, y1 = view.projection.ylim
+    near, far = view.projection.near_far
+    camera_x = x0 + (point[0] + 1.0) * 0.5 * (x1 - x0)
+    camera_y = y0 + (point[1] + 1.0) * 0.5 * (y1 - y0)
+    camera_z = near + (point[2] + 1.0) * 0.5 * (far - near)
+    return _add3(
+        view.camera.eye,
+        _add3(
+            _scale3(basis.right, camera_x),
+            _add3(_scale3(basis.true_up, camera_y), _scale3(basis.forward, camera_z)),
+        ),
+    )
+
+
 def resolve_view3d_projection_snapshot(
     view: View3D, *, layout_snapshot_id: str
 ) -> View3DProjectionSnapshot:
@@ -253,6 +274,14 @@ def _validate_float3(name: str, value: Float3) -> None:
 
 def _sub3(left: Float3, right: Float3) -> Float3:
     return (left[0] - right[0], left[1] - right[1], left[2] - right[2])
+
+
+def _add3(left: Float3, right: Float3) -> Float3:
+    return (left[0] + right[0], left[1] + right[1], left[2] + right[2])
+
+
+def _scale3(value: Float3, scale: float) -> Float3:
+    return (value[0] * scale, value[1] * scale, value[2] * scale)
 
 
 def _cross3(left: Float3, right: Float3) -> Float3:

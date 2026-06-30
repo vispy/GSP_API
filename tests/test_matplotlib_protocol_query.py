@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 
 from gsp.protocol import (
+    Camera3D,
     ColorMapId,
     ColorMapRef,
     ColorScale,
@@ -19,8 +20,10 @@ from gsp.protocol import (
     MeshVisual,
     MarkerShape,
     MarkerVisual,
+    OrthographicProjection3D,
     PointVisual,
     QueryContributionKind,
+    QueryCoordinateSpace,
     QueryHit,
     QueryHitPolicy,
     QueryRequest,
@@ -33,19 +36,43 @@ from gsp.protocol import (
     ScalarRangeClass,
     TEXT_QUERY_PAYLOAD_KIND,
     TRANSFORM_QUERY_PAYLOAD_KIND,
+    VIEW3D_QUERY_PAYLOAD_KIND,
     TextVisual,
     TransformQueryPayload,
     View2D,
+    View3D,
+    View3DDiagnosticCode,
+    View3DQueryPayload,
     VisualFamily,
     VisualTransformBinding,
+    resolve_view3d_projection_snapshot,
 )
 from gsp_matplotlib.color_mapping import map_scalar_value
 from gsp_matplotlib.protocol_query import (
     QueryVisualEntry,
     failed_query_result,
+    query_view3d_ray_context,
     query_visuals,
     unsupported_query_result,
 )
+
+
+def _canonical_query_view3d() -> View3D:
+    return View3D(
+        id="view:main",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 1.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-1.0, 1.0),
+            ylim=(-1.0, 1.0),
+            near_far=(0.0, 2.0),
+        ),
+        revision=3,
+    )
 
 
 def test_query_returns_frontmost_point_over_image():
@@ -357,6 +384,121 @@ def test_query_returns_mesh_face_payload():
         coordinate_space="data",
         displayed_rgba=(0.0, 0.0, 1.0, 128 / 255.0),
     )
+
+
+def test_query_3d_mesh_visual_returns_deferred_picking_diagnostic():
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [-1.0, 1.0, 0.0]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    result = query_visuals(
+        QueryRequest(id="query:mesh3d", panel_id="panel:main", coordinate=(0.0, 0.0)),
+        [QueryVisualEntry(mesh)],
+    )
+
+    assert result.status == QueryStatus.UNSUPPORTED
+    assert result.diagnostic is not None
+    assert View3DDiagnosticCode.QUERY_3D_VISUAL_HIT_DEFERRED.value in result.diagnostic
+
+
+def test_query_view3d_ray_context_returns_center_ray_payload():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    request = QueryRequest(
+        id="query:ray",
+        panel_id="panel:main",
+        coordinate=(50.0, 50.0),
+        coordinate_space=QueryCoordinateSpace.PANEL,
+        layout_snapshot_id=snapshot.layout_snapshot_id,
+        view_snapshot_id=snapshot.view_projection_snapshot_id,
+    )
+
+    result = query_view3d_ray_context(
+        request,
+        view,
+        snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.extension_payload_kind == VIEW3D_QUERY_PAYLOAD_KIND
+    assert result.layout_snapshot_id == snapshot.layout_snapshot_id
+    assert result.view_snapshot_id == snapshot.view_projection_snapshot_id
+    assert result.extension_payload == View3DQueryPayload(
+        view_id=view.id,
+        view_revision=view.revision,
+        layout_snapshot_id=snapshot.layout_snapshot_id,
+        view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+        panel_xy=(50.0, 50.0),
+        panel_ndc=(0.0, 0.0),
+        near_data_point=(0.0, 0.0, 1.0),
+        far_data_point=(0.0, 0.0, -1.0),
+        ray_direction=(0.0, 0.0, -1.0),
+    )
+
+
+def test_query_view3d_ray_context_returns_corner_ray_payload():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    request = QueryRequest(
+        id="query:ray",
+        panel_id="panel:main",
+        coordinate=(100.0, 100.0),
+        coordinate_space=QueryCoordinateSpace.PANEL,
+    )
+
+    result = query_view3d_ray_context(
+        request,
+        view,
+        snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+
+    assert result.status == QueryStatus.HIT
+    payload = result.extension_payload
+    assert isinstance(payload, View3DQueryPayload)
+    assert payload.panel_ndc == pytest.approx((1.0, 1.0))
+    assert payload.near_data_point == pytest.approx((1.0, 1.0, 1.0))
+    assert payload.far_data_point == pytest.approx((1.0, 1.0, -1.0))
+    assert payload.ray_direction == pytest.approx((0.0, 0.0, -1.0))
+
+
+def test_query_view3d_ray_context_reports_stale_snapshot_mismatch():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    request = QueryRequest(
+        id="query:ray",
+        panel_id="panel:main",
+        coordinate=(50.0, 50.0),
+        coordinate_space=QueryCoordinateSpace.PANEL,
+        layout_snapshot_id="layout:stale",
+        view_snapshot_id=snapshot.view_projection_snapshot_id,
+    )
+
+    result = query_view3d_ray_context(
+        request,
+        view,
+        snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+
+    assert result.status == QueryStatus.STALE
+    assert result.diagnostic == View3DDiagnosticCode.QUERY_3D_SNAPSHOT_MISMATCH.value
+    assert result.layout_snapshot_id == snapshot.layout_snapshot_id
+    assert result.view_snapshot_id == snapshot.view_projection_snapshot_id
 
 
 def test_query_returns_uniform_mesh_color_and_frontmost_order():
