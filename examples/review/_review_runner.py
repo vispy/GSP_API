@@ -41,6 +41,7 @@ from gsp.protocol import (
     View2D,
     View2DNavigationController,
     View2DNavigationInputAdapter,
+    View3D,
 )
 from gsp_datoviz.protocol_renderer import DatovizV04ProtocolRenderer, DatovizV04Unavailable
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
@@ -74,6 +75,7 @@ class ReviewScene:
     title: str
     visuals: tuple[Visual, ...]
     view: View2D | None = None
+    view3d: View3D | None = None
     axis_guides: tuple[AxisGuide, ...] = ()
     panel_text_guides: tuple[PanelTextGuide, ...] = ()
     color_scales: tuple[ColorScale, ...] = ()
@@ -287,7 +289,7 @@ def _render_matplotlib_scene(
     _configure_matplotlib_axes(ax, scene)
     for visual in scene.visuals:
         _render_matplotlib_visual(
-            ax, visual, color_scales=color_scales, view=scene.view
+            ax, visual, color_scales=color_scales, view=scene.view, view3d=scene.view3d
         )
     for guide in scene.colorbar_guides:
         render_colorbar_guide(ax, guide, color_scales=color_scales)
@@ -305,6 +307,7 @@ def _render_matplotlib_visual(
     *,
     color_scales: dict[str, ColorScale],
     view: View2D | None,
+    view3d: View3D | None,
 ) -> None:
     if isinstance(visual, PointVisual):
         render_point_visual(ax, visual, color_scales=color_scales, view=view)
@@ -317,7 +320,7 @@ def _render_matplotlib_visual(
     elif isinstance(visual, TextVisual):
         render_text_visual(ax, visual, view=view)
     elif isinstance(visual, MeshVisual):
-        render_mesh_visual(ax, visual, view=view)
+        render_mesh_visual(ax, visual, view=view, view3d=view3d)
     else:  # pragma: no cover - typing guard for new visuals.
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
 

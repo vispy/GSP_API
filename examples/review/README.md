@@ -30,7 +30,8 @@ uv run python examples/review/01_scatter_basic.py --backend matplotlib --interac
 uv run python examples/review/01_scatter_basic.py --backend datoviz --interactive-navigation
 ```
 
-Open all six review examples with 2D interactivity, one example after another:
+Open all numbered review examples with 2D interactivity where a `View2D` is present, one example
+after another:
 
 ```bash
 tools/compare-review-examples --interactive-navigation
@@ -44,7 +45,8 @@ tools/compare-review-examples --live-side-by-side --interactive-navigation examp
 
 If the local Datoviz v0.4 build does not expose the live pointer-input binding, the Datoviz window
 still opens as a normal live review window and prints a message that GSP navigation is unavailable.
-Matplotlib remains the strict interactive review path for the six examples.
+Matplotlib remains the strict interactive review path for 2D `View2D` examples. S036 View3D
+examples are static; this flag does not introduce public 3D navigation semantics.
 
 Capture and compare offscreen outputs:
 
@@ -82,6 +84,12 @@ inch. Matplotlib live review keeps using the reference DPI for its figure size; 
 | `04_guides_axes_ticks.py` | Explicit ticks, tick labels, axis labels, grid, title |
 | `05_color_mapping_colorbar.py` | ColorScale, ScalarColorEncoding, named colormap, colorbar |
 | `06_text_labels.py` | TextVisual labels, anchors, z-order over points |
+| `07_view3d_cube.py` | Static `(N,3)` DATA cube projected through `View3D` |
+| `08_view3d_terrain.py` | Static terrain-like `(N,3)` DATA mesh with per-face colors |
+| `09_view3d_ndc_depth.py` | `(N,3)` NDC mesh with adapted opaque face-depth ordering |
+
+The non-default `s036_alpha_not_strict_negative.py` script checks that translucent 3D mesh colors
+raise `mesh3d_alpha_not_strict` in the opaque-depth path.
 
 ## Manual Review Checklist
 

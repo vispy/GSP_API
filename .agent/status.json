@@ -215,7 +215,7 @@
       "id": "S036",
       "title": "Static View3D, Orthographic Projection, and 3D Mesh Baseline",
       "state": "active",
-      "progress": 75
+      "progress": 90
     }
   ],
   "missions": [
@@ -1636,16 +1636,16 @@
       "id": "M159",
       "title": "S036 review examples and adapted demo boundary",
       "stage": "S036",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 159
     },
     {
       "id": "M160",
       "title": "S036 closeout and S037 recommendation",
       "stage": "S036",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 160

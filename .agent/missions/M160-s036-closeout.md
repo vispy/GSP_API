@@ -6,7 +6,7 @@ S036 - Static View3D, Orthographic Projection, and 3D Mesh Baseline
 
 ## Status
 
-Draft; depends on M154-M159.
+Ready; depends on completed M154-M159.
 
 ## Summary
 
@@ -25,4 +25,3 @@ complete or explicitly unsupported with diagnostics.
 ## Stop Condition
 
 Stop before opening S037 if public 3D navigation still needs a new ChatGPT Pro consultation.
-
