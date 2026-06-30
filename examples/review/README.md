@@ -23,6 +23,29 @@ Open Matplotlib and Datoviz live windows at the same time:
 tools/compare-review-examples --live-side-by-side examples/review/01_scatter_basic.py
 ```
 
+Open a live example with S035 View2D drag-to-pan and wheel-to-zoom:
+
+```bash
+uv run python examples/review/01_scatter_basic.py --backend matplotlib --interactive-navigation
+uv run python examples/review/01_scatter_basic.py --backend datoviz --interactive-navigation
+```
+
+Open all six review examples with 2D interactivity, one example after another:
+
+```bash
+tools/compare-review-examples --interactive-navigation
+```
+
+Open Matplotlib and Datoviz interactive windows side by side for one example:
+
+```bash
+tools/compare-review-examples --live-side-by-side --interactive-navigation examples/review/01_scatter_basic.py
+```
+
+If the local Datoviz v0.4 build does not expose the live pointer-input binding, the Datoviz window
+still opens as a normal live review window and prints a message that GSP navigation is unavailable.
+Matplotlib remains the strict interactive review path for the six examples.
+
 Capture and compare offscreen outputs:
 
 ```bash

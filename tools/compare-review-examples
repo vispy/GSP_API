@@ -25,10 +25,17 @@ def main() -> int:
     )
     parser.add_argument("--datoviz-offscreen", action="store_true", dest="offscreen", help="Deprecated alias for --offscreen.")
     parser.add_argument("--resolution", default=REVIEW_DEFAULT_RESOLUTION)
+    parser.add_argument(
+        "--interactive-navigation",
+        action="store_true",
+        help="In live mode, enable S035 View2D drag-to-pan and wheel-to-zoom.",
+    )
     parser.set_defaults(offscreen=False)
     args = parser.parse_args()
     if args.offscreen and args.live_side_by_side:
         parser.error("--live-side-by-side cannot be combined with --offscreen")
+    if args.offscreen and args.interactive_navigation:
+        parser.error("--interactive-navigation requires live mode")
 
     examples = args.examples or sorted(Path("examples/review").glob("[0-9]*.py"))
     if not examples:
@@ -39,7 +46,12 @@ def main() -> int:
     for example in examples:
         out_dir = Path("artifacts/example_review") / example.stem
         if args.live_side_by_side:
-            failures += _run_parallel_live(example, out_dir, args.resolution)
+            failures += _run_parallel_live(
+                example,
+                out_dir,
+                args.resolution,
+                interactive_navigation=args.interactive_navigation,
+            )
             continue
         cmd = [
             "uv",
@@ -55,6 +67,8 @@ def main() -> int:
         ]
         if args.offscreen:
             cmd.append("--offscreen")
+        if args.interactive_navigation:
+            cmd.append("--interactive-navigation")
         print(f"==> {example}", flush=True)
         result = subprocess.run(cmd, check=False)
         if result.returncode != 0:
@@ -62,7 +76,9 @@ def main() -> int:
     return 1 if failures else 0
 
 
-def _run_parallel_live(example: Path, out_dir: Path, resolution: str) -> int:
+def _run_parallel_live(
+    example: Path, out_dir: Path, resolution: str, *, interactive_navigation: bool
+) -> int:
     """Run both live backends concurrently for one review example."""
     processes: list[subprocess.Popen[bytes]] = []
     for backend in ("matplotlib", "datoviz"):
@@ -79,6 +95,8 @@ def _run_parallel_live(example: Path, out_dir: Path, resolution: str) -> int:
             "--resolution",
             resolution,
         ]
+        if interactive_navigation:
+            cmd.append("--interactive-navigation")
         processes.append(subprocess.Popen(cmd))
 
     try:

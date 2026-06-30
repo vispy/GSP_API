@@ -7,13 +7,13 @@ backend selection, live display, screenshots, and comparison artifacts.
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import json
 import os
 from pathlib import Path
 import sys
 import traceback
-from typing import Callable
+from typing import Any, Callable
 
 import numpy as np
 
@@ -25,8 +25,11 @@ from gsp.protocol import (
     ColorbarGuide,
     CoordinateSpace,
     ImageVisual,
+    LogicalPixelRect,
     MarkerVisual,
     MeshVisual,
+    NavigationPointerEvent,
+    NavigationPointerEventKind,
     PanelTextGuide,
     PanelTextRole,
     PointVisual,
@@ -36,9 +39,12 @@ from gsp.protocol import (
     TextVisual,
     TickSpecKind,
     View2D,
+    View2DNavigationController,
+    View2DNavigationInputAdapter,
 )
-from gsp_datoviz.protocol_renderer import DatovizV04ProtocolRenderer
+from gsp_datoviz.protocol_renderer import DatovizV04ProtocolRenderer, DatovizV04Unavailable
 from gsp_matplotlib.guides import render_axis_guides, render_panel_text_guides
+from gsp_matplotlib.navigation import apply_view2d_navigation_action
 from gsp_matplotlib.protocol_renderer import (
     render_colorbar_guide,
     render_image_visual,
@@ -88,7 +94,15 @@ def run_review(builder: SceneBuilder) -> int:
     live = not args.offscreen
     for backend in backends:
         if backend == "matplotlib":
-            statuses.append(_run_matplotlib(scene, out_dir, args.resolution, live=live))
+            statuses.append(
+                _run_matplotlib(
+                    scene,
+                    out_dir,
+                    args.resolution,
+                    live=live,
+                    interactive_navigation=args.interactive_navigation,
+                )
+            )
         else:
             statuses.append(
                 _run_datoviz(
@@ -98,6 +112,7 @@ def run_review(builder: SceneBuilder) -> int:
                     live=live,
                     frames=args.frames,
                     allow_offscreen=args.offscreen,
+                    interactive_navigation=args.interactive_navigation,
                 )
             )
     if args.offscreen and len(statuses) > 1:
@@ -151,8 +166,16 @@ def _parse_args() -> argparse.Namespace:
         dest="offscreen",
         help="Deprecated alias for --offscreen.",
     )
+    parser.add_argument(
+        "--interactive-navigation",
+        action="store_true",
+        help="In live mode, enable S035 View2D drag-to-pan and wheel-to-zoom when the scene has a View2D.",
+    )
     parser.set_defaults(offscreen=False)
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.offscreen and args.interactive_navigation:
+        parser.error("--interactive-navigation requires live mode")
+    return args
 
 
 def _parse_resolution(value: str) -> tuple[int, int]:
@@ -169,7 +192,12 @@ def _parse_resolution(value: str) -> tuple[int, int]:
 
 
 def _run_matplotlib(
-    scene: ReviewScene, out_dir: Path, resolution: tuple[int, int], *, live: bool
+    scene: ReviewScene,
+    out_dir: Path,
+    resolution: tuple[int, int],
+    *,
+    live: bool,
+    interactive_navigation: bool,
 ) -> dict[str, object]:
     import matplotlib
 
@@ -191,21 +219,17 @@ def _run_matplotlib(
     )
     setattr(fig, "_gsp_resolved_canvas", resolved_canvas)
     try:
-        _configure_matplotlib_axes(ax, scene)
         color_scales = {scale.id: scale for scale in scene.color_scales}
-        for visual in scene.visuals:
-            _render_matplotlib_visual(
-                ax, visual, color_scales=color_scales, view=scene.view
-            )
-        for guide in scene.colorbar_guides:
-            render_colorbar_guide(ax, guide, color_scales=color_scales)
-        if scene.view is not None and scene.axis_guides:
-            render_axis_guides(ax, scene.view, scene.axis_guides)
-        if scene.panel_text_guides:
-            render_panel_text_guides(ax, scene.panel_text_guides)
-        if scene.axis_guides or scene.panel_text_guides or scene.colorbar_guides:
-            fig.tight_layout(pad=0.8)
+        _render_matplotlib_scene(fig, ax, scene, color_scales=color_scales)
         if live:
+            if interactive_navigation and scene.view is not None:
+                session = _MatplotlibReviewNavigationSession(
+                    fig, ax, scene, color_scales=color_scales
+                )
+                session.connect()
+                print(
+                    "Matplotlib GSP navigation enabled: drag to pan, wheel to zoom."
+                )
             plt.show()
         else:
             fig.savefig(
@@ -249,6 +273,32 @@ def _configure_matplotlib_axes(ax: object, scene: ReviewScene) -> None:
         ax.set_axis_off()
 
 
+def _render_matplotlib_scene(
+    fig: object,
+    ax: object,
+    scene: ReviewScene,
+    *,
+    color_scales: dict[str, ColorScale],
+) -> None:
+    for extra_ax in list(fig.axes):
+        if extra_ax is not ax:
+            extra_ax.remove()
+    ax.clear()
+    _configure_matplotlib_axes(ax, scene)
+    for visual in scene.visuals:
+        _render_matplotlib_visual(
+            ax, visual, color_scales=color_scales, view=scene.view
+        )
+    for guide in scene.colorbar_guides:
+        render_colorbar_guide(ax, guide, color_scales=color_scales)
+    if scene.view is not None and scene.axis_guides:
+        render_axis_guides(ax, scene.view, scene.axis_guides)
+    if scene.panel_text_guides:
+        render_panel_text_guides(ax, scene.panel_text_guides)
+    if scene.axis_guides or scene.panel_text_guides or scene.colorbar_guides:
+        fig.tight_layout(pad=0.8)
+
+
 def _render_matplotlib_visual(
     ax: object,
     visual: Visual,
@@ -272,6 +322,139 @@ def _render_matplotlib_visual(
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
 
 
+class _MatplotlibReviewNavigationSession:
+    """Attach S035 View2D navigation to a live Matplotlib review scene."""
+
+    def __init__(
+        self,
+        fig: Any,
+        ax: Any,
+        scene: ReviewScene,
+        *,
+        color_scales: dict[str, ColorScale],
+    ) -> None:
+        if scene.view is None:
+            raise ValueError("interactive navigation requires a View2D")
+        self.fig = fig
+        self.ax = ax
+        self.scene = scene
+        self.color_scales = color_scales
+        self.view = scene.view
+        self.revision_index = 1
+        self.controller = View2DNavigationController(
+            id="nav:review",
+            panel_id=self.view.panel_id,
+            view_id=self.view.id,
+            current_view2d_revision="view-rev:1",
+            home_view=self.view,
+        )
+        self.adapter = View2DNavigationInputAdapter(
+            controller_id=self.controller.id,
+            view2d_revision=self.controller.current_view2d_revision,
+            panel_rect=self._panel_rect(),
+            layout_snapshot_id="layout:matplotlib-review-live",
+        )
+
+    def connect(self) -> None:
+        self.fig.canvas.mpl_connect("button_press_event", self.on_button_press)
+        self.fig.canvas.mpl_connect("button_release_event", self.on_button_release)
+        self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
+        self.fig.canvas.mpl_connect("scroll_event", self.on_scroll)
+
+    def on_button_press(self, event: Any) -> None:
+        if event.inaxes is not self.ax or event.x is None or event.y is None:
+            return
+        self.adapter.set_panel_rect(self._panel_rect())
+        self.adapter.handle_pointer_event(
+            NavigationPointerEvent(
+                kind=NavigationPointerEventKind.BUTTON_PRESS,
+                x_px=float(event.x),
+                y_px=float(event.y),
+                left_button=event.button == 1,
+            )
+        )
+
+    def on_button_release(self, event: Any) -> None:
+        if event.x is None or event.y is None:
+            return
+        self.adapter.handle_pointer_event(
+            NavigationPointerEvent(
+                kind=NavigationPointerEventKind.BUTTON_RELEASE,
+                x_px=float(event.x),
+                y_px=float(event.y),
+            )
+        )
+
+    def on_motion(self, event: Any) -> None:
+        if event.inaxes is not self.ax or event.x is None or event.y is None:
+            return
+        self._apply_event(
+            NavigationPointerEvent(
+                kind=NavigationPointerEventKind.MOUSE_MOVE,
+                x_px=float(event.x),
+                y_px=float(event.y),
+            )
+        )
+
+    def on_scroll(self, event: Any) -> None:
+        if event.inaxes is not self.ax or event.x is None or event.y is None:
+            return
+        self.adapter.set_panel_rect(self._panel_rect())
+        self._apply_event(
+            NavigationPointerEvent(
+                kind=NavigationPointerEventKind.WHEEL,
+                x_px=float(event.x),
+                y_px=float(event.y),
+                scroll_steps=float(event.step),
+            )
+        )
+
+    def _apply_event(self, event: NavigationPointerEvent) -> None:
+        action = self.adapter.handle_pointer_event(event)
+        if action is None:
+            return
+        result = apply_view2d_navigation_action(
+            self.controller,
+            self.view,
+            self.adapter.panel_rect,
+            action,
+            next_view2d_revision=self._next_revision(),
+            view_snapshot_id=f"view-snapshot:{self.revision_index}",
+            expected_layout_snapshot_id="layout:matplotlib-review-live",
+        )
+        if (
+            not result.accepted
+            or result.view is None
+            or result.new_view2d_revision is None
+        ):
+            print(f"navigation rejected: {result.diagnostics}")
+            return
+        self.view = result.view
+        self.scene = replace(self.scene, view=self.view)
+        self.controller = replace(
+            self.controller, current_view2d_revision=result.new_view2d_revision
+        )
+        self.adapter.accept_navigation_result(result)
+        _render_matplotlib_scene(
+            self.fig, self.ax, self.scene, color_scales=self.color_scales
+        )
+        self.fig.canvas.draw_idle()
+
+    def _next_revision(self) -> str:
+        self.revision_index += 1
+        return f"view-rev:{self.revision_index}"
+
+    def _panel_rect(self) -> LogicalPixelRect:
+        self.fig.canvas.draw()
+        bbox = self.ax.bbox
+        return LogicalPixelRect(
+            x=float(bbox.x0),
+            y=float(bbox.y0),
+            width=float(bbox.width),
+            height=float(bbox.height),
+        )
+
+
 def _run_datoviz(
     scene: ReviewScene,
     out_dir: Path,
@@ -280,6 +463,7 @@ def _run_datoviz(
     live: bool,
     frames: int,
     allow_offscreen: bool,
+    interactive_navigation: bool,
 ) -> dict[str, object]:
     path = out_dir / "datoviz.png"
     unsupported_path = out_dir / "datoviz.unsupported.json"
@@ -320,6 +504,18 @@ def _run_datoviz(
             for visual in _panel_text_as_text_visuals(scene.panel_text_guides):
                 renderer.add_text_visual(visual)
             if live:
+                if interactive_navigation and scene.view is not None:
+                    try:
+                        renderer.enable_gsp_view2d_navigation(scene.view)
+                    except DatovizV04Unavailable as exc:
+                        print(
+                            "Datoviz GSP navigation unavailable; opening static live window: "
+                            f"{exc}"
+                        )
+                    else:
+                        print(
+                            "Datoviz GSP navigation enabled: drag to pan, wheel to zoom."
+                        )
                 renderer.show(frame_count=frames)
             else:
                 path.write_bytes(renderer.capture_png_bytes())
