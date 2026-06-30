@@ -221,7 +221,7 @@
       "id": "S037",
       "title": "Legacy 3D Reuse, Datoviz View3D Binding, and Public 3D Interaction",
       "state": "active",
-      "progress": 35
+      "progress": 45
     },
     {
       "id": "S038",
@@ -1702,16 +1702,16 @@
       "id": "M165",
       "title": "S037 Datoviz View3D evidence spike",
       "stage": "S037",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 165
     },
     {
       "id": "M166",
       "title": "S037 Datoviz static View3D mesh binding",
       "stage": "S037",
-      "state": "draft",
+      "state": "blocked",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 166
@@ -1720,7 +1720,7 @@
       "id": "M167",
       "title": "S037 Datoviz query ray readback parity",
       "stage": "S037",
-      "state": "draft",
+      "state": "blocked",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 167
@@ -1729,7 +1729,7 @@
       "id": "M168",
       "title": "S037 public examples and docs",
       "stage": "S037",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 168
@@ -1811,11 +1811,12 @@
     }
   ],
   "recommendations": [
-    "Run M163 next: implement View3D navigation protocol dataclasses and pure reducers.",
+    "Run M168 next: update public examples/docs and close out S037 around Matplotlib View3D navigation plus Datoviz unsupported evidence.",
     "Keep materials/lights/textures deferred to future S038/S039/S040 specs; review-only demos must not be capability evidence.",
-    "Do not claim Datoviz public 3D support until M165/M166 evidence proves retained View3D DATA/NDC3/depth semantics."
+    "Keep M166/M167 blocked until Datoviz exposes Python-bindable Camera3D-equivalent fields/factories and retained View3D DATA/NDC3/depth evidence passes."
   ],
   "notes": [
+    "M165 completed: Datoviz exposes promising camera/depth symbols but lacks Python-bindable DvzCameraView/DvzCameraDesc fields/factories and full S036 x/y orthographic bounds evidence; M166/M167 remain blocked.",
     "M164 completed: added Matplotlib live review View3D navigation adapter using canonical S037 actions/results; left-drag orbit, right/middle-drag pan, wheel zoom, and r reset.",
     "M163 completed: added protocol-only View3D navigation action/result dataclasses, orbit/pan/zoom/set/reset reducers, snapshot freshness enforcement, exports, and focused tests.",
     "M162 completed: archived P021 response, accepted S037 as View3D navigation plus Datoviz View3D binding, added ADR-0024, S037 decision record, View3D navigation spec, and capability wording updates.",
