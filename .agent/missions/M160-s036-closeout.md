@@ -6,7 +6,7 @@ S036 - Static View3D, Orthographic Projection, and 3D Mesh Baseline
 
 ## Status
 
-Ready; depends on completed M154-M159.
+Completed.
 
 ## Summary
 
@@ -25,3 +25,12 @@ complete or explicitly unsupported with diagnostics.
 ## Stop Condition
 
 Stop before opening S037 if public 3D navigation still needs a new ChatGPT Pro consultation.
+
+## Result
+
+- Added `.agent/S036_CLOSEOUT.md`.
+- Updated `spec/backend_capabilities_visuals.md` with S036 capability gates and backend status.
+- Confirmed `SPEC_INDEX.md` points at the View3D spec and added the S036 closeout report.
+- Marked S036 and M160 complete in Mission Control status.
+- Recommended that S037 begin with a ChatGPT Pro consultation before public View3D navigation is
+  opened.

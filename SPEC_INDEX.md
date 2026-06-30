@@ -52,6 +52,7 @@ This file tells agents where to find authoritative design information.
 | View2D navigation actions ADR | adr/ADR-0022-view2d-navigation-actions.md |
 | Static View3D orthographic ADR | adr/ADR-0023-static-view3d-orthographic-baseline.md |
 | S036 View3D decision | .agent/decisions/S036_view3d_contracts.md |
+| S036 closeout | .agent/S036_CLOSEOUT.md |
 | S035 View2D navigation decision | .agent/decisions/S035_view2d_navigation_contracts.md |
 | S029 resolved layout decision | .agent/decisions/S029_resolved_layout_contracts.md |
 | S027 transform/view decision | .agent/decisions/S027_transform_view_contracts.md |

@@ -214,8 +214,8 @@
     {
       "id": "S036",
       "title": "Static View3D, Orthographic Projection, and 3D Mesh Baseline",
-      "state": "active",
-      "progress": 90
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -1645,9 +1645,9 @@
       "id": "M160",
       "title": "S036 closeout and S037 recommendation",
       "stage": "S036",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 160
     }
   ],

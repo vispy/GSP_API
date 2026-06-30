@@ -1,6 +1,6 @@
 # S036 Scoping - Static View3D, Orthographic Projection, and 3D Mesh Baseline
 
-Status: opened.
+Status: completed. See `.agent/S036_CLOSEOUT.md`.
 
 ## Decision
 
@@ -48,4 +48,3 @@ S036 should add:
   objects as public protocol fields.
 - Stop if strict 3D mesh picking is needed before the projection/ray readback contract is accepted.
 - Stop if existing `(N, 2)` mesh or `View2D` behavior would regress.
-

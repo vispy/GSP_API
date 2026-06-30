@@ -128,3 +128,27 @@ uv run python examples/protocol_view2d_navigation.py --backend matplotlib
 uv run python examples/protocol_view2d_navigation.py --backend matplotlib --scripted-smoke
 uv run python tools/s035_navigation_smoke.py --backend both --steps 40 --points 25000
 ```
+
+## S036 View3D and 3D Mesh capability gates
+
+A backend may claim `view3d.static.orthographic.v1` only when it accepts public `View3D` state with
+`Camera3D(eye, target, up)` and `OrthographicProjection3D` without exposing backend-native camera or
+controller objects. `(N, 3)` `MeshVisual` DATA and NDC rendering are separately gated by
+`meshvisual.positions3d.data.view3d.v1` and `meshvisual.positions3d.ndc.v1`.
+
+Strict `meshvisual.positions3d.opaque_depth.v1` requires accepted nearer-fragment-wins semantics for
+opaque meshes. Adapted face ordering, painter sorting, or unverified clipping must not be advertised
+as strict opaque-depth support. Query ray readback is gated by `query.view3d.ray_readback.v1` and
+does not imply 3D mesh picking.
+
+Current S036 support summary:
+
+| Backend | Static View3D projection | `(N,3)` MeshVisual render | Opaque depth | Ray readback | 3D picking |
+|---|---:|---:|---:|---:|---:|
+| Matplotlib | reference | adapted reference | adapted face order only | reference | deferred |
+| Datoviz v0.4 protocol renderer | unsupported | unsupported with `mesh3d_coordinate_space_unsupported` | unsupported | unsupported | deferred |
+| VisPy2 producer API | deferred | deferred | deferred | deferred | deferred |
+
+Structured diagnostics include `view3d_not_supported`, `mesh3d_requires_view3d`,
+`mesh3d_coordinate_space_unsupported`, `mesh3d_alpha_not_strict`,
+`query_3d_visual_hit_deferred`, and `query_3d_snapshot_mismatch`.
