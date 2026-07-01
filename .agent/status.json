@@ -257,7 +257,7 @@
       "id": "S043",
       "title": "Datoviz Panel Frame, Guide Strictness, And Retained View3D",
       "state": "active",
-      "progress": 5
+      "progress": 18
     }
   ],
   "missions": [
@@ -1885,16 +1885,16 @@
       "id": "M182",
       "title": "S043 Datoviz panel frame snapshot core",
       "stage": "S043",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 182
     },
     {
       "id": "M183",
       "title": "S043 Datoviz unified view descriptors",
       "stage": "S043",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 183
@@ -2034,7 +2034,7 @@
   ],
   "recommendations": [
     "S043 accepts one unified Datoviz panel frame architecture for guide strictness and retained View3D navigation; v0.4-dev API breaks are acceptable when they support the durable design.",
-    "M182 is the next ready mission: implement the Datoviz panel frame snapshot core before GSP guide strict promotion or Datoviz View3D live navigation.",
+    "M182 completed the Datoviz panel frame snapshot core in Datoviz commits 7dd92aa88 and aa506e72d; M183 is the next ready mission.",
     "Native Datoviz grid clipping remains a separate verified capability and must not be treated as full guide strictness.",
     "Datoviz View3D live navigation remains unsupported until DATA-space visual attachments and retained camera/projection updates prove no unchanged visual buffer reupload.",
     "S037 Datoviz static View3D rendering is now implemented for local v0.4-dev builds with the P022 camera ctypes layouts and explicit orthographic-bounds API.",
@@ -2050,6 +2050,7 @@
     "S041 completed manual Matplotlib-vs-Dataviz 3D review coverage for lit meshes and arcball-style View3D navigation."
   ],
   "notes": [
+    "M182 completed: added Datoviz public DvzPanelFrameSnapshot/DvzPanelFrameInfo API, generated ctypes exposure, native snapshot tests, and Datoviz architecture documentation. Full scene tests passed with 664/664.",
     "M181 completed: archived the P027 response, accepted S043 unified Datoviz panel frame architecture, added the Datoviz architecture note, opened S043 scoping, and created mission stack M182-M188.",
     "S043 opened: Datoviz guide strictness and retained View3D navigation now share one panel frame/view/guide foundation; M182 is ready.",
     "M180 completed: live review examples enable supported Matplotlib and Datoviz View2D navigation, while Datoviz View3D live navigation remains explicitly unsupported pending retained DATA-space Datoviz work.",

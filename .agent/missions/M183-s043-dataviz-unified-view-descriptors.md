@@ -6,7 +6,7 @@ S043 - Datoviz Panel Frame, Guide Strictness, And Retained View3D
 
 ## Status
 
-Draft.
+Ready.
 
 ## Summary
 

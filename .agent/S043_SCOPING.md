@@ -44,8 +44,8 @@ draw-state, and pipeline names remain private implementation details.
 | Mission | State | Purpose |
 |---|---|---|
 | M181 | completed | Archive P027 response, accept S043 architecture, and open this mission stack. |
-| M182 | ready | Datoviz panel frame snapshot core. |
-| M183 | draft | Datoviz unified revisioned view descriptors. |
+| M182 | completed | Datoviz panel frame snapshot core. |
+| M183 | ready | Datoviz unified revisioned view descriptors. |
 | M184 | draft | Datoviz first-class guide objects. |
 | M185 | draft | GSP partial Datoviz snapshot adapter. |
 | M186 | draft | GSP Datoviz guide strict promotion. |
