@@ -174,6 +174,7 @@ DVZ_POINTER_EVENT_PRESS = 1
 DVZ_POINTER_EVENT_MOVE = 2
 DVZ_POINTER_EVENT_WHEEL = 20
 DVZ_POINTER_BUTTON_LEFT = 1
+DVZ_POINTER_BUTTON_RIGHT = 3
 
 DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
@@ -1987,11 +1988,18 @@ def _navigation_pointer_event_from_datoviz(
             "DVZ_POINTER_BUTTON_LEFT",
             DVZ_POINTER_BUTTON_LEFT,
         )
+        right_button = int(getattr(event, "button", 0)) == _enum_value(
+            dvz,
+            "DvzPointerButton",
+            "DVZ_POINTER_BUTTON_RIGHT",
+            DVZ_POINTER_BUTTON_RIGHT,
+        )
         return NavigationPointerEvent(
             NavigationPointerEventKind.BUTTON_PRESS,
             x_px,
             y_px,
             left_button=left_button,
+            right_button=right_button,
         )
     if event_type == _enum_value(
         dvz,

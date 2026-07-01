@@ -94,7 +94,10 @@ def _run_datoviz(*, scripted_smoke: bool, frames: int) -> int:
             print(f"datoviz retained scripted smoke: view={renderer.view.x_range},{renderer.view.y_range}")
             return 0
         renderer.enable_gsp_view2d_navigation()
-        print("Datoviz v0.4 GSP navigation enabled: drag to pan, wheel to zoom.")
+        print(
+            "Datoviz v0.4 GSP navigation enabled: drag to pan, "
+            "right-drag to zoom x/y, wheel to zoom."
+        )
         renderer.show(frame_count=frames)
     return 0
 
@@ -129,6 +132,7 @@ class _MatplotlibNavigationSession:
                 x_px=float(event.x),
                 y_px=float(event.y),
                 left_button=event.button == 1,
+                right_button=event.button == 3,
             )
         )
 

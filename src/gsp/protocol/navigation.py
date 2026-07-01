@@ -195,6 +195,7 @@ class NavigationPointerEvent:
     x_px: float
     y_px: float
     left_button: bool = False
+    right_button: bool = False
     scroll_steps: float = 0.0
 
     def __post_init__(self) -> None:
@@ -204,6 +205,8 @@ class NavigationPointerEvent:
         _validate_finite("y_px", self.y_px)
         if not isinstance(self.left_button, bool):
             raise TypeError("left_button must be a bool")
+        if not isinstance(self.right_button, bool):
+            raise TypeError("right_button must be a bool")
         _validate_finite("scroll_steps", self.scroll_steps)
 
 
@@ -212,6 +215,7 @@ class View2DNavigationInputAdapter:
 
     __slots__ = (
         "_controller_id",
+        "_drag_kind",
         "_drag_last_px",
         "_layout_snapshot_id",
         "_panel_rect",
@@ -242,6 +246,7 @@ class View2DNavigationInputAdapter:
         self._panel_rect = panel_rect
         self._zoom_base = float(zoom_base)
         self._drag_last_px: tuple[float, float] | None = None
+        self._drag_kind: str | None = None
 
     @property
     def view2d_revision(self) -> str:
@@ -273,10 +278,19 @@ class View2DNavigationInputAdapter:
     def handle_pointer_event(self, event: NavigationPointerEvent) -> NavigationAction | None:
         """Return a semantic navigation action for one pointer event, if any."""
         if event.kind is NavigationPointerEventKind.BUTTON_PRESS:
-            self._drag_last_px = (event.x_px, event.y_px) if event.left_button else None
+            if event.left_button:
+                self._drag_last_px = (event.x_px, event.y_px)
+                self._drag_kind = "pan"
+            elif event.right_button:
+                self._drag_last_px = (event.x_px, event.y_px)
+                self._drag_kind = "zoom"
+            else:
+                self._drag_last_px = None
+                self._drag_kind = None
             return None
         if event.kind is NavigationPointerEventKind.BUTTON_RELEASE:
             self._drag_last_px = None
+            self._drag_kind = None
             return None
         if event.kind is NavigationPointerEventKind.MOUSE_MOVE:
             return self._handle_mouse_move(event)
@@ -284,7 +298,7 @@ class View2DNavigationInputAdapter:
             return self._handle_wheel(event)
         raise ValueError(f"unsupported pointer event kind: {event.kind!r}")
 
-    def _handle_mouse_move(self, event: NavigationPointerEvent) -> PanByAction | None:
+    def _handle_mouse_move(self, event: NavigationPointerEvent) -> NavigationAction | None:
         if self._drag_last_px is None:
             return None
         last_x, last_y = self._drag_last_px
@@ -293,6 +307,17 @@ class View2DNavigationInputAdapter:
         dy_px = event.y_px - last_y
         if dx_px == 0.0 and dy_px == 0.0:
             return None
+        if self._drag_kind == "zoom":
+            factor_x = self._zoom_base ** (dx_px / (self._panel_rect.width * 0.05))
+            factor_y = self._zoom_base ** (dy_px / (self._panel_rect.height * 0.05))
+            return ZoomAboutAction(
+                controller_id=self._controller_id,
+                view2d_revision=self._view2d_revision,
+                anchor_px=(event.x_px, event.y_px),
+                factor_x=factor_x,
+                factor_y=factor_y,
+                layout_snapshot_id=self._layout_snapshot_id,
+            )
         return PanByAction(
             controller_id=self._controller_id,
             view2d_revision=self._view2d_revision,
@@ -373,6 +398,7 @@ def navigation_pointer_event_from_ndc(
     y_ndc: float,
     panel_rect: LogicalPixelRect,
     left_button: bool = False,
+    right_button: bool = False,
     scroll_steps: float = 0.0,
 ) -> NavigationPointerEvent:
     """Create a pointer event from target-panel NDC coordinates."""
@@ -384,6 +410,7 @@ def navigation_pointer_event_from_ndc(
         x_px=panel_rect.x + (x_ndc + 1.0) * 0.5 * panel_rect.width,
         y_px=panel_rect.y + (y_ndc + 1.0) * 0.5 * panel_rect.height,
         left_button=left_button,
+        right_button=right_button,
         scroll_steps=scroll_steps,
     )
 

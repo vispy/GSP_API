@@ -542,6 +542,7 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
 
     class DvzPointerButton:
         DVZ_POINTER_BUTTON_LEFT = 1
+        DVZ_POINTER_BUTTON_RIGHT = 3
 
     class DvzPointerEvent:
         def __init__(self):
@@ -3285,6 +3286,46 @@ def test_datoviz_live_pointer_events_apply_retained_gsp_view2d_navigation():
         ("set_domain", "panel", 0, -1.2, 0.8),
         ("set_domain", "panel", 1, -1.0, 1.0),
     ]
+    assert _calls(fake, "request_frame") == [("request_frame", "live-view")]
+
+
+def test_datoviz_live_right_drag_zooms_view2d_x_and_y_axes():
+    fake = FakeDatovizV04WithInteractive()
+    view = View2D(id="view:main", panel_id="panel:main")
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view=view)
+    renderer.enable_gsp_view2d_navigation()
+    assert fake.pointer_callback is not None
+
+    fake.pointer_callback(
+        "input-router",
+        FakePointerEventPtr(
+            FakePointerEvent(
+                fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+                400.0,
+                300.0,
+                button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_RIGHT,
+            )
+        ),
+        None,
+    )
+    fake.pointer_callback(
+        "input-router",
+        FakePointerEventPtr(
+            FakePointerEvent(
+                fake.DvzPointerEventType.DVZ_POINTER_EVENT_MOVE, 440.0, 270.0
+            )
+        ),
+        None,
+    )
+
+    assert renderer.view is not None
+    assert renderer.view.x_range == pytest.approx((-0.9, 0.9181818181818181))
+    assert renderer.view.y_range == pytest.approx((-0.9, 0.9181818181818181))
+    x_domain, y_domain = _calls(fake, "set_domain")[-2:]
+    assert x_domain[:3] == ("set_domain", "panel", 0)
+    assert y_domain[:3] == ("set_domain", "panel", 1)
+    assert x_domain[3:] == pytest.approx((-0.9, 0.9181818181818181))
+    assert y_domain[3:] == pytest.approx((-0.9, 0.9181818181818181))
     assert _calls(fake, "request_frame") == [("request_frame", "live-view")]
 
 

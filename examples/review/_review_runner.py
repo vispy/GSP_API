@@ -247,7 +247,8 @@ def _run_matplotlib(
                 )
                 session.connect()
                 print(
-                    "Matplotlib GSP View2D navigation enabled: drag to pan, wheel to zoom."
+                    "Matplotlib GSP View2D navigation enabled: drag to pan, "
+                    "right-drag to zoom x/y, wheel to zoom."
                 )
             elif interactive_navigation and scene.view3d is not None:
                 view3d_session = _MatplotlibReviewView3DNavigationSession(
@@ -399,6 +400,7 @@ class _MatplotlibReviewNavigationSession:
                 x_px=float(event.x),
                 y_px=float(event.y),
                 left_button=event.button == 1,
+                right_button=event.button == 3,
             )
         )
 
@@ -691,7 +693,8 @@ def _run_datoviz(
                         )
                     else:
                         print(
-                            "Datoviz GSP navigation enabled: drag to pan, wheel to zoom."
+                            "Datoviz GSP navigation enabled: drag to pan, "
+                            "right-drag to zoom x/y, wheel to zoom."
                         )
                 elif interactive_navigation and scene.view3d is not None:
                     enable_view3d_navigation = getattr(

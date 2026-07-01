@@ -354,6 +354,41 @@ def test_navigation_input_adapter_emits_wheel_zoom_and_tracks_accepted_revision(
     assert next_zoom.factor_x == pytest.approx(1.0 / 1.2)
 
 
+def test_navigation_input_adapter_emits_right_drag_axis_zoom_actions():
+    adapter = View2DNavigationInputAdapter(
+        controller_id="nav:main",
+        view2d_revision="view-rev:1",
+        panel_rect=LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0),
+        layout_snapshot_id="layout:main",
+        zoom_base=1.2,
+    )
+
+    assert (
+        adapter.handle_pointer_event(
+            NavigationPointerEvent(
+                kind=NavigationPointerEventKind.BUTTON_PRESS,
+                x_px=210.0,
+                y_px=120.0,
+                right_button=True,
+            )
+        )
+        is None
+    )
+    zoom = adapter.handle_pointer_event(
+        NavigationPointerEvent(
+            kind=NavigationPointerEventKind.MOUSE_MOVE,
+            x_px=230.0,
+            y_px=110.0,
+        )
+    )
+
+    assert isinstance(zoom, ZoomAboutAction)
+    assert zoom.anchor_px == pytest.approx((230.0, 110.0))
+    assert zoom.factor_x == pytest.approx(1.2)
+    assert zoom.factor_y == pytest.approx(1.0 / 1.2)
+    assert zoom.layout_snapshot_id == "layout:main"
+
+
 def test_navigation_pointer_event_from_ndc_resolves_logical_pixels():
     panel_rect = LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0)
 
@@ -368,6 +403,15 @@ def test_navigation_pointer_event_from_ndc_resolves_logical_pixels():
     assert event.x_px == pytest.approx(110.0)
     assert event.y_px == pytest.approx(145.0)
     assert event.scroll_steps == pytest.approx(1.0)
+
+    press = navigation_pointer_event_from_ndc(
+        kind=NavigationPointerEventKind.BUTTON_PRESS,
+        x_ndc=0.0,
+        y_ndc=0.0,
+        panel_rect=panel_rect,
+        right_button=True,
+    )
+    assert press.right_button is True
 
 
 def test_navigation_input_adapter_rejects_invalid_pointer_adapter_state():

@@ -170,6 +170,9 @@ accepts resolved target-panel logical-pixel pointer events and emits only semant
 `zoom_about` actions. Backends are still responsible for applying accepted results to their native
 view state.
 
+The default review gesture map is left-drag pan, wheel zoom about the pointer on both axes, and
+right-drag independent x/y zoom about the pointer.
+
 Supported in this stage:
 
 | Path | Status | Notes |
