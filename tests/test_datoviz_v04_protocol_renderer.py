@@ -11,6 +11,7 @@ import types
 import numpy as np
 import pytest
 
+import gsp.protocol.navigation as navigation_module
 from gsp.protocol import (
     ImageOrigin,
     ImageVisual,
@@ -72,6 +73,7 @@ from gsp.protocol import (
     pan_view2d,
     project_view3d_data_point,
     resolve_view3d_projection_snapshot,
+    zoom_view2d_about,
 )
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
 from gsp_datoviz.capabilities import (
@@ -538,6 +540,7 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
         DVZ_POINTER_EVENT_RELEASE = 0
         DVZ_POINTER_EVENT_PRESS = 1
         DVZ_POINTER_EVENT_MOVE = 2
+        DVZ_POINTER_EVENT_DOUBLE_CLICK = 5
         DVZ_POINTER_EVENT_WHEEL = 20
 
     class DvzPointerButton:
@@ -3318,15 +3321,83 @@ def test_datoviz_live_right_drag_zooms_view2d_x_and_y_axes():
         None,
     )
 
+    expected_factor_x, expected_factor_y = (
+        navigation_module._DatovizPanzoomProfile.for_platform().drag_zoom_factor(
+            LogicalPixelRect(x=0.0, y=0.0, width=800.0, height=600.0),
+            40.0,
+            30.0,
+        )
+    )
+    expected_view = zoom_view2d_about(
+        view,
+        LogicalPixelRect(x=0.0, y=0.0, width=800.0, height=600.0),
+        (400.0, 300.0),
+        expected_factor_x,
+        expected_factor_y,
+    )
+
     assert renderer.view is not None
-    assert renderer.view.x_range == pytest.approx((-0.9, 0.9181818181818181))
-    assert renderer.view.y_range == pytest.approx((-0.9, 0.9181818181818181))
+    assert renderer.view.x_range == pytest.approx(expected_view.x_range)
+    assert renderer.view.y_range == pytest.approx(expected_view.y_range)
     x_domain, y_domain = _calls(fake, "set_domain")[-2:]
     assert x_domain[:3] == ("set_domain", "panel", 0)
     assert y_domain[:3] == ("set_domain", "panel", 1)
-    assert x_domain[3:] == pytest.approx((-0.9, 0.9181818181818181))
-    assert y_domain[3:] == pytest.approx((-0.9, 0.9181818181818181))
+    assert x_domain[3:] == pytest.approx(expected_view.x_range)
+    assert y_domain[3:] == pytest.approx(expected_view.y_range)
     assert _calls(fake, "request_frame") == [("request_frame", "live-view")]
+
+
+def test_datoviz_live_double_click_resets_to_home_view2d():
+    fake = FakeDatovizV04WithInteractive()
+    view = View2D(id="view:main", panel_id="panel:main")
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view=view)
+    renderer.enable_gsp_view2d_navigation()
+    assert fake.pointer_callback is not None
+
+    fake.pointer_callback(
+        "input-router",
+        FakePointerEventPtr(
+            FakePointerEvent(
+                fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+                350.0,
+                300.0,
+                button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
+            )
+        ),
+        None,
+    )
+    fake.pointer_callback(
+        "input-router",
+        FakePointerEventPtr(
+            FakePointerEvent(
+                fake.DvzPointerEventType.DVZ_POINTER_EVENT_MOVE,
+                430.0,
+                300.0,
+            )
+        ),
+        None,
+    )
+    fake.pointer_callback(
+        "input-router",
+        FakePointerEventPtr(
+            FakePointerEvent(
+                fake.DvzPointerEventType.DVZ_POINTER_EVENT_DOUBLE_CLICK,
+                430.0,
+                300.0,
+            )
+        ),
+        None,
+    )
+
+    assert renderer.view == view
+    assert _calls(fake, "set_domain")[-2:] == [
+        ("set_domain", "panel", 0, -1.0, 1.0),
+        ("set_domain", "panel", 1, -1.0, 1.0),
+    ]
+    assert _calls(fake, "request_frame") == [
+        ("request_frame", "live-view"),
+        ("request_frame", "live-view"),
+    ]
 
 
 def test_datoviz_live_pointer_y_coordinates_are_converted_from_window_origin():
@@ -3558,6 +3629,14 @@ def test_retained_view2d_navigation_with_axes_does_not_reupload_data_points():
         ("set_domain", "panel", 1, 0.0, 4.0),
     ]
     assert _calls_from(new_calls, "set_view2d")
+    assert _calls_from(new_calls, "set_tick_policy") == [
+        ("set_tick_policy", "axis:0", "tick-policy"),
+        ("set_tick_policy", "axis:1", "tick-policy"),
+    ]
+    assert _calls_from(new_calls, "set_grid") == [
+        ("set_grid", "axis:0", False),
+        ("set_grid", "axis:1", False),
+    ]
     assert not _calls_from(new_calls, "set_data")
     assert not _calls_from(new_calls, "point")
     assert not _calls_from(new_calls, "add_visual")

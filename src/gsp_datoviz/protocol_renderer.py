@@ -172,6 +172,7 @@ _OPTIONAL_UNVERIFIED_DVZ_TEXT_FUNCTIONS: tuple[str, ...] = ()
 DVZ_POINTER_EVENT_RELEASE = 0
 DVZ_POINTER_EVENT_PRESS = 1
 DVZ_POINTER_EVENT_MOVE = 2
+DVZ_POINTER_EVENT_DOUBLE_CLICK = 5
 DVZ_POINTER_EVENT_WHEEL = 20
 DVZ_POINTER_BUTTON_LEFT = 1
 DVZ_POINTER_BUTTON_RIGHT = 3
@@ -684,6 +685,22 @@ class _RetainedView2DPositionUpload:
     coordinate_space: CoordinateSpace
 
 
+@dataclass(frozen=True)
+class _DatovizView2DAxisState:
+    """Native Datoviz axis handles and semantic configuration for one View2D."""
+
+    x_axis: Any
+    y_axis: Any
+    x_label: str | None
+    y_label: str | None
+    grid: bool
+    backend_auto_ticks: bool
+    x_tick_values: tuple[float, ...]
+    x_tick_labels: tuple[str, ...] | None
+    y_tick_values: tuple[float, ...]
+    y_tick_labels: tuple[str, ...] | None
+
+
 @dataclass
 class DatovizV04ProtocolRenderer:
     """Minimal point/image renderer using Datoviz v0.4 top-level functions."""
@@ -720,6 +737,9 @@ class DatovizV04ProtocolRenderer:
     )
     retained_view2d_position_uploads: list[_RetainedView2DPositionUpload] = field(
         default_factory=list, init=False
+    )
+    view2d_axis_state: _DatovizView2DAxisState | None = field(
+        default=None, init=False
     )
     transform_adaptations: dict[str, tuple[str, ...]] = field(
         default_factory=dict, init=False
@@ -1823,22 +1843,19 @@ class DatovizV04ProtocolRenderer:
         _configure_axis_review_plot_margins(self.dvz, x_axis)
         _configure_axis_review_plot_margins(self.dvz, y_axis)
 
-        tick_policy = self.dvz.dvz_axis_tick_policy()
-        self.dvz.dvz_axis_set_tick_policy(x_axis, tick_policy)
-        self.dvz.dvz_axis_set_tick_policy(y_axis, tick_policy)
-        if x_tick_values and hasattr(self.dvz, "dvz_axis_set_ticks"):
-            _set_axis_ticks(self.dvz, x_axis, x_tick_values, x_tick_labels)
-        if y_tick_values and hasattr(self.dvz, "dvz_axis_set_ticks"):
-            _set_axis_ticks(self.dvz, y_axis, y_tick_values, y_tick_labels)
-
-        if hasattr(self.dvz, "dvz_axis_set_grid"):
-            self.dvz.dvz_axis_set_grid(x_axis, grid)
-            self.dvz.dvz_axis_set_grid(y_axis, grid)
-
-        if x_label is not None:
-            self.dvz.dvz_axis_set_label(x_axis, x_label.encode("utf-8"))
-        if y_label is not None:
-            self.dvz.dvz_axis_set_label(y_axis, y_label.encode("utf-8"))
+        self.view2d_axis_state = _DatovizView2DAxisState(
+            x_axis=x_axis,
+            y_axis=y_axis,
+            x_label=x_label,
+            y_label=y_label,
+            grid=grid,
+            backend_auto_ticks=backend_auto_ticks,
+            x_tick_values=x_tick_values,
+            x_tick_labels=x_tick_labels,
+            y_tick_values=y_tick_values,
+            y_tick_labels=y_tick_labels,
+        )
+        self.update_view2d_axes(view)
 
     def apply_datoviz_data_view2d(self, view: View2D) -> Any:
         """Apply GSP ordered data ranges and Datoviz View2D policy."""
@@ -1859,14 +1876,42 @@ class DatovizV04ProtocolRenderer:
     def apply_retained_view2d_navigation(self, view: View2D) -> Any:
         """Apply an accepted S035 navigation View2D as a retained panel update."""
         self.view = view
-        return self.apply_datoviz_data_view2d(view)
+        panel_view = self.apply_datoviz_data_view2d(view)
+        self.update_view2d_axes(view)
+        return panel_view
 
     def apply_adapted_view2d_navigation_cpu_remap(self, view: View2D) -> Any:
         """Apply View2D navigation for the adapted CPU-remapped DATA placement."""
         self.view = view
         panel_view = self.apply_datoviz_data_view2d(view)
+        self.update_view2d_axes(view)
         self._reupload_retained_view2d_positions(view)
         return panel_view
+
+    def update_view2d_axes(self, view: View2D) -> None:
+        """Refresh native Datoviz axes from the committed canonical View2D."""
+        del view
+        state = self.view2d_axis_state
+        if state is None:
+            return
+        tick_policy = self.dvz.dvz_axis_tick_policy()
+        self.dvz.dvz_axis_set_tick_policy(state.x_axis, tick_policy)
+        self.dvz.dvz_axis_set_tick_policy(state.y_axis, tick_policy)
+        if state.x_tick_values and hasattr(self.dvz, "dvz_axis_set_ticks"):
+            _set_axis_ticks(
+                self.dvz, state.x_axis, state.x_tick_values, state.x_tick_labels
+            )
+        if state.y_tick_values and hasattr(self.dvz, "dvz_axis_set_ticks"):
+            _set_axis_ticks(
+                self.dvz, state.y_axis, state.y_tick_values, state.y_tick_labels
+            )
+        if hasattr(self.dvz, "dvz_axis_set_grid"):
+            self.dvz.dvz_axis_set_grid(state.x_axis, state.grid)
+            self.dvz.dvz_axis_set_grid(state.y_axis, state.grid)
+        if state.x_label is not None:
+            self.dvz.dvz_axis_set_label(state.x_axis, state.x_label.encode("utf-8"))
+        if state.y_label is not None:
+            self.dvz.dvz_axis_set_label(state.y_axis, state.y_label.encode("utf-8"))
 
 
 NavigationAction = PanByAction | ZoomAboutAction | SetViewAction | ResetViewAction
@@ -2028,6 +2073,17 @@ def _navigation_pointer_event_from_datoviz(
             x_px,
             y_px,
             scroll_steps=float(event.content.w.dir[1]),
+        )
+    if event_type == _enum_value(
+        dvz,
+        "DvzPointerEventType",
+        "DVZ_POINTER_EVENT_DOUBLE_CLICK",
+        DVZ_POINTER_EVENT_DOUBLE_CLICK,
+    ):
+        return NavigationPointerEvent(
+            NavigationPointerEventKind.DOUBLE_CLICK,
+            x_px,
+            y_px,
         )
     return None
 
