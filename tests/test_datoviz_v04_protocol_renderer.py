@@ -3327,6 +3327,37 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
     ]
 
 
+def test_configure_view2d_axes_maps_data_visuals_to_view_coordinates():
+    fake = FakeDatovizV04WithAxes()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    renderer.configure_view2d_axes(
+        View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(-2.5, 2.5),
+            y_range=(0.0, 2.0),
+        )
+    )
+    visual = PointVisual(
+        id="visual:points",
+        positions=np.array([[-2.5, 0.0], [0.0, 1.0], [2.5, 2.0]], dtype=np.float32),
+        colors=np.repeat(np.array([[255, 255, 255, 255]], dtype=np.uint8), 3, axis=0),
+        sizes=np.array([6.0, 6.0, 6.0], dtype=np.float32),
+        coordinate_space=CoordinateSpace.DATA,
+    )
+
+    renderer.add_point_visual(visual)
+
+    position_upload = _calls(fake, "set_data")[0]
+    assert position_upload[2] == "position"
+    np.testing.assert_allclose(
+        position_upload[3],
+        [[-1.0, -1.0, 0.0], [0.0, 0.0, 0.0], [1.0, 1.0, 0.0]],
+    )
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[3].coord_space == 0
+
+
 def test_apply_datoviz_data_view2d_preserves_reversed_ordered_endpoints():
     fake = FakeDatovizV04WithAxes()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)

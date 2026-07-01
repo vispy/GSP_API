@@ -687,6 +687,7 @@ class DatovizV04ProtocolRenderer:
     transform_adaptations: dict[str, tuple[str, ...]] = field(
         default_factory=dict, init=False
     )
+    _cpu_map_data_visuals_to_view: bool = field(default=False, init=False)
     _closed: bool = field(default=False, init=False)
 
     def __post_init__(self) -> None:
@@ -772,6 +773,7 @@ class DatovizV04ProtocolRenderer:
                 visual.coordinate_space,
                 self.view,
                 self.transform_resources,
+                cpu_map_data_to_view=self._cpu_map_data_visuals_to_view,
             )
         )
         _record_transform_adaptation(
@@ -789,12 +791,13 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
         _set_visual_data(self.dvz, dvz_visual, "diameter_px", diameters)
-        self.dvz.dvz_panel_add_visual(
+        _add_visual_to_panel(
+            self.dvz,
             self.panel,
             dvz_visual,
             _visual_attach_desc(
                 self.dvz,
-                coord_space=_datoviz_visual_coord_space(visual.coordinate_space),
+                coord_space=self._visual_coord_space(visual.coordinate_space),
                 z_layer=0,
             ),
         )
@@ -830,6 +833,7 @@ class DatovizV04ProtocolRenderer:
                 visual.coordinate_space,
                 self.view,
                 self.transform_resources,
+                cpu_map_data_to_view=self._cpu_map_data_visuals_to_view,
             )
         )
         _record_transform_adaptation(
@@ -859,12 +863,13 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "diameter_px", diameters)
         _set_visual_data(self.dvz, dvz_visual, "angle", angles)
         _set_visual_data(self.dvz, dvz_visual, "shape", shapes)
-        self.dvz.dvz_panel_add_visual(
+        _add_visual_to_panel(
+            self.dvz,
             self.panel,
             dvz_visual,
             _visual_attach_desc(
                 self.dvz,
-                coord_space=_datoviz_visual_coord_space(visual.coordinate_space),
+                coord_space=self._visual_coord_space(visual.coordinate_space),
                 z_layer=0,
             ),
         )
@@ -900,6 +905,7 @@ class DatovizV04ProtocolRenderer:
                 visual.coordinate_space,
                 self.view,
                 self.transform_resources,
+                cpu_map_data_to_view=self._cpu_map_data_visuals_to_view,
             )
         )
         end_positions = _positions_3d(
@@ -910,6 +916,7 @@ class DatovizV04ProtocolRenderer:
                 visual.coordinate_space,
                 self.view,
                 self.transform_resources,
+                cpu_map_data_to_view=self._cpu_map_data_visuals_to_view,
             )
         )
         _record_transform_adaptation(
@@ -933,12 +940,13 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "position_end", end_positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
         _set_visual_data(self.dvz, dvz_visual, "stroke_width_px", widths)
-        self.dvz.dvz_panel_add_visual(
+        _add_visual_to_panel(
+            self.dvz,
             self.panel,
             dvz_visual,
             _visual_attach_desc(
                 self.dvz,
-                coord_space=_datoviz_visual_coord_space(visual.coordinate_space),
+                coord_space=self._visual_coord_space(visual.coordinate_space),
                 z_layer=0,
             ),
         )
@@ -961,6 +969,7 @@ class DatovizV04ProtocolRenderer:
                 visual.coordinate_space,
                 self.view,
                 self.transform_resources,
+                cpu_map_data_to_view=self._cpu_map_data_visuals_to_view,
             )
         )
         _record_transform_adaptation(
@@ -994,12 +1003,13 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
         _set_visual_data(self.dvz, dvz_visual, "stroke_width_px", widths)
-        self.dvz.dvz_panel_add_visual(
+        _add_visual_to_panel(
+            self.dvz,
             self.panel,
             dvz_visual,
             _visual_attach_desc(
                 self.dvz,
-                coord_space=_datoviz_visual_coord_space(visual.coordinate_space),
+                coord_space=self._visual_coord_space(visual.coordinate_space),
                 z_layer=0,
             ),
         )
@@ -1033,7 +1043,8 @@ class DatovizV04ProtocolRenderer:
             self.sampled_fields[visual.id] = sampled_field
         else:
             self.dvz.dvz_visual_set_texture(dvz_visual, pixels, width, height)
-        self.dvz.dvz_panel_add_visual(
+        _add_visual_to_panel(
+            self.dvz,
             self.panel,
             dvz_visual,
             _visual_attach_desc(self.dvz, coord_space="view", z_layer=0),
@@ -1070,6 +1081,7 @@ class DatovizV04ProtocolRenderer:
             visual.coordinate_space,
             self.view,
             self.transform_resources,
+            cpu_map_data_to_view=self._cpu_map_data_visuals_to_view,
         )
         _record_transform_adaptation(
             self.transform_adaptations, visual.id, visual.transform
@@ -1089,12 +1101,13 @@ class DatovizV04ProtocolRenderer:
         if result not in (0, None, True):
             raise DatovizV04Unsupported("Datoviz mesh depth-test configuration failed")
         _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
-        self.dvz.dvz_panel_add_visual(
+        _add_visual_to_panel(
+            self.dvz,
             self.panel,
             dvz_visual,
             _visual_attach_desc(
                 self.dvz,
-                coord_space=_datoviz_visual_coord_space(visual.coordinate_space),
+                coord_space=self._visual_coord_space(visual.coordinate_space),
                 z_layer=round(visual.order),
             ),
         )
@@ -1171,6 +1184,14 @@ class DatovizV04ProtocolRenderer:
 
         self.visuals[visual.id] = tuple(texts)
         return tuple(texts)
+
+    def _visual_coord_space(self, coordinate_space: CoordinateSpace) -> str:
+        if (
+            coordinate_space is CoordinateSpace.DATA
+            and self._cpu_map_data_visuals_to_view
+        ):
+            return "view"
+        return _datoviz_visual_coord_space(coordinate_space)
 
     def add_colorbar_guide(self, guide: ColorbarGuide) -> Any:
         """Create a native Datoviz colorbar bound to the guide's color scale."""
@@ -1635,6 +1656,8 @@ class DatovizV04ProtocolRenderer:
             )
         dim_x = getattr(self.dvz, "DVZ_DIM_X", 0)
         dim_y = getattr(self.dvz, "DVZ_DIM_Y", 1)
+        self.view = view
+        self._cpu_map_data_visuals_to_view = True
         self.apply_datoviz_data_view2d(view)
 
         x_axis = self.dvz.dvz_panel_axis(self.panel, dim_x)
@@ -2074,6 +2097,8 @@ def _adapt_visual_positions(
     coordinate_space: CoordinateSpace,
     view: View2D | None,
     transform_resources: Mapping[str, AffineTransform2DResource] | None,
+    *,
+    cpu_map_data_to_view: bool = False,
 ) -> npt.NDArray[np.float32] | npt.NDArray[np.float64]:
     transformed = _cpu_adapt_affine_positions(
         visual_id, positions, transform, transform_resources
@@ -2081,10 +2106,28 @@ def _adapt_visual_positions(
     if coordinate_space is CoordinateSpace.NDC:
         return transformed
     if coordinate_space is CoordinateSpace.DATA:
+        if cpu_map_data_to_view:
+            if view is None:
+                raise DatovizV04Unsupported(
+                    "Datoviz data-to-view CPU adaptation requires View2D limits"
+                )
+            return _map_view2d_data_positions_to_view(transformed, view)
         return transformed
     raise DatovizV04Unsupported(
         f"Datoviz visual coordinate space is unsupported: {coordinate_space.value}"
     )
+
+
+def _map_view2d_data_positions_to_view(
+    positions: npt.NDArray[np.float32] | npt.NDArray[np.float64], view: View2D
+) -> npt.NDArray[np.float32] | npt.NDArray[np.float64]:
+    array = np.asarray(positions)
+    mapped = array.astype(np.float64, copy=True)
+    x0, x1 = view.x_range
+    y0, y1 = view.y_range
+    mapped[:, 0] = ((mapped[:, 0] - x0) / (x1 - x0)) * 2.0 - 1.0
+    mapped[:, 1] = ((mapped[:, 1] - y0) / (y1 - y0)) * 2.0 - 1.0
+    return np.ascontiguousarray(mapped.astype(array.dtype, copy=False))
 
 
 def _cpu_adapt_affine_positions(
@@ -2325,7 +2368,21 @@ def _visual_attach_desc(dvz: Any, *, coord_space: str, z_layer: int) -> Any:
         desc.coord_space = _coord_space_value(dvz, "DVZ_COORD_VIEW", DVZ_COORD_VIEW)
     else:
         raise ValueError(f"unsupported Datoviz coordinate space: {coord_space}")
+    if hasattr(desc, "clip_rect"):
+        desc.clip_rect = _enum_value(
+            dvz, "DvzVisualClipRect", "DVZ_VISUAL_CLIP_AUTO", 0
+        )
+    if hasattr(desc, "viewport_rect"):
+        desc.viewport_rect = _enum_value(
+            dvz, "DvzVisualViewportRect", "DVZ_VISUAL_VIEWPORT_AUTO", 0
+        )
     return desc
+
+
+def _add_visual_to_panel(dvz: Any, panel: Any, visual: Any, attach_desc: Any) -> None:
+    result = dvz.dvz_panel_add_visual(panel, visual, attach_desc)
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz visual panel attachment failed")
 
 
 def _datoviz_visual_coord_space(coordinate_space: CoordinateSpace) -> str:
