@@ -23,45 +23,52 @@ Open Matplotlib and Datoviz live windows at the same time:
 tools/compare-review-examples --live-side-by-side examples/review/01_scatter_basic.py
 ```
 
-Open a live example with GSP navigation:
+Live review enables GSP navigation by default for supported `View2D` and `View3D` scenes:
 
 ```bash
-uv run python examples/review/01_scatter_basic.py --backend matplotlib --interactive-navigation
-uv run python examples/review/01_scatter_basic.py --backend datoviz --interactive-navigation
-uv run python examples/review/07_view3d_cube.py --backend matplotlib --interactive-navigation
-uv run python examples/review/11_view3d_lit_mesh_arcball.py --backend matplotlib --interactive-navigation
+uv run python examples/review/01_scatter_basic.py --backend matplotlib
+uv run python examples/review/01_scatter_basic.py --backend datoviz
+uv run python examples/review/07_view3d_cube.py --backend matplotlib
+uv run python examples/review/11_view3d_lit_mesh_arcball.py --backend matplotlib
 ```
 
-Open all numbered review examples with GSP interactivity where a `View2D` or `View3D` is present,
-one example after another:
+Use `--no-interactive-navigation` when you want a static live window:
 
 ```bash
-tools/compare-review-examples --interactive-navigation
+uv run python examples/review/01_scatter_basic.py --backend matplotlib --no-interactive-navigation
+```
+
+Open all numbered review examples with live interactivity where a `View2D` or `View3D` is present,
+one example after another. Offscreen review remains static and deterministic.
+
+```bash
+tools/compare-review-examples
 ```
 
 Open Matplotlib and Datoviz interactive windows side by side for one example:
 
 ```bash
-tools/compare-review-examples --live-side-by-side --interactive-navigation examples/review/01_scatter_basic.py
+tools/compare-review-examples --live-side-by-side examples/review/01_scatter_basic.py
 ```
 
 If the local Datoviz v0.4 build does not expose the live pointer-input binding, the Datoviz window
 still opens as a normal live review window and prints a message that GSP navigation is unavailable.
-Matplotlib remains the strict interactive review path for S037 `View3D` navigation.
-Datoviz View3D examples require a local v0.4 build with camera bounds and input-event ctypes
-bindings.
+Datoviz `View3D` examples also open as static live windows: the current protocol renderer uploads
+CPU-projected panel-NDC mesh positions with fixed controller mode, so retained Datoviz orbit/pan/zoom
+would require either a native DATA-space mesh path or per-navigation visual buffer reupload.
+Matplotlib remains the interactive S037 `View3D` review path.
 
 For 3D material review, compare the Matplotlib and Datoviz windows side by side:
 
 ```bash
 tools/compare-review-examples --live-side-by-side examples/review/10_view3d_flat_lambert.py
-tools/compare-review-examples --live-side-by-side --interactive-navigation examples/review/11_view3d_lit_mesh_arcball.py
+tools/compare-review-examples --live-side-by-side examples/review/11_view3d_lit_mesh_arcball.py
 ```
 
-The second command enables Matplotlib's canonical GSP orbit/pan/zoom controls for arcball-style
-manual inspection. Datoviz renders the public static `View3D` state through the adapted GSP
-panel-NDC mesh path and S040 CPU-resolved Lambert colors; native Datoviz `panel.arcball()` demos are
-legacy/evidence-only until a public GSP bridge is designed.
+Matplotlib enables canonical GSP orbit/pan/zoom controls for arcball-style manual inspection.
+Datoviz renders the public static `View3D` state through the adapted GSP panel-NDC mesh path and S040
+CPU-resolved Lambert colors; native Datoviz `panel.arcball()` demos are legacy/evidence-only until a
+public GSP bridge is designed and proven without reuploading fixed projected mesh buffers.
 
 Capture and compare offscreen outputs:
 
@@ -105,10 +112,10 @@ inch. Matplotlib live review keeps using the reference DPI for its figure size; 
 | `10_view3d_flat_lambert.py` | S039/S040 flat Lambert face-normal mesh shading |
 | `11_view3d_lit_mesh_arcball.py` | Lit faceted View3D mesh and Matplotlib arcball-style orbit review |
 
-With `--interactive-navigation`, Matplotlib `View3D` examples support S037 review navigation:
-left-drag orbit, right/middle-drag pan, wheel zoom, and `r` reset. Datoviz `View3D` examples render
-the static public camera state; live Datoviz View3D navigation and native arcball bridging are still
-not implemented.
+In live mode, Matplotlib `View3D` examples support S037 review navigation by default: left-drag
+orbit, right/middle-drag pan, wheel zoom, and `r` reset. Datoviz `View3D` examples render the static
+public camera state and print a structured diagnostic explaining why retained live View3D navigation
+is not implemented in the current CPU-projected mesh path.
 
 The non-default `s036_alpha_not_strict_negative.py` script checks that translucent 3D mesh colors
 raise `mesh3d_alpha_not_strict` in the opaque-depth path.

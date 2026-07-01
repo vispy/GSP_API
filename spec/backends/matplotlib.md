@@ -180,8 +180,9 @@ reports `query_3d_snapshot_mismatch` for stale layout/view-projection snapshots,
 ## S037 View3D navigation review adapter
 
 Matplotlib consumes the backend-neutral S037 `View3DNavigationAction` protocol for live review
-examples. `examples/review/_review_runner.py --interactive-navigation` adapts native Matplotlib
-events privately:
+examples. Live review examples enable this navigation by default; `--no-interactive-navigation`
+opens a static live window. `examples/review/_review_runner.py` adapts native Matplotlib events
+privately:
 
 - left-drag -> `orbit`;
 - right/middle-drag -> `pan`;

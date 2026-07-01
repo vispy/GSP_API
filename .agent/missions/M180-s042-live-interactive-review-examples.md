@@ -6,7 +6,7 @@ S042 - Live Interactive Review Examples
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -21,8 +21,9 @@ private inputs that lower to S035/S037 navigation actions and produce updated ca
 - Static live fallback flag and clear diagnostics for unavailable backend input bindings.
 - Matplotlib 2D and 3D review examples validated under live interactive navigation.
 - Datoviz 2D review examples validated under live retained navigation.
-- Datoviz 3D `enable_gsp_view3d_navigation()` implemented if v0.4 retained camera/projection
-  bindings are sufficient.
+- Datoviz 3D `enable_gsp_view3d_navigation()` implemented as an evidence-backed unsupported
+  diagnostic because v0.4 retained camera/projection updates cannot move the current CPU-projected
+  fixed mesh uploads.
 - Fake-facade or smoke tests proving retained Datoviz navigation does not rebuild/reupload unchanged
   visual data.
 - Updated review README and capability documentation.
@@ -49,7 +50,7 @@ View3D updates, write an evidence note and leave Datoviz 3D live navigation unsu
 
 ## Handoff
 
-Start with `.agent/S042_SCOPING.md`. Relevant implementation anchors:
+Follow-up work should start with `.agent/S042_SCOPING.md`. Relevant implementation anchors:
 
 - `examples/review/_review_runner.py`
 - `examples/review/README.md`
@@ -61,3 +62,11 @@ Start with `.agent/S042_SCOPING.md`. Relevant implementation anchors:
 - `spec/backend_capabilities_visuals.md`
 - `.agent/decisions/S035_view2d_navigation_contracts.md`
 - `.agent/decisions/S037_view3d_navigation_datoviz_contracts.md`
+
+## Result
+
+Completed. Live review now defaults to GSP navigation where supported, with
+`--no-interactive-navigation` as the static live opt-out. Datoviz `View3D` navigation is explicitly
+unsupported with an evidence-backed diagnostic: the current renderer uploads CPU-projected
+panel-NDC mesh positions with fixed controller mode, so native camera updates alone cannot move the
+mesh and per-event visual buffer reupload would violate the retained-navigation boundary.

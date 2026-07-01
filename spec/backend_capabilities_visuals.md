@@ -119,7 +119,7 @@ Current S035 support summary:
 | Backend | Programmatic S035 actions | Native drag/wheel review | Retained fast-path proof | Notes |
 |---|---:|---:|---:|---|
 | Matplotlib | supported reference | supported in example review | not applicable | Reference implementation updates axes limits and redraws. |
-| Datoviz v0.4 protocol renderer | supported retained update target | deferred | supported by fake-facade smoke | The protocol renderer updates panel domains/View2D state and records zero visual upload calls during scripted navigation. |
+| Datoviz v0.4 protocol renderer | supported retained update target | supported when live input bindings are available | supported by fake-facade smoke | The protocol renderer updates panel domains/View2D state and records zero visual upload calls during scripted navigation. |
 
 Review/smoke commands:
 
@@ -177,6 +177,12 @@ unsupported diagnostics rather than silently flattening z or exposing backend-na
 Datoviz may claim `query.view3d.ray_readback.v1` for canonical ray-context payload generation when
 the same P022 camera binding is available. This capability does not imply GPU visual hit picking for
 3D meshes.
+
+Datoviz must not claim `view3d.navigation.orbit_pan_zoom.v1` for the current protocol renderer. The
+live review API reports `DatovizV04Unavailable` because 3D meshes are uploaded as CPU-projected
+panel-NDC positions with fixed controller mode. Canonical retained View3D navigation requires a
+native DATA-space mesh path or another proven retained update path that does not rebuild or reupload
+unchanged visual buffers on every orbit/pan/zoom.
 
 ## S038 MeshVisual material boundary and S039 Lambert extension
 

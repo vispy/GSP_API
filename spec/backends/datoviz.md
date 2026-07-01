@@ -127,8 +127,14 @@ and adapted face ordering, so it does not claim strict `meshvisual.positions3d.o
 GSP lowers `View3D.camera` through `dvz_panel_set_camera()` and lowers
 `OrthographicProjection3D.xlim`, `.ylim`, and `.near_far` directly through
 `dvz_camera_set_orthographic_bounds()`. Datoviz `query.view3d.ray_readback.v1` returns canonical
-ray-context payloads from public `View3D` state and snapshot ids. Datoviz live `View3D` navigation,
-GPU 3D visual picking, materials, lights, textures, perspective, and culling remain deferred.
+ray-context payloads from public `View3D` state and snapshot ids.
+
+Datoviz live `View3D` navigation remains unsupported in the protocol renderer. The renderer uploads
+3D meshes as CPU-projected panel-NDC positions with fixed controller mode; updating only the native
+camera would not move those retained mesh buffers, and reprojecting/reuploading positions on every
+mouse event would not satisfy the retained View3D navigation boundary. The live review runner
+therefore opens a static Datoviz `View3D` window and reports this diagnostic. GPU 3D visual picking,
+materials, lights, textures, perspective, and culling remain deferred.
 
 ## S040 flat Lambert CPU resolve
 

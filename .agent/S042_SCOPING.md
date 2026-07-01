@@ -9,10 +9,10 @@ backend support exists, while preserving canonical GSP navigation semantics.
 
 | Area | State | Notes |
 |---|---|---|
-| Matplotlib View2D | Implemented | `examples/review/_review_runner.py` adapts mouse drag/wheel to S035 `View2DNavigationAction` when `--interactive-navigation` is passed. |
-| Matplotlib View3D | Implemented | `examples/review/_review_runner.py` adapts drag/wheel/key input to S037 `View3DNavigationAction` when `--interactive-navigation` is passed. |
-| Datoviz View2D | Implemented but needs review-pack validation | `DatovizV04ProtocolRenderer.enable_gsp_view2d_navigation()` subscribes to Datoviz pointer input and applies retained S035 updates. |
-| Datoviz View3D | Static only | Datoviz renders public `View3D` state, but live orbit/pan/zoom is not implemented. |
+| Matplotlib View2D | Implemented | Live review enables S035 drag/wheel navigation by default. |
+| Matplotlib View3D | Implemented | Live review enables S037 orbit/pan/zoom/reset by default. |
+| Datoviz View2D | Implemented | `DatovizV04ProtocolRenderer.enable_gsp_view2d_navigation()` subscribes to Datoviz pointer input and applies retained S035 updates when bindings are available. |
+| Datoviz View3D | Evidence-backed unsupported | The renderer reports `DatovizV04Unavailable` because current meshes are CPU-projected panel-NDC uploads with fixed controller mode. |
 
 ## Authority And Boundary
 
@@ -62,7 +62,7 @@ Out of scope:
 
 | Mission | State | Purpose |
 |---|---|---|
-| M180 | ready | Make protocol review examples interactive in live mode and implement/prove Datoviz View3D navigation if the v0.4 bindings support retained updates. |
+| M180 | completed | Made protocol review examples interactive in live mode and recorded the Datoviz View3D retained-navigation boundary. |
 
 If M180 becomes too large, split it:
 
@@ -135,7 +135,7 @@ PYTHONPATH=src .venv/bin/python examples/review/10_view3d_flat_lambert.py --back
 Review pack:
 
 ```bash
-tools/compare-review-examples --live-side-by-side --interactive-navigation examples/review/10_view3d_flat_lambert.py
+tools/compare-review-examples --live-side-by-side examples/review/10_view3d_flat_lambert.py
 ```
 
 ## Acceptance
@@ -168,3 +168,15 @@ tools/compare-review-examples --live-side-by-side --interactive-navigation examp
 - Existing capability tables may contain stale wording for Datoviz View2D native drag/wheel review.
 - Legacy non-review examples use older APIs and should not be folded into this stage without a
   separate migration pass.
+
+## Result
+
+Completed in the local session:
+
+- Live review navigation is enabled by default for supported scenes.
+- `--no-interactive-navigation` forces static live review windows.
+- Matplotlib `View2D` and `View3D` review paths keep using canonical S035/S037 actions.
+- Datoviz `View2D` review paths use retained S035 navigation when live input bindings are available.
+- Datoviz `View3D` review paths now have an explicit unsupported method and diagnostic instead of a
+  missing-method fallback. The block is the CPU-projected panel-NDC mesh upload path with fixed
+  controller mode.
