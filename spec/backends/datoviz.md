@@ -518,13 +518,28 @@ Current support status:
 | Programmatic retained `View2D` update | supported | Uses retained panel domain/View2D state. |
 | Visual buffer stability during navigation | supported by fake-facade smoke | Zero upload/recreation calls are expected after baseline scene creation. |
 | Adapted CPU-remap navigation fallback | adapted | Retains source DATA positions and reuploads derived view-space positions only when explicitly selected. |
-| Datoviz v0.4 pointer callback adapter | supported | Datoviz pointer callbacks are normalized into S035 pointer events, then accepted actions update canonical `View2D`. |
+| Datoviz v0.4 union input adapter | supported | Datoviz union input events are normalized into S035 pointer events, then accepted actions update canonical `View2D`. |
+| Live resize/scale handling | supported | Resize updates the logical panel rect used for pointer sensitivity; resize and scale refresh native axes from the accepted `View2D`. |
 | Datoviz native panzoom controller | native-only demo | `dvz_view_panzoom()` is not strict GSP navigation unless synchronized back into canonical `View2D`. |
 | Live GPU runtime performance benchmark | deferred | Requires a bounded benchmark beyond the fake-facade retained-update proof and one-frame live launch. |
 
-Strict Datoviz live navigation is the GSP action path: native pointer events are adapted into S035
-actions and accepted `View2D` updates are applied through retained panel state. CPU remapping remains
-an adapted fallback only and must not be advertised as the retained fast path.
+Strict Datoviz live navigation is the GSP action path. The adapter subscribes to
+`dvz_input_subscribe_event()`, not the raw pointer stream, because Datoviz emits gesture-derived
+events such as `DVZ_POINTER_EVENT_DRAG`, `DVZ_POINTER_EVENT_DRAG_STOP`, and
+`DVZ_POINTER_EVENT_DOUBLE_CLICK` on the union input stream. Raw `DVZ_POINTER_EVENT_MOVE` is ignored
+for GSP navigation; `DRAG` drives pan/zoom, `DRAG_STOP` ends the active gesture, wheel events zoom
+about the cursor, and double-click emits a reset action to the controller home view.
+
+Accepted `View2D` updates are applied through retained panel state. Resize events update the live
+logical panel rectangle used by the pointer adapter before subsequent pan/zoom sensitivity is
+computed. Resize and scale events refresh native axes from the accepted `View2D` without changing
+the data view. CPU remapping remains an adapted fallback only and must not be advertised as the
+retained fast path.
+
+Native axis refresh follows tick authority. Backend-auto ticks are cleared before reapplying the
+Datoviz tick policy so grid lines and tick labels regenerate after a committed `View2D` change.
+Explicit GSP tick values/labels are not cleared on navigation: they remain fixed data-space guide
+intent and move with the `View2D`.
 
 Datoviz may continue to provide native interaction systems such as `dvz_view_panzoom()` for direct
 Datoviz users and native demos. GSP does not reuse those systems for strict behavior unless their
