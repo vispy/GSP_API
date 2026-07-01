@@ -36,6 +36,16 @@
       "query_policy": "non-queryable",
       "side": "bottom",
       "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
       "tick_spec": {
         "explicit_labels": [
           "right",
@@ -61,6 +71,16 @@
       "query_policy": "non-queryable",
       "side": "left",
       "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
       "tick_spec": {
         "explicit_labels": [
           "top",
@@ -88,6 +108,10 @@
       "panel_id": "panel:main",
       "query_policy": "non-queryable",
       "role": "title",
+      "style": {
+        "guide_margin_px": null,
+        "title_font_size_px": null
+      },
       "text": "S028 reversed guide View2D"
     }
   ],

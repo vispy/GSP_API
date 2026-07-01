@@ -33,6 +33,17 @@
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/guide_view2d_reversed_explicit.png",
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/s028_all_cases.png"
   ],
+  "datoviz_review_classification_counts": {
+    "fail.layout": 0,
+    "fail.query": 0,
+    "fail.semantic": 0,
+    "pass.layout_strict": 0,
+    "pass.raster_tolerant": 0,
+    "pass.semantic_strict": 23,
+    "review.adapted": 6,
+    "review.native_backend": 0,
+    "unsupported.capability": 0
+  },
   "datoviz_status_counts": {
     "adapted": 6,
     "crashed": 0,

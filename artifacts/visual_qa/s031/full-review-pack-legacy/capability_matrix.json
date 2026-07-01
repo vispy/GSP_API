@@ -1,5 +1,27 @@
 {
-  "generated_at": "2026-06-28T08:15:37.349105+00:00",
+  "generated_at": "2026-07-01T17:57:47.724682+00:00",
+  "review_classification_summary": {
+    "fail.layout": 0,
+    "fail.query": 0,
+    "fail.semantic": 0,
+    "pass.layout_strict": 0,
+    "pass.raster_tolerant": 0,
+    "pass.semantic_strict": 52,
+    "review.adapted": 6,
+    "review.native_backend": 0,
+    "unsupported.capability": 0
+  },
+  "review_classification_taxonomy": [
+    "pass.semantic_strict",
+    "pass.layout_strict",
+    "pass.raster_tolerant",
+    "review.adapted",
+    "review.native_backend",
+    "fail.semantic",
+    "fail.layout",
+    "fail.query",
+    "unsupported.capability"
+  ],
   "rows": [
     {
       "backend": "matplotlib",
@@ -21,6 +43,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -43,6 +66,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -65,6 +89,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -87,6 +112,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -109,6 +135,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -131,6 +158,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -154,6 +182,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -177,6 +206,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -201,6 +231,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -225,6 +256,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -248,6 +280,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -271,6 +304,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -294,6 +328,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -317,6 +352,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -342,6 +378,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -367,6 +404,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -391,6 +429,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -417,6 +456,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -440,6 +480,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -465,6 +506,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -488,6 +530,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -513,6 +556,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -535,6 +579,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -559,6 +604,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -582,6 +628,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -607,6 +654,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -629,6 +677,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -655,6 +704,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_pending_promotion_audit",
       "rendering_supported": true,
+      "review_classification": "review.adapted",
       "status": "adapted"
     },
     {
@@ -676,6 +726,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -701,6 +752,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_pending_promotion_audit",
       "rendering_supported": true,
+      "review_classification": "review.adapted",
       "status": "adapted"
     },
     {
@@ -724,6 +776,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -750,6 +803,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -771,6 +825,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -796,6 +851,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_pending_promotion_audit",
       "rendering_supported": true,
+      "review_classification": "review.adapted",
       "status": "adapted"
     },
     {
@@ -817,6 +873,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -842,6 +899,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_pending_promotion_audit",
       "rendering_supported": true,
+      "review_classification": "review.adapted",
       "status": "adapted"
     },
     {
@@ -865,6 +923,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -891,6 +950,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -914,6 +974,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -940,6 +1001,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -963,6 +1025,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -989,6 +1052,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1012,6 +1076,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1038,6 +1103,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1060,6 +1126,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1085,6 +1152,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1107,6 +1175,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1132,6 +1201,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1153,6 +1223,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1177,6 +1248,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1199,6 +1271,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1224,6 +1297,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1250,6 +1324,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1279,6 +1354,7 @@
       "query_supported": false,
       "reason_code": "datoviz_rendered_strict_s029_family_audit",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1302,6 +1378,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1334,6 +1411,7 @@
       "query_supported": false,
       "reason_code": "datoviz_axis_guide_adapted_review",
       "rendering_supported": true,
+      "review_classification": "review.adapted",
       "status": "adapted"
     },
     {
@@ -1358,6 +1436,7 @@
       "query_supported": false,
       "reason_code": "matplotlib_reference_rendered",
       "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
       "status": "strict"
     },
     {
@@ -1391,6 +1470,7 @@
       "query_supported": false,
       "reason_code": "datoviz_axis_guide_adapted_review",
       "rendering_supported": true,
+      "review_classification": "review.adapted",
       "status": "adapted"
     }
   ],

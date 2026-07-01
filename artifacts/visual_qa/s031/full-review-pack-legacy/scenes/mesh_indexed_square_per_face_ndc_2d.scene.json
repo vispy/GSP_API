@@ -71,7 +71,7 @@
           2
         ]
       },
-      "shading": "flat"
+      "shading": "unlit_rgba"
     }
   ]
 }
