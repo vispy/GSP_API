@@ -7,6 +7,11 @@ Updated: 2026-07-01 with the long-term native grid clipping plan after the Datov
 `examples/review/01_scatter_basic.py` clipping review.
 Updated: 2026-07-01 after GSP implementation against Datoviz `v0.4-dev` commit
 `32ad98848` (`Track generated Python binding runtime files`).
+Updated: 2026-07-01 after Datoviz commit `e54bd9af3`
+(`Clip axis grid endpoints to plot interval`) and GSP commit `18a7c46`
+(`Detect Datoviz native axis grid clipping`). GSP commit `0b93aed`
+(`Add Datoviz grid clipping review case`) adds the title-boundary visual QA
+regression row.
 
 This handoff is intended for another agent to pick up. It covers both repositories:
 
@@ -96,15 +101,19 @@ Acceptance:
 - data visual clipping and grid clipping agree;
 - title/label reserve areas remain free of grid geometry.
 
-#### GSP-1: Keep Datoviz grid clipping classified as adapted/partial
+#### GSP-1: Keep Datoviz grid clipping classified as adapted/partial on unverified builds
 
-Until Datoviz has native proof, GSP_API should keep diagnostics such as:
+Until a Datoviz checkout has native proof, GSP_API should keep diagnostics such as:
 
 - `grid_clip_not_enforced`;
 - `grid_clip_native_api_unverified`.
 
 Do not hide the issue by drawing an opaque title band or by unclipping data markers. Those would make
 the review artifact prettier while preserving inconsistent guide/data clipping semantics.
+
+Completion update: GSP commit `18a7c46` now narrows those blockers only when the Datoviz source
+checkout contains the native grid endpoint fix and the regression test proof from Datoviz commit
+`e54bd9af3`.
 
 #### GSP-2: Add a targeted visual QA regression
 
@@ -143,11 +152,44 @@ The combined promotion is complete only when both repositories prove the same co
 - GSP_API visual QA proves guide/data clipping coherency in a real review scene;
 - GSP_API capability metadata no longer overstates Datoviz guide strictness on older builds.
 
+### 2026-07-01 Completion Update
+
+Datoviz commit `e54bd9af3` implements the native part of the fix:
+
+- `_axis_update_visual()` now derives grid segment endpoints from the resolved plot interval
+  (`x0`, `x1`, `y0`, `y1`) instead of the full inverse `[-1,+1]` panzoom extent.
+- Native Datoviz tests cover plot-source extent, style plot margins, panzoom snapping, and equal
+  aspect alignment. The full Datoviz scene test binary passed with `661/661` tests.
+
+GSP commit `18a7c46` implements the compatibility gate:
+
+- `datoviz_v04_grid_clip_to_plot_rect_ready_for_source()` detects a Datoviz source checkout with
+  the native commit or equivalent source/test sentinels.
+- Datoviz capability metadata reports `grid_clip_to_plot_rect: native-verified` and sets
+  `axis_grid_clip_to_plot_rect=True` only for verified builds.
+- Visual QA guide diagnostics now report `grid_clip_evidence:
+  datoviz-native-axis-grid-plot-interval` for verified Datoviz builds; older/unverified builds keep
+  the `grid_clip_not_enforced` and `grid_clip_native_api_unverified` blockers.
+
+GSP commit `0b93aed` adds `guide/view2d_grid_clip_title_boundary`, a review-pack regression with
+a large DATA marker near the top plot boundary, explicit grid ticks, and a panel title reserve.
+
+The S031 legacy S028 review pack was regenerated against Datoviz `e54bd9af3`. Current matrix:
+
+- strict: 53
+- adapted: 7
+- unsupported: 0
+
+The S028 guide rows, including the new title-boundary grid clipping row, remain `adapted`, but now
+only for title/layout-query and guide-query semantics. Grid clipping is no longer a promotion
+blocker for this verified Datoviz checkout.
+
 ## Current Verdict
 
-The current S028 guide/View2D mismatch is still primarily a GSP Datoviz adapter bug. The
-Datoviz-side API/documentation gap described in the original handoff has largely been addressed in
-the local Datoviz `v0.4-dev` branch.
+The original S028 guide/View2D carrier mismatch has been addressed in GSP, and the later grid
+bleed-through at title boundaries has been addressed natively in Datoviz plus capability-gated in
+GSP. The remaining Datoviz guide rows are adapted because title layout/query and guide-query
+semantics are still outside the strict Datoviz slice.
 
 Implementation note from the GSP pass at Datoviz `32ad98848`: the current public
 `DvzPanelView2D` C struct and generated Python `_ctypes.DvzPanelView2D` wrapper expose
@@ -169,9 +211,8 @@ Datoviz `32ad98848`.
 The older handoff diagnosis assumed `DvzPanelView2D.data_x/data_y` were the authoritative
 domains. That assumption does not match Datoviz `32ad98848`. In the current Datoviz source,
 `DvzPanelView2D` controls View2D policy and resolution reads the ordered source domains set on the
-panel axes. The remaining GSP responsibility is to set ordered domains before enabling/updating the
-View2D policy and to prove the call order, reversed endpoint preservation, and runtime binding
-shape.
+panel axes. GSP now sets ordered domains before enabling/updating the View2D policy and proves the
+call order, reversed endpoint preservation, and runtime binding shape.
 
 This explains the visible failures:
 

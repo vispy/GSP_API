@@ -32,7 +32,8 @@
     "transform/view2d_data_ndc_overlay",
     "transform/family_affine_view2d",
     "guide/view2d_auto_grid",
-    "guide/view2d_reversed_explicit"
+    "guide/view2d_reversed_explicit",
+    "guide/view2d_grid_clip_title_boundary"
   ],
   "datoviz_color_pipeline": "legacy_srgb_blend",
   "device_scale": 1.0,
@@ -44,6 +45,6 @@
   "schema_kind": "gsp.visual_qa.run_manifest",
   "schema_version": 1,
   "stage": "S028",
-  "started_at": "2026-07-01T17:57:30.438992+00:00",
+  "started_at": "2026-07-01T18:20:57.728127+00:00",
   "suite": "s028"
 }

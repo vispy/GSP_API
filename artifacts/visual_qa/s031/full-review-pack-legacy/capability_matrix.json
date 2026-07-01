@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-07-01T17:57:47.724682+00:00",
+  "generated_at": "2026-07-01T18:21:15.968974+00:00",
   "review_classification_summary": {
     "fail.layout": 0,
     "fail.query": 0,
     "fail.semantic": 0,
     "pass.layout_strict": 0,
     "pass.raster_tolerant": 0,
-    "pass.semantic_strict": 52,
-    "review.adapted": 6,
+    "pass.semantic_strict": 53,
+    "review.adapted": 7,
     "review.native_backend": 0,
     "unsupported.capability": 0
   },
@@ -1472,6 +1472,65 @@
       "rendering_supported": true,
       "review_classification": "review.adapted",
       "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "guide/view2d_grid_clip_title_boundary",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s031/full-review-pack-legacy/backends/matplotlib/guide_view2d_grid_clip_title_boundary.png",
+        "artifacts/visual_qa/s031/full-review-pack-legacy/backends/matplotlib/guide_view2d_grid_clip_title_boundary.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "explicit-ticks",
+        "grid",
+        "plot-clip",
+        "title"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "guide/view2d_grid_clip_title_boundary",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s031/full-review-pack-legacy/backends/datoviz/guide_view2d_grid_clip_title_boundary.png",
+        "artifacts/visual_qa/s031/full-review-pack-legacy/backends/datoviz/guide_view2d_grid_clip_title_boundary.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [
+        "Datoviz native panel axes render this title-boundary grid clipping row for review with explicit ticks and native plot-interval grid endpoints when the verified Datoviz source fix is present",
+        "Panel title and guide query semantics remain excluded from the Datoviz rendered artifact"
+      ],
+      "known_missing_semantics": [
+        "strict panel title layout is not claimed for the adapted Datoviz title visual",
+        "guide/all-rendered query semantics are unsupported for this Datoviz slice"
+      ],
+      "promotion_blockers": [
+        "prove or exclude panel title layout before strict guide promotion",
+        "add Datoviz guide-query support before advertising guide or all-rendered query semantics"
+      ],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "explicit-ticks",
+        "grid",
+        "plot-clip",
+        "title"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_axis_guide_adapted_review",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
     }
   ],
   "run_id": "s031-full-review-pack-legacy",
@@ -1489,12 +1548,12 @@
   ],
   "suite": "s028",
   "summary": {
-    "adapted": 6,
+    "adapted": 7,
     "crashed": 0,
     "disabled": 0,
     "experimental": 0,
     "not_run": 0,
-    "strict": 52,
+    "strict": 53,
     "unsupported": 0
   }
 }

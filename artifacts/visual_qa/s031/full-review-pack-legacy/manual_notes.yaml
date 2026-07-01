@@ -87,3 +87,6 @@ cases:
   - case_id: guide/view2d_reversed_explicit
     status: pending
     notes: ''
+  - case_id: guide/view2d_grid_clip_title_boundary
+    status: pending
+    notes: ''

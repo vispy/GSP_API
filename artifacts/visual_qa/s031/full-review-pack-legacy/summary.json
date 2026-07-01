@@ -1,6 +1,6 @@
 {
   "capability_matrix_path": "capability_matrix.json",
-  "case_count": 29,
+  "case_count": 30,
   "contact_sheets": [
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/point_basic_ndc.png",
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/point_diameter_ramp_ndc.png",
@@ -31,6 +31,7 @@
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/transform_family_affine_view2d.png",
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/guide_view2d_auto_grid.png",
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/guide_view2d_reversed_explicit.png",
+    "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/guide_view2d_grid_clip_title_boundary.png",
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/s028_all_cases.png"
   ],
   "datoviz_review_classification_counts": {
@@ -40,12 +41,12 @@
     "pass.layout_strict": 0,
     "pass.raster_tolerant": 0,
     "pass.semantic_strict": 23,
-    "review.adapted": 6,
+    "review.adapted": 7,
     "review.native_backend": 0,
     "unsupported.capability": 0
   },
   "datoviz_status_counts": {
-    "adapted": 6,
+    "adapted": 7,
     "crashed": 0,
     "disabled": 0,
     "experimental": 0,

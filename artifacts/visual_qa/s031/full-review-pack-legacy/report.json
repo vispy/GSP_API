@@ -815,11 +815,8 @@
             "axis_provider": "datoviz.v04.panel_axis.wip",
             "axis_rendering": "adapted-review",
             "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
-            "grid_clip_blockers": [
-              "grid_clip_not_enforced",
-              "grid_clip_native_api_unverified"
-            ],
-            "grid_clip_to_plot_rect": "unsupported",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-interval",
+            "grid_clip_to_plot_rect": "native-verified",
             "guide_query": "unsupported",
             "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
             "ordered_ranges_preserved": true,
@@ -944,11 +941,8 @@
             "axis_rendering": "adapted-review",
             "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
             "explicit_ticks": "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise",
-            "grid_clip_blockers": [
-              "grid_clip_not_enforced",
-              "grid_clip_native_api_unverified"
-            ],
-            "grid_clip_to_plot_rect": "unsupported",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-interval",
+            "grid_clip_to_plot_rect": "native-verified",
             "guide_query": "unsupported",
             "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
             "ordered_ranges_preserved": true,
@@ -1058,6 +1052,133 @@
       ],
       "scene_path": "artifacts/visual_qa/s031/full-review-pack-legacy/scenes/guide_view2d_reversed_explicit.scene.json",
       "title": "Reversed View2D guide explicit ticks"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s031/full-review-pack-legacy/scenes/guide_view2d_grid_clip_title_boundary.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-legacy/backends/datoviz/guide_view2d_grid_clip_title_boundary.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "all_rendered_guide_query": "unsupported",
+            "auto_ticks": "backend-native",
+            "axis_guide_count": 2,
+            "axis_provider": "datoviz.v04.panel_axis.wip",
+            "axis_rendering": "adapted-review",
+            "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
+            "explicit_ticks": "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-interval",
+            "grid_clip_to_plot_rect": "native-verified",
+            "guide_query": "unsupported",
+            "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
+            "ordered_ranges_preserved": true,
+            "panel_text_adapter": "datoviz.ndc_text_visual",
+            "panel_text_guide_count": 1,
+            "panel_text_guides_adapted": [
+              {
+                "id": "guide:s028-grid-clip-title",
+                "role": "title",
+                "text": "S028 grid clip boundary"
+              }
+            ],
+            "panel_title": "adapted-review",
+            "view2d_present": true
+          },
+          "log_path": "artifacts/visual_qa/s031/full-review-pack-legacy/backends/datoviz/guide_view2d_grid_clip_title_boundary.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s031/full-review-pack-legacy/backends/matplotlib/guide_view2d_grid_clip_title_boundary.png",
+          "backend_id": "matplotlib",
+          "layout_snapshot": {
+            "axis_label_boxes": [
+              {
+                "guide_id": "guide:s028-grid-clip-x",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 14.0,
+                  "width": 36.875,
+                  "x": 400.8888888888889,
+                  "y": 511.87152777777777
+                },
+                "role": "x_axis_label"
+              },
+              {
+                "guide_id": "guide:s028-grid-clip-y",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 36.875,
+                  "width": 14.000000000000002,
+                  "x": 11.11111111111112,
+                  "y": 281.5625
+                },
+                "role": "y_axis_label"
+              }
+            ],
+            "grid_clip_rect_px": {
+              "height": 365.1875,
+              "width": 730.375,
+              "x": 54.1388888888889,
+              "y": 117.40625
+            },
+            "guide_box_count": 9,
+            "panel_rect_px": {
+              "height": 600.0,
+              "width": 800.0,
+              "x": 0.0,
+              "y": 0.0
+            },
+            "plot_rect_px": {
+              "height": 365.1875,
+              "width": 730.375,
+              "x": 54.1388888888889,
+              "y": 117.40625
+            },
+            "render_target": {
+              "device_scale": 1.0,
+              "dpi": 100.0,
+              "framebuffer_height_px": 600,
+              "framebuffer_width_px": 800,
+              "logical_height_px": 600.0,
+              "logical_width_px": 800.0,
+              "pixel_origin": "top-left"
+            },
+            "snapshot_id": "layout:guide_view2d_grid_clip_title_boundary:matplotlib",
+            "tick_label_box_count": 6,
+            "title_boxes": [
+              {
+                "guide_id": "guide:s028-grid-clip-title",
+                "kind": "title",
+                "rect_px": {
+                  "height": 18.0,
+                  "width": 198.25,
+                  "x": 320.2013888888889,
+                  "y": 95.07291666666669
+                },
+                "role": "title"
+              }
+            ],
+            "view_id": "view:s028-grid-clip"
+          },
+          "layout_snapshot_id": "layout:guide_view2d_grid_clip_title_boundary:matplotlib",
+          "log_path": "artifacts/visual_qa/s031/full-review-pack-legacy/backends/matplotlib/guide_view2d_grid_clip_title_boundary.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_grid_clip_title_boundary",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "explicit-ticks",
+        "grid",
+        "plot-clip",
+        "title"
+      ],
+      "scene_path": "artifacts/visual_qa/s031/full-review-pack-legacy/scenes/guide_view2d_grid_clip_title_boundary.scene.json",
+      "title": "View2D grid clipping at title boundary"
     }
   ],
   "contact_sheets": [
@@ -1090,6 +1211,7 @@
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/transform_family_affine_view2d.png",
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/guide_view2d_auto_grid.png",
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/guide_view2d_reversed_explicit.png",
+    "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/guide_view2d_grid_clip_title_boundary.png",
     "artifacts/visual_qa/s031/full-review-pack-legacy/contact_sheets/s028_all_cases.png"
   ],
   "datoviz_color_pipeline": "legacy_srgb_blend",
@@ -1107,7 +1229,7 @@
     },
     "minimal_point_supported": true,
     "raw_imported": true,
-    "source_revision": "32ad9884859e5e86f7a4a88d48bb8a49de9c9fa0",
+    "source_revision": "e54bd9af3bde328543c3119669b365e8e731f08d",
     "unexpected_banned_hits": 0
   },
   "device_scale": 1.0,
@@ -1116,6 +1238,6 @@
   "schema_kind": "gsp.visual_qa.report",
   "schema_version": 1,
   "stage": "S028",
-  "started_at": "2026-07-01T17:57:30.438992+00:00",
+  "started_at": "2026-07-01T18:20:57.728127+00:00",
   "suite": "s028"
 }

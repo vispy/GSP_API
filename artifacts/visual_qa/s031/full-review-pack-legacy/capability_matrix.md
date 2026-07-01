@@ -62,3 +62,5 @@ Run id: `s031-full-review-pack-legacy`
 | `guide/view2d_auto_grid` | datoviz | adapted / review.adapted | `datoviz_axis_guide_adapted_review` | True | False |
 | `guide/view2d_reversed_explicit` | matplotlib | strict / pass.semantic_strict | `matplotlib_reference_rendered` | True | False |
 | `guide/view2d_reversed_explicit` | datoviz | adapted / review.adapted | `datoviz_axis_guide_adapted_review` | True | False |
+| `guide/view2d_grid_clip_title_boundary` | matplotlib | strict / pass.semantic_strict | `matplotlib_reference_rendered` | True | False |
+| `guide/view2d_grid_clip_title_boundary` | datoviz | adapted / review.adapted | `datoviz_axis_guide_adapted_review` | True | False |

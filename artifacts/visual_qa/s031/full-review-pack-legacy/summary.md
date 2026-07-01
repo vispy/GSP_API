@@ -33,3 +33,4 @@ Run id: `s031-full-review-pack-legacy`
 | `transform/family_affine_view2d` | rendered | rendered |
 | `guide/view2d_auto_grid` | rendered | rendered |
 | `guide/view2d_reversed_explicit` | rendered | rendered |
+| `guide/view2d_grid_clip_title_boundary` | rendered | rendered |
