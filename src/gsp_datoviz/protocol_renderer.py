@@ -2420,6 +2420,7 @@ def _visual_attach_desc(
         if hasattr(desc, "flags"):
             desc.flags = 0
 
+    _validate_visual_attach_desc_binding(desc)
     desc.z_layer = z_layer
     if controller_mode == "apply":
         desc.controller_mode = _controller_mode_value(
@@ -2446,6 +2447,19 @@ def _visual_attach_desc(
             dvz, "DvzVisualViewportRect", "DVZ_VISUAL_VIEWPORT_AUTO", 0
         )
     return desc
+
+
+def _validate_visual_attach_desc_binding(desc: Any) -> None:
+    missing = [
+        name
+        for name in ("clip_rect", "viewport_rect")
+        if not hasattr(desc, name)
+    ]
+    if missing:
+        raise DatovizV04Unavailable(
+            "Datoviz Python binding is stale: DvzVisualAttachDesc is missing "
+            f"{', '.join(missing)}. Regenerate Datoviz bindings with `just ctypes`."
+        )
 
 
 def _add_visual_to_panel(dvz: Any, panel: Any, visual: Any, attach_desc: Any) -> None:

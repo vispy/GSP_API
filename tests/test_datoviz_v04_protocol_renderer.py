@@ -102,6 +102,7 @@ from gsp_datoviz.protocol_renderer import (
     _image_texcoords,
     _datoviz_view_size_desc,
     _resolved_canvas_from_datoviz,
+    _visual_attach_desc,
 )
 from gsp_datoviz.query import (
     DVZ_QUERY_STATUS_DECODE_FAILED,
@@ -287,6 +288,8 @@ class FakeDatovizV04:
             ("z_layer", ctypes.c_int),
             ("controller_mode", ctypes.c_int),
             ("coord_space", ctypes.c_int),
+            ("clip_rect", ctypes.c_int),
+            ("viewport_rect", ctypes.c_int),
         )
 
     def dvz_scene_destroy(self, scene):
@@ -1667,6 +1670,34 @@ def test_add_point_visual_uses_dvz_point_attributes_and_diameter_pixels():
     assert isinstance(attach_desc, FakeDatovizV04.DvzVisualAttachDesc)
     assert attach_desc.z_layer == 0
     assert attach_desc.coord_space == 0
+    assert attach_desc.clip_rect == 0
+    assert attach_desc.viewport_rect == 0
+
+
+def test_visual_attach_desc_rejects_stale_binding_missing_clip_and_viewport_rect():
+    class StaleAttachDesc(ctypes.Structure):
+        _fields_ = (
+            ("struct_size", ctypes.c_uint32),
+            ("flags", ctypes.c_uint32),
+            ("z_layer", ctypes.c_int32),
+            ("controller_mode", ctypes.c_int),
+            ("coord_space", ctypes.c_int),
+        )
+
+    def stale_factory():
+        desc = StaleAttachDesc()
+        desc.struct_size = ctypes.sizeof(StaleAttachDesc)
+        desc.controller_mode = 0
+        desc.coord_space = 1
+        return desc
+
+    fake = SimpleNamespace(
+        DvzVisualAttachDesc=StaleAttachDesc,
+        dvz_visual_attach_desc=stale_factory,
+    )
+
+    with pytest.raises(DatovizV04Unavailable, match="Regenerate Datoviz bindings"):
+        _visual_attach_desc(fake, coord_space="data", z_layer=3)
 
 
 def test_add_point_visual_scales_canvas_pixels_for_resolved_datoviz_framebuffer():
