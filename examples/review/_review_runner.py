@@ -665,7 +665,10 @@ def _run_datoviz(
                 _render_datoviz_visual(renderer, visual)
             for guide in scene.colorbar_guides:
                 renderer.add_colorbar_guide(guide)
-            for visual in _panel_text_background_visuals(scene.panel_text_guides):
+            for visual in _panel_text_background_visuals(
+                scene.panel_text_guides,
+                include_background=scene.view3d is None,
+            ):
                 _render_datoviz_visual(renderer, visual)
             for visual in _panel_text_as_text_visuals(scene.panel_text_guides):
                 renderer.add_text_visual(visual)
@@ -833,7 +836,11 @@ def _panel_text_as_text_visuals(
 
 def _panel_text_background_visuals(
     guides: tuple[PanelTextGuide, ...],
+    *,
+    include_background: bool = True,
 ) -> tuple[MeshVisual, ...]:
+    if not include_background:
+        return ()
     if not any(guide.role is PanelTextRole.TITLE for guide in guides):
         return ()
     return (

@@ -59,9 +59,9 @@ tools/compare-review-examples --live-side-by-side --interactive-navigation examp
 ```
 
 The second command enables Matplotlib's canonical GSP orbit/pan/zoom controls for arcball-style
-manual inspection. Datoviz renders the public static `View3D` camera and S040 CPU-resolved Lambert
-mesh; native Datoviz `panel.arcball()` demos are legacy/evidence-only until a public GSP bridge is
-designed.
+manual inspection. Datoviz renders the public static `View3D` state through the adapted GSP
+panel-NDC mesh path and S040 CPU-resolved Lambert colors; native Datoviz `panel.arcball()` demos are
+legacy/evidence-only until a public GSP bridge is designed.
 
 Capture and compare offscreen outputs:
 
@@ -149,11 +149,11 @@ Use this checklist before approving release preparation.
    | `04_guides_axes_ticks.py` | Explicit ticks, tick labels, axis labels, grid, and title are readable. |
    | `05_color_mapping_colorbar.py` | Colors match scalar values and colorbar semantics are clear. |
    | `06_text_labels.py` | Labels are placed correctly, anchored reasonably, and drawn above points. |
-   | `07_view3d_cube.py` | Matplotlib shows a projected cube; interactive navigation changes the canonical `View3D`. Datoviz renders the static native camera. |
-   | `08_view3d_terrain.py` | Matplotlib terrain projection and per-face colors are coherent; Datoviz renders the static native camera. |
+   | `07_view3d_cube.py` | Matplotlib shows a projected cube; interactive navigation changes the canonical `View3D`. Datoviz renders the same static public projection through the adapted mesh path. |
+   | `08_view3d_terrain.py` | Matplotlib terrain projection and per-face colors are coherent; Datoviz renders the same static public projection through the adapted mesh path. |
    | `09_view3d_ndc_depth.py` | Opaque NDC3 depth ordering is visible in both backends. |
    | `10_view3d_flat_lambert.py` | Flat Lambert face colors are visibly lit in both backends when Datoviz S040 support is available. |
-   | `11_view3d_lit_mesh_arcball.py` | Matplotlib arcball-style orbit changes the lit mesh projection; Datoviz static view matches the same public camera and CPU-resolved Lambert colors. |
+   | `11_view3d_lit_mesh_arcball.py` | Matplotlib arcball-style orbit changes the lit mesh projection; Datoviz static view matches the same public projection and CPU-resolved Lambert colors. |
 
 6. Record the review result in this form:
 

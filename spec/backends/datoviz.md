@@ -121,6 +121,9 @@ Evidence required for the support claim:
   `query.view3d.ray_readback.v1`;
 - public API does not expose Datoviz camera, controller, draw-state, or material names.
 
+The current protocol renderer lowers Datoviz 3D mesh rendering through CPU-projected GSP panel NDC
+and adapted face ordering, so it does not claim strict `meshvisual.positions3d.opaque_depth.v1`.
+
 GSP lowers `View3D.camera` through `dvz_panel_set_camera()` and lowers
 `OrthographicProjection3D.xlim`, `.ylim`, and `.near_far` directly through
 `dvz_camera_set_orthographic_bounds()`. Datoviz `query.view3d.ray_readback.v1` returns canonical

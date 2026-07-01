@@ -146,7 +146,7 @@ Current S036 support summary:
 | Backend | Static View3D projection | `(N,3)` MeshVisual render | Opaque depth | Ray readback | 3D picking |
 |---|---:|---:|---:|---:|---:|
 | Matplotlib | reference | adapted reference | adapted face order only | reference | deferred |
-| Datoviz v0.4 protocol renderer | supported with P022 bindings | supported with P022 bindings | supported with P022 bindings | ray context only | deferred |
+| Datoviz v0.4 protocol renderer | supported with P022 bindings | adapted GSP panel-NDC lowering | adapted face order only | ray context only | deferred |
 | VisPy2 producer API | deferred | deferred | deferred | deferred | deferred |
 
 Structured diagnostics include `view3d_not_supported`, `mesh3d_requires_view3d`,
@@ -168,10 +168,11 @@ adapted: DATA meshes are projected by canonical CPU `View3D` math and rendered a
 sorting faces far-to-near by average panel-NDC z. This is not strict GPU fragment-depth semantics.
 
 Datoviz v0.4 may claim `view3d.static.orthographic.v1`,
-`meshvisual.positions3d.data.view3d.v1`, `meshvisual.positions3d.ndc.v1`, and
-`meshvisual.positions3d.opaque_depth.v1` only for local builds with the P022 camera ctypes layouts
-and explicit orthographic-bounds API. Older builds must continue reporting structured unsupported
-diagnostics rather than silently flattening z or exposing backend-native camera objects.
+`meshvisual.positions3d.data.view3d.v1`, and `meshvisual.positions3d.ndc.v1` for local builds with
+the P022 camera ctypes layouts and explicit orthographic-bounds API. Its current protocol renderer
+uses adapted CPU projection plus face ordering for meshes, so it must not claim
+`meshvisual.positions3d.opaque_depth.v1`. Older builds must continue reporting structured
+unsupported diagnostics rather than silently flattening z or exposing backend-native camera objects.
 
 Datoviz may claim `query.view3d.ray_readback.v1` for canonical ray-context payload generation when
 the same P022 camera binding is available. This capability does not imply GPU visual hit picking for

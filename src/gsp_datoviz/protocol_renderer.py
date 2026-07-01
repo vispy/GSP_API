@@ -31,6 +31,7 @@ from gsp.protocol import (
     ColorbarGuide,
     ColorbarOrientation,
     ColorbarPlacement,
+    DepthMode,
     ImageOrigin,
     ImageVisual,
     LogicalPixelRect,
@@ -62,6 +63,7 @@ from gsp.protocol import (
     QueryScope,
     QueryStatus,
     ResolvedCanvas,
+    project_view3d_data_point,
     resolve_view3d_projection_snapshot,
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
     ScalarColorQueryPayload,
@@ -184,6 +186,8 @@ DVZ_QUERY_PROFILE_UNSUPPORTED = 0
 DVZ_QUERY_CAPABILITY_ITEM = 0x02
 DVZ_QUERY_CAPABILITY_PIXEL = 0x10
 DVZ_CAMERA_ORTHOGRAPHIC = 1
+DVZ_CONTROLLER_APPLY = 0
+DVZ_CONTROLLER_FIXED = 1
 DVZ_COORD_VIEW = 0
 DVZ_COORD_DATA = 1
 DVZ_SHAPE_ASPECT_FILLED = 0
@@ -1074,15 +1078,26 @@ class DatovizV04ProtocolRenderer:
                 + "; ".join(diagnostics)
             )
 
-        adapted_positions = _adapt_visual_positions(
-            visual.id,
-            visual.positions,
-            visual.transform,
-            visual.coordinate_space,
-            self.view,
-            self.transform_resources,
-            cpu_map_data_to_view=self._cpu_map_data_visuals_to_view,
-        )
+        face_order: npt.NDArray[np.int64] | None = None
+        adapted_positions: npt.NDArray[np.float32] | npt.NDArray[np.float64]
+        if is_3d_mesh:
+            adapted_positions = _datoviz_mesh3d_panel_ndc_positions(
+                visual, view3d=self.view3d
+            )
+            if visual.depth_test is not DepthMode.DISABLED:
+                face_order = _mesh3d_face_depth_order(
+                    adapted_positions[:, 2], visual.faces
+                )
+        else:
+            adapted_positions = _adapt_visual_positions(
+                visual.id,
+                visual.positions,
+                visual.transform,
+                visual.coordinate_space,
+                self.view,
+                self.transform_resources,
+                cpu_map_data_to_view=self._cpu_map_data_visuals_to_view,
+            )
         _record_transform_adaptation(
             self.transform_adaptations, visual.id, visual.transform
         )
@@ -1090,6 +1105,7 @@ class DatovizV04ProtocolRenderer:
             visual,
             adapted_positions,
             view3d=self.view3d,
+            face_order=face_order,
         )
         dvz_visual = self.dvz.dvz_mesh(self.scene, 0)
         if dvz_visual is None:
@@ -1097,7 +1113,10 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
         _set_visual_index_data(self.dvz, dvz_visual, indices)
-        result = self.dvz.dvz_visual_set_depth_test(dvz_visual, is_3d_mesh)
+        native_depth_test = (
+            False if is_3d_mesh else visual.depth_test is DepthMode.ENABLED
+        )
+        result = self.dvz.dvz_visual_set_depth_test(dvz_visual, native_depth_test)
         if result not in (0, None, True):
             raise DatovizV04Unsupported("Datoviz mesh depth-test configuration failed")
         _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
@@ -1107,8 +1126,13 @@ class DatovizV04ProtocolRenderer:
             dvz_visual,
             _visual_attach_desc(
                 self.dvz,
-                coord_space=self._visual_coord_space(visual.coordinate_space),
+                coord_space=(
+                    "view"
+                    if is_3d_mesh
+                    else self._visual_coord_space(visual.coordinate_space)
+                ),
                 z_layer=round(visual.order),
+                controller_mode="fixed" if is_3d_mesh else "apply",
             ),
         )
         self.visuals[visual.id] = dvz_visual
@@ -1768,9 +1792,7 @@ class _DatovizLiveView2DNavigation:
     ) -> None:
         """Handle one raw Datoviz pointer callback."""
         event = getattr(event_ptr, "contents", event_ptr)
-        pointer_event = _navigation_pointer_event_from_datoviz(
-            self.renderer.dvz, event
-        )
+        pointer_event = _navigation_pointer_event_from_datoviz(self.renderer.dvz, event)
         if pointer_event is None:
             return
         self._apply_event(pointer_event)
@@ -1789,7 +1811,11 @@ class _DatovizLiveView2DNavigation:
             view_snapshot_id=f"view-snapshot:datoviz-live-{self.revision_index}",
             expected_layout_snapshot_id=self.layout_snapshot_id,
         )
-        if not result.accepted or result.view is None or result.new_view2d_revision is None:
+        if (
+            not result.accepted
+            or result.view is None
+            or result.new_view2d_revision is None
+        ):
             return
         self.view = result.view
         self.controller = replace(
@@ -1845,9 +1871,7 @@ def _navigation_pointer_event_from_datoviz(
         "DVZ_POINTER_EVENT_MOVE",
         DVZ_POINTER_EVENT_MOVE,
     ):
-        return NavigationPointerEvent(
-            NavigationPointerEventKind.MOUSE_MOVE, x_px, y_px
-        )
+        return NavigationPointerEvent(NavigationPointerEventKind.MOUSE_MOVE, x_px, y_px)
     if event_type == _enum_value(
         dvz,
         "DvzPointerEventType",
@@ -2218,6 +2242,28 @@ def _validate_datoviz_mesh3d_visual(visual: MeshVisual, view3d: View3D | None) -
         )
 
 
+def _datoviz_mesh3d_panel_ndc_positions(
+    visual: MeshVisual, *, view3d: View3D | None
+) -> npt.NDArray[np.float64]:
+    source = np.asarray(visual.positions, dtype=np.float64)
+    if visual.coordinate_space is CoordinateSpace.DATA:
+        if view3d is None:
+            raise DatovizV04Unsupported(
+                f"{View3DDiagnosticCode.MESH3D_REQUIRES_VIEW3D.value}: "
+                "Datoviz MeshVisual DATA positions3d require View3D"
+            )
+        return np.asarray(
+            [project_view3d_data_point(view3d, tuple(point)) for point in source],
+            dtype=np.float64,
+        )
+    if visual.coordinate_space is CoordinateSpace.NDC:
+        return source
+    raise DatovizV04Unsupported(
+        f"{View3DDiagnosticCode.MESH3D_COORDINATE_SPACE_UNSUPPORTED.value}: "
+        f"unsupported MeshVisual 3D coordinate_space {visual.coordinate_space!r}"
+    )
+
+
 def _rgba8(colors: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:
     if colors.dtype == np.dtype(np.uint8):
         return np.ascontiguousarray(colors)
@@ -2231,6 +2277,7 @@ def _datoviz_mesh_payload(
     positions: npt.NDArray[np.float32] | npt.NDArray[np.float64],
     *,
     view3d: View3D | None = None,
+    face_order: npt.NDArray[np.int64] | None = None,
 ) -> tuple[npt.NDArray[np.float32], npt.NDArray[np.uint8], npt.NDArray[np.uint32]]:
     if visual.face_color_encoding is not None:
         raise DatovizV04Unsupported(
@@ -2251,6 +2298,11 @@ def _datoviz_mesh_payload(
             view3d=view3d,
         )
         color_mode = MeshColorMode.FACE
+
+    if face_order is not None:
+        faces = faces[face_order]
+        if color_mode is MeshColorMode.FACE:
+            colors = colors.reshape(visual.faces.shape[0], 4)[face_order]
 
     if color_mode is MeshColorMode.UNIFORM:
         rgba = np.asarray(colors, dtype=np.uint8).reshape(1, 4)
@@ -2276,6 +2328,13 @@ def _datoviz_mesh_payload(
             np.ascontiguousarray(triangle_indices),
         )
     raise DatovizV04Unsupported(f"unsupported mesh color mode: {color_mode}")
+
+
+def _mesh3d_face_depth_order(
+    vertex_depth: npt.NDArray[np.float64], faces: npt.NDArray[np.integer]
+) -> npt.NDArray[np.int64]:
+    face_depth = np.mean(vertex_depth[np.asarray(faces, dtype=np.uint32)], axis=1)
+    return np.argsort(-face_depth, kind="stable")
 
 
 def _resolve_datoviz_flat_lambert_facecolors(
@@ -2331,9 +2390,7 @@ def _resolve_datoviz_flat_lambert_facecolors(
     resolved = base.copy()
     resolved[:, :3] = np.clip(base[:, :3] * light_factor[:, np.newaxis], 0.0, 1.0)
     resolved[:, 3] = base[:, 3]
-    return np.ascontiguousarray(
-        np.rint(resolved * 255.0).clip(0, 255).astype(np.uint8)
-    )
+    return np.ascontiguousarray(np.rint(resolved * 255.0).clip(0, 255).astype(np.uint8))
 
 
 def _diameters_from_pixel_diameters(
@@ -2347,7 +2404,9 @@ def _diameters_from_pixel_diameters(
     return np.ascontiguousarray(diameters.reshape(-1))
 
 
-def _visual_attach_desc(dvz: Any, *, coord_space: str, z_layer: int) -> Any:
+def _visual_attach_desc(
+    dvz: Any, *, coord_space: str, z_layer: int, controller_mode: str = "apply"
+) -> Any:
     factory = getattr(dvz, "dvz_visual_attach_desc", None)
     if factory is not None:
         desc = factory()
@@ -2362,6 +2421,16 @@ def _visual_attach_desc(dvz: Any, *, coord_space: str, z_layer: int) -> Any:
             desc.flags = 0
 
     desc.z_layer = z_layer
+    if controller_mode == "apply":
+        desc.controller_mode = _controller_mode_value(
+            dvz, "DVZ_CONTROLLER_APPLY", DVZ_CONTROLLER_APPLY
+        )
+    elif controller_mode == "fixed":
+        desc.controller_mode = _controller_mode_value(
+            dvz, "DVZ_CONTROLLER_FIXED", DVZ_CONTROLLER_FIXED
+        )
+    else:
+        raise ValueError(f"unsupported Datoviz controller mode: {controller_mode}")
     if coord_space == "data":
         desc.coord_space = _coord_space_value(dvz, "DVZ_COORD_DATA", DVZ_COORD_DATA)
     elif coord_space == "view":
@@ -2400,6 +2469,16 @@ def _coord_space_value(dvz: Any, name: str, fallback: int) -> int:
     if value is not None:
         return int(value)
     enum_type = getattr(dvz, "DvzVisualCoordSpace", None)
+    if enum_type is not None:
+        return int(getattr(enum_type, name))
+    return fallback
+
+
+def _controller_mode_value(dvz: Any, name: str, fallback: int) -> int:
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, "DvzControllerMode", None)
     if enum_type is not None:
         return int(getattr(enum_type, name))
     return fallback

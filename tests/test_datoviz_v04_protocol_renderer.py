@@ -43,6 +43,7 @@ from gsp.protocol import (
     ColorScale,
     LinearNormalize,
     LogicalPixelRect,
+    MESH3D_OPAQUE_DEPTH_CAPABILITY,
     NavigationPlacement,
     QueryCoordinateSpace,
     QueryHitPolicy,
@@ -69,6 +70,7 @@ from gsp.protocol import (
     VisualFamily,
     VisualTransformBinding,
     pan_view2d,
+    project_view3d_data_point,
     resolve_view3d_projection_snapshot,
 )
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
@@ -1587,7 +1589,9 @@ def test_datoviz_renderer_view3d_ray_context_rejects_missing_or_stale_view():
     )
 
     assert unsupported.status == QueryStatus.UNSUPPORTED
-    assert View3DDiagnosticCode.VIEW3D_NOT_SUPPORTED.value in str(unsupported.diagnostic)
+    assert View3DDiagnosticCode.VIEW3D_NOT_SUPPORTED.value in str(
+        unsupported.diagnostic
+    )
     assert stale.status == QueryStatus.STALE
     assert stale.diagnostic == View3DDiagnosticCode.QUERY_3D_SNAPSHOT_MISMATCH.value
 
@@ -2701,7 +2705,7 @@ def test_add_mesh_visual_accepts_default_data_domain_and_requires_view3d_for_dat
         renderer.add_mesh_visual(mesh_3d)
 
 
-def test_add_mesh_visual_configures_native_view3d_camera_for_data_positions3d():
+def test_add_mesh_visual_projects_data_positions3d_to_panel_ndc_for_datoviz_mesh():
     fake = FakeDatovizV04WithMesh()
     view3d = View3D(
         id="view:main",
@@ -2745,13 +2749,93 @@ def test_add_mesh_visual_configures_native_view3d_camera_for_data_positions3d():
         )
     ]
     assert _calls(fake, "camera_set_orthographic_bounds") == [
-        ("camera_set_orthographic_bounds", "panel-camera", 2.0, -2.0, -1.0, 3.0, 0.1, 100.0)
+        (
+            "camera_set_orthographic_bounds",
+            "panel-camera",
+            2.0,
+            -2.0,
+            -1.0,
+            3.0,
+            0.1,
+            100.0,
+        )
     ]
+    expected_positions = np.array(
+        [project_view3d_data_point(view3d, tuple(point)) for point in visual.positions],
+        dtype=np.float32,
+    )
     np.testing.assert_allclose(
         _calls(fake, "set_data")[0][3],
-        [[0.0, 0.0, 0.0], [0.5, 0.0, 0.25], [0.0, 0.5, 0.5]],
+        expected_positions,
+        rtol=1.0e-6,
+        atol=1.0e-6,
     )
-    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", True)]
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", False)]
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[3].coord_space == 0
+    assert add_visual_call[3].controller_mode == 1
+
+
+def test_add_mesh_visual_orders_ndc3_faces_for_adapted_datoviz_depth():
+    fake = FakeDatovizV04WithMesh()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    visual = MeshVisual(
+        id="visual:mesh-ndc-depth",
+        positions=np.array(
+            [
+                [-0.72, -0.62, 0.0],
+                [0.72, -0.62, 0.0],
+                [0.0, 0.72, 0.0],
+                [-0.58, 0.58, 0.75],
+                [0.58, 0.58, 0.75],
+                [0.0, -0.74, 0.75],
+            ],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2], [3, 4, 5]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([[230, 57, 70, 255], [69, 123, 157, 255]], dtype=np.uint8),
+        color_mode=MeshColorMode.FACE,
+    )
+
+    renderer.add_mesh_visual(visual)
+
+    set_data = _calls(fake, "set_data")
+    expected_positions = np.array(
+        [
+            [-0.58, 0.58, 0.75],
+            [0.58, 0.58, 0.75],
+            [0.0, -0.74, 0.75],
+            [-0.72, -0.62, 0.0],
+            [0.72, -0.62, 0.0],
+            [0.0, 0.72, 0.0],
+        ],
+        dtype=np.float32,
+    )
+    np.testing.assert_allclose(
+        set_data[0][3],
+        expected_positions,
+        rtol=1.0e-6,
+        atol=1.0e-6,
+    )
+    np.testing.assert_array_equal(
+        set_data[1][3],
+        np.array(
+            [
+                [69, 123, 157, 255],
+                [69, 123, 157, 255],
+                [69, 123, 157, 255],
+                [230, 57, 70, 255],
+                [230, 57, 70, 255],
+                [230, 57, 70, 255],
+            ],
+            dtype=np.uint8,
+        ),
+    )
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", False)]
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[3].coord_space == 0
+    assert add_visual_call[3].controller_mode == 1
 
 
 def test_add_mesh_visual_cpu_resolves_s039_flat_lambert_face_colors():
@@ -2797,17 +2881,11 @@ def test_add_mesh_visual_cpu_resolves_s039_flat_lambert_face_colors():
     renderer.add_mesh_visual(visual)
 
     set_data = _calls(fake, "set_data")
-    np.testing.assert_allclose(
-        set_data[0][3],
-        [
-            [0.0, 0.0, 0.0],
-            [0.5, 0.0, 0.0],
-            [0.0, 0.5, 0.0],
-            [0.0, 0.0, 0.5],
-            [0.0, 0.5, 0.5],
-            [0.5, 0.0, 0.5],
-        ],
+    expected_positions = np.array(
+        [project_view3d_data_point(view3d, tuple(point)) for point in visual.positions],
+        dtype=np.float32,
     )
+    np.testing.assert_allclose(set_data[0][3], expected_positions)
     np.testing.assert_array_equal(
         set_data[1][3],
         np.array(
@@ -2826,7 +2904,7 @@ def test_add_mesh_visual_cpu_resolves_s039_flat_lambert_face_colors():
         _calls(fake, "set_index_data")[0][2],
         np.arange(6, dtype=np.uint32),
     )
-    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", True)]
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", False)]
 
 
 def test_add_mesh_visual_rejects_s039_flat_lambert_alpha_as_non_strict():
@@ -2869,6 +2947,7 @@ def test_add_mesh_visual_rejects_s039_flat_lambert_alpha_as_non_strict():
 def test_datoviz_capabilities_advertise_s040_lambert_cpu_resolve_when_view3d_ready():
     caps = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh()).capabilities()
 
+    assert MESH3D_OPAQUE_DEPTH_CAPABILITY not in caps.view3d_capabilities
     assert MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMALS_FACE3D_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY in caps.view3d_capabilities

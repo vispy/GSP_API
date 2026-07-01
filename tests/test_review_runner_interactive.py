@@ -14,6 +14,8 @@ from gsp.protocol import (
     CoordinateSpace,
     MeshVisual,
     OrthographicProjection3D,
+    PanelTextGuide,
+    PanelTextRole,
     PointVisual,
     View2D,
     View3D,
@@ -80,6 +82,38 @@ def _view3d_scene() -> review_runner.ReviewScene:
             ),
         ),
     )
+
+
+def test_datoviz_title_background_kept_for_2d_review_scenes() -> None:
+    guide = PanelTextGuide(
+        id="guide:title",
+        panel_id="panel:main",
+        role=PanelTextRole.TITLE,
+        text="2D title",
+    )
+
+    backgrounds = review_runner._panel_text_background_visuals((guide,))
+
+    assert len(backgrounds) == 1
+    assert backgrounds[0].id == "visual:datoviz-panel-title-background"
+
+
+def test_datoviz_title_background_skipped_for_view3d_review_scenes() -> None:
+    guide = PanelTextGuide(
+        id="guide:title",
+        panel_id="panel:main",
+        role=PanelTextRole.TITLE,
+        text="3D title",
+    )
+
+    backgrounds = review_runner._panel_text_background_visuals(
+        (guide,),
+        include_background=False,
+    )
+
+    assert backgrounds == ()
+
+
 def test_matplotlib_interactive_navigation_rerenders_data_visual_positions() -> None:
     import matplotlib
 
