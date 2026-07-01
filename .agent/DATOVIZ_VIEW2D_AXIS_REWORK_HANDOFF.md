@@ -3,11 +3,143 @@
 Generated: 2026-06-27
 Updated: 2026-06-27 after Datoviz `v0.4-dev` commits through `4e5f6aec6`
 (`docs: document panel coordinate transforms`).
+Updated: 2026-07-01 with the long-term native grid clipping plan after the Datoviz
+`examples/review/01_scatter_basic.py` clipping review.
 
 This handoff is intended for another agent to pick up. It covers both repositories:
 
 - GSP_API: `/home/cyrille/GIT/Viz/GSP_API`
 - Datoviz: `/home/cyrille/GIT/Viz/datoviz`
+
+## 2026-07-01 Follow-up: Native Grid Clipping Architecture
+
+### Observed Problem
+
+`examples/review/01_scatter_basic.py` exposes a guide/data clipping mismatch in Datoviz:
+
+- a large marker near the accepted `View2D` top boundary is clipped at the data/plot boundary;
+- the vertical grid line below it continues into the title/reserve area.
+
+The marker clipping is the desired behavior. The grid line is using a broader panel/source extent
+than the data visual clip region, so guide and data geometry do not share the same plot-rect
+boundary.
+
+This is not a `View2D` navigation bug. It is a Datoviz native axis/grid clipping issue that GSP
+should continue to classify as adapted or partial until Datoviz exposes native evidence that grid
+geometry is clipped to the resolved plot rectangle.
+
+### Long-Term Architectural Fix
+
+The durable fix belongs primarily in Datoviz, with GSP_API consuming and testing the capability.
+
+#### Datoviz-1: Make plot-rect clipping native axis semantics
+
+Datoviz should define this invariant for panel-owned 2D axes:
+
+- data visuals, grid lines, ticks, tick labels, and axis labels derive from the same resolved
+  `DvzPanelFrameSnapshot`;
+- grid lines are clipped to the resolved plot rectangle, not to the full panel/source extent;
+- `dvz_panel_plot_rect_px()` is the authoritative pixel-space plot rectangle for data/guide
+  clipping and layout snapshots.
+
+#### Datoviz-2: Fix axis grid generation
+
+The short-term implementation target is `src/scene/annotation/axis_visual.c`.
+
+Current grid generation already skips ticks whose fixed visual coordinate is outside the plot range,
+but grid line endpoints are derived from the full inverse panzoom/source extent:
+
+- X-axis grid lines use `source_y0` to `source_y1`;
+- Y-axis grid lines use `source_x0` to `source_x1`.
+
+That lets grid geometry bleed into reserved title/label space. Datoviz should instead clamp or derive
+grid endpoints from the plot rectangle (`x0`, `x1`, `y0`, `y1`) transformed through the same
+panzoom/source mapping used by axis geometry. In other words, the grid segment endpoints should
+represent the visible data plot area, not the full panel.
+
+#### Datoviz-3: Add a visual clip safety net
+
+If the visual attachment pipeline supports it, add or expose a plot-rect clip mode for generated
+guide visuals, for example:
+
+```c
+DVZ_VISUAL_CLIP_PLOT
+```
+
+The preferred design is both:
+
+- generated grid geometry endpoints respect the plot rectangle; and
+- the retained grid visual is clipped to the plot rectangle as a defensive invariant.
+
+This avoids relying on every future guide generator to remember manual endpoint trimming.
+
+#### Datoviz-4: Native tests
+
+Add Datoviz tests that inspect generated grid geometry or captured output against
+`dvz_panel_plot_rect_px()`.
+
+Required cases:
+
+- large marker near plot boundary with a title/reserve area;
+- backend auto ticks with grid enabled;
+- explicit ticks with grid enabled;
+- reversed X/Y domains;
+- panzoom and resize;
+- high-DPI/content-scale path if plot rect is measured in logical pixels.
+
+Acceptance:
+
+- no grid vertex extends outside the resolved plot rectangle except for expected stroke-width
+  tolerance;
+- data visual clipping and grid clipping agree;
+- title/label reserve areas remain free of grid geometry.
+
+#### GSP-1: Keep Datoviz grid clipping classified as adapted/partial
+
+Until Datoviz has native proof, GSP_API should keep diagnostics such as:
+
+- `grid_clip_not_enforced`;
+- `grid_clip_native_api_unverified`.
+
+Do not hide the issue by drawing an opaque title band or by unclipping data markers. Those would make
+the review artifact prettier while preserving inconsistent guide/data clipping semantics.
+
+#### GSP-2: Add a targeted visual QA regression
+
+Add a GSP visual QA case that intentionally reproduces the screenshot-class failure:
+
+- large marker close to the top plot boundary;
+- title or panel text reserve above the plot;
+- grid enabled;
+- Datoviz backend axis guides enabled.
+
+Expected strict behavior after Datoviz promotion:
+
+- marker and grid both stop at the same plot boundary;
+- grid does not enter title/label reserve space;
+- Matplotlib reference and Datoviz output agree on guide/data clipping boundaries.
+
+Before Datoviz promotion, this case should remain adapted or flagged with the explicit grid clipping
+blocker.
+
+#### GSP-3: Capability-gate promotion
+
+After Datoviz lands native tests and a stable API/behavior contract, update GSP_API:
+
+- enhance `datoviz_v04_axis_provider_capability()` or related diagnostics to detect/probe the grid
+  clipping capability;
+- remove or narrow the grid clipping blockers only for Datoviz builds that expose the proven
+  behavior;
+- add a runtime probe or fixture assertion that ties Datoviz grid geometry to
+  `dvz_panel_plot_rect_px()`.
+
+#### Cross-repo acceptance
+
+The combined promotion is complete only when both repositories prove the same contract:
+
+- Datoviz native tests prove grid geometry is plot-rect clipped;
+- GSP_API visual QA proves guide/data clipping coherency in a real review scene;
+- GSP_API capability metadata no longer overstates Datoviz guide strictness on older builds.
 
 ## Current Verdict
 
