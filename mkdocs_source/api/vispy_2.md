@@ -1,6 +1,8 @@
 # VisPy 2 API Reference
 
-The VisPy 2 package provides high-level components for interactive axes display and pan/zoom functionality, building on top of the GSP API.
+The VisPy 2 package provides a high-level producer facade for GSP protocol scenes.
+2D interaction is owned by canonical GSP `View2D` navigation, not by the removed
+legacy `vispy2.axes` pan/zoom helpers.
 
 ## Overview
 
@@ -13,7 +15,8 @@ The VisPy 2 package provides high-level components for interactive axes display 
 
 ## Axes Module
 
-The axes module provides components for displaying and interacting with 2D axes in a viewport.
+The axes module contains tick utility helpers only. Legacy `AxesDisplay`, `AxesPanZoom`,
+and `AxesManaged` were removed in favor of canonical `View2D` navigation and semantic guides.
 
 ::: vispy2.axes
     handler: python
@@ -21,11 +24,3 @@ The axes module provides components for displaying and interacting with 2D axes 
       show_root_heading: true
       show_source: true
       members_order: source
-
-### Axes Display
-
-::: vispy2.axes.axes_display
-
-### Axes Pan Zoom
-
-::: vispy2.axes.axes_panzoom

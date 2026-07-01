@@ -26,7 +26,7 @@ Verified directly:
 
 Surveyed via Explore agents (findings in conversation, files not all individually re-read by me):
 - Basic visuals: `markers_example.py`, `segments_example.py`, `paths_example.py`, `pixels_example.py`, `image_example.py`, `texts_example.py`, `buffer_example.py`, `transform_example.py`, `transform_build_sample.py`, `_mesh_example.py`
-- Viewports/axes/cameras: `viewport_*_example.py`, `camera_control_example.py`, `vispy_basic_example.py`, `vispy_imshow_example.py`, `vispy_axes_*_example.py`, `simple_model_matrix.py`, `object3d_example.py`
+- Viewports/cameras/navigation: `viewport_*_example.py`, `camera_control_example.py`, protocol `View2D` navigation examples, `simple_model_matrix.py`, `object3d_example.py`
 - Advanced: `animator_example.py`, `groups_example.py`, `dynamic_groups_example.py`, `texts_animated_example.py`, `session_record_example.py`, `session_player_example.py`, `transform_serialization_example.py`, `transform_visual_example.py`, `pydantic_cycle_example.py`, `network_client_example.py`, `svg_pdf_example.py`
 
 ## Approach
@@ -79,16 +79,15 @@ One subsection per pattern. Each subsection: 1-paragraph description, canonical 
 - Tile / overlap / stack layouts
 - Files: `viewport_multi_example.py`, `viewport_overlapping_example.py`, `viewport_events_example.py`
 
-#### 4.3 Interaction: ViewportEvents + AxesPanZoom
-- `ExampleHelper.create_viewport_events(...)` → subscribe to `mouse_move_event`, `button_press_event`, `mouse_scroll_event`
-- `AxesPanZoom(viewport_events, base_scale, axes_display)` as a reusable controller
-- `new_limits_event` triggers re-render when axes limits change
-- Files: `viewport_events_example.py`, `vispy_axes_panzoom_example.py`, `vispy_axes_multiple_panzoom_example.py`
+#### 4.3 Interaction: canonical View2D navigation
+- Backend input → `View2DNavigationInputAdapter` → navigation action → accepted `View2D`
+- Datoviz live review uses the same protocol and Datoviz panzoom mouse conventions/constants
+- Files: protocol `View2D` navigation examples and Datoviz review workflows
 
-#### 4.4 Axes layers (managed → display → panzoom)
-- `AxesManaged` (auto-everything) for tutorial code
-- `AxesDisplay` + `AxesPanZoom` (decoupled) for full control
-- Files: `vispy_axes_managed_example.py`, `vispy_axes_display_example.py`, `vispy_axes_panzoom_example.py`
+#### 4.4 Axes, guides, and query state
+- Axes and guides are derived from the accepted `View2D`
+- Navigation must refresh data transforms, axis transforms, ticks, labels, guides, and query snapshots together
+- Removed legacy APIs must not be documented: `AxesManaged`, `AxesDisplay`, `AxesPanZoom`
 
 #### 4.5 3D scenes: manual matrices vs Object3D hierarchies
 - Manual: `model_matrix = glm.zrotate(20.0)`

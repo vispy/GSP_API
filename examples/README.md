@@ -95,16 +95,10 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | `viewport_overlapping_example.py` | Overlapping viewport layouts | Complex viewport arrangements |
 | `viewport_ndc_metric.py` | Normalized device coordinates | NDC coordinate system usage |
 
-### Axes and Grid Examples
+### Plot and Grid Examples
 
 | File | Description | Demonstrates |
 |------|-------------|--------------|
-| `vispy_axes_display_example.py` | Displaying coordinate axes | Axis visualization and labels |
-| `vispy_axes_managed_example.py` | Managed axis systems | Automatic axis management |
-| `vispy_axes_managed_multiple_example.py` | Multiple managed axes | Multi-axis layouts |
-| `vispy_axes_panzoom_example.py` | Pan and zoom on axes | Interactive axis navigation |
-| `vispy_axes_multiple_panzoom_example.py` | Multiple axes with pan/zoom | Multi-axis interaction |
-| `vispy_axes_image_pyramid.py` | Image pyramids for efficient rendering | Level-of-detail image rendering |
 | `vispy_plot_example.py` | Line plots and curves | 2D line plot visualization |
 | `vispy_scatter_example.py` | Scatter plots and point clouds | Scatter plot rendering |
 
@@ -120,17 +114,14 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 
 | File | Description | Demonstrates |
 |------|-------------|--------------|
-| `vispy_basic_example.py` | Basic vispy canvas setup | Getting started with vispy |
-| `vispy_imshow_example.py` | VisPy-style image display | Image display through the VisPy-inspired API |
 | `_big_tester_example.py` | Large-scale performance testing | Stress testing with many elements |
 | `_big_tester_cmdline.py` | Command-line performance testing | CLI-based testing framework |
 
-### Image Pyramid Examples (Internal)
+### Internal Examples
 
 | File | Description | Demonstrates |
 |------|-------------|--------------|
 | `_axes_image_pyramid_*.py` | Various image pyramid implementations | Different LOD and tiling strategies |
-| `_vispy_axes_managed_example_*.py` | Different axis management patterns | Various axis configuration approaches |
 
 ---
 

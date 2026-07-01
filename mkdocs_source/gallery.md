@@ -122,55 +122,6 @@
 </div>
 
 <div class="gallery-card">
-  <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_image_pyramid.py" target="_blank">
-    <img src="images/vispy_axes_image_pyramid_animator_matplotlib.png" alt="Vispy Axes Image Pyramid">
-    <p>vispy_axes_image_pyramid.py</p>
-  </a>
-</div>
-
-<div class="gallery-card">
-  <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_managed_example.py" target="_blank">
-    <img src="images/vispy_axes_managed_example_animator_matplotlib.png" alt="Vispy Axes Managed Example">
-    <p>vispy_axes_managed_example.py</p>
-  </a>
-</div>
-
-<div class="gallery-card">
-  <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_managed_multiple_example.py" target="_blank">
-    <img src="images/vispy_axes_managed_multiple_example_animator_matplotlib.png" alt="Vispy Axes Managed Multiple Example">
-    <p>vispy_axes_managed_multiple_example.py</p>
-  </a>
-</div>
-
-<div class="gallery-card">
-  <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_multiple_panzoom_example.py" target="_blank">
-    <img src="images/vispy_axes_multiple_panzoom_example_animator_matplotlib.png" alt="Vispy Axes Multiple Panzoom Example">
-    <p>vispy_axes_multiple_panzoom_example.py</p>
-  </a>
-</div>
-
-<div class="gallery-card">
-  <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_panzoom_example.py" target="_blank">
-    <img src="images/vispy_axes_panzoom_example_animator_matplotlib.png" alt="Vispy Axes Panzoom Example">
-    <p>vispy_axes_panzoom_example.py</p>
-  </a>
-</div>
-
-<div class="gallery-card">
-  <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_basic_example.py" target="_blank">
-    <img src="images/vispy_basic_example_animator_matplotlib.png" alt="Vispy Basic Example">
-    <p>vispy_basic_example.py</p>
-  </a>
-</div>
-
-<div class="gallery-card">
-  <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_imshow_example.py" target="_blank">
-    <img src="images/vispy_imshow_example_animator_matplotlib.png" alt="Vispy Imshow Example">
-    <p>vispy_imshow_example.py</p>
-  </a>
-</div>
-
-<div class="gallery-card">
   <a href="https://github.com/vispy/GSP_API/blob/main/examples/vispy_plot_example.py" target="_blank">
     <img src="images/vispy_plot_example_matplotlib.png" alt="Vispy Plot Example">
     <p>vispy_plot_example.py</p>

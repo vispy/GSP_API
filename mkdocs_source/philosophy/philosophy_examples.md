@@ -195,40 +195,33 @@ Layouts emerge from how you place the viewports in pixel coordinates:
 
 **Demonstrated in:** `viewport_multi_example.py`, `viewport_overlapping_example.py`, `viewport_events_example.py`.
 
-### 4.3 Interaction: ViewportEvents + AxesPanZoom
+### 4.3 Interaction: canonical View2D navigation
 
-Input is delivered via a backend-agnostic `ViewportEvents` object, manufactured by the helper:
-
-```python
-viewport_events = ExampleHelper.create_viewport_events(renderer_base, viewport)
-
-viewport_events.mouse_move_event.subscribe(on_mouse_move)
-viewport_events.button_press_event.subscribe(on_button_press)
-viewport_events.mouse_scroll_event.subscribe(on_mouse_scroll)
-```
-
-Higher-level controllers consume those events and translate them into camera/axes changes:
+Interactive 2D examples should use the retained `View2D` model. Backend input is adapted into backend-neutral navigation actions, then the accepted `View2D` becomes the only authority for data transforms, axes, guides, and query snapshots.
 
 ```python
-axes_pan_zoom = AxesPanZoom(viewport_events, base_scale=1.1, axes_display=axes_display)
-axes_display.new_limits_event.subscribe(re_render_callback)
+adapter = View2DNavigationInputAdapter(
+    view,
+    viewport_width_px=viewport.width,
+    viewport_height_px=viewport.height,
+)
+action = adapter.handle_pointer_event(pointer_event)
+
+if action is not None:
+    view = apply_view2d_navigation_action(view, action)
 ```
 
-`AxesPanZoom` itself contains no rendering logic — it only mutates `axes_display` limits in response to events. The re-render is triggered by subscribing to `new_limits_event`. This separation (events → controller → display → render trigger) is the canonical interactive shape.
+The Datoviz backend wires the same protocol through `DatovizV04ProtocolRenderer.enable_gsp_view2d_navigation(...)`. Its mouse conventions, constants, zoom sensitivity, and reset gesture intentionally follow Datoviz panzoom behavior.
 
-**Demonstrated in:** [`viewport_events_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/viewport_events_example.py), [`vispy_axes_panzoom_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_panzoom_example.py), [`vispy_axes_multiple_panzoom_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_multiple_panzoom_example.py), [`camera_control_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/camera_control_example.py).
+The removed `AxesDisplay` / `AxesPanZoom` / `AxesManaged` stack must not be used for new code.
 
-### 4.4 Axes layers (managed → display → panzoom)
+**Demonstrated in:** protocol `View2D` navigation examples and Datoviz review workflows.
 
-Three abstraction levels, increasing in control:
+### 4.4 Axes, guides, and query state
 
-| Layer | Purpose | When to reach for it |
-|---|---|---|
-| `AxesManaged` | Wraps a viewport, auto-handles pan/zoom, labels, and titles. | Tutorial code, quick plots, demos. See [`vispy_axes_managed_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_managed_example.py). |
-| `AxesDisplay` | Exposes the viewport, transform matrix, and `new_limits_event`. No interaction baked in. | When you want custom event wiring. See [`vispy_axes_display_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_display_example.py). |
-| `AxesPanZoom` | Pure input controller — listens to `ViewportEvents`, mutates an `AxesDisplay`. | Pair with `AxesDisplay` for full control. See [`vispy_axes_panzoom_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_axes_panzoom_example.py). |
+Axes and guide visuals are derived from the accepted `View2D`; they are not independent interaction state. When navigation changes the viewport, renderers must refresh axis transforms, tick policy, explicit ticks, grid lines, labels, and any query snapshot against the same accepted view.
 
-The split is deliberate: rendering, display state, and interaction can each be replaced independently.
+This keeps 2D interaction deterministic across backends: raw backend input → `View2DNavigationInputAdapter` → accepted `View2D` → synchronized data, axes, and guides render.
 
 ### 4.5 3D scenes: manual matrices vs Object3D hierarchies
 
@@ -265,7 +258,7 @@ renderer_base.render(viewports, visuals, model_matrices, cameras)
 
 `Object3D.pre_render` is the bridge: it flattens a hierarchy into the four parallel lists the renderer expects. The renderer's API does not change — only the way the lists are produced.
 
-**Demonstrated in:** [`simple_model_matrix.py`](https://github.com/vispy/GSP_API/blob/main/examples/simple_model_matrix.py), [`object3d_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/object3d_example.py), [`camera_control_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/camera_control_example.py), [`vispy_basic_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_basic_example.py).
+**Demonstrated in:** [`simple_model_matrix.py`](https://github.com/vispy/GSP_API/blob/main/examples/simple_model_matrix.py), [`object3d_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/object3d_example.py), [`camera_control_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/camera_control_example.py), [`vispy_plot_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/vispy_plot_example.py).
 
 ### 4.6 Animation: `@animator.event_listener`
 
@@ -459,7 +452,7 @@ The "now you do it" section. Each box mirrors a step in the canonical skeleton o
   ```
   Look for both PNGs in `examples/output/`. They should be visually equivalent.
 - [ ] **For animated examples**, use `@animator.event_listener` and return only changed visuals.
-- [ ] **For interactive examples**, build the chain `ExampleHelper.create_viewport_events → AxesPanZoom → AxesDisplay.new_limits_event → re-render` rather than wiring callbacks ad hoc.
+- [ ] **For interactive 2D examples**, build the chain `raw backend input → View2DNavigationInputAdapter → accepted View2D → synchronized data/guides render`.
 - [ ] **Add a row** to the appropriate table in [`examples/README.md`](https://github.com/vispy/GSP_API/blob/main/examples/README.md).
 
 ---

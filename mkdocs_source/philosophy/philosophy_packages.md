@@ -51,7 +51,7 @@ Three packages that build on `gsp` *without* taking a dependency on any backend.
 |---|---|
 | [`gsp_extra`](https://github.com/vispy/GSP_API/blob/main/src/gsp_extra/) | Helpers above the protocol: `Object3D` scene-graph hierarchy, camera controls, `Bufferx` numpy bridge |
 | [`gsp_pydantic`](https://github.com/vispy/GSP_API/blob/main/src/gsp_pydantic/) | Round-trip the entire scene through pydantic models (for sessions, network, snapshot tests) |
-| [`vispy2`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/) | High-level matplotlib-like facade: `scatter`, `plot`, `imshow`, and the `AxesManaged` / `AxesDisplay` / `AxesPanZoom` stack |
+| [`vispy2`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/) | High-level matplotlib-like facade: `scatter`, `plot`, `imshow`, plus axis tick locating and formatting helpers |
 
 ### 2.4 The golden rule: dependencies point downward
 
@@ -295,26 +295,22 @@ _, viewports, visuals, model_matrices, cameras = parser.parse(serialized)
 
 ### 3.7 `vispy2` — high-level facade
 
-**What it is.** A matplotlib-like convenience API for users who want `scatter()` and `imshow()` rather than the raw four-list `renderer.render(...)` call. Hosts the `AxesManaged` / `AxesDisplay` / `AxesPanZoom` stack used by the interactive examples.
+**What it is.** A matplotlib-like convenience API for users who want `scatter()` and `imshow()` rather than the raw four-list `renderer.render(...)` call. Its axes package contains tick locating and formatting helpers only; interactive 2D navigation lives in the canonical `View2D` protocol.
 
 **Key entry points.**
 
 | Module | Exports |
 |---|---|
-| [`vispy2.axes`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/axes/__init__.py) | `AxesManaged`, `AxesDisplay`, `AxesPanZoom`, `AxisTickLocator`, `AxisTickFormatter` |
+| [`vispy2.axes`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/axes/__init__.py) | `AxisTickLocator`, `AxisTickFormatter` |
 | [`vispy2.scatter`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/scatter/scatter.py) | `scatter(...)` |
 | [`vispy2.plot`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/plot/plot.py) | `plot(...)` |
 | [`vispy2.imshow`](https://github.com/vispy/GSP_API/blob/main/src/vispy2/imshow/imshow.py) | `imshow(...)` |
 
-**The Axes ladder** (rendering / state / interaction, separable):
+**2D navigation boundary.**
 
-| Class | Purpose | When to reach for it |
-|---|---|---|
-| `AxesManaged` | Wraps a viewport, auto-handles pan/zoom/labels/title. | Tutorial code, quick demos. |
-| `AxesDisplay` | Owns viewport + transform + `new_limits_event`. No interaction baked in. | Custom event wiring. |
-| `AxesPanZoom` | Pure input controller — listens to `ViewportEvents`, mutates an `AxesDisplay`. | Pair with `AxesDisplay` for full control. |
+`View2DNavigationInputAdapter` and `apply_view2d_navigation_action()` define the backend-neutral interaction path. Backends render from the accepted `View2D` and keep axes, guides, and query snapshots synchronized with that view.
 
-This is the same separation described in [philosophy_examples.md §4.4](./philosophy_examples.md). `vispy2` is where it lives.
+The removed `AxesManaged` / `AxesDisplay` / `AxesPanZoom` stack is not part of the supported API.
 
 **Boundaries.** No rendering, no backend dependency. Builds on `gsp` plus `gsp_extra`.
 
@@ -359,28 +355,32 @@ The architecture exists to make these three flows trivially expressible. Each sh
 
 ```python
 from gsp.core import Canvas, Viewport, Camera
+from gsp.protocol.navigation import View2DNavigationInputAdapter, apply_view2d_navigation_action
+from gsp.protocol.view2d import View2D
 from gsp.visuals import Points
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.renderer_registery import RendererRegistry
-from vispy2.axes import AxesPanZoom, AxesDisplay
 
 import gsp_datoviz                                   # registers "datoviz"
 
 canvas    = Canvas(width=512, height=512, dpi=127.5)
 viewport  = Viewport(0, 0, 512, 512)
+view      = View2D.from_bounds(0.0, 1.0, 0.0, 1.0)
 positions = Bufferx.from_numpy(np.random.rand(1000, 3), BufferType.vec3)
 points    = Points(positions, ...)
 
 renderer  = RendererRegistry.create_renderer("datoviz", canvas)
-events    = RendererRegistry.create_viewport_events(renderer, viewport)
-display   = AxesDisplay(viewport, ...)
-panzoom   = AxesPanZoom(events, base_scale=1.1, axes_display=display)
+adapter   = View2DNavigationInputAdapter(view, viewport_width_px=512, viewport_height_px=512)
+
+action = adapter.handle_pointer_event(pointer_event)
+if action is not None:
+    view = apply_view2d_navigation_action(view, action)
 
 renderer.render([viewport], [points], [Bufferx.mat4_identity()], [Camera(...)])
 renderer.show()
 ```
 
-**Package map:** `gsp` (Canvas/Viewport/Camera/Points), `gsp_extra` (Bufferx), `gsp_datoviz` (renderer + events), `vispy2` (AxesPanZoom/AxesDisplay).
+**Package map:** `gsp` (Canvas/Viewport/Camera/Points/View2D navigation), `gsp_extra` (Bufferx), `gsp_datoviz` (renderer + live Datoviz event bridge).
 
 ### 5.2 Headless image export
 
