@@ -6,12 +6,12 @@ S043 - Datoviz Panel Frame, Guide Strictness, And Retained View3D
 
 ## Status
 
-Completed locally in isolated Datoviz worktree; not yet committed or merged.
+Completed and landed on Datoviz `v0.4-dev`.
 
 ## Result
 
-Implemented in `/Users/cyrille/GIT/Viz/datoviz-agent-worktrees/M184-first-class-guides` on branch
-`agent/M184-first-class-guides` from Datoviz commit `3ad83213b`. Added public frame-snapshot guide
+Implemented in Datoviz on branch `agent/M184-first-class-guides`, rebased onto `v0.4-dev`, and
+pushed to `v0.4-dev` as commits `7b3bd2f7f` and `7c6e48f64`. Added public frame-snapshot guide
 layout, hit, and rendered-contribution records/APIs; populated axes, guide lines/spans, colorbars,
 and legends from retained layout state; regenerated Python ctypes; and validated native scene tests
 plus ctypes ABI checks.

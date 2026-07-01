@@ -6,17 +6,19 @@ M184
 
 ## Status
 
-Completed locally and pushed for review. Datoviz changes are on a sibling repository branch, not in
+Completed and landed on Datoviz `v0.4-dev`. Datoviz changes are in the sibling repository, not in
 this GSP repository.
 
-## Datoviz Branch
+## Datoviz Location
 
-- Repository: `/Users/cyrille/GIT/Viz/datoviz-agent-worktrees/M184-first-class-guides`
+- Main checkout: `/Users/cyrille/GIT/Viz/datoviz`
 - Branch: `agent/M184-first-class-guides`
-- Base commit: `3ad83213b`
-- Handoff file: `agents/now/HANDOFF_FIRST_CLASS_GUIDE_SNAPSHOT.md`
+- Landed branch: `v0.4-dev`
+- Implementation commit: `7b3bd2f7f`
+- Handoff status commit: `7c6e48f64`
+- Datoviz handoff file: `agents/now/HANDOFF_FIRST_CLASS_GUIDE_SNAPSHOT.md`
 
-The main Datoviz checkout was not edited because another agent was active there during the work.
+The normal Datoviz `v0.4-dev` checkout has been fast-forwarded locally and contains the handoff.
 
 ## What Datoviz Now Exposes
 
@@ -68,8 +70,9 @@ Results:
 
 ## Next Agent Guidance
 
-M185 should remain a partial Datoviz snapshot adapter unless the pushed Datoviz branch has been
-merged into the local Datoviz runtime that GSP imports.
+M185 should detect the new Datoviz snapshot APIs from the local Datoviz runtime before using them.
+If GSP imports Datoviz from `/Users/cyrille/GIT/Viz/datoviz` on `v0.4-dev`, the APIs should be
+available.
 
 For M185:
 

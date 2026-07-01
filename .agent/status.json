@@ -2050,7 +2050,7 @@
     "S041 completed manual Matplotlib-vs-Dataviz 3D review coverage for lit meshes and arcball-style View3D navigation."
   ],
   "notes": [
-    "M184 completed locally in isolated Datoviz worktree datoviz-agent-worktrees/M184-first-class-guides: added public guide layout/hit/contribution snapshot APIs, populated axes, guide lines/spans, colorbars, and legends from retained layout state, regenerated ctypes, and validated scene-graph/fields plus ctypes ABI checks. Changes are not yet committed or merged.",
+    "M184 completed and landed on Datoviz v0.4-dev as commits 7b3bd2f7f and 7c6e48f64: added public guide layout/hit/contribution snapshot APIs, populated axes, guide lines/spans, colorbars, and legends from retained layout state, regenerated ctypes, and validated scene-graph/fields plus ctypes ABI checks.",
     "M184 scoped and marked ready: implementation should target the sibling Datoviz repository with first-class guide layout/readback/contribution APIs layered over existing axes, guide lines/spans, colorbars, legends, generated visual roles, and DvzPanelFrameSnapshot; use a separate Datoviz worktree if another agent is active.",
     "M183 completed after explicit approval to inspect the sibling Datoviz checkout: native v0.4-dev already contains revisioned panel View2D/View3D descriptors, ordered reversed-domain support, canonical 2D/3D state readback, frame snapshot view revisions, generated ctypes policy fixes through Datoviz commit f1a904fba, and focused native validation plus ctypes-check passed.",
     "M182 completed: added Datoviz public DvzPanelFrameSnapshot/DvzPanelFrameInfo API, generated ctypes exposure, native snapshot tests, and Datoviz architecture documentation. Full scene tests passed with 664/664.",
