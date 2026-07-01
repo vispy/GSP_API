@@ -179,6 +179,8 @@ DVZ_POINTER_EVENT_WHEEL = 20
 DVZ_POINTER_BUTTON_LEFT = 1
 DVZ_POINTER_BUTTON_RIGHT = 3
 DVZ_INPUT_EVENT_POINTER = 1
+DVZ_INPUT_EVENT_RESIZE = 3
+DVZ_INPUT_EVENT_SCALE = 4
 
 DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
@@ -1949,6 +1951,7 @@ class _DatovizLiveView2DNavigation:
             current_view2d_revision="view-rev:datoviz-live-1",
             home_view=view,
         )
+        self._panel_rect = self._initial_panel_rect()
         self.adapter = View2DNavigationInputAdapter(
             controller_id=self.controller.id,
             view2d_revision=self.controller.current_view2d_revision,
@@ -1960,6 +1963,10 @@ class _DatovizLiveView2DNavigation:
     @property
     def panel_rect(self) -> LogicalPixelRect:
         """Return the live Datoviz panel rectangle in host logical pixels."""
+        return self._panel_rect
+
+    def _initial_panel_rect(self) -> LogicalPixelRect:
+        """Return the initial live Datoviz panel rectangle in host logical pixels."""
         return LogicalPixelRect(
             x=0.0,
             y=0.0,
@@ -1982,15 +1989,30 @@ class _DatovizLiveView2DNavigation:
         """Handle one routed Datoviz input callback."""
         input_event = getattr(event_ptr, "contents", event_ptr)
         input_event_type = int(getattr(input_event, "type"))
-        if input_event_type != _enum_value(
+        if input_event_type == _enum_value(
             self.renderer.dvz,
             "DvzInputEventType",
             "DVZ_INPUT_EVENT_POINTER",
             DVZ_INPUT_EVENT_POINTER,
         ):
+            pointer_event = getattr(input_event.content, "pointer")
+            self.handle_pointer_event(_router, pointer_event, _user_data)
             return
-        pointer_event = getattr(input_event.content, "pointer")
-        self.handle_pointer_event(_router, pointer_event, _user_data)
+        if input_event_type == _enum_value(
+            self.renderer.dvz,
+            "DvzInputEventType",
+            "DVZ_INPUT_EVENT_RESIZE",
+            DVZ_INPUT_EVENT_RESIZE,
+        ):
+            self.handle_resize_event(getattr(input_event.content, "resize"))
+            return
+        if input_event_type == _enum_value(
+            self.renderer.dvz,
+            "DvzInputEventType",
+            "DVZ_INPUT_EVENT_SCALE",
+            DVZ_INPUT_EVENT_SCALE,
+        ):
+            self._refresh_view_after_viewport_change()
 
     def handle_pointer_event(
         self, _router: Any, event_ptr: Any, _user_data: Any
@@ -2001,6 +2023,15 @@ class _DatovizLiveView2DNavigation:
         if pointer_event is None:
             return
         self._apply_event(pointer_event)
+
+    def handle_resize_event(self, event: Any) -> None:
+        """Update the live logical panel size from one Datoviz resize event."""
+        width, height = _datoviz_resize_logical_size(event)
+        if width <= 0.0 or height <= 0.0:
+            return
+        self._panel_rect = LogicalPixelRect(x=0.0, y=0.0, width=width, height=height)
+        self.adapter.set_panel_rect(self._panel_rect)
+        self._refresh_view_after_viewport_change()
 
     def _apply_event(self, event: NavigationPointerEvent) -> None:
         self.adapter.set_panel_rect(self.panel_rect)
@@ -2028,6 +2059,12 @@ class _DatovizLiveView2DNavigation:
         )
         self.adapter.accept_navigation_result(result)
         self.renderer.apply_retained_view2d_navigation(result.view)
+        request_frame = getattr(self.renderer.dvz, "dvz_view_request_frame", None)
+        if request_frame is not None:
+            request_frame(self.live_view)
+
+    def _refresh_view_after_viewport_change(self) -> None:
+        self.renderer.update_view2d_axes(self.view)
         request_frame = getattr(self.renderer.dvz, "dvz_view_request_frame", None)
         if request_frame is not None:
             request_frame(self.live_view)
@@ -2133,6 +2170,26 @@ def _datoviz_pointer_y_to_gsp_logical_px(event: Any) -> float:
         if height > 0.0:
             return height - float(event.pos[1])
     return float(event.pos[1])
+
+
+def _datoviz_resize_logical_size(event: Any) -> tuple[float, float]:
+    width = float(getattr(event, "window_width", 0))
+    height = float(getattr(event, "window_height", 0))
+    if width > 0.0 and height > 0.0:
+        return width, height
+
+    framebuffer_width = float(getattr(event, "framebuffer_width", 0))
+    framebuffer_height = float(getattr(event, "framebuffer_height", 0))
+    scale_x = float(getattr(event, "content_scale_x", 1.0))
+    scale_y = float(getattr(event, "content_scale_y", 1.0))
+    if (
+        framebuffer_width > 0.0
+        and framebuffer_height > 0.0
+        and scale_x > 0.0
+        and scale_y > 0.0
+    ):
+        return framebuffer_width / scale_x, framebuffer_height / scale_y
+    return 0.0, 0.0
 
 
 def _apply_view2d_navigation_action(

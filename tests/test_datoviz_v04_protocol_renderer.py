@@ -102,6 +102,7 @@ from gsp_datoviz.protocol_renderer import (
     datoviz_v04_view3d_live_navigation_diagnostics,
     import_datoviz_v04,
     is_datoviz_v04_facade,
+    _DatovizLiveView2DNavigation,
     _image_texcoords,
     _datoviz_view_size_desc,
     _resolved_canvas_from_datoviz,
@@ -551,6 +552,8 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
 
     class DvzInputEventType:
         DVZ_INPUT_EVENT_POINTER = 1
+        DVZ_INPUT_EVENT_RESIZE = 3
+        DVZ_INPUT_EVENT_SCALE = 4
 
     class DvzPointerButton:
         DVZ_POINTER_BUTTON_LEFT = 1
@@ -628,6 +631,12 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
         return None
 
 
+class FakeDatovizV04WithInteractiveAxes(
+    FakeDatovizV04WithInteractive, FakeDatovizV04WithAxes
+):
+    pass
+
+
 class FakePointerEvent:
     def __init__(
         self,
@@ -637,11 +646,12 @@ class FakePointerEvent:
         *,
         button=0,
         wheel_y=0.0,
+        window_size=(800.0, 600.0),
     ):
         self.type = event_type
         self.pos = [float(x), float(y)]
         self.button = button
-        self.window_size = [800.0, 600.0]
+        self.window_size = [float(window_size[0]), float(window_size[1])]
         self.content = SimpleNamespace(w=SimpleNamespace(dir=[0.0, float(wheel_y)]))
 
 
@@ -651,9 +661,20 @@ class FakePointerEventPtr:
 
 
 class FakeInputEvent:
-    def __init__(self, pointer_event):
-        self.type = FakeDatovizV04WithInteractive.DvzInputEventType.DVZ_INPUT_EVENT_POINTER
-        self.content = SimpleNamespace(pointer=pointer_event)
+    def __init__(
+        self,
+        event_type,
+        *,
+        pointer_event=None,
+        resize_event=None,
+        scale_event=None,
+    ):
+        self.type = event_type
+        self.content = SimpleNamespace(
+            pointer=pointer_event,
+            resize=resize_event,
+            scale=scale_event,
+        )
 
 
 class FakeInputEventPtr:
@@ -669,19 +690,74 @@ def _emit_fake_datoviz_pointer(
     *,
     button: int = 0,
     wheel_y: float = 0.0,
+    window_size: tuple[float, float] = (800.0, 600.0),
 ) -> None:
     assert fake.input_callback is not None
     fake.input_callback(
         "input-router",
         FakeInputEventPtr(
             FakeInputEvent(
-                FakePointerEvent(
+                fake.DvzInputEventType.DVZ_INPUT_EVENT_POINTER,
+                pointer_event=FakePointerEvent(
                     event_type,
                     x,
                     y,
                     button=button,
                     wheel_y=wheel_y,
+                    window_size=window_size,
                 )
+            )
+        ),
+        None,
+    )
+
+
+def _emit_fake_datoviz_resize(
+    fake: FakeDatovizV04WithInteractive,
+    *,
+    window_width: int,
+    window_height: int,
+    framebuffer_width: int | None = None,
+    framebuffer_height: int | None = None,
+    content_scale_x: float = 1.0,
+    content_scale_y: float = 1.0,
+) -> None:
+    assert fake.input_callback is not None
+    fake.input_callback(
+        "input-router",
+        FakeInputEventPtr(
+            FakeInputEvent(
+                fake.DvzInputEventType.DVZ_INPUT_EVENT_RESIZE,
+                resize_event=SimpleNamespace(
+                    framebuffer_width=framebuffer_width or window_width,
+                    framebuffer_height=framebuffer_height or window_height,
+                    window_width=window_width,
+                    window_height=window_height,
+                    content_scale_x=content_scale_x,
+                    content_scale_y=content_scale_y,
+                ),
+            )
+        ),
+        None,
+    )
+
+
+def _emit_fake_datoviz_scale(
+    fake: FakeDatovizV04WithInteractive,
+    *,
+    content_scale_x: float,
+    content_scale_y: float,
+) -> None:
+    assert fake.input_callback is not None
+    fake.input_callback(
+        "input-router",
+        FakeInputEventPtr(
+            FakeInputEvent(
+                fake.DvzInputEventType.DVZ_INPUT_EVENT_SCALE,
+                scale_event=SimpleNamespace(
+                    content_scale_x=content_scale_x,
+                    content_scale_y=content_scale_y,
+                ),
             )
         ),
         None,
@@ -3466,6 +3542,77 @@ def test_datoviz_live_pointer_y_coordinates_are_converted_from_window_origin():
     assert renderer.view.y_range == pytest.approx((-1.2, 0.8))
 
 
+def test_datoviz_live_resize_updates_navigation_panel_rect_and_refreshes_axes():
+    fake = FakeDatovizV04WithInteractiveAxes()
+    view = View2D(id="view:main", panel_id="panel:main")
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    renderer.configure_view2d_axes(view, x_label="x", y_label="y", grid=True)
+    session = renderer.enable_gsp_view2d_navigation(view)
+    baseline_call_count = len(fake.calls)
+
+    _emit_fake_datoviz_resize(fake, window_width=1600, window_height=1200)
+
+    assert session.panel_rect == LogicalPixelRect(
+        x=0.0, y=0.0, width=1600.0, height=1200.0
+    )
+    assert session.adapter.panel_rect == session.panel_rect
+    resize_calls = fake.calls[baseline_call_count:]
+    assert _calls_from(resize_calls, "clear_ticks") == [
+        ("clear_ticks", "axis:0"),
+        ("clear_ticks", "axis:1"),
+    ]
+    assert _calls_from(resize_calls, "set_tick_policy") == [
+        ("set_tick_policy", "axis:0", "tick-policy"),
+        ("set_tick_policy", "axis:1", "tick-policy"),
+    ]
+    assert _calls_from(resize_calls, "request_frame") == [
+        ("request_frame", "live-view")
+    ]
+
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+        800.0,
+        600.0,
+        button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
+        window_size=(1600.0, 1200.0),
+    )
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG,
+        960.0,
+        600.0,
+        window_size=(1600.0, 1200.0),
+    )
+
+    assert renderer.view is not None
+    assert renderer.view.x_range == pytest.approx((-1.2, 0.8))
+    assert renderer.view.y_range == pytest.approx((-1.0, 1.0))
+
+
+def test_datoviz_live_scale_refreshes_axes_without_changing_panel_rect_or_view():
+    fake = FakeDatovizV04WithInteractiveAxes()
+    view = View2D(id="view:main", panel_id="panel:main")
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    renderer.configure_view2d_axes(view, x_label="x", y_label="y", grid=True)
+    session = renderer.enable_gsp_view2d_navigation(view)
+    baseline_rect = session.panel_rect
+    baseline_call_count = len(fake.calls)
+
+    _emit_fake_datoviz_scale(fake, content_scale_x=2.0, content_scale_y=2.0)
+
+    assert session.panel_rect == baseline_rect
+    assert renderer.view == view
+    scale_calls = fake.calls[baseline_call_count:]
+    assert _calls_from(scale_calls, "clear_ticks") == [
+        ("clear_ticks", "axis:0"),
+        ("clear_ticks", "axis:1"),
+    ]
+    assert _calls_from(scale_calls, "request_frame") == [
+        ("request_frame", "live-view")
+    ]
+
+
 def test_datoviz_live_navigation_unsubscribes_on_close():
     fake = FakeDatovizV04WithInteractive()
 
@@ -3837,6 +3984,133 @@ def test_imported_datoviz_binding_exposes_live_input_contract_when_available():
     diagnostics = datoviz_v04_live_input_diagnostics(dvz)
 
     assert diagnostics == ()
+
+
+def test_imported_datoviz_union_input_stream_drives_live_view2d_navigation_when_available():
+    dvz = pytest.importorskip("datoviz")
+    required = (
+        "dvz_input_router",
+        "dvz_input_router_destroy",
+        "dvz_input_subscribe_event",
+        "dvz_input_emit_event",
+        "DvzInputEvent",
+        "DvzInputEventType",
+        "DvzPointerEventType",
+        "DvzPointerButton",
+    )
+    missing = [name for name in required if not hasattr(dvz, name)]
+    if missing:
+        pytest.skip(f"installed Datoviz binding is missing input symbols: {missing}")
+
+    class DvzWithoutRequestFrame:
+        def __init__(self, raw_dvz):
+            self.raw_dvz = raw_dvz
+
+        def __getattr__(self, name):
+            if name == "dvz_view_request_frame":
+                raise AttributeError(name)
+            return getattr(self.raw_dvz, name)
+
+    class RendererRecorder:
+        def __init__(self, raw_dvz):
+            self.dvz = DvzWithoutRequestFrame(raw_dvz)
+            self.resolved_canvas = SimpleNamespace(
+                host_logical_width=800,
+                host_logical_height=600,
+            )
+            self.view = None
+            self.applied_views = []
+            self.axis_updates = []
+
+        def apply_retained_view2d_navigation(self, view):
+            self.view = view
+            self.applied_views.append(view)
+            return None
+
+        def update_view2d_axes(self, view):
+            self.axis_updates.append(view)
+
+    def emit_pointer(router, event_type, x, y, *, button=None, wheel_y=0.0):
+        input_event = dvz.DvzInputEvent()
+        input_event.type = dvz.DvzInputEventType.DVZ_INPUT_EVENT_POINTER
+        pointer = input_event.content.pointer
+        pointer.type = event_type
+        pointer.pos[0] = float(x)
+        pointer.pos[1] = float(y)
+        pointer.window_size[0] = 800.0
+        pointer.window_size[1] = 600.0
+        pointer.button = (
+            int(button)
+            if button is not None
+            else int(dvz.DvzPointerButton.DVZ_POINTER_BUTTON_NONE)
+        )
+        pointer.content.w.dir[1] = float(wheel_y)
+        dvz.dvz_input_emit_event(router, input_event)
+
+    view = View2D(id="view:main", panel_id="panel:main")
+    renderer = RendererRecorder(dvz)
+    router = dvz.dvz_input_router()
+    try:
+        session = _DatovizLiveView2DNavigation(
+            renderer=renderer,
+            router=router,
+            live_view=None,
+            view=view,
+            controller_id="nav:datoviz-live",
+            layout_snapshot_id="layout:datoviz-live",
+        )
+        dvz.dvz_input_subscribe_event(router, session.handle_input_event, None)
+
+        emit_pointer(
+            router,
+            dvz.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+            350.0,
+            300.0,
+            button=dvz.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
+        )
+        emit_pointer(
+            router, dvz.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG, 430.0, 300.0
+        )
+        assert renderer.applied_views[-1].x_range == pytest.approx((-1.2, 0.8))
+
+        emit_pointer(
+            router,
+            dvz.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG_STOP,
+            430.0,
+            300.0,
+        )
+        emit_pointer(
+            router,
+            dvz.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+            400.0,
+            300.0,
+            button=dvz.DvzPointerButton.DVZ_POINTER_BUTTON_RIGHT,
+        )
+        emit_pointer(
+            router, dvz.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG, 440.0, 270.0
+        )
+        right_drag_view = renderer.applied_views[-1]
+        assert right_drag_view.x_range != pytest.approx((-1.2, 0.8))
+
+        emit_pointer(
+            router,
+            dvz.DvzPointerEventType.DVZ_POINTER_EVENT_WHEEL,
+            460.0,
+            315.0,
+            wheel_y=1.0,
+        )
+        assert renderer.applied_views[-1] != right_drag_view
+
+        emit_pointer(
+            router,
+            dvz.DvzPointerEventType.DVZ_POINTER_EVENT_DOUBLE_CLICK,
+            460.0,
+            315.0,
+        )
+        assert renderer.applied_views[-1] == view
+        session.close()
+    finally:
+        dvz.dvz_input_router_destroy(router)
 
 
 def test_import_datoviz_v04_wraps_facade_load_runtime_error(monkeypatch):
