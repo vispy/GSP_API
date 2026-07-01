@@ -394,6 +394,10 @@ class FakeDatovizV04WithAxes(FakeDatovizV04):
         self.calls.append(("set_tick_policy", axis, policy))
         return True
 
+    def dvz_axis_clear_ticks(self, axis):
+        self.calls.append(("clear_ticks", axis))
+        return True
+
     def dvz_axis_set_grid(self, axis, visible):
         self.calls.append(("set_grid", axis, visible))
         return True
@@ -541,7 +545,12 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
         DVZ_POINTER_EVENT_PRESS = 1
         DVZ_POINTER_EVENT_MOVE = 2
         DVZ_POINTER_EVENT_DOUBLE_CLICK = 5
+        DVZ_POINTER_EVENT_DRAG = 11
+        DVZ_POINTER_EVENT_DRAG_STOP = 12
         DVZ_POINTER_EVENT_WHEEL = 20
+
+    class DvzInputEventType:
+        DVZ_INPUT_EVENT_POINTER = 1
 
     class DvzPointerButton:
         DVZ_POINTER_BUTTON_LEFT = 1
@@ -567,6 +576,8 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
         super().__init__()
         self.pointer_callback = None
         self.pointer_user_data = None
+        self.input_callback = None
+        self.input_user_data = None
 
     def dvz_view_glfw(self, app, figure, width, height, title):
         self.calls.append(("view_glfw", app, figure, width, height, title))
@@ -600,6 +611,18 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
             self.pointer_callback = None
         return None
 
+    def dvz_input_subscribe_event(self, router, callback, user_data):
+        self.calls.append(("subscribe_event", router, user_data))
+        self.input_callback = callback
+        self.input_user_data = user_data
+        return None
+
+    def dvz_input_unsubscribe_event(self, router, callback, user_data):
+        self.calls.append(("unsubscribe_event", router, callback, user_data))
+        if callback == self.input_callback:
+            self.input_callback = None
+        return None
+
     def dvz_view_request_frame(self, view):
         self.calls.append(("request_frame", view))
         return None
@@ -625,6 +648,44 @@ class FakePointerEvent:
 class FakePointerEventPtr:
     def __init__(self, event):
         self.contents = event
+
+
+class FakeInputEvent:
+    def __init__(self, pointer_event):
+        self.type = FakeDatovizV04WithInteractive.DvzInputEventType.DVZ_INPUT_EVENT_POINTER
+        self.content = SimpleNamespace(pointer=pointer_event)
+
+
+class FakeInputEventPtr:
+    def __init__(self, event):
+        self.contents = event
+
+
+def _emit_fake_datoviz_pointer(
+    fake: FakeDatovizV04WithInteractive,
+    event_type,
+    x: float,
+    y: float,
+    *,
+    button: int = 0,
+    wheel_y: float = 0.0,
+) -> None:
+    assert fake.input_callback is not None
+    fake.input_callback(
+        "input-router",
+        FakeInputEventPtr(
+            FakeInputEvent(
+                FakePointerEvent(
+                    event_type,
+                    x,
+                    y,
+                    button=button,
+                    wheel_y=wheel_y,
+                )
+            )
+        ),
+        None,
+    )
 
 
 class FakeDatovizV04WithQueryCapabilities(FakeDatovizV04):
@@ -3247,10 +3308,10 @@ def test_renderer_enable_gsp_view2d_navigation_subscribes_to_live_pointer_input(
 
     assert session.view == view
     assert _calls(fake, "view_input") == [("view_input", "live-view")]
-    assert _calls(fake, "subscribe_pointer") == [
-        ("subscribe_pointer", "input-router", None)
+    assert _calls(fake, "subscribe_event") == [
+        ("subscribe_event", "input-router", None)
     ]
-    assert fake.pointer_callback == session.handle_pointer_event
+    assert fake.input_callback == session.handle_input_event
 
 
 def test_datoviz_live_pointer_events_apply_retained_gsp_view2d_navigation():
@@ -3258,28 +3319,29 @@ def test_datoviz_live_pointer_events_apply_retained_gsp_view2d_navigation():
     view = View2D(id="view:main", panel_id="panel:main")
     renderer = DatovizV04ProtocolRenderer(dvz=fake, view=view)
     renderer.enable_gsp_view2d_navigation()
-    assert fake.pointer_callback is not None
+    assert fake.input_callback is not None
 
-    fake.pointer_callback(
-        "input-router",
-        FakePointerEventPtr(
-            FakePointerEvent(
-                fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
-                350.0,
-                300.0,
-                button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
-            )
-        ),
-        None,
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+        350.0,
+        300.0,
+        button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
     )
-    fake.pointer_callback(
-        "input-router",
-        FakePointerEventPtr(
-            FakePointerEvent(
-                fake.DvzPointerEventType.DVZ_POINTER_EVENT_MOVE, 430.0, 300.0
-            )
-        ),
-        None,
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_MOVE,
+        390.0,
+        300.0,
+    )
+    assert renderer.view == view
+    assert _calls(fake, "request_frame") == []
+
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG,
+        430.0,
+        300.0,
     )
 
     assert renderer.view is not None
@@ -3297,28 +3359,20 @@ def test_datoviz_live_right_drag_zooms_view2d_x_and_y_axes():
     view = View2D(id="view:main", panel_id="panel:main")
     renderer = DatovizV04ProtocolRenderer(dvz=fake, view=view)
     renderer.enable_gsp_view2d_navigation()
-    assert fake.pointer_callback is not None
+    assert fake.input_callback is not None
 
-    fake.pointer_callback(
-        "input-router",
-        FakePointerEventPtr(
-            FakePointerEvent(
-                fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
-                400.0,
-                300.0,
-                button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_RIGHT,
-            )
-        ),
-        None,
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+        400.0,
+        300.0,
+        button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_RIGHT,
     )
-    fake.pointer_callback(
-        "input-router",
-        FakePointerEventPtr(
-            FakePointerEvent(
-                fake.DvzPointerEventType.DVZ_POINTER_EVENT_MOVE, 440.0, 270.0
-            )
-        ),
-        None,
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG,
+        440.0,
+        270.0,
     )
 
     expected_factor_x, expected_factor_y = (
@@ -3352,41 +3406,26 @@ def test_datoviz_live_double_click_resets_to_home_view2d():
     view = View2D(id="view:main", panel_id="panel:main")
     renderer = DatovizV04ProtocolRenderer(dvz=fake, view=view)
     renderer.enable_gsp_view2d_navigation()
-    assert fake.pointer_callback is not None
+    assert fake.input_callback is not None
 
-    fake.pointer_callback(
-        "input-router",
-        FakePointerEventPtr(
-            FakePointerEvent(
-                fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
-                350.0,
-                300.0,
-                button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
-            )
-        ),
-        None,
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+        350.0,
+        300.0,
+        button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
     )
-    fake.pointer_callback(
-        "input-router",
-        FakePointerEventPtr(
-            FakePointerEvent(
-                fake.DvzPointerEventType.DVZ_POINTER_EVENT_MOVE,
-                430.0,
-                300.0,
-            )
-        ),
-        None,
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG,
+        430.0,
+        300.0,
     )
-    fake.pointer_callback(
-        "input-router",
-        FakePointerEventPtr(
-            FakePointerEvent(
-                fake.DvzPointerEventType.DVZ_POINTER_EVENT_DOUBLE_CLICK,
-                430.0,
-                300.0,
-            )
-        ),
-        None,
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_DOUBLE_CLICK,
+        430.0,
+        300.0,
     )
 
     assert renderer.view == view
@@ -3406,30 +3445,20 @@ def test_datoviz_live_pointer_y_coordinates_are_converted_from_window_origin():
         dvz=fake, view=View2D(id="view:main", panel_id="panel:main")
     )
     renderer.enable_gsp_view2d_navigation()
-    assert fake.pointer_callback is not None
+    assert fake.input_callback is not None
 
-    fake.pointer_callback(
-        "input-router",
-        FakePointerEventPtr(
-            FakePointerEvent(
-                fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
-                350.0,
-                300.0,
-                button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
-            )
-        ),
-        None,
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+        350.0,
+        300.0,
+        button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
     )
-    fake.pointer_callback(
-        "input-router",
-        FakePointerEventPtr(
-            FakePointerEvent(
-                fake.DvzPointerEventType.DVZ_POINTER_EVENT_MOVE,
-                350.0,
-                240.0,
-            )
-        ),
-        None,
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG,
+        350.0,
+        240.0,
     )
 
     assert renderer.view is not None
@@ -3445,8 +3474,8 @@ def test_datoviz_live_navigation_unsubscribes_on_close():
     ) as renderer:
         renderer.enable_gsp_view2d_navigation()
 
-    assert _calls(fake, "unsubscribe_pointer")
-    assert fake.pointer_callback is None
+    assert _calls(fake, "unsubscribe_event")
+    assert fake.input_callback is None
 
 
 def test_datoviz_view3d_live_navigation_reports_cpu_projected_mesh_boundary():
@@ -3548,6 +3577,10 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
         ("set_plot_margins", "axis:0", 0.0, 0.0, 0.0, 0.08),
         ("set_plot_margins", "axis:1", 0.0, 0.0, 0.0, 0.08),
     ]
+    assert _calls(fake, "clear_ticks") == [
+        ("clear_ticks", "axis:0"),
+        ("clear_ticks", "axis:1"),
+    ]
     assert _calls(fake, "set_tick_policy") == [
         ("set_tick_policy", "axis:0", "tick-policy"),
         ("set_tick_policy", "axis:1", "tick-policy"),
@@ -3629,6 +3662,10 @@ def test_retained_view2d_navigation_with_axes_does_not_reupload_data_points():
         ("set_domain", "panel", 1, 0.0, 4.0),
     ]
     assert _calls_from(new_calls, "set_view2d")
+    assert _calls_from(new_calls, "clear_ticks") == [
+        ("clear_ticks", "axis:0"),
+        ("clear_ticks", "axis:1"),
+    ]
     assert _calls_from(new_calls, "set_tick_policy") == [
         ("set_tick_policy", "axis:0", "tick-policy"),
         ("set_tick_policy", "axis:1", "tick-policy"),
@@ -3734,6 +3771,7 @@ def test_configure_view2d_axes_adapts_explicit_ticks_to_backend_policy_when_tick
     )
 
     assert _calls(fake, "set_ticks") == []
+    assert _calls(fake, "clear_ticks") == []
     assert _calls(fake, "set_tick_policy") == [
         ("set_tick_policy", "axis:0", "tick-policy"),
         ("set_tick_policy", "axis:1", "tick-policy"),

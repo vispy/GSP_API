@@ -173,9 +173,12 @@ DVZ_POINTER_EVENT_RELEASE = 0
 DVZ_POINTER_EVENT_PRESS = 1
 DVZ_POINTER_EVENT_MOVE = 2
 DVZ_POINTER_EVENT_DOUBLE_CLICK = 5
+DVZ_POINTER_EVENT_DRAG = 11
+DVZ_POINTER_EVENT_DRAG_STOP = 12
 DVZ_POINTER_EVENT_WHEEL = 20
 DVZ_POINTER_BUTTON_LEFT = 1
 DVZ_POINTER_BUTTON_RIGHT = 3
+DVZ_INPUT_EVENT_POINTER = 1
 
 DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
@@ -353,8 +356,8 @@ def datoviz_v04_live_input_diagnostics(module: ModuleType | Any) -> tuple[str, .
         f"missing {name}"
         for name in (
             "dvz_view_input",
-            "dvz_input_subscribe_pointer",
-            "dvz_input_unsubscribe_pointer",
+            "dvz_input_subscribe_event",
+            "dvz_input_unsubscribe_event",
             "DvzPointerEvent",
             "DvzInputEvent",
             "DvzInputEventContent",
@@ -1504,8 +1507,8 @@ class DatovizV04ProtocolRenderer:
             controller_id=controller_id,
             layout_snapshot_id=layout_snapshot_id,
         )
-        self.dvz.dvz_input_subscribe_pointer(
-            router, self.live_navigation.handle_pointer_event, None
+        self.dvz.dvz_input_subscribe_event(
+            router, self.live_navigation.handle_input_event, None
         )
         return self.live_navigation
 
@@ -1895,6 +1898,9 @@ class DatovizV04ProtocolRenderer:
         if state is None:
             return
         tick_policy = self.dvz.dvz_axis_tick_policy()
+        if state.backend_auto_ticks and hasattr(self.dvz, "dvz_axis_clear_ticks"):
+            self.dvz.dvz_axis_clear_ticks(state.x_axis)
+            self.dvz.dvz_axis_clear_ticks(state.y_axis)
         self.dvz.dvz_axis_set_tick_policy(state.x_axis, tick_policy)
         self.dvz.dvz_axis_set_tick_policy(state.y_axis, tick_policy)
         if state.x_tick_values and hasattr(self.dvz, "dvz_axis_set_ticks"):
@@ -1965,10 +1971,26 @@ class _DatovizLiveView2DNavigation:
         """Unsubscribe from Datoviz pointer callbacks."""
         if self._closed:
             return
-        unsubscribe = getattr(self.renderer.dvz, "dvz_input_unsubscribe_pointer", None)
+        unsubscribe = getattr(self.renderer.dvz, "dvz_input_unsubscribe_event", None)
         if unsubscribe is not None:
-            unsubscribe(self.router, self.handle_pointer_event, None)
+            unsubscribe(self.router, self.handle_input_event, None)
         self._closed = True
+
+    def handle_input_event(
+        self, _router: Any, event_ptr: Any, _user_data: Any
+    ) -> None:
+        """Handle one routed Datoviz input callback."""
+        input_event = getattr(event_ptr, "contents", event_ptr)
+        input_event_type = int(getattr(input_event, "type"))
+        if input_event_type != _enum_value(
+            self.renderer.dvz,
+            "DvzInputEventType",
+            "DVZ_INPUT_EVENT_POINTER",
+            DVZ_INPUT_EVENT_POINTER,
+        ):
+            return
+        pointer_event = getattr(input_event.content, "pointer")
+        self.handle_pointer_event(_router, pointer_event, _user_data)
 
     def handle_pointer_event(
         self, _router: Any, event_ptr: Any, _user_data: Any
@@ -2061,7 +2083,23 @@ def _navigation_pointer_event_from_datoviz(
         "DVZ_POINTER_EVENT_MOVE",
         DVZ_POINTER_EVENT_MOVE,
     ):
+        return None
+    if event_type == _enum_value(
+        dvz,
+        "DvzPointerEventType",
+        "DVZ_POINTER_EVENT_DRAG",
+        DVZ_POINTER_EVENT_DRAG,
+    ):
         return NavigationPointerEvent(NavigationPointerEventKind.MOUSE_MOVE, x_px, y_px)
+    if event_type == _enum_value(
+        dvz,
+        "DvzPointerEventType",
+        "DVZ_POINTER_EVENT_DRAG_STOP",
+        DVZ_POINTER_EVENT_DRAG_STOP,
+    ):
+        return NavigationPointerEvent(
+            NavigationPointerEventKind.BUTTON_RELEASE, x_px, y_px
+        )
     if event_type == _enum_value(
         dvz,
         "DvzPointerEventType",
