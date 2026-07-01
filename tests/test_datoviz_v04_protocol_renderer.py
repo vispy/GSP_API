@@ -97,6 +97,7 @@ from gsp_datoviz.protocol_renderer import (
     datoviz_v04_text_diagnostics,
     datoviz_v04_text_ready,
     datoviz_v04_view3d_camera_diagnostics,
+    datoviz_v04_view3d_live_navigation_diagnostics,
     import_datoviz_v04,
     is_datoviz_v04_facade,
     _image_texcoords,
@@ -3334,6 +3335,18 @@ def test_datoviz_live_navigation_unsubscribes_on_close():
 
     assert _calls(fake, "unsubscribe_pointer")
     assert fake.pointer_callback is None
+
+
+def test_datoviz_view3d_live_navigation_reports_cpu_projected_mesh_boundary():
+    fake = FakeDatovizV04WithMesh()
+    view3d = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
+
+    diagnostics = datoviz_v04_view3d_live_navigation_diagnostics(fake)
+
+    assert any("CPU-projected panel-NDC mesh positions" in item for item in diagnostics)
+    with pytest.raises(DatovizV04Unavailable, match="CPU-projected panel-NDC"):
+        renderer.enable_gsp_view3d_navigation()
 
 
 def test_renderer_show_uses_resolved_host_logical_size_for_reference_canvas():

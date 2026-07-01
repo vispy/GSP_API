@@ -294,3 +294,52 @@ def test_datoviz_live_input_unavailable_still_opens_static_live_window(
     assert result["status"] == "rendered"
     assert instances[0].show_calls == 1
     assert "opening static live window" in capsys.readouterr().out
+
+
+def test_datoviz_view3d_navigation_unavailable_still_opens_static_live_window(
+    tmp_path: Path, monkeypatch: Any, capsys: Any
+) -> None:
+    instances: list[FakeDatovizRenderer] = []
+
+    class FakeDatovizRenderer:
+        def __init__(self, **kwargs: Any) -> None:
+            self.kwargs = kwargs
+            self.show_calls = 0
+            instances.append(self)
+
+        def __enter__(self) -> "FakeDatovizRenderer":
+            return self
+
+        def __exit__(self, *args: Any) -> None:
+            return None
+
+        def add_mesh_visual(self, visual: Any) -> None:
+            return None
+
+        def add_text_visual(self, visual: Any) -> None:
+            return None
+
+        def enable_gsp_view3d_navigation(self, view3d: Any) -> None:
+            raise DatovizV04Unavailable("CPU-projected panel-NDC mesh positions")
+
+        def show(self, *, frame_count: int) -> None:
+            self.show_calls += 1
+            assert frame_count == 1
+
+    monkeypatch.setattr(
+        review_runner, "DatovizV04ProtocolRenderer", FakeDatovizRenderer
+    )
+
+    result = review_runner._run_datoviz(
+        _view3d_scene(),
+        tmp_path,
+        (320, 240),
+        live=True,
+        frames=1,
+        allow_offscreen=False,
+        interactive_navigation=True,
+    )
+
+    assert result["status"] == "rendered"
+    assert instances[0].show_calls == 1
+    assert "Datoviz GSP View3D navigation unavailable" in capsys.readouterr().out

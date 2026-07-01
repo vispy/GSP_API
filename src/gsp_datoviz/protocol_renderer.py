@@ -412,6 +412,23 @@ def datoviz_v04_view3d_camera_diagnostics(module: ModuleType | Any) -> tuple[str
     )
 
 
+def datoviz_v04_view3d_live_navigation_diagnostics(
+    module: ModuleType | Any,
+) -> tuple[str, ...]:
+    """Return why Datoviz View3D live navigation is unavailable."""
+    diagnostics = [
+        *datoviz_v04_live_input_diagnostics(module),
+        *datoviz_v04_view3d_camera_diagnostics(module),
+    ]
+    diagnostics.append(
+        "Datoviz View3D live navigation is unavailable because the current "
+        "protocol renderer uploads CPU-projected panel-NDC mesh positions with "
+        "fixed controller mode; retained orbit/pan/zoom would require either a "
+        "native DATA-space mesh path or per-navigation visual buffer reupload"
+    )
+    return tuple(diagnostics)
+
+
 def datoviz_v04_text_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
     """Return why Datoviz TextVisual rendering is disabled for this slice."""
     diagnostics = [
@@ -1373,6 +1390,22 @@ class DatovizV04ProtocolRenderer:
             router, self.live_navigation.handle_pointer_event, None
         )
         return self.live_navigation
+
+    def enable_gsp_view3d_navigation(
+        self,
+        view3d: View3D | None = None,
+        *,
+        controller_id: str = "nav:datoviz-live-3d",
+        layout_snapshot_id: str = "layout:datoviz-live-3d",
+    ) -> None:
+        """Report why Datoviz cannot yet provide canonical S037 View3D navigation."""
+        target_view3d = view3d or self.view3d
+        if target_view3d is None:
+            raise DatovizV04Unavailable(
+                "Datoviz GSP View3D navigation requires an initial View3D"
+            )
+        diagnostics = datoviz_v04_view3d_live_navigation_diagnostics(self.dvz)
+        raise DatovizV04Unavailable("; ".join(diagnostics))
 
     def _create_rgba8_sampled_field(
         self, pixels: npt.NDArray[np.uint8], width: int, height: int
