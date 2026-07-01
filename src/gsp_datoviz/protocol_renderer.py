@@ -672,6 +672,18 @@ class _ScalarVisualData:
 
 
 @dataclass
+class _RetainedView2DPositionUpload:
+    """Source positions for CPU-mapped DATA visuals that must follow View2D changes."""
+
+    visual_id: str
+    native_visual: Any
+    attr_name: str
+    positions: npt.NDArray[np.float32] | npt.NDArray[np.float64]
+    transform: VisualTransformBinding | None
+    coordinate_space: CoordinateSpace
+
+
+@dataclass
 class DatovizV04ProtocolRenderer:
     """Minimal point/image renderer using Datoviz v0.4 top-level functions."""
 
@@ -704,6 +716,9 @@ class DatovizV04ProtocolRenderer:
     resolved_canvas: ResolvedCanvas = field(init=False)
     scalar_visuals: dict[str, _ScalarVisualData] = field(
         default_factory=dict, init=False
+    )
+    retained_view2d_position_uploads: list[_RetainedView2DPositionUpload] = field(
+        default_factory=list, init=False
     )
     transform_adaptations: dict[str, tuple[str, ...]] = field(
         default_factory=dict, init=False
@@ -823,6 +838,14 @@ class DatovizV04ProtocolRenderer:
             ),
         )
         self.visuals[visual.id] = dvz_visual
+        self._retain_view2d_position_upload(
+            visual.id,
+            dvz_visual,
+            "position",
+            visual.positions,
+            visual.transform,
+            visual.coordinate_space,
+        )
         if visual.color_encoding is not None:
             scale = resolve_color_scale(
                 self.color_scales, visual.color_encoding.color_scale_id
@@ -895,6 +918,14 @@ class DatovizV04ProtocolRenderer:
             ),
         )
         self.visuals[visual.id] = dvz_visual
+        self._retain_view2d_position_upload(
+            visual.id,
+            dvz_visual,
+            "position",
+            visual.positions,
+            visual.transform,
+            visual.coordinate_space,
+        )
         if visual.fill_color_encoding is not None:
             scale = resolve_color_scale(
                 self.color_scales, visual.fill_color_encoding.color_scale_id
@@ -972,6 +1003,22 @@ class DatovizV04ProtocolRenderer:
             ),
         )
         self.visuals[visual.id] = dvz_visual
+        self._retain_view2d_position_upload(
+            visual.id,
+            dvz_visual,
+            "position_start",
+            visual.start_positions,
+            visual.transform,
+            visual.coordinate_space,
+        )
+        self._retain_view2d_position_upload(
+            visual.id,
+            dvz_visual,
+            "position_end",
+            visual.end_positions,
+            visual.transform,
+            visual.coordinate_space,
+        )
         return dvz_visual
 
     def add_path_visual(self, visual: PathVisual) -> Any:
@@ -1035,6 +1082,14 @@ class DatovizV04ProtocolRenderer:
             ),
         )
         self.visuals[visual.id] = dvz_visual
+        self._retain_view2d_position_upload(
+            visual.id,
+            dvz_visual,
+            "position",
+            visual.positions,
+            visual.transform,
+            visual.coordinate_space,
+        )
         return dvz_visual
 
     def add_image_visual(self, visual: ImageVisual) -> Any:
@@ -1233,6 +1288,48 @@ class DatovizV04ProtocolRenderer:
         ):
             return "view"
         return _datoviz_visual_coord_space(coordinate_space)
+
+    def _retain_view2d_position_upload(
+        self,
+        visual_id: str,
+        native_visual: Any,
+        attr_name: str,
+        positions: npt.NDArray[np.float32] | npt.NDArray[np.float64],
+        transform: VisualTransformBinding | None,
+        coordinate_space: CoordinateSpace,
+    ) -> None:
+        if (
+            not self._cpu_map_data_visuals_to_view
+            or coordinate_space is not CoordinateSpace.DATA
+        ):
+            return
+        self.retained_view2d_position_uploads.append(
+            _RetainedView2DPositionUpload(
+                visual_id=visual_id,
+                native_visual=native_visual,
+                attr_name=attr_name,
+                positions=np.ascontiguousarray(np.asarray(positions).copy()),
+                transform=transform,
+                coordinate_space=coordinate_space,
+            )
+        )
+
+    def _reupload_retained_view2d_positions(self, view: View2D) -> None:
+        for upload in self.retained_view2d_position_uploads:
+            positions = _positions_3d(
+                _adapt_visual_positions(
+                    upload.visual_id,
+                    upload.positions,
+                    upload.transform,
+                    upload.coordinate_space,
+                    view,
+                    self.transform_resources,
+                    cpu_map_data_to_view=True,
+                )
+            )
+            _set_visual_data(
+                self.dvz, upload.native_visual, upload.attr_name, positions
+            )
 
     def add_colorbar_guide(self, guide: ColorbarGuide) -> Any:
         """Create a native Datoviz colorbar bound to the guide's color scale."""
@@ -1714,7 +1811,7 @@ class DatovizV04ProtocolRenderer:
         dim_x = getattr(self.dvz, "DVZ_DIM_X", 0)
         dim_y = getattr(self.dvz, "DVZ_DIM_Y", 1)
         self.view = view
-        self._cpu_map_data_visuals_to_view = True
+        self._cpu_map_data_visuals_to_view = False
         self.apply_datoviz_data_view2d(view)
 
         x_axis = self.dvz.dvz_panel_axis(self.panel, dim_x)
@@ -1762,6 +1859,13 @@ class DatovizV04ProtocolRenderer:
         """Apply an accepted S035 navigation View2D as a retained panel update."""
         self.view = view
         return self.apply_datoviz_data_view2d(view)
+
+    def apply_adapted_view2d_navigation_cpu_remap(self, view: View2D) -> Any:
+        """Apply View2D navigation for the adapted CPU-remapped DATA placement."""
+        self.view = view
+        panel_view = self.apply_datoviz_data_view2d(view)
+        self._reupload_retained_view2d_positions(view)
+        return panel_view
 
 
 NavigationAction = PanByAction | ZoomAboutAction | SetViewAction | ResetViewAction

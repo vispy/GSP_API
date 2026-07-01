@@ -259,16 +259,17 @@ def gsp_capability_snapshot_from_datoviz(
         ),
         "s025_mesh": (
             "bounded 2D MeshVisual rows render through dvz_mesh with direct "
-            "position/color/index upload; DATA positions are CPU-mapped through "
-            "View2D when present, per-face RGBA is adapted by duplicating vertices, "
-            "and scalar face colors plus mesh query payloads remain unsupported"
+            "position/color/index upload; 2D DATA positions use retained panel "
+            "domain/View2D placement, per-face RGBA is adapted by duplicating "
+            "vertices, and scalar face colors plus mesh query payloads remain unsupported"
         ),
         "s027_transform": (
             "finite eager Point/Marker/Segment/Path/Text/Mesh positions are CPU "
             "pre-transformed before upload for inline and named AFFINE_2D bindings; "
-            "DATA positions are CPU-mapped through View2D when present; transform "
-            "query inverse, image affine, 3D camera/projection/controller semantics, "
-            "and virtual-source materialization are unsupported"
+            "2D DATA positions use retained panel domain/View2D placement with "
+            "CPU remap reserved for explicit adapted fallback; transform query "
+            "inverse, image affine, 3D camera/projection/controller semantics, and "
+            "virtual-source materialization are unsupported"
         ),
         "s027_transform_diagnostics": (
             "cpu_adapter_affine2d_eager_ndc",

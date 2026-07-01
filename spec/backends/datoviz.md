@@ -415,7 +415,8 @@ The current GSP Datoviz adapter is still a slice, not parity:
 - implemented: point visual, scalar gray and RGB/RGBA images via texture fallback or sampled field, Datoviz
   capability translation, query decoding and binding gate, bounded point/image query execution
   wrapper, bounded offscreen PNG capture, color-pipeline selection, native colorbar rendering,
-  CPU-adapted named/inline affine transforms and DATA/View2D placement for finite eager visuals,
+  CPU-adapted named/inline affine transforms, retained panel-domain DATA/View2D placement for
+  finite eager visuals, explicit adapted CPU-remap fallback for finite eager DATA positions,
   v0.4-dev wheel-stage smoke harness;
 - not implemented: strict explicit colorbar ticks/labels, colorbar query, live GPU/headless query
   execution validation, strict guide parity, guide/all-rendered query scopes, scientific readback,
@@ -516,6 +517,7 @@ Current support status:
 |---|---:|---|
 | Programmatic retained `View2D` update | supported | Uses retained panel domain/View2D state. |
 | Visual buffer stability during navigation | supported by fake-facade smoke | Zero upload/recreation calls are expected after baseline scene creation. |
+| Adapted CPU-remap navigation fallback | adapted | Retains source DATA positions and reuploads derived view-space positions only when explicitly selected. |
 | Datoviz v0.4 pointer callback adapter | supported | Datoviz pointer callbacks are normalized into S035 pointer events, then accepted actions update canonical `View2D`. |
 | Datoviz native panzoom controller | native-only demo | `dvz_view_panzoom()` is not strict GSP navigation unless synchronized back into canonical `View2D`. |
 | Live GPU runtime performance benchmark | deferred | Requires a bounded benchmark beyond the fake-facade retained-update proof and one-frame live launch. |

@@ -3450,7 +3450,7 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
     ]
 
 
-def test_configure_view2d_axes_maps_data_visuals_to_view_coordinates():
+def test_configure_view2d_axes_keeps_data_visuals_in_native_data_coordinates():
     fake = FakeDatovizV04WithAxes()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     renderer.configure_view2d_axes(
@@ -3475,10 +3475,92 @@ def test_configure_view2d_axes_maps_data_visuals_to_view_coordinates():
     assert position_upload[2] == "position"
     np.testing.assert_allclose(
         position_upload[3],
-        [[-1.0, -1.0, 0.0], [0.0, 0.0, 0.0], [1.0, 1.0, 0.0]],
+        [[-2.5, 0.0, 0.0], [0.0, 1.0, 0.0], [2.5, 2.0, 0.0]],
     )
     add_visual_call = _calls(fake, "add_visual")[-1]
-    assert add_visual_call[3].coord_space == 0
+    assert add_visual_call[3].coord_space == 1
+
+
+def test_retained_view2d_navigation_with_axes_does_not_reupload_data_points():
+    fake = FakeDatovizV04WithAxes()
+    initial_view = View2D(
+        id="view:main",
+        panel_id="panel:main",
+        x_range=(-2.5, 2.5),
+        y_range=(0.0, 2.0),
+    )
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    renderer.configure_view2d_axes(initial_view)
+    renderer.add_point_visual(
+        PointVisual(
+            id="visual:points",
+            positions=np.array([[0.0, 1.0]], dtype=np.float32),
+            colors=np.array([[255, 255, 255, 255]], dtype=np.uint8),
+            sizes=np.array([6.0], dtype=np.float32),
+            coordinate_space=CoordinateSpace.DATA,
+        )
+    )
+    baseline_call_count = len(fake.calls)
+
+    renderer.apply_retained_view2d_navigation(
+        View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(-5.0, 5.0),
+            y_range=(0.0, 4.0),
+        )
+    )
+
+    new_calls = fake.calls[baseline_call_count:]
+    assert _calls_from(new_calls, "set_domain") == [
+        ("set_domain", "panel", 0, -5.0, 5.0),
+        ("set_domain", "panel", 1, 0.0, 4.0),
+    ]
+    assert _calls_from(new_calls, "set_view2d")
+    assert not _calls_from(new_calls, "set_data")
+    assert not _calls_from(new_calls, "point")
+    assert not _calls_from(new_calls, "add_visual")
+
+
+def test_adapted_cpu_remap_navigation_reuploads_derived_data_points():
+    fake = FakeDatovizV04WithAxes()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    renderer.configure_view2d_axes(
+        View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(-2.5, 2.5),
+            y_range=(0.0, 2.0),
+        )
+    )
+    renderer._cpu_map_data_visuals_to_view = True
+    visual = PointVisual(
+        id="visual:points",
+        positions=np.array([[0.0, 1.0]], dtype=np.float32),
+        colors=np.array([[255, 255, 255, 255]], dtype=np.uint8),
+        sizes=np.array([6.0], dtype=np.float32),
+        coordinate_space=CoordinateSpace.DATA,
+    )
+    renderer.add_point_visual(visual)
+    baseline_call_count = len(fake.calls)
+
+    renderer.apply_adapted_view2d_navigation_cpu_remap(
+        View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(-5.0, 5.0),
+            y_range=(0.0, 4.0),
+        )
+    )
+
+    new_calls = fake.calls[baseline_call_count:]
+    assert _calls_from(new_calls, "set_domain") == [
+        ("set_domain", "panel", 0, -5.0, 5.0),
+        ("set_domain", "panel", 1, 0.0, 4.0),
+    ]
+    position_upload = _calls_from(new_calls, "set_data")[0]
+    assert position_upload[2] == "position"
+    np.testing.assert_allclose(position_upload[3], [[0.0, -0.5, 0.0]])
 
 
 def test_apply_datoviz_data_view2d_preserves_reversed_ordered_endpoints():
