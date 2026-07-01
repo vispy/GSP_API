@@ -1047,6 +1047,17 @@ def test_s028_datoviz_guide_path_configures_view2d_before_data_visuals(
     diagnostics = report["cases"][0]["backends"]["datoviz"]["guide_diagnostics"]
     assert diagnostics["panel_title"] == "adapted-review"
     assert diagnostics["panel_text_adapter"] == "datoviz.ndc_text_visual"
+    assert (
+        diagnostics["datoviz_view2d_carrier"]
+        == "dvz_panel_set_domain+DvzPanelView2D policy"
+    )
+    assert diagnostics["ordered_ranges_preserved"] is True
+    assert diagnostics["legacy_panel_domain_sync"] == "compat-before-dvz_panel_set_view2d"
+    assert diagnostics["grid_clip_to_plot_rect"] == "unsupported"
+    assert diagnostics["grid_clip_blockers"] == [
+        "grid_clip_not_enforced",
+        "grid_clip_native_api_unverified",
+    ]
     assert captured["view"] is None
     assert captured["axis_view"].x_range == (-2.0, 2.0)
     assert captured["axis_view"].y_range == (-1.0, 1.0)

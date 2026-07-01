@@ -530,7 +530,12 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
         supports_text_query=False,
         diagnostics=(
             "axis-provider-selected: datoviz.v04.panel_axis.wip",
-            "axis-provider-adapted: panel DATA domains use dvz_panel_set_domain; backend-native ticks remain adapted and strict guide promotion still excludes title/query semantics",
+            (
+                "axis-provider-adapted: ordered DATA domains are carried by "
+                "dvz_panel_set_domain with DvzPanelView2D fit policy, or by "
+                "descriptor data_x/data_y when exposed; backend-native ticks remain "
+                "adapted and strict guide promotion still excludes title/query semantics"
+            ),
             explicit_tick_diagnostic,
             "axis-guide-query-unsupported: guide picking is deferred for Datoviz v0.4 RC",
             "all-rendered-guides-unsupported: all-rendered guide contributions require guide query support",

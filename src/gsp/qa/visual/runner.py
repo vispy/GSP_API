@@ -631,6 +631,16 @@ def _datoviz_guide_diagnostics(
         diagnostics["guide_query"] = "unsupported"
         diagnostics["all_rendered_guide_query"] = "unsupported"
         diagnostics["view2d_present"] = view is not None
+        diagnostics["datoviz_view2d_carrier"] = (
+            "dvz_panel_set_domain+DvzPanelView2D policy" if view is not None else "none"
+        )
+        diagnostics["ordered_ranges_preserved"] = view is not None
+        diagnostics["legacy_panel_domain_sync"] = "compat-before-dvz_panel_set_view2d"
+        diagnostics["grid_clip_to_plot_rect"] = "unsupported"
+        diagnostics["grid_clip_blockers"] = [
+            "grid_clip_not_enforced",
+            "grid_clip_native_api_unverified",
+        ]
         if any(guide.tick_spec.kind is TickSpecKind.EXPLICIT for guide in axis_guides):
             diagnostics["explicit_ticks"] = (
                 "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise"

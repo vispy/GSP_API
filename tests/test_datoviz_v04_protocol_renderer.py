@@ -162,9 +162,15 @@ class FakeDatovizV04:
         self.calls.append(("panel", figure, desc.x, desc.y, desc.width, desc.height))
         return "panel"
 
+    class FakeDomain:
+        def __init__(self):
+            self.min = -1.0
+            self.max = 1.0
+
     class FakePanelView2D:
-        aspect = 0
-        padding = 1.0
+        def __init__(self):
+            self.aspect = 0
+            self.padding = 1.0
 
     def dvz_panel_view2d(self):
         self.calls.append(("panel_view2d",))
@@ -418,6 +424,16 @@ class FakeDatovizV04WithAxisTicks(FakeDatovizV04WithAxes):
     def dvz_axis_set_ticks(self, axis, values, labels=None):
         self.calls.append(("set_ticks", axis, tuple(values), labels))
         return True
+
+
+class FakeDatovizV04WithDescriptorDomains(FakeDatovizV04WithAxes):
+    """Recorder for bindings that carry View2D domains on the descriptor."""
+
+    class FakePanelView2D(FakeDatovizV04.FakePanelView2D):
+        def __init__(self):
+            super().__init__()
+            self.data_x = FakeDatovizV04.FakeDomain()
+            self.data_y = FakeDatovizV04.FakeDomain()
 
 
 class FakeDvzCapabilitySnapshot:
@@ -3686,6 +3702,15 @@ def test_configure_view2d_axes_uses_verified_datoviz_v04dev_symbols():
     panel_view = view_call[2]
     assert view_call[:2] == ("set_view2d", "panel")
     assert panel_view.padding == 0.0
+    assert renderer.last_view2d_carrier_diagnostics == {
+        "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
+        "ordered_ranges_preserved": True,
+        "reversed_x": False,
+        "reversed_y": False,
+        "legacy_panel_domain_sync": True,
+        "datoviz_visible_domain_readback": "available",
+        "datoviz_transform_point": "available",
+    }
     assert _calls(fake, "panel_axis") == [
         ("panel_axis", "panel", 0),
         ("panel_axis", "panel", 1),
@@ -3887,6 +3912,65 @@ def test_apply_datoviz_data_view2d_preserves_reversed_ordered_endpoints():
         ("set_domain", "panel", 1, 2.0, -2.0),
     ]
     assert _calls(fake, "set_view2d")[-1] == ("set_view2d", "panel", panel_view)
+    assert renderer.last_view2d_carrier_diagnostics == {
+        "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
+        "ordered_ranges_preserved": True,
+        "reversed_x": True,
+        "reversed_y": True,
+        "legacy_panel_domain_sync": True,
+        "datoviz_visible_domain_readback": "available",
+        "datoviz_transform_point": "available",
+    }
+
+
+def test_apply_datoviz_data_view2d_calls_legacy_domain_sync_before_view2d_setter():
+    fake = FakeDatovizV04WithAxes()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+    baseline_call_count = len(fake.calls)
+
+    renderer.apply_datoviz_data_view2d(
+        View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(-2.0, 2.0),
+            y_range=(-1.0, 1.0),
+        )
+    )
+
+    new_calls = fake.calls[baseline_call_count:]
+    assert [call[0] for call in new_calls] == [
+        "set_domain",
+        "set_domain",
+        "view2d",
+        "set_view2d",
+    ]
+    assert new_calls[:2] == [
+        ("set_domain", "panel", 0, -2.0, 2.0),
+        ("set_domain", "panel", 1, -1.0, 1.0),
+    ]
+    assert new_calls[-1][2].padding == 0.0
+
+
+def test_apply_datoviz_data_view2d_populates_descriptor_domains_when_available():
+    fake = FakeDatovizV04WithDescriptorDomains()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    panel_view = renderer.apply_datoviz_data_view2d(
+        View2D(
+            id="view:main",
+            panel_id="panel:main",
+            x_range=(1.0, -1.0),
+            y_range=(2.0, -2.0),
+        )
+    )
+
+    assert panel_view.data_x.min == 1.0
+    assert panel_view.data_x.max == -1.0
+    assert panel_view.data_y.min == 2.0
+    assert panel_view.data_y.max == -2.0
+    assert renderer.last_view2d_carrier_diagnostics["datoviz_view2d_carrier"] == (
+        "DvzPanelView2D.data_x/data_y"
+    )
 
 
 def test_datoviz_axis_symbol_report_includes_latest_readback_helpers():
@@ -3967,6 +4051,23 @@ def test_imported_datoviz_binding_exposes_view2d_and_axis_tick_contract_when_ava
         pytest.skip(f"installed Datoviz binding is missing latest symbols: {missing}")
 
     panel_view = dvz.dvz_panel_view2d()
+    descriptor_fields_present = True
+    for field_name, expected in (
+        ("data_x", (1.0, -1.0)),
+        ("data_y", (2.0, -2.0)),
+    ):
+        domain = getattr(panel_view, field_name, None)
+        if domain is None:
+            descriptor_fields_present = False
+            continue
+        assert hasattr(domain, "min")
+        assert hasattr(domain, "max")
+        domain.min = expected[0]
+        domain.max = expected[1]
+        assert domain.min == expected[0]
+        assert domain.max == expected[1]
+    if not descriptor_fields_present:
+        assert hasattr(dvz, "dvz_panel_set_domain")
     if hasattr(panel_view, "padding"):
         panel_view.padding = 0.0
         assert panel_view.padding == 0.0

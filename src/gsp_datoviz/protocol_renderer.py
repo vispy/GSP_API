@@ -749,6 +749,9 @@ class DatovizV04ProtocolRenderer:
     transform_adaptations: dict[str, tuple[str, ...]] = field(
         default_factory=dict, init=False
     )
+    last_view2d_carrier_diagnostics: dict[str, object] = field(
+        default_factory=dict, init=False
+    )
     _cpu_map_data_visuals_to_view: bool = field(default=False, init=False)
     _closed: bool = field(default=False, init=False)
 
@@ -1868,14 +1871,43 @@ class DatovizV04ProtocolRenderer:
         if has_panel_domain:
             _set_datoviz_panel_domains(self.dvz, self.panel, view.x_range, view.y_range)
         panel_view = self.dvz.dvz_panel_view2d()
-        if not has_panel_domain:
+        descriptor_has_data_domains = _datoviz_view2d_descriptor_has_data_domains(
+            panel_view
+        )
+        if descriptor_has_data_domains:
             _set_datoviz_data_domain(panel_view, "data_x", view.x_range)
             _set_datoviz_data_domain(panel_view, "data_y", view.y_range)
+        elif not has_panel_domain:
+            raise DatovizV04Unsupported(
+                "Datoviz View2D data-domain setup failed: missing ordered domain carrier"
+            )
         if hasattr(panel_view, "padding"):
             panel_view.padding = 0.0
         result = self.dvz.dvz_panel_set_view2d(self.panel, panel_view)
         if result not in (0, None, True):
             raise DatovizV04Unsupported("Datoviz View2D data-domain setup failed")
+        carrier = (
+            "DvzPanelView2D.data_x/data_y"
+            if descriptor_has_data_domains
+            else "dvz_panel_set_domain+DvzPanelView2D policy"
+        )
+        self.last_view2d_carrier_diagnostics = {
+            "datoviz_view2d_carrier": carrier,
+            "ordered_ranges_preserved": True,
+            "reversed_x": view.x_range[0] > view.x_range[1],
+            "reversed_y": view.y_range[0] > view.y_range[1],
+            "legacy_panel_domain_sync": has_panel_domain,
+            "datoviz_visible_domain_readback": (
+                "available"
+                if hasattr(self.dvz, "dvz_panel_visible_domain")
+                else "missing"
+            ),
+            "datoviz_transform_point": (
+                "available"
+                if hasattr(self.dvz, "dvz_panel_transform_point")
+                else "missing"
+            ),
+        }
         return panel_view
 
     def apply_retained_view2d_navigation(self, view: View2D) -> Any:
@@ -2352,6 +2384,14 @@ def _set_datoviz_data_domain(
         )
     domain.min = float(limits[0])
     domain.max = float(limits[1])
+
+
+def _datoviz_view2d_descriptor_has_data_domains(panel_view: Any) -> bool:
+    for field_name in ("data_x", "data_y"):
+        domain = getattr(panel_view, field_name, None)
+        if domain is None or not hasattr(domain, "min") or not hasattr(domain, "max"):
+            return False
+    return True
 
 
 def _set_datoviz_panel_domains(
@@ -3597,15 +3637,9 @@ def _configure_ndc_panel_view2d(dvz: Any, panel: Any) -> None:
         view.aspect = int(getattr(dvz, "DVZ_PANEL_VIEW2D_ASPECT_EQUAL", 1))
     if hasattr(view, "padding"):
         view.padding = 0.0
-    if not hasattr(dvz, "dvz_panel_set_domain"):
-        for field_name in ("data_x", "data_y"):
-            domain = getattr(view, field_name, None)
-            if domain is None:
-                continue
-            if hasattr(domain, "min"):
-                domain.min = -1.0
-            if hasattr(domain, "max"):
-                domain.max = 1.0
+    if _datoviz_view2d_descriptor_has_data_domains(view):
+        _set_datoviz_data_domain(view, "data_x", (-1.0, 1.0))
+        _set_datoviz_data_domain(view, "data_y", (-1.0, 1.0))
     result = view_setter(panel, view)
     if result not in (0, None, True):
         raise DatovizV04Unsupported("Datoviz NDC equal-aspect panel setup failed")
