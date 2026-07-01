@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-01T18:21:15.968974+00:00",
+  "generated_at": "2026-07-01T18:28:11.130175+00:00",
   "review_classification_summary": {
     "fail.layout": 0,
     "fail.query": 0,
@@ -1507,7 +1507,7 @@
       ],
       "family": "guide",
       "known_adaptations": [
-        "Datoviz native panel axes render this title-boundary grid clipping row for review with explicit ticks and native plot-interval grid endpoints when the verified Datoviz source fix is present",
+        "Datoviz native panel axes render this title-boundary grid clipping row for review with explicit ticks, full source-extent grid geometry, and native plot viewport clipping when the verified Datoviz source fix is present",
         "Panel title and guide query semantics remain excluded from the Datoviz rendered artifact"
       ],
       "known_missing_semantics": [

@@ -815,7 +815,7 @@
             "axis_provider": "datoviz.v04.panel_axis.wip",
             "axis_rendering": "adapted-review",
             "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
-            "grid_clip_evidence": "datoviz-native-axis-grid-plot-interval",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-viewport-clip",
             "grid_clip_to_plot_rect": "native-verified",
             "guide_query": "unsupported",
             "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
@@ -941,7 +941,7 @@
             "axis_rendering": "adapted-review",
             "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
             "explicit_ticks": "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise",
-            "grid_clip_evidence": "datoviz-native-axis-grid-plot-interval",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-viewport-clip",
             "grid_clip_to_plot_rect": "native-verified",
             "guide_query": "unsupported",
             "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
@@ -1068,7 +1068,7 @@
             "axis_rendering": "adapted-review",
             "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
             "explicit_ticks": "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise",
-            "grid_clip_evidence": "datoviz-native-axis-grid-plot-interval",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-viewport-clip",
             "grid_clip_to_plot_rect": "native-verified",
             "guide_query": "unsupported",
             "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
@@ -1229,7 +1229,7 @@
     },
     "minimal_point_supported": true,
     "raw_imported": true,
-    "source_revision": "e54bd9af3bde328543c3119669b365e8e731f08d",
+    "source_revision": "9ba820489fae8b1da4a3debd5d19decd0a8c2533",
     "unexpected_banned_hits": 0
   },
   "device_scale": 1.0,
@@ -1238,6 +1238,6 @@
   "schema_kind": "gsp.visual_qa.report",
   "schema_version": 1,
   "stage": "S028",
-  "started_at": "2026-07-01T18:20:57.728127+00:00",
+  "started_at": "2026-07-01T18:27:53.928934+00:00",
   "suite": "s028"
 }

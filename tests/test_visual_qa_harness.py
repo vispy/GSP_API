@@ -683,7 +683,7 @@ def test_s029_datoviz_guide_view2d_rows_stay_unsupported_with_specific_blockers(
     clip_boundary = rows["guide/view2d_grid_clip_title_boundary"]
     assert clip_boundary["status"] == "unsupported"
     assert "plot-rect grid clipping" in clip_boundary["known_missing_semantics"][0]
-    assert "resolved plot rectangle" in clip_boundary["promotion_blockers"][0]
+    assert "plot viewport and plot clip rect" in clip_boundary["promotion_blockers"][0]
 
 
 def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
