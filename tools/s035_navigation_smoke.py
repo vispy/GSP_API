@@ -292,6 +292,8 @@ class _FakeDatovizV04:
             ("z_layer", ctypes.c_int),
             ("controller_mode", ctypes.c_int),
             ("coord_space", ctypes.c_int),
+            ("clip_rect", ctypes.c_int),
+            ("viewport_rect", ctypes.c_int),
         )
 
     def dvz_scene_destroy(self, scene):
