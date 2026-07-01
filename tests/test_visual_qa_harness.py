@@ -636,6 +636,22 @@ def test_s029_datoviz_guide_view2d_rows_stay_unsupported_with_specific_blockers(
                     "datoviz": {"status": "unsupported", "reason": reason},
                 },
             },
+            {
+                "case_id": "guide/view2d_grid_clip_title_boundary",
+                "family": "guide",
+                "required_features": [
+                    "guide",
+                    "view2d",
+                    "explicit-ticks",
+                    "grid",
+                    "plot-clip",
+                    "title",
+                ],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {"status": "unsupported", "reason": reason},
+                },
+            },
         ],
     }
 
@@ -664,6 +680,10 @@ def test_s029_datoviz_guide_view2d_rows_stay_unsupported_with_specific_blockers(
         "reversed View2D axis/grid placement"
         in reversed_explicit["promotion_blockers"][1]
     )
+    clip_boundary = rows["guide/view2d_grid_clip_title_boundary"]
+    assert clip_boundary["status"] == "unsupported"
+    assert "plot-rect grid clipping" in clip_boundary["known_missing_semantics"][0]
+    assert "resolved plot rectangle" in clip_boundary["promotion_blockers"][0]
 
 
 def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
@@ -729,12 +749,47 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
                     },
                 },
             },
+            {
+                "case_id": "guide/view2d_grid_clip_title_boundary",
+                "family": "guide",
+                "required_features": [
+                    "guide",
+                    "view2d",
+                    "explicit-ticks",
+                    "grid",
+                    "plot-clip",
+                    "title",
+                ],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {
+                        "status": "rendered",
+                        "artifact_path": (
+                            "backends/datoviz/"
+                            "guide_view2d_grid_clip_title_boundary.png"
+                        ),
+                        "log_path": (
+                            "backends/datoviz/"
+                            "guide_view2d_grid_clip_title_boundary.log.txt"
+                        ),
+                        "guide_diagnostics": {
+                            "axis_rendering": "adapted-review",
+                            "grid_clip_to_plot_rect": "native-verified",
+                            "grid_clip_evidence": (
+                                "datoviz-native-axis-grid-plot-interval"
+                            ),
+                            "panel_title": "unsupported",
+                            "guide_query": "unsupported",
+                        },
+                    },
+                },
+            },
         ],
     }
 
     matrix = build_capability_matrix(report)
     assert "review.adapted" in matrix["review_classification_taxonomy"]
-    assert matrix["review_classification_summary"]["review.adapted"] == 2
+    assert matrix["review_classification_summary"]["review.adapted"] == 3
     rows = {
         row["case_id"]: row for row in matrix["rows"] if row["backend"] == "datoviz"
     }
@@ -758,6 +813,11 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
     assert "dvz_axis_set_ticks" in reversed_explicit["known_adaptations"][0]
     assert "backend-native tick policy" in reversed_explicit["known_adaptations"][0]
     assert "guide-query support" in reversed_explicit["promotion_blockers"][1]
+
+    clip_boundary = rows["guide/view2d_grid_clip_title_boundary"]
+    assert clip_boundary["status"] == "adapted"
+    assert "title-boundary grid clipping" in clip_boundary["known_adaptations"][0]
+    assert "guide-query support" in clip_boundary["promotion_blockers"][1]
 
 
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:
@@ -923,9 +983,10 @@ def test_s028_case_registry_extends_s027_with_guide_view2d_cases() -> None:
     """S028 adds deterministic guide/View2D QA cases after S027."""
     case_ids = [case.case_id for case in list_cases(suite=S028_SUITE)]
 
-    assert case_ids[-2:] == [
+    assert case_ids[-3:] == [
         "guide/view2d_auto_grid",
         "guide/view2d_reversed_explicit",
+        "guide/view2d_grid_clip_title_boundary",
     ]
 
 
@@ -940,6 +1001,7 @@ def test_s028_guide_view2d_visual_qa_run_writes_matplotlib_artifacts(
         case_ids=(
             "guide/view2d_auto_grid",
             "guide/view2d_reversed_explicit",
+            "guide/view2d_grid_clip_title_boundary",
         ),
         run_id="test-s028-guides",
         resolution=(360, 240),
@@ -960,6 +1022,19 @@ def test_s028_guide_view2d_visual_qa_run_writes_matplotlib_artifacts(
     ]
     assert scene["panel_text_guides"][0]["text"] == "S028 reversed guide View2D"
     assert scene["visuals"][0]["family"] == "point"
+    clip_scene = json.loads(
+        (
+            tmp_path
+            / "scenes"
+            / "guide_view2d_grid_clip_title_boundary.scene.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert clip_scene["panel_text_guides"][0]["text"] == "S028 grid clip boundary"
+    assert clip_scene["axis_guides"][0]["tick_spec"]["explicit_values"] == [
+        -2.0,
+        0.0,
+        2.0,
+    ]
     for case in report["cases"]:
         assert case["backends"]["matplotlib"]["status"] == "rendered"
 

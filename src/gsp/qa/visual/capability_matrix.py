@@ -136,6 +136,16 @@ _DATOVIZ_S029_UNSUPPORTED_GUIDE_ROWS = {
             "add Datoviz guide-query support before advertising guide or all-rendered query semantics",
         ],
     },
+    "guide/view2d_grid_clip_title_boundary": {
+        "missing": [
+            "Datoviz native axes need verified plot-rect grid clipping before this title-boundary regression can render as review evidence",
+            "panel title placement and guide query semantics are unsupported for this Datoviz slice",
+        ],
+        "blockers": [
+            "prove native Datoviz grid endpoints stop at the resolved plot rectangle below the title reserve",
+            "add Datoviz guide-query support before advertising guide or all-rendered query semantics",
+        ],
+    },
 }
 
 _DATOVIZ_S030_RENDERED_GUIDE_ROWS = {
@@ -161,6 +171,20 @@ _DATOVIZ_S030_RENDERED_GUIDE_ROWS = {
         "missing": [
             "strict explicit GSP tick identity is not claimed when the Datoviz binding omits dvz_axis_set_ticks",
             "panel title placement and guide/all-rendered query semantics are unsupported for this Datoviz slice",
+        ],
+        "blockers": [
+            "prove or exclude panel title layout before strict guide promotion",
+            "add Datoviz guide-query support before advertising guide or all-rendered query semantics",
+        ],
+    },
+    "guide/view2d_grid_clip_title_boundary": {
+        "adaptations": [
+            "Datoviz native panel axes render this title-boundary grid clipping row for review with explicit ticks and native plot-interval grid endpoints when the verified Datoviz source fix is present",
+            "Panel title and guide query semantics remain excluded from the Datoviz rendered artifact",
+        ],
+        "missing": [
+            "strict panel title layout is not claimed for the adapted Datoviz title visual",
+            "guide/all-rendered query semantics are unsupported for this Datoviz slice",
         ],
         "blockers": [
             "prove or exclude panel title layout before strict guide promotion",

@@ -368,6 +368,20 @@ def _s028_guide_view2d_cases() -> tuple[VisualQACase, ...]:
             ),
             builder=_guide_view2d_reversed_explicit,
         ),
+        VisualQACase(
+            case_id="guide/view2d_grid_clip_title_boundary",
+            title="View2D grid clipping at title boundary",
+            family="guide",
+            required_features=(
+                "guide",
+                "view2d",
+                "explicit-ticks",
+                "grid",
+                "plot-clip",
+                "title",
+            ),
+            builder=_guide_view2d_grid_clip_title_boundary,
+        ),
     )
 
 
@@ -1625,6 +1639,83 @@ def _guide_view2d_reversed_explicit() -> VisualQAScene:
         },
         notes=(
             "Explicit guide ticks and labels pass through exactly while reversed View2D limits flip the panel direction.",
+        ),
+    )
+
+
+def _guide_view2d_grid_clip_title_boundary() -> VisualQAScene:
+    view = View2D(
+        id="view:s028-grid-clip",
+        panel_id="panel:main",
+        x_range=(-2.0, 2.0),
+        y_range=(-1.0, 1.0),
+    )
+    positions = np.array([[0.0, 0.96], [-1.25, -0.65], [1.25, -0.2]], dtype=np.float32)
+    colors = np.array(
+        [
+            [190, 48, 64, 230],
+            [42, 128, 185, 255],
+            [46, 160, 67, 255],
+        ],
+        dtype=np.uint8,
+    )
+    sizes = np.array([128.0, 46.0, 46.0], dtype=np.float32)
+    visual = PointVisual(
+        id="visual:s028-grid-clip-guide-points",
+        positions=positions,
+        colors=colors,
+        sizes=sizes,
+        coordinate_space=CoordinateSpace.DATA,
+    )
+    axis_guides = (
+        AxisGuide(
+            id="guide:s028-grid-clip-x",
+            view_id=view.id,
+            dimension=AxisDimension.X,
+            side=AxisSide.BOTTOM,
+            label_text="clip x",
+            grid_visible=True,
+            tick_spec=TickSpec(
+                kind=TickSpecKind.EXPLICIT,
+                explicit_values=(-2.0, 0.0, 2.0),
+                explicit_labels=("-2", "0", "2"),
+                target_count=None,
+            ),
+        ),
+        AxisGuide(
+            id="guide:s028-grid-clip-y",
+            view_id=view.id,
+            dimension=AxisDimension.Y,
+            side=AxisSide.LEFT,
+            label_text="clip y",
+            grid_visible=True,
+            tick_spec=TickSpec(
+                kind=TickSpecKind.EXPLICIT,
+                explicit_values=(-1.0, 0.0, 1.0),
+                explicit_labels=("-1", "0", "1"),
+                target_count=None,
+            ),
+        ),
+    )
+    title = PanelTextGuide(
+        id="guide:s028-grid-clip-title",
+        panel_id=view.panel_id,
+        role=PanelTextRole.TITLE,
+        text="S028 grid clip boundary",
+    )
+    return VisualQAScene(
+        case_id="guide/view2d_grid_clip_title_boundary",
+        visuals=(visual,),
+        axis_guides=axis_guides,
+        panel_text_guides=(title,),
+        views=(view,),
+        arrays={
+            "point_positions": positions,
+            "point_colors": colors,
+            "point_sizes": sizes,
+        },
+        notes=(
+            "A large DATA marker near the top View2D boundary and an x=0 grid line must share the same plot clip boundary below the title reserve.",
         ),
     )
 
