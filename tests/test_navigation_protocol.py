@@ -1,7 +1,10 @@
 """Tests for the accepted S035 View2D navigation protocol model."""
 
+import math
+
 import pytest
 
+import gsp.protocol.navigation as navigation_module
 from gsp.protocol import (
     AdaptationOutcome,
     CapabilitySnapshot,
@@ -310,11 +313,11 @@ def test_navigation_input_adapter_emits_incremental_pan_actions():
 
 
 def test_navigation_input_adapter_emits_wheel_zoom_and_tracks_accepted_revision():
+    panel_rect = LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0)
     adapter = View2DNavigationInputAdapter(
         controller_id="nav:main",
         view2d_revision="view-rev:1",
-        panel_rect=LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0),
-        zoom_base=1.2,
+        panel_rect=panel_rect,
     )
 
     zoom = adapter.handle_pointer_event(
@@ -328,8 +331,13 @@ def test_navigation_input_adapter_emits_wheel_zoom_and_tracks_accepted_revision(
 
     assert isinstance(zoom, ZoomAboutAction)
     assert zoom.anchor_px == pytest.approx((210.0, 120.0))
-    assert zoom.factor_x == pytest.approx(1.44)
-    assert zoom.factor_y == pytest.approx(1.44)
+    expected_factor_x, expected_factor_y = (
+        navigation_module._DatovizPanzoomProfile.for_platform().wheel_zoom_factor(
+            panel_rect, 2.0
+        )
+    )
+    assert zoom.factor_x == pytest.approx(expected_factor_x)
+    assert zoom.factor_y == pytest.approx(expected_factor_y)
     assert zoom.view2d_revision == "view-rev:1"
 
     result = NavigationResult(
@@ -351,16 +359,22 @@ def test_navigation_input_adapter_emits_wheel_zoom_and_tracks_accepted_revision(
     )
     assert isinstance(next_zoom, ZoomAboutAction)
     assert next_zoom.view2d_revision == "view-rev:2"
-    assert next_zoom.factor_x == pytest.approx(1.0 / 1.2)
+    expected_next_factor_x, expected_next_factor_y = (
+        navigation_module._DatovizPanzoomProfile.for_platform().wheel_zoom_factor(
+            panel_rect, -1.0
+        )
+    )
+    assert next_zoom.factor_x == pytest.approx(expected_next_factor_x)
+    assert next_zoom.factor_y == pytest.approx(expected_next_factor_y)
 
 
 def test_navigation_input_adapter_emits_right_drag_axis_zoom_actions():
+    panel_rect = LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0)
     adapter = View2DNavigationInputAdapter(
         controller_id="nav:main",
         view2d_revision="view-rev:1",
-        panel_rect=LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0),
+        panel_rect=panel_rect,
         layout_snapshot_id="layout:main",
-        zoom_base=1.2,
     )
 
     assert (
@@ -383,10 +397,62 @@ def test_navigation_input_adapter_emits_right_drag_axis_zoom_actions():
     )
 
     assert isinstance(zoom, ZoomAboutAction)
-    assert zoom.anchor_px == pytest.approx((230.0, 110.0))
-    assert zoom.factor_x == pytest.approx(1.2)
-    assert zoom.factor_y == pytest.approx(1.0 / 1.2)
+    assert zoom.anchor_px == pytest.approx((210.0, 120.0))
+    expected_factor_x, expected_factor_y = (
+        navigation_module._DatovizPanzoomProfile.for_platform().drag_zoom_factor(
+            panel_rect, 20.0, -10.0
+        )
+    )
+    assert zoom.factor_x == pytest.approx(expected_factor_x)
+    assert zoom.factor_y == pytest.approx(expected_factor_y)
     assert zoom.layout_snapshot_id == "layout:main"
+
+
+def test_navigation_input_adapter_emits_double_click_reset_action():
+    adapter = View2DNavigationInputAdapter(
+        controller_id="nav:main",
+        view2d_revision="view-rev:1",
+        panel_rect=LogicalPixelRect(x=10.0, y=20.0, width=400.0, height=200.0),
+        layout_snapshot_id="layout:main",
+    )
+
+    action = adapter.handle_pointer_event(
+        NavigationPointerEvent(
+            kind=NavigationPointerEventKind.DOUBLE_CLICK,
+            x_px=210.0,
+            y_px=120.0,
+        )
+    )
+
+    assert isinstance(action, ResetViewAction)
+    assert action.controller_id == "nav:main"
+    assert action.view2d_revision == "view-rev:1"
+    assert action.layout_snapshot_id == "layout:main"
+
+
+def test_datoviz_panzoom_profile_matches_platform_constants_and_formulas():
+    apple = navigation_module._DatovizPanzoomProfile.for_platform("darwin")
+    other = navigation_module._DatovizPanzoomProfile.for_platform("linux")
+    panel_rect = LogicalPixelRect(x=0.0, y=0.0, width=800.0, height=400.0)
+
+    assert apple.drag_coef == pytest.approx(0.003)
+    assert apple.wheel_coef == pytest.approx(12.0)
+    assert other.drag_coef == pytest.approx(0.002)
+    assert other.wheel_coef == pytest.approx(120.0)
+
+    drag_x, drag_y = apple.drag_zoom_factor(panel_rect, 40.0, -20.0)
+    assert drag_x == pytest.approx(math.exp(0.003 * 600.0 * (2.0 * 40.0 / 800.0)))
+    assert drag_y == pytest.approx(math.exp(0.003 * 600.0 * (2.0 * -20.0 / 400.0)))
+
+    wheel_x, wheel_y = apple.wheel_zoom_factor(panel_rect, 2.0)
+    shift_x = 12.0 * (2.0 / 4.0)
+    shift_y = -(400.0 / 800.0) * shift_x
+    assert wheel_x == pytest.approx(math.exp(0.003 * 600.0 * (2.0 * shift_x / 800.0)))
+    assert wheel_y == pytest.approx(math.exp(0.003 * 600.0 * (-2.0 * shift_y / 400.0)))
+
+    assert apple.clamp_zoom(0.0) == pytest.approx(1.0)
+    assert apple.clamp_zoom(1e-6) == pytest.approx(1e-3)
+    assert apple.clamp_zoom(1e6) == pytest.approx(1e4)
 
 
 def test_navigation_pointer_event_from_ndc_resolves_logical_pixels():
@@ -415,12 +481,12 @@ def test_navigation_pointer_event_from_ndc_resolves_logical_pixels():
 
 
 def test_navigation_input_adapter_rejects_invalid_pointer_adapter_state():
-    with pytest.raises(ValueError, match="zoom_base"):
+    with pytest.raises(TypeError, match="zoom_base"):
         View2DNavigationInputAdapter(
             controller_id="nav:main",
             view2d_revision="view-rev:1",
             panel_rect=LogicalPixelRect(x=0.0, y=0.0, width=100.0, height=100.0),
-            zoom_base=1.0,
+            zoom_base=1.0,  # type: ignore[call-arg]
         )
 
     with pytest.raises(TypeError, match="NavigationPointerEventKind"):

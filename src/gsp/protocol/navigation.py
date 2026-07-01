@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 import math
+import sys
 
 from .ids import validate_id
 from .layout import LogicalPixelRect
@@ -51,6 +52,82 @@ class NavigationPointerEventKind(str, Enum):
     BUTTON_RELEASE = "button-release"
     MOUSE_MOVE = "mouse-move"
     WHEEL = "wheel"
+    DOUBLE_CLICK = "double-click"
+
+
+_DATOVIZ_PANZOOM_ZOOM_MIN_DEFAULT = 1e-3
+_DATOVIZ_PANZOOM_ZOOM_MAX_DEFAULT = 1e4
+_DATOVIZ_PANZOOM_APPLE_DRAG_COEF = 0.003
+_DATOVIZ_PANZOOM_APPLE_WHEEL_COEF = 12.0
+_DATOVIZ_PANZOOM_DEFAULT_DRAG_COEF = 0.002
+_DATOVIZ_PANZOOM_DEFAULT_WHEEL_COEF = 120.0
+
+
+@dataclass(frozen=True, slots=True)
+class _DatovizPanzoomProfile:
+    """Private Datoviz v0.4-dev panzoom constants used by the strict GSP adapter."""
+
+    drag_coef: float
+    wheel_coef: float
+    zoom_min: float = _DATOVIZ_PANZOOM_ZOOM_MIN_DEFAULT
+    zoom_max: float = _DATOVIZ_PANZOOM_ZOOM_MAX_DEFAULT
+
+    @classmethod
+    def for_platform(cls, platform: str | None = None) -> "_DatovizPanzoomProfile":
+        """Return the profile matching Datoviz v0.4-dev panzoom.c for a platform."""
+        effective_platform = sys.platform if platform is None else platform
+        if effective_platform == "darwin":
+            return cls(
+                drag_coef=_DATOVIZ_PANZOOM_APPLE_DRAG_COEF,
+                wheel_coef=_DATOVIZ_PANZOOM_APPLE_WHEEL_COEF,
+            )
+        return cls(
+            drag_coef=_DATOVIZ_PANZOOM_DEFAULT_DRAG_COEF,
+            wheel_coef=_DATOVIZ_PANZOOM_DEFAULT_WHEEL_COEF,
+        )
+
+    def clamp_zoom(self, value: float) -> float:
+        """Clamp a Datoviz-style zoom factor to the v0.4-dev defaults."""
+        if not math.isfinite(value) or value <= 0.0:
+            return 1.0
+        return min(max(value, self.zoom_min), self.zoom_max)
+
+    def drag_zoom_factor(
+        self, panel_rect: LogicalPixelRect, dx_px: float, dy_px: float
+    ) -> tuple[float, float]:
+        """Return Datoviz right-drag zoom factors for a GSP logical-pixel shift.
+
+        GSP pointer y increases upward. Datoviz pointer y increases downward and
+        then applies ``-2 * dy / h``. After coordinate conversion, the GSP
+        vertical normalized shift is therefore ``+2 * dy / h``.
+        """
+        _validate_panel_rect(panel_rect)
+        _validate_finite("dx_px", dx_px)
+        _validate_finite("dy_px", dy_px)
+        average_extent_px = 0.5 * (panel_rect.width + panel_rect.height)
+        shift_x = 2.0 * dx_px / panel_rect.width
+        shift_y = 2.0 * dy_px / panel_rect.height
+        return (
+            math.exp(self.drag_coef * average_extent_px * shift_x),
+            math.exp(self.drag_coef * average_extent_px * shift_y),
+        )
+
+    def wheel_zoom_factor(
+        self, panel_rect: LogicalPixelRect, scroll_steps: float
+    ) -> tuple[float, float]:
+        """Return Datoviz wheel zoom factors for a wheel direction value."""
+        _validate_panel_rect(panel_rect)
+        _validate_finite("scroll_steps", scroll_steps)
+        d = scroll_steps / 4.0
+        shift_x = self.wheel_coef * d
+        shift_y = -(panel_rect.height / panel_rect.width) * shift_x
+        average_extent_px = 0.5 * (panel_rect.width + panel_rect.height)
+        normalized_x = 2.0 * shift_x / panel_rect.width
+        normalized_y = -2.0 * shift_y / panel_rect.height
+        return (
+            math.exp(self.drag_coef * average_extent_px * normalized_x),
+            math.exp(self.drag_coef * average_extent_px * normalized_y),
+        )
 
 @dataclass(frozen=True, slots=True)
 class View2DNavigationController:
@@ -216,11 +293,14 @@ class View2DNavigationInputAdapter:
     __slots__ = (
         "_controller_id",
         "_drag_kind",
+        "_drag_start_px",
+        "_drag_start_zoom",
         "_drag_last_px",
         "_layout_snapshot_id",
         "_panel_rect",
+        "_profile",
         "_view2d_revision",
-        "_zoom_base",
+        "_zoom",
     )
 
     def __init__(
@@ -230,22 +310,21 @@ class View2DNavigationInputAdapter:
         view2d_revision: str,
         panel_rect: LogicalPixelRect,
         layout_snapshot_id: str | None = None,
-        zoom_base: float = 1.1,
     ) -> None:
         validate_id(controller_id)
         validate_id(view2d_revision)
         if layout_snapshot_id is not None:
             validate_id(layout_snapshot_id)
         _validate_panel_rect(panel_rect)
-        _validate_finite("zoom_base", zoom_base)
-        if zoom_base <= 1.0:
-            raise ValueError("zoom_base must be greater than 1.0")
         self._controller_id = controller_id
         self._view2d_revision = view2d_revision
         self._layout_snapshot_id = layout_snapshot_id
         self._panel_rect = panel_rect
-        self._zoom_base = float(zoom_base)
+        self._profile = _DatovizPanzoomProfile.for_platform()
+        self._zoom = (1.0, 1.0)
         self._drag_last_px: tuple[float, float] | None = None
+        self._drag_start_px: tuple[float, float] | None = None
+        self._drag_start_zoom: tuple[float, float] | None = None
         self._drag_kind: str | None = None
 
     @property
@@ -280,22 +359,32 @@ class View2DNavigationInputAdapter:
         if event.kind is NavigationPointerEventKind.BUTTON_PRESS:
             if event.left_button:
                 self._drag_last_px = (event.x_px, event.y_px)
+                self._drag_start_px = (event.x_px, event.y_px)
+                self._drag_start_zoom = self._zoom
                 self._drag_kind = "pan"
             elif event.right_button:
                 self._drag_last_px = (event.x_px, event.y_px)
+                self._drag_start_px = (event.x_px, event.y_px)
+                self._drag_start_zoom = self._zoom
                 self._drag_kind = "zoom"
             else:
-                self._drag_last_px = None
-                self._drag_kind = None
+                self._clear_drag()
             return None
         if event.kind is NavigationPointerEventKind.BUTTON_RELEASE:
-            self._drag_last_px = None
-            self._drag_kind = None
+            self._clear_drag()
             return None
         if event.kind is NavigationPointerEventKind.MOUSE_MOVE:
             return self._handle_mouse_move(event)
         if event.kind is NavigationPointerEventKind.WHEEL:
             return self._handle_wheel(event)
+        if event.kind is NavigationPointerEventKind.DOUBLE_CLICK:
+            self._zoom = (1.0, 1.0)
+            self._clear_drag()
+            return ResetViewAction(
+                controller_id=self._controller_id,
+                view2d_revision=self._view2d_revision,
+                layout_snapshot_id=self._layout_snapshot_id,
+            )
         raise ValueError(f"unsupported pointer event kind: {event.kind!r}")
 
     def _handle_mouse_move(self, event: NavigationPointerEvent) -> NavigationAction | None:
@@ -308,12 +397,27 @@ class View2DNavigationInputAdapter:
         if dx_px == 0.0 and dy_px == 0.0:
             return None
         if self._drag_kind == "zoom":
-            factor_x = self._zoom_base ** (dx_px / (self._panel_rect.width * 0.05))
-            factor_y = self._zoom_base ** (dy_px / (self._panel_rect.height * 0.05))
+            if self._drag_start_px is None or self._drag_start_zoom is None:
+                return None
+            start_x, start_y = self._drag_start_px
+            start_zoom_x, start_zoom_y = self._drag_start_zoom
+            absolute_factor_x, absolute_factor_y = self._profile.drag_zoom_factor(
+                self._panel_rect,
+                event.x_px - start_x,
+                event.y_px - start_y,
+            )
+            target_zoom = (
+                self._profile.clamp_zoom(start_zoom_x * absolute_factor_x),
+                self._profile.clamp_zoom(start_zoom_y * absolute_factor_y),
+            )
+            factor_x, factor_y = self._relative_zoom_factors(target_zoom)
+            if factor_x == 1.0 and factor_y == 1.0:
+                return None
+            self._zoom = target_zoom
             return ZoomAboutAction(
                 controller_id=self._controller_id,
                 view2d_revision=self._view2d_revision,
-                anchor_px=(event.x_px, event.y_px),
+                anchor_px=self._drag_start_px,
                 factor_x=factor_x,
                 factor_y=factor_y,
                 layout_snapshot_id=self._layout_snapshot_id,
@@ -329,15 +433,40 @@ class View2DNavigationInputAdapter:
     def _handle_wheel(self, event: NavigationPointerEvent) -> ZoomAboutAction | None:
         if event.scroll_steps == 0.0:
             return None
-        factor = self._zoom_base**event.scroll_steps
+        factor_x, factor_y = self._profile.wheel_zoom_factor(
+            self._panel_rect, event.scroll_steps
+        )
+        target_zoom = (
+            self._profile.clamp_zoom(self._zoom[0] * factor_x),
+            self._profile.clamp_zoom(self._zoom[1] * factor_y),
+        )
+        factor_x, factor_y = self._relative_zoom_factors(target_zoom)
+        if factor_x == 1.0 and factor_y == 1.0:
+            return None
+        self._zoom = target_zoom
         return ZoomAboutAction(
             controller_id=self._controller_id,
             view2d_revision=self._view2d_revision,
             anchor_px=(event.x_px, event.y_px),
-            factor_x=factor,
-            factor_y=factor,
+            factor_x=factor_x,
+            factor_y=factor_y,
             layout_snapshot_id=self._layout_snapshot_id,
         )
+
+    def _relative_zoom_factors(
+        self, target_zoom: tuple[float, float]
+    ) -> tuple[float, float]:
+        current_x, current_y = self._zoom
+        if current_x <= 0.0 or current_y <= 0.0:
+            self._zoom = (1.0, 1.0)
+            current_x, current_y = self._zoom
+        return target_zoom[0] / current_x, target_zoom[1] / current_y
+
+    def _clear_drag(self) -> None:
+        self._drag_last_px = None
+        self._drag_start_px = None
+        self._drag_start_zoom = None
+        self._drag_kind = None
 
 
 def pan_view2d(view: View2D, panel_rect: LogicalPixelRect, dx_px: float, dy_px: float) -> View2D:
