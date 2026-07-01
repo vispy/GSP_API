@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+import subprocess
 from types import ModuleType
 from typing import Any, cast
 
@@ -39,6 +41,7 @@ from gsp_datoviz.v04_import import bootstrap_datoviz_v04_source
 
 
 DATOVIZ_V04_AXIS_PROVIDER = "datoviz.v04.panel_axis.wip"
+DATOVIZ_GRID_CLIP_TO_PLOT_RECT_COMMIT = "e54bd9af3bde328543c3119669b365e8e731f08d"
 DATOVIZ_S034_AXIS_STYLE_FIELDS = (
     "tick_size_px",
     "label_size_px",
@@ -177,6 +180,19 @@ def gsp_capability_snapshot_from_datoviz(
         texture_formats.append("rg32uint")
 
     capture_diagnostics = datoviz_v04_capture_diagnostics(dvz) if dvz is not None else ("Datoviz is not importable",)
+    grid_clip_diagnostics = datoviz_v04_grid_clip_to_plot_rect_diagnostics(dvz)
+    grid_clip_supported = not grid_clip_diagnostics
+    grid_clip_status = "native-verified" if grid_clip_supported else "unsupported"
+    grid_clip_audit_diagnostics = (
+        ("grid_clip_native_verified",) if grid_clip_supported else grid_clip_diagnostics
+    )
+    guide_layout_diagnostics = (
+        "panel_text_guide_as_screen_text",
+        "axis_style_mapping_partial",
+        *grid_clip_audit_diagnostics,
+        "guide_query_missing",
+        "all_rendered_guides_unsupported",
+    )
 
     metadata: dict[str, object] = {
         "datoviz_api": "v0.4 dvz_* facade",
@@ -216,15 +232,14 @@ def gsp_capability_snapshot_from_datoviz(
             "panel_text_title": "adapted: panel_text_guide_as_screen_text",
             "axis_style_mapping": "partial" if dvz is not None and hasattr(dvz, "dvz_axis_set_style") else "unsupported",
             "axis_style_fields": DATOVIZ_S034_AXIS_STYLE_FIELDS,
-            "grid_clip_to_plot_rect": "unsupported",
+            "grid_clip_to_plot_rect": grid_clip_status,
             "guide_query": False,
             "all_rendered_guides": False,
             "diagnostics": (
                 "panel_text_guide_as_screen_text",
                 "resolved_layout_snapshot_unsupported",
                 "axis_style_mapping_partial",
-                "grid_clip_not_enforced",
-                "grid_clip_native_api_unverified",
+                *grid_clip_audit_diagnostics,
                 "guide_query_missing",
                 "all_rendered_guides_unsupported",
                 "font_metrics_parity_false",
@@ -394,7 +409,7 @@ def gsp_capability_snapshot_from_datoviz(
             axis_deterministic_gsp_ticks=False,
             axis_labels=True,
             axis_grid=True,
-            axis_grid_clip_to_plot_rect=False,
+            axis_grid_clip_to_plot_rect=grid_clip_supported,
             axis_query=False,
             panel_text_title="adapted",
             panel_text_participates_in_layout=False,
@@ -402,13 +417,7 @@ def gsp_capability_snapshot_from_datoviz(
             colorbar="adapted",
             colorbar_query=False,
             legend="unsupported",
-            diagnostics=(
-                "panel_text_guide_as_screen_text",
-                "axis_style_mapping_partial",
-                "grid_clip_not_enforced",
-                "guide_query_missing",
-                "all_rendered_guides_unsupported",
-            ),
+            diagnostics=guide_layout_diagnostics,
         ),
         font_layout_capability=FontLayoutCapability(
             logical_font_size_px=True,
@@ -487,6 +496,31 @@ def datoviz_v04_capture_diagnostics(dvz: ModuleType | Any) -> tuple[str, ...]:
     return tuple(diagnostics)
 
 
+def datoviz_v04_grid_clip_to_plot_rect_ready_for_source(
+    source: Path | str | None,
+) -> bool:
+    """Return whether a Datoviz source checkout contains the native grid clip fix."""
+    if source is None:
+        return False
+    source_path = Path(source)
+    return (
+        _datoviz_commit_contains(source_path, DATOVIZ_GRID_CLIP_TO_PLOT_RECT_COMMIT)
+        or _datoviz_source_has_grid_clip_fix(source_path)
+    )
+
+
+def datoviz_v04_grid_clip_to_plot_rect_diagnostics(
+    dvz: ModuleType | Any | None,
+) -> tuple[str, ...]:
+    """Return diagnostics for Datoviz native axis grid clipping to the plot rect."""
+    if dvz is None:
+        return ("grid_clip_not_enforced", "grid_clip_native_api_unverified")
+    source = _datoviz_module_source_root(dvz)
+    if source is not None and datoviz_v04_grid_clip_to_plot_rect_ready_for_source(source):
+        return ()
+    return ("grid_clip_not_enforced", "grid_clip_native_api_unverified")
+
+
 def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) -> AxisProviderCapability:
     """Return the Datoviz v0.4-dev native axis provider capability.
 
@@ -511,6 +545,11 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
         "axis-provider-explicit-ticks: explicit GSP tick values and labels are wired through dvz_axis_set_ticks"
         if supports_explicit_ticks
         else "axis-provider-explicit-ticks-unsupported: missing dvz_axis_set_ticks"
+    )
+    grid_clip_diagnostic = (
+        "axis-provider-grid-clip-to-plot-rect: native Datoviz grid endpoints are clipped to the resolved plot interval"
+        if not datoviz_v04_grid_clip_to_plot_rect_diagnostics(dvz)
+        else "axis-provider-grid-clip-to-plot-rect-unverified: native grid endpoint clipping is not verified for this Datoviz build"
     )
 
     return AxisProviderCapability(
@@ -537,6 +576,7 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
                 "adapted and strict guide promotion still excludes title/query semantics"
             ),
             explicit_tick_diagnostic,
+            grid_clip_diagnostic,
             "axis-guide-query-unsupported: guide picking is deferred for Datoviz v0.4 RC",
             "all-rendered-guides-unsupported: all-rendered guide contributions require guide query support",
             "strict-guide-title-query-unverified: Datoviz guide rows remain adapted until title layout and guide query semantics are strict",
@@ -563,6 +603,56 @@ def _optional_nonnegative_int(value: object | None) -> int | None:
         return None
     integer = int(cast(Any, value))
     return integer if integer >= 0 else None
+
+
+def _datoviz_module_source_root(dvz: ModuleType | Any) -> Path | None:
+    module_file = getattr(dvz, "__file__", None)
+    if not isinstance(module_file, str):
+        return None
+    path = Path(module_file).resolve()
+    if path.name == "__init__.py" and path.parent.name == "datoviz":
+        return path.parent.parent
+    for parent in path.parents:
+        if (parent / "datoviz" / "__init__.py").is_file():
+            return parent
+    return None
+
+
+def _datoviz_commit_contains(source: Path, commit: str) -> bool:
+    if not (source / ".git").exists():
+        return False
+    try:
+        result = subprocess.run(
+            ("git", "merge-base", "--is-ancestor", commit, "HEAD"),
+            cwd=source,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+    except (OSError, ValueError):
+        return False
+    return result.returncode == 0
+
+
+def _datoviz_source_has_grid_clip_fix(source: Path) -> bool:
+    axis_visual = source / "src" / "scene" / "annotation" / "axis_visual.c"
+    axis_tests = source / "src" / "scene" / "tests" / "axis.c"
+    if not axis_visual.is_file():
+        return False
+    try:
+        axis_visual_source = axis_visual.read_text(encoding="utf-8")
+        axis_test_source = (
+            axis_tests.read_text(encoding="utf-8") if axis_tests.is_file() else ""
+        )
+    except OSError:
+        return False
+    return (
+        "_axis_inverse_panzoom_coord(extent, 0, 1, x0)" in axis_visual_source
+        and "_axis_inverse_panzoom_coord(extent, 0, 1, x1)" in axis_visual_source
+        and "_axis_inverse_panzoom_coord(extent, 2, 3, y0)" in axis_visual_source
+        and "_axis_inverse_panzoom_coord(extent, 2, 3, y1)" in axis_visual_source
+        and "test_axis_grid_uses_style_plot_margins" in axis_test_source
+    )
 
 
 def _unsupported(diagnostic: str) -> AxisProviderCapability:

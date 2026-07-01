@@ -69,6 +69,7 @@ from gsp.qa.visual.cases import (
 )
 from gsp.qa.visual.contact_sheet import write_contact_sheets
 from gsp.qa.visual.datoviz_probe import DatovizV04ProbeReport, probe_datoviz_v04
+from gsp_datoviz.capabilities import datoviz_v04_grid_clip_to_plot_rect_ready_for_source
 from gsp_datoviz.protocol_renderer import (
     DatovizColorPipeline,
     DatovizV04ProtocolRenderer,
@@ -439,7 +440,12 @@ def _run_datoviz(
             diagnostics={"env_var": DATOVIZ_QA_OFFSCREEN_ENV, "required_value": "1"},
             datoviz_color_pipeline=datoviz_color_pipeline,
         )
-    guide_diagnostics = _datoviz_guide_diagnostics(axis_guides, panel_text_guides, view)
+    guide_diagnostics = _datoviz_guide_diagnostics(
+        axis_guides,
+        panel_text_guides,
+        view,
+        grid_clip_to_plot_rect=_datoviz_probe_grid_clip_to_plot_rect(probe_report),
+    )
     guide_configuration = _datoviz_guide_axis_configuration(axis_guides, view)
     if axis_guides and view is None:
         return _write_datoviz_unsupported(
@@ -621,6 +627,8 @@ def _datoviz_guide_diagnostics(
     axis_guides: tuple[AxisGuide, ...],
     panel_text_guides: tuple[PanelTextGuide, ...],
     view: View2D | None,
+    *,
+    grid_clip_to_plot_rect: bool,
 ) -> dict[str, object]:
     diagnostics: dict[str, object] = {}
     if axis_guides:
@@ -636,11 +644,16 @@ def _datoviz_guide_diagnostics(
         )
         diagnostics["ordered_ranges_preserved"] = view is not None
         diagnostics["legacy_panel_domain_sync"] = "compat-before-dvz_panel_set_view2d"
-        diagnostics["grid_clip_to_plot_rect"] = "unsupported"
-        diagnostics["grid_clip_blockers"] = [
-            "grid_clip_not_enforced",
-            "grid_clip_native_api_unverified",
-        ]
+        diagnostics["grid_clip_to_plot_rect"] = (
+            "native-verified" if grid_clip_to_plot_rect else "unsupported"
+        )
+        if grid_clip_to_plot_rect:
+            diagnostics["grid_clip_evidence"] = "datoviz-native-axis-grid-plot-interval"
+        else:
+            diagnostics["grid_clip_blockers"] = [
+                "grid_clip_not_enforced",
+                "grid_clip_native_api_unverified",
+            ]
         if any(guide.tick_spec.kind is TickSpecKind.EXPLICIT for guide in axis_guides):
             diagnostics["explicit_ticks"] = (
                 "binding-dependent; dvz_axis_set_ticks when exposed, backend-native ticks otherwise"
@@ -654,6 +667,14 @@ def _datoviz_guide_diagnostics(
             for guide in panel_text_guides
         ]
     return diagnostics
+
+
+def _datoviz_probe_grid_clip_to_plot_rect(
+    probe_report: DatovizV04ProbeReport,
+) -> bool:
+    source = probe_report.sibling_source.get("path")
+    source_path = source if isinstance(source, str) else None
+    return datoviz_v04_grid_clip_to_plot_rect_ready_for_source(source_path)
 
 
 def _datoviz_panel_text_visuals(

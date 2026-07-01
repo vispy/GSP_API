@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ctypes
 import inspect
+from pathlib import Path
 from types import SimpleNamespace
 import sys
 import types
@@ -83,6 +84,7 @@ from gsp_datoviz.capabilities import (
     datoviz_v04_axis_symbols,
     datoviz_v04_capture_diagnostics,
     datoviz_v04_capture_ready,
+    datoviz_v04_grid_clip_to_plot_rect_ready_for_source,
     gsp_capability_snapshot_from_datoviz,
 )
 from gsp_datoviz.protocol_renderer import (
@@ -1284,6 +1286,23 @@ def test_capability_snapshot_defers_query_support():
     assert "grid_clip_not_enforced" in caps.guide_layout_capability.diagnostics
     assert "axis_style_mapping_partial" in caps.layout_capability.diagnostics
     assert caps.metadata["datoviz_api"] == "v0.4 dvz_* facade"
+
+
+def test_capability_snapshot_promotes_native_datoviz_grid_clip_when_source_is_fixed(
+    tmp_path: Path,
+) -> None:
+    source = _write_datoviz_grid_clip_source(tmp_path)
+    fake_dvz = SimpleNamespace(__file__=str(source / "datoviz" / "__init__.py"))
+
+    caps = gsp_capability_snapshot_from_datoviz(None, dvz=fake_dvz)
+
+    assert datoviz_v04_grid_clip_to_plot_rect_ready_for_source(source)
+    audit = caps.metadata["s034_guide_layout_audit"]
+    assert audit["grid_clip_to_plot_rect"] == "native-verified"
+    assert "grid_clip_native_verified" in audit["diagnostics"]
+    assert "grid_clip_not_enforced" not in audit["diagnostics"]
+    assert caps.guide_layout_capability.axis_grid_clip_to_plot_rect is True
+    assert "grid_clip_native_verified" in caps.guide_layout_capability.diagnostics
 
 
 def test_retained_view2d_navigation_update_does_not_reupload_visual_buffers():
@@ -4291,6 +4310,29 @@ def test_imported_datoviz_capture_binding_smoke_when_available():
         )
 
     assert datoviz_v04_capture_diagnostics(dvz) == ()
+
+
+def _write_datoviz_grid_clip_source(root: Path) -> Path:
+    source = root / "datoviz-source"
+    (source / "datoviz").mkdir(parents=True)
+    (source / "datoviz" / "__init__.py").write_text("", encoding="utf-8")
+    axis_visual = source / "src" / "scene" / "annotation" / "axis_visual.c"
+    axis_visual.parent.mkdir(parents=True)
+    axis_visual.write_text(
+        "\n".join(
+            (
+                "source_x0 = _axis_inverse_panzoom_coord(extent, 0, 1, x0);",
+                "source_x1 = _axis_inverse_panzoom_coord(extent, 0, 1, x1);",
+                "source_y0 = _axis_inverse_panzoom_coord(extent, 2, 3, y0);",
+                "source_y1 = _axis_inverse_panzoom_coord(extent, 2, 3, y1);",
+            )
+        ),
+        encoding="utf-8",
+    )
+    axis_tests = source / "src" / "scene" / "tests" / "axis.c"
+    axis_tests.parent.mkdir(parents=True)
+    axis_tests.write_text("test_axis_grid_uses_style_plot_margins", encoding="utf-8")
+    return source
 
 
 def _test_color_scale(*, colormap_id: ColorMapId = ColorMapId.VIRIDIS) -> ColorScale:

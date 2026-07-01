@@ -1078,6 +1078,60 @@ def test_s028_datoviz_guide_path_configures_view2d_before_data_visuals(
     )
 
 
+def test_s028_datoviz_guide_diagnostics_report_native_grid_clip_when_source_is_fixed(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = _write_datoviz_grid_clip_source(tmp_path)
+
+    class FakeDatovizRenderer:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            pass
+
+        def __enter__(self) -> "FakeDatovizRenderer":
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            return None
+
+        def add_point_visual(self, visual: Any) -> None:
+            pass
+
+        def add_text_visual(self, visual: Any) -> None:
+            pass
+
+        def configure_view2d_axes(self, view: Any, **kwargs: Any) -> None:
+            pass
+
+        def capture_png_bytes(self) -> bytes:
+            return b"fake-png"
+
+    monkeypatch.setattr(
+        visual_runner,
+        "probe_datoviz_v04",
+        lambda: _supported_datoviz_probe_report(source),
+    )
+    monkeypatch.setattr(
+        visual_runner, "DatovizV04ProtocolRenderer", FakeDatovizRenderer
+    )
+    monkeypatch.setenv(visual_runner.DATOVIZ_QA_OFFSCREEN_ENV, "1")
+
+    report = run_visual_qa_suite(
+        suite=S028_SUITE,
+        out_dir=tmp_path,
+        backends=("datoviz",),
+        case_ids=("guide/view2d_auto_grid",),
+        contact_sheet=False,
+        run_id="test-s028-dataviz-guide-grid-clip",
+        resolution=(96, 96),
+    )
+
+    diagnostics = report["cases"][0]["backends"]["datoviz"]["guide_diagnostics"]
+    assert diagnostics["grid_clip_to_plot_rect"] == "native-verified"
+    assert diagnostics["grid_clip_evidence"] == "datoviz-native-axis-grid-plot-interval"
+    assert "grid_clip_blockers" not in diagnostics
+
+
 def test_s034_case_registry_extends_s028_with_layout_cases() -> None:
     """S034 adds resolved-layout QA cases after S028 guide/View2D cases."""
     case_ids = [case.case_id for case in list_cases(suite=S034_SUITE)]
@@ -1227,10 +1281,12 @@ def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
     assert payload["source_symbol_matrix"]["dvz_mesh"]
 
 
-def _supported_datoviz_probe_report() -> DatovizV04ProbeReport:
+def _supported_datoviz_probe_report(
+    source_path: Path | None = None,
+) -> DatovizV04ProbeReport:
     return DatovizV04ProbeReport(
         installed_package={},
-        sibling_source={},
+        sibling_source={} if source_path is None else {"path": str(source_path)},
         imports={
             "datoviz": ImportProbe(
                 module="datoviz",
@@ -1270,3 +1326,26 @@ def _supported_datoviz_probe_report() -> DatovizV04ProbeReport:
         capture={},
         banned_symbol_check={},
     )
+
+
+def _write_datoviz_grid_clip_source(root: Path) -> Path:
+    source = root / "datoviz-source"
+    (source / "datoviz").mkdir(parents=True)
+    (source / "datoviz" / "__init__.py").write_text("", encoding="utf-8")
+    axis_visual = source / "src" / "scene" / "annotation" / "axis_visual.c"
+    axis_visual.parent.mkdir(parents=True)
+    axis_visual.write_text(
+        "\n".join(
+            (
+                "source_x0 = _axis_inverse_panzoom_coord(extent, 0, 1, x0);",
+                "source_x1 = _axis_inverse_panzoom_coord(extent, 0, 1, x1);",
+                "source_y0 = _axis_inverse_panzoom_coord(extent, 2, 3, y0);",
+                "source_y1 = _axis_inverse_panzoom_coord(extent, 2, 3, y1);",
+            )
+        ),
+        encoding="utf-8",
+    )
+    axis_tests = source / "src" / "scene" / "tests" / "axis.c"
+    axis_tests.parent.mkdir(parents=True)
+    axis_tests.write_text("test_axis_grid_uses_style_plot_margins", encoding="utf-8")
+    return source
