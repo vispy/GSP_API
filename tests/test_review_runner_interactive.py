@@ -200,6 +200,56 @@ def test_matplotlib_interactive_view3d_navigation_rerenders_mesh() -> None:
         plt.close(fig)
 
 
+def test_review_runner_defaults_live_mode_to_interactive_navigation(
+    monkeypatch: Any,
+) -> None:
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["example.py", "--backend", "matplotlib", "--frames", "1"],
+    )
+
+    args = review_runner._parse_args()
+
+    assert args.offscreen is False
+    assert args.interactive_navigation is True
+
+
+def test_review_runner_static_live_opt_out(monkeypatch: Any) -> None:
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "example.py",
+            "--backend",
+            "matplotlib",
+            "--frames",
+            "1",
+            "--no-interactive-navigation",
+        ],
+    )
+
+    args = review_runner._parse_args()
+
+    assert args.offscreen is False
+    assert args.interactive_navigation is False
+
+
+def test_review_runner_offscreen_default_is_not_interactive(
+    monkeypatch: Any,
+) -> None:
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["example.py", "--backend", "matplotlib", "--offscreen"],
+    )
+
+    args = review_runner._parse_args()
+
+    assert args.offscreen is True
+    assert args.interactive_navigation is False
+
+
 def test_datoviz_live_input_unavailable_still_opens_static_live_window(
     tmp_path: Path, monkeypatch: Any, capsys: Any
 ) -> None:

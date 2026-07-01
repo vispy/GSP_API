@@ -28,14 +28,23 @@ def main() -> int:
     parser.add_argument(
         "--interactive-navigation",
         action="store_true",
+        default=None,
         help="In live mode, enable GSP navigation for View2D or View3D review scenes.",
+    )
+    parser.add_argument(
+        "--no-interactive-navigation",
+        action="store_false",
+        dest="interactive_navigation",
+        help="Open static live review windows without GSP navigation.",
     )
     parser.set_defaults(offscreen=False)
     args = parser.parse_args()
     if args.offscreen and args.live_side_by_side:
         parser.error("--live-side-by-side cannot be combined with --offscreen")
-    if args.offscreen and args.interactive_navigation:
+    if args.offscreen and args.interactive_navigation is True:
         parser.error("--interactive-navigation requires live mode")
+    if args.interactive_navigation is None:
+        args.interactive_navigation = not args.offscreen
 
     examples = args.examples or sorted(Path("examples/review").glob("[0-9]*.py"))
     if not examples:
@@ -69,6 +78,8 @@ def main() -> int:
             cmd.append("--offscreen")
         if args.interactive_navigation:
             cmd.append("--interactive-navigation")
+        elif not args.offscreen:
+            cmd.append("--no-interactive-navigation")
         print(f"==> {example}", flush=True)
         result = subprocess.run(cmd, check=False)
         if result.returncode != 0:
@@ -97,6 +108,8 @@ def _run_parallel_live(
         ]
         if interactive_navigation:
             cmd.append("--interactive-navigation")
+        else:
+            cmd.append("--no-interactive-navigation")
         processes.append(subprocess.Popen(cmd))
 
     try:

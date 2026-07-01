@@ -179,12 +179,21 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--interactive-navigation",
         action="store_true",
+        default=None,
         help="In live mode, enable GSP navigation for View2D or View3D review scenes.",
+    )
+    parser.add_argument(
+        "--no-interactive-navigation",
+        action="store_false",
+        dest="interactive_navigation",
+        help="Open a static live review window without GSP navigation.",
     )
     parser.set_defaults(offscreen=False)
     args = parser.parse_args()
-    if args.offscreen and args.interactive_navigation:
+    if args.offscreen and args.interactive_navigation is True:
         parser.error("--interactive-navigation requires live mode")
+    if args.interactive_navigation is None:
+        args.interactive_navigation = not args.offscreen
     return args
 
 
@@ -232,23 +241,22 @@ def _run_matplotlib(
         color_scales = {scale.id: scale for scale in scene.color_scales}
         _render_matplotlib_scene(fig, ax, scene, color_scales=color_scales)
         if live:
-            if interactive_navigation:
-                if scene.view is not None:
-                    session = _MatplotlibReviewNavigationSession(
-                        fig, ax, scene, color_scales=color_scales
-                    )
-                    session.connect()
-                    print(
-                        "Matplotlib GSP View2D navigation enabled: drag to pan, wheel to zoom."
-                    )
-                elif scene.view3d is not None:
-                    view3d_session = _MatplotlibReviewView3DNavigationSession(
-                        fig, ax, scene, color_scales=color_scales
-                    )
-                    view3d_session.connect()
-                    print(
-                        "Matplotlib GSP View3D navigation enabled: drag to orbit, right-drag to pan, wheel to zoom, r to reset."
-                    )
+            if interactive_navigation and scene.view is not None:
+                session = _MatplotlibReviewNavigationSession(
+                    fig, ax, scene, color_scales=color_scales
+                )
+                session.connect()
+                print(
+                    "Matplotlib GSP View2D navigation enabled: drag to pan, wheel to zoom."
+                )
+            elif interactive_navigation and scene.view3d is not None:
+                view3d_session = _MatplotlibReviewView3DNavigationSession(
+                    fig, ax, scene, color_scales=color_scales
+                )
+                view3d_session.connect()
+                print(
+                    "Matplotlib GSP View3D navigation enabled: drag to orbit, right-drag to pan, wheel to zoom, r to reset."
+                )
             plt.show()
         else:
             fig.savefig(
@@ -685,6 +693,27 @@ def _run_datoviz(
                         print(
                             "Datoviz GSP navigation enabled: drag to pan, wheel to zoom."
                         )
+                elif interactive_navigation and scene.view3d is not None:
+                    enable_view3d_navigation = getattr(
+                        renderer, "enable_gsp_view3d_navigation", None
+                    )
+                    if enable_view3d_navigation is None:
+                        print(
+                            "Datoviz GSP View3D navigation unavailable; opening static live window: "
+                            "missing enable_gsp_view3d_navigation"
+                        )
+                    else:
+                        try:
+                            enable_view3d_navigation(scene.view3d)
+                        except DatovizV04Unavailable as exc:
+                            print(
+                                "Datoviz GSP View3D navigation unavailable; opening static live window: "
+                                f"{exc}"
+                            )
+                        else:
+                            print(
+                                "Datoviz GSP View3D navigation enabled: drag to orbit, right-drag to pan, wheel to zoom."
+                            )
                 renderer.show(frame_count=frames)
             else:
                 path.write_bytes(renderer.capture_png_bytes())
