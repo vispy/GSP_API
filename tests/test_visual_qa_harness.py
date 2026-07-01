@@ -776,7 +776,7 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
                             "axis_rendering": "adapted-review",
                             "grid_clip_to_plot_rect": "native-verified",
                             "grid_clip_evidence": (
-                                "datoviz-native-axis-grid-plot-interval"
+                                "datoviz-native-axis-grid-plot-viewport-clip"
                             ),
                             "panel_title": "unsupported",
                             "guide_query": "unsupported",
@@ -1203,7 +1203,7 @@ def test_s028_datoviz_guide_diagnostics_report_native_grid_clip_when_source_is_f
 
     diagnostics = report["cases"][0]["backends"]["datoviz"]["guide_diagnostics"]
     assert diagnostics["grid_clip_to_plot_rect"] == "native-verified"
-    assert diagnostics["grid_clip_evidence"] == "datoviz-native-axis-grid-plot-interval"
+    assert diagnostics["grid_clip_evidence"] == "datoviz-native-axis-grid-plot-viewport-clip"
     assert "grid_clip_blockers" not in diagnostics
 
 
@@ -1412,15 +1412,17 @@ def _write_datoviz_grid_clip_source(root: Path) -> Path:
     axis_visual.write_text(
         "\n".join(
             (
-                "source_x0 = _axis_inverse_panzoom_coord(extent, 0, 1, x0);",
-                "source_x1 = _axis_inverse_panzoom_coord(extent, 0, 1, x1);",
-                "source_y0 = _axis_inverse_panzoom_coord(extent, 2, 3, y0);",
-                "source_y1 = _axis_inverse_panzoom_coord(extent, 2, 3, y1);",
+                "source_x0 = _axis_inverse_panzoom_coord(extent, 0, 1, -1.0f);",
+                "source_x1 = _axis_inverse_panzoom_coord(extent, 0, 1, +1.0f);",
+                "source_y0 = _axis_inverse_panzoom_coord(extent, 2, 3, -1.0f);",
+                "source_y1 = _axis_inverse_panzoom_coord(extent, 2, 3, +1.0f);",
             )
         ),
         encoding="utf-8",
     )
     axis_tests = source / "src" / "scene" / "tests" / "axis.c"
     axis_tests.parent.mkdir(parents=True)
-    axis_tests.write_text("test_axis_grid_uses_style_plot_margins", encoding="utf-8")
+    axis_tests.write_text(
+        "test_axis_grid_style_margins_do_not_double_clip", encoding="utf-8"
+    )
     return source

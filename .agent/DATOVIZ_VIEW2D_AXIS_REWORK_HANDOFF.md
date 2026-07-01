@@ -12,6 +12,9 @@ Updated: 2026-07-01 after Datoviz commit `e54bd9af3`
 (`Detect Datoviz native axis grid clipping`). GSP commit `0b93aed`
 (`Add Datoviz grid clipping review case`) adds the title-boundary visual QA
 regression row.
+Updated: 2026-07-01 after Datoviz commit `9ba820489`
+(`Avoid double clipping axis grid geometry`), which supersedes the `e54bd9af3`
+geometry-endpoint approach after `features/user_scale` exposed double clipping.
 
 This handoff is intended for another agent to pick up. It covers both repositories:
 
@@ -111,9 +114,9 @@ Until a Datoviz checkout has native proof, GSP_API should keep diagnostics such 
 Do not hide the issue by drawing an opaque title band or by unclipping data markers. Those would make
 the review artifact prettier while preserving inconsistent guide/data clipping semantics.
 
-Completion update: GSP commit `18a7c46` now narrows those blockers only when the Datoviz source
-checkout contains the native grid endpoint fix and the regression test proof from Datoviz commit
-`e54bd9af3`.
+Completion update: GSP commit `18a7c46`, amended by the later verifier update, narrows those
+blockers only when the Datoviz source checkout contains the native plot-viewport/plot-clip proof
+from Datoviz commit `9ba820489`.
 
 #### GSP-2: Add a targeted visual QA regression
 
@@ -154,27 +157,36 @@ The combined promotion is complete only when both repositories prove the same co
 
 ### 2026-07-01 Completion Update
 
-Datoviz commit `e54bd9af3` implements the native part of the fix:
+Datoviz commit `e54bd9af3` attempted the native part of the fix by trimming generated grid geometry
+to the resolved plot interval. That approach was wrong for the current Datoviz rendering model:
+axis grid visuals already render in `DVZ_VISUAL_VIEWPORT_PLOT` with `DVZ_VISUAL_CLIP_PLOT`, so
+trimming geometry to the plot interval double-applied the inset and visibly shortened grids in
+`examples/c/features/user_scale.c`.
 
-- `_axis_update_visual()` now derives grid segment endpoints from the resolved plot interval
-  (`x0`, `x1`, `y0`, `y1`) instead of the full inverse `[-1,+1]` panzoom extent.
-- Native Datoviz tests cover plot-source extent, style plot margins, panzoom snapping, and equal
-  aspect alignment. The full Datoviz scene test binary passed with `661/661` tests.
+Datoviz commit `9ba820489` is the corrected native fix:
+
+- `_axis_update_visual()` again authors grid geometry over the full inverse `[-1,+1]` panzoom
+  source extent.
+- Native plot clipping is supplied by the generated visual attachment policy:
+  `DVZ_VISUAL_VIEWPORT_PLOT` plus `DVZ_VISUAL_CLIP_PLOT`.
+- Native Datoviz tests now cover plot-source extent, style margins without double clipping,
+  panzoom snapping, and equal aspect alignment. The full Datoviz scene test binary passed with
+  `661/661` tests.
 
 GSP commit `18a7c46` implements the compatibility gate:
 
 - `datoviz_v04_grid_clip_to_plot_rect_ready_for_source()` detects a Datoviz source checkout with
-  the native commit or equivalent source/test sentinels.
+  the corrected native commit or equivalent source/test sentinels.
 - Datoviz capability metadata reports `grid_clip_to_plot_rect: native-verified` and sets
   `axis_grid_clip_to_plot_rect=True` only for verified builds.
 - Visual QA guide diagnostics now report `grid_clip_evidence:
-  datoviz-native-axis-grid-plot-interval` for verified Datoviz builds; older/unverified builds keep
-  the `grid_clip_not_enforced` and `grid_clip_native_api_unverified` blockers.
+  datoviz-native-axis-grid-plot-viewport-clip` for verified Datoviz builds; older/unverified builds
+  keep the `grid_clip_not_enforced` and `grid_clip_native_api_unverified` blockers.
 
 GSP commit `0b93aed` adds `guide/view2d_grid_clip_title_boundary`, a review-pack regression with
 a large DATA marker near the top plot boundary, explicit grid ticks, and a panel title reserve.
 
-The S031 legacy S028 review pack was regenerated against Datoviz `e54bd9af3`. Current matrix:
+The S031 legacy S028 review pack was regenerated against Datoviz `9ba820489`. Current matrix:
 
 - strict: 53
 - adapted: 7

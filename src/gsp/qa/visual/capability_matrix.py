@@ -142,7 +142,7 @@ _DATOVIZ_S029_UNSUPPORTED_GUIDE_ROWS = {
             "panel title placement and guide query semantics are unsupported for this Datoviz slice",
         ],
         "blockers": [
-            "prove native Datoviz grid endpoints stop at the resolved plot rectangle below the title reserve",
+            "prove native Datoviz grid visuals use the plot viewport and plot clip rect below the title reserve",
             "add Datoviz guide-query support before advertising guide or all-rendered query semantics",
         ],
     },
@@ -179,7 +179,7 @@ _DATOVIZ_S030_RENDERED_GUIDE_ROWS = {
     },
     "guide/view2d_grid_clip_title_boundary": {
         "adaptations": [
-            "Datoviz native panel axes render this title-boundary grid clipping row for review with explicit ticks and native plot-interval grid endpoints when the verified Datoviz source fix is present",
+            "Datoviz native panel axes render this title-boundary grid clipping row for review with explicit ticks, full source-extent grid geometry, and native plot viewport clipping when the verified Datoviz source fix is present",
             "Panel title and guide query semantics remain excluded from the Datoviz rendered artifact",
         ],
         "missing": [

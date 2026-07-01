@@ -41,7 +41,7 @@ from gsp_datoviz.v04_import import bootstrap_datoviz_v04_source
 
 
 DATOVIZ_V04_AXIS_PROVIDER = "datoviz.v04.panel_axis.wip"
-DATOVIZ_GRID_CLIP_TO_PLOT_RECT_COMMIT = "e54bd9af3bde328543c3119669b365e8e731f08d"
+DATOVIZ_GRID_CLIP_TO_PLOT_RECT_COMMIT = "9ba820489fae8b1da4a3debd5d19decd0a8c2533"
 DATOVIZ_S034_AXIS_STYLE_FIELDS = (
     "tick_size_px",
     "label_size_px",
@@ -547,7 +547,7 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
         else "axis-provider-explicit-ticks-unsupported: missing dvz_axis_set_ticks"
     )
     grid_clip_diagnostic = (
-        "axis-provider-grid-clip-to-plot-rect: native Datoviz grid endpoints are clipped to the resolved plot interval"
+        "axis-provider-grid-clip-to-plot-rect: native Datoviz axis grids use the plot viewport and plot clip rect without double-trimming geometry"
         if not datoviz_v04_grid_clip_to_plot_rect_diagnostics(dvz)
         else "axis-provider-grid-clip-to-plot-rect-unverified: native grid endpoint clipping is not verified for this Datoviz build"
     )
@@ -647,11 +647,11 @@ def _datoviz_source_has_grid_clip_fix(source: Path) -> bool:
     except OSError:
         return False
     return (
-        "_axis_inverse_panzoom_coord(extent, 0, 1, x0)" in axis_visual_source
-        and "_axis_inverse_panzoom_coord(extent, 0, 1, x1)" in axis_visual_source
-        and "_axis_inverse_panzoom_coord(extent, 2, 3, y0)" in axis_visual_source
-        and "_axis_inverse_panzoom_coord(extent, 2, 3, y1)" in axis_visual_source
-        and "test_axis_grid_uses_style_plot_margins" in axis_test_source
+        "_axis_inverse_panzoom_coord(extent, 0, 1, -1.0f)" in axis_visual_source
+        and "_axis_inverse_panzoom_coord(extent, 0, 1, +1.0f)" in axis_visual_source
+        and "_axis_inverse_panzoom_coord(extent, 2, 3, -1.0f)" in axis_visual_source
+        and "_axis_inverse_panzoom_coord(extent, 2, 3, +1.0f)" in axis_visual_source
+        and "test_axis_grid_style_margins_do_not_double_clip" in axis_test_source
     )
 
 

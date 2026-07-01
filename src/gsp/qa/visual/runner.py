@@ -648,7 +648,7 @@ def _datoviz_guide_diagnostics(
             "native-verified" if grid_clip_to_plot_rect else "unsupported"
         )
         if grid_clip_to_plot_rect:
-            diagnostics["grid_clip_evidence"] = "datoviz-native-axis-grid-plot-interval"
+            diagnostics["grid_clip_evidence"] = "datoviz-native-axis-grid-plot-viewport-clip"
         else:
             diagnostics["grid_clip_blockers"] = [
                 "grid_clip_not_enforced",

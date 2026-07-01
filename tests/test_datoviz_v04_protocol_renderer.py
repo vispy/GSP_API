@@ -4321,17 +4321,19 @@ def _write_datoviz_grid_clip_source(root: Path) -> Path:
     axis_visual.write_text(
         "\n".join(
             (
-                "source_x0 = _axis_inverse_panzoom_coord(extent, 0, 1, x0);",
-                "source_x1 = _axis_inverse_panzoom_coord(extent, 0, 1, x1);",
-                "source_y0 = _axis_inverse_panzoom_coord(extent, 2, 3, y0);",
-                "source_y1 = _axis_inverse_panzoom_coord(extent, 2, 3, y1);",
+                "source_x0 = _axis_inverse_panzoom_coord(extent, 0, 1, -1.0f);",
+                "source_x1 = _axis_inverse_panzoom_coord(extent, 0, 1, +1.0f);",
+                "source_y0 = _axis_inverse_panzoom_coord(extent, 2, 3, -1.0f);",
+                "source_y1 = _axis_inverse_panzoom_coord(extent, 2, 3, +1.0f);",
             )
         ),
         encoding="utf-8",
     )
     axis_tests = source / "src" / "scene" / "tests" / "axis.c"
     axis_tests.parent.mkdir(parents=True)
-    axis_tests.write_text("test_axis_grid_uses_style_plot_margins", encoding="utf-8")
+    axis_tests.write_text(
+        "test_axis_grid_style_margins_do_not_double_clip", encoding="utf-8"
+    )
     return source
 
 
