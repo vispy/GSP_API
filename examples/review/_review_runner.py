@@ -507,8 +507,10 @@ class _MatplotlibReviewView3DNavigationSession:
         self.view3d = scene.view3d
         self.home_view3d = scene.view3d
         self.layout_snapshot_id = "layout:matplotlib-review-live"
+        self._drag_start_px: tuple[float, float] | None = None
         self._drag_last_px: tuple[float, float] | None = None
         self._drag_button: int | None = None
+        self._drag_base_view3d: View3D | None = None
 
     def connect(self) -> None:
         self.fig.canvas.mpl_connect("button_press_event", self.on_button_press)
@@ -522,12 +524,16 @@ class _MatplotlibReviewView3DNavigationSession:
             return
         if event.button not in (1, 2, 3):
             return
+        self._drag_start_px = (float(event.x), float(event.y))
         self._drag_last_px = (float(event.x), float(event.y))
         self._drag_button = int(event.button)
+        self._drag_base_view3d = self.view3d
 
     def on_button_release(self, event: Any) -> None:
+        self._drag_start_px = None
         self._drag_last_px = None
         self._drag_button = None
+        self._drag_base_view3d = None
 
     def on_motion(self, event: Any) -> None:
         if (
@@ -545,11 +551,17 @@ class _MatplotlibReviewView3DNavigationSession:
         if dx_px == 0.0 and dy_px == 0.0:
             return
         if self._drag_button == 1:
+            start_px = self._drag_start_px or (last_x, last_y)
+            base_view3d = self._drag_base_view3d or self.view3d
             self._apply_payload(
                 View3DNavigationActionKind.SET_CAMERA,
                 SetCamera3DPayload(
                     camera=self._arcball_camera_from_pixels(
-                        last_x, last_y, float(event.x), float(event.y)
+                        start_px[0],
+                        start_px[1],
+                        float(event.x),
+                        float(event.y),
+                        base_view3d=base_view3d,
                     )
                 ),
             )
@@ -610,8 +622,15 @@ class _MatplotlibReviewView3DNavigationSession:
         self.fig.canvas.draw_idle()
 
     def _arcball_camera_from_pixels(
-        self, last_x_px: float, last_y_px: float, x_px: float, y_px: float
+        self,
+        last_x_px: float,
+        last_y_px: float,
+        x_px: float,
+        y_px: float,
+        *,
+        base_view3d: View3D | None = None,
     ) -> Any:
+        view3d = base_view3d or self.view3d
         rect = self._panel_rect()
         last_ball = _review_arcball_project(
             _panel_x_to_ndc(last_x_px, rect), _panel_y_to_ndc(last_y_px, rect)
@@ -622,19 +641,20 @@ class _MatplotlibReviewView3DNavigationSession:
         axis = np.cross(last_ball, current_ball)
         axis_norm = float(np.linalg.norm(axis))
         if axis_norm <= 1.0e-12:
-            return self.view3d.camera
+            return view3d.camera
         dot = float(np.clip(np.dot(last_ball, current_ball), -1.0, 1.0))
         angle = 2.0 * np.arctan2(axis_norm, 1.0 + dot)
-        # Datoviz arcball rotates the model. For equivalent camera-orbit review, apply inverse.
-        rotation_axis = -axis / axis_norm
-        target = np.asarray(self.view3d.camera.target, dtype=np.float64)
-        eye = np.asarray(self.view3d.camera.eye, dtype=np.float64)
-        up = np.asarray(self.view3d.camera.up, dtype=np.float64)
+        # Datoviz interprets the arcball axis in camera/view space and applies it to the model.
+        # For equivalent camera review, transform that axis to world space and apply its inverse.
+        rotation_axis = -_camera_view_axis_to_world(axis / axis_norm, view3d.camera)
+        target = np.asarray(view3d.camera.target, dtype=np.float64)
+        eye = np.asarray(view3d.camera.eye, dtype=np.float64)
+        up = np.asarray(view3d.camera.up, dtype=np.float64)
         next_eye = target + _rotate_vector(eye - target, rotation_axis, angle)
         next_up = _rotate_vector(up, rotation_axis, angle)
-        return type(self.view3d.camera)(
+        return type(view3d.camera)(
             eye=tuple(float(value) for value in next_eye),
-            target=self.view3d.camera.target,
+            target=view3d.camera.target,
             up=tuple(float(value) for value in next_up),
         )
 
@@ -695,6 +715,18 @@ def _review_arcball_project(x_ndc: float, y_ndc: float) -> np.ndarray:
         return np.array([x_ndc, y_ndc, np.sqrt(1.0 - distance)], dtype=np.float64)
     point /= np.sqrt(distance)
     return np.array([point[0], point[1], 0.0], dtype=np.float64)
+
+
+def _camera_view_axis_to_world(axis: np.ndarray, camera: Any) -> np.ndarray:
+    basis = camera.basis()
+    right = np.asarray(basis.right, dtype=np.float64)
+    true_up = np.asarray(basis.true_up, dtype=np.float64)
+    forward = np.asarray(basis.forward, dtype=np.float64)
+    world = axis[0] * right + axis[1] * true_up - axis[2] * forward
+    norm = float(np.linalg.norm(world))
+    if norm <= 1.0e-12:
+        return world
+    return world / norm
 
 
 def _rotate_vector(

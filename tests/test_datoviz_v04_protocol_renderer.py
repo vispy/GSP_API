@@ -3664,9 +3664,31 @@ def test_add_mesh_visual_uses_retained_perspective_view3d_path_when_available():
     )
     assert not _calls(fake, "camera_set_orthographic_bounds")
     np.testing.assert_allclose(_calls(fake, "set_data")[0][3], visual.positions)
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", True)]
     add_visual_call = _calls(fake, "add_visual")[-1]
     assert add_visual_call[3].coord_space == 1
     assert add_visual_call[3].controller_mode == 0
+
+
+def test_add_mesh_visual_can_disable_retained_view3d_native_depth() -> None:
+    fake = FakeDatovizV04WithRetainedView3D()
+    view3d = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
+    visual = MeshVisual(
+        id="visual:retained-mesh-3d-depth-disabled",
+        positions=np.array(
+            [[0.0, 0.0, 0.0], [0.5, 0.0, 0.25], [0.0, 0.5, 0.5]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        depth_test=DepthMode.DISABLED,
+    )
+
+    renderer.add_mesh_visual(visual)
+
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", False)]
 
 
 def test_retained_view3d_navigation_updates_camera_without_reuploading_mesh_buffers():

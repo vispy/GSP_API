@@ -118,6 +118,25 @@ def _perspective_view3d_scene() -> review_runner.ReviewScene:
     )
 
 
+def _oblique_view3d_scene() -> review_runner.ReviewScene:
+    scene = _perspective_view3d_scene()
+    assert scene.view3d is not None
+    return review_runner.ReviewScene(
+        title=scene.title,
+        view3d=View3D(
+            id=scene.view3d.id,
+            panel_id=scene.view3d.panel_id,
+            camera=Camera3D(
+                eye=(1.8, -2.2, 1.5),
+                target=(0.0, 0.0, 0.0),
+                up=(0.0, 0.0, 1.0),
+            ),
+            projection=scene.view3d.projection,
+        ),
+        visuals=scene.visuals,
+    )
+
+
 def test_datoviz_title_background_kept_for_2d_review_scenes() -> None:
     guide = PanelTextGuide(
         id="guide:title",
@@ -262,6 +281,104 @@ def test_matplotlib_interactive_view3d_orbit_uses_arcball_camera_update() -> Non
         assert np.linalg.norm(np.subtract(camera.eye, camera.target)) == pytest.approx(
             np.linalg.norm(np.subtract(scene.view3d.camera.eye, scene.view3d.camera.target))
         )
+    finally:
+        plt.close(fig)
+
+
+def test_matplotlib_interactive_view3d_orbit_uses_press_anchor_for_drag(
+    monkeypatch: Any,
+) -> None:
+    import matplotlib
+
+    matplotlib.use("Agg", force=True)
+    import matplotlib.pyplot as plt
+
+    scene = _view3d_scene()
+    fig, ax = plt.subplots()
+    try:
+        review_runner._render_matplotlib_scene(fig, ax, scene, color_scales={})
+        session = review_runner._MatplotlibReviewView3DNavigationSession(
+            fig, ax, scene, color_scales={}
+        )
+        rect = session._panel_rect()
+        calls: list[tuple[float, float, float, float, View3D | None]] = []
+
+        def fake_arcball_camera(
+            last_x_px: float,
+            last_y_px: float,
+            x_px: float,
+            y_px: float,
+            *,
+            base_view3d: View3D | None = None,
+        ) -> Camera3D:
+            calls.append((last_x_px, last_y_px, x_px, y_px, base_view3d))
+            return scene.view3d.camera
+
+        monkeypatch.setattr(session, "_arcball_camera_from_pixels", fake_arcball_camera)
+        monkeypatch.setattr(session, "_apply_payload", lambda *_args, **_kwargs: None)
+
+        press_x = rect.x + rect.width * 0.5
+        press_y = rect.y + rect.height * 0.5
+        session.on_button_press(
+            SimpleNamespace(inaxes=ax, x=press_x, y=press_y, button=1)
+        )
+        session.on_motion(
+            SimpleNamespace(
+                inaxes=ax,
+                x=rect.x + rect.width * 0.6,
+                y=press_y,
+            )
+        )
+        session.on_motion(
+            SimpleNamespace(
+                inaxes=ax,
+                x=rect.x + rect.width * 0.7,
+                y=press_y,
+            )
+        )
+
+        assert len(calls) == 2
+        assert calls[0][:2] == pytest.approx((press_x, press_y))
+        assert calls[1][:2] == pytest.approx((press_x, press_y))
+        assert calls[0][4] is scene.view3d
+        assert calls[1][4] is scene.view3d
+    finally:
+        plt.close(fig)
+
+
+def test_matplotlib_interactive_view3d_arcball_axis_uses_camera_basis() -> None:
+    import matplotlib
+
+    matplotlib.use("Agg", force=True)
+    import matplotlib.pyplot as plt
+
+    scene = _oblique_view3d_scene()
+    assert scene.view3d is not None
+    fig, ax = plt.subplots()
+    try:
+        review_runner._render_matplotlib_scene(fig, ax, scene, color_scales={})
+        session = review_runner._MatplotlibReviewView3DNavigationSession(
+            fig, ax, scene, color_scales={}
+        )
+        rect = session._panel_rect()
+
+        camera = session._arcball_camera_from_pixels(
+            rect.x + rect.width * 0.5,
+            rect.y + rect.height * 0.5,
+            rect.x + rect.width * 0.6,
+            rect.y + rect.height * 0.5,
+        )
+
+        original = np.subtract(scene.view3d.camera.eye, scene.view3d.camera.target)
+        rotated = np.subtract(camera.eye, camera.target)
+        basis = scene.view3d.camera.basis()
+        expected_axis = -np.asarray(basis.true_up, dtype=np.float64)
+        expected = review_runner._rotate_vector(
+            original,
+            expected_axis,
+            2.0 * np.arctan2(0.2, 1.0 + np.sqrt(1.0 - 0.2**2)),
+        )
+        np.testing.assert_allclose(rotated, expected, rtol=1.0e-6, atol=1.0e-6)
     finally:
         plt.close(fig)
 

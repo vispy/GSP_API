@@ -1460,7 +1460,8 @@ class DatovizV04ProtocolRenderer:
             self.retained_view3d_update_stats.index_uploads += 1
             self.retained_view3d_update_stats.visual_rebuilds += 1
         native_depth_test = (
-            visual.depth_test is DepthMode.ENABLED
+            visual.depth_test is not DepthMode.DISABLED
+            and visual.depth_write is not DepthMode.DISABLED
             if retained_view3d_data_path
             else False if is_3d_mesh else visual.depth_test is DepthMode.ENABLED
         )
