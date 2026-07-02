@@ -299,7 +299,7 @@
       "id": "S050",
       "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
       "state": "active",
-      "progress": 20
+      "progress": 30
     }
   ],
   "missions": [
@@ -2098,9 +2098,9 @@
       "id": "M201",
       "title": "S050 Datoviz query and readback parity scoping",
       "stage": "S050",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 201
     },
     {
@@ -2129,6 +2129,24 @@
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 204
+    },
+    {
+      "id": "M205",
+      "title": "S050 Datoviz query/readback status refresh",
+      "stage": "S050",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 205
+    },
+    {
+      "id": "M206",
+      "title": "S050 Datoviz live point/image payload parity evidence",
+      "stage": "S050",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 206
     }
   ],
   "review_queue": [],
@@ -2226,6 +2244,8 @@
     }
   ],
   "recommendations": [
+    "M205 completed: Datoviz query/readback docs now distinguish capability-gated guide/all-rendered query from still-deferred live rich payload parity, scientific readback, hit_policy=all, and mesh-triangle picking.",
+    "M206 remains draft for a live Datoviz point/image payload evidence refresh; run it only if the current v0.4 runtime/offscreen setup is already available without manual build or GPU intervention.",
     "M200 completed: Datoviz upstream API work is required before GSP can safely advertise query.view3d.mesh_triangle_pick.v1; see .agent/S050_DATOVIZ_MESH_PICK_EVIDENCE.md.",
     "Keep Datoviz query.view3d.mesh_triangle_pick.v1 unadvertised until native public visual_id, canonical triangle primitive_index, and pick-scene freshness are exposed and tested upstream.",
     "Use the M200 upstream handoff evidence to decide whether M201-M203 should proceed independently or wait for Datoviz face/triangle query support.",
@@ -2244,6 +2264,8 @@
     "Optional hardening after M194 found Datoviz mesh-pick promotion blocked on upstream face/triangle query and freshness API evidence."
   ],
   "notes": [
+    "M205 completed: updated spec/backends/datoviz.md query/readback wording to reflect S043 panel-frame guide hit/readback capability gates and preserved unsupported boundaries for hit_policy=all, unsupported extension payloads, scientific readback, and mesh-triangle picking.",
+    "M201 completed: scoped Datoviz query/readback follow-up after M200; mesh triangle picking waits on upstream Datoviz face/triangle query API, while M205 can safely refresh docs/status and M206 can later refresh live point/image payload evidence.",
     "M200 completed: audited GSP Datoviz query/capability code and sibling Datoviz v0.4-dev commit dc8b168ed86e0f674be204d00c29e5869ee5e6c4; current Datoviz mesh queries return item/instance identity, not canonical triangle identity, so upstream API work is required before query.view3d.mesh_triangle_pick.v1 promotion.",
     "M199 completed: reconciled unregistered M198/S049 white paper status, opened S050 as the post-S048 implementation roadmap, approved M200 for Datoviz native mesh-pick evidence, and drafted follow-up parity/strictness/API missions.",
     "M198 completed: prepared the GSP white paper draft under whitepaper/ and recorded .agent/S049_CLOSEOUT.md; this status entry reconciles existing filesystem records.",

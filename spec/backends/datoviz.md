@@ -318,9 +318,12 @@ promotes:
 `DvzQueryResult`, and remaps the result id back to the GSP request id. A bounded poll with no
 available result returns `dropped` with a diagnostic.
 
-Guide scope, all-rendered scope, `hit_policy=all`, extension query payloads, and live GPU/headless
-execution proof remain deferred. Runtime tests skip cleanly while the installed GSP environment
-imports Datoviz 0.3.5 rather than a v0.4-dev facade.
+In the M029 slice, guide scope, all-rendered scope, `hit_policy=all`, extension query payloads, and
+live GPU/headless execution proof remained deferred. Later S043 work added a capability-gated
+guide/all-rendered route through Datoviz panel-frame guide hit/readback APIs. Builds without those
+APIs still return structured `axis-guide-query-unsupported` or `all-rendered-guides-unsupported`
+diagnostics. `hit_policy=all`, unsupported extension payloads, live point/image rich-payload parity,
+and headless runtime proof remain separate follow-up scope.
 
 ## M030 v0.4-dev binding activation smoke
 
@@ -429,9 +432,11 @@ The current GSP Datoviz adapter is still a slice, not parity:
   CPU-adapted named/inline affine transforms, retained panel-domain DATA/View2D placement for
   finite eager visuals, explicit adapted CPU-remap fallback for finite eager DATA positions,
   v0.4-dev wheel-stage smoke harness;
-- not implemented: strict explicit colorbar ticks/labels, colorbar query, live GPU/headless query
-  execution validation, strict guide parity, guide/all-rendered query scopes, scientific readback,
-  tiled-source support.
+- not implemented or still gated: strict explicit colorbar ticks/labels, colorbar query, live
+  GPU/headless query execution validation, full strict guide parity, `hit_policy=all`, unsupported
+  extension payloads, scientific readback, tiled-source support, and Datoviz mesh-triangle picking.
+  Guide/all-rendered query is now capability-gated by panel-frame guide hit/readback APIs rather
+  than universally deferred.
 
 Recommended next mission: establish the Datoviz v0.4 Python facade/raw binding import path, then
 implement Datoviz query/capability parity. Scope implementation to translating
@@ -504,7 +509,9 @@ The S044 posture is:
   containing commit `9ba820489` or equivalent source/test sentinels. Verified builds report
   `grid_clip_to_plot_rect: native-verified`; older or unverified builds retain
   `grid_clip_not_enforced` and `grid_clip_native_api_unverified`.
-- Guide query and all-rendered guide contributions are unsupported.
+- Guide query and all-rendered guide contributions are native-verified only when the Datoviz
+  facade exposes panel-frame snapshot, guide hit/readback, and rendered-contribution APIs with
+  matching snapshot ids. Builds missing any of those pieces remain structured unsupported.
 - Font metrics and raster parity are backend-defined and must not be claimed as parity.
 
 Capability snapshots expose `s034_guide_layout_audit` metadata plus diagnostics. Verified grid

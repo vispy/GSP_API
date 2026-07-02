@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft pending M200.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -18,3 +18,12 @@ payload policy, and scientific/raw readback decisions.
 
 - Stop if M200 reports that Datoviz API work must happen first.
 - Stop before introducing new query semantics without a ChatGPT Pro consultation packet.
+
+## Result
+
+Completed locally. See `.agent/S050_QUERY_READBACK_SCOPING.md`.
+
+Decision: M200 blocks only mesh-triangle picking promotion. Datoviz query/readback work can continue
+for documentation/status cleanup, capability-gated guide/all-rendered query clarity, and live
+point/image payload evidence. New public query/readback semantics and scientific readback remain out
+of scope without consultation.
