@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import subprocess
 from types import ModuleType
@@ -45,6 +46,7 @@ from gsp_datoviz.v04_import import bootstrap_datoviz_v04_source
 
 DATOVIZ_V04_AXIS_PROVIDER = "datoviz.v04.panel_axis.wip"
 DATOVIZ_GRID_CLIP_TO_PLOT_RECT_COMMIT = "9ba820489fae8b1da4a3debd5d19decd0a8c2533"
+DATOVIZ_EXPERIMENTAL_VIEW3D_NAV_ENV = "GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV"
 DATOVIZ_S034_AXIS_STYLE_FIELDS = (
     "tick_size_px",
     "label_size_px",
@@ -446,7 +448,14 @@ def gsp_capability_snapshot_from_datoviz(
             metadata["datoviz_view3d_retained_data_diagnostics"] = (
                 retained_view3d_diagnostics
             )
-        if not retained_view3d_diagnostics and not live_input_diagnostics:
+        view3d_navigation_experimental_enabled = (
+            os.environ.get(DATOVIZ_EXPERIMENTAL_VIEW3D_NAV_ENV) == "1"
+        )
+        if (
+            not retained_view3d_diagnostics
+            and not live_input_diagnostics
+            and view3d_navigation_experimental_enabled
+        ):
             view3d_capabilities = (
                 *view3d_capabilities,
                 VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
@@ -457,6 +466,11 @@ def gsp_capability_snapshot_from_datoviz(
             )
         elif live_input_diagnostics:
             metadata["datoviz_live_input_diagnostics"] = live_input_diagnostics
+        else:
+            metadata["datoviz_view3d_navigation_diagnostics"] = (
+                "Datoviz View3D live navigation is experimental and failed manual "
+                "review; set GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV=1 to opt in"
+            )
         query_modes = (*query_modes, "view3d-ray")
         metadata["view3d_support"] = (
             "static orthographic View3D mesh rendering and canonical ray-context payloads"

@@ -3658,14 +3658,28 @@ def test_retained_view3d_state_readback_reports_snapshot_identity():
     assert ray.view_snapshot_id == snapshot["view_projection_snapshot_id"]
 
 
-def test_datoviz_view3d_live_navigation_diagnostics_clear_when_retained_input_ready():
+def test_datoviz_view3d_live_navigation_diagnostics_report_manual_review_gate():
     fake = FakeDatovizV04WithInteractiveRetainedView3D()
+
+    diagnostics = datoviz_v04_view3d_live_navigation_diagnostics(fake)
+
+    assert any("failed manual review" in item for item in diagnostics)
+
+
+def test_datoviz_view3d_live_navigation_diagnostics_clear_when_experimental_opted_in(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    fake = FakeDatovizV04WithInteractiveRetainedView3D()
+    monkeypatch.setenv("GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV", "1")
 
     assert datoviz_v04_view3d_live_navigation_diagnostics(fake) == ()
 
 
-def test_datoviz_live_view3d_navigation_replays_canonical_actions_without_reupload():
+def test_datoviz_live_view3d_navigation_replays_canonical_actions_without_reupload(
+    monkeypatch: pytest.MonkeyPatch,
+):
     fake = FakeDatovizV04WithInteractiveRetainedView3D()
+    monkeypatch.setenv("GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV", "1")
     view3d = _canonical_view3d_for_datoviz_query()
     renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
     renderer.add_mesh_visual(
@@ -3740,8 +3754,11 @@ def test_datoviz_live_view3d_navigation_replays_canonical_actions_without_reuplo
     assert ray.view_snapshot_id == snapshot["view_projection_snapshot_id"]
 
 
-def test_datoviz_live_view3d_navigation_supports_pan_zoom_and_reset():
+def test_datoviz_live_view3d_navigation_supports_pan_zoom_and_reset(
+    monkeypatch: pytest.MonkeyPatch,
+):
     fake = FakeDatovizV04WithInteractiveRetainedView3D()
+    monkeypatch.setenv("GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV", "1")
     view3d = _canonical_view3d_for_datoviz_query()
     renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
     renderer.enable_gsp_view3d_navigation()
@@ -4009,7 +4026,25 @@ def test_datoviz_capabilities_advertise_retained_view3d_data_space_when_ready():
     assert "view3d_retained_data_space_visuals" in caps.metadata
 
 
-def test_datoviz_capabilities_advertise_live_view3d_navigation_when_ready():
+def test_datoviz_capabilities_hide_live_view3d_navigation_by_default():
+    caps = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithInteractiveRetainedView3D()
+    ).capabilities()
+
+    assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY in caps.view3d_capabilities
+    assert VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY not in caps.view3d_capabilities
+    assert VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY not in caps.navigation_capabilities
+    assert not caps.supports_view3d_capability(
+        VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY
+    )
+    assert "datoviz_view3d_navigation_diagnostics" in caps.metadata
+
+
+def test_datoviz_capabilities_advertise_live_view3d_navigation_when_opted_in(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setenv("GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV", "1")
+
     caps = DatovizV04ProtocolRenderer(
         dvz=FakeDatovizV04WithInteractiveRetainedView3D()
     ).capabilities()

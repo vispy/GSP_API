@@ -535,6 +535,11 @@ def datoviz_v04_view3d_live_navigation_diagnostics(
     diagnostics = [
         *datoviz_v04_live_input_diagnostics(module),
     ]
+    if os.environ.get("GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV") != "1":
+        diagnostics.append(
+            "Datoviz View3D live navigation is experimental and failed manual "
+            "review; set GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV=1 to opt in"
+        )
     retained_diagnostics = datoviz_v04_view3d_retained_data_diagnostics(module)
     if retained_diagnostics:
         diagnostics.extend(retained_diagnostics)
