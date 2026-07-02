@@ -40,6 +40,7 @@ from gsp.protocol import (
     PanelTextGuide,
     PanelTextRole,
     PathVisual,
+    PerspectiveProjection3D,
     PointVisual,
     QueryCoordinateSpace,
     QueryRequest,
@@ -919,6 +920,48 @@ def test_render_mesh_visual_3d_data_projects_through_view3d():
         np.testing.assert_allclose(
             artist.get_paths()[0].vertices[:3],
             np.array([[0.0, 0.0], [0.5, 0.0], [0.0, 0.5]]),
+        )
+        assert artist.get_transform() == ax.transAxes
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_3d_data_projects_through_perspective_view3d():
+    """DATA MeshVisual positions3d project through an S047 perspective View3D."""
+    fig, ax = plt.subplots(figsize=(4, 4), dpi=100)
+    ax.set_position([0.0, 0.0, 1.0, 1.0])
+    try:
+        visual = MeshVisual(
+            id="visual:mesh",
+            positions=np.array(
+                [[0.0, 0.0, -1.0], [1.0, 0.0, -1.0], [0.0, 1.0, -1.0]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.DATA,
+            color=np.array([255, 0, 0, 255], dtype=np.uint8),
+        )
+        view3d = View3D(
+            id="view:main",
+            panel_id="panel:main",
+            camera=Camera3D(
+                eye=(0.0, 0.0, 0.0),
+                target=(0.0, 0.0, -1.0),
+                up=(0.0, 1.0, 0.0),
+            ),
+            projection=PerspectiveProjection3D(
+                fov_y_degrees=90.0,
+                near_far=(1.0, 10.0),
+            ),
+        )
+
+        artist = render_mesh_visual(ax, visual, view3d=view3d)
+
+        np.testing.assert_allclose(
+            artist.get_paths()[0].vertices[:3],
+            np.array([[0.5, 0.5], [1.0, 0.5], [0.5, 1.0]]),
+            rtol=1.0e-6,
+            atol=1.0e-6,
         )
         assert artist.get_transform() == ax.transAxes
     finally:

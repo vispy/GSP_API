@@ -10,6 +10,7 @@ from gsp.protocol import (
     AxisSide,
     CapabilitySnapshot,
     TILED_IMAGE_EXTENSION_CAPABILITY,
+    VIEW3D_STATIC_PERSPECTIVE_CAPABILITY,
     PanelTextGuide,
     PanelTextGuideStyle,
     PanelTextRole,
@@ -41,6 +42,7 @@ def test_matplotlib_advertises_strict_native_axis_provider():
     assert caps.supports_virtual_data_sources
     assert caps.supports_tiled_image_sources
     assert caps.supports_synthetic_data_sources
+    assert caps.supports_view3d_capability(VIEW3D_STATIC_PERSPECTIVE_CAPABILITY)
 
 
 def test_axis_provider_selection_policies():

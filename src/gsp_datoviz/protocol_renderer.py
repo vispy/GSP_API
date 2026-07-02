@@ -11,6 +11,7 @@ import ctypes
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from dataclasses import replace
+import math
 import os
 from pathlib import Path
 import tempfile
@@ -63,6 +64,8 @@ from gsp.protocol import (
     StrokeCap,
     StrokeJoin,
     View3D,
+    OrthographicProjection3D,
+    PerspectiveProjection3D,
     QueryCoordinateSpace,
     QueryDiagnostic,
     QueryDiagnosticSeverity,
@@ -247,6 +250,7 @@ DVZ_QUERY_HIT_FRONTMOST = 0
 DVZ_QUERY_PROFILE_UNSUPPORTED = 0
 DVZ_QUERY_CAPABILITY_ITEM = 0x02
 DVZ_QUERY_CAPABILITY_PIXEL = 0x10
+DVZ_CAMERA_PERSPECTIVE = 0
 DVZ_CAMERA_ORTHOGRAPHIC = 1
 DVZ_CONTROLLER_APPLY = 0
 DVZ_CONTROLLER_FIXED = 1
@@ -649,7 +653,7 @@ def _configure_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> An
         camera = dvz.dvz_panel_camera(panel)
         if _is_null_handle(camera):
             raise DatovizV04Unsupported("Datoviz retained View3D panel camera is unavailable")
-        _set_datoviz_camera_orthographic_bounds(dvz, camera, view3d)
+        _set_datoviz_camera_projection_state(dvz, camera, view3d)
         return camera
 
     desc = dvz.dvz_camera_desc()
@@ -657,7 +661,7 @@ def _configure_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> An
     camera = dvz.dvz_panel_set_camera(panel, _ctypes_pointer_arg(desc))
     if _is_null_handle(camera):
         raise DatovizV04Unsupported("Datoviz View3D panel camera allocation failed")
-    _set_datoviz_camera_orthographic_bounds(dvz, camera, view3d)
+    _set_datoviz_camera_projection_state(dvz, camera, view3d)
     return camera
 
 
@@ -668,19 +672,35 @@ def _fill_datoviz_camera_desc(dvz: Any, desc: Any, view3d: View3D) -> None:
         desc.view.target[index] = float(value)
     for index, value in enumerate(view3d.camera.up):
         desc.view.up[index] = float(value)
-    desc.projection.type = _enum_value(
-        dvz, "DvzCameraType", "DVZ_CAMERA_ORTHOGRAPHIC", DVZ_CAMERA_ORTHOGRAPHIC
-    )
-    desc.projection.near_clip = float(view3d.projection.near_far[0])
-    desc.projection.far_clip = float(view3d.projection.near_far[1])
-    desc.projection.ortho_height = float(
-        abs(view3d.projection.ylim[1] - view3d.projection.ylim[0])
-    )
+    near, far = view3d.projection.near_far
+    desc.projection.near_clip = float(near)
+    desc.projection.far_clip = float(far)
+    if isinstance(view3d.projection, PerspectiveProjection3D):
+        desc.projection.type = _enum_value(
+            dvz, "DvzCameraType", "DVZ_CAMERA_PERSPECTIVE", DVZ_CAMERA_PERSPECTIVE
+        )
+        desc.projection.fov_y = float(math.radians(view3d.projection.fov_y_degrees))
+    else:
+        desc.projection.type = _enum_value(
+            dvz, "DvzCameraType", "DVZ_CAMERA_ORTHOGRAPHIC", DVZ_CAMERA_ORTHOGRAPHIC
+        )
+        desc.projection.ortho_height = float(
+            abs(view3d.projection.ylim[1] - view3d.projection.ylim[0])
+        )
+
+
+def _set_datoviz_camera_projection_state(
+    dvz: Any, camera: Any, view3d: View3D
+) -> None:
+    if isinstance(view3d.projection, OrthographicProjection3D):
+        _set_datoviz_camera_orthographic_bounds(dvz, camera, view3d)
 
 
 def _set_datoviz_camera_orthographic_bounds(
     dvz: Any, camera: Any, view3d: View3D
 ) -> None:
+    if not isinstance(view3d.projection, OrthographicProjection3D):
+        raise DatovizV04Unsupported("Datoviz orthographic bounds require OrthographicProjection3D")
     x0, x1 = view3d.projection.xlim
     y0, y1 = view3d.projection.ylim
     near, far = view3d.projection.near_far
@@ -709,7 +729,7 @@ def _update_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> Any:
         camera = dvz.dvz_panel_set_camera(panel, _ctypes_pointer_arg(desc))
     if _is_null_handle(camera):
         raise DatovizV04Unsupported("Datoviz retained View3D panel camera update failed")
-    _set_datoviz_camera_orthographic_bounds(dvz, camera, view3d)
+    _set_datoviz_camera_projection_state(dvz, camera, view3d)
     return camera
 
 
@@ -1398,7 +1418,12 @@ class DatovizV04ProtocolRenderer:
             )
         elif is_3d_mesh:
             adapted_positions = _datoviz_mesh3d_panel_ndc_positions(
-                visual, view3d=self.view3d
+                visual,
+                view3d=self.view3d,
+                aspect_ratio=(
+                    self.resolved_canvas.host_logical_width
+                    / self.resolved_canvas.host_logical_height
+                ),
             )
             if visual.depth_test is not DepthMode.DISABLED:
                 face_order = _mesh3d_face_depth_order(
@@ -2383,6 +2408,7 @@ class DatovizV04ProtocolRenderer:
                 float(getattr(projection, "near_clip", 0.0)),
                 float(getattr(projection, "far_clip", 0.0)),
             ),
+            "fov_y_radians": float(getattr(projection, "fov_y", 0.0)),
             "orthographic_bounds": _datoviz_orthographic_bounds_tuple(state),
         }
 
@@ -3243,7 +3269,7 @@ def _validate_datoviz_mesh3d_visual(visual: MeshVisual, view3d: View3D | None) -
 
 
 def _datoviz_mesh3d_panel_ndc_positions(
-    visual: MeshVisual, *, view3d: View3D | None
+    visual: MeshVisual, *, view3d: View3D | None, aspect_ratio: float
 ) -> npt.NDArray[np.float64]:
     source = np.asarray(visual.positions, dtype=np.float64)
     if visual.coordinate_space is CoordinateSpace.DATA:
@@ -3253,7 +3279,12 @@ def _datoviz_mesh3d_panel_ndc_positions(
                 "Datoviz MeshVisual DATA positions3d require View3D"
             )
         return np.asarray(
-            [project_view3d_data_point(view3d, tuple(point)) for point in source],
+            [
+                project_view3d_data_point(
+                    view3d, tuple(point), aspect_ratio=aspect_ratio
+                )
+                for point in source
+            ],
             dtype=np.float64,
         )
     if visual.coordinate_space is CoordinateSpace.NDC:
@@ -4254,20 +4285,38 @@ def _retained_view3d_state_mismatch_diagnostics(
                 f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_RESULT.value}: "
                 f"Datoviz retained View3D {key} does not match canonical state"
             )
-    expected_bounds = (
-        *view3d.projection.xlim,
-        *view3d.projection.ylim,
-        *view3d.projection.near_far,
-    )
-    observed_bounds = snapshot.get("orthographic_bounds")
-    if observed_bounds is None or not np.allclose(
-        np.asarray(observed_bounds, dtype=np.float64),
-        np.asarray(expected_bounds, dtype=np.float64),
+    observed_near_far = snapshot.get("near_far")
+    if observed_near_far is None or not np.allclose(
+        np.asarray(observed_near_far, dtype=np.float64),
+        np.asarray(view3d.projection.near_far, dtype=np.float64),
     ):
         diagnostics.append(
             f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_RESULT.value}: "
-            "Datoviz retained View3D orthographic bounds do not match canonical state"
+            "Datoviz retained View3D near/far bounds do not match canonical state"
         )
+    if isinstance(view3d.projection, OrthographicProjection3D):
+        expected_bounds = (
+            *view3d.projection.xlim,
+            *view3d.projection.ylim,
+            *view3d.projection.near_far,
+        )
+        observed_bounds = snapshot.get("orthographic_bounds")
+        if observed_bounds is None or not np.allclose(
+            np.asarray(observed_bounds, dtype=np.float64),
+            np.asarray(expected_bounds, dtype=np.float64),
+        ):
+            diagnostics.append(
+                f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_RESULT.value}: "
+                "Datoviz retained View3D orthographic bounds do not match canonical state"
+            )
+    elif isinstance(view3d.projection, PerspectiveProjection3D):
+        observed_fov_y = snapshot.get("fov_y_radians")
+        expected_fov_y = math.radians(view3d.projection.fov_y_degrees)
+        if observed_fov_y is None or not np.isclose(float(observed_fov_y), expected_fov_y):
+            diagnostics.append(
+                f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_RESULT.value}: "
+                "Datoviz retained View3D perspective fov_y does not match canonical state"
+            )
     return tuple(diagnostics)
 
 

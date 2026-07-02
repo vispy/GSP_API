@@ -39,6 +39,7 @@ from gsp.protocol import (
     VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
     VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY,
     VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
+    VIEW3D_STATIC_PERSPECTIVE_CAPABILITY,
 )
 from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics
 from gsp_datoviz.v04_import import bootstrap_datoviz_v04_source
@@ -427,6 +428,7 @@ def gsp_capability_snapshot_from_datoviz(
     else:
         view3d_capabilities = (
             VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
+            VIEW3D_STATIC_PERSPECTIVE_CAPABILITY,
             MESH3D_DATA_VIEW3D_CAPABILITY,
             MESH3D_NDC_CAPABILITY,
             QUERY_VIEW3D_RAY_READBACK_CAPABILITY,

@@ -759,8 +759,14 @@ def _render_mesh3d_positions(
                 f"{View3DDiagnosticCode.MESH3D_REQUIRES_VIEW3D.value}: "
                 "Matplotlib MeshVisual DATA positions3d require View3D"
             )
+        aspect_ratio = _axes_pixel_aspect_ratio(axes)
         panel_ndc3 = np.asarray(
-            [project_view3d_data_point(view3d, tuple(point)) for point in source],
+            [
+                project_view3d_data_point(
+                    view3d, tuple(point), aspect_ratio=aspect_ratio
+                )
+                for point in source
+            ],
             dtype=np.float64,
         )
     elif visual.coordinate_space == CoordinateSpace.NDC:
@@ -771,6 +777,14 @@ def _render_mesh3d_positions(
             f"unsupported MeshVisual 3D coordinate_space {visual.coordinate_space!r}"
         )
     return panel_ndc_to_axes_fraction(panel_ndc3[:, :2]), axes.transAxes, panel_ndc3[:, 2]
+
+
+def _axes_pixel_aspect_ratio(axes: matplotlib.axes.Axes) -> float:
+    axes_box = axes.get_position()
+    canvas_width_px, canvas_height_px = _figure_canvas_size_px(axes.figure)
+    width = max(float(axes_box.width) * canvas_width_px, 1.0)
+    height = max(float(axes_box.height) * canvas_height_px, 1.0)
+    return width / height
 
 
 def _validate_mesh3d_opaque_colors(colors: npt.NDArray[Any]) -> None:

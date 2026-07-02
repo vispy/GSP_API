@@ -8,11 +8,16 @@ from gsp.protocol import (
     FontLayoutCapability,
     GuideLayoutCapability,
     LayoutCapability,
+    MESH3D_DATA_VIEW3D_CAPABILITY,
+    MESH3D_NDC_CAPABILITY,
     NavigationPlacement,
+    QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
     QueryLayoutCapability,
     RenderTargetCapability,
     TILED_IMAGE_EXTENSION_CAPABILITY,
     TransportKind,
+    VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
+    VIEW3D_STATIC_PERSPECTIVE_CAPABILITY,
 )
 
 
@@ -50,6 +55,13 @@ def capability_snapshot() -> CapabilitySnapshot:
         query_modes=("panel-query", "point-item", "image-texel"),
         navigation_placements=(NavigationPlacement.CLIENT_SIDE.value,),
         navigation_capabilities=("interaction.view2d.navigation.v1",),
+        view3d_capabilities=(
+            VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
+            VIEW3D_STATIC_PERSPECTIVE_CAPABILITY,
+            MESH3D_DATA_VIEW3D_CAPABILITY,
+            MESH3D_NDC_CAPABILITY,
+            QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
+        ),
         output_formats=("png", "svg", "pdf"),
         extensions=(TILED_IMAGE_EXTENSION_CAPABILITY,),
         supports_extension_manifests=True,

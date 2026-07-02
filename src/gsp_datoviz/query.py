@@ -163,8 +163,13 @@ def datoviz_query_view3d_ray_context(
         )
 
     panel_ndc = _panel_coordinate_to_ndc(request.coordinate, panel_bounds)
-    near = unproject_view3d_panel_ndc_point(view, (panel_ndc[0], panel_ndc[1], -1.0))
-    far = unproject_view3d_panel_ndc_point(view, (panel_ndc[0], panel_ndc[1], 1.0))
+    aspect_ratio = _panel_bounds_aspect_ratio(panel_bounds)
+    near = unproject_view3d_panel_ndc_point(
+        view, (panel_ndc[0], panel_ndc[1], -1.0), aspect_ratio=aspect_ratio
+    )
+    far = unproject_view3d_panel_ndc_point(
+        view, (panel_ndc[0], panel_ndc[1], 1.0), aspect_ratio=aspect_ratio
+    )
     ray_direction = _normalized3(_sub3(far, near))
     payload = View3DQueryPayload(
         view_id=snapshot.view_id,
@@ -219,6 +224,15 @@ def _panel_coordinate_to_ndc(
         -1.0 + 2.0 * (x - left) / (right - left),
         -1.0 + 2.0 * (y - bottom) / (top - bottom),
     )
+
+
+def _panel_bounds_aspect_ratio(bounds: tuple[float, float, float, float]) -> float:
+    left, right, bottom, top = bounds
+    width = abs(right - left)
+    height = abs(top - bottom)
+    if width == 0.0 or height == 0.0:
+        raise ValueError("panel_bounds must be non-degenerate")
+    return width / height
 
 
 def _sub3(
