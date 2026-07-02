@@ -686,11 +686,26 @@ def _set_datoviz_camera_orthographic_bounds(
         raise DatovizV04Unsupported("Datoviz View3D orthographic bounds setup failed")
 
 
-def _update_datoviz_view3d_camera(dvz: Any, camera: Any, view3d: View3D) -> None:
-    desc = dvz.dvz_camera_desc()
-    _fill_datoviz_camera_desc(dvz, desc, view3d)
-    dvz.dvz_camera_set_view(camera, _ctypes_pointer_arg(desc.view))
+def _update_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> Any:
+    if hasattr(dvz, "dvz_panel_view3d_desc") and hasattr(
+        dvz, "dvz_panel_set_view3d_desc"
+    ):
+        panel_desc = dvz.dvz_panel_view3d_desc()
+        _fill_datoviz_camera_desc(dvz, panel_desc.camera, view3d)
+        result = dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(panel_desc))
+        if result not in (0, None, True):
+            raise DatovizV04Unsupported(
+                "Datoviz retained View3D panel camera descriptor update failed"
+            )
+        camera = dvz.dvz_panel_camera(panel)
+    else:
+        desc = dvz.dvz_camera_desc()
+        _fill_datoviz_camera_desc(dvz, desc, view3d)
+        camera = dvz.dvz_panel_set_camera(panel, _ctypes_pointer_arg(desc))
+    if _is_null_handle(camera):
+        raise DatovizV04Unsupported("Datoviz retained View3D panel camera update failed")
     _set_datoviz_camera_orthographic_bounds(dvz, camera, view3d)
+    return camera
 
 
 def _resolve_datoviz_canvas_size(dvz: Any, requested: CanvasSize) -> ResolvedCanvas:
@@ -2274,11 +2289,9 @@ class DatovizV04ProtocolRenderer:
                 "Datoviz retained View3D DATA-space visual path is unavailable: "
                 + "; ".join(diagnostics)
             )
-        if self.native_view3d_camera is None:
-            self.native_view3d_camera = self.dvz.dvz_panel_camera(self.panel)
-        if _is_null_handle(self.native_view3d_camera):
-            raise DatovizV04Unsupported("Datoviz retained View3D panel camera is unavailable")
-        _update_datoviz_view3d_camera(self.dvz, self.native_view3d_camera, view3d)
+        self.native_view3d_camera = _update_datoviz_view3d_camera(
+            self.dvz, self.panel, view3d
+        )
         self.view3d = view3d
         self.retained_view3d_update_stats.view_projection_uniform_updates += 1
         return self.resolve_retained_view3d_state_snapshot(

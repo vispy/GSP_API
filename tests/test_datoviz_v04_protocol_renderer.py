@@ -75,6 +75,7 @@ from gsp.protocol import (
     View3DMeshTrianglePickRequest,
     View3DNavigationAction,
     View3DNavigationActionKind,
+    View3DNavigationResult,
     VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
     VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
     VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY,
@@ -85,6 +86,7 @@ from gsp.protocol import (
     pan_view2d,
     project_view3d_data_point,
     resolve_view3d_projection_snapshot,
+    apply_view3d_navigation_action,
     Pan3DPayload,
     zoom_view2d_about,
 )
@@ -121,6 +123,7 @@ from gsp_datoviz.protocol_renderer import (
     import_datoviz_v04,
     is_datoviz_v04_facade,
     _DatovizLiveView2DNavigation,
+    _DatovizLiveView3DNavigation,
     _image_texcoords,
     _datoviz_view_size_desc,
     _resolved_canvas_from_datoviz,
@@ -3573,15 +3576,20 @@ def test_retained_view3d_navigation_updates_camera_without_reuploading_mesh_buff
     snapshot = renderer.apply_retained_view3d_navigation(next_view)
 
     new_calls = fake.calls[baseline_call_count:]
-    assert _calls_from(new_calls, "camera_set_view") == [
+    assert _calls_from(new_calls, "panel_set_view3d_desc") == [
         (
-            "camera_set_view",
-            "retained-panel-camera",
+            "panel_set_view3d_desc",
+            "panel",
             (2.0, 2.0, 3.0),
             (0.0, 0.0, 0.0),
             (0.0, 1.0, 0.0),
+            1,
+            0.2,
+            50.0,
+            2.0,
         )
     ]
+    assert _calls_from(new_calls, "panel_camera") == [("panel_camera", "panel")]
     assert _calls_from(new_calls, "camera_set_orthographic_bounds") == [
         (
             "camera_set_orthographic_bounds",
@@ -3700,7 +3708,8 @@ def test_datoviz_live_view3d_navigation_replays_canonical_actions_without_reuplo
     assert renderer.view3d.revision == view3d.revision + 1
     assert renderer.view3d.camera != view3d.camera
     assert session.view3d == renderer.view3d
-    assert _calls_from(new_calls, "camera_set_view")
+    assert _calls_from(new_calls, "panel_set_view3d_desc")
+    assert _calls_from(new_calls, "panel_camera")
     assert _calls_from(new_calls, "camera_set_orthographic_bounds")
     assert not _calls_from(new_calls, "set_data")
     assert not _calls_from(new_calls, "set_index_data")
@@ -3801,6 +3810,7 @@ def test_datoviz_view3d_navigation_action_rejects_stale_snapshot_before_camera_u
     assert View3DDiagnosticCode.VIEW3D_NAVIGATION_SNAPSHOT_MISMATCH.value in (
         result.diagnostics[0]
     )
+    assert not _calls_from(fake.calls[baseline_call_count:], "panel_set_view3d_desc")
     assert not _calls_from(fake.calls[baseline_call_count:], "camera_set_view")
 
 
@@ -5075,6 +5085,142 @@ def test_imported_datoviz_union_input_stream_drives_live_view2d_navigation_when_
             315.0,
         )
         assert renderer.applied_views[-1] == view
+        session.close()
+    finally:
+        dvz.dvz_input_router_destroy(router)
+
+
+def test_imported_datoviz_union_input_stream_drives_live_view3d_navigation_when_available():
+    dvz = pytest.importorskip("datoviz")
+    required = (
+        "dvz_input_router",
+        "dvz_input_router_destroy",
+        "dvz_input_subscribe_event",
+        "dvz_input_emit_event",
+        "DvzInputEvent",
+        "DvzInputEventType",
+        "DvzPointerEventType",
+        "DvzPointerButton",
+    )
+    missing = [name for name in required if not hasattr(dvz, name)]
+    if missing:
+        pytest.skip(f"installed Datoviz binding is missing input symbols: {missing}")
+
+    class DvzWithoutRequestFrame:
+        def __init__(self, raw_dvz):
+            self.raw_dvz = raw_dvz
+
+        def __getattr__(self, name):
+            if name == "dvz_view_request_frame":
+                raise AttributeError(name)
+            return getattr(self.raw_dvz, name)
+
+    class RendererRecorder:
+        def __init__(self, raw_dvz, view3d):
+            self.dvz = DvzWithoutRequestFrame(raw_dvz)
+            self.resolved_canvas = SimpleNamespace(
+                host_logical_width=800,
+                host_logical_height=600,
+            )
+            self.view3d = view3d
+            self.applied_results: list[View3DNavigationResult] = []
+
+        def apply_gsp_view3d_navigation_action(
+            self, action, *, layout_snapshot_id="layout:datoviz-live-3d"
+        ):
+            result = apply_view3d_navigation_action(
+                self.view3d, action, layout_snapshot_id=layout_snapshot_id
+            )
+            if result.accepted and result.view is not None:
+                self.view3d = result.view
+            self.applied_results.append(result)
+            return result
+
+    def emit_pointer(router, event_type, x, y, *, button=None, wheel_y=0.0):
+        input_event = dvz.DvzInputEvent()
+        input_event.type = dvz.DvzInputEventType.DVZ_INPUT_EVENT_POINTER
+        pointer = input_event.content.pointer
+        pointer.type = event_type
+        pointer.pos[0] = float(x)
+        pointer.pos[1] = float(y)
+        pointer.window_size[0] = 800.0
+        pointer.window_size[1] = 600.0
+        pointer.button = (
+            int(button)
+            if button is not None
+            else int(dvz.DvzPointerButton.DVZ_POINTER_BUTTON_NONE)
+        )
+        pointer.content.w.dir[1] = float(wheel_y)
+        dvz.dvz_input_emit_event(router, input_event)
+
+    view3d = _canonical_view3d_for_datoviz_query()
+    renderer = RendererRecorder(dvz, view3d)
+    router = dvz.dvz_input_router()
+    try:
+        session = _DatovizLiveView3DNavigation(
+            renderer=renderer,
+            router=router,
+            live_view=None,
+            view3d=view3d,
+            controller_id="nav:datoviz-live-3d",
+            layout_snapshot_id="layout:datoviz-live-3d",
+        )
+        dvz.dvz_input_subscribe_event(router, session.handle_input_event, None)
+
+        emit_pointer(
+            router,
+            dvz.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+            400.0,
+            300.0,
+            button=dvz.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
+        )
+        emit_pointer(
+            router, dvz.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG, 480.0, 300.0
+        )
+        assert renderer.applied_results[-1].accepted
+        assert renderer.view3d.camera != view3d.camera
+        orbited_view = renderer.view3d
+
+        emit_pointer(
+            router,
+            dvz.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG_STOP,
+            480.0,
+            300.0,
+        )
+        emit_pointer(
+            router,
+            dvz.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+            400.0,
+            300.0,
+            button=dvz.DvzPointerButton.DVZ_POINTER_BUTTON_RIGHT,
+        )
+        emit_pointer(
+            router, dvz.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG, 440.0, 270.0
+        )
+        assert renderer.applied_results[-1].accepted
+        assert renderer.view3d.camera.target != orbited_view.camera.target
+        panned_view = renderer.view3d
+
+        emit_pointer(
+            router,
+            dvz.DvzPointerEventType.DVZ_POINTER_EVENT_WHEEL,
+            460.0,
+            315.0,
+            wheel_y=1.0,
+        )
+        assert renderer.applied_results[-1].accepted
+        assert renderer.view3d.projection != panned_view.projection
+
+        emit_pointer(
+            router,
+            dvz.DvzPointerEventType.DVZ_POINTER_EVENT_DOUBLE_CLICK,
+            460.0,
+            315.0,
+        )
+        assert renderer.applied_results[-1].accepted
+        assert renderer.view3d.camera == view3d.camera
+        assert renderer.view3d.projection == view3d.projection
+        assert renderer.view3d.revision == view3d.revision + 4
         session.close()
     finally:
         dvz.dvz_input_router_destroy(router)
