@@ -45,9 +45,9 @@ draw-state, and pipeline names remain private implementation details.
 |---|---|---|
 | M181 | completed | Archive P027 response, accept S043 architecture, and open this mission stack. |
 | M182 | completed | Datoviz panel frame snapshot core. |
-| M183 | ready | Datoviz unified revisioned view descriptors. |
-| M184 | draft | Datoviz first-class guide objects. |
-| M185 | draft | GSP partial Datoviz snapshot adapter. |
+| M183 | completed | Datoviz unified revisioned view descriptors. |
+| M184 | completed | Datoviz first-class guide objects. |
+| M185 | completed | GSP partial Datoviz snapshot adapter. |
 | M186 | draft | GSP Datoviz guide strict promotion. |
 | M187 | draft | Datoviz retained DATA-space View3D visuals. |
 | M188 | draft | GSP Datoviz View3D live navigation. |

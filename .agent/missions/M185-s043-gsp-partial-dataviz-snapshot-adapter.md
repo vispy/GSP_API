@@ -6,7 +6,28 @@ S043 - Datoviz Panel Frame, Guide Strictness, And Retained View3D
 
 ## Status
 
-Draft.
+Completed locally in GSP_API commit `2c14c95`.
+
+## Result
+
+Added a guarded Datoviz M184 panel-frame snapshot adapter in GSP. The Datoviz v0.4 protocol renderer
+now detects the frame snapshot APIs, maps reported panel/plot/grid rectangles, device scale, visible
+View2D ranges, guide layout boxes, and rendered contribution identities into a partial
+`ResolvedLayoutSnapshot`, and preserves explicit diagnostics for guide query/all-rendered strictness
+gaps. Capability metadata now advertises `resolved_layout_produce="partial"` only when those Datoviz
+APIs are present, while keeping `layout_strict=False` and native grid clipping independent.
+
+Validation completed:
+
+```sh
+uv run pytest tests/ -q
+uv run mypy src/ --strict --show-error-codes
+GSP_BACKEND=matplotlib uv run python -c "import gsp; print('Matplotlib backend OK')"
+GSP_BACKEND=datoviz uv run python -c "import gsp; print('DatoViz backend OK')"
+git diff --check
+```
+
+Results: 549 passed, 2 skipped; strict mypy clean; both backend import smokes passed.
 
 ## Summary
 
