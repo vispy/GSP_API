@@ -257,7 +257,7 @@
       "id": "S043",
       "title": "Datoviz Panel Frame, Guide Strictness, And Retained View3D",
       "state": "active",
-      "progress": 55
+      "progress": 68
     }
   ],
   "missions": [
@@ -1921,9 +1921,9 @@
       "id": "M186",
       "title": "S043 GSP Datoviz guide strict promotion",
       "stage": "S043",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 186
     },
     {

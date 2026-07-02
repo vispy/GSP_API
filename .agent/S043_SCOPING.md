@@ -18,7 +18,7 @@ Implement the accepted P027 architecture direction across Datoviz and GSP_API:
 | Area | State | Notes |
 |---|---|---|
 | Datoviz grid clipping | Native verified for current local source | Datoviz commit `9ba820489` uses plot viewport plus plot clipping; this is not full guide strictness. |
-| Datoviz guide rows | Adapted | Remaining blockers are guide identity, layout boxes, guide query/readback, all-rendered guide contributions, and snapshot id equality. |
+| Datoviz guide rows | Strict-gated | Rows promote only when native guide identity, layout boxes, guide query/readback, all-rendered guide contributions, and snapshot id equality are all verified; otherwise they remain adapted. |
 | Datoviz View2D navigation | Implemented in GSP review paths | Uses retained S035 navigation when local input bindings are available. |
 | Datoviz static View3D | Partially supported/gated | Static mesh rendering and canonical ray readback exist for the accepted slices. |
 | Datoviz View3D live navigation | Unsupported | Current GSP Datoviz renderer uploads CPU-projected panel-NDC mesh buffers; retained navigation would require DATA-space visual attachments. |
@@ -48,7 +48,7 @@ draw-state, and pipeline names remain private implementation details.
 | M183 | completed | Datoviz unified revisioned view descriptors. |
 | M184 | completed | Datoviz first-class guide objects. |
 | M185 | completed | GSP partial Datoviz snapshot adapter. |
-| M186 | draft | GSP Datoviz guide strict promotion. |
+| M186 | completed | GSP Datoviz guide strict promotion. |
 | M187 | draft | Datoviz retained DATA-space View3D visuals. |
 | M188 | draft | GSP Datoviz View3D live navigation. |
 
@@ -78,7 +78,7 @@ draw-state, and pipeline names remain private implementation details.
 
 ## Acceptance
 
-- `tools/agentctl next` shows S043 and M182 as the next ready mission.
+- `tools/agentctl next` shows S043 and M187 as the next ready mission.
 - Datoviz API break direction is recorded in both the GSP decision record and Datoviz architecture
   note.
 - M130 remains superseded/deferred; strict guide promotion now belongs to S043.
