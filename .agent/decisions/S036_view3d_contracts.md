@@ -30,7 +30,14 @@ matrices, materials/lights/normals, scene graph/model transforms, instancing, ex
 transparency sorting, strict clipping of partially clipped triangles, 3D mesh picking, and non-mesh
 3D visual families.
 
+## Superseding Direction
+
+S047 accepts perspective `View3D` as the next 3D protocol direction. Orthographic remains the S036
+baseline and deterministic/debug projection, but perspective should become the primary practical 3D
+camera slice.
+
 ## Source
 
 `.agent/consultations/P020-response.md` converted into ADR-0023 and `spec/view3d.md`.
 
+`.agent/decisions/S047_perspective_view3d_direction.md` records the accepted perspective direction.

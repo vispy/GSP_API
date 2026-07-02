@@ -72,6 +72,7 @@ This file tells agents where to find authoritative design information.
 | S037 Datoviz View3D evidence | .agent/S037_DATOVIZ_VIEW3D_EVIDENCE.md |
 | S037 closeout | .agent/S037_CLOSEOUT.md |
 | S036 View3D decision | .agent/decisions/S036_view3d_contracts.md |
+| S047 Perspective View3D direction | .agent/decisions/S047_perspective_view3d_direction.md |
 | S036 closeout | .agent/S036_CLOSEOUT.md |
 | S035 View2D navigation decision | .agent/decisions/S035_view2d_navigation_contracts.md |
 | S029 resolved layout decision | .agent/decisions/S029_resolved_layout_contracts.md |
