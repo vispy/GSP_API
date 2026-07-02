@@ -268,8 +268,8 @@
     {
       "id": "S045",
       "title": "Post-S044 Roadmap And Release Readiness",
-      "state": "ready",
-      "progress": 20
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2005,9 +2005,9 @@
       "id": "M194",
       "title": "S045 release-facing docs and review-pack refresh",
       "stage": "S045",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 194
     }
   ],
@@ -2106,16 +2106,17 @@
     }
   ],
   "recommendations": [
-    "M194 is ready: refresh release-facing docs, changelog, review-pack pointers, and validation wording for S034-S044 before approving release mechanics.",
+    "S045 completed: release-facing docs now summarize S034-S044 capability state and stop conditions.",
+    "Next branch is user choice: explicitly approve M131 release mechanics with target version/tag/publish scope, or open an optional Datoviz native mesh-pick evidence spike.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target.",
     "S044 completed: grid clipping proof is consolidated and View3D mesh triangle picking has a backend-neutral protocol plus Matplotlib CPU oracle.",
     "Datoviz must not advertise query.view3d.mesh_triangle_pick.v1 until native public visual_id/primitive_index mapping and pick-scene freshness are proven.",
     "Native Datoviz grid clipping remains a separate verified capability and must not be treated as full guide strictness.",
     "Datoviz View3D live navigation is capability-gated on retained DATA-space View3D symbols plus live input bindings.",
-    "The capability specs are current through S044; release-facing changelog/README/review-pack notes need consolidation before packaging this state.",
     "Optional hardening after M194 is a Datoviz native mesh-pick evidence spike, not public capability promotion."
   ],
   "notes": [
+    "M194 completed: refreshed CHANGELOG, README, review README, release checklist, and S045 release-refresh note for S034-S044 capability state without version bumps, tags, publication, or Datoviz capability overclaims.",
     "M193 completed: opened S045, audited post-S044 project state, found capability specs current but release-facing docs stale after S034-S044, and made M194 ready for a release-facing refresh before M131.",
     "S045 opened for post-S044 roadmap and release-readiness scoping; release mechanics remain blocked until explicit approval.",
     "M192 completed: added S044 protocol payloads, pick diagnostics, query.view3d.mesh_triangle_pick.v1 capability constant, Matplotlib CPU reference picker, Datoviz structured unsupported/non-advertisement boundary, and focused tests for hit/miss/stale/unsupported behavior.",

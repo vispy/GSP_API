@@ -4,6 +4,12 @@ Graphics Server Protocol Application User Interface
 A Python library for backend-agnostic scientific visualization scenes and protocol records, with a
 Matplotlib reference backend plus optional Datoviz and network renderer paths.
 
+The current protocol prototype includes 2D visual families, color mapping, guide/layout metadata,
+retained `View2D` navigation, static orthographic `View3D`, bounded 3D mesh rendering, flat Lambert
+mesh shading, and first-class query/readback payloads. Matplotlib is the reference backend. Datoviz
+v0.4 support is capability-gated against the local v0.4 facade and must not be treated as a required
+package dependency.
+
 ---
 
 ## Installation
@@ -71,6 +77,11 @@ GSP_RENDERER=datoviz-v03 python your_script.py
 ```
 
 Plain `datoviz` is reserved for the Datoviz v0.4 protocol backend. Datoviz legacy renderer support is optional. Install it with `pip install -e ".[datoviz-legacy]"` when using examples that require the older Datoviz Python wrapper.
+
+For protocol/API review, including View2D navigation and View3D mesh examples, see
+[`examples/review/README.md`](examples/review/README.md). The Datoviz v0.4 path reports structured
+unsupported diagnostics when a local binding lacks the required capability; it does not silently
+claim support for unproven features such as View3D mesh triangle picking.
 
 ### Q. How do I run the tests?
 A. Tests live under `tests/` and run with pytest:

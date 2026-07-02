@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added release checklist and tag policy documentation for S019 closeout.
 - Added conformance fixture packaging, import-surface smoke coverage, and release-facing docs polish.
 - Added strict mypy closure for `src/` with documented optional/vendored typing boundaries.
+- Added resolved layout snapshots, layout-aware guide query support, device-scale layout metadata,
+  and layout visual QA fixtures.
+- Added retained semantic `View2D` navigation and live review wiring for supported backends.
+- Added static orthographic `View3D`, `(N,3)` mesh rendering paths, canonical ray readback payloads,
+  and View3D navigation action semantics.
+- Added flat Lambert face-normal mesh shading, Datoviz CPU-resolved Lambert promotion, and 3D manual
+  review examples.
+- Added backend-neutral `query.view3d.mesh_triangle_pick.v1` protocol payloads with a Matplotlib CPU
+  reference oracle for bounded opaque DATA-space mesh triangle picking.
 
 ### Changed
 - Clarified Datoviz packaging policy: legacy Datoviz wrapper support is optional, while Datoviz v0.4
@@ -26,6 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   distinguish Matplotlib, optional legacy Datoviz, network, and Datoviz v0.4 protocol surfaces.
 - Updated `examples/README.md` to list shipped public example scripts and to show the current
   `renderer.render(...)` API pattern.
+- Promoted Datoviz guide, grid-clipping, View3D rendering, View3D navigation, and Lambert support
+  only where local v0.4 evidence and capability gates prove the accepted semantics.
+- Kept Datoviz native grid clipping separate from full guide strictness; grid clipping is not a
+  guide-query or all-rendered contribution claim.
 
 ### Fixed
 - Fixed Matplotlib-only example execution so public examples no longer import optional legacy
@@ -40,6 +53,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `uv build`
 - `PYTHONPATH=. uv run python tools/run_all_examples.py`
 - `PYTHONPATH=. uv run python tools/check_expected_output.py`
+- Focused S034-S044 validation includes layout, guide, navigation, View3D, Lambert, Datoviz v0.4
+  capability gates, and mesh-triangle-pick tests recorded in the corresponding `.agent/S0xx_*` and
+  mission files.
 
 ### Backend support
 - Matplotlib remains the required reference and release-readiness backend.
@@ -47,12 +63,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `GSP_RENDERER=datoviz-v03` example path.
 - Datoviz v0.4 protocol adapter work remains capability-gated and is not declared as a package
   dependency until compatible release artifacts exist.
+- Datoviz v0.4 may support retained View2D navigation, retained DATA-space View3D rendering,
+  View3D live navigation, grid clipping, and CPU-resolved flat Lambert only when the active local
+  v0.4 facade exposes the required symbols and the adapter advertises the corresponding capability.
 - The network renderer requires a separate server process and remote renderer configuration.
 
 ### Known limitations
 - Datoviz v0.4 text and guide/View2D review rows include adapted, not strict, cases: several text
   anchor/placement/unicode semantics remain verification-gated, while guide panel-title and
   guide/all-rendered query semantics remain unsupported.
+- Strict opaque GPU depth, perspective projection, textures/UVs, smooth/Phong lighting, and public
+  material resources remain deferred.
+- Datoviz v0.4 does not advertise `query.view3d.mesh_triangle_pick.v1`; native visual/triangle
+  mapping and pick-scene freshness remain unproven.
 - Optional Datoviz, network, and session replay checks are outside the required release validation
   path unless their exact environment is recorded separately.
 

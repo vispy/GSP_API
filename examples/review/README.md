@@ -119,6 +119,18 @@ orbit, right-drag pan, wheel zoom, and double-click reset.
 The non-default `s036_alpha_not_strict_negative.py` script checks that translucent 3D mesh colors
 raise `mesh3d_alpha_not_strict` in the opaque-depth path.
 
+## Query And Capability Boundaries
+
+The review examples exercise rendering and live navigation paths. Query/readback capabilities are
+validated by focused protocol tests and backend capability gates:
+
+| Capability | Current review boundary |
+|---|---|
+| `query.view3d.ray_readback.v1` | Returns canonical public ray-context payloads for `View3D`; it is not a visual-hit query. |
+| `query.view3d.mesh_triangle_pick.v1` | Backend-neutral S044 payload with a Matplotlib CPU reference oracle for strict opaque DATA-space mesh picking. Datoviz v0.4 returns structured unsupported and must not advertise this capability until public visual/triangle mapping and pick-scene freshness are proven. |
+| `meshvisual.positions3d.opaque_depth.v1` | Still not strict for Datoviz or the Matplotlib adapted reference path; visible review examples must not be used as strict GPU depth evidence. |
+| Datoviz grid clipping | Native-verified separately from full guide strictness; it does not imply guide query or all-rendered contribution support. |
+
 ## Manual Review Checklist
 
 Use this checklist before approving release preparation.
@@ -178,6 +190,13 @@ Use this checklist before approving release preparation.
    ```
 
 Defer release only for API-shape problems, broken Matplotlib reference behavior, misleading docs/support claims, or Datoviz differences that contradict the advertised capability matrix. Local Datoviz offscreen capture being unsupported is not itself a release blocker.
+
+The latest committed release-facing capability baseline is S045. Review-pack artifacts from S031
+remain the broad 2D visual matrix baseline, while `artifacts/example_review/07_view3d_cube/`,
+`artifacts/example_review/08_view3d_terrain/`, and
+`artifacts/example_review/09_view3d_ndc_depth/` record the current static View3D offscreen review
+paths. S039-S042 live 3D material/navigation checks are documented in the corresponding `.agent`
+closeout files and are capability-gated for Datoviz.
 
 ## Datoviz HiDPI Fix Acceptance
 
