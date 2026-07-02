@@ -6,7 +6,7 @@ S043 - Datoviz Panel Frame, Guide Strictness, And Retained View3D
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -15,19 +15,40 @@ gates.
 
 ## Deliverables
 
-- Datoviz capability gate for retained DATA-space visuals and retained update stats.
-- GSP canonical `View3D` action replay into Datoviz camera/projection state.
-- Datoviz state readback equality checks against canonical GSP state.
-- Retained update counter assertions proving unchanged visual buffers are not reuploaded.
-- Ray readback after initial/orbit/pan/zoom/reset navigation steps.
-- Review artifacts for Datoviz live `View3D` initial/orbit/pan/zoom/reset.
-- Documentation and capability table updates.
+- Added Datoviz `view3d.navigation.orbit_pan_zoom.v1` promotion only when live input and retained
+  DATA-space `View3D` symbols are both available.
+- Added renderer-level canonical `View3DNavigationAction` replay into retained Datoviz camera and
+  orthographic projection state.
+- Added Datoviz retained-state readback checks against canonical GSP camera/projection state.
+- Added live pointer input handling for left-drag orbit, right-drag pan, wheel zoom, and
+  double-click reset.
+- Added tests proving unchanged mesh vertex/index buffers and visual identity are preserved during
+  ordinary live `View3D` navigation.
+- Added ray readback proof after retained live navigation using the same layout/projection snapshot
+  ids.
+- Updated review-runner behavior and documentation to enable Datoviz live `View3D` navigation behind
+  capability gates while preserving static fallback diagnostics.
 
 ## Acceptance
 
-- `view3d.navigation.orbit_pan_zoom.v1` is advertised only when retained navigation is proven.
+- `view3d.navigation.orbit_pan_zoom.v1` is advertised only when retained navigation and live input
+  are available.
 - Live Datoviz `View3D` review examples enable navigation only behind capability gates.
 - Static fallback diagnostics remain clear for older Datoviz builds.
+- Orbit, pan, zoom, and reset update retained camera/projection state without unchanged mesh buffer
+  reuploads.
+
+## Validation
+
+- `uv run pytest tests/test_datoviz_v04_protocol_renderer.py -q`
+- `uv run pytest tests/test_review_runner_interactive.py -q`
+- `uv run pytest tests/ -q --cov=src --cov-report=term-missing` (`562 passed, 2 skipped`, total
+  coverage 64%)
+- `uv run mypy src/ --strict --show-error-codes`
+- `uv run ruff check src tests examples/review`
+- `GSP_BACKEND=matplotlib uv run python -c "import gsp; print('Matplotlib backend OK')"`
+- `GSP_BACKEND=datoviz uv run python -c "import gsp; print('DatoViz backend OK')"`
+- `git diff --check`
 
 ## Stop Conditions
 

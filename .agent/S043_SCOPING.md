@@ -21,7 +21,7 @@ Implement the accepted P027 architecture direction across Datoviz and GSP_API:
 | Datoviz guide rows | Strict-gated | Rows promote only when native guide identity, layout boxes, guide query/readback, all-rendered guide contributions, and snapshot id equality are all verified; otherwise they remain adapted. |
 | Datoviz View2D navigation | Implemented in GSP review paths | Uses retained S035 navigation when local input bindings are available. |
 | Datoviz static View3D | Partially supported/gated | Static mesh rendering and canonical ray readback exist for the accepted slices. |
-| Datoviz retained View3D substrate | GSP-gated | Retained DATA-space mesh attachment, camera/projection updates, stats, and state readback are implemented when the v0.4-dev panel View3D APIs are present; live input/action wiring remains M188. |
+| Datoviz retained View3D navigation | GSP-gated | Retained DATA-space mesh attachment, canonical live action replay, camera/projection updates, stats, ray readback, and state readback are implemented when the v0.4-dev panel View3D and live input APIs are present. |
 
 ## Authority And Boundary
 
@@ -50,7 +50,7 @@ draw-state, and pipeline names remain private implementation details.
 | M185 | completed | GSP partial Datoviz snapshot adapter. |
 | M186 | completed | GSP Datoviz guide strict promotion. |
 | M187 | completed | Datoviz retained DATA-space View3D visuals. |
-| M188 | draft | GSP Datoviz View3D live navigation. |
+| M188 | completed | GSP Datoviz View3D live navigation. |
 
 ## Implementation Order
 
@@ -78,7 +78,7 @@ draw-state, and pipeline names remain private implementation details.
 
 ## Acceptance
 
-- `tools/agentctl next` shows S043 and M188 as the next ready mission.
+- `tools/agentctl next` no longer lists S043 missions after M188 completion.
 - Datoviz API break direction is recorded in both the GSP decision record and Datoviz architecture
   note.
 - M130 remains superseded/deferred; strict guide promotion now belongs to S043.
