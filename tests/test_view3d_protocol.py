@@ -1,4 +1,4 @@
-"""Tests for the accepted S036 static View3D protocol baseline."""
+"""Tests for the accepted S036/S047 View3D protocol baseline."""
 
 import pytest
 
@@ -12,6 +12,7 @@ from gsp.protocol import (
     Orbit3DPayload,
     OrthographicProjection3D,
     Pan3DPayload,
+    PerspectiveProjection3D,
     Projection3DKind,
     QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY,
     QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
@@ -23,6 +24,7 @@ from gsp.protocol import (
     SetProjection3DPayload,
     TransportKind,
     VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
+    VIEW3D_STATIC_PERSPECTIVE_CAPABILITY,
     VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
     View3D,
     View3DDiagnosticCode,
@@ -111,6 +113,38 @@ def test_orthographic_projection_rejects_non_orthographic_kind():
         OrthographicProjection3D(kind="perspective")  # type: ignore[arg-type]
 
 
+def test_perspective_projection_accepts_fov_and_rejects_bad_ranges():
+    projection = PerspectiveProjection3D(
+        fov_y_degrees=60.0,
+        near_far=(0.1, 100.0),
+        aspect_ratio=16.0 / 9.0,
+    )
+
+    assert projection.kind is Projection3DKind.PERSPECTIVE
+    assert projection.fov_y_degrees == 60.0
+    assert projection.aspect_ratio == pytest.approx(16.0 / 9.0)
+
+    diagnostic = View3DDiagnosticCode.VIEW3D_INVALID_PROJECTION.value
+    with pytest.raises(ValueError, match=diagnostic):
+        PerspectiveProjection3D(fov_y_degrees=0.0)
+    with pytest.raises(ValueError, match=diagnostic):
+        PerspectiveProjection3D(fov_y_degrees=180.0)
+    with pytest.raises(ValueError, match=diagnostic):
+        PerspectiveProjection3D(near_far=(0.0, 10.0))
+    with pytest.raises(ValueError, match=diagnostic):
+        PerspectiveProjection3D(near_far=(10.0, 1.0))
+    with pytest.raises(ValueError, match=diagnostic):
+        PerspectiveProjection3D(aspect_ratio=0.0)
+
+
+def test_perspective_projection_rejects_non_perspective_kind():
+    with pytest.raises(
+        ValueError,
+        match=View3DDiagnosticCode.VIEW3D_PROJECTION_UNSUPPORTED.value,
+    ):
+        PerspectiveProjection3D(kind="orthographic")  # type: ignore[arg-type]
+
+
 def test_view3d_targets_one_panel_and_validates_runtime_fields():
     camera = Camera3D(
         eye=(0.0, 0.0, 5.0),
@@ -162,6 +196,14 @@ def test_view3d_targets_one_panel_and_validates_runtime_fields():
             projection=projection,
             revision=-1,
         )
+
+    perspective = View3D(
+        id="view:perspective",
+        panel_id="panel:main",
+        camera=camera,
+        projection=PerspectiveProjection3D(),
+    )
+    assert perspective.projection.kind is Projection3DKind.PERSPECTIVE
 
 
 def test_directional_light3d_validates_s039_fields():
@@ -215,6 +257,7 @@ def test_view3d_capabilities_adapt_semantic_support():
             QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
             QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY,
             VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
+            VIEW3D_STATIC_PERSPECTIVE_CAPABILITY,
         ),
     )
 
@@ -227,6 +270,7 @@ def test_view3d_capabilities_adapt_semantic_support():
     rejected = caps.adapt_view3d_capability("view3d.perspective.v1")
     assert rejected.outcome == AdaptationOutcome.REJECT
     assert rejected.diagnostic is not None
+    assert caps.supports_view3d_capability(VIEW3D_STATIC_PERSPECTIVE_CAPABILITY)
 
 
 def test_view3d_mesh_triangle_pick_request_and_payload_validate_s044_fields():
@@ -462,7 +506,42 @@ def test_apply_view3d_navigation_action_supports_setters_and_reset():
     assert set_projection_result.projection == view.projection
 
 
-def _canonical_view3d(*, revision: int = 0) -> View3D:
+def test_apply_view3d_navigation_rejects_perspective_zoom_until_semantics_land():
+    view = _canonical_view3d(
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=45.0,
+            near_far=(0.1, 100.0),
+            aspect_ratio=1.0,
+        ),
+        revision=3,
+    )
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    action = View3DNavigationAction(
+        kind=View3DNavigationActionKind.ZOOM,
+        view_id=view.id,
+        base_view_revision=view.revision,
+        base_view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+        payload=Zoom3DPayload(scale=2.0),
+        base_layout_snapshot_id=snapshot.layout_snapshot_id,
+    )
+
+    result = apply_view3d_navigation_action(
+        view, action, layout_snapshot_id="layout:main"
+    )
+
+    assert not result.accepted
+    assert View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value in (
+        result.diagnostics[0]
+    )
+
+
+def _canonical_view3d(
+    *,
+    revision: int = 0,
+    projection: OrthographicProjection3D | PerspectiveProjection3D | None = None,
+) -> View3D:
     return View3D(
         id="view:nav3d",
         panel_id="panel:main",
@@ -471,7 +550,8 @@ def _canonical_view3d(*, revision: int = 0) -> View3D:
             target=(0.0, 0.0, 0.0),
             up=(0.0, 1.0, 0.0),
         ),
-        projection=OrthographicProjection3D(
+        projection=projection
+        or OrthographicProjection3D(
             xlim=(-2.0, 2.0),
             ylim=(-2.0, 2.0),
             near_far=(1.0, 10.0),
@@ -528,6 +608,77 @@ def test_view3d_unprojects_panel_ndc3_to_data_space():
     )
     assert unproject_view3d_panel_ndc_point(view, (1.0, 1.0, 1.0)) == pytest.approx(
         (2.0, 2.0, -5.0)
+    )
+
+
+def test_view3d_projects_perspective_points_to_ndc3():
+    view = View3D(
+        id="view:perspective-project",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 0.0),
+            target=(0.0, 0.0, -1.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=90.0,
+            near_far=(1.0, 10.0),
+            aspect_ratio=1.0,
+        ),
+    )
+
+    assert project_view3d_data_point(view, (0.0, 0.0, -1.0)) == pytest.approx(
+        (0.0, 0.0, -1.0)
+    )
+    assert project_view3d_data_point(view, (1.0, 1.0, -1.0)) == pytest.approx(
+        (1.0, 1.0, -1.0)
+    )
+    assert project_view3d_data_point(view, (0.0, 0.0, -5.5)) == pytest.approx(
+        (0.0, 0.0, 0.0)
+    )
+
+
+def test_view3d_perspective_projection_uses_resolved_aspect_ratio():
+    view = View3D(
+        id="view:perspective-aspect",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 0.0),
+            target=(0.0, 0.0, -1.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=90.0,
+            near_far=(1.0, 10.0),
+        ),
+    )
+
+    assert project_view3d_data_point(
+        view, (2.0, 1.0, -1.0), aspect_ratio=2.0
+    ) == pytest.approx((1.0, 1.0, -1.0))
+
+
+def test_view3d_unprojects_perspective_panel_ndc3_to_data_space():
+    view = View3D(
+        id="view:perspective-unproject",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 0.0),
+            target=(0.0, 0.0, -1.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=90.0,
+            near_far=(1.0, 10.0),
+            aspect_ratio=1.0,
+        ),
+    )
+
+    assert unproject_view3d_panel_ndc_point(view, (1.0, 1.0, -1.0)) == pytest.approx(
+        (1.0, 1.0, -1.0)
+    )
+    assert unproject_view3d_panel_ndc_point(view, (0.0, 0.0, 0.0)) == pytest.approx(
+        (0.0, 0.0, -5.5)
     )
 
 
@@ -618,3 +769,36 @@ def test_view3d_projection_snapshot_identity_tracks_view_and_layout_state():
     assert snapshot.view_projection_snapshot_id != updated.view_projection_snapshot_id
     assert snapshot.view_revision == 3
     assert snapshot.forward == pytest.approx((0.0, 0.0, -1.0))
+
+
+def test_view3d_perspective_projection_snapshot_tracks_projection_parameters():
+    view = _canonical_view3d(
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=45.0,
+            near_far=(0.1, 100.0),
+            aspect_ratio=1.5,
+        )
+    )
+    changed = _canonical_view3d(
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=60.0,
+            near_far=(0.1, 100.0),
+            aspect_ratio=1.5,
+        )
+    )
+
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    changed_snapshot = resolve_view3d_projection_snapshot(
+        changed, layout_snapshot_id="layout:main"
+    )
+
+    assert snapshot.projection_kind is Projection3DKind.PERSPECTIVE
+    assert snapshot.xlim is None
+    assert snapshot.ylim is None
+    assert snapshot.fov_y_degrees == pytest.approx(45.0)
+    assert snapshot.aspect_ratio == pytest.approx(1.5)
+    assert snapshot.view_projection_snapshot_id != (
+        changed_snapshot.view_projection_snapshot_id
+    )

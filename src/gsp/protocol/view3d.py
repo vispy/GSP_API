@@ -14,6 +14,7 @@ from .transforms import ViewKind
 CAMERA3D_EPSILON = 1.0e-12
 
 VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY = "view3d.static.orthographic.v1"
+VIEW3D_STATIC_PERSPECTIVE_CAPABILITY = "view3d.static.perspective.v1"
 MESH3D_DATA_VIEW3D_CAPABILITY = "meshvisual.positions3d.data.view3d.v1"
 MESH3D_NDC_CAPABILITY = "meshvisual.positions3d.ndc.v1"
 MESH3D_OPAQUE_DEPTH_CAPABILITY = "meshvisual.positions3d.opaque_depth.v1"
@@ -32,9 +33,10 @@ _PayloadT = TypeVar("_PayloadT")
 
 
 class Projection3DKind(str, Enum):
-    """Accepted S036 projection kinds."""
+    """Accepted public View3D projection kinds."""
 
     ORTHOGRAPHIC = "orthographic"
+    PERSPECTIVE = "perspective"
 
 
 class DepthMode3D(str, Enum):
@@ -104,10 +106,13 @@ class View3DProjectionSnapshot:
     right: Float3
     true_up: Float3
     forward: Float3
-    xlim: Float2
-    ylim: Float2
+    projection_kind: Projection3DKind
     near_far: Float2
     depth_mode: DepthMode3D
+    xlim: Float2 | None = None
+    ylim: Float2 | None = None
+    fov_y_degrees: float | None = None
+    aspect_ratio: float | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.view_id)
@@ -116,6 +121,8 @@ class View3DProjectionSnapshot:
         validate_id(self.view_projection_snapshot_id)
         if self.view_revision < 0:
             raise ValueError("view_revision must be non-negative")
+        if not isinstance(self.projection_kind, Projection3DKind):
+            raise TypeError("projection_kind must be a Projection3DKind")
 
 
 @dataclass(frozen=True, slots=True)
@@ -217,11 +224,10 @@ class SetCamera3DPayload:
 class SetProjection3DPayload:
     """Replace canonical View3D projection state."""
 
-    projection: OrthographicProjection3D
+    projection: "Projection3D"
 
     def __post_init__(self) -> None:
-        if not isinstance(self.projection, OrthographicProjection3D):
-            raise TypeError("projection must be an OrthographicProjection3D")
+        _validate_projection3d_instance(self.projection)
 
 
 @dataclass(frozen=True, slots=True)
@@ -229,13 +235,12 @@ class ResetView3DPayload:
     """Restore explicit home camera/projection state."""
 
     camera: Camera3D
-    projection: OrthographicProjection3D
+    projection: "Projection3D"
 
     def __post_init__(self) -> None:
         if not isinstance(self.camera, Camera3D):
             raise TypeError("camera must be a Camera3D")
-        if not isinstance(self.projection, OrthographicProjection3D):
-            raise TypeError("projection must be an OrthographicProjection3D")
+        _validate_projection3d_instance(self.projection)
 
 
 View3DNavigationPayload = (
@@ -282,7 +287,7 @@ class View3DNavigationResult:
     diagnostics: tuple[str, ...] = ()
     new_revision: int | None = None
     camera: Camera3D | None = None
-    projection: OrthographicProjection3D | None = None
+    projection: "Projection3D | None" = None
     view: View3D | None = None
     layout_snapshot_id: str | None = None
     view_projection_snapshot_id: str | None = None
@@ -299,10 +304,8 @@ class View3DNavigationResult:
             raise ValueError("new_revision must be non-negative")
         if self.camera is not None and not isinstance(self.camera, Camera3D):
             raise TypeError("camera must be a Camera3D")
-        if self.projection is not None and not isinstance(
-            self.projection, OrthographicProjection3D
-        ):
-            raise TypeError("projection must be an OrthographicProjection3D")
+        if self.projection is not None:
+            _validate_projection3d_instance(self.projection)
         if self.view is not None and not isinstance(self.view, View3D):
             raise TypeError("view must be a View3D")
         if self.layout_snapshot_id is not None:
@@ -380,6 +383,54 @@ class OrthographicProjection3D:
 
 
 @dataclass(frozen=True, slots=True)
+class PerspectiveProjection3D:
+    """Perspective projection with a vertical field-of-view angle."""
+
+    fov_y_degrees: float = 45.0
+    near_far: Float2 = (0.1, 1000.0)
+    aspect_ratio: float | None = None
+    kind: Projection3DKind = Projection3DKind.PERSPECTIVE
+
+    def __post_init__(self) -> None:
+        if self.kind is not Projection3DKind.PERSPECTIVE:
+            raise ValueError(
+                f"{View3DDiagnosticCode.VIEW3D_PROJECTION_UNSUPPORTED.value}: "
+                "PerspectiveProjection3D requires kind='perspective'"
+            )
+        _validate_finite(
+            "fov_y_degrees",
+            self.fov_y_degrees,
+            View3DDiagnosticCode.VIEW3D_INVALID_PROJECTION,
+        )
+        if self.fov_y_degrees <= 0.0 or self.fov_y_degrees >= 180.0:
+            raise ValueError(
+                f"{View3DDiagnosticCode.VIEW3D_INVALID_PROJECTION.value}: "
+                "fov_y_degrees must be within (0, 180)"
+            )
+        validate_projection3d_range("near_far", self.near_far, allow_reversed=False)
+        near, far = self.near_far
+        if near <= 0.0 or far <= near:
+            raise ValueError(
+                f"{View3DDiagnosticCode.VIEW3D_INVALID_PROJECTION.value}: "
+                "perspective near_far must satisfy near > 0 and far > near"
+            )
+        if self.aspect_ratio is not None:
+            _validate_finite(
+                "aspect_ratio",
+                self.aspect_ratio,
+                View3DDiagnosticCode.VIEW3D_INVALID_PROJECTION,
+            )
+            if self.aspect_ratio <= 0.0:
+                raise ValueError(
+                    f"{View3DDiagnosticCode.VIEW3D_INVALID_PROJECTION.value}: "
+                    "aspect_ratio must be positive"
+                )
+
+
+Projection3D = OrthographicProjection3D | PerspectiveProjection3D
+
+
+@dataclass(frozen=True, slots=True)
 class DirectionalLight3D:
     """S039 scalar white DATA-space directional light."""
 
@@ -411,7 +462,7 @@ class View3D:
     id: str
     panel_id: str
     camera: Camera3D
-    projection: OrthographicProjection3D
+    projection: Projection3D
     depth_mode: DepthMode3D = DepthMode3D.OPAQUE_LESS
     ambient_light_intensity: float = 0.0
     directional_light: DirectionalLight3D | None = None
@@ -423,8 +474,7 @@ class View3D:
         validate_id(self.panel_id)
         if not isinstance(self.camera, Camera3D):
             raise TypeError("camera must be a Camera3D")
-        if not isinstance(self.projection, OrthographicProjection3D):
-            raise TypeError("projection must be an OrthographicProjection3D")
+        _validate_projection3d_instance(self.projection)
         if self.depth_mode is not DepthMode3D.OPAQUE_LESS:
             raise ValueError("only OPAQUE_LESS depth is accepted in S036")
         _validate_unit_interval(
@@ -442,7 +492,9 @@ class View3D:
             raise ValueError("revision must be a non-negative integer")
 
 
-def project_view3d_data_point(view: View3D, point: Float3) -> Float3:
+def project_view3d_data_point(
+    view: View3D, point: Float3, *, aspect_ratio: float | None = None
+) -> Float3:
     """Project one DATA-space point into GSP panel NDC3."""
     if not isinstance(view, View3D):
         raise TypeError("view must be a View3D")
@@ -452,9 +504,25 @@ def project_view3d_data_point(view: View3D, point: Float3) -> Float3:
     camera_x = _dot3(relative, basis.right)
     camera_y = _dot3(relative, basis.true_up)
     camera_z = _dot3(relative, basis.forward)
+    near, far = view.projection.near_far
+    if isinstance(view.projection, PerspectiveProjection3D):
+        resolved_aspect = _resolve_perspective_aspect_ratio(
+            view.projection, aspect_ratio
+        )
+        if camera_z <= 0.0:
+            raise ValueError(
+                f"{View3DDiagnosticCode.VIEW3D_INVALID_PROJECTION.value}: "
+                "point is behind the perspective camera"
+            )
+        half_height = camera_z * _perspective_tan_half_fov(view.projection)
+        half_width = half_height * resolved_aspect
+        return (
+            camera_x / half_width,
+            camera_y / half_height,
+            -1.0 + 2.0 * (camera_z - near) / (far - near),
+        )
     x0, x1 = view.projection.xlim
     y0, y1 = view.projection.ylim
-    near, far = view.projection.near_far
     return (
         -1.0 + 2.0 * (camera_x - x0) / (x1 - x0),
         -1.0 + 2.0 * (camera_y - y0) / (y1 - y0),
@@ -462,18 +530,29 @@ def project_view3d_data_point(view: View3D, point: Float3) -> Float3:
     )
 
 
-def unproject_view3d_panel_ndc_point(view: View3D, point: Float3) -> Float3:
+def unproject_view3d_panel_ndc_point(
+    view: View3D, point: Float3, *, aspect_ratio: float | None = None
+) -> Float3:
     """Unproject one panel NDC3 point into DATA space."""
     if not isinstance(view, View3D):
         raise TypeError("view must be a View3D")
     _validate_float3("point", point)
     basis = view.camera.basis()
-    x0, x1 = view.projection.xlim
-    y0, y1 = view.projection.ylim
     near, far = view.projection.near_far
-    camera_x = x0 + (point[0] + 1.0) * 0.5 * (x1 - x0)
-    camera_y = y0 + (point[1] + 1.0) * 0.5 * (y1 - y0)
     camera_z = near + (point[2] + 1.0) * 0.5 * (far - near)
+    if isinstance(view.projection, PerspectiveProjection3D):
+        resolved_aspect = _resolve_perspective_aspect_ratio(
+            view.projection, aspect_ratio
+        )
+        half_height = camera_z * _perspective_tan_half_fov(view.projection)
+        half_width = half_height * resolved_aspect
+        camera_x = point[0] * half_width
+        camera_y = point[1] * half_height
+    else:
+        x0, x1 = view.projection.xlim
+        y0, y1 = view.projection.ylim
+        camera_x = x0 + (point[0] + 1.0) * 0.5 * (x1 - x0)
+        camera_y = y0 + (point[1] + 1.0) * 0.5 * (y1 - y0)
     return _add3(
         view.camera.eye,
         _add3(
@@ -503,10 +582,21 @@ def resolve_view3d_projection_snapshot(
         right=basis.right,
         true_up=basis.true_up,
         forward=basis.forward,
-        xlim=view.projection.xlim,
-        ylim=view.projection.ylim,
+        projection_kind=view.projection.kind,
         near_far=view.projection.near_far,
         depth_mode=view.depth_mode,
+        xlim=view.projection.xlim
+        if isinstance(view.projection, OrthographicProjection3D)
+        else None,
+        ylim=view.projection.ylim
+        if isinstance(view.projection, OrthographicProjection3D)
+        else None,
+        fov_y_degrees=view.projection.fov_y_degrees
+        if isinstance(view.projection, PerspectiveProjection3D)
+        else None,
+        aspect_ratio=view.projection.aspect_ratio
+        if isinstance(view.projection, PerspectiveProjection3D)
+        else None,
     )
 
 
@@ -562,6 +652,11 @@ def zoom_view3d(view: View3D, payload: Zoom3DPayload) -> View3D:
         raise TypeError("view must be a View3D")
     if not isinstance(payload, Zoom3DPayload):
         raise TypeError("payload must be a Zoom3DPayload")
+    if not isinstance(view.projection, OrthographicProjection3D):
+        raise ValueError(
+            f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value}: "
+            "perspective zoom semantics are deferred"
+        )
     if payload.anchor_panel_ndc_xy is None:
         x_anchor_t = 0.5
         y_anchor_t = 0.5
@@ -742,7 +837,7 @@ def _replace_view3d(
     view: View3D,
     *,
     camera: Camera3D | None = None,
-    projection: OrthographicProjection3D | None = None,
+    projection: Projection3D | None = None,
 ) -> View3D:
     return View3D(
         id=view.id,
@@ -814,6 +909,13 @@ def _validate_float3_with_diagnostic(
         raise ValueError(f"{diagnostic.value}: {name} values must be finite")
 
 
+def _validate_projection3d_instance(projection: Projection3D) -> None:
+    if not isinstance(projection, (OrthographicProjection3D, PerspectiveProjection3D)):
+        raise TypeError(
+            "projection must be an OrthographicProjection3D or PerspectiveProjection3D"
+        )
+
+
 def _validate_finite(
     name: str, value: float, diagnostic: View3DDiagnosticCode
 ) -> None:
@@ -827,6 +929,29 @@ def _validate_unit_interval(
     _validate_finite(name, value, diagnostic)
     if value < 0.0 or value > 1.0:
         raise ValueError(f"{diagnostic.value}: {name} must be within [0, 1]")
+
+
+def _resolve_perspective_aspect_ratio(
+    projection: PerspectiveProjection3D, aspect_ratio: float | None
+) -> float:
+    resolved = aspect_ratio if aspect_ratio is not None else projection.aspect_ratio
+    if resolved is None:
+        return 1.0
+    _validate_finite(
+        "aspect_ratio",
+        resolved,
+        View3DDiagnosticCode.VIEW3D_INVALID_PROJECTION,
+    )
+    if resolved <= 0.0:
+        raise ValueError(
+            f"{View3DDiagnosticCode.VIEW3D_INVALID_PROJECTION.value}: "
+            "aspect_ratio must be positive"
+        )
+    return resolved
+
+
+def _perspective_tan_half_fov(projection: PerspectiveProjection3D) -> float:
+    return math.tan(math.radians(projection.fov_y_degrees) * 0.5)
 
 
 def _sub3(left: Float3, right: Float3) -> Float3:
@@ -900,8 +1025,8 @@ def _projection_snapshot_id(
         _format_float3(basis.right),
         _format_float3(basis.true_up),
         _format_float3(basis.forward),
-        _format_float2(view.projection.xlim),
-        _format_float2(view.projection.ylim),
+        view.projection.kind.value,
+        _format_projection_parameters(view.projection),
         _format_float2(view.projection.near_far),
         view.depth_mode.value,
     )
@@ -915,3 +1040,19 @@ def _format_float2(value: Float2) -> str:
 
 def _format_float3(value: Float3) -> str:
     return ",".join(f"{component:.17g}" for component in value)
+
+
+def _format_projection_parameters(projection: Projection3D) -> str:
+    if isinstance(projection, OrthographicProjection3D):
+        return "|".join(
+            (
+                _format_float2(projection.xlim),
+                _format_float2(projection.ylim),
+            )
+        )
+    return "|".join(
+        (
+            f"{projection.fov_y_degrees:.17g}",
+            "" if projection.aspect_ratio is None else f"{projection.aspect_ratio:.17g}",
+        )
+    )
