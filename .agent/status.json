@@ -1,5 +1,5 @@
 {
-  "current_stage": "S047",
+  "current_stage": "S048",
   "stages": [
     {
       "id": "S001",
@@ -280,6 +280,12 @@
     {
       "id": "S047",
       "title": "Perspective View3D And Center-Dolly Zoom",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S048",
+      "title": "View3D Arcball Review Stabilization",
       "state": "completed",
       "progress": 100
     }
@@ -2039,6 +2045,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 196
+    },
+    {
+      "id": "M197",
+      "title": "S048 View3D arcball review stabilization",
+      "stage": "S048",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 197
     }
   ],
   "review_queue": [],
@@ -2136,8 +2151,8 @@
     }
   ],
   "recommendations": [
+    "S048 completed: Datoviz-style Matplotlib arcball and native Datoviz arcball review paths are approved for examples 07, 08, 10, 11, and 13 with no source changes required.",
     "S047 completed: perspective View3D is implemented for protocol, Matplotlib, Datoviz, review examples, and center-dolly wheel zoom.",
-    "Next review step: approve Datoviz-style Matplotlib arcball and native Datoviz arcball on examples 07, 08, 10, 11, and 13.",
     "S046 completed: 3D review examples now cover S044 mesh picking, OBJ-style flat Lambert mesh rendering, and deterministic View3D camera paths.",
     "Next branch is user choice: continue examples with producer-facing VisPy2 3D helpers, open Datoviz native mesh-pick evidence, or approve M131 release mechanics with target version/tag/publish scope.",
     "S045 completed: release-facing docs now summarize S034-S044 capability state and stop conditions.",
@@ -2149,6 +2164,7 @@
     "Optional hardening after M194 is a Datoviz native mesh-pick evidence spike, not public capability promotion."
   ],
   "notes": [
+    "M197 completed: validated examples 07, 08, 10, 11, and 13 offscreen with both Matplotlib and Datoviz, passed focused arcball/native-arcball tests, and kept Datoviz native arcball as live-review behavior only.",
     "M196 completed: accepted S047 perspective View3D direction, added PerspectiveProjection3D, renderer support, perspective review examples, and S037 center-dolly perspective zoom while keeping cursor-anchored perspective zoom deferred.",
     "M195 completed: added examples/review/12_view3d_mesh_pick.py, 13_view3d_suzanne_lambert.py, and 14_view3d_camera_path.py plus review README updates and focused offscreen validation.",
     "S046 completed for the first focused 3D examples pack; Datoviz mesh picking, strict opaque GPU depth, perspective, textures, and new public material semantics remain out of scope.",
