@@ -526,12 +526,25 @@ def render_mesh_visual(
     if vertex_depth is not None:
         _validate_mesh3d_opaque_colors(facecolors)
         if visual.depth_test is not DepthMode.DISABLED:
-            face_order = _mesh3d_face_depth_order(vertex_depth, visual.faces)
-            triangles = triangles[face_order]
-            facecolors = facecolors[face_order]
+            polygons, facecolors = _mesh3d_depth_polygons(
+                projected_positions=positions,
+                source_positions=np.asarray(visual.positions, dtype=np.float64),
+                faces=visual.faces,
+                facecolors=facecolors,
+                vertex_depth=vertex_depth,
+            )
+        else:
+            polygons = [
+                np.ascontiguousarray(triangle, dtype=np.float32)
+                for triangle in triangles
+            ]
+    else:
+        polygons = [
+            np.ascontiguousarray(triangle, dtype=np.float32) for triangle in triangles
+        ]
 
     collection = matplotlib.collections.PolyCollection(
-        [np.ascontiguousarray(triangle, dtype=np.float32) for triangle in triangles],
+        polygons,
         facecolors=_rgba_for_matplotlib(facecolors),
         edgecolors="none",
         closed=True,
@@ -800,11 +813,156 @@ def _validate_mesh3d_opaque_colors(colors: npt.NDArray[Any]) -> None:
         )
 
 
-def _mesh3d_face_depth_order(
-    vertex_depth: npt.NDArray[np.float64], faces: npt.NDArray[np.integer]
+def _mesh3d_depth_polygons(
+    *,
+    projected_positions: npt.NDArray[np.float64],
+    source_positions: npt.NDArray[np.float64],
+    faces: npt.NDArray[np.integer],
+    facecolors: npt.NDArray[Any],
+    vertex_depth: npt.NDArray[np.float64],
+) -> tuple[list[npt.NDArray[np.float32]], npt.NDArray[Any]]:
+    """Return painter-sorted 3D polygons, merging simple triangulated quads.
+
+    Matplotlib has no 3D depth buffer in this protocol reference path, so 3D
+    meshes use a painter fallback. Sorting every triangle independently can
+    split a logical quad face while orbiting a cube. Adjacent coplanar triangles
+    with identical resolved color are therefore drawn as one polygon.
+    """
+    edge_to_faces: dict[tuple[int, int], list[int]] = {}
+    for face_index, face in enumerate(faces):
+        indices = [int(index) for index in face]
+        for start, stop in ((0, 1), (1, 2), (2, 0)):
+            edge = (
+                min(indices[start], indices[stop]),
+                max(indices[start], indices[stop]),
+            )
+            edge_to_faces.setdefault(edge, []).append(face_index)
+
+    visited = np.zeros(faces.shape[0], dtype=np.bool_)
+    polygons: list[npt.NDArray[np.float32]] = []
+    colors: list[npt.NDArray[Any]] = []
+    depths: list[float] = []
+
+    for face_index, face in enumerate(faces):
+        if visited[face_index]:
+            continue
+        visited[face_index] = True
+        partner = _mesh3d_coplanar_quad_partner(
+            face_index=face_index,
+            source_positions=source_positions,
+            faces=faces,
+            facecolors=facecolors,
+            edge_to_faces=edge_to_faces,
+            visited=visited,
+        )
+        if partner is None:
+            face_indices = np.asarray(face, dtype=np.int64)
+            polygon = projected_positions[face_indices]
+            depth = float(np.mean(vertex_depth[face_indices]))
+        else:
+            visited[partner] = True
+            face_indices = _mesh3d_projected_quad_indices(
+                projected_positions=projected_positions,
+                first_face=face,
+                second_face=faces[partner],
+            )
+            polygon = projected_positions[face_indices]
+            depth = float(np.mean(vertex_depth[face_indices]))
+        polygons.append(np.ascontiguousarray(polygon, dtype=np.float32))
+        colors.append(np.asarray(facecolors[face_index]))
+        depths.append(depth)
+
+    order = np.argsort(-np.asarray(depths, dtype=np.float64), kind="stable")
+    sorted_polygons = [polygons[int(index)] for index in order]
+    sorted_colors = np.asarray([colors[int(index)] for index in order], dtype=facecolors.dtype)
+    return sorted_polygons, sorted_colors
+
+
+def _mesh3d_coplanar_quad_partner(
+    *,
+    face_index: int,
+    source_positions: npt.NDArray[np.float64],
+    faces: npt.NDArray[np.integer],
+    facecolors: npt.NDArray[Any],
+    edge_to_faces: dict[tuple[int, int], list[int]],
+    visited: npt.NDArray[np.bool_],
+) -> int | None:
+    face = faces[face_index]
+    indices = [int(index) for index in face]
+    candidates: list[int] = []
+    for start, stop in ((0, 1), (1, 2), (2, 0)):
+        edge = (
+            min(indices[start], indices[stop]),
+            max(indices[start], indices[stop]),
+        )
+        candidates.extend(
+            index
+            for index in edge_to_faces.get(edge, ())
+            if index != face_index and not visited[index]
+        )
+    for candidate in candidates:
+        if not _mesh3d_facecolors_match(facecolors[face_index], facecolors[candidate]):
+            continue
+        if _mesh3d_faces_form_coplanar_quad(
+            source_positions, face, faces[candidate]
+        ):
+            return int(candidate)
+    return None
+
+
+def _mesh3d_facecolors_match(first: npt.NDArray[Any], second: npt.NDArray[Any]) -> bool:
+    if np.issubdtype(np.asarray(first).dtype, np.floating) or np.issubdtype(
+        np.asarray(second).dtype, np.floating
+    ):
+        return bool(np.allclose(first, second, rtol=1.0e-6, atol=1.0e-8))
+    return bool(np.array_equal(first, second))
+
+
+def _mesh3d_faces_form_coplanar_quad(
+    source_positions: npt.NDArray[np.float64],
+    first_face: npt.NDArray[np.integer],
+    second_face: npt.NDArray[np.integer],
+) -> bool:
+    first = [int(index) for index in first_face]
+    second = [int(index) for index in second_face]
+    unique_indices = tuple(dict.fromkeys((*first, *second)))
+    if len(set(first).intersection(second)) != 2 or len(unique_indices) != 4:
+        return False
+    first_normal = _mesh3d_face_normal(source_positions[np.asarray(first)])
+    second_normal = _mesh3d_face_normal(source_positions[np.asarray(second)])
+    if first_normal is None or second_normal is None:
+        return False
+    if abs(float(np.dot(first_normal, second_normal))) < 1.0 - 1.0e-6:
+        return False
+    plane_point = source_positions[first[0]]
+    distances = (source_positions[np.asarray(unique_indices)] - plane_point) @ first_normal
+    return bool(np.all(np.abs(distances) <= 1.0e-6))
+
+
+def _mesh3d_face_normal(
+    vertices: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64] | None:
+    normal = np.cross(vertices[1] - vertices[0], vertices[2] - vertices[0])
+    norm = float(np.linalg.norm(normal))
+    if norm <= 1.0e-12:
+        return None
+    return np.asarray(normal / norm, dtype=np.float64)
+
+
+def _mesh3d_projected_quad_indices(
+    *,
+    projected_positions: npt.NDArray[np.float64],
+    first_face: npt.NDArray[np.integer],
+    second_face: npt.NDArray[np.integer],
 ) -> npt.NDArray[np.int64]:
-    face_depth = np.mean(vertex_depth[faces], axis=1)
-    return np.argsort(-face_depth, kind="stable")
+    unique_indices = np.asarray(
+        tuple(dict.fromkeys((*[int(index) for index in first_face], *[int(index) for index in second_face]))),
+        dtype=np.int64,
+    )
+    points = projected_positions[unique_indices]
+    center = np.mean(points, axis=0)
+    angles = np.arctan2(points[:, 1] - center[1], points[:, 0] - center[0])
+    return unique_indices[np.argsort(angles, kind="stable")]
 
 
 def _resolve_flat_lambert_facecolors(

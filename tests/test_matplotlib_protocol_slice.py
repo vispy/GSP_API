@@ -1174,6 +1174,73 @@ def test_render_mesh_visual_3d_orders_opaque_faces_far_to_near():
         plt.close(fig)
 
 
+def test_render_mesh_visual_3d_coalesces_coplanar_cube_triangles_for_painter_sort():
+    """A triangulated cube draws logical sides atomically in the Matplotlib 3D fallback."""
+    fig, ax = plt.subplots()
+    try:
+        positions = np.array(
+            [
+                [-1.0, -1.0, -1.0],
+                [1.0, -1.0, -1.0],
+                [1.0, 1.0, -1.0],
+                [-1.0, 1.0, -1.0],
+                [-1.0, -1.0, 1.0],
+                [1.0, -1.0, 1.0],
+                [1.0, 1.0, 1.0],
+                [-1.0, 1.0, 1.0],
+            ],
+            dtype=np.float32,
+        )
+        faces = np.array(
+            [
+                [0, 1, 2],
+                [0, 2, 3],
+                [4, 6, 5],
+                [4, 7, 6],
+                [0, 4, 5],
+                [0, 5, 1],
+                [1, 5, 6],
+                [1, 6, 2],
+                [2, 6, 7],
+                [2, 7, 3],
+                [3, 7, 4],
+                [3, 4, 0],
+            ],
+            dtype=np.uint32,
+        )
+        colors = np.repeat(
+            np.array(
+                [
+                    [69, 123, 157, 255],
+                    [42, 157, 143, 255],
+                    [230, 57, 70, 255],
+                    [244, 162, 97, 255],
+                    [38, 70, 83, 255],
+                    [131, 197, 190, 255],
+                ],
+                dtype=np.uint8,
+            ),
+            2,
+            axis=0,
+        )
+        visual = MeshVisual(
+            id="visual:cube",
+            positions=positions,
+            faces=faces,
+            coordinate_space=CoordinateSpace.NDC,
+            color=colors,
+            color_mode=MeshColorMode.FACE,
+        )
+
+        artist = render_mesh_visual(ax, visual)
+
+        assert len(artist.get_paths()) == 6
+        assert all(path.vertices.shape == (5, 2) for path in artist.get_paths())
+        assert artist.get_facecolors().shape == (6, 4)
+    finally:
+        plt.close(fig)
+
+
 def test_render_mesh_visual_3d_depth_disabled_preserves_face_order():
     """Disabled depth uses declared face order for 3D MeshVisual rendering."""
     fig, ax = plt.subplots()
