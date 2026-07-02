@@ -257,7 +257,7 @@
       "id": "S043",
       "title": "Datoviz Panel Frame, Guide Strictness, And Retained View3D",
       "state": "active",
-      "progress": 68
+      "progress": 84
     }
   ],
   "missions": [
@@ -1930,9 +1930,9 @@
       "id": "M187",
       "title": "S043 Datoviz retained DATA-space View3D visuals",
       "stage": "S043",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 187
     },
     {
