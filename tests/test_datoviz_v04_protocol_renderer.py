@@ -43,6 +43,7 @@ from gsp.protocol import (
     ColorMapId,
     ColorMapRef,
     ColorScale,
+    DepthMode,
     LinearNormalize,
     GUIDE_QUERY_PAYLOAD_KIND,
     GuideQueryPayload,
@@ -69,6 +70,7 @@ from gsp.protocol import (
     View3D,
     View3DDiagnosticCode,
     VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
+    VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY,
     DirectionalLight3D,
     OrthographicProjection3D,
     VisualFamily,
@@ -87,6 +89,7 @@ from gsp_datoviz.capabilities import (
     datoviz_v04_capture_diagnostics,
     datoviz_v04_capture_ready,
     datoviz_v04_grid_clip_to_plot_rect_ready_for_source,
+    datoviz_v04_view3d_retained_data_diagnostics,
     gsp_capability_snapshot_from_datoviz,
 )
 from gsp_datoviz.protocol_renderer import (
@@ -106,6 +109,7 @@ from gsp_datoviz.protocol_renderer import (
     datoviz_v04_text_ready,
     datoviz_v04_view3d_camera_diagnostics,
     datoviz_v04_view3d_live_navigation_diagnostics,
+    datoviz_v04_view3d_retained_data_ready,
     import_datoviz_v04,
     is_datoviz_v04_facade,
     _DatovizLiveView2DNavigation,
@@ -1043,6 +1047,158 @@ class FakeDatovizV04WithMesh(FakeDatovizV04WithQueryCapabilities):
     def dvz_visual_set_depth_test(self, visual, enabled):
         self.calls.append(("set_depth_test", visual, enabled))
         return 0
+
+
+class FakeDatovizV04WithRetainedView3D(FakeDatovizV04WithMesh):
+    DvzPanelView3DDesc = object
+
+    class DvzPanelView3DState:
+        def __init__(self):
+            self.view_id = 0
+            self.revision = 0
+            self.enabled = False
+            self.view = SimpleNamespace(
+                eye=[0.0, 0.0, 0.0],
+                target=[0.0, 0.0, 0.0],
+                up=[0.0, 1.0, 0.0],
+            )
+            self.projection = SimpleNamespace(
+                type=0,
+                near_clip=0.0,
+                far_clip=1.0,
+                ortho_height=2.0,
+            )
+            self.has_explicit_orthographic_bounds = False
+            self.orthographic_bounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    def __init__(self):
+        super().__init__()
+        self.view3d_revision = 0
+        self.view3d_view_id = 0x43
+        self.camera_handle = "retained-panel-camera"
+        self.camera_view = SimpleNamespace(
+            eye=[0.0, 0.0, 0.0],
+            target=[0.0, 0.0, 0.0],
+            up=[0.0, 1.0, 0.0],
+        )
+        self.camera_projection = SimpleNamespace(
+            type=0,
+            near_clip=0.0,
+            far_clip=1.0,
+            ortho_height=2.0,
+        )
+        self.orthographic_bounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        self.has_explicit_orthographic_bounds = False
+
+    def dvz_panel_view3d_desc(self):
+        self.calls.append(("panel_view3d_desc",))
+        return SimpleNamespace(camera=self.dvz_camera_desc())
+
+    def dvz_panel_set_view3d_desc(self, panel, desc):
+        self.calls.append(
+            (
+                "panel_set_view3d_desc",
+                panel,
+                tuple(desc.camera.view.eye),
+                tuple(desc.camera.view.target),
+                tuple(desc.camera.view.up),
+                desc.camera.projection.type,
+                desc.camera.projection.near_clip,
+                desc.camera.projection.far_clip,
+                desc.camera.projection.ortho_height,
+            )
+        )
+        self.camera_view = SimpleNamespace(
+            eye=list(desc.camera.view.eye),
+            target=list(desc.camera.view.target),
+            up=list(desc.camera.view.up),
+        )
+        self.camera_projection = SimpleNamespace(
+            type=desc.camera.projection.type,
+            near_clip=desc.camera.projection.near_clip,
+            far_clip=desc.camera.projection.far_clip,
+            ortho_height=desc.camera.projection.ortho_height,
+        )
+        self.view3d_revision += 1
+        return 0
+
+    def dvz_panel_camera(self, panel):
+        self.calls.append(("panel_camera", panel))
+        return self.camera_handle
+
+    def dvz_camera_set_view(self, camera, view):
+        self.calls.append(
+            (
+                "camera_set_view",
+                camera,
+                tuple(view.eye),
+                tuple(view.target),
+                tuple(view.up),
+            )
+        )
+        self.camera_view = SimpleNamespace(
+            eye=list(view.eye),
+            target=list(view.target),
+            up=list(view.up),
+        )
+        self.view3d_revision += 1
+        return None
+
+    def dvz_camera_get_view(self, camera, out):
+        vars(out).update(vars(self.camera_view))
+        return None
+
+    def dvz_camera_get_projection(self, camera, out):
+        vars(out).update(vars(self.camera_projection))
+        return None
+
+    def dvz_camera_get_orthographic_bounds(
+        self, camera, out_left, out_right, out_bottom, out_top, out_near, out_far
+    ):
+        return 0 if self.has_explicit_orthographic_bounds else -1
+
+    def dvz_camera_set_orthographic_bounds(
+        self, camera, left, right, bottom, top, near, far
+    ):
+        self.calls.append(
+            (
+                "camera_set_orthographic_bounds",
+                camera,
+                left,
+                right,
+                bottom,
+                top,
+                near,
+                far,
+            )
+        )
+        self.orthographic_bounds = [left, right, bottom, top, near, far]
+        self.has_explicit_orthographic_bounds = True
+        self.camera_projection.near_clip = near
+        self.camera_projection.far_clip = far
+        self.camera_projection.ortho_height = abs(top - bottom)
+        self.view3d_revision += 1
+        return 0
+
+    def dvz_panel_view3d_state(self, panel, out):
+        self.calls.append(("panel_view3d_state", panel))
+        out.view_id = self.view3d_view_id
+        out.revision = self.view3d_revision
+        out.enabled = True
+        out.view = SimpleNamespace(
+            eye=list(self.camera_view.eye),
+            target=list(self.camera_view.target),
+            up=list(self.camera_view.up),
+        )
+        out.projection = SimpleNamespace(
+            type=self.camera_projection.type,
+            near_clip=self.camera_projection.near_clip,
+            far_clip=self.camera_projection.far_clip,
+            ortho_height=self.camera_projection.ortho_height,
+        )
+        out.has_explicit_orthographic_bounds = self.has_explicit_orthographic_bounds
+        out.orthographic_bounds = list(self.orthographic_bounds)
+        return True
 
 
 class FakeDatovizV04WithColorbar(FakeDatovizV04):
@@ -3298,6 +3454,157 @@ def test_add_mesh_visual_projects_data_positions3d_to_panel_ndc_for_datoviz_mesh
     assert add_visual_call[3].controller_mode == 1
 
 
+def test_add_mesh_visual_uses_retained_data_space_view3d_path_when_available():
+    fake = FakeDatovizV04WithRetainedView3D()
+    view3d = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
+    visual = MeshVisual(
+        id="visual:retained-mesh-3d",
+        positions=np.array(
+            [[0.0, 0.0, 0.0], [0.5, 0.0, 0.25], [0.0, 0.5, 0.5]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        depth_test=DepthMode.ENABLED,
+    )
+
+    renderer.add_mesh_visual(visual)
+
+    assert datoviz_v04_view3d_retained_data_ready(fake)
+    assert datoviz_v04_view3d_retained_data_diagnostics(fake) == ()
+    assert _calls(fake, "panel_set_view3d_desc")
+    np.testing.assert_allclose(_calls(fake, "set_data")[0][3], visual.positions)
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", True)]
+    add_visual_call = _calls(fake, "add_visual")[-1]
+    assert add_visual_call[3].coord_space == 1
+    assert add_visual_call[3].controller_mode == 0
+    assert renderer.retained_view3d_meshes[0].visual_id == visual.id
+    assert renderer.retained_view3d_update_stats.vertex_uploads == 1
+    assert renderer.retained_view3d_update_stats.index_uploads == 1
+    assert renderer.retained_view3d_update_stats.visual_rebuilds == 1
+
+
+def test_retained_view3d_navigation_updates_camera_without_reuploading_mesh_buffers():
+    fake = FakeDatovizV04WithRetainedView3D()
+    view3d = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
+    renderer.add_mesh_visual(
+        MeshVisual(
+            id="visual:retained-mesh-3d",
+            positions=np.array(
+                [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.DATA,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        )
+    )
+    baseline_call_count = len(fake.calls)
+    baseline_vertex_uploads = renderer.retained_view3d_update_stats.vertex_uploads
+    baseline_index_uploads = renderer.retained_view3d_update_stats.index_uploads
+    baseline_visual_rebuilds = renderer.retained_view3d_update_stats.visual_rebuilds
+    baseline_uniform_updates = (
+        renderer.retained_view3d_update_stats.view_projection_uniform_updates
+    )
+    next_view = View3D(
+        id=view3d.id,
+        panel_id=view3d.panel_id,
+        camera=Camera3D(
+            eye=(2.0, 2.0, 3.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-2.0, 2.0),
+            ylim=(-1.0, 1.0),
+            near_far=(0.2, 50.0),
+        ),
+        revision=view3d.revision + 1,
+    )
+
+    snapshot = renderer.apply_retained_view3d_navigation(next_view)
+
+    new_calls = fake.calls[baseline_call_count:]
+    assert _calls_from(new_calls, "camera_set_view") == [
+        (
+            "camera_set_view",
+            "retained-panel-camera",
+            (2.0, 2.0, 3.0),
+            (0.0, 0.0, 0.0),
+            (0.0, 1.0, 0.0),
+        )
+    ]
+    assert _calls_from(new_calls, "camera_set_orthographic_bounds") == [
+        (
+            "camera_set_orthographic_bounds",
+            "retained-panel-camera",
+            -2.0,
+            2.0,
+            -1.0,
+            1.0,
+            0.2,
+            50.0,
+        )
+    ]
+    assert not _calls_from(new_calls, "set_data")
+    assert not _calls_from(new_calls, "set_index_data")
+    assert not _calls_from(new_calls, "mesh")
+    assert not _calls_from(new_calls, "add_visual")
+    assert renderer.visuals["visual:retained-mesh-3d"] == "mesh-visual"
+    assert renderer.retained_view3d_update_stats.vertex_uploads == baseline_vertex_uploads
+    assert renderer.retained_view3d_update_stats.index_uploads == baseline_index_uploads
+    assert renderer.retained_view3d_update_stats.visual_rebuilds == baseline_visual_rebuilds
+    assert (
+        renderer.retained_view3d_update_stats.view_projection_uniform_updates
+        == baseline_uniform_updates + 1
+    )
+    assert snapshot["native_revision"] > 0
+    assert snapshot["camera_eye"] == (2.0, 2.0, 3.0)
+    assert snapshot["orthographic_bounds"] == (-2.0, 2.0, -1.0, 1.0, 0.2, 50.0)
+
+
+def test_retained_view3d_state_readback_reports_snapshot_identity():
+    fake = FakeDatovizV04WithRetainedView3D()
+    view3d = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
+
+    snapshot = renderer.resolve_retained_view3d_state_snapshot(
+        layout_snapshot_id="layout:datoviz:2a"
+    )
+    expected = resolve_view3d_projection_snapshot(
+        view3d, layout_snapshot_id="layout:datoviz:2a"
+    )
+
+    assert snapshot["enabled"] is True
+    assert snapshot["native_view_id"] == 0x43
+    assert snapshot["layout_snapshot_id"] == "layout:datoviz:2a"
+    assert (
+        snapshot["view_projection_snapshot_id"]
+        == expected.view_projection_snapshot_id
+    )
+    assert snapshot["camera_eye"] == view3d.camera.eye
+    assert renderer.retained_view3d_update_stats.snapshot_resolves == 1
+
+    ray = renderer.query_view3d_ray_context(
+        QueryRequest(
+            id="query:retained-ray",
+            panel_id="panel:main",
+            coordinate=(64.0, 64.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            layout_snapshot_id=str(snapshot["layout_snapshot_id"]),
+            view_snapshot_id=str(snapshot["view_projection_snapshot_id"]),
+        ),
+        layout_snapshot_id=str(snapshot["layout_snapshot_id"]),
+    )
+
+    assert ray.status == QueryStatus.HIT
+    assert ray.layout_snapshot_id == snapshot["layout_snapshot_id"]
+    assert ray.view_snapshot_id == snapshot["view_projection_snapshot_id"]
+
+
 def test_add_mesh_visual_orders_ndc3_faces_for_adapted_datoviz_depth():
     fake = FakeDatovizV04WithMesh()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
@@ -3470,12 +3777,25 @@ def test_datoviz_capabilities_advertise_s040_lambert_cpu_resolve_when_view3d_rea
     caps = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh()).capabilities()
 
     assert MESH3D_OPAQUE_DEPTH_CAPABILITY not in caps.view3d_capabilities
+    assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY not in caps.view3d_capabilities
     assert MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMALS_FACE3D_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY in caps.view3d_capabilities
     assert VIEW3D_LIGHT_AMBIENT_CAPABILITY in caps.view3d_capabilities
     assert VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY in caps.view3d_capabilities
     assert "flat_lambert_cpu_resolved_strict" in caps.metadata["s040_flat_lambert"]
+
+
+def test_datoviz_capabilities_advertise_retained_view3d_data_space_when_ready():
+    caps = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithRetainedView3D()
+    ).capabilities()
+
+    assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY in caps.view3d_capabilities
+    assert caps.supports_view3d_capability(
+        VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY
+    )
+    assert "view3d_retained_data_space_visuals" in caps.metadata
 
 
 def test_datoviz_capabilities_do_not_advertise_s040_lambert_without_view3d_binding():

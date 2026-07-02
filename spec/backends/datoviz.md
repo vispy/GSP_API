@@ -121,19 +121,22 @@ Evidence required for the support claim:
   `query.view3d.ray_readback.v1`;
 - public API does not expose Datoviz camera, controller, draw-state, or material names.
 
-The current protocol renderer lowers Datoviz 3D mesh rendering through CPU-projected GSP panel NDC
-and adapted face ordering, so it does not claim strict `meshvisual.positions3d.opaque_depth.v1`.
+The protocol renderer prefers a retained DATA-space View3D mesh path when the Datoviz binding
+exposes `DvzPanelView3DDesc`, `DvzPanelView3DState`, `dvz_panel_set_view3d_desc()`,
+`dvz_panel_view3d_state()`, `dvz_panel_camera()`, and camera view/projection readback/update
+symbols. In that path, DATA `(N,3)` mesh vertices are uploaded unchanged, attached with panel DATA
+coordinates, and ordinary camera/projection updates touch retained View3D state only. Older bindings
+fall back to CPU-projected GSP panel NDC and adapted face ordering. Neither path claims strict
+`meshvisual.positions3d.opaque_depth.v1`.
 
-GSP lowers `View3D.camera` through `dvz_panel_set_camera()` and lowers
-`OrthographicProjection3D.xlim`, `.ylim`, and `.near_far` directly through
-`dvz_camera_set_orthographic_bounds()`. Datoviz `query.view3d.ray_readback.v1` returns canonical
-ray-context payloads from public `View3D` state and snapshot ids.
+GSP lowers retained `View3D.camera` through `dvz_panel_set_view3d_desc()` on setup and
+`dvz_camera_set_view()` on updates, and lowers `OrthographicProjection3D.xlim`, `.ylim`, and
+`.near_far` through `dvz_camera_set_orthographic_bounds()`. Datoviz
+`query.view3d.ray_readback.v1` returns canonical ray-context payloads from public `View3D` state and
+snapshot ids.
 
-Datoviz live `View3D` navigation remains unsupported in the protocol renderer. The renderer uploads
-3D meshes as CPU-projected panel-NDC positions with fixed controller mode; updating only the native
-camera would not move those retained mesh buffers, and reprojecting/reuploading positions on every
-mouse event would not satisfy the retained View3D navigation boundary. The live review runner
-therefore opens a static Datoviz `View3D` window and reports this diagnostic. GPU 3D visual picking,
+Datoviz live `View3D` navigation remains unsupported in the protocol renderer until M188 wires
+canonical action/input replay on top of the retained DATA-space substrate. GPU 3D visual picking,
 materials, lights, textures, perspective, and culling remain deferred.
 
 ## S040 flat Lambert CPU resolve

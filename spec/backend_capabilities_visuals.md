@@ -169,20 +169,23 @@ sorting faces far-to-near by average panel-NDC z. This is not strict GPU fragmen
 
 Datoviz v0.4 may claim `view3d.static.orthographic.v1`,
 `meshvisual.positions3d.data.view3d.v1`, and `meshvisual.positions3d.ndc.v1` for local builds with
-the P022 camera ctypes layouts and explicit orthographic-bounds API. Its current protocol renderer
-uses adapted CPU projection plus face ordering for meshes, so it must not claim
-`meshvisual.positions3d.opaque_depth.v1`. Older builds must continue reporting structured
+the P022 camera ctypes layouts and explicit orthographic-bounds API. Builds that also expose the
+revisioned panel `View3D` descriptor/state APIs may claim
+`view3d.retained_data_space_visuals.v1`: DATA `(N,3)` mesh vertices stay in DATA space, attach to
+the retained panel View3D, and ordinary camera/projection updates do not rewrite unchanged vertex or
+index buffers. Builds without that retained descriptor/state path use the adapted CPU projection
+path for DATA meshes. Datoviz must not claim `meshvisual.positions3d.opaque_depth.v1` until strict
+GPU less-depth behavior is independently proven. Older builds must continue reporting structured
 unsupported diagnostics rather than silently flattening z or exposing backend-native camera objects.
 
 Datoviz may claim `query.view3d.ray_readback.v1` for canonical ray-context payload generation when
 the same P022 camera binding is available. This capability does not imply GPU visual hit picking for
 3D meshes.
 
-Datoviz must not claim `view3d.navigation.orbit_pan_zoom.v1` for the current protocol renderer. The
-live review API reports `DatovizV04Unavailable` because 3D meshes are uploaded as CPU-projected
-panel-NDC positions with fixed controller mode. Canonical retained View3D navigation requires a
-native DATA-space mesh path or another proven retained update path that does not rebuild or reupload
-unchanged visual buffers on every orbit/pan/zoom.
+Datoviz must not claim `view3d.navigation.orbit_pan_zoom.v1` until the retained DATA-space visual
+path is wired to canonical action/input replay. `view3d.retained_data_space_visuals.v1` is only the
+substrate: it proves stable visual identity, retained camera/projection updates, and no unchanged
+mesh buffer rewrites during ordinary View3D state changes.
 
 ## S038 MeshVisual material boundary and S039 Lambert extension
 

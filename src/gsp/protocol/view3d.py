@@ -18,6 +18,9 @@ MESH3D_DATA_VIEW3D_CAPABILITY = "meshvisual.positions3d.data.view3d.v1"
 MESH3D_NDC_CAPABILITY = "meshvisual.positions3d.ndc.v1"
 MESH3D_OPAQUE_DEPTH_CAPABILITY = "meshvisual.positions3d.opaque_depth.v1"
 QUERY_VIEW3D_RAY_READBACK_CAPABILITY = "query.view3d.ray_readback.v1"
+VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY = (
+    "view3d.retained_data_space_visuals.v1"
+)
 VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY = "view3d.navigation.orbit_pan_zoom.v1"
 VIEW3D_LIGHT_AMBIENT_CAPABILITY = "view3d.light.ambient.v1"
 VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY = "view3d.light.directional.v1"

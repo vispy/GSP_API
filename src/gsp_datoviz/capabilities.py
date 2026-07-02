@@ -34,6 +34,7 @@ from gsp.protocol import (
     TransformPlacement,
     VIEW3D_LIGHT_AMBIENT_CAPABILITY,
     VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY,
+    VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY,
     VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
 )
 from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics
@@ -85,6 +86,19 @@ _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS = (
     "dvz_camera_desc",
     "dvz_panel_set_camera",
     "dvz_camera_set_orthographic_bounds",
+)
+
+_REQUIRED_DVZ_VIEW3D_RETAINED_DATA_FUNCTIONS = (
+    "DvzPanelView3DDesc",
+    "DvzPanelView3DState",
+    "dvz_panel_view3d_desc",
+    "dvz_panel_set_view3d_desc",
+    "dvz_panel_view3d_state",
+    "dvz_panel_camera",
+    "dvz_camera_set_view",
+    "dvz_camera_get_view",
+    "dvz_camera_get_projection",
+    "dvz_camera_get_orthographic_bounds",
 )
 
 _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS = (
@@ -391,6 +405,7 @@ def gsp_capability_snapshot_from_datoviz(
         metadata["query_support"] = "data-scope point/image query queue, poll, and decode binding available"
 
     view3d_diagnostics = _datoviz_v04_view3d_binding_diagnostics(dvz)
+    retained_view3d_diagnostics = datoviz_v04_view3d_retained_data_diagnostics(dvz)
     view3d_capabilities: tuple[str, ...] = ()
     if view3d_diagnostics:
         metadata["datoviz_view3d_binding_diagnostics"] = view3d_diagnostics
@@ -406,6 +421,18 @@ def gsp_capability_snapshot_from_datoviz(
             VIEW3D_LIGHT_AMBIENT_CAPABILITY,
             VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY,
         )
+        if not retained_view3d_diagnostics:
+            view3d_capabilities = (
+                *view3d_capabilities,
+                VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY,
+            )
+            metadata["view3d_retained_data_space_visuals"] = (
+                "native DATA-space mesh attachments with retained camera/projection updates"
+            )
+        else:
+            metadata["datoviz_view3d_retained_data_diagnostics"] = (
+                retained_view3d_diagnostics
+            )
         query_modes = (*query_modes, "view3d-ray")
         metadata["view3d_support"] = (
             "static orthographic View3D mesh rendering and canonical ray-context payloads"
@@ -540,6 +567,22 @@ def _datoviz_v04_view3d_binding_diagnostics(dvz: ModuleType | Any | None) -> tup
         f"missing {name}"
         for name in _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS
         if not hasattr(dvz, name)
+    )
+
+
+def datoviz_v04_view3d_retained_data_diagnostics(
+    dvz: ModuleType | Any | None,
+) -> tuple[str, ...]:
+    """Return why retained DATA-space View3D visual attachment is unavailable."""
+    if dvz is None:
+        return ("Datoviz is not importable",)
+    return (
+        *_datoviz_v04_view3d_binding_diagnostics(dvz),
+        *(
+            f"missing {name}"
+            for name in _REQUIRED_DVZ_VIEW3D_RETAINED_DATA_FUNCTIONS
+            if not callable(getattr(dvz, name, None))
+        ),
     )
 
 

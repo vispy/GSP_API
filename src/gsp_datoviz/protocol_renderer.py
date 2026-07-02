@@ -168,6 +168,19 @@ _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS = (
     "dvz_camera_set_orthographic_bounds",
 )
 
+_REQUIRED_DVZ_VIEW3D_RETAINED_DATA_FUNCTIONS = (
+    "DvzPanelView3DDesc",
+    "DvzPanelView3DState",
+    "dvz_panel_view3d_desc",
+    "dvz_panel_set_view3d_desc",
+    "dvz_panel_view3d_state",
+    "dvz_panel_camera",
+    "dvz_camera_set_view",
+    "dvz_camera_get_view",
+    "dvz_camera_get_projection",
+    "dvz_camera_get_orthographic_bounds",
+)
+
 _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS = (
     "DvzPanelFrameInfo",
     "DvzGuideLayout",
@@ -446,6 +459,25 @@ def datoviz_v04_view3d_camera_diagnostics(module: ModuleType | Any) -> tuple[str
     )
 
 
+def datoviz_v04_view3d_retained_data_diagnostics(
+    module: ModuleType | Any,
+) -> tuple[str, ...]:
+    """Return why retained DATA-space View3D visual attachment is unavailable."""
+    return (
+        *datoviz_v04_view3d_camera_diagnostics(module),
+        *(
+            f"missing {name}"
+            for name in _REQUIRED_DVZ_VIEW3D_RETAINED_DATA_FUNCTIONS
+            if not callable(getattr(module, name, None))
+        ),
+    )
+
+
+def datoviz_v04_view3d_retained_data_ready(module: ModuleType | Any) -> bool:
+    """Return whether Datoviz can keep 3D vertices in DATA space under View3D."""
+    return not datoviz_v04_view3d_retained_data_diagnostics(module)
+
+
 def datoviz_v04_panel_frame_snapshot_diagnostics(
     module: ModuleType | Any,
 ) -> tuple[str, ...]:
@@ -487,14 +519,19 @@ def datoviz_v04_view3d_live_navigation_diagnostics(
     """Return why Datoviz View3D live navigation is unavailable."""
     diagnostics = [
         *datoviz_v04_live_input_diagnostics(module),
-        *datoviz_v04_view3d_camera_diagnostics(module),
     ]
-    diagnostics.append(
-        "Datoviz View3D live navigation is unavailable because the current "
-        "protocol renderer uploads CPU-projected panel-NDC mesh positions with "
-        "fixed controller mode; retained orbit/pan/zoom would require either a "
-        "native DATA-space mesh path or per-navigation visual buffer reupload"
-    )
+    retained_diagnostics = datoviz_v04_view3d_retained_data_diagnostics(module)
+    if retained_diagnostics:
+        diagnostics.extend(retained_diagnostics)
+        diagnostics.append(
+            "Datoviz View3D live navigation is unavailable because the current "
+            "protocol renderer would need CPU-projected panel-NDC mesh positions "
+            "without the retained DATA-space View3D visual path"
+        )
+    else:
+        diagnostics.append(
+            "Datoviz View3D live navigation input/action wiring is deferred until M188"
+        )
     return tuple(diagnostics)
 
 
@@ -587,7 +624,28 @@ def _configure_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> An
             "Datoviz View3D camera binding is unavailable: " + "; ".join(diagnostics)
         )
 
+    if datoviz_v04_view3d_retained_data_ready(dvz):
+        desc = dvz.dvz_panel_view3d_desc()
+        _fill_datoviz_camera_desc(dvz, desc.camera, view3d)
+        result = dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(desc))
+        if result not in (0, None, True):
+            raise DatovizV04Unsupported("Datoviz retained View3D descriptor setup failed")
+        camera = dvz.dvz_panel_camera(panel)
+        if _is_null_handle(camera):
+            raise DatovizV04Unsupported("Datoviz retained View3D panel camera is unavailable")
+        _set_datoviz_camera_orthographic_bounds(dvz, camera, view3d)
+        return camera
+
     desc = dvz.dvz_camera_desc()
+    _fill_datoviz_camera_desc(dvz, desc, view3d)
+    camera = dvz.dvz_panel_set_camera(panel, _ctypes_pointer_arg(desc))
+    if _is_null_handle(camera):
+        raise DatovizV04Unsupported("Datoviz View3D panel camera allocation failed")
+    _set_datoviz_camera_orthographic_bounds(dvz, camera, view3d)
+    return camera
+
+
+def _fill_datoviz_camera_desc(dvz: Any, desc: Any, view3d: View3D) -> None:
     for index, value in enumerate(view3d.camera.eye):
         desc.view.eye[index] = float(value)
     for index, value in enumerate(view3d.camera.target):
@@ -603,9 +661,10 @@ def _configure_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> An
         abs(view3d.projection.ylim[1] - view3d.projection.ylim[0])
     )
 
-    camera = dvz.dvz_panel_set_camera(panel, _ctypes_pointer_arg(desc))
-    if _is_null_handle(camera):
-        raise DatovizV04Unsupported("Datoviz View3D panel camera allocation failed")
+
+def _set_datoviz_camera_orthographic_bounds(
+    dvz: Any, camera: Any, view3d: View3D
+) -> None:
     x0, x1 = view3d.projection.xlim
     y0, y1 = view3d.projection.ylim
     near, far = view3d.projection.near_far
@@ -614,7 +673,13 @@ def _configure_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> An
     )
     if result not in (0, None, True):
         raise DatovizV04Unsupported("Datoviz View3D orthographic bounds setup failed")
-    return camera
+
+
+def _update_datoviz_view3d_camera(dvz: Any, camera: Any, view3d: View3D) -> None:
+    desc = dvz.dvz_camera_desc()
+    _fill_datoviz_camera_desc(dvz, desc, view3d)
+    dvz.dvz_camera_set_view(camera, _ctypes_pointer_arg(desc.view))
+    _set_datoviz_camera_orthographic_bounds(dvz, camera, view3d)
 
 
 def _resolve_datoviz_canvas_size(dvz: Any, requested: CanvasSize) -> ResolvedCanvas:
@@ -752,6 +817,25 @@ class _RetainedView2DPositionUpload:
     coordinate_space: CoordinateSpace
 
 
+@dataclass
+class DatovizRetainedView3DUpdateStats:
+    """Counters proving retained View3D updates avoid unchanged visual buffer writes."""
+
+    vertex_uploads: int = 0
+    index_uploads: int = 0
+    visual_rebuilds: int = 0
+    view_projection_uniform_updates: int = 0
+    snapshot_resolves: int = 0
+
+
+@dataclass
+class _RetainedView3DMeshAttachment:
+    """Native DATA-space 3D mesh attached to a retained Datoviz View3D."""
+
+    visual_id: str
+    native_visual: Any
+
+
 @dataclass(frozen=True)
 class _DatovizView2DAxisState:
     """Native Datoviz axis handles and semantic configuration for one View2D."""
@@ -805,9 +889,16 @@ class DatovizV04ProtocolRenderer:
     retained_view2d_position_uploads: list[_RetainedView2DPositionUpload] = field(
         default_factory=list, init=False
     )
+    retained_view3d_meshes: list[_RetainedView3DMeshAttachment] = field(
+        default_factory=list, init=False
+    )
+    retained_view3d_update_stats: DatovizRetainedView3DUpdateStats = field(
+        default_factory=DatovizRetainedView3DUpdateStats, init=False
+    )
     view2d_axis_state: _DatovizView2DAxisState | None = field(
         default=None, init=False
     )
+    native_view3d_camera: Any | None = field(default=None, init=False)
     transform_adaptations: dict[str, tuple[str, ...]] = field(
         default_factory=dict, init=False
     )
@@ -850,7 +941,10 @@ class DatovizV04ProtocolRenderer:
         if self.view is not None:
             self.apply_datoviz_data_view2d(self.view)
         if self.view3d is not None:
-            _configure_datoviz_view3d_camera(self.dvz, self.panel, self.view3d)
+            self.native_view3d_camera = _configure_datoviz_view3d_camera(
+                self.dvz, self.panel, self.view3d
+            )
+            self.retained_view3d_update_stats.view_projection_uniform_updates += 1
 
     def capabilities(self) -> CapabilitySnapshot:
         """Return the capability snapshot for this adapter slice."""
@@ -1259,7 +1353,16 @@ class DatovizV04ProtocolRenderer:
 
         face_order: npt.NDArray[np.int64] | None = None
         adapted_positions: npt.NDArray[np.float32] | npt.NDArray[np.float64]
-        if is_3d_mesh:
+        retained_view3d_data_path = (
+            is_3d_mesh
+            and visual.coordinate_space is CoordinateSpace.DATA
+            and datoviz_v04_view3d_retained_data_ready(self.dvz)
+        )
+        if retained_view3d_data_path:
+            adapted_positions = np.ascontiguousarray(
+                np.asarray(visual.positions, dtype=np.float32)
+            )
+        elif is_3d_mesh:
             adapted_positions = _datoviz_mesh3d_panel_ndc_positions(
                 visual, view3d=self.view3d
             )
@@ -1292,8 +1395,14 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
         _set_visual_index_data(self.dvz, dvz_visual, indices)
+        if is_3d_mesh:
+            self.retained_view3d_update_stats.vertex_uploads += 1
+            self.retained_view3d_update_stats.index_uploads += 1
+            self.retained_view3d_update_stats.visual_rebuilds += 1
         native_depth_test = (
-            False if is_3d_mesh else visual.depth_test is DepthMode.ENABLED
+            visual.depth_test is DepthMode.ENABLED
+            if retained_view3d_data_path
+            else False if is_3d_mesh else visual.depth_test is DepthMode.ENABLED
         )
         result = self.dvz.dvz_visual_set_depth_test(dvz_visual, native_depth_test)
         if result not in (0, None, True):
@@ -1306,15 +1415,27 @@ class DatovizV04ProtocolRenderer:
             _visual_attach_desc(
                 self.dvz,
                 coord_space=(
-                    "view"
+                    "data"
+                    if retained_view3d_data_path
+                    else "view"
                     if is_3d_mesh
                     else self._visual_coord_space(visual.coordinate_space)
                 ),
                 z_layer=round(visual.order),
-                controller_mode="fixed" if is_3d_mesh else "apply",
+                controller_mode=(
+                    "apply" if retained_view3d_data_path
+                    else "fixed" if is_3d_mesh else "apply"
+                ),
             ),
         )
         self.visuals[visual.id] = dvz_visual
+        if retained_view3d_data_path:
+            self.retained_view3d_meshes.append(
+                _RetainedView3DMeshAttachment(
+                    visual_id=visual.id,
+                    native_visual=dvz_visual,
+                )
+            )
         return dvz_visual
 
     def add_text_visual(self, visual: TextVisual) -> Any:
@@ -2063,6 +2184,65 @@ class DatovizV04ProtocolRenderer:
         panel_view = self.apply_datoviz_data_view2d(view)
         self.update_view2d_axes(view)
         return panel_view
+
+    def apply_retained_view3d_navigation(self, view3d: View3D) -> dict[str, object]:
+        """Apply an accepted S037 View3D state as retained camera/projection updates."""
+        diagnostics = datoviz_v04_view3d_retained_data_diagnostics(self.dvz)
+        if diagnostics:
+            raise DatovizV04Unavailable(
+                "Datoviz retained View3D DATA-space visual path is unavailable: "
+                + "; ".join(diagnostics)
+            )
+        if self.native_view3d_camera is None:
+            self.native_view3d_camera = self.dvz.dvz_panel_camera(self.panel)
+        if _is_null_handle(self.native_view3d_camera):
+            raise DatovizV04Unsupported("Datoviz retained View3D panel camera is unavailable")
+        _update_datoviz_view3d_camera(self.dvz, self.native_view3d_camera, view3d)
+        self.view3d = view3d
+        self.retained_view3d_update_stats.view_projection_uniform_updates += 1
+        return self.resolve_retained_view3d_state_snapshot()
+
+    def resolve_retained_view3d_state_snapshot(
+        self, *, layout_snapshot_id: str = "layout:datoviz"
+    ) -> dict[str, object]:
+        """Read back retained Datoviz View3D state and canonical GSP snapshot identity."""
+        diagnostics = datoviz_v04_view3d_retained_data_diagnostics(self.dvz)
+        if diagnostics:
+            raise DatovizV04Unavailable(
+                "Datoviz retained View3D state readback is unavailable: "
+                + "; ".join(diagnostics)
+            )
+        if self.view3d is None:
+            raise DatovizV04Unavailable(
+                "Datoviz retained View3D state readback requires a renderer View3D"
+            )
+        state = self.dvz.DvzPanelView3DState()
+        if not self.dvz.dvz_panel_view3d_state(self.panel, _ctypes_pointer_arg(state)):
+            raise DatovizV04Unsupported("Datoviz retained View3D state copy failed")
+        self.retained_view3d_update_stats.snapshot_resolves += 1
+        projection_snapshot = resolve_view3d_projection_snapshot(
+            self.view3d, layout_snapshot_id=layout_snapshot_id
+        )
+        view = getattr(state, "view", None)
+        projection = getattr(state, "projection", None)
+        return {
+            "layout_snapshot_id": layout_snapshot_id,
+            "view_projection_snapshot_id": (
+                projection_snapshot.view_projection_snapshot_id
+            ),
+            "native_view_id": int(getattr(state, "view_id", 0)),
+            "native_revision": int(getattr(state, "revision", 0)),
+            "enabled": bool(getattr(state, "enabled", False)),
+            "camera_eye": _datoviz_vec3_tuple(getattr(view, "eye", ())),
+            "camera_target": _datoviz_vec3_tuple(getattr(view, "target", ())),
+            "camera_up": _datoviz_vec3_tuple(getattr(view, "up", ())),
+            "projection_type": int(getattr(projection, "type", 0)),
+            "near_far": (
+                float(getattr(projection, "near_clip", 0.0)),
+                float(getattr(projection, "far_clip", 0.0)),
+            ),
+            "orthographic_bounds": _datoviz_orthographic_bounds_tuple(state),
+        }
 
     def apply_adapted_view2d_navigation_cpu_remap(self, view: View2D) -> Any:
         """Apply View2D navigation for the adapted CPU-remapped DATA placement."""
@@ -3682,6 +3862,34 @@ def _datoviz_layout_snapshot_id_matches(snapshot_id: str, native_id: int) -> boo
     if native_id == 0:
         return True
     return snapshot_id.endswith(f":{native_id:x}")
+
+
+def _datoviz_vec3_tuple(value: object) -> tuple[float, float, float] | None:
+    try:
+        raw = cast(Any, value)
+        return (float(raw[0]), float(raw[1]), float(raw[2]))
+    except (TypeError, ValueError, IndexError):
+        return None
+
+
+def _datoviz_orthographic_bounds_tuple(
+    state: object,
+) -> tuple[float, float, float, float, float, float] | None:
+    if not bool(getattr(state, "has_explicit_orthographic_bounds", False)):
+        return None
+    bounds = getattr(state, "orthographic_bounds", ())
+    try:
+        raw = cast(Any, bounds)
+        return (
+            float(raw[0]),
+            float(raw[1]),
+            float(raw[2]),
+            float(raw[3]),
+            float(raw[4]),
+            float(raw[5]),
+        )
+    except (TypeError, ValueError, IndexError):
+        return None
 
 
 def _datoviz_label(value: object) -> str | None:
