@@ -1,5 +1,5 @@
 {
-  "current_stage": "S048",
+  "current_stage": "S050",
   "stages": [
     {
       "id": "S001",
@@ -288,6 +288,18 @@
       "title": "View3D Arcball Review Stabilization",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S049",
+      "title": "GSP White Paper Draft",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S050",
+      "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
+      "state": "active",
+      "progress": 10
     }
   ],
   "missions": [
@@ -2054,6 +2066,69 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 197
+    },
+    {
+      "id": "M198",
+      "title": "S049 GSP white paper draft for Nicolas review",
+      "stage": "S049",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 198
+    },
+    {
+      "id": "M199",
+      "title": "S050 implementation roadmap and mission batch",
+      "stage": "S050",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 199
+    },
+    {
+      "id": "M200",
+      "title": "S050 Datoviz native mesh-pick evidence spike",
+      "stage": "S050",
+      "state": "approved",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 200
+    },
+    {
+      "id": "M201",
+      "title": "S050 Datoviz query and readback parity scoping",
+      "stage": "S050",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 201
+    },
+    {
+      "id": "M202",
+      "title": "S050 Datoviz guide text and colorbar strictness scoping",
+      "stage": "S050",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 202
+    },
+    {
+      "id": "M203",
+      "title": "S050 strict 3D depth and mesh semantics scoping",
+      "stage": "S050",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 203
+    },
+    {
+      "id": "M204",
+      "title": "S050 materials textures and VisPy2 API consultation planning",
+      "stage": "S050",
+      "state": "blocked",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 204
     }
   ],
   "review_queue": [],
@@ -2151,6 +2226,11 @@
     }
   ],
   "recommendations": [
+    "S050 is open: user approved the implementation roadmap branch; M200 is the next approved mission for Datoviz native mesh-pick evidence.",
+    "Run M200 first. Promote Datoviz query.view3d.mesh_triangle_pick.v1 only if public GSP visual_id, primitive_index, and pick-scene freshness are proven.",
+    "Keep M201-M203 as draft follow-ups until M200 reports whether Datoviz needs an upstream API handoff, a GSP adapter-only implementation, or a protocol consultation.",
+    "M204 remains blocked pending ChatGPT Pro consultation because materials/textures and broader VisPy2 public API design are architecture/API-shape decisions.",
+    "S049 white paper draft is complete but was not previously reflected in .agent/status.json; Mission Control has reconciled it as completed.",
     "S048 completed: Datoviz-style Matplotlib arcball and native Datoviz arcball review paths are approved for examples 07, 08, 10, 11, and 13 with no source changes required.",
     "S047 completed: perspective View3D is implemented for protocol, Matplotlib, Datoviz, review examples, and center-dolly wheel zoom.",
     "S046 completed: 3D review examples now cover S044 mesh picking, OBJ-style flat Lambert mesh rendering, and deterministic View3D camera paths.",
@@ -2164,6 +2244,8 @@
     "Optional hardening after M194 is a Datoviz native mesh-pick evidence spike, not public capability promotion."
   ],
   "notes": [
+    "M199 completed: reconciled unregistered M198/S049 white paper status, opened S050 as the post-S048 implementation roadmap, approved M200 for Datoviz native mesh-pick evidence, and drafted follow-up parity/strictness/API missions.",
+    "M198 completed: prepared the GSP white paper draft under whitepaper/ and recorded .agent/S049_CLOSEOUT.md; this status entry reconciles existing filesystem records.",
     "M197 completed: validated examples 07, 08, 10, 11, and 13 offscreen with both Matplotlib and Datoviz, passed focused arcball/native-arcball tests, and kept Datoviz native arcball as live-review behavior only.",
     "M196 completed: accepted S047 perspective View3D direction, added PerspectiveProjection3D, renderer support, perspective review examples, and S037 center-dolly perspective zoom while keeping cursor-anchored perspective zoom deferred.",
     "M195 completed: added examples/review/12_view3d_mesh_pick.py, 13_view3d_suzanne_lambert.py, and 14_view3d_camera_path.py plus review README updates and focused offscreen validation.",
