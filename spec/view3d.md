@@ -20,7 +20,7 @@ Accepted S036 concepts:
 | `(N, 3)` NDC mesh | capability-gated | Mesh vertices interpreted as panel NDC x/y/z. |
 | Opaque depth | capability-gated | Nearer opaque fragment wins where strict support is claimed. |
 | Ray readback | accepted target | Query returns projection-inverse ray context. |
-| 3D visual picking | deferred | Query hit identity for 3D mesh faces is unsupported in S036. |
+| 3D visual picking | accepted after S044 | `query.view3d.mesh_triangle_pick.v1` identifies strict-scope opaque DATA-space mesh triangles. |
 
 S037 accepts backend-neutral public navigation actions in `spec/view3d_navigation.md`. Deferred
 concepts still include perspective projection, matrix-first authoring, materials/lights/normals,
@@ -184,6 +184,7 @@ meshvisual.positions3d.data.view3d.v1
 meshvisual.positions3d.ndc.v1
 meshvisual.positions3d.opaque_depth.v1
 query.view3d.ray_readback.v1
+query.view3d.mesh_triangle_pick.v1
 ```
 
 These do not imply support for:
@@ -191,7 +192,7 @@ These do not imply support for:
 ```text
 view3d.perspective
 view3d.navigation
-meshvisual.positions3d.picking
+query.view3d.visual_pick.v1
 meshvisual.positions3d.transparent_strict
 meshvisual.positions3d.clipping_strict
 ```
@@ -229,8 +230,8 @@ S036 query/readback should return a deterministic projection-inverse ray context
 - near and far DATA points;
 - DATA-space ray direction.
 
-S036 does not return strict 3D mesh face hit identity. Such requests return
-`query_3d_visual_hit_deferred`.
+S036 ray readback does not return strict 3D mesh face hit identity. S044 defines the separate
+`query.view3d.mesh_triangle_pick.v1` protocol in `spec/view3d_mesh_triangle_picking.md`.
 
 ## Backend Mapping
 

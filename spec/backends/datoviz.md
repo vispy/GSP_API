@@ -141,8 +141,11 @@ orbit, right-drag pan, wheel zoom, and double-click reset. Each accepted action 
 public GSP `View3DNavigationAction` semantics, lowered into retained Datoviz camera/projection
 state, checked against Datoviz state readback, and followed by a retained frame request without
 rewriting unchanged mesh vertex/index buffers. Older bindings keep static `View3D` rendering and
-report structured diagnostics instead of claiming `view3d.navigation.orbit_pan_zoom.v1`. GPU 3D
-visual picking, materials, lights, textures, perspective, and culling remain deferred.
+report structured diagnostics instead of claiming `view3d.navigation.orbit_pan_zoom.v1`. S044
+accepts a separate backend-neutral `query.view3d.mesh_triangle_pick.v1` target for opaque DATA-space
+mesh triangles; Datoviz support remains unadvertised until public visual/triangle mapping and
+pick-state freshness are proven. Materials, lights, textures, perspective, and culling remain
+deferred.
 
 ## S040 flat Lambert CPU resolve
 
@@ -483,25 +486,33 @@ rows. Future Datoviz releases may promote the provider toward strict status afte
 guide-query payload semantics are exposed and validated through the Python facade, or after the GSP
 guide-row contract explicitly excludes those semantics.
 
-## S034 resolved layout and guide diagnostics
+## S034/S044 resolved layout and guide diagnostics
 
-Datoviz does not currently produce or consume `ResolvedLayoutSnapshot` records and must advertise
-`layout_strict=false`. Its S034 guide-layout posture is semantic/adapted:
+Datoviz guide/layout behavior remains semantic/adapted unless all strict guide evidence is present.
+Recent v0.4-dev builds can produce a partial panel frame/layout snapshot and can independently prove
+native axis grid clipping to the plot rectangle, but those facts do not by themselves imply
+`layout_strict=true`.
+
+The S044 posture is:
 
 - `PanelTextGuide(role=TITLE)` may be rendered as adapted screen text for review output, but this
   does not participate in layout-strict guide geometry or guide query.
 - Native axis style mapping is partial and limited to exposed Datoviz fields such as
   `tick_size_px`, `label_size_px`, tick lengths/widths, label/tick gaps, grid width, and plot margin
   fields.
-- Grid clipping to `plot_rect_px` is unsupported in the current audited slice; promotion requires
-  native API evidence that grid geometry is clipped to the resolved plot rectangle.
+- Grid clipping to `plot_rect_px` is independently native-verified only for Datoviz source builds
+  containing commit `9ba820489` or equivalent source/test sentinels. Verified builds report
+  `grid_clip_to_plot_rect: native-verified`; older or unverified builds retain
+  `grid_clip_not_enforced` and `grid_clip_native_api_unverified`.
 - Guide query and all-rendered guide contributions are unsupported.
 - Font metrics and raster parity are backend-defined and must not be claimed as parity.
 
-Capability snapshots expose `s034_guide_layout_audit` metadata plus diagnostics including
-`panel_text_guide_as_screen_text`, `resolved_layout_snapshot_unsupported`,
-`axis_style_mapping_partial`, `grid_clip_not_enforced`, `grid_clip_native_api_unverified`,
-`guide_query_missing`, `all_rendered_guides_unsupported`, and `font_metrics_parity_false`.
+Capability snapshots expose `s034_guide_layout_audit` metadata plus diagnostics. Verified grid
+clipping builds include `grid_clip_native_verified`; unverified builds include
+`grid_clip_not_enforced` and `grid_clip_native_api_unverified`. The remaining guide strictness
+blockers, including `panel_text_guide_as_screen_text`, `axis_style_mapping_partial`,
+`guide_query_missing`, `all_rendered_guides_unsupported`, and `font_metrics_parity_false`, remain
+separate.
 
 ## S035 retained View2D navigation
 

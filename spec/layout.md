@@ -194,7 +194,9 @@ layout snapshot it used before claiming layout strictness.
 Datoviz remains the high-performance GPU backend. Until it can produce or consume resolved layout
 snapshots and query guide geometry, it should advertise semantic/adapted guide support and must not
 claim layout strictness. Current adapted review rows should diagnose title screen-text adaptation,
-missing guide query, missing all-rendered guide contributions, and missing or partial grid clipping.
+missing guide query, and missing all-rendered guide contributions. Grid clipping is reported
+independently: verified Datoviz builds may advertise native plot-rect grid clipping evidence, while
+older or unverified builds must keep explicit grid clipping blockers.
 
 ## Visual QA
 

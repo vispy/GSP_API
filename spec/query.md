@@ -262,3 +262,16 @@ a stale `layout_snapshot_id` or `view_snapshot_id`, the result is `stale` with
 returns `unsupported` with `query_3d_visual_hit_deferred`. Datoviz v0.4 support for
 `query.view3d.ray_readback.v1` is canonical ray-context payload generation from public `View3D`
 state, not GPU visual hit picking for 3D meshes.
+
+## S044 View3D mesh triangle picking
+
+S044 accepts backend-neutral `query.view3d.mesh_triangle_pick.v1` for the first strict 3D visual-hit
+query. This is distinct from ray readback: it identifies the frontmost visible supported opaque
+DATA-space `MeshVisual` triangle at a panel point.
+
+Strict v1 responses report public `visual_id`, `visual_type="MeshVisual"`,
+`primitive_kind="triangle"`, public canonical `primitive_index`, layout/view/projection snapshot
+ids, and `pick_scene_snapshot_id`. Unsupported, stale, invalid, and miss states must remain
+distinct.
+
+Full semantics live in `spec/view3d_mesh_triangle_picking.md`.

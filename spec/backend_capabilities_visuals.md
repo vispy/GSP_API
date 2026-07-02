@@ -139,14 +139,15 @@ controller objects. `(N, 3)` `MeshVisual` DATA and NDC rendering are separately 
 Strict `meshvisual.positions3d.opaque_depth.v1` requires accepted nearer-fragment-wins semantics for
 opaque meshes. Adapted face ordering, painter sorting, or unverified clipping must not be advertised
 as strict opaque-depth support. Query ray readback is gated by `query.view3d.ray_readback.v1` and
-does not imply 3D mesh picking.
+does not imply mesh triangle picking. S044 mesh triangle picking is separately gated by
+`query.view3d.mesh_triangle_pick.v1`.
 
 Current S036 support summary:
 
 | Backend | Static View3D projection | `(N,3)` MeshVisual render | Opaque depth | Ray readback | 3D picking |
 |---|---:|---:|---:|---:|---:|
-| Matplotlib | reference | adapted reference | adapted face order only | reference | deferred |
-| Datoviz v0.4 protocol renderer | supported with P022 bindings | adapted GSP panel-NDC lowering | adapted face order only | ray context only | deferred |
+| Matplotlib | reference | adapted reference | adapted face order only | reference | S044 CPU oracle candidate |
+| Datoviz v0.4 protocol renderer | supported with P022 bindings | adapted GSP panel-NDC lowering | adapted face order only | ray context only | S044 implementation candidate |
 | VisPy2 producer API | deferred | deferred | deferred | deferred | deferred |
 
 Structured diagnostics include `view3d_not_supported`, `mesh3d_requires_view3d`,
@@ -181,6 +182,11 @@ unsupported diagnostics rather than silently flattening z or exposing backend-na
 Datoviz may claim `query.view3d.ray_readback.v1` for canonical ray-context payload generation when
 the same P022 camera binding is available. This capability does not imply GPU visual hit picking for
 3D meshes.
+
+Datoviz may claim `query.view3d.mesh_triangle_pick.v1` only after it can return public GSP
+`visual_id` and canonical mesh triangle `primitive_index` for the accepted S044 scope, with
+freshness checks for layout, View3D revision, projection snapshot, and pick-scene snapshot. Native
+Datoviz ids, shader names, framebuffer attachments, and draw-state names are not public evidence.
 
 Datoviz claims `view3d.navigation.orbit_pan_zoom.v1` only when the retained DATA-space visual path
 and live input bindings are both available. The protocol renderer replays canonical

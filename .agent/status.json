@@ -1,5 +1,5 @@
 {
-  "current_stage": "S043",
+  "current_stage": "S044",
   "stages": [
     {
       "id": "S001",
@@ -258,6 +258,12 @@
       "title": "Datoviz Panel Frame, Guide Strictness, And Retained View3D",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S044",
+      "title": "Datoviz Grid Clipping Proof And View3D Mesh Triangle Picking",
+      "state": "active",
+      "progress": 55
     }
   ],
   "missions": [
@@ -1943,6 +1949,42 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 188
+    },
+    {
+      "id": "M189",
+      "title": "S044 opening and GPU picking consultation",
+      "stage": "S044",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 189
+    },
+    {
+      "id": "M190",
+      "title": "S044 Datoviz grid clipping proof audit",
+      "stage": "S044",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 190
+    },
+    {
+      "id": "M191",
+      "title": "S044 View3D mesh triangle picking response integration",
+      "stage": "S044",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 191
+    },
+    {
+      "id": "M192",
+      "title": "S044 View3D mesh triangle picking proof",
+      "stage": "S044",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 192
     }
   ],
   "review_queue": [],
@@ -2030,14 +2072,25 @@
       "requires_human": false,
       "requires_chatgpt_pro": true,
       "state": "closed"
+    },
+    {
+      "id": "Q150-GPU-3D-VISUAL-PICKING-SEMANTICS",
+      "summary": "Resolved by P028 response: accept backend-neutral query.view3d.mesh_triangle_pick.v1 for opaque DATA-space MeshVisual triangle picking; visual-only/GPU-named picking remains deferred.",
+      "requires_human": false,
+      "requires_chatgpt_pro": true,
+      "state": "closed"
     }
   ],
   "recommendations": [
+    "M191 completed: P028 accepted backend-neutral query.view3d.mesh_triangle_pick.v1, with GPU as a private implementation strategy.",
+    "M192 is now ready: implement the accepted View3D mesh triangle picking proof with public visual_id and primitive_index mapping.",
+    "M190 completed: Datoviz grid clipping is native-verified for the local source checkout and remains independent from full guide strictness.",
+    "S044 is open for Datoviz native grid clipping proof consolidation and View3D mesh triangle picking.",
     "S043 completed the unified Datoviz panel frame architecture path for guide strictness and retained View3D navigation.",
     "Datoviz View3D live navigation is capability-gated on retained DATA-space View3D symbols plus live input bindings.",
     "Native Datoviz grid clipping remains a separate verified capability and must not be treated as full guide strictness.",
     "S037 Datoviz static View3D rendering is now implemented for local v0.4-dev builds with the P022 camera ctypes layouts and explicit orthographic-bounds API.",
-    "Datoviz query.view3d.ray_readback.v1 is implemented for canonical ray-context payloads; GPU 3D visual picking remains separate.",
+    "Datoviz query.view3d.ray_readback.v1 is implemented for canonical ray-context payloads; View3D mesh triangle picking remains separate.",
     "S038 accepts only implicit meshvisual.material.unlit_rgba.v1 semantics for existing MeshVisual RGBA colors; review-only material/light/texture demos must not be capability evidence.",
     "S039 accepts flat Lambert face-normal shading for opaque DATA-space 3D MeshVisuals with scalar ambient and one DATA-space directional light.",
     "M172 completed S039 protocol dataclasses, validation, capability names, diagnostics, and focused tests.",
@@ -2049,6 +2102,9 @@
     "S041 completed manual Matplotlib-vs-Dataviz 3D review coverage for lit meshes and arcball-style View3D navigation."
   ],
   "notes": [
+    "M191 completed: archived ANSWER as .agent/consultations/P028-response.md, accepted backend-neutral mesh triangle picking rather than public GPU picking, added ADR-0028, S044 decision/spec updates, and made M192 ready.",
+    "M190 completed: audited the Datoviz source proof at sibling checkout 7c6e48f64, confirmed commit 9ba820489 is an ancestor, verified source/test sentinels, updated backend/layout spec wording, and recorded .agent/S044_GRID_CLIPPING_AUDIT.md without editing Datoviz.",
+    "M189 completed: opened S044, created P028 GPU 3D visual picking consultation, registered M190 as ready, and blocked M191/M192 dependent GPU picking work pending ChatGPT Pro response.",
     "M188 completed: added Datoviz GSP View3D live navigation behind retained DATA-space View3D and live input gates, canonical action replay, state readback equality checks, no-reupload tests, ray snapshot proof, review-runner enablement, docs, and pytest-cov dev tooling.",
     "M184 completed and landed on Datoviz v0.4-dev as commits 7b3bd2f7f and 7c6e48f64: added public guide layout/hit/contribution snapshot APIs, populated axes, guide lines/spans, colorbars, and legends from retained layout state, regenerated ctypes, and validated scene-graph/fields plus ctypes ABI checks.",
     "M184 scoped and marked ready: implementation should target the sibling Datoviz repository with first-class guide layout/readback/contribution APIs layered over existing axes, guide lines/spans, colorbars, legends, generated visual roles, and DvzPanelFrameSnapshot; use a separate Datoviz worktree if another agent is active.",

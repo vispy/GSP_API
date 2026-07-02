@@ -16,6 +16,7 @@ This file tells agents where to find authoritative design information.
 | View2D navigation actions | spec/navigation.md |
 | Static View3D/camera/projection | spec/view3d.md |
 | View3D navigation actions | spec/view3d_navigation.md |
+| View3D mesh triangle picking | spec/view3d_mesh_triangle_picking.md |
 | Mesh material boundary | spec/visuals/mesh_materials_s038.md |
 | Mesh flat Lambert shading | spec/visuals/mesh_flat_lambert_s039.md |
 | Resolved layout and guide geometry | spec/layout.md |
@@ -58,6 +59,8 @@ This file tells agents where to find authoritative design information.
 | MeshVisual unlit RGBA material boundary ADR | adr/ADR-0025-meshvisual-unlit-rgba-material-boundary.md |
 | MeshVisual flat Lambert shading ADR | adr/ADR-0026-minimal-flat-lambert-mesh-shading.md |
 | Datoviz flat Lambert CPU resolve ADR | adr/ADR-0027-dataviz-flat-lambert-cpu-resolve.md |
+| View3D mesh triangle picking ADR | adr/ADR-0028-view3d-mesh-triangle-picking.md |
+| S044 View3D mesh triangle picking decision | .agent/decisions/S044_view3d_mesh_triangle_picking.md |
 | S040 Datoviz flat Lambert promotion decision | .agent/decisions/S040_datoviz_flat_lambert_promotion.md |
 | S040 closeout | .agent/S040_CLOSEOUT.md |
 | S041 closeout | .agent/S041_CLOSEOUT.md |
