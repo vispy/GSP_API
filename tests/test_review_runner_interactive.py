@@ -234,6 +234,29 @@ def test_matplotlib_interactive_view3d_navigation_rerenders_mesh() -> None:
         plt.close(fig)
 
 
+def test_matplotlib_interactive_view3d_orbit_inverts_mouse_y_for_pitch() -> None:
+    import matplotlib
+
+    matplotlib.use("Agg", force=True)
+    import matplotlib.pyplot as plt
+
+    scene = _view3d_scene()
+    fig, ax = plt.subplots()
+    try:
+        review_runner._render_matplotlib_scene(fig, ax, scene, color_scales={})
+        session = review_runner._MatplotlibReviewView3DNavigationSession(
+            fig, ax, scene, color_scales={}
+        )
+        rect = session._panel_rect()
+
+        payload = session._orbit_payload_from_pixels(0.0, rect.height * 0.25)
+
+        assert payload.delta_yaw_radians == pytest.approx(0.0)
+        assert payload.delta_pitch_radians == pytest.approx(np.pi * 0.25)
+    finally:
+        plt.close(fig)
+
+
 def test_matplotlib_interactive_view3d_pans_perspective_at_target_distance() -> None:
     import matplotlib
 
@@ -426,5 +449,56 @@ def test_datoviz_view3d_navigation_unavailable_still_opens_static_live_window(
 
     assert result["status"] == "rendered"
     assert instances[0].show_calls == 1
+    assert not hasattr(instances[0], "enabled_view3d")
+    assert "failed manual review" in capsys.readouterr().out
+
+
+def test_datoviz_view3d_navigation_explicit_opt_in_can_enable_experimental_path(
+    tmp_path: Path, monkeypatch: Any, capsys: Any
+) -> None:
+    instances: list[FakeDatovizRenderer] = []
+
+    class FakeDatovizRenderer:
+        def __init__(self, **kwargs: Any) -> None:
+            self.kwargs = kwargs
+            self.show_calls = 0
+            instances.append(self)
+
+        def __enter__(self) -> "FakeDatovizRenderer":
+            return self
+
+        def __exit__(self, *args: Any) -> None:
+            return None
+
+        def add_mesh_visual(self, visual: Any) -> None:
+            return None
+
+        def add_text_visual(self, visual: Any) -> None:
+            return None
+
+        def enable_gsp_view3d_navigation(self, view3d: Any) -> None:
+            self.enabled_view3d = view3d
+
+        def show(self, *, frame_count: int) -> None:
+            self.show_calls += 1
+            assert frame_count == 1
+
+    monkeypatch.setenv(review_runner.DATOVIZ_EXPERIMENTAL_VIEW3D_NAV_ENV, "1")
+    monkeypatch.setattr(
+        review_runner, "DatovizV04ProtocolRenderer", FakeDatovizRenderer
+    )
+
+    result = review_runner._run_datoviz(
+        _view3d_scene(),
+        tmp_path,
+        (320, 240),
+        live=True,
+        frames=1,
+        allow_offscreen=False,
+        interactive_navigation=True,
+    )
+
+    assert result["status"] == "rendered"
+    assert instances[0].show_calls == 1
     assert instances[0].enabled_view3d == _view3d_scene().view3d
-    assert "Datoviz GSP View3D navigation enabled" in capsys.readouterr().out
+    assert "experimental GSP View3D navigation enabled" in capsys.readouterr().out

@@ -11,6 +11,7 @@ first implementation slice.
 - Matplotlib and Datoviz renderer support for perspective `View3D`.
 - Perspective review examples for the main 3D mesh/material scenes.
 - Center-dolly perspective zoom semantics for S037 `View3D` navigation.
+- Matplotlib live review orbit/pan/zoom over perspective `View3D`.
 
 ## Boundary
 
@@ -18,6 +19,8 @@ first implementation slice.
   up, FOV, and near/far.
 - Cursor-anchored perspective zoom remains deferred because it requires a layout/aspect-aware
   semantic decision.
+- Datoviz live 3D navigation failed manual review and remains experimental opt-in only; normal
+  review commands use static Datoviz View3D windows.
 - S044 mesh triangle picking remains backend-neutral with Matplotlib CPU reference behavior;
   Datoviz still must not advertise `query.view3d.mesh_triangle_pick.v1`.
 

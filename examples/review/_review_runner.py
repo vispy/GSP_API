@@ -76,6 +76,7 @@ REVIEW_MONITOR_DPI_ENV = "GSP_REVIEW_MONITOR_DPI"
 REVIEW_DEFAULT_RESOLUTION = (1280, 720)
 REVIEW_REFERENCE_DPI = 96.0
 REVIEW_OUTPUT_DPI = 100.0
+DATOVIZ_EXPERIMENTAL_VIEW3D_NAV_ENV = "GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV"
 
 
 @dataclass(frozen=True, slots=True)
@@ -609,7 +610,7 @@ class _MatplotlibReviewView3DNavigationSession:
         rect = self._panel_rect()
         return Orbit3DPayload(
             delta_yaw_radians=-dx_px / rect.width * np.pi,
-            delta_pitch_radians=-dy_px / rect.height * np.pi,
+            delta_pitch_radians=dy_px / rect.height * np.pi,
         )
 
     def _pan_payload_from_pixels(self, dx_px: float, dy_px: float) -> Pan3DPayload:
@@ -721,26 +722,32 @@ def _run_datoviz(
                             "right-drag to zoom x/y, wheel to zoom."
                         )
                 elif interactive_navigation and scene.view3d is not None:
-                    enable_view3d_navigation = getattr(
-                        renderer, "enable_gsp_view3d_navigation", None
-                    )
-                    if enable_view3d_navigation is None:
+                    if os.environ.get(DATOVIZ_EXPERIMENTAL_VIEW3D_NAV_ENV) != "1":
                         print(
                             "Datoviz GSP View3D navigation unavailable; opening static live window: "
-                            "missing enable_gsp_view3d_navigation"
+                            f"failed manual review; set {DATOVIZ_EXPERIMENTAL_VIEW3D_NAV_ENV}=1 to opt in"
                         )
                     else:
-                        try:
-                            enable_view3d_navigation(scene.view3d)
-                        except DatovizV04Unavailable as exc:
+                        enable_view3d_navigation = getattr(
+                            renderer, "enable_gsp_view3d_navigation", None
+                        )
+                        if enable_view3d_navigation is None:
                             print(
                                 "Datoviz GSP View3D navigation unavailable; opening static live window: "
-                                f"{exc}"
+                                "missing enable_gsp_view3d_navigation"
                             )
                         else:
-                            print(
-                                "Datoviz GSP View3D navigation enabled: drag to orbit, right-drag to pan, wheel to zoom."
-                            )
+                            try:
+                                enable_view3d_navigation(scene.view3d)
+                            except DatovizV04Unavailable as exc:
+                                print(
+                                    "Datoviz GSP View3D navigation unavailable; opening static live window: "
+                                    f"{exc}"
+                                )
+                            else:
+                                print(
+                                    "Datoviz experimental GSP View3D navigation enabled: drag to orbit, right-drag to pan, wheel to zoom."
+                                )
                 renderer.show(frame_count=frames)
             else:
                 path.write_bytes(renderer.capture_png_bytes())
