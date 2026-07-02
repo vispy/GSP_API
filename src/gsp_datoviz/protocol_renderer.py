@@ -34,6 +34,10 @@ from gsp.protocol import (
     DepthMode,
     ImageOrigin,
     ImageVisual,
+    LayoutAnchor,
+    LayoutDiagnostic,
+    LayoutDiagnosticStatus,
+    LayoutLayer,
     LogicalPixelRect,
     MeshColorMode,
     MeshShading,
@@ -62,7 +66,10 @@ from gsp.protocol import (
     QueryResult,
     QueryScope,
     QueryStatus,
+    RenderTarget,
     ResolvedCanvas,
+    ResolvedGuideBox,
+    ResolvedLayoutSnapshot,
     project_view3d_data_point,
     resolve_view3d_projection_snapshot,
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
@@ -156,6 +163,18 @@ _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS = (
     "dvz_camera_desc",
     "dvz_panel_set_camera",
     "dvz_camera_set_orthographic_bounds",
+)
+
+_REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS = (
+    "DvzPanelFrameInfo",
+    "DvzGuideLayout",
+    "DvzRenderedContribution",
+    "dvz_panel_resolve_frame",
+    "dvz_panel_frame_info",
+    "dvz_panel_frame_guide_count",
+    "dvz_panel_frame_guide_layout",
+    "dvz_panel_frame_contribution_count",
+    "dvz_panel_frame_contribution",
 )
 
 
@@ -417,6 +436,22 @@ def datoviz_v04_view3d_camera_diagnostics(module: ModuleType | Any) -> tuple[str
         for name in _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS
         if not hasattr(module, name)
     )
+
+
+def datoviz_v04_panel_frame_snapshot_diagnostics(
+    module: ModuleType | Any,
+) -> tuple[str, ...]:
+    """Return why Datoviz panel frame snapshot readback is unavailable."""
+    return tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS
+        if not hasattr(module, name)
+    )
+
+
+def datoviz_v04_panel_frame_snapshot_ready(module: ModuleType | Any) -> bool:
+    """Return whether the facade exposes the bounded S043 snapshot readback path."""
+    return not datoviz_v04_panel_frame_snapshot_diagnostics(module)
 
 
 def datoviz_v04_view3d_live_navigation_diagnostics(
@@ -793,6 +828,22 @@ class DatovizV04ProtocolRenderer:
     def capabilities(self) -> CapabilitySnapshot:
         """Return the capability snapshot for this adapter slice."""
         return datoviz_v04_capability_snapshot(self.dvz)
+
+    def resolve_partial_layout_snapshot(
+        self, *, snapshot_id_prefix: str = "layout:datoviz"
+    ) -> ResolvedLayoutSnapshot:
+        """Map Datoviz-reported panel frame fields into a partial GSP snapshot.
+
+        The adapter only copies geometry and identities reported by Datoviz. Missing guide/query
+        semantics remain explicit diagnostics and are intentionally not synthesized here.
+        """
+        return _resolve_datoviz_partial_layout_snapshot(
+            self.dvz,
+            self.panel,
+            resolved_canvas=self.resolved_canvas,
+            view=self.view,
+            snapshot_id_prefix=snapshot_id_prefix,
+        )
 
     def _canvas_px_scale(self) -> float:
         return self.resolved_canvas.framebuffer_per_canvas_px
@@ -2905,6 +2956,466 @@ def _datoviz_query_panel_bounds(
 ) -> tuple[float, float, float, float]:
     panel_width, panel_height = _panel_pixel_size(width, height, panel_bounds)
     return (0.0, panel_width, 0.0, panel_height)
+
+
+def _resolve_datoviz_partial_layout_snapshot(
+    dvz: Any,
+    panel: Any,
+    *,
+    resolved_canvas: ResolvedCanvas,
+    view: View2D | None,
+    snapshot_id_prefix: str,
+) -> ResolvedLayoutSnapshot:
+    diagnostics = datoviz_v04_panel_frame_snapshot_diagnostics(dvz)
+    if diagnostics:
+        raise DatovizV04Unavailable(
+            "Datoviz panel frame snapshot binding is unavailable: "
+            + "; ".join(diagnostics)
+        )
+
+    snapshot = dvz.dvz_panel_resolve_frame(panel)
+    if _is_null_handle(snapshot):
+        raise DatovizV04Unsupported("Datoviz panel frame snapshot resolution failed")
+    try:
+        info = dvz.DvzPanelFrameInfo()
+        if not dvz.dvz_panel_frame_info(snapshot, _ctypes_pointer_arg(info)):
+            raise DatovizV04Unsupported("Datoviz panel frame info copy failed")
+        frame_snapshot_id = _native_uint_id(getattr(info, "snapshot_id", 0))
+        if frame_snapshot_id == 0 and hasattr(dvz, "dvz_panel_frame_id"):
+            frame_snapshot_id = _native_uint_id(dvz.dvz_panel_frame_id(snapshot))
+        snapshot_id = f"{snapshot_id_prefix}:{frame_snapshot_id:x}"
+
+        device_scale = _datoviz_frame_device_scale(info)
+        render_target = RenderTarget(
+            logical_width_px=_positive_or_fallback(
+                getattr(info, "logical_width_px", 0),
+                resolved_canvas.canvas_width_px,
+            ),
+            logical_height_px=_positive_or_fallback(
+                getattr(info, "logical_height_px", 0),
+                resolved_canvas.canvas_height_px,
+            ),
+            device_scale=device_scale,
+            dpi=resolved_canvas.output_dpi,
+        )
+        _validate_datoviz_frame_units(info, render_target)
+
+        guide_boxes, guide_diagnostics = _datoviz_frame_guide_boxes(
+            dvz, snapshot, frame_snapshot_id
+        )
+        z_layers, contribution_diagnostics = _datoviz_frame_contribution_layers(
+            dvz, snapshot, frame_snapshot_id
+        )
+        transform, transform_diagnostics = _datoviz_frame_data_to_screen_transform(
+            info
+        )
+        grid_clip_rect = _optional_dvz_rect(getattr(info, "grid_clip_rect_px", None))
+
+        snapshot_diagnostics = (
+            LayoutDiagnostic(
+                code="layout_snapshot_partial",
+                status=LayoutDiagnosticStatus.RESOLVED,
+                message=(
+                    "Datoviz panel, plot, grid clip, guide layout, and contribution "
+                    "records were mapped without strict guide query promotion."
+                ),
+            ),
+            LayoutDiagnostic(
+                code="guide_query_missing",
+                status=LayoutDiagnosticStatus.MISSING,
+                message="Datoviz guide hit/readback is not yet wired into GSP query results.",
+            ),
+            LayoutDiagnostic(
+                code="all_rendered_guides_unsupported",
+                status=LayoutDiagnosticStatus.UNSUPPORTED,
+                message="Rendered contributions are diagnostic snapshot evidence only in M185.",
+            ),
+            *guide_diagnostics,
+            *contribution_diagnostics,
+            *transform_diagnostics,
+        )
+        return ResolvedLayoutSnapshot(
+            snapshot_id=snapshot_id,
+            render_target=render_target,
+            panel_rect_px=_required_dvz_rect(info.panel_rect_px, "panel_rect_px"),
+            plot_rect_px=_required_dvz_rect(info.plot_rect_px, "plot_rect_px"),
+            view_id=view.id if view is not None else None,
+            data_to_screen_transform=transform,
+            guide_boxes=guide_boxes,
+            tick_label_boxes=tuple(
+                box for box in guide_boxes if box.kind == "tick_label"
+            ),
+            axis_label_boxes=tuple(
+                box for box in guide_boxes if box.kind == "axis_label"
+            ),
+            title_boxes=tuple(box for box in guide_boxes if box.kind == "title"),
+            legend_boxes=tuple(box for box in guide_boxes if box.kind == "legend"),
+            colorbar_boxes=tuple(
+                box for box in guide_boxes if box.kind == "colorbar"
+            ),
+            grid_clip_rect_px=grid_clip_rect,
+            z_layers=z_layers,
+            diagnostics=snapshot_diagnostics,
+        )
+    finally:
+        frame_unref = getattr(dvz, "dvz_panel_frame_unref", None)
+        if frame_unref is not None:
+            frame_unref(snapshot)
+
+
+def _datoviz_frame_device_scale(info: Any) -> float:
+    scale_x = float(getattr(info, "device_scale_x", 1.0))
+    scale_y = float(getattr(info, "device_scale_y", scale_x))
+    if scale_x <= 0.0 or scale_y <= 0.0:
+        raise DatovizV04Unsupported("Datoviz panel frame reported non-positive device scale")
+    if not np.isclose(scale_x, scale_y, rtol=1e-6, atol=1e-6):
+        raise DatovizV04Unsupported(
+            "Datoviz panel frame reported asymmetric device_scale_x/device_scale_y; "
+            "GSP RenderTarget currently requires one device_scale value"
+        )
+    return scale_x
+
+
+def _validate_datoviz_frame_units(info: Any, render_target: RenderTarget) -> None:
+    framebuffer_width = float(
+        getattr(info, "framebuffer_width_px", render_target.framebuffer_width_px)
+    )
+    framebuffer_height = float(
+        getattr(info, "framebuffer_height_px", render_target.framebuffer_height_px)
+    )
+    if not np.isclose(framebuffer_width, render_target.framebuffer_width_px, atol=1.0):
+        raise DatovizV04Unsupported(
+            "Datoviz panel frame framebuffer width disagrees with logical width/device scale"
+        )
+    if not np.isclose(framebuffer_height, render_target.framebuffer_height_px, atol=1.0):
+        raise DatovizV04Unsupported(
+            "Datoviz panel frame framebuffer height disagrees with logical height/device scale"
+        )
+
+
+def _datoviz_frame_guide_boxes(
+    dvz: Any, snapshot: Any, frame_snapshot_id: int
+) -> tuple[tuple[ResolvedGuideBox, ...], tuple[LayoutDiagnostic, ...]]:
+    boxes: list[ResolvedGuideBox] = []
+    diagnostics: list[LayoutDiagnostic] = []
+    count = int(dvz.dvz_panel_frame_guide_count(snapshot))
+    for index in range(count):
+        record = dvz.DvzGuideLayout()
+        if not dvz.dvz_panel_frame_guide_layout(
+            snapshot, index, _ctypes_pointer_arg(record)
+        ):
+            diagnostics.append(
+                LayoutDiagnostic(
+                    code="datoviz_guide_layout_copy_failed",
+                    status=LayoutDiagnosticStatus.MISSING,
+                    message=f"Datoviz did not copy guide layout record {index}.",
+                )
+            )
+            continue
+        if frame_snapshot_id and _native_uint_id(getattr(record, "snapshot_id", 0)) not in (
+            0,
+            frame_snapshot_id,
+        ):
+            diagnostics.append(
+                LayoutDiagnostic(
+                    code="datoviz_guide_snapshot_id_mismatch",
+                    status=LayoutDiagnosticStatus.DEGRADED,
+                    message=f"Guide layout record {index} did not match the frame snapshot id.",
+                )
+            )
+        if not bool(getattr(record, "has_box", False)):
+            diagnostics.append(
+                LayoutDiagnostic(
+                    code="datoviz_guide_box_missing",
+                    status=LayoutDiagnosticStatus.MISSING,
+                    message=f"Datoviz guide layout record {index} has no box.",
+                )
+            )
+            continue
+        guide_id = _native_uint_id(getattr(record, "guide_id", 0))
+        if guide_id == 0:
+            diagnostics.append(
+                LayoutDiagnostic(
+                    code="datoviz_guide_id_missing",
+                    status=LayoutDiagnosticStatus.MISSING,
+                    message=f"Datoviz guide layout record {index} has no guide id.",
+                )
+            )
+            continue
+        anchor = None
+        if bool(getattr(record, "has_anchor", False)):
+            anchor_values = getattr(record, "anchor_px", None)
+            if anchor_values is not None:
+                anchor = LayoutAnchor(x=float(anchor_values[0]), y=float(anchor_values[1]))
+        role = _datoviz_guide_role(dvz, int(getattr(record, "role", 0)))
+        boxes.append(
+            ResolvedGuideBox(
+                guide_id=_datoviz_protocol_id("guide", guide_id),
+                kind=cast(Any, _datoviz_guide_box_kind(dvz, record)),
+                rect_px=_required_dvz_rect(record.box_px, "guide.box_px"),
+                anchor_px=anchor,
+                role=role,
+                diagnostics=(
+                    LayoutDiagnostic(
+                        code="datoviz_guide_layout_snapshot_first_slice",
+                        status=LayoutDiagnosticStatus.ADAPTED,
+                        message=(
+                            "Datoviz reports retained logical-pixel guide boxes; "
+                            "text boxes may be coarse and are not strict glyph extents."
+                        ),
+                    ),
+                ),
+            )
+        )
+    return tuple(boxes), tuple(diagnostics)
+
+
+def _datoviz_frame_contribution_layers(
+    dvz: Any, snapshot: Any, frame_snapshot_id: int
+) -> tuple[tuple[LayoutLayer, ...], tuple[LayoutDiagnostic, ...]]:
+    layers: list[LayoutLayer] = []
+    diagnostics: list[LayoutDiagnostic] = []
+    count = int(dvz.dvz_panel_frame_contribution_count(snapshot))
+    for index in range(count):
+        record = dvz.DvzRenderedContribution()
+        if not dvz.dvz_panel_frame_contribution(
+            snapshot, index, _ctypes_pointer_arg(record)
+        ):
+            diagnostics.append(
+                LayoutDiagnostic(
+                    code="datoviz_contribution_copy_failed",
+                    status=LayoutDiagnosticStatus.MISSING,
+                    message=f"Datoviz did not copy rendered contribution record {index}.",
+                )
+            )
+            continue
+        if frame_snapshot_id and _native_uint_id(getattr(record, "snapshot_id", 0)) not in (
+            0,
+            frame_snapshot_id,
+        ):
+            diagnostics.append(
+                LayoutDiagnostic(
+                    code="datoviz_contribution_snapshot_id_mismatch",
+                    status=LayoutDiagnosticStatus.DEGRADED,
+                    message=f"Rendered contribution record {index} did not match the frame snapshot id.",
+                )
+            )
+        contribution_id = _native_uint_id(getattr(record, "contribution_id", 0))
+        if contribution_id == 0:
+            diagnostics.append(
+                LayoutDiagnostic(
+                    code="datoviz_contribution_id_missing",
+                    status=LayoutDiagnosticStatus.MISSING,
+                    message=f"Datoviz rendered contribution record {index} has no contribution id.",
+                )
+            )
+            continue
+        layers.append(
+            LayoutLayer(
+                object_id=_datoviz_protocol_id("contribution", contribution_id),
+                layer=_datoviz_contribution_layer(dvz, int(getattr(record, "kind", 0))),
+                z_order=float(index),
+            )
+        )
+    if count:
+        diagnostics.append(
+            LayoutDiagnostic(
+                code="datoviz_rendered_contributions_reported",
+                status=LayoutDiagnosticStatus.NATIVE,
+                message=f"Datoviz reported {count} rendered contribution records.",
+            )
+        )
+    return tuple(layers), tuple(diagnostics)
+
+
+def _datoviz_frame_data_to_screen_transform(
+    info: Any,
+) -> tuple[tuple[float, ...], tuple[LayoutDiagnostic, ...]]:
+    if not (
+        bool(getattr(info, "has_valid_visible_x", False))
+        and bool(getattr(info, "has_valid_visible_y", False))
+    ):
+        return (
+            (1.0, 0.0, 0.0, 0.0, 1.0, 0.0),
+            (
+                LayoutDiagnostic(
+                    code="datoviz_data_to_screen_transform_missing",
+                    status=LayoutDiagnosticStatus.MISSING,
+                    message="Datoviz did not report valid visible data ranges for a 2D transform.",
+                ),
+            ),
+        )
+    x0, x1 = (float(value) for value in getattr(info, "visible_data_x"))
+    y0, y1 = (float(value) for value in getattr(info, "visible_data_y"))
+    if np.isclose(x0, x1) or np.isclose(y0, y1):
+        return (
+            (1.0, 0.0, 0.0, 0.0, 1.0, 0.0),
+            (
+                LayoutDiagnostic(
+                    code="datoviz_data_to_screen_transform_degenerate",
+                    status=LayoutDiagnosticStatus.DEGRADED,
+                    message="Datoviz reported a degenerate visible data range.",
+                ),
+            ),
+        )
+    plot = _required_dvz_rect(info.plot_rect_px, "plot_rect_px")
+    sx = plot.width / (x1 - x0)
+    sy = plot.height / (y1 - y0)
+    tx = plot.x - sx * x0
+    ty = plot.y - sy * y0
+    return (sx, 0.0, tx, 0.0, sy, ty), ()
+
+
+def _datoviz_guide_box_kind(dvz: Any, record: Any) -> str:
+    role = int(getattr(record, "role", 0))
+    if role in _datoviz_enum_values(
+        dvz,
+        "DvzGuideRole",
+        {
+            "DVZ_GUIDE_ROLE_AXIS_TICK_LABEL": 4,
+            "DVZ_GUIDE_ROLE_COLORBAR_TICK_LABEL": 8,
+        },
+    ):
+        return "tick_label"
+    if role in _datoviz_enum_values(
+        dvz,
+        "DvzGuideRole",
+        {
+            "DVZ_GUIDE_ROLE_AXIS_LABEL": 5,
+        },
+    ):
+        return "axis_label"
+    if role in _datoviz_enum_values(
+        dvz,
+        "DvzGuideRole",
+        {
+            "DVZ_GUIDE_ROLE_AXIS_GRID": 3,
+        },
+    ):
+        return "grid"
+    if role in _datoviz_enum_values(
+        dvz,
+        "DvzGuideRole",
+        {
+            "DVZ_GUIDE_ROLE_COLORBAR": 6,
+            "DVZ_GUIDE_ROLE_COLORBAR_RAMP": 7,
+            "DVZ_GUIDE_ROLE_COLORBAR_TITLE": 9,
+        },
+    ):
+        return "colorbar"
+    if role in _datoviz_enum_values(
+        dvz,
+        "DvzGuideRole",
+        {
+            "DVZ_GUIDE_ROLE_LEGEND": 10,
+            "DVZ_GUIDE_ROLE_LEGEND_ENTRY": 11,
+            "DVZ_GUIDE_ROLE_LEGEND_TITLE": 12,
+        },
+    ):
+        return "legend"
+    if role in _datoviz_enum_values(
+        dvz,
+        "DvzGuideRole",
+        {
+            "DVZ_GUIDE_ROLE_GUIDE_LABEL": 15,
+        },
+    ):
+        return "title"
+    return "axis"
+
+
+def _datoviz_guide_role(dvz: Any, role: int) -> str:
+    names = {
+        "DVZ_GUIDE_ROLE_X_AXIS": 1,
+        "DVZ_GUIDE_ROLE_Y_AXIS": 2,
+        "DVZ_GUIDE_ROLE_AXIS_GRID": 3,
+        "DVZ_GUIDE_ROLE_AXIS_TICK_LABEL": 4,
+        "DVZ_GUIDE_ROLE_AXIS_LABEL": 5,
+        "DVZ_GUIDE_ROLE_COLORBAR": 6,
+        "DVZ_GUIDE_ROLE_COLORBAR_RAMP": 7,
+        "DVZ_GUIDE_ROLE_COLORBAR_TICK_LABEL": 8,
+        "DVZ_GUIDE_ROLE_COLORBAR_TITLE": 9,
+        "DVZ_GUIDE_ROLE_LEGEND": 10,
+        "DVZ_GUIDE_ROLE_LEGEND_ENTRY": 11,
+        "DVZ_GUIDE_ROLE_LEGEND_TITLE": 12,
+        "DVZ_GUIDE_ROLE_GUIDE_LINE": 13,
+        "DVZ_GUIDE_ROLE_GUIDE_SPAN": 14,
+        "DVZ_GUIDE_ROLE_GUIDE_LABEL": 15,
+    }
+    for name, fallback in names.items():
+        if role == _datoviz_enum_value(dvz, "DvzGuideRole", name, fallback):
+            return name.removeprefix("DVZ_GUIDE_ROLE_").lower()
+    return f"datoviz_role_{role}"
+
+
+def _datoviz_contribution_layer(dvz: Any, kind: int) -> str:
+    if kind == _datoviz_enum_value(
+        dvz,
+        "DvzRenderedContributionKind",
+        "DVZ_RENDERED_CONTRIBUTION_GUIDE",
+        2,
+    ):
+        return "guide"
+    if kind == _datoviz_enum_value(
+        dvz,
+        "DvzRenderedContributionKind",
+        "DVZ_RENDERED_CONTRIBUTION_VISUAL",
+        1,
+    ):
+        return "visual"
+    return "datoviz"
+
+
+def _datoviz_enum_values(
+    dvz: Any, enum_type_name: str, values: Mapping[str, int]
+) -> set[int]:
+    return {
+        _datoviz_enum_value(dvz, enum_type_name, name, fallback)
+        for name, fallback in values.items()
+    }
+
+
+def _datoviz_enum_value(
+    dvz: Any, enum_type_name: str, name: str, fallback: int
+) -> int:
+    value = getattr(dvz, name, None)
+    if value is not None:
+        return int(value)
+    enum_type = getattr(dvz, enum_type_name, None)
+    if enum_type is not None and hasattr(enum_type, name):
+        return int(getattr(enum_type, name))
+    return fallback
+
+
+def _required_dvz_rect(rect: Any, field_name: str) -> LogicalPixelRect:
+    logical_rect = _optional_dvz_rect(rect)
+    if logical_rect is None:
+        raise DatovizV04Unsupported(f"Datoviz panel frame missing {field_name}")
+    return logical_rect
+
+
+def _optional_dvz_rect(rect: Any | None) -> LogicalPixelRect | None:
+    if rect is None:
+        return None
+    return LogicalPixelRect(
+        x=float(getattr(rect, "x")),
+        y=float(getattr(rect, "y")),
+        width=float(getattr(rect, "width")),
+        height=float(getattr(rect, "height")),
+    )
+
+
+def _positive_or_fallback(value: object, fallback: float) -> float:
+    number = float(cast(Any, value))
+    return number if number > 0.0 else float(fallback)
+
+
+def _native_uint_id(value: object) -> int:
+    return int(cast(Any, value))
+
+
+def _datoviz_protocol_id(prefix: str, value: int) -> str:
+    return f"datoviz:{prefix}:{value:x}"
 
 
 def _text_renderer_value(dvz: Any) -> int:

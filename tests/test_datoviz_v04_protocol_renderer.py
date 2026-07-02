@@ -96,6 +96,8 @@ from gsp_datoviz.protocol_renderer import (
     datoviz_v04_live_input_ready,
     datoviz_v04_mesh_diagnostics,
     datoviz_v04_mesh_ready,
+    datoviz_v04_panel_frame_snapshot_diagnostics,
+    datoviz_v04_panel_frame_snapshot_ready,
     datoviz_v04_sampled_field_diagnostics,
     datoviz_v04_sampled_field_ready,
     datoviz_v04_text_diagnostics,
@@ -426,6 +428,142 @@ class FakeDatovizV04WithAxisTicks(FakeDatovizV04WithAxes):
     def dvz_axis_set_ticks(self, axis, values, labels=None):
         self.calls.append(("set_ticks", axis, tuple(values), labels))
         return True
+
+
+class FakeDvzRect:
+    def __init__(self, x, y, width, height):
+        self.x = float(x)
+        self.y = float(y)
+        self.width = float(width)
+        self.height = float(height)
+
+
+class FakeDvzPanelFrameInfo:
+    def __init__(self):
+        self.snapshot_id = 0x2A
+        self.logical_width_px = 800
+        self.logical_height_px = 600
+        self.framebuffer_width_px = 800.0
+        self.framebuffer_height_px = 600.0
+        self.device_scale_x = 1.0
+        self.device_scale_y = 1.0
+        self.panel_rect_px = FakeDvzRect(0.0, 0.0, 800.0, 600.0)
+        self.plot_rect_px = FakeDvzRect(80.0, 70.0, 640.0, 460.0)
+        self.grid_clip_rect_px = FakeDvzRect(80.0, 70.0, 640.0, 460.0)
+        self.visible_data_x = (-2.0, 2.0)
+        self.visible_data_y = (-1.0, 1.0)
+        self.has_valid_visible_x = True
+        self.has_valid_visible_y = True
+
+
+class FakeDvzGuideLayout:
+    def __init__(self):
+        self.snapshot_id = 0
+        self.guide_id = 0
+        self.kind = 0
+        self.role = 0
+        self.part = 0
+        self.box_px = FakeDvzRect(0.0, 0.0, 0.0, 0.0)
+        self.anchor_px = [0.0, 0.0]
+        self.has_box = False
+        self.has_anchor = False
+
+
+class FakeDvzRenderedContribution:
+    def __init__(self):
+        self.snapshot_id = 0
+        self.contribution_id = 0
+        self.guide_id = 0
+        self.visual_id = 0
+        self.kind = 0
+        self.role = 0
+        self.part = 0
+        self.box_px = FakeDvzRect(0.0, 0.0, 0.0, 0.0)
+
+
+class FakeDatovizV04WithPanelFrameSnapshot(FakeDatovizV04WithAxes):
+    DvzPanelFrameInfo = FakeDvzPanelFrameInfo
+    DvzGuideLayout = FakeDvzGuideLayout
+    DvzRenderedContribution = FakeDvzRenderedContribution
+    DVZ_GUIDE_ROLE_AXIS_TICK_LABEL = 4
+    DVZ_GUIDE_ROLE_AXIS_LABEL = 5
+    DVZ_RENDERED_CONTRIBUTION_GUIDE = 2
+
+    def __init__(self):
+        super().__init__()
+        self.frame_info = FakeDvzPanelFrameInfo()
+        self.guide_layouts = [
+            SimpleNamespace(
+                snapshot_id=0x2A,
+                guide_id=0x100,
+                kind=1,
+                role=self.DVZ_GUIDE_ROLE_AXIS_TICK_LABEL,
+                part=5,
+                box_px=FakeDvzRect(90.0, 520.0, 80.0, 22.0),
+                anchor_px=[130.0, 531.0],
+                has_box=True,
+                has_anchor=True,
+            ),
+            SimpleNamespace(
+                snapshot_id=0x2A,
+                guide_id=0x101,
+                kind=1,
+                role=self.DVZ_GUIDE_ROLE_AXIS_LABEL,
+                part=5,
+                box_px=FakeDvzRect(350.0, 560.0, 100.0, 24.0),
+                anchor_px=[400.0, 572.0],
+                has_box=True,
+                has_anchor=True,
+            ),
+        ]
+        self.contributions = [
+            SimpleNamespace(
+                snapshot_id=0x2A,
+                contribution_id=0x300,
+                guide_id=0x100,
+                visual_id=0,
+                kind=self.DVZ_RENDERED_CONTRIBUTION_GUIDE,
+                role=self.DVZ_GUIDE_ROLE_AXIS_TICK_LABEL,
+                part=5,
+                box_px=FakeDvzRect(90.0, 520.0, 80.0, 22.0),
+            )
+        ]
+        self.unref_count = 0
+
+    def dvz_panel_resolve_frame(self, panel):
+        self.calls.append(("panel_resolve_frame", panel))
+        return "frame-snapshot"
+
+    def dvz_panel_frame_id(self, snapshot):
+        self.calls.append(("panel_frame_id", snapshot))
+        return self.frame_info.snapshot_id
+
+    def dvz_panel_frame_info(self, snapshot, out):
+        self.calls.append(("panel_frame_info", snapshot))
+        vars(out).update(vars(self.frame_info))
+        return True
+
+    def dvz_panel_frame_guide_count(self, snapshot):
+        self.calls.append(("panel_frame_guide_count", snapshot))
+        return len(self.guide_layouts)
+
+    def dvz_panel_frame_guide_layout(self, snapshot, index, out):
+        self.calls.append(("panel_frame_guide_layout", snapshot, index))
+        vars(out).update(vars(self.guide_layouts[index]))
+        return True
+
+    def dvz_panel_frame_contribution_count(self, snapshot):
+        self.calls.append(("panel_frame_contribution_count", snapshot))
+        return len(self.contributions)
+
+    def dvz_panel_frame_contribution(self, snapshot, index, out):
+        self.calls.append(("panel_frame_contribution", snapshot, index))
+        vars(out).update(vars(self.contributions[index]))
+        return True
+
+    def dvz_panel_frame_unref(self, snapshot):
+        self.calls.append(("panel_frame_unref", snapshot))
+        self.unref_count += 1
 
 
 class FakeDatovizV04WithDescriptorDomains(FakeDatovizV04WithAxes):
@@ -1303,6 +1441,72 @@ def test_capability_snapshot_promotes_native_datoviz_grid_clip_when_source_is_fi
     assert "grid_clip_not_enforced" not in audit["diagnostics"]
     assert caps.guide_layout_capability.axis_grid_clip_to_plot_rect is True
     assert "grid_clip_native_verified" in caps.guide_layout_capability.diagnostics
+
+
+def test_datoviz_panel_frame_snapshot_maps_to_partial_layout_snapshot():
+    fake = FakeDatovizV04WithPanelFrameSnapshot()
+    view = View2D(
+        id="view:main",
+        panel_id="panel:main",
+        x_range=(-2.0, 2.0),
+        y_range=(-1.0, 1.0),
+    )
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view=view)
+
+    snapshot = renderer.resolve_partial_layout_snapshot(
+        snapshot_id_prefix="layout:test:datoviz"
+    )
+
+    assert datoviz_v04_panel_frame_snapshot_ready(fake)
+    assert snapshot.snapshot_id == "layout:test:datoviz:2a"
+    assert snapshot.view_id == "view:main"
+    assert snapshot.render_target.logical_width_px == 800.0
+    assert snapshot.render_target.logical_height_px == 600.0
+    assert snapshot.render_target.device_scale == 1.0
+    assert snapshot.panel_rect_px == LogicalPixelRect(0.0, 0.0, 800.0, 600.0)
+    assert snapshot.plot_rect_px == LogicalPixelRect(80.0, 70.0, 640.0, 460.0)
+    assert snapshot.grid_clip_rect_px == LogicalPixelRect(80.0, 70.0, 640.0, 460.0)
+    assert snapshot.data_to_screen_transform == (160.0, 0.0, 400.0, 0.0, 230.0, 300.0)
+    assert [box.guide_id for box in snapshot.guide_boxes] == [
+        "datoviz:guide:100",
+        "datoviz:guide:101",
+    ]
+    assert [box.kind for box in snapshot.guide_boxes] == [
+        "tick_label",
+        "axis_label",
+    ]
+    assert snapshot.tick_label_boxes[0].guide_id == "datoviz:guide:100"
+    assert snapshot.axis_label_boxes[0].guide_id == "datoviz:guide:101"
+    assert snapshot.z_layers[0].object_id == "datoviz:contribution:300"
+    assert snapshot.z_layers[0].layer == "guide"
+    assert fake.unref_count == 1
+    assert {diagnostic.code for diagnostic in snapshot.diagnostics} >= {
+        "layout_snapshot_partial",
+        "guide_query_missing",
+        "all_rendered_guides_unsupported",
+        "datoviz_rendered_contributions_reported",
+    }
+
+
+def test_datoviz_capabilities_report_partial_layout_snapshot_when_frame_api_exists():
+    caps = gsp_capability_snapshot_from_datoviz(
+        None, dvz=FakeDatovizV04WithPanelFrameSnapshot()
+    )
+
+    audit = caps.metadata["s034_guide_layout_audit"]
+    assert datoviz_v04_panel_frame_snapshot_diagnostics(
+        FakeDatovizV04WithPanelFrameSnapshot()
+    ) == ()
+    assert audit["resolved_layout_produce"] == "partial"
+    assert audit["layout_snapshot_partial"] is True
+    assert audit["layout_strict"] is False
+    assert "layout_snapshot_partial" in audit["diagnostics"]
+    assert caps.layout_capability.resolved_layout_produce == "partial"
+    assert caps.layout_capability.layout_strict is False
+    assert caps.render_target_capability.device_scale is True
+    assert caps.query_layout_capability.reports_layout_snapshot_id is True
+    assert caps.query_layout_capability.guide_query is False
+    assert caps.query_layout_capability.all_rendered_guides is False
 
 
 def test_retained_view2d_navigation_update_does_not_reupload_visual_buffers():

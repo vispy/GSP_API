@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 import subprocess
 from types import ModuleType
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 from gsp.protocol import (
     AxisProviderCapability,
@@ -85,6 +85,18 @@ _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS = (
     "dvz_camera_desc",
     "dvz_panel_set_camera",
     "dvz_camera_set_orthographic_bounds",
+)
+
+_REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS = (
+    "DvzPanelFrameInfo",
+    "DvzGuideLayout",
+    "DvzRenderedContribution",
+    "dvz_panel_resolve_frame",
+    "dvz_panel_frame_info",
+    "dvz_panel_frame_guide_count",
+    "dvz_panel_frame_guide_layout",
+    "dvz_panel_frame_contribution_count",
+    "dvz_panel_frame_contribution",
 )
 
 _REQUIRED_DVZ_AXIS_FUNCTIONS = (
@@ -186,10 +198,26 @@ def gsp_capability_snapshot_from_datoviz(
     grid_clip_audit_diagnostics = (
         ("grid_clip_native_verified",) if grid_clip_supported else grid_clip_diagnostics
     )
+    frame_snapshot_diagnostics = datoviz_v04_panel_frame_snapshot_diagnostics(dvz)
+    frame_snapshot_supported = not frame_snapshot_diagnostics
+    frame_snapshot_status: Literal["none", "partial"] = (
+        "partial" if frame_snapshot_supported else "none"
+    )
+    frame_snapshot_audit_diagnostics = (
+        (
+            "layout_snapshot_partial",
+            "guide_layout_snapshot_first_slice",
+            "guide_query_missing",
+            "all_rendered_guides_unsupported",
+        )
+        if frame_snapshot_supported
+        else ("resolved_layout_snapshot_unsupported", *frame_snapshot_diagnostics)
+    )
     guide_layout_diagnostics = (
         "panel_text_guide_as_screen_text",
         "axis_style_mapping_partial",
         *grid_clip_audit_diagnostics,
+        *frame_snapshot_audit_diagnostics,
         "guide_query_missing",
         "all_rendered_guides_unsupported",
     )
@@ -221,25 +249,29 @@ def gsp_capability_snapshot_from_datoviz(
         ),
         "s034_layout_status": (
             "Datoviz guide/layout behavior is semantic/adapted in this slice. "
-            "The adapter does not produce or consume ResolvedLayoutSnapshot, "
-            "does not provide guide query geometry, and must not claim layout_strict."
+            "The adapter can produce a partial ResolvedLayoutSnapshot only when "
+            "the M184 panel frame snapshot APIs are available; guide query geometry "
+            "is still not a strict GSP query path and must not claim layout_strict."
         ),
         "s034_guide_layout_audit": {
             "semantic_guides": True,
-            "resolved_layout_produce": "none",
+            "resolved_layout_produce": frame_snapshot_status,
             "resolved_layout_consume": "none",
             "layout_strict": False,
             "panel_text_title": "adapted: panel_text_guide_as_screen_text",
             "axis_style_mapping": "partial" if dvz is not None and hasattr(dvz, "dvz_axis_set_style") else "unsupported",
             "axis_style_fields": DATOVIZ_S034_AXIS_STYLE_FIELDS,
             "grid_clip_to_plot_rect": grid_clip_status,
+            "layout_snapshot_partial": frame_snapshot_supported,
+            "layout_snapshot_guides": frame_snapshot_supported,
+            "layout_snapshot_contributions": frame_snapshot_supported,
             "guide_query": False,
             "all_rendered_guides": False,
             "diagnostics": (
                 "panel_text_guide_as_screen_text",
-                "resolved_layout_snapshot_unsupported",
                 "axis_style_mapping_partial",
                 *grid_clip_audit_diagnostics,
+                *frame_snapshot_audit_diagnostics,
                 "guide_query_missing",
                 "all_rendered_guides_unsupported",
                 "font_metrics_parity_false",
@@ -393,13 +425,13 @@ def gsp_capability_snapshot_from_datoviz(
         axis_providers=(datoviz_v04_axis_provider_capability(dvz),),
         layout_capability=LayoutCapability(
             semantic_guides=True,
-            resolved_layout_produce="none",
+            resolved_layout_produce=frame_snapshot_status,
             resolved_layout_consume="none",
             layout_strict=False,
             diagnostics=(
                 "panel_text_guide_as_screen_text",
-                "resolved_layout_snapshot_unsupported",
                 "axis_style_mapping_partial",
+                *frame_snapshot_audit_diagnostics,
                 "layout_strict_false",
             ),
         ),
@@ -430,20 +462,28 @@ def gsp_capability_snapshot_from_datoviz(
         ),
         render_target_capability=RenderTargetCapability(
             logical_pixels=True,
-            device_scale=False,
+            device_scale=frame_snapshot_supported,
             dpi_metadata=False,
             physical_framebuffer_scale=False,
-            diagnostics=("device_scale_reporting_unverified",),
+            diagnostics=(
+                ()
+                if frame_snapshot_supported
+                else ("device_scale_reporting_unverified",)
+            ),
         ),
         query_layout_capability=QueryLayoutCapability(
             screen_logical_px=True,
             data_readout_uses_view_snapshot=True,
             guide_query=False,
             all_rendered_guides=False,
-            reports_layout_snapshot_id=False,
+            reports_layout_snapshot_id=frame_snapshot_supported,
             diagnostics=(
                 "guide_query_missing",
-                "layout_snapshot_not_used",
+                (
+                    "layout_snapshot_partial"
+                    if frame_snapshot_supported
+                    else "layout_snapshot_not_used"
+                ),
             ),
         ),
         metadata=metadata,
@@ -479,6 +519,19 @@ def _datoviz_v04_view3d_binding_diagnostics(dvz: ModuleType | Any | None) -> tup
     return tuple(
         f"missing {name}"
         for name in _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS
+        if not hasattr(dvz, name)
+    )
+
+
+def datoviz_v04_panel_frame_snapshot_diagnostics(
+    dvz: ModuleType | Any | None,
+) -> tuple[str, ...]:
+    """Return why Datoviz panel frame snapshot readback is unavailable."""
+    if dvz is None:
+        return ("Datoviz is not importable",)
+    return tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS
         if not hasattr(dvz, name)
     )
 

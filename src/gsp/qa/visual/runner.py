@@ -73,6 +73,7 @@ from gsp_datoviz.capabilities import datoviz_v04_grid_clip_to_plot_rect_ready_fo
 from gsp_datoviz.protocol_renderer import (
     DatovizColorPipeline,
     DatovizV04ProtocolRenderer,
+    DatovizV04Unavailable,
     DatovizV04Unsupported,
 )
 from gsp_matplotlib.protocol_renderer import (
@@ -378,6 +379,11 @@ def _layout_snapshot_report(snapshot: ResolvedLayoutSnapshot) -> dict[str, objec
         ],
         "tick_label_box_count": len(snapshot.tick_label_boxes),
         "guide_box_count": len(snapshot.guide_boxes),
+        "z_layer_count": len(snapshot.z_layers),
+        "diagnostics": [
+            {"code": diagnostic.code, "status": diagnostic.status.value}
+            for diagnostic in snapshot.diagnostics
+        ],
     }
 
 
@@ -489,6 +495,28 @@ def _run_datoviz(
             for title_visual in _datoviz_panel_text_visuals(panel_text_guides):
                 renderer.add_text_visual(title_visual)
             png = renderer.capture_png_bytes()
+            try:
+                resolve_partial_layout_snapshot = getattr(
+                    renderer, "resolve_partial_layout_snapshot"
+                )
+                layout_snapshot = resolve_partial_layout_snapshot(
+                    snapshot_id_prefix=f"layout:{case_slug(case.case_id)}:datoviz"
+                )
+            except (
+                AttributeError,
+                DatovizV04Unavailable,
+                DatovizV04Unsupported,
+            ) as snapshot_exc:
+                layout_snapshot = None
+                layout_snapshot_diagnostics = {
+                    "layout_snapshot_partial": "unsupported",
+                    "layout_snapshot_blocker": str(snapshot_exc),
+                }
+            else:
+                layout_snapshot_diagnostics = {
+                    "layout_snapshot_partial": "available",
+                    "layout_snapshot_id": layout_snapshot.snapshot_id,
+                }
         artifact_path.write_bytes(png)
         log_path.write_text("rendered\n", encoding="utf-8")
         report: dict[str, object] = {
@@ -498,8 +526,15 @@ def _run_datoviz(
             "log_path": str(log_path),
             "datoviz_color_pipeline": datoviz_color_pipeline,
         }
+        if layout_snapshot is not None:
+            report["layout_snapshot_id"] = layout_snapshot.snapshot_id
+            report["layout_snapshot"] = _layout_snapshot_report(layout_snapshot)
+        if layout_snapshot_diagnostics:
+            report["layout_snapshot_diagnostics"] = layout_snapshot_diagnostics
         if guide_diagnostics:
-            report["guide_diagnostics"] = guide_diagnostics
+            report["guide_diagnostics"] = guide_diagnostics | layout_snapshot_diagnostics
+        elif layout_snapshot_diagnostics:
+            report["guide_diagnostics"] = layout_snapshot_diagnostics
         return report
     except Exception as exc:  # noqa: BLE001 - local GPU/display/runtime failures are structured unsupported data.
         log_path.write_text(traceback.format_exc(), encoding="utf-8")
