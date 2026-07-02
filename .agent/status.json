@@ -299,7 +299,7 @@
       "id": "S050",
       "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
       "state": "active",
-      "progress": 10
+      "progress": 20
     }
   ],
   "missions": [
@@ -2089,9 +2089,9 @@
       "id": "M200",
       "title": "S050 Datoviz native mesh-pick evidence spike",
       "stage": "S050",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 200
     },
     {
@@ -2226,24 +2226,25 @@
     }
   ],
   "recommendations": [
-    "S050 is open: user approved the implementation roadmap branch; M200 is the next approved mission for Datoviz native mesh-pick evidence.",
-    "Run M200 first. Promote Datoviz query.view3d.mesh_triangle_pick.v1 only if public GSP visual_id, primitive_index, and pick-scene freshness are proven.",
-    "Keep M201-M203 as draft follow-ups until M200 reports whether Datoviz needs an upstream API handoff, a GSP adapter-only implementation, or a protocol consultation.",
+    "M200 completed: Datoviz upstream API work is required before GSP can safely advertise query.view3d.mesh_triangle_pick.v1; see .agent/S050_DATOVIZ_MESH_PICK_EVIDENCE.md.",
+    "Keep Datoviz query.view3d.mesh_triangle_pick.v1 unadvertised until native public visual_id, canonical triangle primitive_index, and pick-scene freshness are exposed and tested upstream.",
+    "Use the M200 upstream handoff evidence to decide whether M201-M203 should proceed independently or wait for Datoviz face/triangle query support.",
     "M204 remains blocked pending ChatGPT Pro consultation because materials/textures and broader VisPy2 public API design are architecture/API-shape decisions.",
     "S049 white paper draft is complete but was not previously reflected in .agent/status.json; Mission Control has reconciled it as completed.",
     "S048 completed: Datoviz-style Matplotlib arcball and native Datoviz arcball review paths are approved for examples 07, 08, 10, 11, and 13 with no source changes required.",
     "S047 completed: perspective View3D is implemented for protocol, Matplotlib, Datoviz, review examples, and center-dolly wheel zoom.",
     "S046 completed: 3D review examples now cover S044 mesh picking, OBJ-style flat Lambert mesh rendering, and deterministic View3D camera paths.",
-    "Next branch is user choice: continue examples with producer-facing VisPy2 3D helpers, open Datoviz native mesh-pick evidence, or approve M131 release mechanics with target version/tag/publish scope.",
+    "Next branch is user choice: scope Datoviz query/readback parity without mesh-triangle promotion, continue strictness scoping, or approve M131 release mechanics with target version/tag/publish scope.",
     "S045 completed: release-facing docs now summarize S034-S044 capability state and stop conditions.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target.",
     "S044 completed: grid clipping proof is consolidated and View3D mesh triangle picking has a backend-neutral protocol plus Matplotlib CPU oracle.",
     "Datoviz must not advertise query.view3d.mesh_triangle_pick.v1 until native public visual_id/primitive_index mapping and pick-scene freshness are proven.",
     "Native Datoviz grid clipping remains a separate verified capability and must not be treated as full guide strictness.",
     "Datoviz View3D live review uses native dvz_view_arcball when available; the old canonical GSP replay path remains experimental-only.",
-    "Optional hardening after M194 is a Datoviz native mesh-pick evidence spike, not public capability promotion."
+    "Optional hardening after M194 found Datoviz mesh-pick promotion blocked on upstream face/triangle query and freshness API evidence."
   ],
   "notes": [
+    "M200 completed: audited GSP Datoviz query/capability code and sibling Datoviz v0.4-dev commit dc8b168ed86e0f674be204d00c29e5869ee5e6c4; current Datoviz mesh queries return item/instance identity, not canonical triangle identity, so upstream API work is required before query.view3d.mesh_triangle_pick.v1 promotion.",
     "M199 completed: reconciled unregistered M198/S049 white paper status, opened S050 as the post-S048 implementation roadmap, approved M200 for Datoviz native mesh-pick evidence, and drafted follow-up parity/strictness/API missions.",
     "M198 completed: prepared the GSP white paper draft under whitepaper/ and recorded .agent/S049_CLOSEOUT.md; this status entry reconciles existing filesystem records.",
     "M197 completed: validated examples 07, 08, 10, 11, and 13 offscreen with both Matplotlib and Datoviz, passed focused arcball/native-arcball tests, and kept Datoviz native arcball as live-review behavior only.",

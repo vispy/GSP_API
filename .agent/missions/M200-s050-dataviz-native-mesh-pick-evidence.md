@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Approved for codex-ucl.
+Completed by codex-ucl.
 
 ## Summary
 
@@ -53,6 +53,16 @@ This is evidence work first, not capability promotion.
 - No public Datoviz capability is promoted.
 - No sibling Datoviz files are edited.
 - The current GSP worktree remains safe for follow-up implementation.
+
+## Result
+
+Completed locally in the current Mission Control session. See
+`.agent/S050_DATOVIZ_MESH_PICK_EVIDENCE.md`.
+
+Verdict: Datoviz upstream API work is required before GSP can safely implement or advertise
+`query.view3d.mesh_triangle_pick.v1`. Current Datoviz source/facade exposes general mesh item
+queries and public Datoviz visual ids, but not a public mesh triangle/face query path that returns
+canonical triangle ids with freshness evidence tied to the pick scene.
 
 ## Stop Conditions
 
