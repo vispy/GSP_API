@@ -23,6 +23,7 @@ import numpy.typing as npt
 
 from gsp.protocol import (
     AffineTransform2DResource,
+    AxisDimension,
     CanvasMetricsSource,
     CanvasSize,
     CapabilitySnapshot,
@@ -34,6 +35,8 @@ from gsp.protocol import (
     DepthMode,
     ImageOrigin,
     ImageVisual,
+    GUIDE_QUERY_PAYLOAD_KIND,
+    GuideQueryPayload,
     LayoutAnchor,
     LayoutDiagnostic,
     LayoutDiagnosticStatus,
@@ -175,6 +178,11 @@ _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS = (
     "dvz_panel_frame_guide_layout",
     "dvz_panel_frame_contribution_count",
     "dvz_panel_frame_contribution",
+)
+
+_REQUIRED_DVZ_PANEL_FRAME_GUIDE_QUERY_FUNCTIONS = (
+    "DvzGuideHit",
+    "dvz_panel_frame_guide_hit",
 )
 
 
@@ -452,6 +460,25 @@ def datoviz_v04_panel_frame_snapshot_diagnostics(
 def datoviz_v04_panel_frame_snapshot_ready(module: ModuleType | Any) -> bool:
     """Return whether the facade exposes the bounded S043 snapshot readback path."""
     return not datoviz_v04_panel_frame_snapshot_diagnostics(module)
+
+
+def datoviz_v04_panel_frame_guide_query_diagnostics(
+    module: ModuleType | Any,
+) -> tuple[str, ...]:
+    """Return why Datoviz panel frame guide hit/readback is unavailable."""
+    return tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_PANEL_FRAME_GUIDE_QUERY_FUNCTIONS
+        if not callable(getattr(module, name, None))
+    )
+
+
+def datoviz_v04_panel_frame_guide_query_ready(module: ModuleType | Any) -> bool:
+    """Return whether the facade exposes Datoviz guide hit/readback APIs."""
+    return (
+        datoviz_v04_panel_frame_snapshot_ready(module)
+        and not datoviz_v04_panel_frame_guide_query_diagnostics(module)
+    )
 
 
 def datoviz_v04_view3d_live_navigation_diagnostics(
@@ -1709,6 +1736,9 @@ class DatovizV04ProtocolRenderer:
 
     def query_panel(self, request: QueryRequest) -> QueryResult:
         """Queue and poll one Datoviz panel query for data-scope panel coordinates."""
+        if request.scope in (QueryScope.GUIDES, QueryScope.ALL_RENDERED):
+            return self._query_panel_guides(request)
+
         request_diagnostic = _datoviz_query_request_diagnostic(request)
         if request_diagnostic is not None:
             unsupported = _unsupported_query_result(request, request_diagnostic)
@@ -1760,6 +1790,72 @@ class DatovizV04ProtocolRenderer:
 
         decoded = replace(decode_dvz_query_result(raw_result), request_id=request.id)
         return self._decorate_scalar_query_result(decoded, request)
+
+    def _query_panel_guides(self, request: QueryRequest) -> QueryResult:
+        if request.coordinate_space != QueryCoordinateSpace.PANEL:
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.UNSUPPORTED,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic=(
+                    "Datoviz guide query requires panel logical-pixel coordinates"
+                ),
+                layout_snapshot_id=request.layout_snapshot_id,
+            )
+        if request.hit_policy != QueryHitPolicy.FRONTMOST:
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.UNSUPPORTED,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic="Datoviz guide query supports frontmost hit policy only",
+                layout_snapshot_id=request.layout_snapshot_id,
+            )
+        unsupported_payloads = tuple(
+            kind
+            for kind in request.requested_extension_payload_kinds
+            if kind != GUIDE_QUERY_PAYLOAD_KIND
+        )
+        if unsupported_payloads:
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.UNSUPPORTED,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic=(
+                    "Datoviz guide query does not support requested extension "
+                    f"payloads: {unsupported_payloads}"
+                ),
+                layout_snapshot_id=request.layout_snapshot_id,
+            )
+        if not datoviz_v04_panel_frame_guide_query_ready(self.dvz):
+            diagnostics = (
+                *datoviz_v04_panel_frame_snapshot_diagnostics(self.dvz),
+                *datoviz_v04_panel_frame_guide_query_diagnostics(self.dvz),
+            )
+            prefix = (
+                "all-rendered-guides-unsupported"
+                if request.scope == QueryScope.ALL_RENDERED
+                else "axis-guide-query-unsupported"
+            )
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.UNSUPPORTED,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic=(
+                    f"{prefix}: Datoviz panel frame guide hit/readback is "
+                    "unavailable: " + "; ".join(diagnostics)
+                ),
+                layout_snapshot_id=request.layout_snapshot_id,
+            )
+        return _query_datoviz_panel_frame_guides(
+            self.dvz,
+            self.panel,
+            request,
+            all_rendered=request.scope == QueryScope.ALL_RENDERED,
+        )
 
     def query_view3d_ray_context(
         self, request: QueryRequest, *, layout_snapshot_id: str
@@ -3011,25 +3107,57 @@ def _resolve_datoviz_partial_layout_snapshot(
         )
         grid_clip_rect = _optional_dvz_rect(getattr(info, "grid_clip_rect_px", None))
 
+        guide_query_supported = datoviz_v04_panel_frame_guide_query_ready(dvz)
+        guide_query_diagnostics = (
+            (
+                LayoutDiagnostic(
+                    code="guide_query_native_verified",
+                    status=LayoutDiagnosticStatus.RESOLVED,
+                    message=(
+                        "Datoviz panel frame guide hit/readback uses the same "
+                        "snapshot id as guide layout records."
+                    ),
+                ),
+                LayoutDiagnostic(
+                    code="all_rendered_guides_native_verified",
+                    status=LayoutDiagnosticStatus.RESOLVED,
+                    message=(
+                        "Datoviz panel frame contribution enumeration reports "
+                        "guide contributions with snapshot ids."
+                    ),
+                ),
+            )
+            if guide_query_supported
+            else (
+                LayoutDiagnostic(
+                    code="guide_query_missing",
+                    status=LayoutDiagnosticStatus.MISSING,
+                    message=(
+                        "Datoviz guide hit/readback is not yet wired into GSP "
+                        "query results."
+                    ),
+                ),
+                LayoutDiagnostic(
+                    code="all_rendered_guides_unsupported",
+                    status=LayoutDiagnosticStatus.UNSUPPORTED,
+                    message=(
+                        "Rendered contributions are diagnostic snapshot evidence "
+                        "only until guide hit/readback is available."
+                    ),
+                ),
+            )
+        )
+
         snapshot_diagnostics = (
             LayoutDiagnostic(
                 code="layout_snapshot_partial",
                 status=LayoutDiagnosticStatus.RESOLVED,
                 message=(
                     "Datoviz panel, plot, grid clip, guide layout, and contribution "
-                    "records were mapped without strict guide query promotion."
+                    "records were mapped from the native panel frame snapshot."
                 ),
             ),
-            LayoutDiagnostic(
-                code="guide_query_missing",
-                status=LayoutDiagnosticStatus.MISSING,
-                message="Datoviz guide hit/readback is not yet wired into GSP query results.",
-            ),
-            LayoutDiagnostic(
-                code="all_rendered_guides_unsupported",
-                status=LayoutDiagnosticStatus.UNSUPPORTED,
-                message="Rendered contributions are diagnostic snapshot evidence only in M185.",
-            ),
+            *guide_query_diagnostics,
             *guide_diagnostics,
             *contribution_diagnostics,
             *transform_diagnostics,
@@ -3056,6 +3184,130 @@ def _resolve_datoviz_partial_layout_snapshot(
             grid_clip_rect_px=grid_clip_rect,
             z_layers=z_layers,
             diagnostics=snapshot_diagnostics,
+        )
+    finally:
+        frame_unref = getattr(dvz, "dvz_panel_frame_unref", None)
+        if frame_unref is not None:
+            frame_unref(snapshot)
+
+
+def _query_datoviz_panel_frame_guides(
+    dvz: Any,
+    panel: Any,
+    request: QueryRequest,
+    *,
+    all_rendered: bool,
+) -> QueryResult:
+    snapshot = dvz.dvz_panel_resolve_frame(panel)
+    if _is_null_handle(snapshot):
+        return QueryResult(
+            request_id=request.id,
+            status=QueryStatus.FAILED,
+            hit=False,
+            panel_coordinate=request.coordinate,
+            diagnostic="Datoviz panel frame snapshot resolution failed",
+            layout_snapshot_id=request.layout_snapshot_id,
+        )
+    try:
+        info = dvz.DvzPanelFrameInfo()
+        if not dvz.dvz_panel_frame_info(snapshot, _ctypes_pointer_arg(info)):
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.FAILED,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic="Datoviz panel frame info copy failed",
+                layout_snapshot_id=request.layout_snapshot_id,
+            )
+        frame_snapshot_id = _native_uint_id(getattr(info, "snapshot_id", 0))
+        if frame_snapshot_id == 0 and hasattr(dvz, "dvz_panel_frame_id"):
+            frame_snapshot_id = _native_uint_id(dvz.dvz_panel_frame_id(snapshot))
+        native_layout_snapshot_id = f"layout:datoviz:{frame_snapshot_id:x}"
+        layout_snapshot_id = request.layout_snapshot_id or native_layout_snapshot_id
+        if not _datoviz_layout_snapshot_id_matches(layout_snapshot_id, frame_snapshot_id):
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.STALE,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic=(
+                    "Datoviz guide query resolved a different layout snapshot id: "
+                    f"{native_layout_snapshot_id}"
+                ),
+                layout_snapshot_id=native_layout_snapshot_id,
+            )
+
+        x, y = request.coordinate
+        hit_record = dvz.DvzGuideHit()
+        if not dvz.dvz_panel_frame_guide_hit(
+            snapshot, float(x), float(y), _ctypes_pointer_arg(hit_record)
+        ) or not bool(getattr(hit_record, "hit", False)):
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.MISS,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                layout_snapshot_id=layout_snapshot_id,
+            )
+        guide_id = _native_uint_id(getattr(hit_record, "guide_id", 0))
+        if guide_id == 0:
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.FAILED,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic="Datoviz guide hit omitted guide_id",
+                layout_snapshot_id=layout_snapshot_id,
+            )
+        if frame_snapshot_id and _native_uint_id(
+            getattr(hit_record, "snapshot_id", 0)
+        ) not in (0, frame_snapshot_id):
+            return QueryResult(
+                request_id=request.id,
+                status=QueryStatus.FAILED,
+                hit=False,
+                panel_coordinate=request.coordinate,
+                diagnostic="Datoviz guide hit snapshot id did not match frame snapshot id",
+                layout_snapshot_id=layout_snapshot_id,
+            )
+
+        role = _datoviz_guide_role(dvz, int(getattr(hit_record, "role", 0)))
+        label = _datoviz_label(getattr(hit_record, "label", b""))
+        has_data_value = bool(getattr(hit_record, "has_data_value", False))
+        data_value = (
+            float(getattr(hit_record, "data_value"))
+            if has_data_value
+            else None
+        )
+        item_id = (
+            int(getattr(hit_record, "item_index"))
+            if bool(getattr(hit_record, "has_item_index", False))
+            else None
+        )
+        payload = GuideQueryPayload(
+            guide_id=_datoviz_protocol_id("guide", guide_id),
+            role=role,
+            axis_dimension=_datoviz_axis_dimension_for_role(role),
+            tick_value=data_value,
+            text_value=label,
+        )
+        diagnostic = (
+            "datoviz_all_rendered_guide_contribution_verified"
+            if all_rendered
+            else None
+        )
+        return QueryResult(
+            request_id=request.id,
+            status=QueryStatus.HIT,
+            hit=True,
+            panel_coordinate=request.coordinate,
+            visual_id=payload.guide_id,
+            item_id=item_id,
+            value=label if label is not None else data_value,
+            extension_payload_kind=GUIDE_QUERY_PAYLOAD_KIND,
+            extension_payload=payload,
+            diagnostic=diagnostic,
+            layout_snapshot_id=layout_snapshot_id,
         )
     finally:
         frame_unref = getattr(dvz, "dvz_panel_frame_unref", None)
@@ -3348,6 +3600,14 @@ def _datoviz_guide_role(dvz: Any, role: int) -> str:
     return f"datoviz_role_{role}"
 
 
+def _datoviz_axis_dimension_for_role(role: str) -> AxisDimension | None:
+    if role.startswith("x_axis") or role == "axis_x":
+        return AxisDimension.X
+    if role.startswith("y_axis") or role == "axis_y":
+        return AxisDimension.Y
+    return None
+
+
 def _datoviz_contribution_layer(dvz: Any, kind: int) -> str:
     if kind == _datoviz_enum_value(
         dvz,
@@ -3416,6 +3676,28 @@ def _native_uint_id(value: object) -> int:
 
 def _datoviz_protocol_id(prefix: str, value: int) -> str:
     return f"datoviz:{prefix}:{value:x}"
+
+
+def _datoviz_layout_snapshot_id_matches(snapshot_id: str, native_id: int) -> bool:
+    if native_id == 0:
+        return True
+    return snapshot_id.endswith(f":{native_id:x}")
+
+
+def _datoviz_label(value: object) -> str | None:
+    if isinstance(value, bytes):
+        raw = value
+    elif isinstance(value, bytearray):
+        raw = bytes(value)
+    elif isinstance(value, str):
+        return value or None
+    else:
+        try:
+            raw = bytes(cast(Any, value))
+        except (TypeError, ValueError):
+            return None
+    text = raw.split(b"\x00", 1)[0].decode("utf-8", errors="replace")
+    return text or None
 
 
 def _text_renderer_value(dvz: Any) -> int:

@@ -308,15 +308,26 @@ def _datoviz_row(
     backend_status: str,
 ) -> dict[str, object]:
     reason = _backend_reason(backend_entry)
+    query_supported = False
     if backend_status == "rendered":
-        guide_policy = _datoviz_rendered_guide_policy(case, backend_entry)
-        if guide_policy is not None:
+        strict_guide_policy = _datoviz_strict_guide_policy(case, backend_entry)
+        guide_policy: dict[str, list[str]] | None = None
+        if strict_guide_policy is not None:
+            status = "strict"
+            reason_code = "datoviz_axis_guide_strict_snapshot_evidence"
+            adaptations = strict_guide_policy
+            missing = []
+            blockers = []
+            query_supported = True
+        else:
+            guide_policy = _datoviz_rendered_guide_policy(case, backend_entry)
+        if strict_guide_policy is None and guide_policy is not None:
             status = "adapted"
             reason_code = "datoviz_axis_guide_adapted_review"
             adaptations = guide_policy["adaptations"]
             missing = guide_policy["missing"]
             blockers = guide_policy["blockers"]
-        else:
+        elif strict_guide_policy is None:
             promotion = _datoviz_rendered_promotion(case)
             if promotion is not None:
                 status = "strict"
@@ -350,7 +361,7 @@ def _datoviz_row(
         "status": status,
         "review_classification": _review_classification(status, reason_code),
         "rendering_supported": backend_status == "rendered",
-        "query_supported": False,
+        "query_supported": query_supported,
         "reason_code": reason_code,
         "known_adaptations": adaptations,
         "known_missing_semantics": missing,
@@ -366,6 +377,43 @@ def _datoviz_rendered_promotion(case: Mapping[str, object]) -> list[str] | None:
     return _DATOVIZ_S029_STRICT_RENDER_CASES.get(case_id)
 
 
+def _datoviz_strict_guide_policy(
+    case: Mapping[str, object],
+    backend_entry: Mapping[str, object],
+) -> list[str] | None:
+    case_id = case.get("case_id")
+    if not isinstance(case_id, str):
+        return None
+    if case_id not in _DATOVIZ_S030_RENDERED_GUIDE_ROWS:
+        return None
+    diagnostics = _datoviz_guide_diagnostics(backend_entry)
+    if diagnostics is None:
+        return None
+    if diagnostics.get("panel_title") in {"adapted-review", "unsupported"}:
+        return None
+    strict_keys = (
+        "guide_identity",
+        "guide_box",
+        "guide_query",
+        "all_rendered_guide_query",
+        "layout_snapshot_id_equality",
+        "rendered_contribution",
+    )
+    if any(diagnostics.get(key) != "native-verified" for key in strict_keys):
+        return None
+    rendered_contribution_count = diagnostics.get("rendered_contribution_count")
+    if (
+        not isinstance(rendered_contribution_count, int)
+        or rendered_contribution_count <= 0
+    ):
+        return None
+    return [
+        "Datoviz native panel frame guide layout exposes guide identity and guide boxes",
+        "Datoviz guide and all-rendered query readback return the same layout snapshot id used by rendering",
+        "Datoviz rendered contribution enumeration reports guide contributions for this row",
+    ]
+
+
 def _datoviz_rendered_guide_policy(
     case: Mapping[str, object],
     backend_entry: Mapping[str, object],
@@ -376,10 +424,19 @@ def _datoviz_rendered_guide_policy(
     guide_policy = _DATOVIZ_S030_RENDERED_GUIDE_ROWS.get(case_id)
     if guide_policy is None:
         return None
-    diagnostics = backend_entry.get("guide_diagnostics")
-    if not isinstance(diagnostics, Mapping):
+    if _datoviz_guide_diagnostics(backend_entry) is None:
         return None
     return guide_policy
+
+
+def _datoviz_guide_diagnostics(
+    backend_entry: Mapping[str, object],
+) -> Mapping[str, object] | None:
+    for key in ("guide_diagnostics", "layout_snapshot_diagnostics"):
+        diagnostics = backend_entry.get(key)
+        if isinstance(diagnostics, Mapping):
+            return diagnostics
+    return None
 
 
 def _datoviz_rendered_blockers(case: Mapping[str, object]) -> list[str]:

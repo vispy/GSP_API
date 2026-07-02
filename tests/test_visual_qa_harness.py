@@ -816,8 +816,54 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
 
     clip_boundary = rows["guide/view2d_grid_clip_title_boundary"]
     assert clip_boundary["status"] == "adapted"
+    assert clip_boundary["reason_code"] == "datoviz_axis_guide_adapted_review"
     assert "title-boundary grid clipping" in clip_boundary["known_adaptations"][0]
     assert "guide-query support" in clip_boundary["promotion_blockers"][1]
+
+
+def test_s030_rendered_datoviz_guide_row_promotes_with_strict_snapshot_evidence() -> None:
+    report = {
+        "suite": "s028",
+        "stage": "S043",
+        "run_id": "unit",
+        "cases": [
+            {
+                "case_id": "guide/view2d_auto_grid",
+                "family": "guide",
+                "required_features": ["guide", "view2d", "auto-ticks", "grid", "labels"],
+                "backends": {
+                    "matplotlib": {"status": "rendered"},
+                    "datoviz": {
+                        "status": "rendered",
+                        "artifact_path": "backends/datoviz/guide_view2d_auto_grid.png",
+                        "log_path": "backends/datoviz/guide_view2d_auto_grid.log.txt",
+                        "guide_diagnostics": {
+                            "axis_rendering": "native-verified",
+                            "panel_title": "native-verified",
+                            "guide_identity": "native-verified",
+                            "guide_box": "native-verified",
+                            "guide_query": "native-verified",
+                            "all_rendered_guide_query": "native-verified",
+                            "layout_snapshot_id_equality": "native-verified",
+                            "rendered_contribution": "native-verified",
+                            "rendered_contribution_count": 1,
+                        },
+                    },
+                },
+            }
+        ],
+    }
+
+    matrix = build_capability_matrix(report)
+    row = next(row for row in matrix["rows"] if row["backend"] == "datoviz")
+
+    assert row["status"] == "strict"
+    assert row["review_classification"] == "pass.semantic_strict"
+    assert row["rendering_supported"] is True
+    assert row["query_supported"] is True
+    assert row["reason_code"] == "datoviz_axis_guide_strict_snapshot_evidence"
+    assert row["known_missing_semantics"] == []
+    assert row["promotion_blockers"] == []
 
 
 def test_visual_qa_harness_does_not_import_legacy_datoviz_renderer() -> None:

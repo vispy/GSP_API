@@ -99,6 +99,11 @@ _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS = (
     "dvz_panel_frame_contribution",
 )
 
+_REQUIRED_DVZ_PANEL_FRAME_GUIDE_QUERY_FUNCTIONS = (
+    "DvzGuideHit",
+    "dvz_panel_frame_guide_hit",
+)
+
 _REQUIRED_DVZ_AXIS_FUNCTIONS = (
     "dvz_panel_set_domain",
     "dvz_panel_view2d",
@@ -203,12 +208,23 @@ def gsp_capability_snapshot_from_datoviz(
     frame_snapshot_status: Literal["none", "partial"] = (
         "partial" if frame_snapshot_supported else "none"
     )
+    guide_query_diagnostics = datoviz_v04_panel_frame_guide_query_diagnostics(dvz)
+    guide_query_supported = frame_snapshot_supported and not guide_query_diagnostics
     frame_snapshot_audit_diagnostics = (
         (
             "layout_snapshot_partial",
             "guide_layout_snapshot_first_slice",
-            "guide_query_missing",
-            "all_rendered_guides_unsupported",
+            (
+                "guide_query_native_verified"
+                if guide_query_supported
+                else "guide_query_missing"
+            ),
+            (
+                "all_rendered_guides_native_verified"
+                if guide_query_supported
+                else "all_rendered_guides_unsupported"
+            ),
+            *guide_query_diagnostics,
         )
         if frame_snapshot_supported
         else ("resolved_layout_snapshot_unsupported", *frame_snapshot_diagnostics)
@@ -265,8 +281,8 @@ def gsp_capability_snapshot_from_datoviz(
             "layout_snapshot_partial": frame_snapshot_supported,
             "layout_snapshot_guides": frame_snapshot_supported,
             "layout_snapshot_contributions": frame_snapshot_supported,
-            "guide_query": False,
-            "all_rendered_guides": False,
+            "guide_query": guide_query_supported,
+            "all_rendered_guides": guide_query_supported,
             "diagnostics": (
                 "panel_text_guide_as_screen_text",
                 "axis_style_mapping_partial",
@@ -442,7 +458,7 @@ def gsp_capability_snapshot_from_datoviz(
             axis_labels=True,
             axis_grid=True,
             axis_grid_clip_to_plot_rect=grid_clip_supported,
-            axis_query=False,
+            axis_query=guide_query_supported,
             panel_text_title="adapted",
             panel_text_participates_in_layout=False,
             panel_text_query=False,
@@ -474,11 +490,15 @@ def gsp_capability_snapshot_from_datoviz(
         query_layout_capability=QueryLayoutCapability(
             screen_logical_px=True,
             data_readout_uses_view_snapshot=True,
-            guide_query=False,
-            all_rendered_guides=False,
+            guide_query=guide_query_supported,
+            all_rendered_guides=guide_query_supported,
             reports_layout_snapshot_id=frame_snapshot_supported,
             diagnostics=(
-                "guide_query_missing",
+                (
+                    "guide_query_native_verified"
+                    if guide_query_supported
+                    else "guide_query_missing"
+                ),
                 (
                     "layout_snapshot_partial"
                     if frame_snapshot_supported
@@ -533,6 +553,19 @@ def datoviz_v04_panel_frame_snapshot_diagnostics(
         f"missing {name}"
         for name in _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS
         if not hasattr(dvz, name)
+    )
+
+
+def datoviz_v04_panel_frame_guide_query_diagnostics(
+    dvz: ModuleType | Any | None,
+) -> tuple[str, ...]:
+    """Return why Datoviz panel frame guide hit/readback is unavailable."""
+    if dvz is None:
+        return ("Datoviz is not importable",)
+    return tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_PANEL_FRAME_GUIDE_QUERY_FUNCTIONS
+        if not callable(getattr(dvz, name, None))
     )
 
 
@@ -604,6 +637,20 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
         if not datoviz_v04_grid_clip_to_plot_rect_diagnostics(dvz)
         else "axis-provider-grid-clip-to-plot-rect-unverified: native grid endpoint clipping is not verified for this Datoviz build"
     )
+    guide_query_supported = (
+        not datoviz_v04_panel_frame_snapshot_diagnostics(dvz)
+        and not datoviz_v04_panel_frame_guide_query_diagnostics(dvz)
+    )
+    guide_query_diagnostic = (
+        "axis-guide-query-native-verified: Datoviz panel frame guide hit/readback uses the same snapshot id as guide layout records"
+        if guide_query_supported
+        else "axis-guide-query-unsupported: guide picking is deferred for Datoviz v0.4 RC"
+    )
+    all_rendered_diagnostic = (
+        "all-rendered-guides-native-verified: Datoviz panel frame contribution enumeration reports guide contributions with snapshot ids"
+        if guide_query_supported
+        else "all-rendered-guides-unsupported: all-rendered guide contributions require guide query support"
+    )
 
     return AxisProviderCapability(
         provider_id=DATOVIZ_V04_AXIS_PROVIDER,
@@ -618,7 +665,7 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
         supports_grid=hasattr(dvz, "dvz_axis_set_grid"),
         supports_style_basic=hasattr(dvz, "dvz_axis_set_style"),
         supports_visible_domain_readback=hasattr(dvz, "dvz_panel_visible_domain"),
-        supports_guide_query=False,
+        supports_guide_query=guide_query_supported,
         supports_text_query=False,
         diagnostics=(
             "axis-provider-selected: datoviz.v04.panel_axis.wip",
@@ -630,8 +677,8 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
             ),
             explicit_tick_diagnostic,
             grid_clip_diagnostic,
-            "axis-guide-query-unsupported: guide picking is deferred for Datoviz v0.4 RC",
-            "all-rendered-guides-unsupported: all-rendered guide contributions require guide query support",
+            guide_query_diagnostic,
+            all_rendered_diagnostic,
             "strict-guide-title-query-unverified: Datoviz guide rows remain adapted until title layout and guide query semantics are strict",
         ),
     )

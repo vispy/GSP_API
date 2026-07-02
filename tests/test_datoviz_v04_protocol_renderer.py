@@ -44,6 +44,8 @@ from gsp.protocol import (
     ColorMapRef,
     ColorScale,
     LinearNormalize,
+    GUIDE_QUERY_PAYLOAD_KIND,
+    GuideQueryPayload,
     LogicalPixelRect,
     MESH3D_OPAQUE_DEPTH_CAPABILITY,
     NavigationPlacement,
@@ -481,10 +483,28 @@ class FakeDvzRenderedContribution:
         self.box_px = FakeDvzRect(0.0, 0.0, 0.0, 0.0)
 
 
+class FakeDvzGuideHit:
+    def __init__(self):
+        self.snapshot_id = 0
+        self.guide_id = 0
+        self.kind = 0
+        self.role = 0
+        self.part = 0
+        self.box_px = FakeDvzRect(0.0, 0.0, 0.0, 0.0)
+        self.point_px = [0.0, 0.0]
+        self.data_value = 0.0
+        self.item_index = 0
+        self.hit = False
+        self.has_data_value = False
+        self.has_item_index = False
+        self.label = b""
+
+
 class FakeDatovizV04WithPanelFrameSnapshot(FakeDatovizV04WithAxes):
     DvzPanelFrameInfo = FakeDvzPanelFrameInfo
     DvzGuideLayout = FakeDvzGuideLayout
     DvzRenderedContribution = FakeDvzRenderedContribution
+    DvzGuideHit = FakeDvzGuideHit
     DVZ_GUIDE_ROLE_AXIS_TICK_LABEL = 4
     DVZ_GUIDE_ROLE_AXIS_LABEL = 5
     DVZ_RENDERED_CONTRIBUTION_GUIDE = 2
@@ -561,9 +581,30 @@ class FakeDatovizV04WithPanelFrameSnapshot(FakeDatovizV04WithAxes):
         vars(out).update(vars(self.contributions[index]))
         return True
 
+    def dvz_panel_frame_guide_hit(self, snapshot, x, y, out):
+        self.calls.append(("panel_frame_guide_hit", snapshot, x, y))
+        for index, layout in enumerate(self.guide_layouts):
+            rect = layout.box_px
+            if rect.x <= x <= rect.x + rect.width and rect.y <= y <= rect.y + rect.height:
+                vars(out).update(vars(layout))
+                out.point_px = [float(x), float(y)]
+                out.data_value = 1.25
+                out.item_index = index
+                out.hit = True
+                out.has_data_value = True
+                out.has_item_index = True
+                out.label = b"tick A" if index == 0 else b"axis A"
+                return True
+        return False
+
     def dvz_panel_frame_unref(self, snapshot):
         self.calls.append(("panel_frame_unref", snapshot))
         self.unref_count += 1
+
+
+class FakeDatovizV04WithPanelFrameSnapshotOnly(FakeDatovizV04WithPanelFrameSnapshot):
+    DvzGuideHit = None
+    dvz_panel_frame_guide_hit = None
 
 
 class FakeDatovizV04WithDescriptorDomains(FakeDatovizV04WithAxes):
@@ -1482,20 +1523,74 @@ def test_datoviz_panel_frame_snapshot_maps_to_partial_layout_snapshot():
     assert fake.unref_count == 1
     assert {diagnostic.code for diagnostic in snapshot.diagnostics} >= {
         "layout_snapshot_partial",
-        "guide_query_missing",
-        "all_rendered_guides_unsupported",
+        "guide_query_native_verified",
+        "all_rendered_guides_native_verified",
         "datoviz_rendered_contributions_reported",
     }
 
 
+def test_datoviz_panel_frame_guide_query_returns_hit_with_matching_snapshot_id():
+    fake = FakeDatovizV04WithPanelFrameSnapshot()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    result = renderer.query_panel(
+        QueryRequest(
+            id="query:guide-hit",
+            panel_id="panel:main",
+            coordinate=(130.0, 531.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            scope=QueryScope.GUIDES,
+            requested_extension_payload_kinds=(GUIDE_QUERY_PAYLOAD_KIND,),
+            layout_snapshot_id="layout:test:datoviz:2a",
+        )
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.visual_id == "datoviz:guide:100"
+    assert result.item_id == 0
+    assert result.value == "tick A"
+    assert result.layout_snapshot_id == "layout:test:datoviz:2a"
+    assert result.extension_payload_kind == GUIDE_QUERY_PAYLOAD_KIND
+    assert isinstance(result.extension_payload, GuideQueryPayload)
+    assert result.extension_payload.guide_id == "datoviz:guide:100"
+    assert result.extension_payload.tick_value == pytest.approx(1.25)
+    assert _calls(fake, "panel_frame_guide_hit") == [
+        ("panel_frame_guide_hit", "frame-snapshot", 130.0, 531.0)
+    ]
+    assert fake.unref_count == 1
+
+
+def test_datoviz_panel_frame_guide_query_rejects_stale_layout_snapshot_id():
+    fake = FakeDatovizV04WithPanelFrameSnapshot()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    result = renderer.query_panel(
+        QueryRequest(
+            id="query:guide-stale",
+            panel_id="panel:main",
+            coordinate=(130.0, 531.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            scope=QueryScope.GUIDES,
+            requested_extension_payload_kinds=(GUIDE_QUERY_PAYLOAD_KIND,),
+            layout_snapshot_id="layout:test:datoviz:99",
+        )
+    )
+
+    assert result.status == QueryStatus.STALE
+    assert result.layout_snapshot_id == "layout:datoviz:2a"
+    assert "different layout snapshot id" in str(result.diagnostic)
+    assert _calls(fake, "panel_frame_guide_hit") == []
+    assert fake.unref_count == 1
+
+
 def test_datoviz_capabilities_report_partial_layout_snapshot_when_frame_api_exists():
     caps = gsp_capability_snapshot_from_datoviz(
-        None, dvz=FakeDatovizV04WithPanelFrameSnapshot()
+        None, dvz=FakeDatovizV04WithPanelFrameSnapshotOnly()
     )
 
     audit = caps.metadata["s034_guide_layout_audit"]
     assert datoviz_v04_panel_frame_snapshot_diagnostics(
-        FakeDatovizV04WithPanelFrameSnapshot()
+        FakeDatovizV04WithPanelFrameSnapshotOnly()
     ) == ()
     assert audit["resolved_layout_produce"] == "partial"
     assert audit["layout_snapshot_partial"] is True
@@ -1507,6 +1602,21 @@ def test_datoviz_capabilities_report_partial_layout_snapshot_when_frame_api_exis
     assert caps.query_layout_capability.reports_layout_snapshot_id is True
     assert caps.query_layout_capability.guide_query is False
     assert caps.query_layout_capability.all_rendered_guides is False
+
+
+def test_datoviz_capabilities_report_native_guide_query_when_frame_hit_api_exists():
+    caps = gsp_capability_snapshot_from_datoviz(
+        None, dvz=FakeDatovizV04WithPanelFrameSnapshot()
+    )
+
+    audit = caps.metadata["s034_guide_layout_audit"]
+    assert audit["guide_query"] is True
+    assert audit["all_rendered_guides"] is True
+    assert "guide_query_native_verified" in audit["diagnostics"]
+    assert "all_rendered_guides_native_verified" in audit["diagnostics"]
+    assert caps.guide_layout_capability.axis_query is True
+    assert caps.query_layout_capability.guide_query is True
+    assert caps.query_layout_capability.all_rendered_guides is True
 
 
 def test_retained_view2d_navigation_update_does_not_reupload_visual_buffers():

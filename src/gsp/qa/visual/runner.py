@@ -25,12 +25,19 @@ from gsp.protocol import (
     ColorbarGuide,
     CoordinateSpace,
     ImageVisual,
+    GUIDE_QUERY_PAYLOAD_KIND,
     LogicalPixelRect,
     MeshVisual,
     MarkerVisual,
     PanelTextGuide,
     PathVisual,
     PointVisual,
+    QueryCoordinateSpace,
+    QueryHitPolicy,
+    QueryRequest,
+    QueryResult,
+    QueryScope,
+    QueryStatus,
     SegmentVisual,
     TextAnchorX,
     TextAnchorY,
@@ -495,6 +502,7 @@ def _run_datoviz(
             for title_visual in _datoviz_panel_text_visuals(panel_text_guides):
                 renderer.add_text_visual(title_visual)
             png = renderer.capture_png_bytes()
+            layout_snapshot_diagnostics: dict[str, object]
             try:
                 resolve_partial_layout_snapshot = getattr(
                     renderer, "resolve_partial_layout_snapshot"
@@ -513,10 +521,9 @@ def _run_datoviz(
                     "layout_snapshot_blocker": str(snapshot_exc),
                 }
             else:
-                layout_snapshot_diagnostics = {
-                    "layout_snapshot_partial": "available",
-                    "layout_snapshot_id": layout_snapshot.snapshot_id,
-                }
+                layout_snapshot_diagnostics = _datoviz_layout_snapshot_diagnostics(
+                    renderer, case, layout_snapshot
+                )
         artifact_path.write_bytes(png)
         log_path.write_text("rendered\n", encoding="utf-8")
         report: dict[str, object] = {
@@ -592,6 +599,144 @@ def _render_matplotlib_visual(
         )
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
+
+
+def _datoviz_layout_snapshot_diagnostics(
+    renderer: object,
+    case: VisualQACase,
+    layout_snapshot: ResolvedLayoutSnapshot,
+) -> dict[str, object]:
+    diagnostics: dict[str, object] = {
+        "layout_snapshot_partial": "available",
+        "layout_snapshot_id": layout_snapshot.snapshot_id,
+    }
+    guide_box = _first_queryable_guide_box(layout_snapshot)
+    guide_contribution_count = sum(
+        1 for layer in layout_snapshot.z_layers if layer.layer == "guide"
+    )
+    diagnostics["rendered_contribution_count"] = guide_contribution_count
+    diagnostics["rendered_contribution"] = (
+        "native-verified" if guide_contribution_count > 0 else "missing"
+    )
+    if guide_box is None:
+        diagnostics.update(
+            {
+                "guide_box": "missing",
+                "guide_identity": "missing",
+                "guide_query": "missing",
+                "all_rendered_guide_query": "missing",
+                "layout_snapshot_id_equality": "missing",
+            }
+        )
+        return diagnostics
+
+    diagnostics["guide_box"] = "native-verified"
+    diagnostics["guide_box_id"] = guide_box.guide_id
+    query_panel = getattr(renderer, "query_panel", None)
+    if not callable(query_panel):
+        diagnostics.update(
+            {
+                "guide_identity": "unsupported",
+                "guide_query": "unsupported",
+                "all_rendered_guide_query": "unsupported",
+                "layout_snapshot_id_equality": "unsupported",
+            }
+        )
+        return diagnostics
+
+    center = (
+        guide_box.rect_px.x + guide_box.rect_px.width / 2.0,
+        guide_box.rect_px.y + guide_box.rect_px.height / 2.0,
+    )
+    guide_result = query_panel(
+        QueryRequest(
+            id=f"query:{case_slug(case.case_id)}:datoviz-guide",
+            panel_id="panel:main",
+            coordinate=center,
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            scope=QueryScope.GUIDES,
+            hit_policy=QueryHitPolicy.FRONTMOST,
+            requested_extension_payload_kinds=(GUIDE_QUERY_PAYLOAD_KIND,),
+            layout_snapshot_id=layout_snapshot.snapshot_id,
+        )
+    )
+    all_rendered_result = query_panel(
+        QueryRequest(
+            id=f"query:{case_slug(case.case_id)}:datoviz-all-rendered-guide",
+            panel_id="panel:main",
+            coordinate=center,
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            scope=QueryScope.ALL_RENDERED,
+            hit_policy=QueryHitPolicy.FRONTMOST,
+            requested_extension_payload_kinds=(GUIDE_QUERY_PAYLOAD_KIND,),
+            layout_snapshot_id=layout_snapshot.snapshot_id,
+        )
+    )
+    _record_datoviz_guide_query_diagnostics(
+        diagnostics,
+        guide_result,
+        all_rendered_result,
+        guide_id=guide_box.guide_id,
+        layout_snapshot_id=layout_snapshot.snapshot_id,
+    )
+    return diagnostics
+
+
+def _first_queryable_guide_box(
+    layout_snapshot: ResolvedLayoutSnapshot,
+) -> ResolvedGuideBox | None:
+    for boxes in (
+        layout_snapshot.tick_label_boxes,
+        layout_snapshot.axis_label_boxes,
+        layout_snapshot.title_boxes,
+        layout_snapshot.legend_boxes,
+        layout_snapshot.colorbar_boxes,
+        layout_snapshot.guide_boxes,
+    ):
+        for box in boxes:
+            if box.rect_px.width > 0.0 and box.rect_px.height > 0.0:
+                return box
+    return None
+
+
+def _record_datoviz_guide_query_diagnostics(
+    diagnostics: dict[str, object],
+    guide_result: QueryResult,
+    all_rendered_result: QueryResult,
+    *,
+    guide_id: str,
+    layout_snapshot_id: str,
+) -> None:
+    diagnostics["guide_query_status"] = guide_result.status.value
+    diagnostics["all_rendered_guide_query_status"] = all_rendered_result.status.value
+    diagnostics["guide_query_layout_snapshot_id"] = guide_result.layout_snapshot_id
+    diagnostics["all_rendered_guide_query_layout_snapshot_id"] = (
+        all_rendered_result.layout_snapshot_id
+    )
+    diagnostics["guide_identity"] = (
+        "native-verified"
+        if guide_result.status == QueryStatus.HIT and guide_result.visual_id == guide_id
+        else "mismatch"
+    )
+    diagnostics["guide_query"] = (
+        "native-verified"
+        if guide_result.status == QueryStatus.HIT
+        and guide_result.layout_snapshot_id == layout_snapshot_id
+        else guide_result.status.value
+    )
+    diagnostics["all_rendered_guide_query"] = (
+        "native-verified"
+        if all_rendered_result.status == QueryStatus.HIT
+        and all_rendered_result.layout_snapshot_id == layout_snapshot_id
+        else all_rendered_result.status.value
+    )
+    diagnostics["layout_snapshot_id_equality"] = (
+        "native-verified"
+        if guide_result.layout_snapshot_id
+        == all_rendered_result.layout_snapshot_id
+        == layout_snapshot_id
+        else "mismatch"
+    )
 
 
 def _render_datoviz_visual(
