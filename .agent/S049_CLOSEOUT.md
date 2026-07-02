@@ -9,6 +9,7 @@ Rossant.
 
 - `whitepaper/gsp-whitepaper.tex`
 - `whitepaper/gsp-whitepaper.pdf`
+- `whitepaper/references.bib`
 - `whitepaper/README.md`
 - `whitepaper/NOTES_FOR_NICOLAS.md`
 - `whitepaper/figures/`
@@ -22,7 +23,7 @@ renderers, not as API reference.
 
 Main concepts covered:
 
-- motivation and 2023 draft continuity;
+- motivation and primitive decomposition;
 - what GSP is not;
 - session/protocol boundary;
 - control plane and data plane;
@@ -30,6 +31,7 @@ Main concepts covered:
 - semantic visual families;
 - capabilities and explicit adaptation;
 - query/readback;
+- illustrative protocol/code snippets;
 - Matplotlib, Datoviz, and VisPy2 roles;
 - conformance fixtures and review packs;
 - extensions, large data, and remote rendering;
@@ -59,6 +61,6 @@ pdftoppm -png -r 120 gsp-whitepaper.pdf ../tmp/pdfs/gsp-whitepaper-page
 
 ## Notes
 
-- The draft intentionally keeps citations light.
+- The draft uses a small BibTeX reference set; citations are improved but still not exhaustive.
 - The paper is not ready for public release without author review.
 - `NOTES_FOR_NICOLAS.md` identifies the main feedback points for Nicolas.

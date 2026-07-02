@@ -11,6 +11,8 @@
 \usepackage{geometry}
 \usepackage{xcolor}
 \usepackage{xspace}
+\usepackage{listings}
+\usepackage[numbers,sort&compress]{natbib}
 \usepackage{hyperref}
 
 \geometry{left=32mm,right=32mm,top=30mm,bottom=32mm}
@@ -19,6 +21,17 @@
 \setlength{\parskip}{0.72\baselineskip}
 \setlist[itemize]{leftmargin=1.5em,itemsep=0.2em,topsep=0.2em}
 \setlist[enumerate]{leftmargin=1.5em,itemsep=0.2em,topsep=0.2em}
+\lstset{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  frame=single,
+  framerule=0.3pt,
+  xleftmargin=0.5em,
+  xrightmargin=0.5em,
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=2
+}
 
 \definecolor{gspblue}{HTML}{1F4E79}
 \hypersetup{
@@ -65,10 +78,14 @@ boundary that scientific visualization libraries could share.
 
 Scientific visualization has never had a shortage of plotting APIs. A researcher can choose a high
 level grammar, a stateful plotting library, a domain-specific viewer, a 3D visualization toolkit, a
-browser-based charting system, or a low-level GPU library. These projects differ in user experience,
-language ecosystem, deployment target, and visual style. That diversity is valuable: no single user
-API can cover the needs of static publication plots, interactive exploratory tools, microscopy
-viewers, computational geometry, neural data inspection, volume rendering, and web dashboards.
+browser-based charting system, or a low-level GPU library. \matplotlib established a durable model
+for publication-oriented plotting in Python \cite{Hunter:2007}; VTK demonstrated the value of a
+large scientific visualization toolkit for geometry, imaging, and 3D pipelines
+\cite{Schroeder:2006}; Vega-Lite showed how far a declarative visualization grammar can go in the
+browser \cite{Satyanarayan:2017}. These projects differ in user experience, language ecosystem,
+deployment target, and visual style. That diversity is valuable: no single user API can cover the
+needs of static publication plots, interactive exploratory tools, microscopy viewers,
+computational geometry, neural data inspection, volume rendering, and web dashboards.
 
 The problem is lower in the stack. Underneath these different APIs, many libraries rebuild the same
 renderer-facing concepts. They need to place points, markers, line segments, paths, images, text,
@@ -76,8 +93,10 @@ meshes, axes, colorbars, cameras, and interactive views. They need to map scalar
 scales. They need to express coordinate systems and transforms. They need to answer basic scientific
 questions such as ``what item is under this cursor?'' or ``what data value is represented by this
 pixel?'' They need publication-quality output in one context and fast GPU interaction in another.
-They need to run locally, in notebooks, in CI, on remote machines, and eventually in browser or cloud
-rendering contexts.
+They need text rendering, antialiasing, color mapping, transparency, and image resampling to be
+good enough for scientific inspection, not merely sufficient for a demo
+\cite{Parker:1983,Mitchell:1988,Bujack:2018,McGuire:2013,Rougier:2018}. They need to run locally, in
+notebooks, in CI, on remote machines, and eventually in browser or cloud rendering contexts.
 
 Today these concerns are usually packaged as inseparable products: a user API plus a scene model
 plus a renderer plus an interaction system. Moving a visualization from one renderer to another
@@ -103,32 +122,31 @@ a domain-specific viewer script. It should decide what semantic scene those prod
 renderer, how a renderer declares what it can faithfully support, and how unsupported behavior is
 adapted or rejected.
 
-\section{The 2023 starting point}
+\section{Primitive decomposition}
 
-The initial 2023 white paper framed the project around a simple observation: most scientific
-figures decompose into a limited number of visual primitives. A scatter plot, for example, is not a
-magical object from the renderer's perspective. It is a composition of points or markers, line
-segments, text glyphs, axes, and filled regions. A high-level plotting API may choose how much of
-that structure to expose, but the renderer still has to draw the underlying primitives.
+Most scientific figures decompose into a limited number of visual components. A scatter plot, for
+example, is not a magical object from the renderer's perspective. It is a composition of points or
+markers, line segments, text glyphs, axes, and filled regions. A high-level plotting API may choose
+how much of that structure to expose, but the renderer still has to draw the underlying
+components.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.92\textwidth]{legacy-plot-decomposition.pdf}
-  \caption{A 2023 draft figure decomposing a scatter plot into elementary visual components. The
-  figure remains useful, but the current \gsp framing treats these components as semantic visual
-  families rather than as backend draw calls.}
+  \includegraphics[width=0.92\textwidth]{plot-decomposition.pdf}
+  \caption{A scatter plot decomposed into elementary visual components. \gsp treats these
+  components as semantic visual families rather than as backend draw calls.}
   \label{fig:decomposition}
 \end{figure}
 
-That motivation remains correct, but the project has become more precise. The current \gsp design
-is not merely a list of primitives. It is a session protocol with resources, visual families,
-views, capabilities, queries, diagnostics, fixtures, and backend conformance evidence. The change is
-important. A list of primitives risks becoming another graphics API. A protocol can define how
-scientific visualization semantics survive across different renderers.
+Primitive decomposition is necessary but not sufficient. A protocol cannot simply say ``draw
+points'' or ``draw text'' and be useful to scientific visualization libraries. It also has to
+define what coordinate space the points live in, what units the marker size uses, how scalar values
+become colors, what identity a rendered item carries, how the view transforms the data, and what
+happens when a backend cannot implement the exact request.
 
-The 2023 draft also emphasized mutualization: a shared layer that lets libraries reuse work from
-other libraries instead of rebuilding renderer engines. The current project keeps that aim but adds
-three constraints that were less developed at the time:
+\gsp therefore treats primitive decomposition as the beginning of the design, not the end. The
+shared layer must let libraries reuse renderer work without rebuilding a complete renderer engine,
+while adding three constraints:
 
 \begin{itemize}
   \item Backend differences must be visible. A renderer must declare capabilities and return
@@ -189,16 +207,52 @@ The protocol is organized around a session between a producer/client and a rende
 server may live in the same process, in a subprocess, on a remote machine, in a browser worker, or
 behind a cloud service. It exposes capabilities, accepts resources and visual descriptions, executes
 frames, returns query/readback results, and reports diagnostics. This framing is deliberately
-inspired by successful protocol layers such as the Language Server Protocol: the important idea is
-not a particular encoding, but a durable boundary between producers and implementations.
+inspired by successful protocol layers such as the Language Server Protocol \cite{Microsoft:LSP}:
+the important idea is not a particular encoding, but a durable boundary between producers and
+implementations.
+
+A minimal session has a concrete shape:
+
+\begin{enumerate}
+  \item the producer opens a session and states the protocol versions it can speak;
+  \item the renderer returns a capability snapshot;
+  \item the producer creates resources such as buffers, textures, views, and visual descriptions;
+  \item the producer submits a frame or a retained scene update;
+  \item the renderer returns a render result with diagnostics and snapshot identifiers;
+  \item the producer may issue queries against those snapshots and receive structured readback
+  payloads.
+\end{enumerate}
+
+The following sketch is intentionally not a Python API commitment. It shows the level of
+abstraction: the producer describes a scene and asks a renderer to plan it against declared
+capabilities.
+
+\begin{lstlisting}[float=htbp,language=Python,caption={Illustrative producer-side session sketch.}]
+session = gsp.connect("inproc://datoviz")
+caps = session.initialize(protocol_versions=["gsp/0.2"])
+
+scene = gsp.Scene(canvas=gsp.Canvas(width=900, height=600))
+panel = scene.add_panel(rect=(0, 0, 900, 600), view=gsp.View2D(xlim=(0, 1), ylim=(0, 1)))
+points = scene.add(
+    gsp.PointVisual(
+        panel=panel,
+        positions=gsp.Array(points_xy, coordinate_space="data"),
+        color=gsp.ScalarColor(values, scale="viridis", clim=(0, 1)),
+        diameter_px=7,
+    )
+)
+
+plan = gsp.plan(scene, caps)
+result = session.render(plan)
+assert result.status in {"accepted", "adapted"}
+\end{lstlisting}
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.9\textwidth]{legacy-gsp-architecture.pdf}
-  \caption{The original 2023 architectural idea: multiple visualization APIs target an intermediate
-  rendering protocol rather than binding directly to incompatible rendering engines. The current
-  project keeps this structure but adds capability discovery, conformance, query/readback, and
-  transport independence.}
+  \includegraphics[width=0.9\textwidth]{gsp-architecture.pdf}
+  \caption{Multiple visualization APIs can target an intermediate rendering protocol rather than
+  binding directly to incompatible rendering engines. \gsp adds capability discovery, conformance,
+  query/readback, and transport independence to this shared-protocol structure.}
   \label{fig:gsp-architecture}
 \end{figure}
 
@@ -239,11 +293,11 @@ Python adapter is not a sufficient protocol story for remote or polyglot rendere
 
 \section{Semantic visual families}
 
-The 2023 draft described primitives as dots, points, markers, segments, paths, glyphs, images,
-meshes, and volumes. The current project uses the term visual family to emphasize that the protocol
-contract is semantic, not merely graphical. A visual family defines the meaning of data fields,
-coordinate spaces, screen-space units, color interpretation, ordering rules, query identity, and
-backend adaptation behavior.
+Scientific visualization primitives can be described as dots, points, markers, segments, paths,
+glyphs, images, meshes, and volumes. \gsp uses the term visual family to emphasize that the
+protocol contract is semantic, not merely graphical. A visual family defines the meaning of data
+fields, coordinate spaces, screen-space units, color interpretation, ordering rules, query
+identity, and backend adaptation behavior.
 
 The current baseline includes the following families and cross-cutting concepts:
 
@@ -281,6 +335,41 @@ change the scientific meaning of the point. If requested sizes are in logical sc
 backend must preserve that meaning or report an adaptation. If scalar colors require a particular
 normalization, the backend must apply it or reject the request. If query support is advertised, the
 backend must return item identities and payloads that match the visual family contract.
+
+For example, a point-family contract is not just ``draw circles.'' It contains several semantic
+commitments:
+
+\begin{center}
+\begin{tabularx}{0.92\textwidth}{@{}lX@{}}
+\toprule
+Point field or behavior & Semantic commitment \\
+\midrule
+Position & Coordinates are interpreted in the visual's declared coordinate space and through the
+attached view snapshot. \\
+Diameter & Size is a logical screen-pixel diameter, not data-space radius and not backend marker
+area. \\
+Color & RGBA values are final colors unless an explicit scalar color encoding is attached. \\
+Identity & Each item has stable visual and item identity for query/readback where advertised. \\
+Adaptation & Unsupported coordinate spaces, color encodings, or query payloads produce diagnostics
+rather than silent fallback. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+A compact debug fixture for such a visual might look like this:
+
+\begin{lstlisting}[float=htbp,caption={Illustrative debug fixture fragment for a point visual.}]
+{
+  "visual_family": "point",
+  "visual_id": "cells",
+  "panel_id": "main",
+  "positions": {"resource": "xy", "dtype": "float32", "shape": [1000000, 2],
+                "coordinate_space": "data"},
+  "diameter_px": 5,
+  "color": {"scalar_resource": "cluster_score", "scale": "viridis", "clim": [0, 1]},
+  "query_payloads": ["visual_id", "item_id", "data_xy", "display_rgba"]
+}
+\end{lstlisting}
 
 \section{Capabilities and adaptation}
 
@@ -321,6 +410,31 @@ picking. It may render guides visually but lack resolved layout snapshots for gu
 support scalar images but not remote tiled data sources. These distinctions matter to library
 authors and users.
 
+The capability surface therefore needs to be granular. A backend should be able to say ``I can
+render this visual family strictly,'' ``I can render it only after CPU adaptation,'' or ``I can
+render it but cannot answer strict queries.'' A planner can then make an explicit decision before
+any pixels are drawn:
+
+\begin{lstlisting}[float=htbp,caption={Illustrative capability-driven planning result.}]
+request:
+  visual: mesh
+  coordinates: data3d
+  material: flat_lambert
+  query: mesh_triangle_pick
+
+datoviz-v0.4 plan:
+  render.mesh.data3d: accept
+  material.flat_lambert: accept_via_cpu_resolve
+  query.mesh_triangle_pick: reject
+  diagnostics:
+    - code: GSP_QUERY_CAPABILITY_UNSUPPORTED
+      detail: native visual_id/primitive_index mapping not advertised
+\end{lstlisting}
+
+This kind of planning result is more useful than a binary backend label. It allows a producer to
+continue with rendering, disable the picking tool, choose another backend, or show a precise
+diagnostic to the user.
+
 \section{Query and readback}
 
 In many graphics APIs, rendering is the main product and picking is an afterthought. Scientific
@@ -347,6 +461,35 @@ provide these guarantees, it should not advertise them.
 The result is a stronger relationship between rendering and interpretation. \gsp does not merely
 ask a backend to draw. It asks the backend to participate in a scientific visualization session.
 
+A typical query is tied to a rendered snapshot, not just to current mutable state. This prevents a
+producer from interpreting a hit against a stale camera, layout, or view transform:
+
+\begin{lstlisting}[float=htbp,caption={Illustrative panel query and response.}]
+query:
+  panel_id: main
+  layout_snapshot_id: layout-42
+  view_snapshot_id: view-107
+  panel_xy_px: [514, 238]
+  scope: all-rendered
+  hit_policy: frontmost
+
+response:
+  status: hit
+  scope: data
+  visual_id: cells
+  visual_family: point
+  item_id: 481516
+  data_xy: [0.372, 0.811]
+  display_rgba: [68, 1, 84, 255]
+  payload:
+    scalar_name: cluster_score
+    scalar_value: 0.61
+\end{lstlisting}
+
+The exact payload varies by visual family and advertised query capability. The important property
+is that the result is not merely a pixel color. It is a protocol-level explanation of a rendered
+contribution.
+
 \section{Reference and flagship backends}
 
 \gsp needs more than a specification. It needs concrete backends that exercise different parts of
@@ -366,7 +509,7 @@ implementation details; the protocol contract is the \gsp scene and result model
 
 \subsection{\datoviz: high-performance GPU rendering}
 
-\datoviz is the flagship high-performance GPU backend. It brings the project back to one of its
+\datoviz is the flagship high-performance GPU backend \cite{Rossant:Datoviz}. It brings the project back to one of its
 original motivations: high-quality, fast rendering of scientific primitives using modern graphics
 hardware. The \datoviz v0.4 direction is especially important because its internal scene, panel,
 visual, camera, query, and capability model is close in spirit to \gsp, while still remaining a
@@ -502,25 +645,28 @@ credible when it distinguishes working semantics from aspirations.
 \gsp overlaps with several existing ideas, but it occupies a specific boundary.
 
 \matplotlib backends separate a plotting API from output renderers, but within the \matplotlib
-artist and figure model. \gsp asks whether a protocol layer can sit below multiple scientific
-visualization APIs, not only one.
+artist and figure model \cite{Hunter:2007}. \gsp asks whether a protocol layer can sit below
+multiple scientific visualization APIs, not only one.
 
 Vega and Vega-Lite demonstrate the power of declarative visualization specifications, especially in
-browser contexts. \gsp is lower level and more renderer-oriented. It is not a grammar for charts; it
-is a protocol for semantic visual scene execution, including local GPU paths and query/readback.
+browser contexts \cite{Satyanarayan:2017}. \gsp is lower level and more renderer-oriented. It is
+not a grammar for charts; it is a protocol for semantic visual scene execution, including local GPU
+paths and query/readback.
 
 VTK and similar systems provide extensive scientific visualization capabilities, especially for 3D,
-meshes, and volumes. \gsp is not a replacement for a large visualization toolkit. It is a protocol
-surface that could, in principle, target or interoperate with such renderers for suitable subsets.
+meshes, and volumes \cite{Schroeder:2006}. \gsp is not a replacement for a large visualization
+toolkit. It is a protocol surface that could, in principle, target or interoperate with such
+renderers for suitable subsets.
 
-ANARI is a relevant comparison for 3D scientific rendering interoperability. \gsp is broader in the
-sense that it targets 2D and 3D scientific visualization, guides, views, query semantics, and
-producer/backend separation for plotting-like systems. It is narrower in other ways: it is not a
-general physically based rendering API.
+ANARI is a relevant comparison for 3D scientific rendering interoperability \cite{Khronos:ANARI}.
+\gsp is broader in the sense that it targets 2D and 3D scientific visualization, guides, views,
+query semantics, and producer/backend separation for plotting-like systems. It is narrower in other
+ways: it is not a general physically based rendering API.
 
 Browser graphics stacks, WebGPU, WebGL, Canvas, SVG, and WebAssembly provide important execution
-targets. \gsp should be able to target browser renderers, but it should not be defined by browser
-constraints alone. Scientific desktop use still needs a fast local in-process path.
+targets \cite{W3C:WebGPU}. \gsp should be able to target browser renderers, but it should not be
+defined by browser constraints alone. Scientific desktop use still needs a fast local in-process
+path.
 
 \section{Community shape}
 
@@ -559,18 +705,7 @@ The current implementation work around \matplotlib, \datoviz, and \vispytwo sugg
 boundary is practical. It is not finished. It is now concrete enough to discuss with the wider
 scientific visualization community.
 
-\section*{Selected references and related projects}
-
-\begin{itemize}
-  \item John D. Hunter. Matplotlib: A 2D graphics environment. \textit{Computing in Science and
-  Engineering}, 2007.
-  \item Nicolas P. Rougier. Shader-based antialiased 2D graphics and scientific visualization
-  primitives, project notes and publications.
-  \item Cyrille Rossant. Datoviz: Vulkan-based scientific visualization.
-  \item Jeffrey Heer, Arvind Satyanarayan, and collaborators. Vega and Vega-Lite.
-  \item Khronos Group. ANARI: Analytic Rendering Interface.
-  \item Microsoft and contributors. Language Server Protocol.
-  \item The Visualization Toolkit (VTK).
-\end{itemize}
+\bibliographystyle{plainnat}
+\bibliography{references}
 
 \end{document}

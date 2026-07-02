@@ -11,16 +11,16 @@ Completed by local-main-codex.
 ## Summary
 
 Prepare a community-facing GSP white paper draft suitable for review by Nicolas Rougier and Cyrille
-Rossant. The draft should update the 2023 preliminary white paper with the current protocol,
-capability, conformance, backend, and VisPy2 direction while preserving the original rationale:
-GSP is not another plotting library, but a shared protocol layer for scientific visualization.
+Rossant. The draft should present the current protocol, capability, conformance, backend, and
+VisPy2 direction while preserving the central rationale: GSP is not another plotting library, but a
+shared protocol layer for scientific visualization.
 
 ## Deliverables
 
 - A tracked `whitepaper/` source tree with LaTeX source, reusable figures, and build output.
 - A narrative draft aimed at scientific visualization library developers.
-- A short review note identifying authorship, reused 2023 material, technical claims, and specific
-  feedback requested from Nicolas.
+- A short review note identifying authorship, technical claims, and specific feedback requested
+  from Nicolas.
 - A rendered PDF validated for basic layout and legibility.
 
 ## Acceptance

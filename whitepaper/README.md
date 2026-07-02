@@ -9,8 +9,9 @@ API reference and should not become a line-by-line restatement of the specs unde
 
 - `gsp-whitepaper.tex` - main LaTeX source.
 - `gsp-whitepaper.pdf` - built PDF when available.
+- `references.bib` - bibliography used by the paper.
 - `NOTES_FOR_NICOLAS.md` - review packet and open questions.
-- `figures/` - selected reusable figures from the 2023 draft plus current review-pack imagery.
+- `figures/` - reusable explanatory figures plus current review-pack imagery.
 - `capability_matrix_s030.md` - copied evidence used while drafting; not intended as a paper
   section.
 
