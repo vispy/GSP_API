@@ -59,3 +59,6 @@ Future material/light/texture capability names are reserved only for later specs
 `spec/view3d_navigation.md`.
 
 `.agent/consultations/P022-response.md` refines the Datoviz v0.4 camera binding/API prerequisite.
+
+`.agent/consultations/P029-response.md` refines the Datoviz live navigation route after manual
+review showed that the direct Python input reducer was not a proven live-window implementation.

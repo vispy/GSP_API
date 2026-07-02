@@ -2,11 +2,13 @@
 
 ## Purpose
 
-This needs ChatGPT Pro consultation.
+Originally prepared for ChatGPT Pro consultation. Superseded by the direct in-agent decision in
+`.agent/consultations/P029-response.md` after the user requested a local decision based on direct
+Datoviz source inspection.
 
 Manual review shows that Datoviz View3D live interaction in `examples/review/12_view3d_mesh_pick.py`
 still has no visible effect, despite retained View3D camera update fixes and passing synthetic input
-tests. Dependent implementation should pause until the consultation result is pasted or committed.
+tests. Dependent implementation should follow the decision in `P029-response.md`.
 
 ## Prompt
 
