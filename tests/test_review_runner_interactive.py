@@ -8,6 +8,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
+import pytest
 
 from gsp.protocol import (
     Camera3D,
@@ -16,6 +17,7 @@ from gsp.protocol import (
     OrthographicProjection3D,
     PanelTextGuide,
     PanelTextRole,
+    PerspectiveProjection3D,
     PointVisual,
     View2D,
     View3D,
@@ -72,6 +74,38 @@ def _view3d_scene() -> review_runner.ReviewScene:
         visuals=(
             MeshVisual(
                 id="visual:triangle3d",
+                positions=np.array(
+                    [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [0.0, 1.0, 0.0]],
+                    dtype=np.float32,
+                ),
+                faces=np.array([[0, 1, 2]], dtype=np.uint32),
+                coordinate_space=CoordinateSpace.DATA,
+                color=np.array([40, 120, 220, 255], dtype=np.uint8),
+            ),
+        ),
+    )
+
+
+def _perspective_view3d_scene() -> review_runner.ReviewScene:
+    view3d = View3D(
+        id="view:review-3d-perspective",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 5.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=60.0,
+            near_far=(0.1, 20.0),
+        ),
+    )
+    return review_runner.ReviewScene(
+        title="interactive perspective 3d test",
+        view3d=view3d,
+        visuals=(
+            MeshVisual(
+                id="visual:triangle3d-perspective",
                 positions=np.array(
                     [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [0.0, 1.0, 0.0]],
                     dtype=np.float32,
@@ -196,6 +230,32 @@ def test_matplotlib_interactive_view3d_navigation_rerenders_mesh() -> None:
         assert session.view3d.revision == 3
         assert session.view3d.camera == scene.view3d.camera
         assert session.view3d.projection == scene.view3d.projection
+    finally:
+        plt.close(fig)
+
+
+def test_matplotlib_interactive_view3d_pans_perspective_at_target_distance() -> None:
+    import matplotlib
+
+    matplotlib.use("Agg", force=True)
+    import matplotlib.pyplot as plt
+
+    scene = _perspective_view3d_scene()
+    fig, ax = plt.subplots()
+    try:
+        review_runner._render_matplotlib_scene(fig, ax, scene, color_scales={})
+        session = review_runner._MatplotlibReviewView3DNavigationSession(
+            fig, ax, scene, color_scales={}
+        )
+        rect = session._panel_rect()
+
+        payload = session._pan_payload_from_pixels(80.0, -60.0)
+
+        target_distance = 5.0
+        y_span = 2.0 * target_distance * np.tan(np.deg2rad(60.0) * 0.5)
+        x_span = y_span * (rect.width / rect.height)
+        assert payload.delta_view_right == pytest.approx(-80.0 / rect.width * x_span)
+        assert payload.delta_view_up == pytest.approx(60.0 / rect.height * y_span)
     finally:
         plt.close(fig)
 

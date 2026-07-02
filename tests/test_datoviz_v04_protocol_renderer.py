@@ -3999,6 +3999,44 @@ def test_datoviz_live_view3d_navigation_supports_pan_zoom_and_reset(
     ]
 
 
+def test_datoviz_live_view3d_pans_perspective_at_target_distance() -> None:
+    view3d = View3D(
+        id="view:datoviz-live-3d-perspective",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 5.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=60.0,
+            near_far=(0.1, 20.0),
+        ),
+    )
+    renderer = SimpleNamespace(
+        dvz=SimpleNamespace(),
+        resolved_canvas=SimpleNamespace(
+            host_logical_width=800.0,
+            host_logical_height=600.0,
+        ),
+    )
+    session = _DatovizLiveView3DNavigation(
+        renderer=renderer,
+        router=None,
+        live_view=None,
+        view3d=view3d,
+        controller_id="nav:datoviz-live-3d-perspective",
+        layout_snapshot_id="layout:datoviz-live-3d-perspective",
+    )
+
+    payload = session._pan_payload_from_pixels(80.0, -60.0)
+
+    y_span = 2.0 * 5.0 * math.tan(math.radians(60.0) * 0.5)
+    x_span = y_span * (800.0 / 600.0)
+    assert payload.delta_view_right == pytest.approx(-80.0 / 800.0 * x_span)
+    assert payload.delta_view_up == pytest.approx(60.0 / 600.0 * y_span)
+
+
 def test_datoviz_view3d_navigation_action_rejects_stale_snapshot_before_camera_update():
     fake = FakeDatovizV04WithInteractiveRetainedView3D()
     view3d = _canonical_view3d_for_datoviz_query()

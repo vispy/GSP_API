@@ -42,8 +42,10 @@ from gsp.protocol import (
     View2DNavigationController,
     View2DNavigationInputAdapter,
     View3D,
+    OrthographicProjection3D,
     Orbit3DPayload,
     Pan3DPayload,
+    PerspectiveProjection3D,
     ResetView3DPayload,
     View3DNavigationAction,
     View3DNavigationActionKind,
@@ -612,11 +614,33 @@ class _MatplotlibReviewView3DNavigationSession:
 
     def _pan_payload_from_pixels(self, dx_px: float, dy_px: float) -> Pan3DPayload:
         rect = self._panel_rect()
-        x0, x1 = self.view3d.projection.xlim
-        y0, y1 = self.view3d.projection.ylim
+        projection = self.view3d.projection
+        if isinstance(projection, OrthographicProjection3D):
+            x_span = projection.xlim[1] - projection.xlim[0]
+            y_span = projection.ylim[1] - projection.ylim[0]
+        elif isinstance(projection, PerspectiveProjection3D):
+            basis = self.view3d.camera.basis()
+            target_distance = max(
+                sum(
+                    (target - eye) * forward
+                    for target, eye, forward in zip(
+                        self.view3d.camera.target,
+                        self.view3d.camera.eye,
+                        basis.forward,
+                        strict=True,
+                    )
+                ),
+                projection.near_far[0],
+            )
+            aspect_ratio = projection.aspect_ratio or (rect.width / rect.height)
+            half_height = target_distance * np.tan(
+                np.deg2rad(projection.fov_y_degrees) * 0.5
+            )
+            x_span = 2.0 * half_height * aspect_ratio
+            y_span = 2.0 * half_height
         return Pan3DPayload(
-            delta_view_right=-dx_px / rect.width * (x1 - x0),
-            delta_view_up=-dy_px / rect.height * (y1 - y0),
+            delta_view_right=-dx_px / rect.width * x_span,
+            delta_view_up=-dy_px / rect.height * y_span,
         )
 
     def _panel_rect(self) -> LogicalPixelRect:

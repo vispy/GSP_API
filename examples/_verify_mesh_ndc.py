@@ -37,7 +37,6 @@ def screen_cross_z(face_vertices_2d: np.ndarray) -> float:
 
 def probe(projection_name: str, projection_matrix: np.ndarray) -> None:
         """Run all four probes against a single projection matrix and print a verdict."""
-
         model_matrix = np.eye(4, dtype=np.float32)
         view_matrix = glm.lookat(eye=(0, 0, 4), center=(0, 0, 0), up=(0, 1, 0))
         mvp_matrix = MathUtils.compute_mvp_matrix(model_matrix, view_matrix, projection_matrix)
