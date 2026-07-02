@@ -1,4 +1,4 @@
-"""API review example: static View3D cube mesh with orthographic projection."""
+"""API review example: static View3D cube mesh with perspective projection."""
 
 from __future__ import annotations
 
@@ -10,9 +10,9 @@ from gsp.protocol import (
     CoordinateSpace,
     MeshColorMode,
     MeshVisual,
-    OrthographicProjection3D,
     PanelTextGuide,
     PanelTextRole,
+    PerspectiveProjection3D,
     View3D,
 )
 
@@ -73,10 +73,9 @@ def build_scene() -> ReviewScene:
             target=(0.0, 0.0, 0.0),
             up=(0.0, 1.0, 0.0),
         ),
-        projection=OrthographicProjection3D(
-            xlim=(-2.0, 2.0),
-            ylim=(-2.0, 2.0),
-            near_far=(0.0, 8.0),
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=42.0,
+            near_far=(0.1, 12.0),
         ),
     )
     cube = MeshVisual(
@@ -100,7 +99,7 @@ def build_scene() -> ReviewScene:
             ),
         ),
         notes=(
-            "Reviews (N,3) MeshVisual DATA positions projected through Camera3D and OrthographicProjection3D.",
+            "Reviews (N,3) MeshVisual DATA positions projected through Camera3D and PerspectiveProjection3D.",
             "Datoviz v0.4 renders this with the native panel camera when camera bounds bindings are available.",
         ),
     )

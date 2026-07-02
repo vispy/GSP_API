@@ -5,7 +5,7 @@ A Python library for backend-agnostic scientific visualization scenes and protoc
 Matplotlib reference backend plus optional Datoviz and network renderer paths.
 
 The current protocol prototype includes 2D visual families, color mapping, guide/layout metadata,
-retained `View2D` navigation, static orthographic `View3D`, bounded 3D mesh rendering, flat Lambert
+retained `View2D` navigation, static perspective/orthographic `View3D`, bounded 3D mesh rendering, flat Lambert
 mesh shading, and first-class query/readback payloads. Matplotlib is the reference backend. Datoviz
 v0.4 support is capability-gated against the local v0.4 facade and must not be treated as a required
 package dependency.

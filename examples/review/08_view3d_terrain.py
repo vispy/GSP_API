@@ -10,9 +10,9 @@ from gsp.protocol import (
     CoordinateSpace,
     MeshColorMode,
     MeshVisual,
-    OrthographicProjection3D,
     PanelTextGuide,
     PanelTextRole,
+    PerspectiveProjection3D,
     View3D,
 )
 
@@ -52,10 +52,9 @@ def build_scene() -> ReviewScene:
             target=(0.0, 0.0, 0.0),
             up=(0.0, 0.0, 1.0),
         ),
-        projection=OrthographicProjection3D(
-            xlim=(-3.0, 3.0),
-            ylim=(-2.4, 2.6),
-            near_far=(0.0, 8.0),
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=44.0,
+            near_far=(0.1, 12.0),
         ),
     )
     terrain = MeshVisual(
@@ -79,7 +78,7 @@ def build_scene() -> ReviewScene:
             ),
         ),
         notes=(
-            "Reviews a finite (N,3) DATA mesh grid through static orthographic View3D projection.",
+            "Reviews a finite (N,3) DATA mesh grid through static perspective View3D projection.",
             "Colors are per-face RGBA; there are no public materials, lights, or terrain-specific primitives.",
         ),
     )

@@ -21,9 +21,9 @@ from gsp.protocol import (
     MeshNormalMode,
     MeshShading,
     MeshVisual,
-    OrthographicProjection3D,
     PanelTextGuide,
     PanelTextRole,
+    PerspectiveProjection3D,
     View3D,
 )
 
@@ -78,10 +78,9 @@ def build_scene() -> ReviewScene:
             target=(0.0, 0.0, 0.0),
             up=(0.0, 0.0, 1.0),
         ),
-        projection=OrthographicProjection3D(
-            xlim=(-1.85, 1.85),
-            ylim=(-1.45, 1.45),
-            near_far=(0.0, 8.0),
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=38.0,
+            near_far=(0.1, 10.0),
         ),
         ambient_light_intensity=0.24,
         directional_light=DirectionalLight3D(
@@ -114,7 +113,7 @@ def build_scene() -> ReviewScene:
         ),
         notes=(
             "Loads a bundled OBJ triangle mesh and renders only accepted public MeshVisual fields.",
-            "OBJ materials, UVs, textures, smooth normals, and perspective projection are intentionally out of scope.",
+            "OBJ materials, UVs, textures, and smooth normals are intentionally out of scope.",
         ),
     )
 

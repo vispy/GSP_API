@@ -14,9 +14,9 @@ from gsp.protocol import (
     MeshNormalMode,
     MeshShading,
     MeshVisual,
-    OrthographicProjection3D,
     PanelTextGuide,
     PanelTextRole,
+    PerspectiveProjection3D,
     View3D,
 )
 
@@ -64,10 +64,9 @@ def build_scene() -> ReviewScene:
             target=(0.0, 0.0, 0.0),
             up=(0.0, 0.0, 1.0),
         ),
-        projection=OrthographicProjection3D(
-            xlim=(-3.1, 3.1),
-            ylim=(-2.25, 2.35),
-            near_far=(0.0, 9.0),
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=44.0,
+            near_far=(0.1, 12.0),
         ),
         ambient_light_intensity=0.28,
         directional_light=DirectionalLight3D(
