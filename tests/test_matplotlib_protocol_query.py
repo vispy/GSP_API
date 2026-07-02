@@ -37,11 +37,15 @@ from gsp.protocol import (
     TEXT_QUERY_PAYLOAD_KIND,
     TRANSFORM_QUERY_PAYLOAD_KIND,
     VIEW3D_QUERY_PAYLOAD_KIND,
+    VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND,
     TextVisual,
     TransformQueryPayload,
     View2D,
     View3D,
     View3DDiagnosticCode,
+    View3DMeshPickDiagnosticCode,
+    View3DMeshTrianglePickPayload,
+    View3DMeshTrianglePickRequest,
     View3DQueryPayload,
     VisualFamily,
     VisualTransformBinding,
@@ -51,6 +55,7 @@ from gsp_matplotlib.color_mapping import map_scalar_value
 from gsp_matplotlib.protocol_query import (
     QueryVisualEntry,
     failed_query_result,
+    query_view3d_mesh_triangle_pick,
     query_view3d_ray_context,
     query_visuals,
     unsupported_query_result,
@@ -406,6 +411,157 @@ def test_query_3d_mesh_visual_returns_deferred_picking_diagnostic():
     assert result.status == QueryStatus.UNSUPPORTED
     assert result.diagnostic is not None
     assert View3DDiagnosticCode.QUERY_3D_VISUAL_HIT_DEFERRED.value in result.diagnostic
+
+
+def test_query_view3d_mesh_triangle_pick_returns_frontmost_public_triangle():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [
+                [-0.5, -0.5, 0.0],
+                [0.5, -0.5, 0.0],
+                [0.0, 0.5, 0.0],
+                [-0.5, -0.5, 0.5],
+                [0.5, -0.5, 0.5],
+                [0.0, 0.5, 0.5],
+            ],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2], [3, 4, 5]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    result = query_view3d_mesh_triangle_pick(
+        View3DMeshTrianglePickRequest(
+            view_id=view.id,
+            panel_id=view.panel_id,
+            panel_xy=(50.0, 50.0),
+            expected_layout_snapshot_id=snapshot.layout_snapshot_id,
+            expected_view_revision=view.revision,
+            expected_view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+        ),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+        pick_scene_snapshot_id="pick-scene:fixture",
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.extension_payload_kind == VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND
+    assert result.visual_id == "visual:mesh3d"
+    assert result.item_id == 1
+    payload = result.extension_payload
+    assert isinstance(payload, View3DMeshTrianglePickPayload)
+    assert payload.visual_id == "visual:mesh3d"
+    assert payload.primitive_index == 1
+    assert payload.panel_ndc_xy == pytest.approx((0.0, 0.0))
+    assert payload.pick_scene_snapshot_id == "pick-scene:fixture"
+    assert payload.diagnostics[0].code == View3DMeshPickDiagnosticCode.ADAPTED_CPU_REFERENCE
+
+
+def test_query_view3d_mesh_triangle_pick_reports_miss_and_invalid_outside_panel():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [[-0.25, -0.25, 0.0], [0.25, -0.25, 0.0], [0.0, 0.25, 0.0]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    miss = query_view3d_mesh_triangle_pick(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(90.0, 90.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+    outside = query_view3d_mesh_triangle_pick(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(101.0, 50.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+
+    assert miss.status == QueryStatus.MISS
+    assert isinstance(miss.extension_payload, View3DMeshTrianglePickPayload)
+    assert miss.extension_payload.hit is False
+    assert outside.status == QueryStatus.INVALID
+    assert outside.diagnostic == View3DMeshPickDiagnosticCode.INVALID_OUTSIDE_PANEL.value
+
+
+def test_query_view3d_mesh_triangle_pick_reports_stale_pick_scene_snapshot():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [[-0.5, -0.5, 0.0], [0.5, -0.5, 0.0], [0.0, 0.5, 0.0]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    result = query_view3d_mesh_triangle_pick(
+        View3DMeshTrianglePickRequest(
+            view_id=view.id,
+            panel_xy=(50.0, 50.0),
+            expected_pick_scene_snapshot_id="pick-scene:stale",
+        ),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+        pick_scene_snapshot_id="pick-scene:fresh",
+    )
+
+    assert result.status == QueryStatus.STALE
+    assert result.diagnostic == View3DMeshPickDiagnosticCode.STALE_PICK_SCENE_SNAPSHOT.value
+
+
+def test_query_view3d_mesh_triangle_pick_rejects_ndc3_mesh_scope():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [[-0.5, -0.5, 0.0], [0.5, -0.5, 0.0], [0.0, 0.5, 0.0]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    result = query_view3d_mesh_triangle_pick(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(50.0, 50.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+
+    assert result.status == QueryStatus.UNSUPPORTED
+    assert result.diagnostic == View3DMeshPickDiagnosticCode.UNSUPPORTED_COORDINATE_SPACE.value
 
 
 def test_query_view3d_ray_context_returns_center_ray_payload():

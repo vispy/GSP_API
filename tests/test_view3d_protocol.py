@@ -13,7 +13,11 @@ from gsp.protocol import (
     OrthographicProjection3D,
     Pan3DPayload,
     Projection3DKind,
+    QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY,
     QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
+    QueryDiagnostic,
+    QueryDiagnosticSeverity,
+    QueryStatus,
     ResetView3DPayload,
     SetCamera3DPayload,
     SetProjection3DPayload,
@@ -22,6 +26,9 @@ from gsp.protocol import (
     VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
     View3D,
     View3DDiagnosticCode,
+    View3DMeshPickDiagnosticCode,
+    View3DMeshTrianglePickPayload,
+    View3DMeshTrianglePickRequest,
     View3DNavigationAction,
     View3DNavigationActionKind,
     ViewKind,
@@ -206,6 +213,7 @@ def test_view3d_capabilities_adapt_semantic_support():
             VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
             MESH3D_DATA_VIEW3D_CAPABILITY,
             QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
+            QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY,
             VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
         ),
     )
@@ -219,6 +227,60 @@ def test_view3d_capabilities_adapt_semantic_support():
     rejected = caps.adapt_view3d_capability("view3d.perspective.v1")
     assert rejected.outcome == AdaptationOutcome.REJECT
     assert rejected.diagnostic is not None
+
+
+def test_view3d_mesh_triangle_pick_request_and_payload_validate_s044_fields():
+    request = View3DMeshTrianglePickRequest(
+        view_id="view:main",
+        panel_id="panel:main",
+        panel_xy=(12.0, 24.0),
+        expected_layout_snapshot_id="layout:main",
+        expected_view_revision=3,
+        expected_view_projection_snapshot_id="view3d-projection:abc",
+        expected_pick_scene_snapshot_id="pick-scene:abc",
+    )
+    diagnostic = QueryDiagnostic(
+        code=View3DMeshPickDiagnosticCode.ADAPTED_CPU_REFERENCE,
+        severity=QueryDiagnosticSeverity.INFO,
+    )
+
+    payload = View3DMeshTrianglePickPayload(
+        status=QueryStatus.HIT,
+        hit=True,
+        view_id=request.view_id,
+        panel_id="panel:main",
+        panel_xy=request.panel_xy,
+        panel_ndc_xy=(0.0, 0.0),
+        layout_snapshot_id="layout:main",
+        view_revision=3,
+        view_projection_snapshot_id="view3d-projection:abc",
+        pick_scene_snapshot_id="pick-scene:abc",
+        depth_mode="opaque_less",
+        visual_id="visual:mesh",
+        visual_type="MeshVisual",
+        primitive_kind="triangle",
+        primitive_index=2,
+        diagnostics=(diagnostic,),
+    )
+
+    assert request.kind == QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY
+    assert payload.kind == QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY
+    assert payload.primitive_index == 2
+
+    with pytest.raises(ValueError, match="visual_id is required"):
+        View3DMeshTrianglePickPayload(
+            status=QueryStatus.HIT,
+            hit=True,
+            view_id="view:main",
+            panel_id="panel:main",
+            panel_xy=(0.0, 0.0),
+            panel_ndc_xy=(0.0, 0.0),
+            layout_snapshot_id="layout:main",
+            view_revision=0,
+            view_projection_snapshot_id="view3d-projection:abc",
+            pick_scene_snapshot_id="pick-scene:abc",
+            depth_mode="opaque_less",
+        )
 
 
 def test_view3d_navigation_action_validates_payload_kind():

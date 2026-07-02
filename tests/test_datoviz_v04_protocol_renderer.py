@@ -56,6 +56,7 @@ from gsp.protocol import (
     QueryScope,
     QueryStatus,
     SCALAR_COLOR_QUERY_PAYLOAD_KIND,
+    QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY,
     VIEW3D_QUERY_PAYLOAD_KIND,
     VIEW3D_LIGHT_AMBIENT_CAPABILITY,
     VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY,
@@ -69,6 +70,9 @@ from gsp.protocol import (
     View2D,
     View3D,
     View3DDiagnosticCode,
+    View3DMeshPickDiagnosticCode,
+    View3DMeshTrianglePickPayload,
+    View3DMeshTrianglePickRequest,
     View3DNavigationAction,
     View3DNavigationActionKind,
     VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
@@ -1922,6 +1926,11 @@ def test_datoviz_capabilities_promote_view3d_ray_when_camera_binding_is_ready():
     assert promoted.query_modes == ("view3d-ray",)
     assert promoted.supports_view3d_capability(VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY)
     assert promoted.supports_view3d_capability(QUERY_VIEW3D_RAY_READBACK_CAPABILITY)
+    assert not promoted.supports_view3d_capability(
+        QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY
+    )
+    assert "view3d-mesh-triangle-pick" not in promoted.query_modes
+    assert "s044_mesh_triangle_pick_diagnostics" in promoted.metadata
     assert promoted.adapt_query_mode("view3d-ray").outcome.value == "accept"
     assert "datoviz_view3d_binding_diagnostics" not in promoted.metadata
     assert "view3d-ray" not in unpromoted.query_modes
@@ -2259,6 +2268,27 @@ def test_datoviz_renderer_view3d_ray_context_rejects_missing_or_stale_view():
     )
     assert stale.status == QueryStatus.STALE
     assert stale.diagnostic == View3DDiagnosticCode.QUERY_3D_SNAPSHOT_MISMATCH.value
+
+
+def test_datoviz_renderer_mesh_triangle_pick_reports_structured_unsupported():
+    view = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh(), view3d=view)
+
+    result = renderer.query_view3d_mesh_triangle_pick(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(50.0, 50.0)),
+        layout_snapshot_id="layout:datoviz",
+    )
+
+    assert result.status == QueryStatus.UNSUPPORTED
+    assert (
+        result.diagnostic
+        == View3DMeshPickDiagnosticCode.UNSUPPORTED_NO_PUBLIC_PRIMITIVE_MAP.value
+    )
+    assert isinstance(result.extension_payload, View3DMeshTrianglePickPayload)
+    assert result.extension_payload.status == QueryStatus.UNSUPPORTED
+    assert result.extension_payload.diagnostics[0].code == (
+        View3DMeshPickDiagnosticCode.UNSUPPORTED_NO_PUBLIC_PRIMITIVE_MAP
+    )
 
 
 def test_facade_shape_rejects_missing_v04_functions():

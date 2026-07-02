@@ -64,6 +64,8 @@ from gsp.protocol import (
     StrokeJoin,
     View3D,
     QueryCoordinateSpace,
+    QueryDiagnostic,
+    QueryDiagnosticSeverity,
     QueryHitPolicy,
     QueryRequest,
     QueryResult,
@@ -83,6 +85,9 @@ from gsp.protocol import (
     View2DNavigationController,
     View2DNavigationInputAdapter,
     View3DDiagnosticCode,
+    View3DMeshPickDiagnosticCode,
+    View3DMeshTrianglePickPayload,
+    View3DMeshTrianglePickRequest,
     VisualFamily,
     VisualTransformBinding,
     ZoomAboutAction,
@@ -2035,6 +2040,52 @@ class DatovizV04ProtocolRenderer:
                 self.resolved_canvas.framebuffer_height,
                 self.panel_bounds,
             ),
+        )
+
+    def query_view3d_mesh_triangle_pick(
+        self,
+        request: View3DMeshTrianglePickRequest,
+        *,
+        layout_snapshot_id: str,
+    ) -> QueryResult:
+        """Return structured unsupported for S044 until Datoviz has strict pick evidence."""
+        diagnostic = QueryDiagnostic(
+            code=View3DMeshPickDiagnosticCode.UNSUPPORTED_NO_PUBLIC_PRIMITIVE_MAP,
+            severity=QueryDiagnosticSeverity.ERROR,
+            message=(
+                "Datoviz S044 mesh triangle picking requires public visual_id and "
+                "canonical primitive_index mapping plus synchronized pick-scene freshness"
+            ),
+        )
+        payload = View3DMeshTrianglePickPayload(
+            status=QueryStatus.UNSUPPORTED,
+            hit=False,
+            view_id=request.view_id,
+            panel_id=request.panel_id or (self.view3d.panel_id if self.view3d else None),
+            panel_xy=request.panel_xy,
+            diagnostics=(diagnostic,),
+        )
+        view_snapshot_id = (
+            resolve_view3d_projection_snapshot(
+                self.view3d, layout_snapshot_id=layout_snapshot_id
+            ).view_projection_snapshot_id
+            if self.view3d is not None
+            else None
+        )
+        return QueryResult(
+            request_id=f"query:{request.view_id}:mesh-pick",
+            status=QueryStatus.UNSUPPORTED,
+            hit=False,
+            panel_coordinate=request.panel_xy,
+            extension_payload_kind=payload.kind,
+            extension_payload=payload,
+            diagnostic=(
+                diagnostic.code.value
+                if isinstance(diagnostic.code, View3DMeshPickDiagnosticCode)
+                else diagnostic.code
+            ),
+            layout_snapshot_id=layout_snapshot_id,
+            view_snapshot_id=view_snapshot_id,
         )
 
     def _decorate_scalar_query_result(

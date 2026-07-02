@@ -19,6 +19,7 @@ from gsp.protocol import (
     MESH_NORMALS_FACE3D_CAPABILITY,
     MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY,
     NavigationPlacement,
+    QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY,
     QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
     QueryCoordinateSpace,
     QueryHitPolicy,
@@ -460,6 +461,17 @@ def gsp_capability_snapshot_from_datoviz(
         metadata["view3d_support"] = (
             "static orthographic View3D mesh rendering and canonical ray-context payloads"
         )
+        metadata["s044_mesh_triangle_pick"] = (
+            "query.view3d.mesh_triangle_pick.v1 is not advertised until Datoviz can "
+            "prove public visual_id and canonical primitive_index mapping plus "
+            "layout/view/projection/pick-scene freshness"
+        )
+        metadata["s044_mesh_triangle_pick_diagnostics"] = (
+            "pick.unsupported.no_public_primitive_map",
+            "pick.unsupported.native_state_only",
+        )
+        if QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY in view3d_capabilities:
+            raise AssertionError("Datoviz must not advertise S044 mesh picking yet")
         metadata["s040_flat_lambert"] = (
             "flat_lambert_cpu_resolved_strict: Datoviz S039 flat Lambert "
             "is resolved by protocol CPU face colors; native Datoviz lighting is not used"

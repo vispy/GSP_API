@@ -52,6 +52,7 @@ class QueryStatus(str, Enum):
     OUTSIDE_PANEL = "outside-panel"
     UNSUPPORTED = "unsupported"
     STALE = "stale"
+    INVALID = "invalid"
     DROPPED = "dropped"
     FAILED = "failed"
 
@@ -78,6 +79,197 @@ MESH_QUERY_PAYLOAD_KIND = "gsp.mesh-query@0.1"
 SCALAR_COLOR_QUERY_PAYLOAD_KIND = "gsp.scalar-color-query@0.1"
 TRANSFORM_QUERY_PAYLOAD_KIND = "gsp.transform-query@0.1"
 VIEW3D_QUERY_PAYLOAD_KIND = "gsp.view3d-query@0.1"
+VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND = "query.view3d.mesh_triangle_pick.v1"
+
+
+class QueryDiagnosticSeverity(str, Enum):
+    """Severity for backend-neutral structured query diagnostics."""
+
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+
+
+class View3DMeshPickDiagnosticCode(str, Enum):
+    """Stable S044 View3D mesh triangle picking diagnostics."""
+
+    UNSUPPORTED_BACKEND = "pick.unsupported.backend"
+    UNSUPPORTED_PROJECTION = "pick.unsupported.projection"
+    UNSUPPORTED_DEPTH_MODE = "pick.unsupported.depth_mode"
+    UNSUPPORTED_COORDINATE_SPACE = "pick.unsupported.coordinate_space"
+    UNSUPPORTED_VISUAL_TYPE = "pick.unsupported.visual_type"
+    UNSUPPORTED_TRANSPARENT = "pick.unsupported.transparent"
+    UNSUPPORTED_INSTANCING = "pick.unsupported.instancing"
+    UNSUPPORTED_NON_TRIANGLE_MESH = "pick.unsupported.non_triangle_mesh"
+    UNSUPPORTED_NO_PUBLIC_PRIMITIVE_MAP = "pick.unsupported.no_public_primitive_map"
+    UNSUPPORTED_SCENE_OCCLUDER = "pick.unsupported.scene_occluder"
+    UNSUPPORTED_NATIVE_STATE_ONLY = "pick.unsupported.native_state_only"
+    STALE_LAYOUT_SNAPSHOT = "pick.stale.layout_snapshot"
+    STALE_VIEW_REVISION = "pick.stale.view_revision"
+    STALE_VIEW_PROJECTION_SNAPSHOT = "pick.stale.view_projection_snapshot"
+    STALE_PICK_SCENE_SNAPSHOT = "pick.stale.pick_scene_snapshot"
+    INVALID_VIEW_ID = "pick.invalid.view_id"
+    INVALID_PANEL_ID = "pick.invalid.panel_id"
+    INVALID_PANEL_POINT = "pick.invalid.panel_point"
+    INVALID_OUTSIDE_PANEL = "pick.invalid.outside_panel"
+    ADAPTED_CPU_REFERENCE = "pick.adapted.cpu_reference"
+    ADAPTED_RASTERIZATION_TOLERANCE = "pick.adapted.rasterization_tolerance"
+    AMBIGUOUS_EDGE_OR_VERTEX = "pick.ambiguous.edge_or_vertex"
+    AMBIGUOUS_DEPTH_TIE = "pick.ambiguous.depth_tie"
+
+
+@dataclass(frozen=True, slots=True)
+class QueryDiagnostic:
+    """Backend-neutral structured query diagnostic."""
+
+    code: View3DMeshPickDiagnosticCode | str
+    severity: QueryDiagnosticSeverity | str
+    message: str | None = None
+    data: object | None = None
+
+    def __post_init__(self) -> None:
+        if isinstance(self.code, str):
+            View3DMeshPickDiagnosticCode(self.code)
+        elif not isinstance(self.code, View3DMeshPickDiagnosticCode):
+            raise TypeError("code must be a View3DMeshPickDiagnosticCode or string")
+        if isinstance(self.severity, str):
+            QueryDiagnosticSeverity(self.severity)
+        elif not isinstance(self.severity, QueryDiagnosticSeverity):
+            raise TypeError("severity must be a QueryDiagnosticSeverity or string")
+        if self.message is not None and not self.message:
+            raise ValueError("diagnostic message must not be empty")
+
+
+@dataclass(frozen=True, slots=True)
+class View3DMeshTrianglePickRequest:
+    """S044 backend-neutral View3D mesh triangle pick request."""
+
+    view_id: str
+    panel_xy: tuple[float, float]
+    kind: str = VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND
+    panel_id: str | None = None
+    expected_layout_snapshot_id: str | None = None
+    expected_view_revision: int | str | None = None
+    expected_view_projection_snapshot_id: str | None = None
+    expected_pick_scene_snapshot_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.kind != VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND:
+            raise ValueError("kind must be query.view3d.mesh_triangle_pick.v1")
+        validate_id(self.view_id)
+        _validate_finite_pair("panel_xy", self.panel_xy)
+        if self.panel_id is not None:
+            validate_id(self.panel_id)
+        for field_name, value in (
+            ("expected_layout_snapshot_id", self.expected_layout_snapshot_id),
+            (
+                "expected_view_projection_snapshot_id",
+                self.expected_view_projection_snapshot_id,
+            ),
+            ("expected_pick_scene_snapshot_id", self.expected_pick_scene_snapshot_id),
+        ):
+            if value is not None:
+                try:
+                    validate_id(value)
+                except ValueError as exc:
+                    raise ValueError(f"{field_name} invalid: {exc}") from exc
+        if isinstance(self.expected_view_revision, int) and self.expected_view_revision < 0:
+            raise ValueError("expected_view_revision must be non-negative")
+        if isinstance(self.expected_view_revision, str) and not self.expected_view_revision:
+            raise ValueError("expected_view_revision must not be empty")
+
+
+@dataclass(frozen=True, slots=True)
+class View3DMeshTrianglePickPayload:
+    """S044 response payload for one View3D mesh triangle pick."""
+
+    status: QueryStatus | str
+    hit: bool
+    view_id: str
+    panel_xy: tuple[float, float]
+    kind: str = VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND
+    panel_id: str | None = None
+    panel_ndc_xy: tuple[float, float] | None = None
+    layout_snapshot_id: str | None = None
+    view_revision: int | str | None = None
+    view_projection_snapshot_id: str | None = None
+    pick_scene_snapshot_id: str | None = None
+    depth_mode: str | None = None
+    visual_id: str | None = None
+    visual_type: str | None = None
+    primitive_kind: str | None = None
+    primitive_index: int | None = None
+    diagnostics: tuple[QueryDiagnostic, ...] = ()
+
+    def __post_init__(self) -> None:
+        if self.kind != VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND:
+            raise ValueError("kind must be query.view3d.mesh_triangle_pick.v1")
+        status = QueryStatus(self.status) if isinstance(self.status, str) else self.status
+        if status not in (
+            QueryStatus.HIT,
+            QueryStatus.MISS,
+            QueryStatus.UNSUPPORTED,
+            QueryStatus.STALE,
+            QueryStatus.INVALID,
+        ):
+            raise ValueError("mesh pick status must be hit, miss, unsupported, stale, or invalid")
+        if self.hit != (status is QueryStatus.HIT):
+            raise ValueError("hit must be true only when status is hit")
+        validate_id(self.view_id)
+        _validate_finite_pair("panel_xy", self.panel_xy)
+        if self.panel_id is not None:
+            validate_id(self.panel_id)
+        _validate_optional_finite_pair("panel_ndc_xy", self.panel_ndc_xy)
+        for field_name, value in (
+            ("layout_snapshot_id", self.layout_snapshot_id),
+            ("view_projection_snapshot_id", self.view_projection_snapshot_id),
+            ("pick_scene_snapshot_id", self.pick_scene_snapshot_id),
+        ):
+            if value is not None:
+                try:
+                    validate_id(value)
+                except ValueError as exc:
+                    raise ValueError(f"{field_name} invalid: {exc}") from exc
+        if isinstance(self.view_revision, int) and self.view_revision < 0:
+            raise ValueError("view_revision must be non-negative")
+        if status in (QueryStatus.HIT, QueryStatus.MISS):
+            if self.panel_id is None:
+                raise ValueError("panel_id is required for hit/miss mesh pick payloads")
+            if self.panel_ndc_xy is None:
+                raise ValueError("panel_ndc_xy is required for hit/miss mesh pick payloads")
+            if self.layout_snapshot_id is None:
+                raise ValueError("layout_snapshot_id is required for hit/miss mesh pick payloads")
+            if self.view_revision is None:
+                raise ValueError("view_revision is required for hit/miss mesh pick payloads")
+            if self.view_projection_snapshot_id is None:
+                raise ValueError("view_projection_snapshot_id is required for hit/miss mesh pick payloads")
+            if self.pick_scene_snapshot_id is None:
+                raise ValueError("pick_scene_snapshot_id is required for hit/miss mesh pick payloads")
+            if self.depth_mode != "opaque_less":
+                raise ValueError("depth_mode must be opaque_less for hit/miss mesh pick payloads")
+        if status is QueryStatus.HIT:
+            if self.visual_id is None:
+                raise ValueError("visual_id is required for mesh pick hits")
+            validate_id(self.visual_id)
+            if self.visual_type != "MeshVisual":
+                raise ValueError("visual_type must be MeshVisual for mesh pick hits")
+            if self.primitive_kind != "triangle":
+                raise ValueError("primitive_kind must be triangle for mesh pick hits")
+            if self.primitive_index is None or self.primitive_index < 0:
+                raise ValueError("primitive_index must be non-negative for mesh pick hits")
+        elif any(
+            value is not None
+            for value in (
+                self.visual_id,
+                self.visual_type,
+                self.primitive_kind,
+                self.primitive_index,
+            )
+        ):
+            raise ValueError("non-hit mesh pick payloads must not include hit identity fields")
+        for diagnostic in self.diagnostics:
+            if not isinstance(diagnostic, QueryDiagnostic):
+                raise TypeError("diagnostics must contain QueryDiagnostic values")
 
 
 @dataclass(frozen=True, slots=True)
@@ -370,6 +562,7 @@ class QueryResult:
         if self.status in (
             QueryStatus.UNSUPPORTED,
             QueryStatus.STALE,
+            QueryStatus.INVALID,
             QueryStatus.DROPPED,
             QueryStatus.FAILED,
         ):
@@ -377,6 +570,10 @@ class QueryResult:
                 raise ValueError(
                     f"{self.status.value} query results require a diagnostic"
                 )
+        s044_mesh_pick_payload = (
+            self.extension_payload_kind == VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND
+            and isinstance(self.extension_payload, View3DMeshTrianglePickPayload)
+        )
         if self.status != QueryStatus.HIT and (
             self.hits
             or self.visual_id is not None
@@ -387,8 +584,10 @@ class QueryResult:
             or self.data_coordinate is not None
             or self.displayed_rgba is not None
             or self.value is not None
-            or self.extension_payload_kind is not None
-            or self.extension_payload is not None
+            or (
+                (self.extension_payload_kind is not None or self.extension_payload is not None)
+                and not s044_mesh_pick_payload
+            )
         ):
             raise ValueError(
                 "non-hit query results must not include hit payload fields"

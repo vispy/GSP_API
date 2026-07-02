@@ -16,13 +16,19 @@ from gsp.protocol.query import (
     TEXT_QUERY_PAYLOAD_KIND,
     TRANSFORM_QUERY_PAYLOAD_KIND,
     VIEW3D_QUERY_PAYLOAD_KIND,
+    VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND,
     MeshQueryPayload,
+    QueryDiagnostic,
+    QueryDiagnosticSeverity,
     QueryHitPolicy,
     QueryRequest,
     QueryResult,
     QueryStatus,
     ScalarColorQueryPayload,
     TransformQueryPayload,
+    View3DMeshPickDiagnosticCode,
+    View3DMeshTrianglePickPayload,
+    View3DMeshTrianglePickRequest,
     View3DQueryPayload,
     VisualFamily,
 )
@@ -35,14 +41,17 @@ from gsp.protocol import (
     View3D,
     View3DDiagnosticCode,
     View3DProjectionSnapshot,
+    project_view3d_data_point,
     unproject_view3d_panel_ndc_point,
 )
 from gsp.protocol.visuals import (
+    DepthMode,
     ImageOrigin,
     ImageVisual,
     MarkerVisual,
     MeshColorMode,
     MeshVisual,
+    OpacityPolicy,
     PointVisual,
     TextVisual,
 )
@@ -235,6 +244,120 @@ def query_view3d_ray_context(
         extension_payload=payload,
         layout_snapshot_id=snapshot.layout_snapshot_id,
         view_snapshot_id=snapshot.view_projection_snapshot_id,
+    )
+
+
+def query_view3d_mesh_triangle_pick(
+    request: View3DMeshTrianglePickRequest,
+    entries: Iterable[QueryVisualEntry],
+    *,
+    view: View3D,
+    snapshot: View3DProjectionSnapshot,
+    panel_bounds: tuple[float, float, float, float],
+    pick_scene_snapshot_id: str | None = None,
+) -> QueryResult:
+    """Return a S044 CPU reference View3D mesh triangle pick result.
+
+    This is a protocol oracle for strict-scope fixtures. It uses public GSP
+    scene state only and reports an adapted CPU diagnostic rather than claiming
+    that Matplotlib has a native GPU picker.
+    """
+    actual_pick_scene_snapshot_id = pick_scene_snapshot_id or _view3d_pick_scene_snapshot_id(
+        entries,
+        snapshot=snapshot,
+    )
+    invalid = _validate_mesh_pick_request(
+        request,
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=panel_bounds,
+        pick_scene_snapshot_id=actual_pick_scene_snapshot_id,
+    )
+    if invalid is not None:
+        return invalid
+
+    panel_ndc = _panel_coordinate_to_ndc(request.panel_xy, panel_bounds)
+    best: tuple[float, str, int] | None = None
+    for entry in entries:
+        visual = entry.visual
+        if not isinstance(visual, MeshVisual):
+            return _mesh_pick_result(
+                request,
+                QueryStatus.UNSUPPORTED,
+                view=view,
+                snapshot=snapshot,
+                panel_ndc=panel_ndc,
+                pick_scene_snapshot_id=actual_pick_scene_snapshot_id,
+                diagnostics=(
+                    _pick_diagnostic(
+                        View3DMeshPickDiagnosticCode.UNSUPPORTED_SCENE_OCCLUDER,
+                        "only MeshVisual entries are accepted in S044 mesh picking",
+                    ),
+                ),
+            )
+        unsupported = _mesh_pick_unsupported_diagnostic(visual)
+        if unsupported is not None:
+            return _mesh_pick_result(
+                request,
+                QueryStatus.UNSUPPORTED,
+                view=view,
+                snapshot=snapshot,
+                panel_ndc=panel_ndc,
+                pick_scene_snapshot_id=actual_pick_scene_snapshot_id,
+                diagnostics=(unsupported,),
+            )
+        projected = np.asarray(
+            [project_view3d_data_point(view, _float3(row)) for row in visual.positions],
+            dtype=np.float64,
+        )
+        for face_index, vertex_indices in enumerate(visual.faces):
+            triangle = projected[vertex_indices]
+            if np.any(triangle[:, 2] < -1.0) or np.any(triangle[:, 2] > 1.0):
+                continue
+            barycentric = _triangle_barycentric_2d(np.asarray(panel_ndc), triangle[:, :2])
+            if barycentric is None:
+                continue
+            depth = float(np.dot(np.asarray(barycentric), triangle[:, 2]))
+            if best is not None and abs(depth - best[0]) <= 1.0e-12:
+                return _mesh_pick_result(
+                    request,
+                    QueryStatus.UNSUPPORTED,
+                    view=view,
+                    snapshot=snapshot,
+                    panel_ndc=panel_ndc,
+                    pick_scene_snapshot_id=actual_pick_scene_snapshot_id,
+                    diagnostics=(
+                        _pick_diagnostic(
+                            View3DMeshPickDiagnosticCode.AMBIGUOUS_DEPTH_TIE,
+                            "equal-depth triangle hits are ambiguous in S044 v1",
+                        ),
+                    ),
+                )
+            if best is None or depth < best[0]:
+                best = (depth, visual.id, int(face_index))
+
+    if best is None:
+        return _mesh_pick_result(
+            request,
+            QueryStatus.MISS,
+            view=view,
+            snapshot=snapshot,
+            panel_ndc=panel_ndc,
+            pick_scene_snapshot_id=actual_pick_scene_snapshot_id,
+            diagnostics=(_pick_cpu_reference_diagnostic(),),
+        )
+
+    _, visual_id, primitive_index = best
+    return _mesh_pick_result(
+        request,
+        QueryStatus.HIT,
+        view=view,
+        snapshot=snapshot,
+        panel_ndc=panel_ndc,
+        pick_scene_snapshot_id=actual_pick_scene_snapshot_id,
+        visual_id=visual_id,
+        primitive_index=primitive_index,
+        diagnostics=(_pick_cpu_reference_diagnostic(),),
     )
 
 
@@ -630,6 +753,31 @@ def _point_in_triangle(point: np.ndarray, triangle: np.ndarray) -> bool:
     return u >= -epsilon and v >= -epsilon and (u + v) <= 1.0 + epsilon
 
 
+def _triangle_barycentric_2d(
+    point: np.ndarray, triangle: np.ndarray
+) -> tuple[float, float, float] | None:
+    a, b, c = triangle
+    v0 = c - a
+    v1 = b - a
+    v2 = point - a
+    dot00 = float(np.dot(v0, v0))
+    dot01 = float(np.dot(v0, v1))
+    dot02 = float(np.dot(v0, v2))
+    dot11 = float(np.dot(v1, v1))
+    dot12 = float(np.dot(v1, v2))
+    denominator = dot00 * dot11 - dot01 * dot01
+    if denominator == 0.0:
+        return None
+    inv_denominator = 1.0 / denominator
+    u = (dot11 * dot02 - dot01 * dot12) * inv_denominator
+    v = (dot00 * dot12 - dot01 * dot02) * inv_denominator
+    w = 1.0 - u - v
+    epsilon = 1e-12
+    if u < -epsilon or v < -epsilon or w < -epsilon:
+        return None
+    return (w, v, u)
+
+
 def _panel_coordinate_to_ndc(
     coordinate: tuple[float, float], bounds: tuple[float, float, float, float]
 ) -> tuple[float, float]:
@@ -641,6 +789,241 @@ def _panel_coordinate_to_ndc(
         -1.0 + 2.0 * (x - left) / (right - left),
         -1.0 + 2.0 * (y - bottom) / (top - bottom),
     )
+
+
+def _validate_mesh_pick_request(
+    request: View3DMeshTrianglePickRequest,
+    *,
+    view: View3D,
+    snapshot: View3DProjectionSnapshot,
+    panel_bounds: tuple[float, float, float, float],
+    pick_scene_snapshot_id: str,
+) -> QueryResult | None:
+    if request.view_id != view.id:
+        return _mesh_pick_result(
+            request,
+            QueryStatus.INVALID,
+            view=view,
+            snapshot=snapshot,
+            diagnostics=(
+                _pick_diagnostic(View3DMeshPickDiagnosticCode.INVALID_VIEW_ID),
+            ),
+        )
+    if request.panel_id is not None and request.panel_id != view.panel_id:
+        return _mesh_pick_result(
+            request,
+            QueryStatus.INVALID,
+            view=view,
+            snapshot=snapshot,
+            diagnostics=(
+                _pick_diagnostic(View3DMeshPickDiagnosticCode.INVALID_PANEL_ID),
+            ),
+        )
+    if not _contains(panel_bounds, request.panel_xy):
+        return _mesh_pick_result(
+            request,
+            QueryStatus.INVALID,
+            view=view,
+            snapshot=snapshot,
+            diagnostics=(
+                _pick_diagnostic(View3DMeshPickDiagnosticCode.INVALID_OUTSIDE_PANEL),
+            ),
+        )
+    if (
+        request.expected_layout_snapshot_id is not None
+        and request.expected_layout_snapshot_id != snapshot.layout_snapshot_id
+    ):
+        return _mesh_pick_result(
+            request,
+            QueryStatus.STALE,
+            view=view,
+            snapshot=snapshot,
+            diagnostics=(
+                _pick_diagnostic(View3DMeshPickDiagnosticCode.STALE_LAYOUT_SNAPSHOT),
+            ),
+        )
+    if (
+        request.expected_view_revision is not None
+        and request.expected_view_revision != snapshot.view_revision
+    ):
+        return _mesh_pick_result(
+            request,
+            QueryStatus.STALE,
+            view=view,
+            snapshot=snapshot,
+            diagnostics=(
+                _pick_diagnostic(View3DMeshPickDiagnosticCode.STALE_VIEW_REVISION),
+            ),
+        )
+    if (
+        request.expected_view_projection_snapshot_id is not None
+        and request.expected_view_projection_snapshot_id
+        != snapshot.view_projection_snapshot_id
+    ):
+        return _mesh_pick_result(
+            request,
+            QueryStatus.STALE,
+            view=view,
+            snapshot=snapshot,
+            diagnostics=(
+                _pick_diagnostic(
+                    View3DMeshPickDiagnosticCode.STALE_VIEW_PROJECTION_SNAPSHOT
+                ),
+            ),
+        )
+    if (
+        request.expected_pick_scene_snapshot_id is not None
+        and request.expected_pick_scene_snapshot_id != pick_scene_snapshot_id
+    ):
+        return _mesh_pick_result(
+            request,
+            QueryStatus.STALE,
+            view=view,
+            snapshot=snapshot,
+            diagnostics=(
+                _pick_diagnostic(View3DMeshPickDiagnosticCode.STALE_PICK_SCENE_SNAPSHOT),
+            ),
+        )
+    return None
+
+
+def _mesh_pick_result(
+    request: View3DMeshTrianglePickRequest,
+    status: QueryStatus,
+    *,
+    view: View3D,
+    snapshot: View3DProjectionSnapshot,
+    panel_ndc: tuple[float, float] | None = None,
+    pick_scene_snapshot_id: str | None = None,
+    visual_id: str | None = None,
+    primitive_index: int | None = None,
+    diagnostics: tuple[QueryDiagnostic, ...] = (),
+) -> QueryResult:
+    payload = View3DMeshTrianglePickPayload(
+        status=status,
+        hit=status is QueryStatus.HIT,
+        view_id=view.id,
+        panel_id=view.panel_id if status in (QueryStatus.HIT, QueryStatus.MISS) else view.panel_id,
+        panel_xy=request.panel_xy,
+        panel_ndc_xy=panel_ndc,
+        layout_snapshot_id=snapshot.layout_snapshot_id if status in (QueryStatus.HIT, QueryStatus.MISS) else None,
+        view_revision=snapshot.view_revision if status in (QueryStatus.HIT, QueryStatus.MISS) else None,
+        view_projection_snapshot_id=snapshot.view_projection_snapshot_id if status in (QueryStatus.HIT, QueryStatus.MISS) else None,
+        pick_scene_snapshot_id=pick_scene_snapshot_id if status in (QueryStatus.HIT, QueryStatus.MISS) else None,
+        depth_mode=view.depth_mode.value if status in (QueryStatus.HIT, QueryStatus.MISS) else None,
+        visual_id=visual_id,
+        visual_type="MeshVisual" if visual_id is not None else None,
+        primitive_kind="triangle" if visual_id is not None else None,
+        primitive_index=primitive_index,
+        diagnostics=diagnostics,
+    )
+    return QueryResult(
+        request_id=f"query:{request.view_id}:mesh-pick",
+        status=status,
+        hit=status is QueryStatus.HIT,
+        panel_coordinate=request.panel_xy,
+        visual_id=visual_id,
+        visual_family=VisualFamily.MESH if visual_id is not None else None,
+        item_id=primitive_index,
+        visual_coordinate=panel_ndc if status is QueryStatus.HIT else None,
+        extension_payload_kind=VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND,
+        extension_payload=payload,
+        diagnostic=_query_diagnostic_code(diagnostics[0]) if diagnostics else None,
+        layout_snapshot_id=payload.layout_snapshot_id,
+        view_snapshot_id=payload.view_projection_snapshot_id,
+    )
+
+
+def _mesh_pick_unsupported_diagnostic(visual: MeshVisual) -> QueryDiagnostic | None:
+    if visual.positions.shape[1] != 3 or visual.coordinate_space is not CoordinateSpace.DATA:
+        return _pick_diagnostic(
+            View3DMeshPickDiagnosticCode.UNSUPPORTED_COORDINATE_SPACE,
+            "S044 mesh picking accepts only DATA-space 3D MeshVisual positions",
+        )
+    if visual.transform is not None:
+        return _pick_diagnostic(
+            View3DMeshPickDiagnosticCode.UNSUPPORTED_NATIVE_STATE_ONLY,
+            "S044 mesh picking does not accept transformed 3D meshes",
+        )
+    if visual.face_culling.value != "none":
+        return _pick_diagnostic(
+            View3DMeshPickDiagnosticCode.UNSUPPORTED_NATIVE_STATE_ONLY,
+            "S044 mesh picking does not define public culling semantics",
+        )
+    if visual.depth_test is DepthMode.DISABLED or visual.depth_write is DepthMode.DISABLED:
+        return _pick_diagnostic(
+            View3DMeshPickDiagnosticCode.UNSUPPORTED_DEPTH_MODE,
+            "S044 mesh picking requires depth-writing opaque_less semantics",
+        )
+    if visual.opacity_policy is not OpacityPolicy.ORDINARY_ALPHA:
+        return _pick_diagnostic(
+            View3DMeshPickDiagnosticCode.UNSUPPORTED_TRANSPARENT,
+            "S044 mesh picking accepts only ordinary opaque meshes",
+        )
+    if _mesh_has_nonopaque_alpha(visual):
+        return _pick_diagnostic(
+            View3DMeshPickDiagnosticCode.UNSUPPORTED_TRANSPARENT,
+            "S044 mesh picking accepts only opaque MeshVisual colors",
+        )
+    return None
+
+
+def _mesh_has_nonopaque_alpha(visual: MeshVisual) -> bool:
+    if visual.color is None:
+        return False
+    colors = _rgba01(visual.color)
+    return bool(np.any(colors[..., 3] < 1.0))
+
+
+def _pick_diagnostic(
+    code: View3DMeshPickDiagnosticCode,
+    message: str | None = None,
+    *,
+    severity: QueryDiagnosticSeverity = QueryDiagnosticSeverity.ERROR,
+) -> QueryDiagnostic:
+    return QueryDiagnostic(code=code, severity=severity, message=message)
+
+
+def _pick_cpu_reference_diagnostic() -> QueryDiagnostic:
+    return _pick_diagnostic(
+        View3DMeshPickDiagnosticCode.ADAPTED_CPU_REFERENCE,
+        "Matplotlib reference path computed this S044 pick from public CPU state",
+        severity=QueryDiagnosticSeverity.INFO,
+    )
+
+
+def _query_diagnostic_code(diagnostic: QueryDiagnostic) -> str:
+    code = diagnostic.code
+    return code.value if isinstance(code, View3DMeshPickDiagnosticCode) else code
+
+
+def _view3d_pick_scene_snapshot_id(
+    entries: Iterable[QueryVisualEntry],
+    *,
+    snapshot: View3DProjectionSnapshot,
+) -> str:
+    import hashlib
+
+    digest = hashlib.sha256()
+    digest.update(snapshot.view_projection_snapshot_id.encode("utf-8"))
+    for entry in entries:
+        visual = entry.visual
+        digest.update(type(visual).__name__.encode("utf-8"))
+        digest.update(str(entry.z_order).encode("ascii"))
+        if isinstance(visual, MeshVisual):
+            digest.update(visual.id.encode("utf-8"))
+            digest.update(visual.coordinate_space.value.encode("ascii"))
+            digest.update(np.ascontiguousarray(visual.positions).tobytes())
+            digest.update(np.ascontiguousarray(visual.faces).tobytes())
+            digest.update(visual.depth_test.value.encode("ascii"))
+            digest.update(visual.depth_write.value.encode("ascii"))
+            if visual.color is not None:
+                digest.update(np.ascontiguousarray(visual.color).tobytes())
+    return f"pick-scene:{digest.hexdigest()[:24]}"
+
+
+def _float3(value: np.ndarray) -> tuple[float, float, float]:
+    return (float(value[0]), float(value[1]), float(value[2]))
 
 
 def _sub3(

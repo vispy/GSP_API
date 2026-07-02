@@ -262,8 +262,8 @@
     {
       "id": "S044",
       "title": "Datoviz Grid Clipping Proof And View3D Mesh Triangle Picking",
-      "state": "active",
-      "progress": 55
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -1981,9 +1981,9 @@
       "id": "M192",
       "title": "S044 View3D mesh triangle picking proof",
       "stage": "S044",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 192
     }
   ],
@@ -2082,8 +2082,9 @@
     }
   ],
   "recommendations": [
+    "S044 completed: grid clipping proof is consolidated and View3D mesh triangle picking has a backend-neutral protocol plus Matplotlib CPU oracle.",
+    "Datoviz must not advertise query.view3d.mesh_triangle_pick.v1 until native public visual_id/primitive_index mapping and pick-scene freshness are proven.",
     "M191 completed: P028 accepted backend-neutral query.view3d.mesh_triangle_pick.v1, with GPU as a private implementation strategy.",
-    "M192 is now ready: implement the accepted View3D mesh triangle picking proof with public visual_id and primitive_index mapping.",
     "M190 completed: Datoviz grid clipping is native-verified for the local source checkout and remains independent from full guide strictness.",
     "S044 is open for Datoviz native grid clipping proof consolidation and View3D mesh triangle picking.",
     "S043 completed the unified Datoviz panel frame architecture path for guide strictness and retained View3D navigation.",
@@ -2102,6 +2103,7 @@
     "S041 completed manual Matplotlib-vs-Dataviz 3D review coverage for lit meshes and arcball-style View3D navigation."
   ],
   "notes": [
+    "M192 completed: added S044 protocol payloads, pick diagnostics, query.view3d.mesh_triangle_pick.v1 capability constant, Matplotlib CPU reference picker, Datoviz structured unsupported/non-advertisement boundary, and focused tests for hit/miss/stale/unsupported behavior.",
     "M191 completed: archived ANSWER as .agent/consultations/P028-response.md, accepted backend-neutral mesh triangle picking rather than public GPU picking, added ADR-0028, S044 decision/spec updates, and made M192 ready.",
     "M190 completed: audited the Datoviz source proof at sibling checkout 7c6e48f64, confirmed commit 9ba820489 is an ancestor, verified source/test sentinels, updated backend/layout spec wording, and recorded .agent/S044_GRID_CLIPPING_AUDIT.md without editing Datoviz.",
     "M189 completed: opened S044, created P028 GPU 3D visual picking consultation, registered M190 as ready, and blocked M191/M192 dependent GPU picking work pending ChatGPT Pro response.",

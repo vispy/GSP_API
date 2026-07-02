@@ -6,7 +6,7 @@ S044 - Datoviz Grid Clipping Proof And View3D Mesh Triangle Picking
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -33,3 +33,12 @@ Implement the bounded backend-neutral View3D mesh triangle picking proof accepte
 - Stop until M191 completes.
 - Stop if picking cannot distinguish frontmost visible hit from ray construction alone when the
   accepted semantics require occlusion-aware visual identity.
+
+## Result
+
+Completed locally. Added the S044 typed request/response payloads, diagnostics, capability constant,
+Matplotlib CPU reference oracle for strict-scope DATA-space mesh triangle picking, Datoviz
+non-advertisement metadata plus structured unsupported renderer response, and focused tests.
+
+Datoviz does not advertise `query.view3d.mesh_triangle_pick.v1` yet because public visual/triangle
+mapping and synchronized native pick-state freshness are not proven.
