@@ -1,5 +1,5 @@
 {
-  "current_stage": "S045",
+  "current_stage": "S046",
   "stages": [
     {
       "id": "S001",
@@ -268,6 +268,12 @@
     {
       "id": "S045",
       "title": "Post-S044 Roadmap And Release Readiness",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S046",
+      "title": "3D Code Examples Pack",
       "state": "completed",
       "progress": 100
     }
@@ -2009,6 +2015,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 194
+    },
+    {
+      "id": "M195",
+      "title": "S046 3D examples pack",
+      "stage": "S046",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 195
     }
   ],
   "review_queue": [],
@@ -2106,8 +2121,9 @@
     }
   ],
   "recommendations": [
+    "S046 completed: 3D review examples now cover S044 mesh picking, OBJ-style flat Lambert mesh rendering, and deterministic View3D camera paths.",
+    "Next branch is user choice: continue examples with producer-facing VisPy2 3D helpers, open Datoviz native mesh-pick evidence, or approve M131 release mechanics with target version/tag/publish scope.",
     "S045 completed: release-facing docs now summarize S034-S044 capability state and stop conditions.",
-    "Next branch is user choice: explicitly approve M131 release mechanics with target version/tag/publish scope, or open an optional Datoviz native mesh-pick evidence spike.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target.",
     "S044 completed: grid clipping proof is consolidated and View3D mesh triangle picking has a backend-neutral protocol plus Matplotlib CPU oracle.",
     "Datoviz must not advertise query.view3d.mesh_triangle_pick.v1 until native public visual_id/primitive_index mapping and pick-scene freshness are proven.",
@@ -2116,6 +2132,8 @@
     "Optional hardening after M194 is a Datoviz native mesh-pick evidence spike, not public capability promotion."
   ],
   "notes": [
+    "M195 completed: added examples/review/12_view3d_mesh_pick.py, 13_view3d_suzanne_lambert.py, and 14_view3d_camera_path.py plus review README updates and focused offscreen validation.",
+    "S046 completed for the first focused 3D examples pack; Datoviz mesh picking, strict opaque GPU depth, perspective, textures, and new public material semantics remain out of scope.",
     "M194 completed: refreshed CHANGELOG, README, review README, release checklist, and S045 release-refresh note for S034-S044 capability state without version bumps, tags, publication, or Datoviz capability overclaims.",
     "M193 completed: opened S045, audited post-S044 project state, found capability specs current but release-facing docs stale after S034-S044, and made M194 ready for a release-facing refresh before M131.",
     "S045 opened for post-S044 roadmap and release-readiness scoping; release mechanics remain blocked until explicit approval.",

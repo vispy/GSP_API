@@ -62,6 +62,7 @@ For 3D material review, compare the Matplotlib and Datoviz windows side by side:
 ```bash
 tools/compare-review-examples --live-side-by-side examples/review/10_view3d_flat_lambert.py
 tools/compare-review-examples --live-side-by-side examples/review/11_view3d_lit_mesh_arcball.py
+tools/compare-review-examples --live-side-by-side examples/review/13_view3d_suzanne_lambert.py
 ```
 
 Matplotlib enables canonical GSP orbit/pan/zoom controls for arcball-style manual inspection.
@@ -110,6 +111,9 @@ inch. Matplotlib live review keeps using the reference DPI for its figure size; 
 | `09_view3d_ndc_depth.py` | `(N,3)` NDC mesh with adapted opaque face-depth ordering |
 | `10_view3d_flat_lambert.py` | S039/S040 flat Lambert face-normal mesh shading |
 | `11_view3d_lit_mesh_arcball.py` | Lit faceted View3D mesh and Matplotlib arcball-style orbit review |
+| `12_view3d_mesh_pick.py` | S044 View3D mesh triangle picking report with Matplotlib CPU oracle |
+| `13_view3d_suzanne_lambert.py` | Bundled OBJ triangle mesh rendered as accepted flat Lambert `MeshVisual` |
+| `14_view3d_camera_path.py` | Deterministic canonical View3D orbit/pan/zoom action path |
 
 In live mode, Matplotlib `View3D` examples support S037 review navigation by default: left-drag
 orbit, right/middle-drag pan, wheel zoom, and `r` reset. Datoviz `View3D` examples use the same
@@ -172,6 +176,9 @@ Use this checklist before approving release preparation.
    | `09_view3d_ndc_depth.py` | Opaque NDC3 depth ordering is visible in both backends. |
    | `10_view3d_flat_lambert.py` | Flat Lambert face colors are visibly lit in both backends when Datoviz S040 support is available. |
    | `11_view3d_lit_mesh_arcball.py` | Matplotlib arcball-style orbit changes the lit mesh projection; Datoviz static view matches the same public projection and CPU-resolved Lambert colors. |
+   | `12_view3d_mesh_pick.py` | The printed S044 report shows frontmost hit, miss, and stale snapshot results; the rendered triangles match the reported frontmost visual identity. |
+   | `13_view3d_suzanne_lambert.py` | The bundled OBJ mesh is recognizable, faceted, and lit only by accepted flat Lambert semantics. |
+   | `14_view3d_camera_path.py` | The printed action report shows accepted revision/snapshot changes, and the rendered final camera state is coherent. |
 
 6. Record the review result in this form:
 
