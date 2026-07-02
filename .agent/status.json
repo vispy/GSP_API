@@ -1,5 +1,5 @@
 {
-  "current_stage": "S046",
+  "current_stage": "S047",
   "stages": [
     {
       "id": "S001",
@@ -274,6 +274,12 @@
     {
       "id": "S046",
       "title": "3D Code Examples Pack",
+      "state": "completed",
+      "progress": 100
+    },
+    {
+      "id": "S047",
+      "title": "Perspective View3D And Center-Dolly Zoom",
       "state": "completed",
       "progress": 100
     }
@@ -2024,6 +2030,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 195
+    },
+    {
+      "id": "M196",
+      "title": "S047 perspective View3D and center-dolly zoom",
+      "stage": "S047",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 196
     }
   ],
   "review_queue": [],
@@ -2121,6 +2136,8 @@
     }
   ],
   "recommendations": [
+    "S047 completed: perspective View3D is implemented for protocol, Matplotlib, Datoviz, review examples, and center-dolly wheel zoom.",
+    "Next review step: run live Matplotlib and Datoviz 3D examples 07, 08, 10, 11, and 13 and approve perspective orbit/pan/zoom behavior.",
     "S046 completed: 3D review examples now cover S044 mesh picking, OBJ-style flat Lambert mesh rendering, and deterministic View3D camera paths.",
     "Next branch is user choice: continue examples with producer-facing VisPy2 3D helpers, open Datoviz native mesh-pick evidence, or approve M131 release mechanics with target version/tag/publish scope.",
     "S045 completed: release-facing docs now summarize S034-S044 capability state and stop conditions.",
@@ -2132,6 +2149,7 @@
     "Optional hardening after M194 is a Datoviz native mesh-pick evidence spike, not public capability promotion."
   ],
   "notes": [
+    "M196 completed: accepted S047 perspective View3D direction, added PerspectiveProjection3D, renderer support, perspective review examples, and S037 center-dolly perspective zoom while keeping cursor-anchored perspective zoom deferred.",
     "M195 completed: added examples/review/12_view3d_mesh_pick.py, 13_view3d_suzanne_lambert.py, and 14_view3d_camera_path.py plus review README updates and focused offscreen validation.",
     "S046 completed for the first focused 3D examples pack; Datoviz mesh picking, strict opaque GPU depth, perspective, textures, and new public material semantics remain out of scope.",
     "M194 completed: refreshed CHANGELOG, README, review README, release checklist, and S045 release-refresh note for S034-S044 capability state without version bumps, tags, publication, or Datoviz capability overclaims.",

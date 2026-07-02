@@ -260,6 +260,30 @@ def test_matplotlib_interactive_view3d_pans_perspective_at_target_distance() -> 
         plt.close(fig)
 
 
+def test_matplotlib_interactive_view3d_scroll_zooms_perspective_by_dolly() -> None:
+    import matplotlib
+
+    matplotlib.use("Agg", force=True)
+    import matplotlib.pyplot as plt
+
+    scene = _perspective_view3d_scene()
+    fig, ax = plt.subplots()
+    try:
+        review_runner._render_matplotlib_scene(fig, ax, scene, color_scales={})
+        session = review_runner._MatplotlibReviewView3DNavigationSession(
+            fig, ax, scene, color_scales={}
+        )
+
+        session.on_scroll(SimpleNamespace(inaxes=ax, step=1.0))
+
+        assert session.view3d.revision == scene.view3d.revision + 1
+        assert session.view3d.camera.eye[2] == pytest.approx(5.0 / 1.1)
+        assert session.view3d.camera.target == scene.view3d.camera.target
+        assert session.view3d.projection == scene.view3d.projection
+    finally:
+        plt.close(fig)
+
+
 def test_review_runner_defaults_live_mode_to_interactive_navigation(
     monkeypatch: Any,
 ) -> None:

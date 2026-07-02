@@ -392,6 +392,33 @@ def test_view3d_navigation_reducers_pan_zoom_and_orbit():
     assert orbited.camera.target == pytest.approx(view.camera.target)
 
 
+def test_view3d_navigation_reducer_zooms_perspective_by_dolly():
+    view = _canonical_view3d(
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=45.0,
+            near_far=(0.1, 100.0),
+            aspect_ratio=1.0,
+        )
+    )
+
+    zoomed = zoom_view3d(view, Zoom3DPayload(scale=2.0))
+
+    assert zoomed.revision == view.revision + 1
+    assert zoomed.camera.eye == pytest.approx((0.0, 0.0, 2.5))
+    assert zoomed.camera.target == pytest.approx(view.camera.target)
+    assert zoomed.camera.up == pytest.approx(view.camera.up)
+    assert zoomed.projection == view.projection
+
+    zoomed_out = zoom_view3d(view, Zoom3DPayload(scale=0.5))
+    assert zoomed_out.camera.eye == pytest.approx((0.0, 0.0, 10.0))
+
+    with pytest.raises(
+        ValueError,
+        match=View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value,
+    ):
+        zoom_view3d(view, Zoom3DPayload(scale=2.0, anchor_panel_ndc_xy=(0.25, -0.25)))
+
+
 def test_apply_view3d_navigation_action_accepts_and_refreshes_snapshot():
     view = _canonical_view3d(revision=3)
     snapshot = resolve_view3d_projection_snapshot(
@@ -506,7 +533,7 @@ def test_apply_view3d_navigation_action_supports_setters_and_reset():
     assert set_projection_result.projection == view.projection
 
 
-def test_apply_view3d_navigation_rejects_perspective_zoom_until_semantics_land():
+def test_apply_view3d_navigation_accepts_perspective_zoom_dolly():
     view = _canonical_view3d(
         projection=PerspectiveProjection3D(
             fov_y_degrees=45.0,
@@ -531,10 +558,14 @@ def test_apply_view3d_navigation_rejects_perspective_zoom_until_semantics_land()
         view, action, layout_snapshot_id="layout:main"
     )
 
-    assert not result.accepted
-    assert View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value in (
-        result.diagnostics[0]
-    )
+    assert result.accepted
+    assert result.view is not None
+    assert result.view.revision == view.revision + 1
+    assert result.camera is not None
+    assert result.camera.eye == pytest.approx((0.0, 0.0, 2.5))
+    assert result.camera.target == pytest.approx(view.camera.target)
+    assert result.projection == view.projection
+    assert result.view_projection_snapshot_id != snapshot.view_projection_snapshot_id
 
 
 def _canonical_view3d(

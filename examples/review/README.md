@@ -65,12 +65,12 @@ tools/compare-review-examples --live-side-by-side examples/review/11_view3d_lit_
 tools/compare-review-examples --live-side-by-side examples/review/13_view3d_suzanne_lambert.py
 ```
 
-Matplotlib enables canonical GSP orbit/pan controls for perspective `View3D` scenes, while zoom
-remains orthographic-only until public perspective zoom semantics are accepted. Datoviz renders the
-public static `View3D` state through the adapted GSP panel-NDC mesh path or retained DATA-space path,
-with S040 CPU-resolved Lambert colors where needed. Native Datoviz `panel.arcball()` demos are
-legacy/evidence-only until a public GSP bridge is designed and proven without reuploading fixed
-projected mesh buffers.
+Matplotlib enables canonical GSP orbit/pan/wheel-zoom controls for perspective `View3D` scenes.
+Perspective zoom uses center dolly semantics: it moves the camera eye along the camera-target line
+while preserving target, up, FOV, and near/far. Datoviz renders the public static `View3D` state
+through the adapted GSP panel-NDC mesh path or retained DATA-space path, with S040 CPU-resolved
+Lambert colors where needed. Native Datoviz `panel.arcball()` demos are legacy/evidence-only until a
+public GSP bridge is designed and proven without reuploading fixed projected mesh buffers.
 
 Capture and compare offscreen outputs:
 
@@ -117,11 +117,9 @@ inch. Matplotlib live review keeps using the reference DPI for its figure size; 
 | `13_view3d_suzanne_lambert.py` | Bundled OBJ triangle mesh rendered as accepted flat Lambert `MeshVisual` |
 | `14_view3d_camera_path.py` | Deterministic canonical View3D orbit/pan/zoom action path |
 
-In live mode, Matplotlib orthographic `View3D` examples support the full S037 review navigation path:
-left-drag orbit, right/middle-drag pan, wheel zoom, and `r` reset. Perspective `View3D` examples use
-orbit/pan/reset; wheel zoom is rejected by the current protocol until perspective zoom semantics are
-accepted. Datoviz `View3D` examples use the same canonical action semantics when retained DATA-space
-visuals and live input are available, with perspective zoom subject to the same protocol gate.
+In live mode, Matplotlib `View3D` examples support the full S037 review navigation path: left-drag
+orbit, right/middle-drag pan, wheel zoom, and `r` reset. Datoviz `View3D` examples use the same
+canonical action semantics when retained DATA-space visuals and live input are available.
 
 The non-default `s036_alpha_not_strict_negative.py` script checks that translucent 3D mesh colors
 raise `mesh3d_alpha_not_strict` in the opaque-depth path.

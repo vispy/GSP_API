@@ -185,7 +185,7 @@ class Pan3DPayload:
 
 @dataclass(frozen=True, slots=True)
 class Zoom3DPayload:
-    """Scale orthographic projection bounds."""
+    """Scale orthographic bounds or dolly a perspective camera."""
 
     scale: float
     anchor_panel_ndc_xy: Float2 | None = None
@@ -647,15 +647,28 @@ def pan_view3d(view: View3D, payload: Pan3DPayload) -> View3D:
 
 
 def zoom_view3d(view: View3D, payload: Zoom3DPayload) -> View3D:
-    """Return the View3D produced by an S037 orthographic zoom payload."""
+    """Return the View3D produced by an S037 zoom payload."""
     if not isinstance(view, View3D):
         raise TypeError("view must be a View3D")
     if not isinstance(payload, Zoom3DPayload):
         raise TypeError("payload must be a Zoom3DPayload")
-    if not isinstance(view.projection, OrthographicProjection3D):
-        raise ValueError(
-            f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value}: "
-            "perspective zoom semantics are deferred"
+    if isinstance(view.projection, PerspectiveProjection3D):
+        if payload.anchor_panel_ndc_xy is not None:
+            raise ValueError(
+                f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_ACTION_UNSUPPORTED.value}: "
+                "anchored perspective zoom semantics are deferred"
+            )
+        basis = view.camera.basis()
+        eye_to_target = _sub3(view.camera.target, view.camera.eye)
+        distance = _dot3(eye_to_target, basis.forward)
+        new_distance = max(distance / payload.scale, CAMERA3D_EPSILON * 10.0)
+        return _replace_view3d(
+            view,
+            camera=Camera3D(
+                eye=_sub3(view.camera.target, _scale3(basis.forward, new_distance)),
+                target=view.camera.target,
+                up=view.camera.up,
+            ),
         )
     if payload.anchor_panel_ndc_xy is None:
         x_anchor_t = 0.5
