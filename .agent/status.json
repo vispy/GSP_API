@@ -2137,7 +2137,7 @@
   ],
   "recommendations": [
     "S047 completed: perspective View3D is implemented for protocol, Matplotlib, Datoviz, review examples, and center-dolly wheel zoom.",
-    "Next review step: approve Matplotlib perspective orbit/pan/zoom on examples 07, 08, 10, 11, and 13; compare Datoviz only as static live projection until 3D interaction is proven.",
+    "Next review step: approve Datoviz-style Matplotlib arcball and native Datoviz arcball on examples 07, 08, 10, 11, and 13.",
     "S046 completed: 3D review examples now cover S044 mesh picking, OBJ-style flat Lambert mesh rendering, and deterministic View3D camera paths.",
     "Next branch is user choice: continue examples with producer-facing VisPy2 3D helpers, open Datoviz native mesh-pick evidence, or approve M131 release mechanics with target version/tag/publish scope.",
     "S045 completed: release-facing docs now summarize S034-S044 capability state and stop conditions.",
@@ -2145,7 +2145,7 @@
     "S044 completed: grid clipping proof is consolidated and View3D mesh triangle picking has a backend-neutral protocol plus Matplotlib CPU oracle.",
     "Datoviz must not advertise query.view3d.mesh_triangle_pick.v1 until native public visual_id/primitive_index mapping and pick-scene freshness are proven.",
     "Native Datoviz grid clipping remains a separate verified capability and must not be treated as full guide strictness.",
-    "Datoviz View3D live navigation failed manual review and remains experimental opt-in only; normal review commands open static Datoviz View3D windows.",
+    "Datoviz View3D live review uses native dvz_view_arcball when available; the old canonical GSP replay path remains experimental-only.",
     "Optional hardening after M194 is a Datoviz native mesh-pick evidence spike, not public capability promotion."
   ],
   "notes": [

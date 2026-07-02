@@ -790,6 +790,11 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
         height = 0.0
         controller_flags = 0
 
+    class FakeArcballDesc:
+        width = 0.0
+        height = 0.0
+        controller_flags = 0
+
     def __init__(self):
         super().__init__()
         self.pointer_callback = None
@@ -812,6 +817,14 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
     def dvz_view_panzoom(self, view, panel, desc):
         self.calls.append(("view_panzoom", view, panel, desc.width, desc.height))
         return "panzoom"
+
+    def dvz_arcball_desc(self):
+        self.calls.append(("arcball_desc",))
+        return self.FakeArcballDesc()
+
+    def dvz_view_arcball(self, view, panel, desc):
+        self.calls.append(("view_arcball", view, panel, desc.width, desc.height))
+        return "arcball"
 
     def dvz_view_input(self, view):
         self.calls.append(("view_input", view))
@@ -4523,6 +4536,23 @@ def test_renderer_enable_native_panzoom_creates_live_view_and_controller():
     assert _calls(fake, "panzoom_desc") == [("panzoom_desc",)]
     assert _calls(fake, "view_panzoom") == [
         ("view_panzoom", "live-view", "panel", 800.0, 600.0)
+    ]
+
+
+def test_renderer_enable_native_view3d_arcball_creates_live_controller():
+    fake = FakeDatovizV04WithInteractive()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake)
+
+    arcball = renderer.enable_native_view3d_arcball()
+
+    assert arcball == "arcball"
+    assert renderer.native_arcball == "arcball"
+    assert _calls(fake, "view_glfw") == [
+        ("view_glfw", "app", "figure", 800, 600, b"GSP Datoviz review")
+    ]
+    assert _calls(fake, "arcball_desc") == [("arcball_desc",)]
+    assert _calls(fake, "view_arcball") == [
+        ("view_arcball", "live-view", "panel", 800.0, 600.0)
     ]
 
 

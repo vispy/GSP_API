@@ -53,9 +53,9 @@ tools/compare-review-examples --live-side-by-side examples/review/01_scatter_bas
 
 If the local Datoviz v0.4 build does not expose the live pointer-input binding, the Datoviz window
 still opens as a normal live review window and prints a message that GSP navigation is unavailable.
-Datoviz `View3D` examples open as static live review windows by default because the live 3D
-navigation path failed manual review. The experimental opt-in path is kept only as a diagnostic
-harness and must not be used as release evidence.
+Datoviz `View3D` examples use native Datoviz arcball interaction in live review when the local v0.4
+build exposes `dvz_view_arcball`. Builds without that binding keep the static live window and print
+structured diagnostics.
 
 For 3D material review, compare the Matplotlib and Datoviz windows side by side:
 
@@ -65,12 +65,10 @@ tools/compare-review-examples --live-side-by-side examples/review/11_view3d_lit_
 tools/compare-review-examples --live-side-by-side examples/review/13_view3d_suzanne_lambert.py
 ```
 
-Matplotlib enables canonical GSP orbit/pan/wheel-zoom controls for perspective `View3D` scenes.
-Perspective zoom uses center dolly semantics: it moves the camera eye along the camera-target line
-while preserving target, up, FOV, and near/far. Datoviz currently opens static live `View3D` review
-windows by default because live 3D interaction failed manual review. The diagnostic Datoviz
-interaction path remains opt-in with `GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV=1`, but it is not a
-supported review claim.
+Matplotlib uses a Datoviz-style virtual-sphere arcball adapter for perspective `View3D` scenes.
+Perspective wheel zoom uses center dolly semantics: it moves the camera eye along the camera-target
+line while preserving target, up, FOV, and near/far. Datoviz uses the native v0.4 arcball controller
+for live 3D review.
 
 Capture and compare offscreen outputs:
 
@@ -117,9 +115,9 @@ inch. Matplotlib live review keeps using the reference DPI for its figure size; 
 | `13_view3d_suzanne_lambert.py` | Bundled OBJ triangle mesh rendered as accepted flat Lambert `MeshVisual` |
 | `14_view3d_camera_path.py` | Deterministic canonical View3D orbit/pan/zoom action path |
 
-In live mode, Matplotlib `View3D` examples support the full S037 review navigation path: left-drag
-orbit, right/middle-drag pan, wheel zoom, and `r` reset. Datoviz `View3D` examples are static by
-default; do not use the experimental opt-in path as release evidence.
+In live mode, Matplotlib `View3D` examples support left-drag arcball rotation, right/middle-drag
+pan, wheel zoom, and `r` reset. Datoviz `View3D` examples use native arcball interaction when the
+local binding exposes it.
 
 The non-default `s036_alpha_not_strict_negative.py` script checks that translucent 3D mesh colors
 raise `mesh3d_alpha_not_strict` in the opaque-depth path.
@@ -172,11 +170,11 @@ Use this checklist before approving release preparation.
    | `04_guides_axes_ticks.py` | Explicit ticks, tick labels, axis labels, grid, and title are readable. |
    | `05_color_mapping_colorbar.py` | Colors match scalar values and colorbar semantics are clear. |
    | `06_text_labels.py` | Labels are placed correctly, anchored reasonably, and drawn above points. |
-   | `07_view3d_cube.py` | Matplotlib shows a perspective cube; orbit/pan/zoom interaction changes the canonical `View3D`. Datoviz renders the same static projection. |
-   | `08_view3d_terrain.py` | Matplotlib perspective terrain projection and per-face colors are coherent; Datoviz renders the same static projection. |
+   | `07_view3d_cube.py` | Matplotlib shows a perspective cube; arcball/pan/zoom interaction is coherent. Datoviz native arcball moves the same scene when available. |
+   | `08_view3d_terrain.py` | Matplotlib perspective terrain projection and per-face colors are coherent; Datoviz native arcball moves the same scene when available. |
    | `09_view3d_ndc_depth.py` | Opaque NDC3 depth ordering is visible in both backends. |
    | `10_view3d_flat_lambert.py` | Flat Lambert face colors are visibly lit in both backends when Datoviz S040 support is available. |
-   | `11_view3d_lit_mesh_arcball.py` | Matplotlib arcball-style orbit/pan/zoom changes the lit perspective mesh projection; Datoviz static view matches the same public projection and CPU-resolved Lambert colors. |
+   | `11_view3d_lit_mesh_arcball.py` | Matplotlib arcball-style rotation/pan/zoom changes the lit perspective mesh projection; Datoviz native arcball moves the CPU-resolved Lambert mesh when available. |
    | `12_view3d_mesh_pick.py` | The printed S044 report shows frontmost hit, miss, and stale snapshot results; the rendered triangles match the reported frontmost visual identity. |
    | `13_view3d_suzanne_lambert.py` | The bundled OBJ mesh is recognizable, faceted, perspective-projected, and lit only by accepted flat Lambert semantics. |
    | `14_view3d_camera_path.py` | The printed action report shows accepted revision/snapshot changes, and the rendered final camera state is coherent. |

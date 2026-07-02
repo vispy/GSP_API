@@ -925,6 +925,7 @@ class DatovizV04ProtocolRenderer:
     offscreen_view: Any | None = field(default=None, init=False)
     live_view: Any | None = field(default=None, init=False)
     native_panzoom: Any | None = field(default=None, init=False)
+    native_arcball: Any | None = field(default=None, init=False)
     live_navigation: "_DatovizLiveView2DNavigation | None" = field(
         default=None, init=False
     )
@@ -1737,6 +1738,31 @@ class DatovizV04ProtocolRenderer:
         if _is_null_handle(self.native_panzoom):
             raise DatovizV04Unavailable("Datoviz native panzoom creation failed")
         return self.native_panzoom
+
+    def enable_native_view3d_arcball(self) -> Any:
+        """Enable Datoviz v0.4 native arcball on the renderer's live 3D panel."""
+        view_arcball = getattr(self.dvz, "dvz_view_arcball", None)
+        if view_arcball is None:
+            raise DatovizV04Unavailable(
+                "Datoviz native arcball is unavailable: missing dvz_view_arcball"
+            )
+        live_view = self._ensure_live_view()
+        desc = None
+        desc_factory = getattr(self.dvz, "dvz_arcball_desc", None)
+        if desc_factory is not None:
+            desc = desc_factory()
+            if hasattr(desc, "width"):
+                desc.width = float(self.resolved_canvas.host_logical_width)
+            if hasattr(desc, "height"):
+                desc.height = float(self.resolved_canvas.host_logical_height)
+        self.native_arcball = view_arcball(
+            live_view,
+            self.panel,
+            _ctypes_pointer_arg(desc) if desc is not None else None,
+        )
+        if _is_null_handle(self.native_arcball):
+            raise DatovizV04Unavailable("Datoviz native arcball creation failed")
+        return self.native_arcball
 
     def enable_gsp_view2d_navigation(
         self,

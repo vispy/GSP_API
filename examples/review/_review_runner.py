@@ -43,10 +43,10 @@ from gsp.protocol import (
     View2DNavigationInputAdapter,
     View3D,
     OrthographicProjection3D,
-    Orbit3DPayload,
     Pan3DPayload,
     PerspectiveProjection3D,
     ResetView3DPayload,
+    SetCamera3DPayload,
     View3DNavigationAction,
     View3DNavigationActionKind,
     Zoom3DPayload,
@@ -76,7 +76,6 @@ REVIEW_MONITOR_DPI_ENV = "GSP_REVIEW_MONITOR_DPI"
 REVIEW_DEFAULT_RESOLUTION = (1280, 720)
 REVIEW_REFERENCE_DPI = 96.0
 REVIEW_OUTPUT_DPI = 100.0
-DATOVIZ_EXPERIMENTAL_VIEW3D_NAV_ENV = "GSP_DATOVIZ_ENABLE_EXPERIMENTAL_VIEW3D_NAV"
 
 
 @dataclass(frozen=True, slots=True)
@@ -547,8 +546,12 @@ class _MatplotlibReviewView3DNavigationSession:
             return
         if self._drag_button == 1:
             self._apply_payload(
-                View3DNavigationActionKind.ORBIT,
-                self._orbit_payload_from_pixels(dx_px, dy_px),
+                View3DNavigationActionKind.SET_CAMERA,
+                SetCamera3DPayload(
+                    camera=self._arcball_camera_from_pixels(
+                        last_x, last_y, float(event.x), float(event.y)
+                    )
+                ),
             )
         else:
             self._apply_payload(
@@ -578,7 +581,7 @@ class _MatplotlibReviewView3DNavigationSession:
     def _apply_payload(
         self,
         kind: View3DNavigationActionKind,
-        payload: Orbit3DPayload | Pan3DPayload | Zoom3DPayload | ResetView3DPayload,
+        payload: SetCamera3DPayload | Pan3DPayload | Zoom3DPayload | ResetView3DPayload,
     ) -> None:
         snapshot = resolve_view3d_projection_snapshot(
             self.view3d, layout_snapshot_id=self.layout_snapshot_id
@@ -606,11 +609,33 @@ class _MatplotlibReviewView3DNavigationSession:
         )
         self.fig.canvas.draw_idle()
 
-    def _orbit_payload_from_pixels(self, dx_px: float, dy_px: float) -> Orbit3DPayload:
+    def _arcball_camera_from_pixels(
+        self, last_x_px: float, last_y_px: float, x_px: float, y_px: float
+    ) -> Any:
         rect = self._panel_rect()
-        return Orbit3DPayload(
-            delta_yaw_radians=-dx_px / rect.width * np.pi,
-            delta_pitch_radians=dy_px / rect.height * np.pi,
+        last_ball = _review_arcball_project(
+            _panel_x_to_ndc(last_x_px, rect), _panel_y_to_ndc(last_y_px, rect)
+        )
+        current_ball = _review_arcball_project(
+            _panel_x_to_ndc(x_px, rect), _panel_y_to_ndc(y_px, rect)
+        )
+        axis = np.cross(last_ball, current_ball)
+        axis_norm = float(np.linalg.norm(axis))
+        if axis_norm <= 1.0e-12:
+            return self.view3d.camera
+        dot = float(np.clip(np.dot(last_ball, current_ball), -1.0, 1.0))
+        angle = 2.0 * np.arctan2(axis_norm, 1.0 + dot)
+        # Datoviz arcball rotates the model. For equivalent camera-orbit review, apply inverse.
+        rotation_axis = -axis / axis_norm
+        target = np.asarray(self.view3d.camera.target, dtype=np.float64)
+        eye = np.asarray(self.view3d.camera.eye, dtype=np.float64)
+        up = np.asarray(self.view3d.camera.up, dtype=np.float64)
+        next_eye = target + _rotate_vector(eye - target, rotation_axis, angle)
+        next_up = _rotate_vector(up, rotation_axis, angle)
+        return type(self.view3d.camera)(
+            eye=tuple(float(value) for value in next_eye),
+            target=self.view3d.camera.target,
+            up=tuple(float(value) for value in next_up),
         )
 
     def _pan_payload_from_pixels(self, dx_px: float, dy_px: float) -> Pan3DPayload:
@@ -653,6 +678,35 @@ class _MatplotlibReviewView3DNavigationSession:
             width=float(bbox.width),
             height=float(bbox.height),
         )
+
+
+def _panel_x_to_ndc(x_px: float, rect: LogicalPixelRect) -> float:
+    return -1.0 + 2.0 * (x_px - rect.x) / rect.width
+
+
+def _panel_y_to_ndc(y_px: float, rect: LogicalPixelRect) -> float:
+    return -1.0 + 2.0 * (y_px - rect.y) / rect.height
+
+
+def _review_arcball_project(x_ndc: float, y_ndc: float) -> np.ndarray:
+    point = np.array([x_ndc, y_ndc], dtype=np.float64)
+    distance = float(np.dot(point, point))
+    if distance <= 1.0:
+        return np.array([x_ndc, y_ndc, np.sqrt(1.0 - distance)], dtype=np.float64)
+    point /= np.sqrt(distance)
+    return np.array([point[0], point[1], 0.0], dtype=np.float64)
+
+
+def _rotate_vector(
+    vector: np.ndarray, axis: np.ndarray, angle_radians: float
+) -> np.ndarray:
+    cos_angle = np.cos(angle_radians)
+    sin_angle = np.sin(angle_radians)
+    return (
+        vector * cos_angle
+        + np.cross(axis, vector) * sin_angle
+        + axis * np.dot(axis, vector) * (1.0 - cos_angle)
+    )
 
 
 def _run_datoviz(
@@ -722,32 +776,26 @@ def _run_datoviz(
                             "right-drag to zoom x/y, wheel to zoom."
                         )
                 elif interactive_navigation and scene.view3d is not None:
-                    if os.environ.get(DATOVIZ_EXPERIMENTAL_VIEW3D_NAV_ENV) != "1":
+                    enable_view3d_arcball = getattr(
+                        renderer, "enable_native_view3d_arcball", None
+                    )
+                    if enable_view3d_arcball is None:
                         print(
                             "Datoviz GSP View3D navigation unavailable; opening static live window: "
-                            f"failed manual review; set {DATOVIZ_EXPERIMENTAL_VIEW3D_NAV_ENV}=1 to opt in"
+                            "missing enable_native_view3d_arcball"
                         )
                     else:
-                        enable_view3d_navigation = getattr(
-                            renderer, "enable_gsp_view3d_navigation", None
-                        )
-                        if enable_view3d_navigation is None:
+                        try:
+                            enable_view3d_arcball()
+                        except DatovizV04Unavailable as exc:
                             print(
                                 "Datoviz GSP View3D navigation unavailable; opening static live window: "
-                                "missing enable_gsp_view3d_navigation"
+                                f"{exc}"
                             )
                         else:
-                            try:
-                                enable_view3d_navigation(scene.view3d)
-                            except DatovizV04Unavailable as exc:
-                                print(
-                                    "Datoviz GSP View3D navigation unavailable; opening static live window: "
-                                    f"{exc}"
-                                )
-                            else:
-                                print(
-                                    "Datoviz experimental GSP View3D navigation enabled: drag to orbit, right-drag to pan, wheel to zoom."
-                                )
+                            print(
+                                "Datoviz native View3D arcball enabled: drag to rotate, right/middle-drag to pan, wheel to zoom."
+                            )
                 renderer.show(frame_count=frames)
             else:
                 path.write_bytes(renderer.capture_png_bytes())

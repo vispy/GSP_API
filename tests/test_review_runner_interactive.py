@@ -234,7 +234,7 @@ def test_matplotlib_interactive_view3d_navigation_rerenders_mesh() -> None:
         plt.close(fig)
 
 
-def test_matplotlib_interactive_view3d_orbit_inverts_mouse_y_for_pitch() -> None:
+def test_matplotlib_interactive_view3d_orbit_uses_arcball_camera_update() -> None:
     import matplotlib
 
     matplotlib.use("Agg", force=True)
@@ -249,10 +249,19 @@ def test_matplotlib_interactive_view3d_orbit_inverts_mouse_y_for_pitch() -> None
         )
         rect = session._panel_rect()
 
-        payload = session._orbit_payload_from_pixels(0.0, rect.height * 0.25)
+        camera = session._arcball_camera_from_pixels(
+            rect.x + rect.width * 0.5,
+            rect.y + rect.height * 0.5,
+            rect.x + rect.width * 0.6,
+            rect.y + rect.height * 0.6,
+        )
 
-        assert payload.delta_yaw_radians == pytest.approx(0.0)
-        assert payload.delta_pitch_radians == pytest.approx(np.pi * 0.25)
+        assert camera.target == scene.view3d.camera.target
+        assert camera.eye != scene.view3d.camera.eye
+        assert camera.up != scene.view3d.camera.up
+        assert np.linalg.norm(np.subtract(camera.eye, camera.target)) == pytest.approx(
+            np.linalg.norm(np.subtract(scene.view3d.camera.eye, scene.view3d.camera.target))
+        )
     finally:
         plt.close(fig)
 
@@ -426,9 +435,6 @@ def test_datoviz_view3d_navigation_unavailable_still_opens_static_live_window(
         def add_text_visual(self, visual: Any) -> None:
             return None
 
-        def enable_gsp_view3d_navigation(self, view3d: Any) -> None:
-            self.enabled_view3d = view3d
-
         def show(self, *, frame_count: int) -> None:
             self.show_calls += 1
             assert frame_count == 1
@@ -449,11 +455,10 @@ def test_datoviz_view3d_navigation_unavailable_still_opens_static_live_window(
 
     assert result["status"] == "rendered"
     assert instances[0].show_calls == 1
-    assert not hasattr(instances[0], "enabled_view3d")
-    assert "failed manual review" in capsys.readouterr().out
+    assert "missing enable_native_view3d_arcball" in capsys.readouterr().out
 
 
-def test_datoviz_view3d_navigation_explicit_opt_in_can_enable_experimental_path(
+def test_datoviz_view3d_navigation_enables_native_arcball(
     tmp_path: Path, monkeypatch: Any, capsys: Any
 ) -> None:
     instances: list[FakeDatovizRenderer] = []
@@ -476,14 +481,13 @@ def test_datoviz_view3d_navigation_explicit_opt_in_can_enable_experimental_path(
         def add_text_visual(self, visual: Any) -> None:
             return None
 
-        def enable_gsp_view3d_navigation(self, view3d: Any) -> None:
-            self.enabled_view3d = view3d
+        def enable_native_view3d_arcball(self) -> None:
+            self.enabled_arcball = True
 
         def show(self, *, frame_count: int) -> None:
             self.show_calls += 1
             assert frame_count == 1
 
-    monkeypatch.setenv(review_runner.DATOVIZ_EXPERIMENTAL_VIEW3D_NAV_ENV, "1")
     monkeypatch.setattr(
         review_runner, "DatovizV04ProtocolRenderer", FakeDatovizRenderer
     )
@@ -500,5 +504,5 @@ def test_datoviz_view3d_navigation_explicit_opt_in_can_enable_experimental_path(
 
     assert result["status"] == "rendered"
     assert instances[0].show_calls == 1
-    assert instances[0].enabled_view3d == _view3d_scene().view3d
-    assert "experimental GSP View3D navigation enabled" in capsys.readouterr().out
+    assert instances[0].enabled_arcball is True
+    assert "Datoviz native View3D arcball enabled" in capsys.readouterr().out
