@@ -182,10 +182,11 @@ Datoviz may claim `query.view3d.ray_readback.v1` for canonical ray-context paylo
 the same P022 camera binding is available. This capability does not imply GPU visual hit picking for
 3D meshes.
 
-Datoviz must not claim `view3d.navigation.orbit_pan_zoom.v1` until the retained DATA-space visual
-path is wired to canonical action/input replay. `view3d.retained_data_space_visuals.v1` is only the
-substrate: it proves stable visual identity, retained camera/projection updates, and no unchanged
-mesh buffer rewrites during ordinary View3D state changes.
+Datoviz claims `view3d.navigation.orbit_pan_zoom.v1` only when the retained DATA-space visual path
+and live input bindings are both available. The protocol renderer replays canonical
+`View3DNavigationAction` values into retained Datoviz camera/projection state, validates Datoviz
+state readback against canonical GSP state, preserves visual identity, and does not rewrite
+unchanged mesh vertex/index buffers during ordinary View3D navigation.
 
 ## S038 MeshVisual material boundary and S039 Lambert extension
 

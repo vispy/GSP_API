@@ -90,6 +90,16 @@ from gsp.protocol import (
     validate_mesh_visual_flat_lambert,
     zoom_view2d_about,
 )
+from gsp.protocol.view3d import (
+    Orbit3DPayload,
+    Pan3DPayload,
+    ResetView3DPayload,
+    View3DNavigationAction,
+    View3DNavigationActionKind,
+    View3DNavigationResult,
+    Zoom3DPayload,
+    apply_view3d_navigation_action,
+)
 from gsp.protocol.color_mapping import (
     map_scalar_value,
     map_scalar_values,
@@ -528,10 +538,6 @@ def datoviz_v04_view3d_live_navigation_diagnostics(
             "protocol renderer would need CPU-projected panel-NDC mesh positions "
             "without the retained DATA-space View3D visual path"
         )
-    else:
-        diagnostics.append(
-            "Datoviz View3D live navigation input/action wiring is deferred until M188"
-        )
     return tuple(diagnostics)
 
 
@@ -875,6 +881,9 @@ class DatovizV04ProtocolRenderer:
     live_view: Any | None = field(default=None, init=False)
     native_panzoom: Any | None = field(default=None, init=False)
     live_navigation: "_DatovizLiveView2DNavigation | None" = field(
+        default=None, init=False
+    )
+    live_view3d_navigation: "_DatovizLiveView3DNavigation | None" = field(
         default=None, init=False
     )
     visuals: dict[str, Any] = field(default_factory=dict, init=False)
@@ -1722,15 +1731,34 @@ class DatovizV04ProtocolRenderer:
         *,
         controller_id: str = "nav:datoviz-live-3d",
         layout_snapshot_id: str = "layout:datoviz-live-3d",
-    ) -> None:
-        """Report why Datoviz cannot yet provide canonical S037 View3D navigation."""
+    ) -> "_DatovizLiveView3DNavigation":
+        """Enable Datoviz pointer input as canonical S037 View3D navigation."""
         target_view3d = view3d or self.view3d
         if target_view3d is None:
             raise DatovizV04Unavailable(
                 "Datoviz GSP View3D navigation requires an initial View3D"
             )
         diagnostics = datoviz_v04_view3d_live_navigation_diagnostics(self.dvz)
-        raise DatovizV04Unavailable("; ".join(diagnostics))
+        if diagnostics:
+            raise DatovizV04Unavailable("; ".join(diagnostics))
+        live_view = self._ensure_live_view()
+        router = self.dvz.dvz_view_input(live_view)
+        if _is_null_handle(router):
+            raise DatovizV04Unavailable("Datoviz live input router is unavailable")
+        if self.live_view3d_navigation is not None:
+            self.live_view3d_navigation.close()
+        self.live_view3d_navigation = _DatovizLiveView3DNavigation(
+            renderer=self,
+            router=router,
+            live_view=live_view,
+            view3d=target_view3d,
+            controller_id=controller_id,
+            layout_snapshot_id=layout_snapshot_id,
+        )
+        self.dvz.dvz_input_subscribe_event(
+            router, self.live_view3d_navigation.handle_input_event, None
+        )
+        return self.live_view3d_navigation
 
     def _create_rgba8_sampled_field(
         self, pixels: npt.NDArray[np.uint8], width: int, height: int
@@ -2185,7 +2213,9 @@ class DatovizV04ProtocolRenderer:
         self.update_view2d_axes(view)
         return panel_view
 
-    def apply_retained_view3d_navigation(self, view3d: View3D) -> dict[str, object]:
+    def apply_retained_view3d_navigation(
+        self, view3d: View3D, *, layout_snapshot_id: str = "layout:datoviz"
+    ) -> dict[str, object]:
         """Apply an accepted S037 View3D state as retained camera/projection updates."""
         diagnostics = datoviz_v04_view3d_retained_data_diagnostics(self.dvz)
         if diagnostics:
@@ -2200,7 +2230,50 @@ class DatovizV04ProtocolRenderer:
         _update_datoviz_view3d_camera(self.dvz, self.native_view3d_camera, view3d)
         self.view3d = view3d
         self.retained_view3d_update_stats.view_projection_uniform_updates += 1
-        return self.resolve_retained_view3d_state_snapshot()
+        return self.resolve_retained_view3d_state_snapshot(
+            layout_snapshot_id=layout_snapshot_id
+        )
+
+    def apply_gsp_view3d_navigation_action(
+        self,
+        action: View3DNavigationAction,
+        *,
+        layout_snapshot_id: str = "layout:datoviz-live-3d",
+    ) -> View3DNavigationResult:
+        """Replay one canonical S037 View3D navigation action into retained Datoviz state."""
+        if self.view3d is None:
+            return View3DNavigationResult(
+                accepted=False,
+                view_id=action.view_id,
+                action_kind=action.kind,
+                old_revision=action.base_view_revision,
+                diagnostics=(
+                    f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_UNSUPPORTED.value}: "
+                    "Datoviz GSP View3D navigation requires a renderer View3D",
+                ),
+                layout_snapshot_id=action.base_layout_snapshot_id,
+            )
+        result = apply_view3d_navigation_action(
+            self.view3d, action, layout_snapshot_id=layout_snapshot_id
+        )
+        if not result.accepted or result.view is None:
+            return result
+        snapshot = self.apply_retained_view3d_navigation(
+            result.view, layout_snapshot_id=layout_snapshot_id
+        )
+        state_diagnostics = _retained_view3d_state_mismatch_diagnostics(
+            result.view, snapshot
+        )
+        if state_diagnostics:
+            return View3DNavigationResult(
+                accepted=False,
+                view_id=result.view_id,
+                action_kind=result.action_kind,
+                old_revision=result.old_revision,
+                diagnostics=state_diagnostics,
+                layout_snapshot_id=result.layout_snapshot_id,
+            )
+        return result
 
     def resolve_retained_view3d_state_snapshot(
         self, *, layout_snapshot_id: str = "layout:datoviz"
@@ -2431,6 +2504,201 @@ class _DatovizLiveView2DNavigation:
     def _next_revision(self) -> str:
         self.revision_index += 1
         return f"view-rev:datoviz-live-{self.revision_index}"
+
+
+class _DatovizLiveView3DNavigation:
+    """Translate Datoviz pointer callbacks into S037 semantic View3D navigation."""
+
+    def __init__(
+        self,
+        *,
+        renderer: DatovizV04ProtocolRenderer,
+        router: Any,
+        live_view: Any,
+        view3d: View3D,
+        controller_id: str,
+        layout_snapshot_id: str,
+    ) -> None:
+        self.renderer = renderer
+        self.router = router
+        self.live_view = live_view
+        self.view3d = view3d
+        self.home_view3d = view3d
+        self.controller_id = controller_id
+        self.layout_snapshot_id = layout_snapshot_id
+        self._panel_rect = self._initial_panel_rect()
+        self._drag_last_px: tuple[float, float] | None = None
+        self._drag_mode: Literal["orbit", "pan"] | None = None
+        self._closed = False
+
+    @property
+    def panel_rect(self) -> LogicalPixelRect:
+        """Return the live Datoviz panel rectangle in host logical pixels."""
+        return self._panel_rect
+
+    def _initial_panel_rect(self) -> LogicalPixelRect:
+        """Return the initial live Datoviz panel rectangle in host logical pixels."""
+        return LogicalPixelRect(
+            x=0.0,
+            y=0.0,
+            width=float(self.renderer.resolved_canvas.host_logical_width),
+            height=float(self.renderer.resolved_canvas.host_logical_height),
+        )
+
+    def close(self) -> None:
+        """Unsubscribe from Datoviz pointer callbacks."""
+        if self._closed:
+            return
+        unsubscribe = getattr(self.renderer.dvz, "dvz_input_unsubscribe_event", None)
+        if unsubscribe is not None:
+            unsubscribe(self.router, self.handle_input_event, None)
+        self._closed = True
+
+    def handle_input_event(
+        self, _router: Any, event_ptr: Any, _user_data: Any
+    ) -> None:
+        """Handle one routed Datoviz input callback."""
+        input_event = getattr(event_ptr, "contents", event_ptr)
+        input_event_type = int(getattr(input_event, "type"))
+        if input_event_type == _enum_value(
+            self.renderer.dvz,
+            "DvzInputEventType",
+            "DVZ_INPUT_EVENT_POINTER",
+            DVZ_INPUT_EVENT_POINTER,
+        ):
+            pointer_event = getattr(input_event.content, "pointer")
+            self.handle_pointer_event(_router, pointer_event, _user_data)
+            return
+        if input_event_type == _enum_value(
+            self.renderer.dvz,
+            "DvzInputEventType",
+            "DVZ_INPUT_EVENT_RESIZE",
+            DVZ_INPUT_EVENT_RESIZE,
+        ):
+            self.handle_resize_event(getattr(input_event.content, "resize"))
+            return
+        if input_event_type == _enum_value(
+            self.renderer.dvz,
+            "DvzInputEventType",
+            "DVZ_INPUT_EVENT_SCALE",
+            DVZ_INPUT_EVENT_SCALE,
+        ):
+            self._request_frame()
+
+    def handle_pointer_event(
+        self, _router: Any, event_ptr: Any, _user_data: Any
+    ) -> None:
+        """Handle one raw Datoviz pointer callback."""
+        event = getattr(event_ptr, "contents", event_ptr)
+        pointer_event = _navigation_pointer_event_from_datoviz(self.renderer.dvz, event)
+        if pointer_event is None:
+            return
+        self._apply_event(pointer_event)
+
+    def handle_resize_event(self, event: Any) -> None:
+        """Update the live logical panel size from one Datoviz resize event."""
+        width, height = _datoviz_resize_logical_size(event)
+        if width <= 0.0 or height <= 0.0:
+            return
+        self._panel_rect = LogicalPixelRect(x=0.0, y=0.0, width=width, height=height)
+        self._request_frame()
+
+    def _apply_event(self, event: NavigationPointerEvent) -> None:
+        if event.kind is NavigationPointerEventKind.BUTTON_PRESS:
+            if event.left_button:
+                self._drag_mode = "orbit"
+            elif event.right_button:
+                self._drag_mode = "pan"
+            else:
+                return
+            self._drag_last_px = (event.x_px, event.y_px)
+            return
+        if event.kind is NavigationPointerEventKind.BUTTON_RELEASE:
+            self._drag_last_px = None
+            self._drag_mode = None
+            return
+        if event.kind is NavigationPointerEventKind.MOUSE_MOVE:
+            self._apply_drag_event(event)
+            return
+        if event.kind is NavigationPointerEventKind.WHEEL and event.scroll_steps != 0.0:
+            self._apply_payload(
+                View3DNavigationActionKind.ZOOM,
+                Zoom3DPayload(scale=1.1 ** event.scroll_steps),
+            )
+            return
+        if event.kind is NavigationPointerEventKind.DOUBLE_CLICK:
+            self._apply_payload(
+                View3DNavigationActionKind.RESET,
+                ResetView3DPayload(
+                    camera=self.home_view3d.camera,
+                    projection=self.home_view3d.projection,
+                ),
+            )
+
+    def _apply_drag_event(self, event: NavigationPointerEvent) -> None:
+        if self._drag_last_px is None or self._drag_mode is None:
+            return
+        last_x, last_y = self._drag_last_px
+        self._drag_last_px = (event.x_px, event.y_px)
+        dx_px = event.x_px - last_x
+        dy_px = event.y_px - last_y
+        if dx_px == 0.0 and dy_px == 0.0:
+            return
+        if self._drag_mode == "orbit":
+            self._apply_payload(
+                View3DNavigationActionKind.ORBIT,
+                self._orbit_payload_from_pixels(dx_px, dy_px),
+            )
+        else:
+            self._apply_payload(
+                View3DNavigationActionKind.PAN,
+                self._pan_payload_from_pixels(dx_px, dy_px),
+            )
+
+    def _apply_payload(
+        self,
+        kind: View3DNavigationActionKind,
+        payload: Orbit3DPayload | Pan3DPayload | Zoom3DPayload | ResetView3DPayload,
+    ) -> None:
+        snapshot = resolve_view3d_projection_snapshot(
+            self.view3d, layout_snapshot_id=self.layout_snapshot_id
+        )
+        action = View3DNavigationAction(
+            kind=kind,
+            view_id=self.view3d.id,
+            base_view_revision=self.view3d.revision,
+            base_view_projection_snapshot_id=snapshot.view_projection_snapshot_id,
+            payload=payload,
+            base_layout_snapshot_id=self.layout_snapshot_id,
+        )
+        result = self.renderer.apply_gsp_view3d_navigation_action(
+            action, layout_snapshot_id=self.layout_snapshot_id
+        )
+        if not result.accepted or result.view is None:
+            return
+        self.view3d = result.view
+        self._request_frame()
+
+    def _orbit_payload_from_pixels(self, dx_px: float, dy_px: float) -> Orbit3DPayload:
+        rect = self.panel_rect
+        return Orbit3DPayload(
+            delta_yaw_radians=-dx_px / rect.width * np.pi,
+            delta_pitch_radians=-dy_px / rect.height * np.pi,
+        )
+
+    def _pan_payload_from_pixels(self, dx_px: float, dy_px: float) -> Pan3DPayload:
+        rect = self.panel_rect
+        x0, x1 = self.view3d.projection.xlim
+        y0, y1 = self.view3d.projection.ylim
+        return Pan3DPayload(
+            delta_view_right=-dx_px / rect.width * (x1 - x0),
+            delta_view_up=-dy_px / rect.height * (y1 - y0),
+        )
+
+    def _request_frame(self) -> None:
+        request_frame = getattr(self.renderer.dvz, "dvz_view_request_frame", None)
+        if request_frame is not None:
+            request_frame(self.live_view)
 
 
 def _navigation_pointer_event_from_datoviz(
@@ -3890,6 +4158,48 @@ def _datoviz_orthographic_bounds_tuple(
         )
     except (TypeError, ValueError, IndexError):
         return None
+
+
+def _retained_view3d_state_mismatch_diagnostics(
+    view3d: View3D, snapshot: Mapping[str, object]
+) -> tuple[str, ...]:
+    diagnostics: list[str] = []
+    if not bool(snapshot.get("enabled", False)):
+        diagnostics.append(
+            f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_RESULT.value}: "
+            "Datoviz retained View3D state readback is disabled"
+        )
+    camera = view3d.camera
+    expected_vectors = {
+        "camera_eye": camera.eye,
+        "camera_target": camera.target,
+        "camera_up": camera.up,
+    }
+    for key, expected in expected_vectors.items():
+        observed = snapshot.get(key)
+        if observed is None or not np.allclose(
+            np.asarray(observed, dtype=np.float64),
+            np.asarray(expected, dtype=np.float64),
+        ):
+            diagnostics.append(
+                f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_RESULT.value}: "
+                f"Datoviz retained View3D {key} does not match canonical state"
+            )
+    expected_bounds = (
+        *view3d.projection.xlim,
+        *view3d.projection.ylim,
+        *view3d.projection.near_far,
+    )
+    observed_bounds = snapshot.get("orthographic_bounds")
+    if observed_bounds is None or not np.allclose(
+        np.asarray(observed_bounds, dtype=np.float64),
+        np.asarray(expected_bounds, dtype=np.float64),
+    ):
+        diagnostics.append(
+            f"{View3DDiagnosticCode.VIEW3D_NAVIGATION_INVALID_RESULT.value}: "
+            "Datoviz retained View3D orthographic bounds do not match canonical state"
+        )
+    return tuple(diagnostics)
 
 
 def _datoviz_label(value: object) -> str | None:

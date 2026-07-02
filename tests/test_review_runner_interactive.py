@@ -320,7 +320,7 @@ def test_datoviz_view3d_navigation_unavailable_still_opens_static_live_window(
             return None
 
         def enable_gsp_view3d_navigation(self, view3d: Any) -> None:
-            raise DatovizV04Unavailable("CPU-projected panel-NDC mesh positions")
+            self.enabled_view3d = view3d
 
         def show(self, *, frame_count: int) -> None:
             self.show_calls += 1
@@ -342,4 +342,5 @@ def test_datoviz_view3d_navigation_unavailable_still_opens_static_live_window(
 
     assert result["status"] == "rendered"
     assert instances[0].show_calls == 1
-    assert "Datoviz GSP View3D navigation unavailable" in capsys.readouterr().out
+    assert instances[0].enabled_view3d == _view3d_scene().view3d
+    assert "Datoviz GSP View3D navigation enabled" in capsys.readouterr().out

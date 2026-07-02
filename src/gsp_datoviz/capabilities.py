@@ -34,6 +34,7 @@ from gsp.protocol import (
     TransformPlacement,
     VIEW3D_LIGHT_AMBIENT_CAPABILITY,
     VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY,
+    VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
     VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY,
     VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
 )
@@ -99,6 +100,15 @@ _REQUIRED_DVZ_VIEW3D_RETAINED_DATA_FUNCTIONS = (
     "dvz_camera_get_view",
     "dvz_camera_get_projection",
     "dvz_camera_get_orthographic_bounds",
+)
+
+_REQUIRED_DVZ_LIVE_INPUT_FUNCTIONS = (
+    "dvz_view_input",
+    "dvz_input_subscribe_event",
+    "dvz_input_unsubscribe_event",
+    "DvzPointerEvent",
+    "DvzInputEvent",
+    "DvzInputEventContent",
 )
 
 _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS = (
@@ -406,6 +416,8 @@ def gsp_capability_snapshot_from_datoviz(
 
     view3d_diagnostics = _datoviz_v04_view3d_binding_diagnostics(dvz)
     retained_view3d_diagnostics = datoviz_v04_view3d_retained_data_diagnostics(dvz)
+    live_input_diagnostics = datoviz_v04_live_input_diagnostics(dvz)
+    navigation_capabilities = ["interaction.view2d.navigation.v1"]
     view3d_capabilities: tuple[str, ...] = ()
     if view3d_diagnostics:
         metadata["datoviz_view3d_binding_diagnostics"] = view3d_diagnostics
@@ -433,6 +445,17 @@ def gsp_capability_snapshot_from_datoviz(
             metadata["datoviz_view3d_retained_data_diagnostics"] = (
                 retained_view3d_diagnostics
             )
+        if not retained_view3d_diagnostics and not live_input_diagnostics:
+            view3d_capabilities = (
+                *view3d_capabilities,
+                VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
+            )
+            navigation_capabilities.append(VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY)
+            metadata["view3d_navigation_support"] = (
+                "canonical S037 action replay into retained Datoviz View3D state"
+            )
+        elif live_input_diagnostics:
+            metadata["datoviz_live_input_diagnostics"] = live_input_diagnostics
         query_modes = (*query_modes, "view3d-ray")
         metadata["view3d_support"] = (
             "static orthographic View3D mesh rendering and canonical ray-context payloads"
@@ -455,7 +478,7 @@ def gsp_capability_snapshot_from_datoviz(
         ),
         transform_capabilities=S027_TRANSFORM_CAPABILITIES,
         navigation_placements=(NavigationPlacement.RETAINED_GPU_STATE.value,),
-        navigation_capabilities=("interaction.view2d.navigation.v1",),
+        navigation_capabilities=tuple(navigation_capabilities),
         query_modes=query_modes,
         query_capabilities=query_capabilities,
         view3d_capabilities=view3d_capabilities,
@@ -583,6 +606,19 @@ def datoviz_v04_view3d_retained_data_diagnostics(
             for name in _REQUIRED_DVZ_VIEW3D_RETAINED_DATA_FUNCTIONS
             if not callable(getattr(dvz, name, None))
         ),
+    )
+
+
+def datoviz_v04_live_input_diagnostics(
+    dvz: ModuleType | Any | None,
+) -> tuple[str, ...]:
+    """Return why live Datoviz input cannot drive retained navigation."""
+    if dvz is None:
+        return ("Datoviz is not importable",)
+    return tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_LIVE_INPUT_FUNCTIONS
+        if not hasattr(dvz, name)
     )
 
 

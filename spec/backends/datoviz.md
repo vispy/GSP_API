@@ -135,9 +135,14 @@ GSP lowers retained `View3D.camera` through `dvz_panel_set_view3d_desc()` on set
 `query.view3d.ray_readback.v1` returns canonical ray-context payloads from public `View3D` state and
 snapshot ids.
 
-Datoviz live `View3D` navigation remains unsupported in the protocol renderer until M188 wires
-canonical action/input replay on top of the retained DATA-space substrate. GPU 3D visual picking,
-materials, lights, textures, perspective, and culling remain deferred.
+When the retained `View3D` substrate and Datoviz live input bindings are both present, GSP enables
+live `View3D` review navigation by translating pointer input into canonical S037 actions: left-drag
+orbit, right-drag pan, wheel zoom, and double-click reset. Each accepted action is reduced through
+public GSP `View3DNavigationAction` semantics, lowered into retained Datoviz camera/projection
+state, checked against Datoviz state readback, and followed by a retained frame request without
+rewriting unchanged mesh vertex/index buffers. Older bindings keep static `View3D` rendering and
+report structured diagnostics instead of claiming `view3d.navigation.orbit_pan_zoom.v1`. GPU 3D
+visual picking, materials, lights, textures, perspective, and culling remain deferred.
 
 ## S040 flat Lambert CPU resolve
 

@@ -69,6 +69,9 @@ from gsp.protocol import (
     View2D,
     View3D,
     View3DDiagnosticCode,
+    View3DNavigationAction,
+    View3DNavigationActionKind,
+    VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY,
     VIEW3D_STATIC_ORTHOGRAPHIC_CAPABILITY,
     VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY,
     DirectionalLight3D,
@@ -78,6 +81,7 @@ from gsp.protocol import (
     pan_view2d,
     project_view3d_data_point,
     resolve_view3d_projection_snapshot,
+    Pan3DPayload,
     zoom_view2d_about,
 )
 from gsp.protocol.visuals import CoordinateSpace, ImageInterpolation
@@ -1199,6 +1203,17 @@ class FakeDatovizV04WithRetainedView3D(FakeDatovizV04WithMesh):
         out.has_explicit_orthographic_bounds = self.has_explicit_orthographic_bounds
         out.orthographic_bounds = list(self.orthographic_bounds)
         return True
+
+
+class FakeDatovizV04WithInteractiveRetainedView3D(
+    FakeDatovizV04WithRetainedView3D, FakeDatovizV04WithInteractive
+):
+    def __init__(self):
+        FakeDatovizV04WithRetainedView3D.__init__(self)
+        self.pointer_callback = None
+        self.pointer_user_data = None
+        self.input_callback = None
+        self.input_user_data = None
 
 
 class FakeDatovizV04WithColorbar(FakeDatovizV04):
@@ -3605,6 +3620,160 @@ def test_retained_view3d_state_readback_reports_snapshot_identity():
     assert ray.view_snapshot_id == snapshot["view_projection_snapshot_id"]
 
 
+def test_datoviz_view3d_live_navigation_diagnostics_clear_when_retained_input_ready():
+    fake = FakeDatovizV04WithInteractiveRetainedView3D()
+
+    assert datoviz_v04_view3d_live_navigation_diagnostics(fake) == ()
+
+
+def test_datoviz_live_view3d_navigation_replays_canonical_actions_without_reupload():
+    fake = FakeDatovizV04WithInteractiveRetainedView3D()
+    view3d = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
+    renderer.add_mesh_visual(
+        MeshVisual(
+            id="visual:retained-live-mesh-3d",
+            positions=np.array(
+                [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]],
+                dtype=np.float32,
+            ),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.DATA,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        )
+    )
+    baseline_vertex_uploads = renderer.retained_view3d_update_stats.vertex_uploads
+    baseline_index_uploads = renderer.retained_view3d_update_stats.index_uploads
+    baseline_visual_rebuilds = renderer.retained_view3d_update_stats.visual_rebuilds
+    baseline_call_count = len(fake.calls)
+
+    session = renderer.enable_gsp_view3d_navigation()
+    assert session.view3d == view3d
+    assert fake.input_callback is not None
+
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+        400.0,
+        300.0,
+        button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_LEFT,
+    )
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG,
+        480.0,
+        300.0,
+    )
+
+    new_calls = fake.calls[baseline_call_count:]
+    assert renderer.view3d is not None
+    assert renderer.view3d.revision == view3d.revision + 1
+    assert renderer.view3d.camera != view3d.camera
+    assert session.view3d == renderer.view3d
+    assert _calls_from(new_calls, "camera_set_view")
+    assert _calls_from(new_calls, "camera_set_orthographic_bounds")
+    assert not _calls_from(new_calls, "set_data")
+    assert not _calls_from(new_calls, "set_index_data")
+    assert not _calls_from(new_calls, "mesh")
+    assert not _calls_from(new_calls, "add_visual")
+    assert renderer.visuals["visual:retained-live-mesh-3d"] == "mesh-visual"
+    assert renderer.retained_view3d_update_stats.vertex_uploads == baseline_vertex_uploads
+    assert renderer.retained_view3d_update_stats.index_uploads == baseline_index_uploads
+    assert renderer.retained_view3d_update_stats.visual_rebuilds == baseline_visual_rebuilds
+    assert _calls(fake, "request_frame") == [("request_frame", "live-view")]
+
+    snapshot = renderer.resolve_retained_view3d_state_snapshot(
+        layout_snapshot_id=session.layout_snapshot_id
+    )
+    ray = renderer.query_view3d_ray_context(
+        QueryRequest(
+            id="query:live-retained-ray",
+            panel_id="panel:main",
+            coordinate=(64.0, 64.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+            layout_snapshot_id=str(snapshot["layout_snapshot_id"]),
+            view_snapshot_id=str(snapshot["view_projection_snapshot_id"]),
+        ),
+        layout_snapshot_id=str(snapshot["layout_snapshot_id"]),
+    )
+    assert ray.status is QueryStatus.HIT
+    assert ray.layout_snapshot_id == session.layout_snapshot_id
+    assert ray.view_snapshot_id == snapshot["view_projection_snapshot_id"]
+
+
+def test_datoviz_live_view3d_navigation_supports_pan_zoom_and_reset():
+    fake = FakeDatovizV04WithInteractiveRetainedView3D()
+    view3d = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
+    renderer.enable_gsp_view3d_navigation()
+
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_PRESS,
+        400.0,
+        300.0,
+        button=fake.DvzPointerButton.DVZ_POINTER_BUTTON_RIGHT,
+    )
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_DRAG,
+        480.0,
+        330.0,
+    )
+    assert renderer.view3d is not None
+    assert renderer.view3d.revision == view3d.revision + 1
+    assert renderer.view3d.camera.target != view3d.camera.target
+
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_WHEEL,
+        480.0,
+        330.0,
+        wheel_y=1.0,
+    )
+    assert renderer.view3d.revision == view3d.revision + 2
+    assert renderer.view3d.projection.xlim != view3d.projection.xlim
+
+    _emit_fake_datoviz_pointer(
+        fake,
+        fake.DvzPointerEventType.DVZ_POINTER_EVENT_DOUBLE_CLICK,
+        480.0,
+        330.0,
+    )
+    assert renderer.view3d.revision == view3d.revision + 3
+    assert renderer.view3d.camera == view3d.camera
+    assert renderer.view3d.projection == view3d.projection
+    assert _calls(fake, "request_frame") == [
+        ("request_frame", "live-view"),
+        ("request_frame", "live-view"),
+        ("request_frame", "live-view"),
+    ]
+
+
+def test_datoviz_view3d_navigation_action_rejects_stale_snapshot_before_camera_update():
+    fake = FakeDatovizV04WithInteractiveRetainedView3D()
+    view3d = _canonical_view3d_for_datoviz_query()
+    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
+    baseline_call_count = len(fake.calls)
+
+    action = View3DNavigationAction(
+        kind=View3DNavigationActionKind.PAN,
+        view_id=view3d.id,
+        base_view_revision=view3d.revision,
+        base_view_projection_snapshot_id="view3d-projection:stale",
+        payload=Pan3DPayload(delta_view_right=1.0, delta_view_up=0.0),
+        base_layout_snapshot_id="layout:datoviz-live-3d",
+    )
+
+    result = renderer.apply_gsp_view3d_navigation_action(action)
+
+    assert not result.accepted
+    assert View3DDiagnosticCode.VIEW3D_NAVIGATION_SNAPSHOT_MISMATCH.value in (
+        result.diagnostics[0]
+    )
+    assert not _calls_from(fake.calls[baseline_call_count:], "camera_set_view")
+
+
 def test_add_mesh_visual_orders_ndc3_faces_for_adapted_datoviz_depth():
     fake = FakeDatovizV04WithMesh()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
@@ -3783,6 +3952,7 @@ def test_datoviz_capabilities_advertise_s040_lambert_cpu_resolve_when_view3d_rea
     assert MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY in caps.view3d_capabilities
     assert VIEW3D_LIGHT_AMBIENT_CAPABILITY in caps.view3d_capabilities
     assert VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY in caps.view3d_capabilities
+    assert VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY not in caps.view3d_capabilities
     assert "flat_lambert_cpu_resolved_strict" in caps.metadata["s040_flat_lambert"]
 
 
@@ -3792,10 +3962,23 @@ def test_datoviz_capabilities_advertise_retained_view3d_data_space_when_ready():
     ).capabilities()
 
     assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY in caps.view3d_capabilities
+    assert VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY not in caps.view3d_capabilities
     assert caps.supports_view3d_capability(
         VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY
     )
     assert "view3d_retained_data_space_visuals" in caps.metadata
+
+
+def test_datoviz_capabilities_advertise_live_view3d_navigation_when_ready():
+    caps = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithInteractiveRetainedView3D()
+    ).capabilities()
+
+    assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY in caps.view3d_capabilities
+    assert VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY in caps.view3d_capabilities
+    assert VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY in caps.navigation_capabilities
+    assert caps.supports_view3d_capability(VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY)
+    assert "view3d_navigation_support" in caps.metadata
 
 
 def test_datoviz_capabilities_do_not_advertise_s040_lambert_without_view3d_binding():
