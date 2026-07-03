@@ -70,6 +70,7 @@ from gsp.protocol import (
     QueryDiagnostic,
     QueryDiagnosticSeverity,
     QueryHitPolicy,
+    QueryPayload,
     QueryRequest,
     QueryResult,
     QueryScope,
@@ -5126,9 +5127,9 @@ def _query_frame_resolution_ready(dvz: Any) -> bool:
 
 def _panel_query(dvz: Any, panel: Any, x: float, y: float, request: Any) -> int:
     try:
-        return int(dvz.dvz_panel_query(panel, x, y, ctypes.byref(request)))
+        return int(dvz.dvz_panel_query_px(panel, x, y, ctypes.byref(request)))
     except TypeError:
-        return int(dvz.dvz_panel_query(panel, x, y, request))
+        return int(dvz.dvz_panel_query_px(panel, x, y, request))
 
 
 def _scene_poll_query(dvz: Any, scene: Any, out_result: Any) -> bool:
@@ -5156,6 +5157,17 @@ def _datoviz_query_request_diagnostic(request: QueryRequest) -> str | None:
         return f"Datoviz v0.4 query slice supports panel coordinates only, got {request.coordinate_space.value!r}"
     if request.hit_policy != QueryHitPolicy.FRONTMOST:
         return f"Datoviz v0.4 query slice supports frontmost hit policy only, got {request.hit_policy.value!r}"
+    if SCALAR_COLOR_QUERY_PAYLOAD_KIND not in request.requested_extension_payload_kinds:
+        unsupported_payloads = tuple(
+            payload
+            for payload in request.requested_payload
+            if payload != QueryPayload.IDENTITY
+        )
+        if unsupported_payloads:
+            return (
+                "Datoviz v0.4 live data query currently supports identity payloads "
+                f"only; unsupported requested payloads: {tuple(p.value for p in unsupported_payloads)}"
+            )
     unsupported_payloads = tuple(
         kind
         for kind in request.requested_extension_payload_kinds

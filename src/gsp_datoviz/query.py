@@ -47,7 +47,7 @@ DVZ_QUERY_VALUE_TEXT = 6
 
 _REQUIRED_DVZ_QUERY_FUNCTIONS = (
     "dvz_query_request",
-    "dvz_panel_query",
+    "dvz_panel_query_px",
     "dvz_scene_poll_query",
 )
 

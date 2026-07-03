@@ -10,7 +10,13 @@ from typing import Any
 
 import numpy as np
 
-from gsp.protocol import ImageVisual, PointVisual, QueryCoordinateSpace, QueryRequest
+from gsp.protocol import (
+    ImageVisual,
+    PointVisual,
+    QueryCoordinateSpace,
+    QueryPayload,
+    QueryRequest,
+)
 from gsp.protocol.query import QueryStatus
 from gsp_datoviz.capabilities import datoviz_v04_capture_diagnostics, datoviz_v04_capture_ready
 from gsp_datoviz.protocol_renderer import (
@@ -101,14 +107,7 @@ def main() -> int:
                     extent=(-0.5, 0.5, -0.5, 0.5),
                 )
             )
-            query_result = renderer.query_panel(
-                QueryRequest(
-                    id="query:smoke",
-                    panel_id="panel:main",
-                    coordinate=(32.0, 32.0),
-                    coordinate_space=QueryCoordinateSpace.PANEL,
-                )
-            )
+            query_result = renderer.query_panel(_identity_query("query:smoke"))
             report["live_query_status"] = query_result.status.value
             report["live_query_hit"] = query_result.hit
             report["live_query_visual_family"] = (
@@ -120,6 +119,8 @@ def main() -> int:
             report["live_query_displayed_rgba"] = query_result.displayed_rgba
             report["live_query_value"] = query_result.value
             report["live_query_diagnostic"] = query_result.diagnostic
+        report["live_point_query"] = _run_isolated_point_query(dvz)
+        report["live_image_query"] = _run_isolated_image_query(dvz)
     except Exception as exc:
         report["error"] = f"GSP Datoviz v0.4 adapter smoke failed: {type(exc).__name__}: {exc}"
         print(json.dumps(report, indent=2, sort_keys=True))
@@ -139,6 +140,66 @@ def _query_result_fields(dvz: Any) -> dict[str, bool]:
     fields = getattr(query_result_type, "_fields_", ())
     field_names = {name for name, *_ in fields}
     return {name: name in field_names for name in _REQUIRED_QUERY_RESULT_FIELDS}
+
+
+def _identity_query(query_id: str) -> QueryRequest:
+    return QueryRequest(
+        id=query_id,
+        panel_id="panel:main",
+        coordinate=(32.0, 32.0),
+        coordinate_space=QueryCoordinateSpace.PANEL,
+        requested_payload=(QueryPayload.IDENTITY,),
+    )
+
+
+def _query_summary(result: Any) -> dict[str, Any]:
+    return {
+        "status": result.status.value,
+        "hit": result.hit,
+        "visual_family": (
+            result.visual_family.value
+            if hasattr(result.visual_family, "value")
+            else result.visual_family
+        ),
+        "visual_id": result.visual_id,
+        "item_id": result.item_id,
+        "texel": result.texel,
+        "displayed_rgba": result.displayed_rgba,
+        "value": result.value,
+        "diagnostic": result.diagnostic,
+    }
+
+
+def _run_isolated_point_query(dvz: Any) -> dict[str, Any]:
+    with DatovizV04ProtocolRenderer(dvz=dvz, width=64, height=64) as renderer:
+        renderer.add_point_visual(
+            PointVisual(
+                id="visual:smoke-point-only",
+                positions=np.array([[0.0, 0.0]], dtype=np.float32),
+                colors=np.array([[255, 0, 0, 255]], dtype=np.uint8),
+                sizes=20.0,
+            )
+        )
+        return _query_summary(renderer.query_panel(_identity_query("query:point-only")))
+
+
+def _run_isolated_image_query(dvz: Any) -> dict[str, Any]:
+    image = np.array(
+        [
+            [[255, 0, 0, 255], [0, 255, 0, 255]],
+            [[0, 0, 255, 255], [255, 255, 255, 255]],
+        ],
+        dtype=np.uint8,
+    )
+    with DatovizV04ProtocolRenderer(dvz=dvz, width=64, height=64) as renderer:
+        renderer.add_image_visual(
+            ImageVisual(
+                id="visual:smoke-image-only",
+                image=image,
+                extent=(-0.5, 0.5, -0.5, 0.5),
+            )
+        )
+        return _query_summary(renderer.query_panel(_identity_query("query:image-only")))
 
 
 def _query_result_field_readback(dvz: Any) -> dict[str, Any] | None:

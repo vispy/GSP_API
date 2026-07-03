@@ -416,9 +416,12 @@ def gsp_capability_snapshot_from_datoviz(
     if query_diagnostics:
         metadata["datoviz_query_binding_diagnostics"] = query_diagnostics
     else:
-        query_modes = ("panel-query", "point-item", "image-texel")
+        query_modes = ("panel-query", "point-item")
         query_capabilities = (_datoviz_data_query_capability(),)
-        metadata["query_support"] = "data-scope point/image query queue, poll, and decode binding available"
+        metadata["query_support"] = (
+            "data-scope query queue, poll, and decode binding available; live payload "
+            "parity currently supports point identity but not image texel/color/value"
+        )
 
     view3d_diagnostics = _datoviz_v04_view3d_binding_diagnostics(dvz)
     retained_view3d_diagnostics = datoviz_v04_view3d_retained_data_diagnostics(dvz)
@@ -600,16 +603,16 @@ def _datoviz_data_query_capability() -> QueryScopeCapability:
             QueryTargetCapability(
                 target_kind=QueryTargetKind.VISUAL_FAMILY,
                 target="point",
-                payloads=(QueryPayload.IDENTITY, QueryPayload.COORDINATE, QueryPayload.COLOR, QueryPayload.VALUE),
-                diagnostics=("point source-value payload may be absent if Datoviz returns no value fields",),
-            ),
-            QueryTargetCapability(
-                target_kind=QueryTargetKind.VISUAL_FAMILY,
-                target="image",
-                payloads=(QueryPayload.IDENTITY, QueryPayload.COORDINATE, QueryPayload.COLOR, QueryPayload.VALUE),
+                payloads=(QueryPayload.IDENTITY,),
+                diagnostics=(
+                    "live Datoviz point queries return visual family and item id, but not displayed color or value",
+                ),
             ),
         ),
-        diagnostics=("Datoviz v0.4 data query supports frontmost panel-coordinate requests only in this slice",),
+        diagnostics=(
+            "Datoviz v0.4 data query supports frontmost panel-coordinate identity requests only in this slice",
+            "image texel/color/value payload parity remains unadvertised",
+        ),
     )
 
 

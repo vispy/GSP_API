@@ -219,8 +219,8 @@ COLOR_MAPPING_SYMBOLS: tuple[str, ...] = (
     "dvz_colormap_custom",
     "dvz_colormap_sample",
     "dvz_colormap_set_stops",
-    "dvz_panel_query",
-    "dvz_panel_query_now",
+    "dvz_panel_query_px",
+    "dvz_panel_query_now_px",
     "dvz_sampled_field",
     "dvz_sampled_field_desc",
     "dvz_sampled_field_set_data",
@@ -276,8 +276,8 @@ COLOR_MAPPING_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
     ),
     "color.query.scalar_readback": (
         "DvzQueryResult",
-        "dvz_panel_query",
-        "dvz_panel_query_now",
+        "dvz_panel_query_px",
+        "dvz_panel_query_now_px",
         "dvz_scene_poll_query",
     ),
 }

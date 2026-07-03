@@ -56,7 +56,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 | Image visual | `dvz_image()` plus `position`, `texcoords`, sampled fields, or packed RGBA8 upload | feasible after image origin/interpolation confirmation |
 | Mesh visual | `dvz_mesh()` plus direct `position`/`color` attribute upload and index upload | implemented for bounded 2D NDC S025 cases; DATA/3D/query remain gated |
 | Capabilities | `dvz_capability_snapshot()` | feasible |
-| Queries | `dvz_panel_query()` / `dvz_scene_poll_query()` | conceptually aligned; local `../datoviz` headers define `DvzQueryResult`, but the current GSP env imports Datoviz 0.3.5 |
+| Queries | `dvz_panel_query_px()` / `dvz_scene_poll_query()` | conceptually aligned when the generated binding exposes current query functions and `DvzQueryResult` fields |
 | Capture | offscreen view capture or `dvz.capture()` | feasible for PNG screenshots only |
 
 ### Implementation constraints
@@ -251,7 +251,7 @@ The Datoviz adapter now has a conditional query capability gate. When the active
 exposes all of the following v0.4 query-binding requirements:
 
 - `dvz_query_request`;
-- `dvz_panel_query`;
+- `dvz_panel_query_px`;
 - `dvz_scene_poll_query`;
 - `DvzQueryResult` with decodable `_fields_`;
 
@@ -259,9 +259,9 @@ the GSP Datoviz capability snapshot advertises coarse `panel-query` support. If 
 missing, query modes remain empty and the missing binding pieces are recorded in
 `metadata["datoviz_query_binding_diagnostics"]`.
 
-Point/image-specific query modes (`point-item`, `image-texel`) are still not advertised in this
-slice. Those require a real runtime query execution proof plus stable application visual-id mapping
-and payload validation.
+Point/image-specific query modes are promoted only after live runtime payload validation. As of
+M216, point identity is proven and `point-item` is advertised; image texel/color/value payloads are
+not proven and `image-texel` remains unadvertised.
 
 ## M027 sampled-field image parity slice
 
@@ -304,18 +304,17 @@ headless GPU runtime execution remain deferred.
 ## M029 runtime point/image query execution proof
 
 The Datoviz adapter now includes a bounded runtime query wrapper for the v0.4 queue/poll binding.
-When the active Python facade exposes the M026 query requirements, the GSP capability snapshot
-promotes:
+When the active Python facade exposes the current query requirements and the M216 point identity
+payload proof holds, the GSP capability snapshot promotes:
 
 - `panel-query`;
 - `point-item`;
-- `image-texel`;
-- typed `data`-scope query capability for frontmost panel-coordinate requests.
+- typed `data`-scope query capability for frontmost panel-coordinate identity requests.
 
 `DatovizV04ProtocolRenderer.query_panel()` accepts only `QueryScope.DATA`,
 `QueryCoordinateSpace.PANEL`, and `QueryHitPolicy.FRONTMOST` in this slice. It creates a
 `DvzQueryRequest`, assigns a stable numeric request id derived from the GSP query id, queues with
-`dvz_panel_query()`, polls once with `dvz_scene_poll_query()`, decodes the returned
+`dvz_panel_query_px()`, polls once with `dvz_scene_poll_query()`, decodes the returned
 `DvzQueryResult`, and remaps the result id back to the GSP request id. A bounded poll with no
 available result returns `dropped` with a diagnostic.
 
@@ -323,8 +322,8 @@ In the M029 slice, guide scope, all-rendered scope, `hit_policy=all`, extension 
 live GPU/headless execution proof remained deferred. Later S043 work added a capability-gated
 guide/all-rendered route through Datoviz panel-frame guide hit/readback APIs. Builds without those
 APIs still return structured `axis-guide-query-unsupported` or `all-rendered-guides-unsupported`
-diagnostics. `hit_policy=all`, unsupported extension payloads, live point/image rich-payload parity,
-and headless runtime proof remain separate follow-up scope.
+diagnostics. `hit_policy=all`, unsupported extension payloads, image texel/color/value parity, and
+headless runtime proof remain separate follow-up scope.
 
 ## M030 v0.4-dev binding activation smoke
 
@@ -343,7 +342,7 @@ capture binding readiness, and runs the bounded query wrapper. After Datoviz com
 `8bb192c2da6df70279eedac5b2eaed9f45aab96c`, Python query-result decoding is ready:
 
 - `query_ready=true`;
-- promoted query modes: `panel-query`, `point-item`, `image-texel`;
+- promoted query modes: current M216 policy now advertises `panel-query` and `point-item`;
 - `DvzQueryResult._fields_` includes the required fields for status, hit identity, coordinates,
   displayed color, scalar/vector value, and label payloads;
 - the smoke can assign and read `request_id`, `status`, `hit`, `panel_position`, `visual_id`,
@@ -372,12 +371,20 @@ Adapter behavior added in M031:
 - the smoke reports `live_query_status`, `live_query_hit`, visual identity fields, displayed color,
   value, and diagnostics.
 
-Current live proof result: `live_query_status=hit`, `live_query_hit=true`, and
-`live_query_visual_id="datoviz:visual:1"`. The same smoke confirms that `DvzQueryResult._fields_`
-contains `visual_family`, `item_id`, `texel_id`, `display_rgba`, `value_kind`, `scalar`, `vector`,
-and `label`, and synthetic field readback succeeds. However, the current mixed v0.4-dev runtime
-artifact leaves `visual_family`, `item_id`, `texel`, displayed color, and value unset in the live
-result. Treat that as the remaining Datoviz live payload parity gap.
+M216 refreshed this proof against the current local v0.4-dev binding at Datoviz commit
+`a9492af6526fbb722e2c0783811758f1b15be10e`. The current API uses
+`dvz_panel_query_px()`. The live smoke proves:
+
+- query binding readiness and a live `hit` result;
+- point-only query returns `visual_family="point"` and `item_id=0`;
+- image-only query returns `visual_family="image"` and a visual id, but still no `texel`,
+  displayed RGBA, or value;
+- synthetic `DvzQueryResult` field readback still covers `item_id`, `texel_id`, `display_rgba`,
+  scalar/vector values, and labels.
+
+Therefore GSP advertises `panel-query` and `point-item`, keeps `image-texel` unadvertised, and
+rejects non-identity Datoviz live data queries unless a supported scalar extension payload can be
+decorated from retained GSP-side metadata.
 
 ## M032 color pipeline selection
 

@@ -1,0 +1,91 @@
+{
+  "capture_diagnostics": [],
+  "capture_ready": true,
+  "datoviz_file": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+  "datoviz_version": null,
+  "is_v04_facade": true,
+  "live_image_query": {
+    "diagnostic": null,
+    "displayed_rgba": null,
+    "hit": true,
+    "item_id": null,
+    "status": "hit",
+    "texel": null,
+    "value": null,
+    "visual_family": "image",
+    "visual_id": "datoviz:visual:7"
+  },
+  "live_point_query": {
+    "diagnostic": null,
+    "displayed_rgba": null,
+    "hit": true,
+    "item_id": 0,
+    "status": "hit",
+    "texel": null,
+    "value": null,
+    "visual_family": "point",
+    "visual_id": "datoviz:visual:7"
+  },
+  "live_query_diagnostic": null,
+  "live_query_displayed_rgba": null,
+  "live_query_hit": true,
+  "live_query_item_id": null,
+  "live_query_status": "hit",
+  "live_query_texel": null,
+  "live_query_value": null,
+  "live_query_visual_family": "image",
+  "live_query_visual_id": "datoviz:visual:8",
+  "ok": true,
+  "output_formats": [
+    "png"
+  ],
+  "query_diagnostics": [],
+  "query_modes": [
+    "panel-query",
+    "point-item",
+    "view3d-ray"
+  ],
+  "query_ready": true,
+  "query_result_field_readback": {
+    "display_rgba": [
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "hit": false,
+    "item_id": 7,
+    "label": "query-label",
+    "panel_position": [
+      12.0,
+      34.0
+    ],
+    "request_id": 123,
+    "scalar": 3.5,
+    "status": 2,
+    "texel_id": 8,
+    "vector": [
+      1.0,
+      2.0,
+      3.0,
+      4.0
+    ],
+    "visual_id": 456
+  },
+  "query_result_fields": {
+    "display_rgba": true,
+    "hit": true,
+    "item_id": true,
+    "label": true,
+    "panel_position": true,
+    "request_id": true,
+    "scalar": true,
+    "status": true,
+    "texel_id": true,
+    "value_kind": true,
+    "vector": true,
+    "visual_id": true
+  },
+  "sampled_field_diagnostics": [],
+  "sampled_field_ready": true
+}

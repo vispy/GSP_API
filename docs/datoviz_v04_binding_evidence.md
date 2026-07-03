@@ -36,9 +36,9 @@ Checked in `../datoviz`:
 Confirmed header symbols:
 
 - `dvz_query_request()`
-- `dvz_panel_query()`
+- `dvz_panel_query_px()`
 - `dvz_scene_poll_query()`
-- `dvz_panel_query_now()`
+- `dvz_panel_query_now_px()`
 - `dvz_capability_snapshot()`
 - `dvz_sampled_field()`
 - `dvz_sampled_field_set_data()`
@@ -74,8 +74,8 @@ Checked from `/home/cyrille/GIT/Viz/GSP_API` with `PYTHONPATH=. uv run python`.
 | `datoviz.__version__` | `0.3.5` |
 | `dvz_capability_snapshot` | no |
 | `DvzCapabilitySnapshot` | no |
-| `dvz_panel_query` | no |
-| `dvz_panel_query_now` | no |
+| `dvz_panel_query_px` | no |
+| `dvz_panel_query_now_px` | no |
 | `dvz_scene_poll_query` | no |
 | `DvzQueryRequest` | no |
 | `DvzQueryResult` | no |

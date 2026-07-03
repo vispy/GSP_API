@@ -49,9 +49,7 @@ First-slice behavior:
   entry as the frontmost result.
 
 Datoviz v0.4-dev implementation is active for the bounded data-scope slice when the Python facade
-exposes decodable `DvzQueryResult` fields. The current live offscreen smoke proves queue, frame,
-poll, and decode to a `hit` result, but Datoviz still leaves some richer live payload fields unset
-(`visual_family`, `item_id`, `texel`, displayed color, value) in the tested runtime artifact.
+exposes current panel query queue/poll functions and decodable `DvzQueryResult` fields.
 
 ## M009 status semantics
 
@@ -75,8 +73,8 @@ The v0.1 names currently used by conformance fixtures are:
 - `image-texel`: backend can identify an image texel/source value.
 
 Backends that do not advertise a mode must reject planning with a diagnostic or return
-`unsupported` for direct query attempts. The Datoviz v0.4 adapter advertises these modes only when
-the imported v0.4 facade exposes the queue/poll functions and decodable `DvzQueryResult` fields.
+`unsupported` for direct query attempts. The Datoviz v0.4 adapter advertises only the query modes
+whose live payload fields are proven for the imported current v0.4 facade.
 
 ## M011 tiled-source query payload
 

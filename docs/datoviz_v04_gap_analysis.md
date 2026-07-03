@@ -54,7 +54,7 @@ Local introspection found:
 - `datoviz._panel`: missing
 - `datoviz._figure`: missing
 - `datoviz._texture`: missing
-- `dvz_scene`, `dvz_figure`, `dvz_panel`, `dvz_panel_full`, `dvz_point`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_field`, `dvz_visual_set_texture_rgba8`, `dvz_capability_snapshot`, `dvz_panel_query`, `dvz_panel_query_now`, and `dvz_scene_poll_query`: present
+- `dvz_scene`, `dvz_figure`, `dvz_panel`, `dvz_panel_full`, `dvz_point`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_field`, `dvz_visual_set_texture_rgba8`, `dvz_capability_snapshot`, `dvz_panel_query_px`, `dvz_panel_query_now_px`, and `dvz_scene_poll_query`: present
 
 ## Post-M011 local Datoviz inventory update
 
@@ -65,7 +65,7 @@ Checked against the local sibling checkout `../datoviz` on `v0.4-dev` after M011
 - `dvz_point`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_texture_rgba8`: present
 - `dvz_sampled_field`, `dvz_sampled_field_set_data`, `dvz_visual_set_field`: present
 - `dvz_capability_snapshot`: present
-- `dvz_panel_query`, `dvz_panel_query_now`, `dvz_scene_poll_query`: present
+- `dvz_panel_query_px`, `dvz_panel_query_now_px`, `dvz_scene_poll_query`: present
 - `DvzQueryResult`: present in the current header with a decodable field layout
 
 Notable `DvzQueryResult` fields in the current header include:
@@ -121,7 +121,7 @@ Important constraint:
 | Buffer attributes | dense NumPy arrays via `dvz_visual_set_data()` | feasible for first slice |
 | Resource ownership | scene-owned buffers/fields; data writes copy caller memory unless documented otherwise | feasible but not zero-copy yet |
 | Capability snapshot | `dvz_capability_snapshot()` / `DvzCapabilitySnapshot` | feasible |
-| Queries | `dvz_visual_set_query_capabilities()`, `dvz_panel_query()`, `dvz_scene_poll_query()` | feasible for next proof; Python result fields are now visible in local `../datoviz` |
+| Queries | `dvz_visual_set_query_capabilities()`, `dvz_panel_query_px()`, `dvz_scene_poll_query()` | feasible for next proof; Python result fields are now visible in local `../datoviz` |
 | Capture | `dvz_view_offscreen` + render/capture, or Python `dvz.capture()` | feasible for raster PNG; not linear scientific readback |
 
 ## Point Visual Mapping
@@ -204,8 +204,8 @@ Unsupported behavior must be explicit. In particular, screenshot capture is not 
 
 GSP's unified panel query model aligns well with Datoviz v0.4 docs:
 
-- queue: `dvz_panel_query(panel, x, y, &request)`;
-- synchronous helper: `dvz_panel_query_now(panel, runtime, x, y, &request, &result)`;
+- queue: `dvz_panel_query_px(panel, x, y, &request)`;
+- synchronous helper: `dvz_panel_query_now_px(panel, runtime, x, y, &request, &result)`;
 - polling: `dvz_scene_poll_query(scene, &result)`;
 - enable per-visual support: `dvz_visual_set_query_capabilities(visual, flags)`.
 

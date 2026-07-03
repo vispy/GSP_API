@@ -53,6 +53,7 @@ from gsp.protocol import (
     NavigationPlacement,
     QueryCoordinateSpace,
     QueryHitPolicy,
+    QueryPayload,
     QueryRequest,
     QueryScope,
     QueryStatus,
@@ -737,8 +738,8 @@ class FakeDatovizV04WithQuery(FakeDatovizV04WithCapabilities):
         self.calls.append(("query_request",))
         return "query-request"
 
-    def dvz_panel_query(self, panel, x, y, request):
-        self.calls.append(("panel_query", panel, x, y, request))
+    def dvz_panel_query_px(self, panel, x, y, request):
+        self.calls.append(("panel_query_px", panel, x, y, request))
         return 0
 
     def dvz_scene_poll_query(self, scene, out_result):
@@ -1968,7 +1969,7 @@ def test_datoviz_capabilities_promote_panel_query_only_when_query_binding_is_rea
         dvz=FakeDatovizV04WithCapabilities()
     ).capabilities()
 
-    assert promoted.query_modes == ("panel-query", "point-item", "image-texel")
+    assert promoted.query_modes == ("panel-query", "point-item")
     assert promoted.supports_query_scope(QueryScope.DATA)
     assert (
         promoted.adapt_query_request(
@@ -1977,6 +1978,7 @@ def test_datoviz_capabilities_promote_panel_query_only_when_query_binding_is_rea
                 panel_id="panel:main",
                 coordinate=(0.0, 0.0),
                 coordinate_space=QueryCoordinateSpace.PANEL,
+                requested_payload=(QueryPayload.IDENTITY,),
             )
         ).outcome.value
         == "accept"
@@ -2120,6 +2122,7 @@ def test_query_panel_queues_polls_and_decodes_datoviz_result():
         panel_id="panel:main",
         coordinate=(12.0, 34.0),
         coordinate_space=QueryCoordinateSpace.PANEL,
+        requested_payload=(QueryPayload.IDENTITY,),
     )
 
     result = renderer.query_panel(request)
@@ -2128,12 +2131,17 @@ def test_query_panel_queues_polls_and_decodes_datoviz_result():
     assert result.status == QueryStatus.HIT
     assert result.visual_family == VisualFamily.POINT
     assert result.item_id == 5
-    query_request = _calls(fake, "panel_query")[0][4]
+    query_request = _calls(fake, "panel_query_px")[0][4]
     assert query_request.request_id > 0
     assert query_request.target == 2
     assert query_request.hit_policy == 0
     assert query_request.profile == 0
-    assert _calls(fake, "panel_query")[0][:4] == ("panel_query", "panel", 12.0, 34.0)
+    assert _calls(fake, "panel_query_px")[0][:4] == (
+        "panel_query_px",
+        "panel",
+        12.0,
+        34.0,
+    )
     assert _calls(fake, "scene_poll_query")[0][1] == "scene"
 
 
@@ -2145,6 +2153,7 @@ def test_query_panel_returns_dropped_when_bounded_poll_has_no_result():
         panel_id="panel:main",
         coordinate=(12.0, 34.0),
         coordinate_space=QueryCoordinateSpace.PANEL,
+        requested_payload=(QueryPayload.IDENTITY,),
     )
 
     result = renderer.query_panel(request)
@@ -2175,19 +2184,37 @@ def test_query_panel_renders_offscreen_frame_before_poll_when_available():
             panel_id="panel:main",
             coordinate=(32.0, 32.0),
             coordinate_space=QueryCoordinateSpace.PANEL,
+            requested_payload=(QueryPayload.IDENTITY,),
         )
     )
 
     names = [call[0] for call in fake.calls]
     assert result.status == QueryStatus.HIT
     assert (
-        names.index("panel_query")
+        names.index("panel_query_px")
         < names.index("view_render_once")
         < names.index("scene_poll_query")
     )
     assert _calls(fake, "view_offscreen") == [
         ("view_offscreen", "app", "figure", 64, 64)
     ]
+
+
+def test_query_panel_rejects_unavailable_rich_payloads():
+    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithRuntimeQuery())
+
+    result = renderer.query_panel(
+        QueryRequest(
+            id="query:rich",
+            panel_id="panel:main",
+            coordinate=(12.0, 34.0),
+            coordinate_space=QueryCoordinateSpace.PANEL,
+        )
+    )
+
+    assert result.status == QueryStatus.UNSUPPORTED
+    assert "identity payloads only" in str(result.diagnostic)
+    assert _calls(renderer.dvz, "panel_query_px") == []
 
 
 def test_query_panel_rejects_unadvertised_scopes_and_policies():
@@ -2239,6 +2266,7 @@ def test_query_panel_rejects_unadvertised_scopes_and_policies():
             panel_id="panel:main",
             coordinate=(0.0, 0.0),
             coordinate_space=QueryCoordinateSpace.PANEL,
+            requested_payload=(QueryPayload.IDENTITY,),
             requested_extension_payload_kinds=(TRANSFORM_QUERY_PAYLOAD_KIND,),
         )
     )
@@ -5593,7 +5621,7 @@ def test_imported_datoviz_capability_snapshot_translates_when_available():
     assert "datoviz_raw_capabilities" in caps.metadata
     expected_modes: tuple[str, ...] = ()
     if datoviz_v04_query_binding_ready(dvz):
-        expected_modes = ("panel-query", "point-item", "image-texel")
+        expected_modes = ("panel-query", "point-item")
     if not datoviz_v04_view3d_camera_diagnostics(dvz):
         expected_modes = (*expected_modes, "view3d-ray")
     assert caps.query_modes == expected_modes
@@ -5627,7 +5655,7 @@ def test_imported_datoviz_query_capability_promotes_when_binding_is_ready():
 
     assert caps.supports_query_mode("panel-query")
     assert caps.supports_query_mode("point-item")
-    assert caps.supports_query_mode("image-texel")
+    assert not caps.supports_query_mode("image-texel")
 
 
 def test_imported_datoviz_sampled_field_binding_smoke_when_available():
