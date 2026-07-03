@@ -1,0 +1,73 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m214-latest-colorbar/scenes/color_scalar_image_viridis_colorbar.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s050/m214-latest-colorbar/backends/datoviz/color_scalar_image_viridis_colorbar.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s050/m214-latest-colorbar/backends/datoviz/color_scalar_image_viridis_colorbar.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m214-latest-colorbar/backends/matplotlib/color_scalar_image_viridis_colorbar.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m214-latest-colorbar/backends/matplotlib/color_scalar_image_viridis_colorbar.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "color/scalar_image_viridis_colorbar",
+      "family": "color",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "scalar",
+        "colormap",
+        "colorbar",
+        "viridis"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m214-latest-colorbar/scenes/color_scalar_image_viridis_colorbar.scene.json",
+      "title": "Scalar image with viridis color scale and colorbar"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s050/m214-latest-colorbar/contact_sheets/color_scalar_image_viridis_colorbar.png",
+    "artifacts/visual_qa/s050/m214-latest-colorbar/contact_sheets/s028_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "f5b81a397e3be69ecfffbffa88754c1c227e6820",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s050/m214-latest-colorbar/environment.json",
+  "run_id": "s050-m214-latest-colorbar",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-07-03T20:56:29.237224+00:00",
+  "suite": "s028"
+}

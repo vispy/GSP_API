@@ -42,9 +42,9 @@ REQUIRED_CAPABILITIES: Mapping[str, tuple[str, str]] = {
     "visual.image.field.dvz_visual_set_field": ("facade", "dvz_visual_set_field"),
     "capture.top_level.datoviz_capture": ("facade", "capture"),
     "attach.desc.DvzVisualAttachDesc": ("facade", "DvzVisualAttachDesc"),
-    "attach.coord_space.DVZ_COORD_VIEW": ("raw", "DVZ_COORD_VIEW"),
-    "attach.coord_space.DVZ_COORD_DATA": ("raw", "DVZ_COORD_DATA"),
-    "attach.coord_space.DVZ_COORD_PANEL": ("raw", "DVZ_COORD_PANEL"),
+    "attach.coord_space.DVZ_VISUAL_COORD_VIEW": ("raw", "DVZ_VISUAL_COORD_VIEW"),
+    "attach.coord_space.DVZ_VISUAL_COORD_DATA": ("raw", "DVZ_VISUAL_COORD_DATA"),
+    "attach.coord_space.DVZ_VISUAL_COORD_PANEL": ("raw", "DVZ_VISUAL_COORD_PANEL"),
 }
 
 RAW_MIRROR_SYMBOLS: tuple[str, ...] = tuple(
@@ -62,9 +62,10 @@ RAW_MIRROR_SYMBOLS: tuple[str, ...] = tuple(
 ENUM_AND_STYLE_SYMBOLS: tuple[str, ...] = (
     "DvzDimMaskFlag",
     "DvzVisualAttachDesc",
-    "DVZ_COORD_DATA",
-    "DVZ_COORD_PANEL",
-    "DVZ_COORD_VIEW",
+    "DvzVisualCoordSpace",
+    "DVZ_VISUAL_COORD_DATA",
+    "DVZ_VISUAL_COORD_PANEL",
+    "DVZ_VISUAL_COORD_VIEW",
     "DVZ_PATH_JOIN_BEVEL",
     "DVZ_PATH_JOIN_MITER",
     "DVZ_PATH_JOIN_ROUND",
@@ -167,7 +168,7 @@ MESH_SYMBOLS: tuple[str, ...] = (
     "dvz_visual_set_index_data",
     "dvz_visual_set_material",
     "dvz_visual_set_depth_test",
-    "dvz_visual_set_texture",
+    "dvz_visual_set_texture_rgba8",
 )
 
 MESH_RENDERER_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
@@ -177,7 +178,7 @@ MESH_RENDERER_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
     "mesh.index.upload": ("dvz_visual_set_index_data",),
     "mesh.material.helper": ("dvz_visual_set_material",),
     "mesh.depth_test.helper": ("dvz_visual_set_depth_test",),
-    "mesh.texture.deferred.evidence": ("dvz_visual_set_texture",),
+    "mesh.texture.rgba8.evidence": ("dvz_visual_set_texture_rgba8",),
 }
 
 

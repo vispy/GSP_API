@@ -155,6 +155,30 @@ class FakeDatovizV04:
 
     DVZ_COLOR_PIPELINE_LINEAR_SRGB = 10
     DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND = 11
+    DVZ_VISUAL_COORD_VIEW = 0
+    DVZ_VISUAL_COORD_DATA = 1
+    DVZ_VISUAL_COORD_PANEL = 2
+    DvzCameraDesc = object
+    DvzCameraView = object
+    DvzCameraProjection = object
+    DvzPanelView3DDesc = object
+    DvzPanelView3DState = object
+    DvzPanelFrameInfo = object
+    dvz_camera_desc = None
+    dvz_camera_set_orthographic_bounds = None
+    dvz_camera_set_view = None
+    dvz_camera_get_view = None
+    dvz_camera_get_projection = None
+    dvz_camera_get_orthographic_bounds = None
+    dvz_panel_view3d_desc = None
+    dvz_panel_set_view3d_desc = None
+    dvz_panel_view3d_state = None
+    dvz_panel_camera = None
+
+    class DvzVisualCoordSpace:
+        DVZ_VISUAL_COORD_VIEW = 0
+        DVZ_VISUAL_COORD_DATA = 1
+        DVZ_VISUAL_COORD_PANEL = 2
 
     def __init__(self):
         self.calls = []
@@ -274,11 +298,42 @@ class FakeDatovizV04:
         self.calls.append(("set_data", visual, name, np.array(data, copy=True)))
         return 0
 
-    def dvz_visual_set_texture(self, visual, pixels, width, height):
+    def dvz_visual_set_texture_rgba8(self, visual, pixels, width, height, size_bytes):
         self.calls.append(
-            ("set_texture", visual, np.array(pixels, copy=True), width, height)
+            (
+                "set_texture_rgba8",
+                visual,
+                np.array(pixels, copy=True),
+                width,
+                height,
+                size_bytes,
+            )
         )
         return 0
+
+    def dvz_sampled_field_desc(self):
+        self.calls.append(("sampled_field_desc",))
+        return FakeSampledFieldDesc()
+
+    def dvz_field_data_view(self):
+        self.calls.append(("field_data_view",))
+        return FakeFieldDataView()
+
+    def dvz_sampled_field(self, scene, desc):
+        self.calls.append(("sampled_field", scene, desc))
+        return "sampled-field"
+
+    def dvz_sampled_field_set_data(self, sampled_field, view):
+        self.calls.append(("sampled_field_set_data", sampled_field, view))
+        return True
+
+    def dvz_visual_set_field(self, visual, slot_name, sampled_field):
+        self.calls.append(("set_field", visual, slot_name, sampled_field))
+        return True
+
+    def dvz_sampled_field_destroy(self, sampled_field):
+        self.calls.append(("sampled_field_destroy", sampled_field))
+        return None
 
     def dvz_visual_set_alpha_mode(self, visual, mode):
         self.calls.append(("set_alpha_mode", visual, mode))
@@ -1029,23 +1084,6 @@ class FakeDatovizV04WithMesh(FakeDatovizV04WithQueryCapabilities):
                 ortho_height=2.0,
             ),
         )
-
-    def dvz_panel_set_camera(self, panel, desc):
-        self.calls.append(
-            (
-                "panel_set_camera",
-                panel,
-                tuple(desc.view.eye),
-                tuple(desc.view.target),
-                tuple(desc.view.up),
-                desc.projection.type,
-                desc.projection.near_clip,
-                desc.projection.far_clip,
-                desc.projection.ortho_height,
-                desc.projection.fov_y,
-            )
-        )
-        return "panel-camera"
 
     def dvz_camera_set_orthographic_bounds(
         self, camera, left, right, bottom, top, near, far
@@ -1856,7 +1894,7 @@ def test_retained_view2d_navigation_update_does_not_reupload_visual_buffers():
     assert _calls_from(new_calls, "panel_view2d")
     assert _calls_from(new_calls, "set_view2d")
     assert not _calls_from(new_calls, "set_data")
-    assert not _calls_from(new_calls, "set_texture")
+    assert not _calls_from(new_calls, "set_texture_rgba8")
     assert not _calls_from(new_calls, "set_index_data")
     assert not _calls_from(new_calls, "sampled_field_set_data")
     assert not _calls_from(new_calls, "point")
@@ -1947,7 +1985,9 @@ def test_datoviz_capabilities_promote_panel_query_only_when_query_binding_is_rea
 
 
 def test_datoviz_capabilities_promote_view3d_ray_when_camera_binding_is_ready():
-    promoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh()).capabilities()
+    promoted = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithRetainedView3D()
+    ).capabilities()
     unpromoted = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04()).capabilities()
 
     assert promoted.query_modes == ("view3d-ray",)
@@ -2239,7 +2279,7 @@ def test_datoviz_view3d_ray_context_matches_matplotlib_reference():
 def test_datoviz_renderer_view3d_ray_context_uses_current_view_and_bounds():
     view = _canonical_view3d_for_datoviz_query()
     renderer = DatovizV04ProtocolRenderer(
-        dvz=FakeDatovizV04WithMesh(),
+        dvz=FakeDatovizV04WithRetainedView3D(),
         width=200,
         height=100,
         panel_bounds=(0.0, 0.0, 0.5, 1.0),
@@ -2278,7 +2318,9 @@ def test_datoviz_renderer_view3d_ray_context_rejects_missing_or_stale_view():
     )
 
     view = _canonical_view3d_for_datoviz_query()
-    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh(), view3d=view)
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithRetainedView3D(), view3d=view
+    )
     stale = renderer.query_view3d_ray_context(
         QueryRequest(
             id="query:stale",
@@ -2300,7 +2342,9 @@ def test_datoviz_renderer_view3d_ray_context_rejects_missing_or_stale_view():
 
 def test_datoviz_renderer_mesh_triangle_pick_reports_structured_unsupported():
     view = _canonical_view3d_for_datoviz_query()
-    renderer = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh(), view3d=view)
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithRetainedView3D(), view3d=view
+    )
 
     result = renderer.query_view3d_mesh_triangle_pick(
         View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(50.0, 50.0)),
@@ -2865,7 +2909,7 @@ def test_renderer_configures_equal_aspect_ndc_panel_when_available():
     ]
 
 
-def test_add_image_visual_uses_sampling_api_and_texture_upload():
+def test_add_image_visual_uses_sampled_field_for_rgb_image():
     fake = FakeDatovizV04WithImageSampling()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     image = np.array(
@@ -2889,13 +2933,14 @@ def test_add_image_visual_uses_sampling_api_and_texture_upload():
         ("image_set_sampling", "image-visual", 1)
     ]
     assert [call[2] for call in _calls(fake, "set_data")] == ["position", "texcoords"]
-    texture_call = _calls(fake, "set_texture")[0]
-    assert texture_call[1] == "image-visual"
-    np.testing.assert_array_equal(texture_call[2][..., :3], image)
+    field_view = _calls(fake, "sampled_field_set_data")[0][2]
+    np.testing.assert_array_equal(field_view.data[..., :3], image)
     np.testing.assert_array_equal(
-        texture_call[2][..., 3], np.full((2, 2), 255, dtype=np.uint8)
+        field_view.data[..., 3], np.full((2, 2), 255, dtype=np.uint8)
     )
-    assert texture_call[3:] == (2, 2)
+    assert field_view.bytes_per_row == 8
+    assert field_view.rows_per_image == 2
+    assert _calls(fake, "set_texture_rgba8") == []
     assert _calls(fake, "set_query_capabilities") == [
         ("set_query_capabilities", "image-visual", 0x12)
     ]
@@ -2920,13 +2965,13 @@ def test_add_image_visual_maps_linear_sampling():
     ]
 
 
-def test_add_image_visual_renders_when_datoviz_sampler_api_is_absent():
+def test_add_image_visual_uploads_packed_rgba8_texture():
     fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     image = np.array(
         [
-            [[255, 0, 0], [0, 255, 0]],
-            [[0, 0, 255], [255, 255, 255]],
+            [[255, 0, 0, 128], [0, 255, 0, 255]],
+            [[0, 0, 255, 64], [255, 255, 255, 32]],
         ],
         dtype=np.uint8,
     )
@@ -2940,7 +2985,11 @@ def test_add_image_visual_renders_when_datoviz_sampler_api_is_absent():
     renderer.add_image_visual(visual)
 
     assert _calls(fake, "image") == [("image", "scene", 0)]
-    assert _calls(fake, "set_texture")
+    texture_call = _calls(fake, "set_texture_rgba8")[0]
+    assert texture_call[1] == "image-visual"
+    np.testing.assert_array_equal(texture_call[2], image)
+    assert texture_call[3:] == (2, 2, image.nbytes)
+    assert _calls(fake, "sampled_field") == []
 
 
 def test_add_image_visual_uses_sampled_field_path_with_sampling_api():
@@ -2971,11 +3020,11 @@ def test_add_image_visual_uses_sampled_field_path_with_sampling_api():
     assert _calls(fake, "set_field") == [
         ("set_field", "image-visual", "field", "sampled-field")
     ]
-    assert _calls(fake, "set_texture") == []
+    assert _calls(fake, "set_texture_rgba8") == []
     assert renderer.sampled_fields == {"visual:image": "sampled-field"}
 
 
-def test_add_image_visual_converts_scalar_image_to_rgba8_texture():
+def test_add_image_visual_converts_scalar_image_to_rgba8_sampled_field():
     fake = FakeDatovizV04WithImageSampling()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     visual = ImageVisual(
@@ -2987,9 +3036,9 @@ def test_add_image_visual_converts_scalar_image_to_rgba8_texture():
 
     renderer.add_image_visual(visual)
 
-    texture_call = _calls(fake, "set_texture")[0]
+    field_view = _calls(fake, "sampled_field_set_data")[0][2]
     np.testing.assert_array_equal(
-        texture_call[2],
+        field_view.data,
         [
             [[0, 0, 0, 255], [128, 128, 128, 255]],
             [[255, 255, 255, 255], [255, 255, 255, 255]],
@@ -3010,9 +3059,9 @@ def test_add_image_visual_cpu_premaps_scalar_color_scale_to_canonical_rgba8():
 
     renderer.add_image_visual(visual)
 
-    texture_call = _calls(fake, "set_texture")[0]
+    field_view = _calls(fake, "sampled_field_set_data")[0][2]
     np.testing.assert_array_equal(
-        texture_call[2],
+        field_view.data,
         [
             [[0, 0, 0, 255], [128, 128, 128, 255]],
             [[255, 255, 255, 255], [255, 255, 255, 255]],
@@ -3256,7 +3305,7 @@ def test_add_colorbar_guide_rejects_missing_explicit_tick_facade():
 
 
 def test_sampled_field_readiness_reports_missing_symbols():
-    fake = FakeDatovizV04()
+    fake = SimpleNamespace()
 
     assert not datoviz_v04_sampled_field_ready(fake)
     assert "dvz_sampled_field" in " ".join(datoviz_v04_sampled_field_diagnostics(fake))
@@ -3456,8 +3505,8 @@ def test_add_mesh_visual_accepts_default_data_domain_and_requires_view3d_for_dat
         renderer.add_mesh_visual(mesh_3d)
 
 
-def test_add_mesh_visual_projects_data_positions3d_to_panel_ndc_for_datoviz_mesh():
-    fake = FakeDatovizV04WithMesh()
+def test_add_mesh_visual_configures_retained_orthographic_view3d_descriptor():
+    fake = FakeDatovizV04WithRetainedView3D()
     view3d = View3D(
         id="view:main",
         panel_id="panel:main",
@@ -3486,9 +3535,9 @@ def test_add_mesh_visual_projects_data_positions3d_to_panel_ndc_for_datoviz_mesh
 
     renderer.add_mesh_visual(visual)
 
-    assert _calls(fake, "panel_set_camera") == [
+    assert _calls(fake, "panel_set_view3d_desc") == [
         (
-            "panel_set_camera",
+            "panel_set_view3d_desc",
             "panel",
             (1.0, 2.0, 3.0),
             (0.0, 0.0, 0.0),
@@ -3503,7 +3552,7 @@ def test_add_mesh_visual_projects_data_positions3d_to_panel_ndc_for_datoviz_mesh
     assert _calls(fake, "camera_set_orthographic_bounds") == [
         (
             "camera_set_orthographic_bounds",
-            "panel-camera",
+            "retained-panel-camera",
             2.0,
             -2.0,
             -1.0,
@@ -3512,24 +3561,14 @@ def test_add_mesh_visual_projects_data_positions3d_to_panel_ndc_for_datoviz_mesh
             100.0,
         )
     ]
-    expected_positions = np.array(
-        [project_view3d_data_point(view3d, tuple(point)) for point in visual.positions],
-        dtype=np.float32,
-    )
-    np.testing.assert_allclose(
-        _calls(fake, "set_data")[0][3],
-        expected_positions,
-        rtol=1.0e-6,
-        atol=1.0e-6,
-    )
-    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", False)]
+    np.testing.assert_allclose(_calls(fake, "set_data")[0][3], visual.positions)
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", True)]
     add_visual_call = _calls(fake, "add_visual")[-1]
-    assert add_visual_call[3].coord_space == 0
-    assert add_visual_call[3].controller_mode == 1
+    assert add_visual_call[3].coord_space == 1
 
 
-def test_add_mesh_visual_projects_perspective_data_positions3d_for_datoviz_mesh():
-    fake = FakeDatovizV04WithMesh()
+def test_add_mesh_visual_configures_retained_perspective_view3d_descriptor():
+    fake = FakeDatovizV04WithRetainedView3D()
     view3d = View3D(
         id="view:main",
         panel_id="panel:main",
@@ -3557,9 +3596,9 @@ def test_add_mesh_visual_projects_perspective_data_positions3d_for_datoviz_mesh(
 
     renderer.add_mesh_visual(visual)
 
-    assert _calls(fake, "panel_set_camera") == [
+    assert _calls(fake, "panel_set_view3d_desc") == [
         (
-            "panel_set_camera",
+            "panel_set_view3d_desc",
             "panel",
             (0.0, 0.0, 0.0),
             (0.0, 0.0, -1.0),
@@ -3572,21 +3611,7 @@ def test_add_mesh_visual_projects_perspective_data_positions3d_for_datoviz_mesh(
         )
     ]
     assert not _calls(fake, "camera_set_orthographic_bounds")
-    expected_positions = np.array(
-        [
-            project_view3d_data_point(
-                view3d, tuple(point), aspect_ratio=800.0 / 600.0
-            )
-            for point in visual.positions
-        ],
-        dtype=np.float32,
-    )
-    np.testing.assert_allclose(
-        _calls(fake, "set_data")[0][3],
-        expected_positions,
-        rtol=1.0e-6,
-        atol=1.0e-6,
-    )
+    np.testing.assert_allclose(_calls(fake, "set_data")[0][3], visual.positions)
 
 
 def test_add_mesh_visual_uses_retained_data_space_view3d_path_when_available():
@@ -4160,7 +4185,7 @@ def test_add_mesh_visual_orders_ndc3_faces_for_adapted_datoviz_depth():
 
 
 def test_add_mesh_visual_cpu_resolves_s039_flat_lambert_face_colors():
-    fake = FakeDatovizV04WithMesh()
+    fake = FakeDatovizV04WithRetainedView3D()
     view3d = View3D(
         id="view:main",
         panel_id="panel:main",
@@ -4202,11 +4227,7 @@ def test_add_mesh_visual_cpu_resolves_s039_flat_lambert_face_colors():
     renderer.add_mesh_visual(visual)
 
     set_data = _calls(fake, "set_data")
-    expected_positions = np.array(
-        [project_view3d_data_point(view3d, tuple(point)) for point in visual.positions],
-        dtype=np.float32,
-    )
-    np.testing.assert_allclose(set_data[0][3], expected_positions)
+    np.testing.assert_allclose(set_data[0][3], visual.positions)
     np.testing.assert_array_equal(
         set_data[1][3],
         np.array(
@@ -4225,11 +4246,11 @@ def test_add_mesh_visual_cpu_resolves_s039_flat_lambert_face_colors():
         _calls(fake, "set_index_data")[0][2],
         np.arange(6, dtype=np.uint32),
     )
-    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", False)]
+    assert _calls(fake, "set_depth_test") == [("set_depth_test", "mesh-visual", True)]
 
 
 def test_add_mesh_visual_rejects_s039_flat_lambert_alpha_as_non_strict():
-    fake = FakeDatovizV04WithMesh()
+    fake = FakeDatovizV04WithRetainedView3D()
     view3d = View3D(
         id="view:main",
         panel_id="panel:main",
@@ -4266,10 +4287,12 @@ def test_add_mesh_visual_rejects_s039_flat_lambert_alpha_as_non_strict():
 
 
 def test_datoviz_capabilities_advertise_s040_lambert_cpu_resolve_when_view3d_ready():
-    caps = DatovizV04ProtocolRenderer(dvz=FakeDatovizV04WithMesh()).capabilities()
+    caps = DatovizV04ProtocolRenderer(
+        dvz=FakeDatovizV04WithRetainedView3D()
+    ).capabilities()
 
     assert MESH3D_OPAQUE_DEPTH_CAPABILITY not in caps.view3d_capabilities
-    assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY not in caps.view3d_capabilities
+    assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY in caps.view3d_capabilities
     assert MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMALS_FACE3D_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY in caps.view3d_capabilities
@@ -4836,16 +4859,15 @@ def test_datoviz_live_navigation_unsubscribes_on_close():
     assert fake.input_callback is None
 
 
-def test_datoviz_view3d_live_navigation_reports_cpu_projected_mesh_boundary():
+def test_datoviz_view3d_live_navigation_requires_retained_data_space_binding():
     fake = FakeDatovizV04WithMesh()
-    view3d = _canonical_view3d_for_datoviz_query()
-    renderer = DatovizV04ProtocolRenderer(dvz=fake, view3d=view3d)
 
     diagnostics = datoviz_v04_view3d_live_navigation_diagnostics(fake)
 
-    assert any("CPU-projected panel-NDC mesh positions" in item for item in diagnostics)
-    with pytest.raises(DatovizV04Unavailable, match="CPU-projected panel-NDC"):
-        renderer.enable_gsp_view3d_navigation()
+    assert any("missing dvz_panel_view3d_desc" in item for item in diagnostics)
+    assert any("retained DATA-space View3D visual path" in item for item in diagnostics)
+    with pytest.raises(DatovizV04Unavailable, match="missing dvz_panel_view3d_desc"):
+        DatovizV04ProtocolRenderer(dvz=fake, view3d=_canonical_view3d_for_datoviz_query())
 
 
 def test_renderer_show_uses_resolved_host_logical_size_for_reference_canvas():
@@ -5278,6 +5300,8 @@ def test_imported_datoviz_binding_exposes_live_input_contract_when_available():
         pytest.skip("installed Datoviz binding is not the v0.4 facade")
 
     diagnostics = datoviz_v04_live_input_diagnostics(dvz)
+    if diagnostics:
+        pytest.skip("installed Datoviz binding does not expose the live input contract")
 
     assert diagnostics == ()
 

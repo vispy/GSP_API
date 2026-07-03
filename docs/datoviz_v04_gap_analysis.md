@@ -11,9 +11,9 @@ Datoviz v0.4 can support a GSP backend, but not through the old v0.3-style Pytho
 
 The old adapter imports `datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `datoviz._figure`, and `datoviz._texture`. In the local Datoviz checkout/package these surfaces are missing. The adapter therefore needs a rewrite around `dvz_scene`, `dvz_figure`, `dvz_panel`, `dvz_point`, `dvz_image`, `dvz_visual_set_data`, sampled fields, query APIs, and capture APIs.
 
-Point rendering maps cleanly. Image rendering maps, but the preferred v0.4 path is sampled fields
-plus `dvz_visual_set_field`; `dvz_visual_set_texture` is documented as a transitional convenience
-wrapper. Query concepts are aligned with GSP's panel-query model. During M004/M009, Python-side
+Point rendering maps cleanly. Image rendering maps through sampled fields plus
+`dvz_visual_set_field` for scalar/mapped images and `dvz_visual_set_texture_rgba8` for already
+packed RGBA8 images. Query concepts are aligned with GSP's panel-query model. During M004/M009, Python-side
 query result decoding was blocked because `DvzQueryResult` had no `_fields_`. M018 confirms that
 the current `../datoviz` v0.4-dev headers now define a rich `DvzQueryResult` struct, but the current
 GSP virtual environment still imports Datoviz `0.3.5` and exposes none of the v0.4 `dvz_*` facade
@@ -54,7 +54,7 @@ Local introspection found:
 - `datoviz._panel`: missing
 - `datoviz._figure`: missing
 - `datoviz._texture`: missing
-- `dvz_scene`, `dvz_figure`, `dvz_panel`, `dvz_panel_full`, `dvz_point`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_field`, `dvz_visual_set_texture`, `dvz_capability_snapshot`, `dvz_panel_query`, `dvz_panel_query_now`, and `dvz_scene_poll_query`: present
+- `dvz_scene`, `dvz_figure`, `dvz_panel`, `dvz_panel_full`, `dvz_point`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_field`, `dvz_visual_set_texture_rgba8`, `dvz_capability_snapshot`, `dvz_panel_query`, `dvz_panel_query_now`, and `dvz_scene_poll_query`: present
 
 ## Post-M011 local Datoviz inventory update
 
@@ -62,7 +62,7 @@ Checked against the local sibling checkout `../datoviz` on `v0.4-dev` after M011
 
 - `datoviz.__file__`: `/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py`
 - `dvz_scene`, `dvz_figure`, `dvz_panel_full`, `dvz_panel_add_visual`: present
-- `dvz_point`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_texture`: present
+- `dvz_point`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_texture_rgba8`: present
 - `dvz_sampled_field`, `dvz_sampled_field_set_data`, `dvz_visual_set_field`: present
 - `dvz_capability_snapshot`: present
 - `dvz_panel_query`, `dvz_panel_query_now`, `dvz_scene_poll_query`: present
@@ -166,8 +166,8 @@ Datoviz v0.4 image path:
 
 - create visual with `dvz_image(scene, flags)`;
 - upload geometry via `"position"` and `"texcoords"` attributes;
-- prefer `dvz_sampled_field()` + `dvz_sampled_field_set_data()` + `dvz_visual_set_field(image, "field", field)`;
-- transitional RGBA8 convenience path: `dvz_visual_set_texture(image, pixels, width, height)`;
+- prefer `dvz_sampled_field()` + `dvz_sampled_field_set_data()` + `dvz_visual_set_field(image, "field", field)` for scalar/mapped images;
+- packed RGBA8 path: `dvz_visual_set_texture_rgba8(image, pixels, width, height, size_bytes)`;
 - attach to panel with `dvz_panel_add_visual()`.
 
 Gaps and adaptation:
@@ -259,7 +259,7 @@ The following Datoviz-side or binding-side tasks should be resolved before a ful
   query-result helper.
 - Clarify the promoted Python facade contract in the `../datoviz/` docs/release artifacts, so GSP agents do not target obsolete wrapper examples or any stale published pages.
 - Confirm image interpolation and origin handling for `DvzSampledField`/`dvz_image`.
-- Confirm whether GSP should use `dvz_visual_set_texture()` for RGBA8 only or move immediately to sampled fields for all images.
+- Keep GSP latest-only: sampled fields for scalar/mapped images and `dvz_visual_set_texture_rgba8()` only for already-packed RGBA8 images.
 
 ## Recommended next Datoviz parity mission
 

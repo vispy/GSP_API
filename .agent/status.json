@@ -2213,11 +2213,11 @@
     },
     {
       "id": "M214",
-      "title": "S050 Datoviz coordinate-space enum compatibility",
+      "title": "Datoviz v0.4-dev Latest Generated-Binding Alignment",
       "stage": "S050",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 214
     },
     {
@@ -2335,8 +2335,8 @@
   ],
   "recommendations": [
     "Do not promote Datoviz query.view3d.mesh_triangle_pick.v1 until upstream Datoviz exposes public canonical mesh face/triangle identity and native tests cover it.",
-    "Do not refresh/promote Datoviz colorbar strictness in S050 until DvzVisualCoordSpace.DVZ_COORD_VIEW compatibility is resolved and the isolated colorbar review case passes.",
-    "M214 is the next local Datoviz compatibility candidate: resolve current facade coordinate-space enum mismatches for VIEW/NDC and DATA paths without editing the sibling Datoviz checkout.",
+    "M214 completed latest Datoviz v0.4-dev generated-binding alignment without aliases, shims, or sibling Datoviz checkout edits.",
+    "Do not promote S050 strict opaque depth beyond adapted until the M214 depth artifact is manually reviewed and a family-specific promotion audit is recorded.",
     "M216 remains draft for a live Datoviz point/image payload evidence refresh; run it only if the current v0.4 runtime/offscreen setup is already available without manual build or GPU intervention.",
     "M215 completed: Datoviz query/readback docs now distinguish capability-gated guide/all-rendered query from still-deferred live rich payload parity, scientific readback, hit_policy=all, and mesh-triangle picking.",
     "M207 remains the next guide-query scoping candidate if work should avoid strict 3D depth and Datoviz offscreen rendering.",
@@ -2346,13 +2346,14 @@
   ],
   "notes": [
     "M215 completed: updated spec/backends/datoviz.md query/readback wording to reflect S043 panel-frame guide hit/readback capability gates and preserved unsupported boundaries for hit_policy=all, unsupported extension payloads, scientific readback, and mesh-triangle picking.",
+    "M214 completed: added a latest-only Datoviz generated-binding contract, replaced stale coordinate/image/View3D camera API usage, archived P030 response, and generated real Datoviz review packs at artifacts/visual_qa/s050/m214-latest-colorbar and artifacts/visual_qa/s050/m214-latest-depth.",
     "M201 completed: scoped Datoviz query/readback follow-up after M200; mesh triangle picking waits on upstream Datoviz face/triangle query API, while M215 refreshed docs/status and M216 can later refresh live point/image payload evidence.",
-    "M213 completed: datoviz-offscreen-opt-in review packs now isolate Datoviz in a child process, discard child staging unless it exits cleanly, and write parent review packs with structured Datoviz rows. Real M206/M210 retries now expose DvzVisualCoordSpace DVZ_COORD_VIEW/DATA compatibility blockers instead of parent-process crashes.",
-    "M210 blocked: S050 strict-depth visual QA fixture and view3d harness support are in place; after M213 isolation, the Datoviz retry completes as a parent review pack but reports missing DvzVisualCoordSpace.DVZ_COORD_DATA, so meshvisual.positions3d.opaque_depth.v1 remains unadvertised.",
+    "M213 completed: datoviz-offscreen-opt-in review packs now isolate Datoviz in a child process, discard child staging unless it exits cleanly, and write parent review packs with structured Datoviz rows. M214 now replaces the stale symbol blockers with the current generated-binding contract.",
+    "M210 blocked: S050 strict-depth visual QA fixture and view3d harness support are in place; after M213 isolation, the Datoviz retry reached stale generated-binding alignment blockers, so meshvisual.positions3d.opaque_depth.v1 remains unadvertised pending M214 evidence.",
     "M209 completed: defined an overlapping opaque-triangle fixture that separates strict per-fragment depth from average-face painter sorting, plus promotion criteria that leave capability advertisements unchanged.",
     "M203 completed: strict opaque depth remains unadvertised pending independent less-depth evidence; Matplotlib remains adapted CPU-sorted 3D raster behavior; follow-ups split into M209 fixture planning, M210 Datoviz runtime proof, and M211/M212 consultation packets.",
     "M202 completed: split Datoviz guide/text/colorbar strictness into M206 colorbar proof, M207 guide query strictness audit, and M208 TextVisual strictness proof.",
-    "M206 blocked: current Datoviz facade exposes colorbar explicit tick symbols and focused GSP tests pass; after M213 isolation, the colorbar retry completes as a parent review pack but reports missing DvzVisualCoordSpace.DVZ_COORD_VIEW.",
+    "M206 blocked: current Datoviz facade exposes colorbar explicit tick symbols and focused GSP tests pass; after M213 isolation, colorbar strictness remains pending M214 latest generated-binding evidence.",
     "M205 completed: converted M200 evidence into a Datoviz upstream mesh triangle query handoff with exact files/functions, result-field semantics, and native fixture requirements.",
     "M200 completed: Datoviz upstream API work is required before GSP can safely advertise query.view3d.mesh_triangle_pick.v1; current native mesh query results do not expose canonical face/triangle identity.",
     "M199 completed: reconciled unregistered M198/S049 white paper status, opened S050 as the post-S048 implementation roadmap, approved M200 for Datoviz native mesh-pick evidence, and drafted follow-up parity/strictness/API missions.",

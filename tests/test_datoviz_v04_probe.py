@@ -120,9 +120,10 @@ class FakeRaw:
     DvzTextAtlas = object
     DvzTextAtlasSpec = object
     DvzTextRenderer = object
-    DVZ_COORD_VIEW = 1
-    DVZ_COORD_DATA = 2
-    DVZ_COORD_PANEL = 3
+    DvzVisualCoordSpace = object
+    DVZ_VISUAL_COORD_VIEW = 1
+    DVZ_VISUAL_COORD_DATA = 2
+    DVZ_VISUAL_COORD_PANEL = 3
     DVZ_PATH_JOIN_ROUND = 10
     DVZ_SEGMENT_CAP_ROUND = 11
     DVZ_BLEND_ALPHA = 12
@@ -177,7 +178,7 @@ def test_probe_successful_fake_facade_is_json_safe(tmp_path: Path) -> None:
     source = tmp_path / "datoviz"
     source.mkdir()
     (source / "README.md").write_text(
-        "dvz_scene\nDvzVisualAttachDesc\nDVZ_COORD_DATA\ndvz_text\ndvz_text_set_placement\n",
+        "dvz_scene\nDvzVisualAttachDesc\nDVZ_VISUAL_COORD_DATA\ndvz_text\ndvz_text_set_placement\n",
         encoding="utf-8",
     )
     facade = FakeDatovizFacade()
@@ -194,7 +195,7 @@ def test_probe_successful_fake_facade_is_json_safe(tmp_path: Path) -> None:
     assert payload["sibling_source"]["exists"] is True
     assert payload["capability_matrix"]["scene.create.dvz_scene"]["supported"] is True
     assert (
-        payload["capability_matrix"]["attach.coord_space.DVZ_COORD_DATA"]["supported"]
+        payload["capability_matrix"]["attach.coord_space.DVZ_VISUAL_COORD_DATA"]["supported"]
         is True
     )
     assert payload["minimal_point_scene"]["supported"] is True

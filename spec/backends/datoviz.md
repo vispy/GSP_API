@@ -53,7 +53,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 | Panel/viewport | `dvz_panel()` or `dvz_panel_full()` | feasible; convert GSP pixel viewports to normalized panel desc |
 | Point visual | `dvz_point()` plus `dvz_visual_set_data()` for `position`, `color`, `diameter_px` | feasible after point-size semantic alignment |
 | Path visual | `dvz_path()` plus `position`, `color`, `stroke_width_px`, subpaths, caps, and joins | feasible when path helpers are exposed |
-| Image visual | `dvz_image()` plus `position`, `texcoords`, sampled field or texture binding | feasible after image origin/interpolation confirmation |
+| Image visual | `dvz_image()` plus `position`, `texcoords`, sampled fields, or packed RGBA8 upload | feasible after image origin/interpolation confirmation |
 | Mesh visual | `dvz_mesh()` plus direct `position`/`color` attribute upload and index upload | implemented for bounded 2D NDC S025 cases; DATA/3D/query remain gated |
 | Capabilities | `dvz_capability_snapshot()` | feasible |
 | Queries | `dvz_panel_query()` / `dvz_scene_poll_query()` | conceptually aligned; local `../datoviz` headers define `DvzQueryResult`, but the current GSP env imports Datoviz 0.3.5 |
@@ -63,7 +63,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 
 - Use `DvzCapabilitySnapshot` to build GSP `CapabilitySnapshot` before planning.
 - Treat screenshot capture as sRGB RGBA8 output, not scientific readback.
-- Use sampled fields (`dvz_sampled_field`, `dvz_visual_set_field`) for scalar/color images where possible; `dvz_visual_set_texture` is a transitional RGBA8 convenience path.
+- Use sampled fields (`dvz_sampled_field`, `dvz_visual_set_field`) for scalar/color images, and `dvz_visual_set_texture_rgba8` only for already-packed `uint8[..., 4]` RGBA images.
 - Do not claim query support in the Python GSP adapter until query results are decodable.
 - Do not edit the Datoviz repository from this repo; create handoff tasks for Datoviz-side API or binding gaps.
 
@@ -72,7 +72,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 The first Datoviz v0.4 protocol adapter lives in `src/gsp_datoviz/protocol_renderer.py`.
 It is intentionally separate from the legacy Datoviz renderer path and targets only the
 top-level C-shaped facade (`dvz_scene`, `dvz_figure`, `dvz_panel_full`, `dvz_point`,
-`dvz_marker`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_texture`, and
+`dvz_marker`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_texture_rgba8`, and
 `dvz_panel_add_visual`).
 
 Current supported surface:
@@ -177,7 +177,7 @@ non-strict via `mesh3d_alpha_not_strict`.
 ## M066 PointVisual retained path
 
 Point visuals are attached with an explicit `DvzVisualAttachDesc` instead of relying on a NULL
-descriptor. For the S023 NDC smoke cases, the adapter uses `coord_space=DVZ_COORD_DATA` with the
+descriptor. For the S023 NDC smoke cases, the adapter uses `coord_space=DVZ_VISUAL_COORD_DATA` with the
 default Datoviz panel domain `[-1, +1]`, matching the protocol NDC coordinate fixtures. The
 descriptor also sets `z_layer=0` for deterministic future layering.
 
@@ -274,13 +274,14 @@ the active v0.4 Python facade exposes:
 - `dvz_sampled_field_set_data`;
 - `dvz_visual_set_field`.
 
-For supported uint8 RGB/RGBA images, the adapter creates a scene-owned 2D `RGBA8_UNORM` sampled
-field with color semantic and sRGB role, uploads tightly packed data, and binds it to the image
-visual's `"field"` slot. If sampled-field symbols are unavailable, the existing transitional
-`dvz_visual_set_texture()` RGBA8 path remains as fallback.
+For scalar and RGB images, the adapter creates a scene-owned 2D `RGBA8_UNORM` sampled field with
+color semantic and sRGB role, uploads tightly packed data, and binds it to the image visual's
+`"field"` slot. Already-packed `uint8[..., 4]` RGBA images use the current
+`dvz_visual_set_texture_rgba8()` upload path.
 
-Scalar float sampled fields and color-scale semantics remain deferred. They require explicit scale
-The M070 scalar path supports conservative CPU grayscale/clim normalization before upload; broader backend-native colormap bindings remain deferred.
+Backend-native scalar float sampled fields and color-scale semantics remain deferred. The M070
+scalar path supports conservative CPU grayscale/clim normalization before upload; broader
+backend-native colormap bindings remain deferred.
 
 ## M028 capture/offscreen parity slice
 

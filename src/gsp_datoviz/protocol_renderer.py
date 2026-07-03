@@ -121,6 +121,10 @@ from gsp_datoviz.capabilities import (
     datoviz_v04_capture_diagnostics,
     datoviz_v04_capture_ready,
 )
+from gsp_datoviz.latest_api_contract import (
+    REQUIRED_DATOVIZ_V04_DEV_SYMBOLS,
+    datoviz_current_api_contract_diagnostics,
+)
 from gsp_datoviz.query import (
     datoviz_query_view3d_ray_context,
     decode_dvz_query_result,
@@ -129,17 +133,7 @@ from gsp_datoviz.query import (
 )
 
 
-_REQUIRED_DVZ_V04_FUNCTIONS = (
-    "dvz_scene",
-    "dvz_figure",
-    "dvz_panel_full",
-    "dvz_panel_add_visual",
-    "dvz_panel_set_domain",
-    "dvz_point",
-    "dvz_image",
-    "dvz_visual_set_data",
-    "dvz_visual_set_texture",
-)
+_REQUIRED_DVZ_V04_FUNCTIONS = REQUIRED_DATOVIZ_V04_DEV_SYMBOLS
 
 _REQUIRED_DVZ_SAMPLED_FIELD_FUNCTIONS = (
     "dvz_sampled_field_desc",
@@ -182,8 +176,10 @@ _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS = (
     "DvzCameraView",
     "DvzCameraProjection",
     "dvz_camera_desc",
-    "dvz_panel_set_camera",
     "dvz_camera_set_orthographic_bounds",
+    "dvz_panel_view3d_desc",
+    "dvz_panel_set_view3d_desc",
+    "dvz_panel_camera",
 )
 
 _REQUIRED_DVZ_VIEW3D_RETAINED_DATA_FUNCTIONS = (
@@ -254,8 +250,6 @@ DVZ_CAMERA_PERSPECTIVE = 0
 DVZ_CAMERA_ORTHOGRAPHIC = 1
 DVZ_CONTROLLER_APPLY = 0
 DVZ_CONTROLLER_FIXED = 1
-DVZ_COORD_VIEW = 0
-DVZ_COORD_DATA = 1
 DVZ_SHAPE_ASPECT_FILLED = 0
 DVZ_SHAPE_ASPECT_OUTLINE = 2
 DVZ_ALPHA_BLENDED = 1
@@ -389,7 +383,7 @@ class DatovizV04Unsupported(ValueError):
 
 def is_datoviz_v04_facade(module: ModuleType | Any) -> bool:
     """Return whether a module-like object exposes the required v0.4 facade."""
-    return all(hasattr(module, name) for name in _REQUIRED_DVZ_V04_FUNCTIONS)
+    return not datoviz_current_api_contract_diagnostics(module)
 
 
 def datoviz_v04_sampled_field_ready(module: ModuleType | Any) -> bool:
@@ -474,7 +468,7 @@ def datoviz_v04_view3d_camera_diagnostics(module: ModuleType | Any) -> tuple[str
     return tuple(
         f"missing {name}"
         for name in _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS
-        if not hasattr(module, name)
+        if not callable(getattr(module, name, None))
     )
 
 
@@ -548,9 +542,8 @@ def datoviz_v04_view3d_live_navigation_diagnostics(
     if retained_diagnostics:
         diagnostics.extend(retained_diagnostics)
         diagnostics.append(
-            "Datoviz View3D live navigation is unavailable because the current "
-            "protocol renderer would need CPU-projected panel-NDC mesh positions "
-            "without the retained DATA-space View3D visual path"
+            "Datoviz View3D live navigation requires the retained DATA-space "
+            "View3D visual path from the current generated binding"
         )
     return tuple(diagnostics)
 
@@ -581,13 +574,9 @@ def import_datoviz_v04() -> ModuleType:
     try:
         import datoviz as dvz
 
-        if not is_datoviz_v04_facade(dvz):
-            missing = [
-                name for name in _REQUIRED_DVZ_V04_FUNCTIONS if not hasattr(dvz, name)
-            ]
-            raise DatovizV04Unavailable(
-                f"Datoviz facade is missing v0.4 functions: {missing}"
-            )
+        diagnostics = datoviz_current_api_contract_diagnostics(dvz)
+        if diagnostics:
+            raise DatovizV04Unavailable("; ".join(diagnostics))
     except ModuleNotFoundError as exc:
         raise DatovizV04Unavailable("Datoviz is not importable") from exc
     except (OSError, RuntimeError) as exc:
@@ -644,23 +633,14 @@ def _configure_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> An
             "Datoviz View3D camera binding is unavailable: " + "; ".join(diagnostics)
         )
 
-    if datoviz_v04_view3d_retained_data_ready(dvz):
-        desc = dvz.dvz_panel_view3d_desc()
-        _fill_datoviz_camera_desc(dvz, desc.camera, view3d)
-        result = dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(desc))
-        if result not in (0, None, True):
-            raise DatovizV04Unsupported("Datoviz retained View3D descriptor setup failed")
-        camera = dvz.dvz_panel_camera(panel)
-        if _is_null_handle(camera):
-            raise DatovizV04Unsupported("Datoviz retained View3D panel camera is unavailable")
-        _set_datoviz_camera_projection_state(dvz, camera, view3d)
-        return camera
-
-    desc = dvz.dvz_camera_desc()
-    _fill_datoviz_camera_desc(dvz, desc, view3d)
-    camera = dvz.dvz_panel_set_camera(panel, _ctypes_pointer_arg(desc))
+    desc = dvz.dvz_panel_view3d_desc()
+    _fill_datoviz_camera_desc(dvz, desc.camera, view3d)
+    result = dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(desc))
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported("Datoviz retained View3D descriptor setup failed")
+    camera = dvz.dvz_panel_camera(panel)
     if _is_null_handle(camera):
-        raise DatovizV04Unsupported("Datoviz View3D panel camera allocation failed")
+        raise DatovizV04Unsupported("Datoviz retained View3D panel camera is unavailable")
     _set_datoviz_camera_projection_state(dvz, camera, view3d)
     return camera
 
@@ -712,21 +692,20 @@ def _set_datoviz_camera_orthographic_bounds(
 
 
 def _update_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> Any:
-    if hasattr(dvz, "dvz_panel_view3d_desc") and hasattr(
-        dvz, "dvz_panel_set_view3d_desc"
-    ):
-        panel_desc = dvz.dvz_panel_view3d_desc()
-        _fill_datoviz_camera_desc(dvz, panel_desc.camera, view3d)
-        result = dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(panel_desc))
-        if result not in (0, None, True):
-            raise DatovizV04Unsupported(
-                "Datoviz retained View3D panel camera descriptor update failed"
-            )
-        camera = dvz.dvz_panel_camera(panel)
-    else:
-        desc = dvz.dvz_camera_desc()
-        _fill_datoviz_camera_desc(dvz, desc, view3d)
-        camera = dvz.dvz_panel_set_camera(panel, _ctypes_pointer_arg(desc))
+    diagnostics = datoviz_v04_view3d_camera_diagnostics(dvz)
+    if diagnostics:
+        raise DatovizV04Unavailable(
+            "Datoviz retained View3D descriptor binding is unavailable: "
+            + "; ".join(diagnostics)
+        )
+    panel_desc = dvz.dvz_panel_view3d_desc()
+    _fill_datoviz_camera_desc(dvz, panel_desc.camera, view3d)
+    result = dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(panel_desc))
+    if result not in (0, None, True):
+        raise DatovizV04Unsupported(
+            "Datoviz retained View3D panel camera descriptor update failed"
+        )
+    camera = dvz.dvz_panel_camera(panel)
     if _is_null_handle(camera):
         raise DatovizV04Unsupported("Datoviz retained View3D panel camera update failed")
     _set_datoviz_camera_projection_state(dvz, camera, view3d)
@@ -1366,7 +1345,11 @@ class DatovizV04ProtocolRenderer:
         )
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "texcoords", texcoords)
-        if datoviz_v04_sampled_field_ready(self.dvz):
+        if _image_visual_is_packed_rgba8(visual):
+            self.dvz.dvz_visual_set_texture_rgba8(
+                dvz_visual, pixels, width, height, int(pixels.nbytes)
+            )
+        elif datoviz_v04_sampled_field_ready(self.dvz):
             sampled_field = self._create_rgba8_sampled_field(pixels, width, height)
             if not _set_visual_field(self.dvz, dvz_visual, "field", sampled_field):
                 raise DatovizV04Unsupported(
@@ -1374,7 +1357,10 @@ class DatovizV04ProtocolRenderer:
                 )
             self.sampled_fields[visual.id] = sampled_field
         else:
-            self.dvz.dvz_visual_set_texture(dvz_visual, pixels, width, height)
+            raise DatovizV04Unavailable(
+                "Datoviz scalar/image field binding is unavailable: "
+                + "; ".join(datoviz_v04_sampled_field_diagnostics(self.dvz))
+            )
         _add_visual_to_panel(
             self.dvz,
             self.panel,
@@ -3513,9 +3499,9 @@ def _visual_attach_desc(
     else:
         raise ValueError(f"unsupported Datoviz controller mode: {controller_mode}")
     if coord_space == "data":
-        desc.coord_space = _coord_space_value(dvz, "DVZ_COORD_DATA", DVZ_COORD_DATA)
+        desc.coord_space = int(dvz.DVZ_VISUAL_COORD_DATA)
     elif coord_space == "view":
-        desc.coord_space = _coord_space_value(dvz, "DVZ_COORD_VIEW", DVZ_COORD_VIEW)
+        desc.coord_space = int(dvz.DVZ_VISUAL_COORD_VIEW)
     else:
         raise ValueError(f"unsupported Datoviz coordinate space: {coord_space}")
     if hasattr(desc, "clip_rect"):
@@ -3558,14 +3544,9 @@ def _datoviz_visual_coord_space(coordinate_space: CoordinateSpace) -> str:
     )
 
 
-def _coord_space_value(dvz: Any, name: str, fallback: int) -> int:
-    value = getattr(dvz, name, None)
-    if value is not None:
-        return int(value)
-    enum_type = getattr(dvz, "DvzVisualCoordSpace", None)
-    if enum_type is not None:
-        return int(getattr(enum_type, name))
-    return fallback
+def _image_visual_is_packed_rgba8(visual: ImageVisual) -> bool:
+    image = np.asarray(visual.image)
+    return image.dtype == np.uint8 and image.ndim == 3 and image.shape[2] == 4
 
 
 def _controller_mode_value(dvz: Any, name: str, fallback: int) -> int:

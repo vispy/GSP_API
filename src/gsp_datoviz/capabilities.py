@@ -89,8 +89,10 @@ _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS = (
     "DvzCameraView",
     "DvzCameraProjection",
     "dvz_camera_desc",
-    "dvz_panel_set_camera",
     "dvz_camera_set_orthographic_bounds",
+    "dvz_panel_view3d_desc",
+    "dvz_panel_set_view3d_desc",
+    "dvz_panel_camera",
 )
 
 _REQUIRED_DVZ_VIEW3D_RETAINED_DATA_FUNCTIONS = (
@@ -617,7 +619,11 @@ def _datoviz_v04_view3d_binding_diagnostics(dvz: ModuleType | Any | None) -> tup
     return tuple(
         f"missing {name}"
         for name in _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS
-        if not hasattr(dvz, name)
+        if (
+            not callable(getattr(dvz, name, None))
+            if name.startswith("dvz_")
+            else not hasattr(dvz, name)
+        )
     )
 
 
