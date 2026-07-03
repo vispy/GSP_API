@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Approved for codex-ucl.
+Completed by codex-ucl.
 
 ## Summary
 
@@ -62,3 +62,13 @@ This is evidence work first, not capability promotion.
 - Stop and create a ChatGPT Pro consultation packet if native Datoviz picking requires a new public
   GSP semantic decision.
 - Stop if provider/runtime setup requires manual credential, account, or build-system intervention.
+
+## Result
+
+Completed as run `R20260703-091617-M200`. See
+`.agent/S050_DATOVIZ_MESH_PICK_EVIDENCE.md`.
+
+Outcome: Datoviz upstream API work is required before GSP can safely advertise
+`query.view3d.mesh_triangle_pick.v1`. The local Datoviz v0.4 query plumbing exposes visual identity
+and query result fields, but the current mesh query path does not populate a public canonical
+face/triangle id for mesh hits.

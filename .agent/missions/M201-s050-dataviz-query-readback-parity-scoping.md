@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft pending M200.
+Blocked pending Datoviz mesh triangle query API work.
 
 ## Summary
 
@@ -18,3 +18,9 @@ payload policy, and scientific/raw readback decisions.
 
 - Stop if M200 reports that Datoviz API work must happen first.
 - Stop before introducing new query semantics without a ChatGPT Pro consultation packet.
+
+## Blocker
+
+M200 reported that Datoviz upstream API work is required before GSP can implement or advertise
+native View3D mesh triangle picking. See `.agent/S050_DATOVIZ_MESH_PICK_EVIDENCE.md` and
+`.agent/S050_DATOVIZ_MESH_TRIANGLE_QUERY_HANDOFF.md`.

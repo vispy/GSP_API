@@ -1,0 +1,1 @@
+Datoviz in-process offscreen QA is disabled by default because native offscreen view creation can abort the Python process; set GSP_DATOVIZ_QA_ENABLE_OFFSCREEN=1 to opt in.

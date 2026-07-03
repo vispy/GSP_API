@@ -299,7 +299,7 @@
       "id": "S050",
       "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
       "state": "active",
-      "progress": 10
+      "progress": 35
     }
   ],
   "missions": [
@@ -2089,16 +2089,16 @@
       "id": "M200",
       "title": "S050 Datoviz native mesh-pick evidence spike",
       "stage": "S050",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 200
     },
     {
       "id": "M201",
       "title": "S050 Datoviz query and readback parity scoping",
       "stage": "S050",
-      "state": "draft",
+      "state": "blocked",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 201
@@ -2107,9 +2107,9 @@
       "id": "M202",
       "title": "S050 Datoviz guide text and colorbar strictness scoping",
       "stage": "S050",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 202
     },
     {
@@ -2129,6 +2129,42 @@
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 204
+    },
+    {
+      "id": "M205",
+      "title": "S050 Datoviz mesh triangle query upstream handoff",
+      "stage": "S050",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 205
+    },
+    {
+      "id": "M206",
+      "title": "S050 Datoviz colorbar explicit tick proof",
+      "stage": "S050",
+      "state": "blocked",
+      "agent": "local-main-codex",
+      "progress": 40,
+      "priority": 206
+    },
+    {
+      "id": "M207",
+      "title": "S050 Datoviz guide query strictness audit",
+      "stage": "S050",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 207
+    },
+    {
+      "id": "M208",
+      "title": "S050 Datoviz TextVisual strictness proof",
+      "stage": "S050",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 208
     }
   ],
   "review_queue": [],
@@ -2226,24 +2262,18 @@
     }
   ],
   "recommendations": [
-    "S050 is open: user approved the implementation roadmap branch; M200 is the next approved mission for Datoviz native mesh-pick evidence.",
-    "Run M200 first. Promote Datoviz query.view3d.mesh_triangle_pick.v1 only if public GSP visual_id, primitive_index, and pick-scene freshness are proven.",
-    "Keep M201-M203 as draft follow-ups until M200 reports whether Datoviz needs an upstream API handoff, a GSP adapter-only implementation, or a protocol consultation.",
+    "Do not promote Datoviz query.view3d.mesh_triangle_pick.v1 until upstream Datoviz exposes public canonical mesh face/triangle identity and native tests cover it.",
+    "Do not refresh/promote Datoviz colorbar strictness in S050 until the current offscreen colorbar review crash exits cleanly.",
+    "M207 is the next GSP-local scoping/audit candidate if work should avoid Datoviz mesh picking and colorbar offscreen rendering; keep panel-title absence as a hard guide-strictness blocker.",
+    "M203 remains a viable draft scoping branch for strict 3D depth/mesh semantics if we want to avoid guide/text/colorbar runtime instability.",
     "M204 remains blocked pending ChatGPT Pro consultation because materials/textures and broader VisPy2 public API design are architecture/API-shape decisions.",
-    "S049 white paper draft is complete but was not previously reflected in .agent/status.json; Mission Control has reconciled it as completed.",
-    "S048 completed: Datoviz-style Matplotlib arcball and native Datoviz arcball review paths are approved for examples 07, 08, 10, 11, and 13 with no source changes required.",
-    "S047 completed: perspective View3D is implemented for protocol, Matplotlib, Datoviz, review examples, and center-dolly wheel zoom.",
-    "S046 completed: 3D review examples now cover S044 mesh picking, OBJ-style flat Lambert mesh rendering, and deterministic View3D camera paths.",
-    "Next branch is user choice: continue examples with producer-facing VisPy2 3D helpers, open Datoviz native mesh-pick evidence, or approve M131 release mechanics with target version/tag/publish scope.",
-    "S045 completed: release-facing docs now summarize S034-S044 capability state and stop conditions.",
-    "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target.",
-    "S044 completed: grid clipping proof is consolidated and View3D mesh triangle picking has a backend-neutral protocol plus Matplotlib CPU oracle.",
-    "Datoviz must not advertise query.view3d.mesh_triangle_pick.v1 until native public visual_id/primitive_index mapping and pick-scene freshness are proven.",
-    "Native Datoviz grid clipping remains a separate verified capability and must not be treated as full guide strictness.",
-    "Datoviz View3D live review uses native dvz_view_arcball when available; the old canonical GSP replay path remains experimental-only.",
-    "Optional hardening after M194 is a Datoviz native mesh-pick evidence spike, not public capability promotion."
+    "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M202 completed: split Datoviz guide/text/colorbar strictness into M206 colorbar proof, M207 guide query strictness audit, and M208 TextVisual strictness proof.",
+    "M206 blocked: current Datoviz facade exposes colorbar explicit tick symbols and focused GSP tests pass, but the offscreen review-pack run for color/scalar_image_viridis_colorbar exits 139.",
+    "M205 completed: converted M200 evidence into a Datoviz upstream mesh triangle query handoff with exact files/functions, result-field semantics, and native fixture requirements.",
+    "M200 completed: Datoviz upstream API work is required before GSP can safely advertise query.view3d.mesh_triangle_pick.v1; current native mesh query results do not expose canonical face/triangle identity.",
     "M199 completed: reconciled unregistered M198/S049 white paper status, opened S050 as the post-S048 implementation roadmap, approved M200 for Datoviz native mesh-pick evidence, and drafted follow-up parity/strictness/API missions.",
     "M198 completed: prepared the GSP white paper draft under whitepaper/ and recorded .agent/S049_CLOSEOUT.md; this status entry reconciles existing filesystem records.",
     "M197 completed: validated examples 07, 08, 10, 11, and 13 offscreen with both Matplotlib and Datoviz, passed focused arcball/native-arcball tests, and kept Datoviz native arcball as live-review behavior only.",
@@ -2338,6 +2368,10 @@
     "M112 completed: added the S029 capability matrix schema, review-pack generator, Datoviz review-pack runtime wrapper, focused tests, and Mission Control opening records."
   ],
   "summaries": [
+    "M202 completed: added .agent/S050_DATOVIZ_GUIDE_TEXT_COLORBAR_SCOPING.md and follow-up missions M206-M208.",
+    "M206 blocked: added .agent/S050_DATOVIZ_COLORBAR_EXPLICIT_TICK_PROOF.md; adapter tests pass but current Datoviz offscreen colorbar review segfaults, so no S050 colorbar promotion was made.",
+    "M200 completed: added .agent/S050_DATOVIZ_MESH_PICK_EVIDENCE.md; GSP-only Datoviz mesh triangle picking is not viable because current native mesh query ids collapse non-instanced hits to one item id.",
+    "M205 completed: added .agent/S050_DATOVIZ_MESH_TRIANGLE_QUERY_HANDOFF.md, preserving GSP Datoviz structured unsupported behavior until Datoviz exposes public mesh face/triangle identity.",
     "S033 correction: enforced Datoviz legacy_srgb_blend as the renderer and visual-QA comparison default, made missing legacy pipeline support fail loudly, and made the legacy all-cases sheet the primary review artifact.",
     "M129 completed: updated release-facing limitations for adapted Datoviz text and guide rows, validated status JSON, diff whitespace, and strict MkDocs build, and left M131 blocked pending explicit release approval.",
     "M128 completed: audited the six adapted Datoviz rows, chose release-preparation as the default branch, left strict promotion as optional M130, and blocked M131 release operations pending explicit approval.",

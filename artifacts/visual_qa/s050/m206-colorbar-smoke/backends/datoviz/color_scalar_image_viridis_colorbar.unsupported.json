@@ -1,0 +1,13 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "color/scalar_image_viridis_colorbar",
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "diagnostics": {
+    "env_var": "GSP_DATOVIZ_QA_ENABLE_OFFSCREEN",
+    "required_value": "1"
+  },
+  "reason": "Datoviz in-process offscreen QA is disabled by default because native offscreen view creation can abort the Python process; set GSP_DATOVIZ_QA_ENABLE_OFFSCREEN=1 to opt in.",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

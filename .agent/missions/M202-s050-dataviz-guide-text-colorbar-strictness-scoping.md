@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft pending M200/M201.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -19,3 +19,10 @@ colorbar tick labels, and colorbar query.
 
 - Stop before claiming full guide strictness from grid clipping alone.
 - Stop before changing text or colorbar public contracts without a consultation packet.
+
+## Result
+
+Completed locally. See `.agent/S050_DATOVIZ_GUIDE_TEXT_COLORBAR_SCOPING.md`.
+
+Outcome: split follow-up work into bounded missions. M206 is ready for Datoviz colorbar explicit
+tick/label proof; M207 and M208 remain draft guide/text strictness follow-ups.
