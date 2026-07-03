@@ -1,0 +1,22 @@
+{
+  "backends": [
+    "matplotlib"
+  ],
+  "case_ids": [
+    "guide/view2d_auto_grid",
+    "guide/view2d_reversed_explicit",
+    "guide/view2d_grid_clip_title_boundary"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "device_scale": 1.0,
+  "resolution": [
+    800,
+    600
+  ],
+  "run_id": "s050-m207-guide-query-audit",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-07-03T21:03:36.662200+00:00",
+  "suite": "s028"
+}

@@ -2152,16 +2152,16 @@
       "id": "M207",
       "title": "S050 Datoviz guide query strictness audit",
       "stage": "S050",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 207
     },
     {
       "id": "M208",
       "title": "S050 Datoviz TextVisual strictness proof",
       "stage": "S050",
-      "state": "draft",
+      "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 208
@@ -2335,8 +2335,9 @@
   ],
   "recommendations": [
     "Do not promote Datoviz query.view3d.mesh_triangle_pick.v1 until upstream Datoviz exposes public canonical mesh face/triangle identity and native tests cover it.",
-    "M207 is ready: audit Datoviz guide query strictness using current panel-frame/guide-hit evidence without claiming full guide strictness from partial title/layout support.",
+    "M208 is ready: run focused Datoviz TextVisual strictness proof without changing TextVisual public semantics or claiming text query/readback support.",
     "M214 completed latest Datoviz v0.4-dev generated-binding alignment without aliases, shims, or sibling Datoviz checkout edits.",
+    "Do not promote Datoviz guide/View2D strictness: M207 real offscreen evidence crashed for guide rows, and native panel-title evidence remains required.",
     "Do not promote S050 strict opaque depth beyond adapted until the M214 depth artifact is manually reviewed and a family-specific promotion audit is recorded.",
     "M216 remains draft for a live Datoviz point/image payload evidence refresh; run it only if the current v0.4 runtime/offscreen setup is already available without manual build or GPU intervention.",
     "M215 completed: Datoviz query/readback docs now distinguish capability-gated guide/all-rendered query from still-deferred live rich payload parity, scientific readback, hit_policy=all, and mesh-triangle picking.",
@@ -2346,6 +2347,7 @@
   ],
   "notes": [
     "M215 completed: updated spec/backends/datoviz.md query/readback wording to reflect S043 panel-frame guide hit/readback capability gates and preserved unsupported boundaries for hit_policy=all, unsupported extension payloads, scientific readback, and mesh-triangle picking.",
+    "M207 completed with no guide promotion: artifacts/visual_qa/s050/m207-guide-query-audit and artifacts/visual_qa/s050/m207-guide-auto-single show Datoviz guide offscreen child crashes with signal 11; focused panel-frame/guide-query gate tests pass.",
     "M206 completed after M214 evidence: real Datoviz rendered color/scalar_image_viridis_colorbar with strict/pass.semantic_strict status at artifacts/visual_qa/s050/m214-latest-colorbar; colorbar query remains unsupported pending native guide-hit payload evidence.",
     "M214 completed: added a latest-only Datoviz generated-binding contract, replaced stale coordinate/image/View3D camera API usage, archived P030 response, and generated real Datoviz review packs at artifacts/visual_qa/s050/m214-latest-colorbar and artifacts/visual_qa/s050/m214-latest-depth.",
     "M201 completed: scoped Datoviz query/readback follow-up after M200; mesh triangle picking waits on upstream Datoviz face/triangle query API, while M215 refreshed docs/status and M216 can later refresh live point/image payload evidence.",

@@ -1,0 +1,143 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m207-guide-auto-single/scenes/guide_view2d_auto_grid.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "log_path": "artifacts/visual_qa/s050/m207-guide-auto-single/backends/datoviz/guide_view2d_auto_grid.native_crash.log.txt",
+          "reason": "Datoviz offscreen child process terminated by signal 11",
+          "status": "error",
+          "unsupported_path": "artifacts/visual_qa/s050/m207-guide-auto-single/backends/datoviz/guide_view2d_auto_grid.native_crash.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m207-guide-auto-single/backends/matplotlib/guide_view2d_auto_grid.png",
+          "backend_id": "matplotlib",
+          "layout_snapshot": {
+            "axis_label_boxes": [
+              {
+                "guide_id": "guide:s028-auto-x",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 14.0,
+                  "width": 44.0,
+                  "x": 403.8888888888889,
+                  "y": 508.5902777777778
+                },
+                "role": "x_axis_label"
+              },
+              {
+                "guide_id": "guide:s028-auto-y",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 44.0,
+                  "width": 14.000000000000002,
+                  "x": 11.11111111111112,
+                  "y": 278.0
+                },
+                "role": "y_axis_label"
+              }
+            ],
+            "diagnostics": [
+              {
+                "code": "matplotlib_native_layout_resolved",
+                "status": "resolved"
+              }
+            ],
+            "grid_clip_rect_px": {
+              "height": 358.625,
+              "width": 717.25,
+              "x": 67.2638888888889,
+              "y": 120.6875
+            },
+            "guide_box_count": 13,
+            "panel_rect_px": {
+              "height": 600.0,
+              "width": 800.0,
+              "x": 0.0,
+              "y": 0.0
+            },
+            "plot_rect_px": {
+              "height": 358.625,
+              "width": 717.25,
+              "x": 67.2638888888889,
+              "y": 120.6875
+            },
+            "render_target": {
+              "device_scale": 1.0,
+              "dpi": 100.0,
+              "framebuffer_height_px": 600,
+              "framebuffer_width_px": 800,
+              "logical_height_px": 600.0,
+              "logical_width_px": 800.0,
+              "pixel_origin": "top-left"
+            },
+            "snapshot_id": "layout:guide_view2d_auto_grid:matplotlib",
+            "tick_label_box_count": 10,
+            "title_boxes": [
+              {
+                "guide_id": "guide:s028-auto-title",
+                "kind": "title",
+                "rect_px": {
+                  "height": 18.0,
+                  "width": 204.5,
+                  "x": 323.6388888888889,
+                  "y": 98.35416666666669
+                },
+                "role": "title"
+              }
+            ],
+            "view_id": "view:s028-auto",
+            "z_layer_count": 3
+          },
+          "layout_snapshot_id": "layout:guide_view2d_auto_grid:matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m207-guide-auto-single/backends/matplotlib/guide_view2d_auto_grid.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_auto_grid",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "auto-ticks",
+        "grid",
+        "labels"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m207-guide-auto-single/scenes/guide_view2d_auto_grid.scene.json",
+      "title": "View2D guide auto ticks and grids"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s050/m207-guide-auto-single/contact_sheets/guide_view2d_auto_grid.png",
+    "artifacts/visual_qa/s050/m207-guide-auto-single/contact_sheets/s028_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "f5b81a397e3be69ecfffbffa88754c1c227e6820",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s050/m207-guide-auto-single/environment.json",
+  "run_id": "s050-m207-guide-auto-single",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-07-03T21:04:11.129310+00:00",
+  "suite": "s028"
+}

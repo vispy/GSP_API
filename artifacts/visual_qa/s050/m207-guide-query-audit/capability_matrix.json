@@ -1,0 +1,210 @@
+{
+  "generated_at": "2026-07-03T21:03:38.518146+00:00",
+  "review_classification_summary": {
+    "fail.layout": 0,
+    "fail.query": 0,
+    "fail.semantic": 3,
+    "pass.layout_strict": 0,
+    "pass.raster_tolerant": 0,
+    "pass.semantic_strict": 3,
+    "review.adapted": 0,
+    "review.native_backend": 0,
+    "unsupported.capability": 0
+  },
+  "review_classification_taxonomy": [
+    "pass.semantic_strict",
+    "pass.layout_strict",
+    "pass.raster_tolerant",
+    "review.adapted",
+    "review.native_backend",
+    "fail.semantic",
+    "fail.layout",
+    "fail.query",
+    "unsupported.capability"
+  ],
+  "rows": [
+    {
+      "backend": "matplotlib",
+      "case_id": "guide/view2d_auto_grid",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/matplotlib/guide_view2d_auto_grid.png",
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/matplotlib/guide_view2d_auto_grid.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "auto-ticks",
+        "grid",
+        "labels"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "guide/view2d_auto_grid",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/datoviz/guide_view2d_auto_grid.native_crash.json",
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/datoviz/guide_view2d_auto_grid.native_crash.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [],
+      "known_missing_semantics": [
+        "Datoviz offscreen child process terminated by signal 11"
+      ],
+      "promotion_blockers": [
+        "runtime error must be isolated before promotion"
+      ],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "auto-ticks",
+        "grid",
+        "labels"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_runtime_error",
+      "rendering_supported": false,
+      "review_classification": "fail.semantic",
+      "status": "crashed"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "guide/view2d_reversed_explicit",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/matplotlib/guide_view2d_reversed_explicit.png",
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/matplotlib/guide_view2d_reversed_explicit.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "reversed-limits",
+        "explicit-ticks",
+        "grid",
+        "labels"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "guide/view2d_reversed_explicit",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/datoviz/guide_view2d_reversed_explicit.native_crash.json",
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/datoviz/guide_view2d_reversed_explicit.native_crash.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [],
+      "known_missing_semantics": [
+        "Datoviz offscreen child process terminated by signal 11"
+      ],
+      "promotion_blockers": [
+        "runtime error must be isolated before promotion"
+      ],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "reversed-limits",
+        "explicit-ticks",
+        "grid",
+        "labels"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_runtime_error",
+      "rendering_supported": false,
+      "review_classification": "fail.semantic",
+      "status": "crashed"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "guide/view2d_grid_clip_title_boundary",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/matplotlib/guide_view2d_grid_clip_title_boundary.png",
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/matplotlib/guide_view2d_grid_clip_title_boundary.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "explicit-ticks",
+        "grid",
+        "plot-clip",
+        "title"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "guide/view2d_grid_clip_title_boundary",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/datoviz/guide_view2d_grid_clip_title_boundary.native_crash.json",
+        "artifacts/visual_qa/s050/m207-guide-query-audit/backends/datoviz/guide_view2d_grid_clip_title_boundary.native_crash.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [],
+      "known_missing_semantics": [
+        "Datoviz offscreen child process terminated by signal 11"
+      ],
+      "promotion_blockers": [
+        "runtime error must be isolated before promotion"
+      ],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "explicit-ticks",
+        "grid",
+        "plot-clip",
+        "title"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_runtime_error",
+      "rendering_supported": false,
+      "review_classification": "fail.semantic",
+      "status": "crashed"
+    }
+  ],
+  "run_id": "s050-m207-guide-query-audit",
+  "schema_kind": "gsp.visual_qa.capability_matrix",
+  "schema_version": 1,
+  "stage": "S028",
+  "status_taxonomy": [
+    "strict",
+    "adapted",
+    "experimental",
+    "unsupported",
+    "disabled",
+    "crashed",
+    "not_run"
+  ],
+  "suite": "s028",
+  "summary": {
+    "adapted": 0,
+    "crashed": 3,
+    "disabled": 0,
+    "experimental": 0,
+    "not_run": 0,
+    "strict": 3,
+    "unsupported": 0
+  }
+}

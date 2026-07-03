@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft pending M206/M207 or explicit approval.
+Ready.
 
 ## Summary
 

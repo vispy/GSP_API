@@ -1,0 +1,5 @@
+schema_version: 1
+cases:
+  - case_id: guide/view2d_auto_grid
+    status: pending
+    notes: ''

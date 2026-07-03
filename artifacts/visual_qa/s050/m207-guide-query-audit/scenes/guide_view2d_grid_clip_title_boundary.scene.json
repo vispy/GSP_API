@@ -1,0 +1,166 @@
+{
+  "arrays": {
+    "point_colors": {
+      "dtype": "uint8",
+      "key": "point_colors",
+      "path": "guide_view2d_grid_clip_title_boundary.arrays.npz",
+      "shape": [
+        3,
+        4
+      ]
+    },
+    "point_positions": {
+      "dtype": "float32",
+      "key": "point_positions",
+      "path": "guide_view2d_grid_clip_title_boundary.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "point_sizes": {
+      "dtype": "float32",
+      "key": "point_sizes",
+      "path": "guide_view2d_grid_clip_title_boundary.arrays.npz",
+      "shape": [
+        3
+      ]
+    }
+  },
+  "axis_guides": [
+    {
+      "dimension": "x",
+      "grid_visible": true,
+      "id": "guide:s028-grid-clip-x",
+      "label_text": "clip x",
+      "query_policy": "non-queryable",
+      "side": "bottom",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": [
+          "-2",
+          "0",
+          "2"
+        ],
+        "explicit_values": [
+          -2.0,
+          0.0,
+          2.0
+        ],
+        "kind": "explicit",
+        "target_count": null
+      },
+      "view_id": "view:s028-grid-clip",
+      "visible": true
+    },
+    {
+      "dimension": "y",
+      "grid_visible": true,
+      "id": "guide:s028-grid-clip-y",
+      "label_text": "clip y",
+      "query_policy": "non-queryable",
+      "side": "left",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": [
+          "-1",
+          "0",
+          "1"
+        ],
+        "explicit_values": [
+          -1.0,
+          0.0,
+          1.0
+        ],
+        "kind": "explicit",
+        "target_count": null
+      },
+      "view_id": "view:s028-grid-clip",
+      "visible": true
+    }
+  ],
+  "case_id": "guide/view2d_grid_clip_title_boundary",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [
+    {
+      "id": "guide:s028-grid-clip-title",
+      "panel_id": "panel:main",
+      "query_policy": "non-queryable",
+      "role": "title",
+      "style": {
+        "guide_margin_px": null,
+        "title_font_size_px": null
+      },
+      "text": "S028 grid clip boundary"
+    }
+  ],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [],
+  "view3d": null,
+  "views": [
+    {
+      "aspect_policy": "auto",
+      "clip": true,
+      "id": "view:s028-grid-clip",
+      "kind": "view2d-linear",
+      "panel_id": "panel:main",
+      "x_range": [
+        -2.0,
+        2.0
+      ],
+      "y_range": [
+        -1.0,
+        1.0
+      ]
+    }
+  ],
+  "visuals": [
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          3,
+          4
+        ]
+      },
+      "coordinate_space": "data",
+      "family": "point",
+      "id": "visual:s028-grid-clip-guide-points",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          3,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          3
+        ]
+      }
+    }
+  ]
+}

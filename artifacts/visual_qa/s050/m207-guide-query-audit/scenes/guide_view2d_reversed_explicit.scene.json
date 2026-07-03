@@ -1,0 +1,166 @@
+{
+  "arrays": {
+    "point_colors": {
+      "dtype": "uint8",
+      "key": "point_colors",
+      "path": "guide_view2d_reversed_explicit.arrays.npz",
+      "shape": [
+        4,
+        4
+      ]
+    },
+    "point_positions": {
+      "dtype": "float32",
+      "key": "point_positions",
+      "path": "guide_view2d_reversed_explicit.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "point_sizes": {
+      "dtype": "float32",
+      "key": "point_sizes",
+      "path": "guide_view2d_reversed_explicit.arrays.npz",
+      "shape": [
+        4
+      ]
+    }
+  },
+  "axis_guides": [
+    {
+      "dimension": "x",
+      "grid_visible": true,
+      "id": "guide:s028-reversed-x",
+      "label_text": "reversed x",
+      "query_policy": "non-queryable",
+      "side": "bottom",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": [
+          "right",
+          "center",
+          "left"
+        ],
+        "explicit_values": [
+          1.0,
+          0.0,
+          -1.0
+        ],
+        "kind": "explicit",
+        "target_count": null
+      },
+      "view_id": "view:s028-reversed",
+      "visible": true
+    },
+    {
+      "dimension": "y",
+      "grid_visible": true,
+      "id": "guide:s028-reversed-y",
+      "label_text": "reversed y",
+      "query_policy": "non-queryable",
+      "side": "left",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": [
+          "top",
+          "center",
+          "bottom"
+        ],
+        "explicit_values": [
+          1.0,
+          0.0,
+          -1.0
+        ],
+        "kind": "explicit",
+        "target_count": null
+      },
+      "view_id": "view:s028-reversed",
+      "visible": true
+    }
+  ],
+  "case_id": "guide/view2d_reversed_explicit",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [
+    {
+      "id": "guide:s028-reversed-title",
+      "panel_id": "panel:main",
+      "query_policy": "non-queryable",
+      "role": "title",
+      "style": {
+        "guide_margin_px": null,
+        "title_font_size_px": null
+      },
+      "text": "S028 reversed guide View2D"
+    }
+  ],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [],
+  "view3d": null,
+  "views": [
+    {
+      "aspect_policy": "auto",
+      "clip": true,
+      "id": "view:s028-reversed",
+      "kind": "view2d-linear",
+      "panel_id": "panel:main",
+      "x_range": [
+        1.0,
+        -1.0
+      ],
+      "y_range": [
+        1.0,
+        -1.0
+      ]
+    }
+  ],
+  "visuals": [
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          4,
+          4
+        ]
+      },
+      "coordinate_space": "data",
+      "family": "point",
+      "id": "visual:s028-reversed-guide-points",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          4
+        ]
+      }
+    }
+  ]
+}
