@@ -1,0 +1,104 @@
+{
+  "generated_at": "2026-07-03T11:01:04.091409+00:00",
+  "review_classification_summary": {
+    "fail.layout": 0,
+    "fail.query": 0,
+    "fail.semantic": 0,
+    "pass.layout_strict": 0,
+    "pass.raster_tolerant": 0,
+    "pass.semantic_strict": 1,
+    "review.adapted": 0,
+    "review.native_backend": 0,
+    "unsupported.capability": 1
+  },
+  "review_classification_taxonomy": [
+    "pass.semantic_strict",
+    "pass.layout_strict",
+    "pass.raster_tolerant",
+    "review.adapted",
+    "review.native_backend",
+    "fail.semantic",
+    "fail.layout",
+    "fail.query",
+    "unsupported.capability"
+  ],
+  "rows": [
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh3d/opaque_depth_intersecting_triangles_view3d",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m210-depth-proof-diagnostic/backends/matplotlib/mesh3d_opaque_depth_intersecting_triangles_view3d.png",
+        "artifacts/visual_qa/s050/m210-depth-proof-diagnostic/backends/matplotlib/mesh3d_opaque_depth_intersecting_triangles_view3d.log.txt"
+      ],
+      "family": "mesh3d",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "mesh",
+        "view3d",
+        "data",
+        "rgba8",
+        "per-face",
+        "opaque-depth-candidate"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh3d/opaque_depth_intersecting_triangles_view3d",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m210-depth-proof-diagnostic/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_view3d.unsupported.json",
+        "artifacts/visual_qa/s050/m210-depth-proof-diagnostic/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_view3d.log.txt"
+      ],
+      "family": "mesh3d",
+      "known_adaptations": [],
+      "known_missing_semantics": [
+        "Datoviz offscreen rendering was not opted in for this run"
+      ],
+      "promotion_blockers": [
+        "rerun with Datoviz offscreen opt-in or subprocess isolation"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "view3d",
+        "data",
+        "rgba8",
+        "per-face",
+        "opaque-depth-candidate"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_offscreen_disabled",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "disabled"
+    }
+  ],
+  "run_id": "s050-m210-depth-diagnostic",
+  "schema_kind": "gsp.visual_qa.capability_matrix",
+  "schema_version": 1,
+  "stage": "S050",
+  "status_taxonomy": [
+    "strict",
+    "adapted",
+    "experimental",
+    "unsupported",
+    "disabled",
+    "crashed",
+    "not_run"
+  ],
+  "suite": "s050",
+  "summary": {
+    "adapted": 0,
+    "crashed": 0,
+    "disabled": 1,
+    "experimental": 0,
+    "not_run": 0,
+    "strict": 1,
+    "unsupported": 0
+  }
+}

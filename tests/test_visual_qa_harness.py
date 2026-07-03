@@ -22,6 +22,7 @@ from gsp.qa.visual.cases import (
     S027_SUITE,
     S028_SUITE,
     S034_SUITE,
+    S050_SUITE,
     get_case,
     list_cases,
 )
@@ -1361,6 +1362,41 @@ def test_s034_layout_snapshot_reports_device_scale(tmp_path: Path) -> None:
     assert target["framebuffer_width_px"] == 640
     assert target["framebuffer_height_px"] == 440
     assert snapshot["grid_clip_rect_px"] == snapshot["plot_rect_px"]
+
+
+def test_s050_case_registry_exposes_strict_depth_candidate() -> None:
+    """S050 adds the retained View3D strict-depth proof candidate as a focused case."""
+    case_ids = [case.case_id for case in list_cases(suite=S050_SUITE)]
+
+    assert case_ids == ["mesh3d/opaque_depth_intersecting_triangles_view3d"]
+
+
+def test_s050_view3d_depth_case_writes_scene_metadata(tmp_path: Path) -> None:
+    """S050 strict-depth fixture records View3D and sample expectations."""
+    report = run_visual_qa_suite(
+        suite=S050_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=("mesh3d/opaque_depth_intersecting_triangles_view3d",),
+        contact_sheet=False,
+        run_id="test-s050-depth",
+        resolution=(320, 240),
+    )
+
+    assert report["stage"] == "S050"
+    backend = report["cases"][0]["backends"]["matplotlib"]
+    assert backend["status"] == "rendered"
+    scene = json.loads(
+        (
+            tmp_path
+            / "scenes"
+            / "mesh3d_opaque_depth_intersecting_triangles_view3d.scene.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert scene["view3d"]["projection"]["kind"] == "orthographic"
+    assert scene["visuals"][0]["coordinate_space"] == "data"
+    assert scene["visuals"][0]["depth_test"] == "enabled"
+    assert scene["arrays"]["expected_sample_ndc_xy"]["shape"] == [2, 2]
 
 
 def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:

@@ -10,11 +10,13 @@ from gsp.protocol import (
     AxisGuide,
     AxisGuideStyle,
     AxisSide,
+    Camera3D,
     ColorMapId,
     ColorMapRef,
     ColorScale,
     ColorbarGuide,
     CoordinateSpace,
+    DepthMode,
     FontRole,
     ImageColormap,
     ImageInterpolation,
@@ -24,6 +26,7 @@ from gsp.protocol import (
     MeshVisual,
     MarkerShape,
     MarkerVisual,
+    OrthographicProjection3D,
     PanelTextGuide,
     PanelTextGuideStyle,
     PanelTextRole,
@@ -41,6 +44,7 @@ from gsp.protocol import (
     TickSpec,
     TickSpecKind,
     View2D,
+    View3D,
     VisualTransformBinding,
 )
 from gsp.qa.visual.case_spec import VisualQACase, VisualQAScene
@@ -53,6 +57,7 @@ S026_SUITE = "s026"
 S027_SUITE = "s027"
 S028_SUITE = "s028"
 S034_SUITE = "s034"
+S050_SUITE = "s050"
 
 
 def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
@@ -97,6 +102,8 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
             + _s028_guide_view2d_cases()
             + _s034_layout_cases()
         )
+    if suite == S050_SUITE:
+        return _s050_strict_depth_cases()
     raise ValueError(f"unknown visual QA suite: {suite}")
 
 
@@ -416,6 +423,25 @@ def _s034_layout_cases() -> tuple[VisualQACase, ...]:
     )
 
 
+def _s050_strict_depth_cases() -> tuple[VisualQACase, ...]:
+    return (
+        VisualQACase(
+            case_id="mesh3d/opaque_depth_intersecting_triangles_view3d",
+            title="View3D opaque depth intersecting triangles",
+            family="mesh3d",
+            required_features=(
+                "mesh",
+                "view3d",
+                "data",
+                "rgba8",
+                "per-face",
+                "opaque-depth-candidate",
+            ),
+            builder=_mesh3d_opaque_depth_intersecting_triangles_view3d,
+        ),
+    )
+
+
 def get_case(case_id: str, *, suite: str = S023_SUITE) -> VisualQACase:
     """Return one registered case by id."""
     for case in list_cases(suite=suite):
@@ -427,6 +453,70 @@ def get_case(case_id: str, *, suite: str = S023_SUITE) -> VisualQACase:
 def case_slug(case_id: str) -> str:
     """Return a filesystem-safe case slug."""
     return case_id.replace("/", "_")
+
+
+def _mesh3d_opaque_depth_intersecting_triangles_view3d() -> VisualQAScene:
+    positions = np.array(
+        [
+            [-0.75, -0.70, 1.60],
+            [0.75, -0.70, -1.60],
+            [-0.75, 0.70, -1.60],
+            [-0.75, -0.70, -0.40],
+            [0.75, -0.70, 1.20],
+            [-0.75, 0.70, 1.20],
+        ],
+        dtype=np.float32,
+    )
+    faces = np.array([[0, 1, 2], [3, 4, 5]], dtype=np.uint32)
+    colors = np.array(
+        [[230, 57, 70, 255], [69, 123, 157, 255]],
+        dtype=np.uint8,
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d-opaque-depth-intersecting-triangles",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.DATA,
+        color=colors,
+        color_mode=MeshColorMode.FACE,
+        depth_test=DepthMode.ENABLED,
+        depth_write=DepthMode.ENABLED,
+    )
+    view3d = View3D(
+        id="view:mesh3d-depth-proof",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 2.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-1.0, 1.0),
+            ylim=(-1.0, 1.0),
+            near_far=(0.0, 4.0),
+        ),
+    )
+    return VisualQAScene(
+        case_id="mesh3d/opaque_depth_intersecting_triangles_view3d",
+        visuals=(mesh,),
+        arrays={
+            "mesh_positions": positions,
+            "mesh_faces": faces,
+            "mesh_face_colors": colors,
+            "expected_left_rgba": colors[0],
+            "expected_right_rgba": colors[1],
+            "expected_sample_ndc_xy": np.array(
+                [[-0.55, -0.45], [0.20, -0.45]],
+                dtype=np.float32,
+            ),
+        },
+        view3d=view3d,
+        notes=(
+            "Two opaque DATA-space triangles share the same projected XY footprint and cross in depth.",
+            "Strict per-fragment depth should show red at the left sample and blue at the right sample.",
+            "Average-face painter sorting draws blue last across the whole overlap, so this fixture separates adapted from strict depth.",
+        ),
+    )
 
 
 def _point_basic_ndc() -> VisualQAScene:

@@ -1,0 +1,32 @@
+{
+  "capability_matrix_path": "capability_matrix.json",
+  "case_count": 1,
+  "contact_sheets": [
+    "artifacts/visual_qa/s050/m210-depth-proof-matplotlib/contact_sheets/mesh3d_opaque_depth_intersecting_triangles_view3d.png",
+    "artifacts/visual_qa/s050/m210-depth-proof-matplotlib/contact_sheets/s050_all_cases.png"
+  ],
+  "datoviz_review_classification_counts": {
+    "fail.layout": 0,
+    "fail.query": 0,
+    "fail.semantic": 0,
+    "pass.layout_strict": 0,
+    "pass.raster_tolerant": 0,
+    "pass.semantic_strict": 0,
+    "review.adapted": 0,
+    "review.native_backend": 0,
+    "unsupported.capability": 1
+  },
+  "datoviz_status_counts": {
+    "adapted": 0,
+    "crashed": 0,
+    "disabled": 0,
+    "experimental": 0,
+    "not_run": 1,
+    "strict": 0,
+    "unsupported": 0
+  },
+  "run_id": "s050-m210-depth-matplotlib",
+  "schema_kind": "gsp.visual_qa.review_summary",
+  "schema_version": 1,
+  "suite": "s050"
+}
