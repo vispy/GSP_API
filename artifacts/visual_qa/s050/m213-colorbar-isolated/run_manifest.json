@@ -1,0 +1,20 @@
+{
+  "backends": [
+    "matplotlib"
+  ],
+  "case_ids": [
+    "color/scalar_image_viridis_colorbar"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "device_scale": 1.0,
+  "resolution": [
+    640,
+    480
+  ],
+  "run_id": "s050-m213-colorbar-isolated",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-07-03T11:30:50.392184+00:00",
+  "suite": "s028"
+}

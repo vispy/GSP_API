@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Blocked pending Datoviz offscreen crash isolation.
+Blocked pending Datoviz coordinate-space enum compatibility.
 
 ## Summary
 
@@ -41,6 +41,10 @@ defines the strict fixture and acceptance criteria.
 Blocked locally. See `.agent/S050_DATOVIZ_RETAINED_VIEW3D_DEPTH_PROOF.md`.
 
 Outcome: added the S050 strict-depth candidate fixture and threaded `view3d` through the visual QA
-harness. Focused tests and Matplotlib/diagnostic review-pack runs pass. The Datoviz opt-in offscreen
-run exits with code `139` after writing partial PNG/log artifacts, so no strict-depth promotion was
-made.
+harness. Focused tests and Matplotlib/diagnostic review-pack runs pass. The initial Datoviz opt-in
+offscreen run exited with code `139` after writing partial PNG/log artifacts, so no strict-depth
+promotion was made in M210.
+
+M213 isolated the offscreen child process. The same S050 strict-depth case now completes as a parent
+review-pack run but reports Datoviz unsupported because the local facade lacks
+`DvzVisualCoordSpace.DVZ_COORD_DATA`. Strict-depth promotion remains blocked.

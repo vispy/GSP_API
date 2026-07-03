@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 511, in _run_datoviz
+    _render_datoviz_visual(renderer, visual)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 771, in _render_datoviz_visual
+    renderer.add_image_visual(visual)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 1382, in add_image_visual
+    _visual_attach_desc(self.dvz, coord_space="view", z_layer=0),
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 3518, in _visual_attach_desc
+    desc.coord_space = _coord_space_value(dvz, "DVZ_COORD_VIEW", DVZ_COORD_VIEW)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 3567, in _coord_space_value
+    return int(getattr(enum_type, name))
+               ~~~~~~~^^^^^^^^^^^^^^^^^
+AttributeError: type object 'DvzVisualCoordSpace' has no attribute 'DVZ_COORD_VIEW'

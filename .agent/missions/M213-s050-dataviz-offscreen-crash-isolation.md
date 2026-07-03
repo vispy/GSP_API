@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -36,3 +36,12 @@ without killing the parent process or leaving ambiguous partial artifacts.
 - Stop before treating partial PNG output from a crashed Datoviz process as promotion evidence.
 - Stop if native crash isolation requires credentials, package publication, or manual build-system
   intervention.
+
+## Result
+
+Completed locally. See `.agent/S050_DATOVIZ_OFFSCREEN_CRASH_ISOLATION.md`.
+
+Outcome: `datoviz-offscreen-opt-in` review packs now run Datoviz in a child process and merge only
+clean child artifacts. Nonzero child exits become structured Datoviz error rows, and child staging
+is discarded. Real M206/M210 retry runs now exit cleanly in the parent and expose coordinate-space
+enum compatibility blockers instead of parent-process crashes.

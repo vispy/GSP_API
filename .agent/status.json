@@ -299,7 +299,7 @@
       "id": "S050",
       "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
       "state": "active",
-      "progress": 55
+      "progress": 62
     }
   ],
   "missions": [
@@ -2145,7 +2145,7 @@
       "stage": "S050",
       "state": "blocked",
       "agent": "local-main-codex",
-      "progress": 40,
+      "progress": 50,
       "priority": 206
     },
     {
@@ -2181,7 +2181,7 @@
       "stage": "S050",
       "state": "blocked",
       "agent": "local-main-codex",
-      "progress": 60,
+      "progress": 70,
       "priority": 210
     },
     {
@@ -2206,10 +2206,19 @@
       "id": "M213",
       "title": "S050 Datoviz offscreen crash isolation",
       "stage": "S050",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 213
+    },
+    {
+      "id": "M214",
+      "title": "S050 Datoviz coordinate-space enum compatibility",
+      "stage": "S050",
       "state": "ready",
       "agent": "local-main-codex",
       "progress": 0,
-      "priority": 213
+      "priority": 214
     }
   ],
   "review_queue": [],
@@ -2308,19 +2317,20 @@
   ],
   "recommendations": [
     "Do not promote Datoviz query.view3d.mesh_triangle_pick.v1 until upstream Datoviz exposes public canonical mesh face/triangle identity and native tests cover it.",
-    "Do not refresh/promote Datoviz colorbar strictness in S050 until the current offscreen colorbar review crash exits cleanly.",
-    "M213 is the next local infrastructure candidate: isolate Datoviz offscreen crashes so M206 and M210 can produce structured pass/fail artifacts without accepting partial output.",
+    "Do not refresh/promote Datoviz colorbar strictness in S050 until DvzVisualCoordSpace.DVZ_COORD_VIEW compatibility is resolved and the isolated colorbar review case passes.",
+    "M214 is the next local Datoviz compatibility candidate: resolve current facade coordinate-space enum mismatches for VIEW/NDC and DATA paths without editing the sibling Datoviz checkout.",
     "M207 remains the next guide-query scoping candidate if work should avoid strict 3D depth and Datoviz offscreen rendering.",
     "Do not accept strict culling, non-opaque mesh alpha, or expanded 3D query payloads without ChatGPT Pro consultation output.",
     "M204 remains blocked pending ChatGPT Pro consultation because materials/textures and broader VisPy2 public API design are architecture/API-shape decisions.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
-    "M210 blocked: added S050 strict-depth visual QA fixture and view3d harness support; focused tests and Matplotlib/diagnostic review-pack runs pass, but Datoviz opt-in offscreen exits 139 after partial artifacts, so meshvisual.positions3d.opaque_depth.v1 remains unadvertised.",
+    "M213 completed: datoviz-offscreen-opt-in review packs now isolate Datoviz in a child process, discard child staging unless it exits cleanly, and write parent review packs with structured Datoviz rows. Real M206/M210 retries now expose DvzVisualCoordSpace DVZ_COORD_VIEW/DATA compatibility blockers instead of parent-process crashes.",
+    "M210 blocked: S050 strict-depth visual QA fixture and view3d harness support are in place; after M213 isolation, the Datoviz retry completes as a parent review pack but reports missing DvzVisualCoordSpace.DVZ_COORD_DATA, so meshvisual.positions3d.opaque_depth.v1 remains unadvertised.",
     "M209 completed: defined an overlapping opaque-triangle fixture that separates strict per-fragment depth from average-face painter sorting, plus promotion criteria that leave capability advertisements unchanged.",
     "M203 completed: strict opaque depth remains unadvertised pending independent less-depth evidence; Matplotlib remains adapted CPU-sorted 3D raster behavior; follow-ups split into M209 fixture planning, M210 Datoviz runtime proof, and M211/M212 consultation packets.",
     "M202 completed: split Datoviz guide/text/colorbar strictness into M206 colorbar proof, M207 guide query strictness audit, and M208 TextVisual strictness proof.",
-    "M206 blocked: current Datoviz facade exposes colorbar explicit tick symbols and focused GSP tests pass, but the offscreen review-pack run for color/scalar_image_viridis_colorbar exits 139.",
+    "M206 blocked: current Datoviz facade exposes colorbar explicit tick symbols and focused GSP tests pass; after M213 isolation, the colorbar retry completes as a parent review pack but reports missing DvzVisualCoordSpace.DVZ_COORD_VIEW.",
     "M205 completed: converted M200 evidence into a Datoviz upstream mesh triangle query handoff with exact files/functions, result-field semantics, and native fixture requirements.",
     "M200 completed: Datoviz upstream API work is required before GSP can safely advertise query.view3d.mesh_triangle_pick.v1; current native mesh query results do not expose canonical face/triangle identity.",
     "M199 completed: reconciled unregistered M198/S049 white paper status, opened S050 as the post-S048 implementation roadmap, approved M200 for Datoviz native mesh-pick evidence, and drafted follow-up parity/strictness/API missions.",
@@ -2418,7 +2428,7 @@
   ],
   "summaries": [
     "M202 completed: added .agent/S050_DATOVIZ_GUIDE_TEXT_COLORBAR_SCOPING.md and follow-up missions M206-M208.",
-    "M206 blocked: added .agent/S050_DATOVIZ_COLORBAR_EXPLICIT_TICK_PROOF.md; adapter tests pass but current Datoviz offscreen colorbar review segfaults, so no S050 colorbar promotion was made.",
+    "M206 blocked: added .agent/S050_DATOVIZ_COLORBAR_EXPLICIT_TICK_PROOF.md; adapter tests pass, but Datoviz colorbar review remains blocked by coordinate-space enum compatibility, so no S050 colorbar promotion was made.",
     "M200 completed: added .agent/S050_DATOVIZ_MESH_PICK_EVIDENCE.md; GSP-only Datoviz mesh triangle picking is not viable because current native mesh query ids collapse non-instanced hits to one item id.",
     "M205 completed: added .agent/S050_DATOVIZ_MESH_TRIANGLE_QUERY_HANDOFF.md, preserving GSP Datoviz structured unsupported behavior until Datoviz exposes public mesh face/triangle identity.",
     "S033 correction: enforced Datoviz legacy_srgb_blend as the renderer and visual-QA comparison default, made missing legacy pipeline support fail loudly, and made the legacy all-cases sheet the primary review artifact.",
