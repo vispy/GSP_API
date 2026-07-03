@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Blocked pending Datoviz coordinate-space enum compatibility.
+Blocked pending manual review and family-specific promotion audit.
 
 ## Summary
 
@@ -45,6 +45,12 @@ harness. Focused tests and Matplotlib/diagnostic review-pack runs pass. The init
 offscreen run exited with code `139` after writing partial PNG/log artifacts, so no strict-depth
 promotion was made in M210.
 
-M213 isolated the offscreen child process. The same S050 strict-depth case now completes as a parent
-review-pack run but reports Datoviz unsupported because the local facade lacks
-`DvzVisualCoordSpace.DVZ_COORD_DATA`. Strict-depth promotion remains blocked.
+M214 aligned GSP with the latest Datoviz v0.4-dev generated binding. The same S050 strict-depth case
+now renders through real Datoviz offscreen review-pack evidence at
+`artifacts/visual_qa/s050/m214-latest-depth/`.
+
+Result: Datoviz rendered `mesh3d/opaque_depth_intersecting_triangles_view3d`, but the capability
+matrix still classifies it as `adapted` with reason code
+`datoviz_rendered_pending_promotion_audit`. Do not advertise
+`meshvisual.positions3d.opaque_depth.v1` until the artifact is manually reviewed and a
+family-specific strict-depth promotion audit is recorded.

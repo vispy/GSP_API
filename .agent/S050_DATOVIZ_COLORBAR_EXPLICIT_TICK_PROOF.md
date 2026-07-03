@@ -6,12 +6,11 @@ Mission: M206 - S050 Datoviz colorbar explicit tick proof
 
 ## Outcome
 
-Blocked at runtime review.
+Completed after M214 latest-binding alignment.
 
-The current local Datoviz facade exposes the colorbar explicit tick/label API, and focused GSP
-adapter tests pass. However, the Datoviz offscreen visual review path still exits with code `139`
-when asked to render `color/scalar_image_viridis_colorbar`. Therefore S050 should not claim fresh
-runtime review proof beyond the existing S029 audit.
+The current local Datoviz facade exposes the colorbar explicit tick/label API, focused GSP adapter
+tests pass, and the real Datoviz offscreen visual review path now renders
+`color/scalar_image_viridis_colorbar` after M214 replaced stale generated-binding symbol usage.
 
 No public `ColorbarGuide` semantics changed. Colorbar query remains unsupported. No Datoviz files
 were edited.
@@ -61,7 +60,7 @@ PYTHONPATH=/home/cyrille/GIT/Viz/datoviz \
 
 Result: `1 passed, 32 deselected`.
 
-Blocked:
+Previously blocked:
 
 ```bash
 DATOVIZ_REPO=/home/cyrille/GIT/Viz/datoviz \
@@ -94,13 +93,30 @@ PYTHONPATH=/home/cyrille/GIT/Viz/datoviz \
 Result: `artifacts/visual_qa/s050/m206-colorbar-smoke/report.json`, with Datoviz marked
 `unsupported` due to offscreen QA opt-in safety.
 
+M214 latest-binding validation passed:
+
+```bash
+DATOVIZ_REPO=/Users/cyrille/GIT/Viz/datoviz \
+  tools/run_datoviz_visual_review_pack.sh \
+  --suite s028 \
+  --case color/scalar_image_viridis_colorbar \
+  --out artifacts/visual_qa/s050/m214-latest-colorbar \
+  --run-id s050-m214-latest-colorbar
+```
+
+Result: `artifacts/visual_qa/s050/m214-latest-colorbar/index.md`.
+
+Datoviz rendered the case and the capability matrix reports:
+
+- status: `strict`;
+- review classification: `pass.semantic_strict`;
+- reason code: `datoviz_rendered_strict_s029_family_audit`.
+
 ## Decision
 
-Keep the existing S029 colorbar strict rendering audit as historical evidence, but do not refresh or
-expand it in S050 until the current Datoviz offscreen review crash is resolved.
+Accept M206 as completed. The S050 colorbar proof has fresh Datoviz runtime evidence and no longer
+depends only on the historical S029 audit. Colorbar query remains out of scope until native colorbar
+guide-hit evidence exists.
 
-Next safe work is not more GSP colorbar promotion. Either:
-
-- debug/fix the Datoviz offscreen colorbar crash in the sibling repository after explicit approval;
-- or move to M207 guide query strictness audit, which uses different panel frame APIs and must avoid
-  full guide strictness if panel title evidence remains absent.
+Next safe work is M207 guide query strictness audit, which must still avoid promoting full guide
+strictness if panel title evidence remains absent.

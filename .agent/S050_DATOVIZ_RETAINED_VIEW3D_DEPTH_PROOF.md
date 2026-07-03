@@ -52,7 +52,7 @@ uv run python -m gsp.qa.visual review-pack --suite s050 --mode datoviz-diagnosti
 The diagnostic probe reported Datoviz source revision
 `dc8b168ed86e0f674be204d00c29e5869ee5e6c4`, minimal point support, and capture symbols available.
 
-Datoviz opt-in offscreen run failed:
+Previous Datoviz opt-in offscreen run failed:
 
 ```text
 DATOVIZ_REPO=/home/cyrille/GIT/Viz/datoviz tools/run_datoviz_visual_review_pack.sh \
@@ -67,10 +67,26 @@ The failed run wrote PNG/log artifacts before the process exited, but no complet
 `capability_matrix.json`, or review-pack index was produced. Those partial PNG artifacts are not
 accepted as strict-depth evidence because the native process crashed.
 
+M214 latest-binding validation completed the Datoviz run:
+
+```text
+DATOVIZ_REPO=/Users/cyrille/GIT/Viz/datoviz tools/run_datoviz_visual_review_pack.sh \
+  --suite s050 \
+  --case mesh3d/opaque_depth_intersecting_triangles_view3d \
+  --out artifacts/visual_qa/s050/m214-latest-depth \
+  --run-id s050-m214-latest-depth
+```
+
+Result: `artifacts/visual_qa/s050/m214-latest-depth/index.md`.
+
+The Datoviz backend rendered, with capability matrix status `adapted`, review classification
+`review.adapted`, and reason code `datoviz_rendered_pending_promotion_audit`.
+
 ## Decision
 
 Do not advertise `meshvisual.positions3d.opaque_depth.v1` for Datoviz.
 
-M210 is blocked on Datoviz offscreen runtime stability or subprocess-isolated proof capture. The
-strict-depth fixture and local harness support are ready for a retry once the native crash path is
-isolated.
+The crash and stale generated-binding blockers are resolved, but M210 remains blocked on manual
+review and a family-specific strict-depth promotion audit. The strict-depth fixture and local
+harness support are ready; promotion requires accepting the M214 Datoviz artifact as strict
+per-fragment depth evidence.

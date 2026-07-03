@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Blocked pending Datoviz coordinate-space enum compatibility.
+Completed.
 
 ## Summary
 
@@ -46,13 +46,17 @@ tick/label evidence. This is a bounded runtime/review proof, not a public API re
 
 ## Result
 
-Blocked locally. See `.agent/S050_DATOVIZ_COLORBAR_EXPLICIT_TICK_PROOF.md`.
+Completed. See `.agent/S050_DATOVIZ_COLORBAR_EXPLICIT_TICK_PROOF.md`.
 
 Focused adapter and visual-QA policy tests pass, and the local Datoviz facade exposes
 `dvz_colorbar_set_ticks()`. The initial Datoviz offscreen review-pack run for
 `color/scalar_image_viridis_colorbar` exited with code `139`, so no S050 colorbar promotion or
 stale-blocker cleanup was made in M206.
 
-M213 isolated the offscreen child process. The same colorbar case now completes as a parent
-review-pack run but reports Datoviz unsupported because the local facade lacks
-`DvzVisualCoordSpace.DVZ_COORD_VIEW`. Colorbar strictness remains blocked.
+M214 aligned GSP with the latest Datoviz v0.4-dev generated binding. The same colorbar case now
+renders through real Datoviz offscreen review-pack evidence at
+`artifacts/visual_qa/s050/m214-latest-colorbar/`.
+
+Result: Datoviz rendered `color/scalar_image_viridis_colorbar` with review status `strict` and
+reason code `datoviz_rendered_strict_s029_family_audit`. No `ColorbarGuide` contract changes were
+made, and colorbar query remains unsupported pending native guide-hit payload evidence.
