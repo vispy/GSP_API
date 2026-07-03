@@ -299,7 +299,7 @@
       "id": "S050",
       "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
       "state": "active",
-      "progress": 62
+      "progress": 67
     }
   ],
   "missions": [
@@ -2161,9 +2161,9 @@
       "id": "M208",
       "title": "S050 Datoviz TextVisual strictness proof",
       "stage": "S050",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 208
     },
     {
@@ -2233,7 +2233,7 @@
       "id": "M216",
       "title": "S050 Datoviz live point/image payload parity evidence",
       "stage": "S050",
-      "state": "draft",
+      "state": "ready",
       "agent": "codex-ucl",
       "progress": 0,
       "priority": 216
@@ -2335,17 +2335,18 @@
   ],
   "recommendations": [
     "Do not promote Datoviz query.view3d.mesh_triangle_pick.v1 until upstream Datoviz exposes public canonical mesh face/triangle identity and native tests cover it.",
-    "M208 is ready: run focused Datoviz TextVisual strictness proof without changing TextVisual public semantics or claiming text query/readback support.",
+    "M208 completed: no new Datoviz TextVisual rows promote; isolated text artifacts render with only text/rotation_alpha_ndc strict, while the combined text review still crashes the Datoviz offscreen child.",
     "M214 completed latest Datoviz v0.4-dev generated-binding alignment without aliases, shims, or sibling Datoviz checkout edits.",
     "Do not promote Datoviz guide/View2D strictness: M207 real offscreen evidence crashed for guide rows, and native panel-title evidence remains required.",
     "Do not promote S050 strict opaque depth beyond adapted until the M214 depth artifact is manually reviewed and a family-specific promotion audit is recorded.",
-    "M216 remains draft for a live Datoviz point/image payload evidence refresh; run it only if the current v0.4 runtime/offscreen setup is already available without manual build or GPU intervention.",
+    "M216 is ready for a live Datoviz point/image payload evidence refresh; run it only while the current v0.4 runtime/offscreen setup remains available without manual build or GPU intervention.",
     "M215 completed: Datoviz query/readback docs now distinguish capability-gated guide/all-rendered query from still-deferred live rich payload parity, scientific readback, hit_policy=all, and mesh-triangle picking.",
     "Do not accept strict culling, non-opaque mesh alpha, or expanded 3D query payloads without ChatGPT Pro consultation output.",
     "M204 remains blocked pending ChatGPT Pro consultation because materials/textures and broader VisPy2 public API design are architecture/API-shape decisions.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M208 completed: fixed packed RGBA8 latest-binding upload to pass POINTER(c_ubyte) into dvz_visual_set_texture_rgba8(); isolated Datoviz TextVisual artifacts render with only text/rotation_alpha_ndc strict, the other text rows adapted, and the combined text batch still crashed with signal 11.",
     "M215 completed: updated spec/backends/datoviz.md query/readback wording to reflect S043 panel-frame guide hit/readback capability gates and preserved unsupported boundaries for hit_policy=all, unsupported extension payloads, scientific readback, and mesh-triangle picking.",
     "M207 completed with no guide promotion: artifacts/visual_qa/s050/m207-guide-query-audit and artifacts/visual_qa/s050/m207-guide-auto-single show Datoviz guide offscreen child crashes with signal 11; focused panel-frame/guide-query gate tests pass.",
     "M206 completed after M214 evidence: real Datoviz rendered color/scalar_image_viridis_colorbar with strict/pass.semantic_strict status at artifacts/visual_qa/s050/m214-latest-colorbar; colorbar query remains unsupported pending native guide-hit payload evidence.",
@@ -2452,6 +2453,7 @@
     "M112 completed: added the S029 capability matrix schema, review-pack generator, Datoviz review-pack runtime wrapper, focused tests, and Mission Control opening records."
   ],
   "summaries": [
+    "M208 completed: added .agent/S050_DATOVIZ_TEXTVISUAL_STRICTNESS_PROOF.md and preserved conservative TextVisual capability posture after latest-binding texture upload fix.",
     "M202 completed: added .agent/S050_DATOVIZ_GUIDE_TEXT_COLORBAR_SCOPING.md and follow-up missions M206-M208.",
     "M206 completed: Datoviz colorbar explicit tick proof now has fresh strict runtime evidence from artifacts/visual_qa/s050/m214-latest-colorbar; colorbar query remains unsupported pending native guide-hit payload evidence.",
     "M200 completed: added .agent/S050_DATOVIZ_MESH_PICK_EVIDENCE.md; GSP-only Datoviz mesh triangle picking is not viable because current native mesh query ids collapse non-instanced hits to one item id.",

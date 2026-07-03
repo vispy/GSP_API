@@ -1347,7 +1347,11 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "texcoords", texcoords)
         if _image_visual_is_packed_rgba8(visual):
             self.dvz.dvz_visual_set_texture_rgba8(
-                dvz_visual, pixels, width, height, int(pixels.nbytes)
+                dvz_visual,
+                _uint8_pointer_arg(pixels),
+                width,
+                height,
+                int(pixels.nbytes),
             )
         elif datoviz_v04_sampled_field_ready(self.dvz):
             sampled_field = self._create_rgba8_sampled_field(pixels, width, height)
@@ -4613,6 +4617,10 @@ def _ctypes_pointer_arg(value: Any) -> Any:
     if isinstance(value, ctypes.Structure):
         return ctypes.byref(value)
     return value
+
+
+def _uint8_pointer_arg(pixels: npt.NDArray[np.uint8]) -> Any:
+    return np.ascontiguousarray(pixels).ctypes.data_as(ctypes.POINTER(ctypes.c_ubyte))
 
 
 def _enum_value(dvz: Any, enum_type_name: str, name: str, fallback: int) -> int:

@@ -1,0 +1,71 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m208-textvisual-strictness-isolated/text_multiline_unicode_smoke/scenes/text_multiline_unicode_smoke.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s050/m208-textvisual-strictness-isolated/text_multiline_unicode_smoke/backends/datoviz/text_multiline_unicode_smoke.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness-isolated/text_multiline_unicode_smoke/backends/datoviz/text_multiline_unicode_smoke.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m208-textvisual-strictness-isolated/text_multiline_unicode_smoke/backends/matplotlib/text_multiline_unicode_smoke.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness-isolated/text_multiline_unicode_smoke/backends/matplotlib/text_multiline_unicode_smoke.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/multiline_unicode_smoke",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "multiline",
+        "unicode"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m208-textvisual-strictness-isolated/text_multiline_unicode_smoke/scenes/text_multiline_unicode_smoke.scene.json",
+      "title": "Text multiline and Unicode smoke"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s050/m208-textvisual-strictness-isolated/text_multiline_unicode_smoke/contact_sheets/text_multiline_unicode_smoke.png",
+    "artifacts/visual_qa/s050/m208-textvisual-strictness-isolated/text_multiline_unicode_smoke/contact_sheets/s024_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "f5b81a397e3be69ecfffbffa88754c1c227e6820",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s050/m208-textvisual-strictness-isolated/text_multiline_unicode_smoke/environment.json",
+  "run_id": "s050-m208-textvisual-text_multiline_unicode_smoke",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S024",
+  "started_at": "2026-07-03T21:10:34.700301+00:00",
+  "suite": "s024"
+}

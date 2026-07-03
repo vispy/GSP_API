@@ -108,7 +108,7 @@ colorbar guide identity and payload semantics for ticks/title/ramp.
 |---|---|---|
 | M206 | completed | Validated Datoviz colorbar explicit tick/label runtime and review evidence. |
 | M207 | completed | Audited Datoviz guide query/all-rendered contribution runtime evidence; no guide row promoted because current Datoviz guide offscreen review crashes and native panel-title proof remains required. |
-| M208 | ready | Prove Datoviz TextVisual anchor/DATA/multiline rows through focused fixtures and review artifacts. |
+| M208 | completed | Audited focused TextVisual fixtures; no new row promoted, existing `text/rotation_alpha_ndc` remains strict, and combined Datoviz text review still crashes. |
 
 M201 stays blocked by the upstream mesh triangle query identity gap. M204 stays blocked pending
 ChatGPT Pro consultation for materials/textures and broader VisPy2 API shape.

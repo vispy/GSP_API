@@ -1,0 +1,11 @@
+{
+  "datoviz": {
+    "imported": true,
+    "minimal_point_supported": true,
+    "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+    "raw_imported": true
+  },
+  "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 17.0.0 (clang-1700.6.4.2)]",
+  "python_executable": "/Users/cyrille/GIT/Viz/GSP_API/.venv/bin/python3"
+}

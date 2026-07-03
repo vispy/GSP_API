@@ -1,0 +1,5 @@
+schema_version: 1
+cases:
+  - case_id: text/multiline_unicode_smoke
+    status: pending
+    notes: ''

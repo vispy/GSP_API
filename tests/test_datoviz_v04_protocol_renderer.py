@@ -299,11 +299,13 @@ class FakeDatovizV04:
         return 0
 
     def dvz_visual_set_texture_rgba8(self, visual, pixels, width, height, size_bytes):
+        assert isinstance(pixels, ctypes.POINTER(ctypes.c_ubyte))
+        copied = np.ctypeslib.as_array(pixels, shape=(size_bytes,)).copy()
         self.calls.append(
             (
                 "set_texture_rgba8",
                 visual,
-                np.array(pixels, copy=True),
+                copied.reshape(height, width, 4),
                 width,
                 height,
                 size_bytes,

@@ -1,0 +1,20 @@
+{
+  "backends": [
+    "matplotlib"
+  ],
+  "case_ids": [
+    "text/rotation_alpha_ndc"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "device_scale": 1.0,
+  "resolution": [
+    800,
+    600
+  ],
+  "run_id": "s050-m208-textvisual-text_rotation_alpha_ndc",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S024",
+  "started_at": "2026-07-03T21:10:30.477028+00:00",
+  "suite": "s024"
+}

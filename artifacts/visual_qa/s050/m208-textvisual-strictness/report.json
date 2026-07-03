@@ -1,0 +1,182 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/scenes/text_basic_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/datoviz/text_basic_ndc.native_crash.log.txt",
+          "reason": "Datoviz offscreen child process terminated by signal 11",
+          "status": "error",
+          "unsupported_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/datoviz/text_basic_ndc.native_crash.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/matplotlib/text_basic_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/matplotlib/text_basic_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/basic_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rgba8",
+        "font-size"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/scenes/text_basic_ndc.scene.json",
+      "title": "Basic NDC text labels"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/scenes/text_anchor_grid_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/datoviz/text_anchor_grid_ndc.native_crash.log.txt",
+          "reason": "Datoviz offscreen child process terminated by signal 11",
+          "status": "error",
+          "unsupported_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/datoviz/text_anchor_grid_ndc.native_crash.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/matplotlib/text_anchor_grid_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/matplotlib/text_anchor_grid_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/anchor_grid_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "anchor"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/scenes/text_anchor_grid_ndc.scene.json",
+      "title": "Text anchor grid in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/scenes/text_rotation_alpha_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/datoviz/text_rotation_alpha_ndc.native_crash.log.txt",
+          "reason": "Datoviz offscreen child process terminated by signal 11",
+          "status": "error",
+          "unsupported_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/datoviz/text_rotation_alpha_ndc.native_crash.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/matplotlib/text_rotation_alpha_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/matplotlib/text_rotation_alpha_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/rotation_alpha_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rotation",
+        "alpha",
+        "z-order"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/scenes/text_rotation_alpha_ndc.scene.json",
+      "title": "Text rotation and alpha overlap in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/scenes/text_data_vs_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/datoviz/text_data_vs_ndc.native_crash.log.txt",
+          "reason": "Datoviz offscreen child process terminated by signal 11",
+          "status": "error",
+          "unsupported_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/datoviz/text_data_vs_ndc.native_crash.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/matplotlib/text_data_vs_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/matplotlib/text_data_vs_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/data_vs_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "data",
+        "ndc"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/scenes/text_data_vs_ndc.scene.json",
+      "title": "Text DATA and NDC coordinate comparison"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/scenes/text_multiline_unicode_smoke.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/datoviz/text_multiline_unicode_smoke.native_crash.log.txt",
+          "reason": "Datoviz offscreen child process terminated by signal 11",
+          "status": "error",
+          "unsupported_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/datoviz/text_multiline_unicode_smoke.native_crash.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/matplotlib/text_multiline_unicode_smoke.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/backends/matplotlib/text_multiline_unicode_smoke.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/multiline_unicode_smoke",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "multiline",
+        "unicode"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/scenes/text_multiline_unicode_smoke.scene.json",
+      "title": "Text multiline and Unicode smoke"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s050/m208-textvisual-strictness/contact_sheets/text_basic_ndc.png",
+    "artifacts/visual_qa/s050/m208-textvisual-strictness/contact_sheets/text_anchor_grid_ndc.png",
+    "artifacts/visual_qa/s050/m208-textvisual-strictness/contact_sheets/text_rotation_alpha_ndc.png",
+    "artifacts/visual_qa/s050/m208-textvisual-strictness/contact_sheets/text_data_vs_ndc.png",
+    "artifacts/visual_qa/s050/m208-textvisual-strictness/contact_sheets/text_multiline_unicode_smoke.png",
+    "artifacts/visual_qa/s050/m208-textvisual-strictness/contact_sheets/s024_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "f5b81a397e3be69ecfffbffa88754c1c227e6820",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s050/m208-textvisual-strictness/environment.json",
+  "run_id": "s050-m208-textvisual-strictness",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S024",
+  "started_at": "2026-07-03T21:10:07.741053+00:00",
+  "suite": "s024"
+}
