@@ -1,0 +1,67 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m213-depth-proof-isolated/scenes/mesh3d_opaque_depth_intersecting_triangles_view3d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "log_path": "artifacts/visual_qa/s050/m213-depth-proof-isolated/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_view3d.log.txt",
+          "reason": "AttributeError: type object 'DvzVisualCoordSpace' has no attribute 'DVZ_COORD_DATA'",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s050/m213-depth-proof-isolated/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_view3d.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m213-depth-proof-isolated/backends/matplotlib/mesh3d_opaque_depth_intersecting_triangles_view3d.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m213-depth-proof-isolated/backends/matplotlib/mesh3d_opaque_depth_intersecting_triangles_view3d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "mesh3d/opaque_depth_intersecting_triangles_view3d",
+      "family": "mesh3d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "view3d",
+        "data",
+        "rgba8",
+        "per-face",
+        "opaque-depth-candidate"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m213-depth-proof-isolated/scenes/mesh3d_opaque_depth_intersecting_triangles_view3d.scene.json",
+      "title": "View3D opaque depth intersecting triangles"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s050/m213-depth-proof-isolated/contact_sheets/mesh3d_opaque_depth_intersecting_triangles_view3d.png",
+    "artifacts/visual_qa/s050/m213-depth-proof-isolated/contact_sheets/s050_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "19610bad23eb094b7a1a81e8498a084fa9736f65",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s050/m213-depth-proof-isolated/environment.json",
+  "run_id": "s050-m213-depth-isolated",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S050",
+  "started_at": "2026-07-03T11:30:33.172070+00:00",
+  "suite": "s050"
+}

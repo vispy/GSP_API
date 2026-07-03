@@ -1,0 +1,66 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m213-colorbar-isolated/scenes/color_scalar_image_viridis_colorbar.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "log_path": "artifacts/visual_qa/s050/m213-colorbar-isolated/backends/datoviz/color_scalar_image_viridis_colorbar.log.txt",
+          "reason": "AttributeError: type object 'DvzVisualCoordSpace' has no attribute 'DVZ_COORD_VIEW'",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s050/m213-colorbar-isolated/backends/datoviz/color_scalar_image_viridis_colorbar.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m213-colorbar-isolated/backends/matplotlib/color_scalar_image_viridis_colorbar.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m213-colorbar-isolated/backends/matplotlib/color_scalar_image_viridis_colorbar.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "color/scalar_image_viridis_colorbar",
+      "family": "color",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "scalar",
+        "colormap",
+        "colorbar",
+        "viridis"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m213-colorbar-isolated/scenes/color_scalar_image_viridis_colorbar.scene.json",
+      "title": "Scalar image with viridis color scale and colorbar"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s050/m213-colorbar-isolated/contact_sheets/color_scalar_image_viridis_colorbar.png",
+    "artifacts/visual_qa/s050/m213-colorbar-isolated/contact_sheets/s028_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "19610bad23eb094b7a1a81e8498a084fa9736f65",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s050/m213-colorbar-isolated/environment.json",
+  "run_id": "s050-m213-colorbar-isolated",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-07-03T11:30:50.392184+00:00",
+  "suite": "s028"
+}

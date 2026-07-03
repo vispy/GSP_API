@@ -27,6 +27,7 @@ from gsp.protocol import (
     TextVisual,
     TransformRef,
     View2D,
+    View3D,
     VisualTransformBinding,
 )
 from gsp.qa.visual.backend_ids import DATOVIZ_BACKEND_ID
@@ -169,6 +170,7 @@ def _scene_json(scene: VisualQAScene) -> dict[str, object]:
             for transform in scene.transform_resources
         ],
         "views": [_view2d_json(view) for view in scene.views],
+        "view3d": _view3d_json(scene.view3d) if scene.view3d is not None else None,
         "visuals": [_visual_json(visual) for visual in scene.visuals],
         "arrays": {
             name: {
@@ -459,6 +461,33 @@ def _view2d_json(view: View2D) -> dict[str, object]:
         "y_range": list(view.y_range),
         "aspect_policy": view.aspect_policy.value,
         "clip": view.clip,
+    }
+
+
+def _view3d_json(view: View3D) -> dict[str, object]:
+    projection: dict[str, object] = {
+        "kind": view.projection.kind.value,
+        "near_far": list(view.projection.near_far),
+    }
+    if hasattr(view.projection, "xlim"):
+        projection["xlim"] = list(view.projection.xlim)
+        projection["ylim"] = list(view.projection.ylim)
+    if hasattr(view.projection, "fov_y_degrees"):
+        projection["fov_y_degrees"] = view.projection.fov_y_degrees
+        projection["aspect_ratio"] = view.projection.aspect_ratio
+    return {
+        "id": view.id,
+        "panel_id": view.panel_id,
+        "kind": view.kind.value,
+        "revision": view.revision,
+        "camera": {
+            "eye": list(view.camera.eye),
+            "target": list(view.camera.target),
+            "up": list(view.camera.up),
+        },
+        "projection": projection,
+        "depth_mode": view.depth_mode.value,
+        "ambient_light_intensity": view.ambient_light_intensity,
     }
 
 

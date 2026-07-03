@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import subprocess
 from typing import Any
 
 import matplotlib.image as mpimg
@@ -22,6 +23,7 @@ from gsp.qa.visual.cases import (
     S027_SUITE,
     S028_SUITE,
     S034_SUITE,
+    S050_SUITE,
     get_case,
     list_cases,
 )
@@ -31,6 +33,7 @@ from gsp.qa.visual.datoviz_probe import (
     ImportProbe,
     MinimalPointProbe,
 )
+import gsp.qa.visual.review_pack as review_pack
 from gsp.qa.visual.review_pack import run_visual_review_pack
 import gsp.qa.visual.runner as visual_runner
 from gsp.qa.visual.runner import run_visual_qa_suite
@@ -291,6 +294,123 @@ def test_visual_review_pack_writes_matrix_and_index(tmp_path: Path) -> None:
     assert matrix["schema_kind"] == "gsp.visual_qa.capability_matrix"
     assert matrix["summary"]["strict"] == 1
     assert matrix["summary"]["not_run"] == 1
+
+
+def test_datoviz_offscreen_review_pack_records_child_crash(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Opt-in Datoviz offscreen review packs survive native child crashes."""
+
+    def fake_child(**kwargs: Any) -> subprocess.CompletedProcess[str]:
+        child_out_dir = Path(str(kwargs["out_dir"]))
+        partial_dir = child_out_dir / "backends" / "datoviz"
+        partial_dir.mkdir(parents=True)
+        (partial_dir / "point_basic_ndc.png").write_text("partial", encoding="utf-8")
+        return subprocess.CompletedProcess(
+            args=["fake-dataviz-child"],
+            returncode=139,
+            stdout="child stdout",
+            stderr="segmentation fault",
+        )
+
+    monkeypatch.setattr(review_pack, "_run_datoviz_child", fake_child)
+
+    result = run_visual_review_pack(
+        out_dir=tmp_path,
+        mode="datoviz-offscreen-opt-in",
+        case_ids=("point/basic_ndc",),
+        run_id="test-dataviz-child-crash",
+        resolution=(96, 96),
+    )
+
+    assert Path(str(result["index_path"])).exists()
+    assert not (tmp_path / "_datoviz_offscreen_child").exists()
+    datoviz_entry = result["report"]["cases"][0]["backends"]["datoviz"]  # type: ignore[index]
+    assert datoviz_entry["status"] == "error"
+    crash_path = Path(str(datoviz_entry["unsupported_path"]))
+    payload = json.loads(crash_path.read_text(encoding="utf-8"))
+    assert payload["schema_kind"] == "gsp.visual_qa.datoviz_native_crash"
+    assert payload["returncode"] == 139
+    assert payload["partial_artifacts_discarded"] is True
+    rows = {
+        (row["backend"], row["case_id"]): row
+        for row in result["capability_matrix"]["rows"]  # type: ignore[index]
+    }
+    assert rows[("datoviz", "point/basic_ndc")]["status"] == "crashed"
+    assert (
+        rows[("datoviz", "point/basic_ndc")]["reason_code"]
+        == "datoviz_runtime_error"
+    )
+
+
+def test_datoviz_offscreen_review_pack_merges_clean_child_report(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Clean child Datoviz artifacts are copied into the parent review pack."""
+
+    def fake_child(**kwargs: Any) -> subprocess.CompletedProcess[str]:
+        child_out_dir = Path(str(kwargs["out_dir"]))
+        backend_dir = child_out_dir / "backends" / "datoviz"
+        backend_dir.mkdir(parents=True)
+        artifact_path = backend_dir / "point_basic_ndc.png"
+        log_path = backend_dir / "point_basic_ndc.log.txt"
+        mpimg.imsave(artifact_path, np.ones((4, 4, 4), dtype=np.float32))
+        log_path.write_text("rendered\n", encoding="utf-8")
+        report = {
+            "schema_version": 1,
+            "schema_kind": "gsp.visual_qa.report",
+            "stage": "S023",
+            "suite": "s023",
+            "run_id": "test-dataviz-child-success",
+            "cases": [
+                {
+                    "case_id": "point/basic_ndc",
+                    "title": "Basic NDC point visual",
+                    "family": "point",
+                    "required_features": ["point", "ndc", "rgba8", "pixel-size"],
+                    "backends": {
+                        "datoviz": {
+                            "backend_id": "datoviz",
+                            "status": "rendered",
+                            "artifact_path": str(artifact_path),
+                            "log_path": str(log_path),
+                        }
+                    },
+                }
+            ],
+        }
+        (child_out_dir / "report.json").write_text(
+            json.dumps(report), encoding="utf-8"
+        )
+        return subprocess.CompletedProcess(
+            args=["fake-dataviz-child"],
+            returncode=0,
+            stdout=str(child_out_dir / "report.json"),
+            stderr="",
+        )
+
+    monkeypatch.setattr(review_pack, "_run_datoviz_child", fake_child)
+
+    result = run_visual_review_pack(
+        out_dir=tmp_path,
+        mode="datoviz-offscreen-opt-in",
+        case_ids=("point/basic_ndc",),
+        run_id="test-dataviz-child-success",
+        resolution=(96, 96),
+    )
+
+    assert not (tmp_path / "_datoviz_offscreen_child").exists()
+    datoviz_entry = result["report"]["cases"][0]["backends"]["datoviz"]  # type: ignore[index]
+    assert datoviz_entry["status"] == "rendered"
+    artifact_path = Path(str(datoviz_entry["artifact_path"]))
+    assert artifact_path.exists()
+    assert artifact_path.parent == tmp_path / "backends" / "datoviz"
+    rows = {
+        (row["backend"], row["case_id"]): row
+        for row in result["capability_matrix"]["rows"]  # type: ignore[index]
+    }
+    assert rows[("datoviz", "point/basic_ndc")]["status"] == "strict"
+    assert rows[("datoviz", "point/basic_ndc")]["promotion_blockers"] == []
 
 
 def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None:
@@ -1361,6 +1481,41 @@ def test_s034_layout_snapshot_reports_device_scale(tmp_path: Path) -> None:
     assert target["framebuffer_width_px"] == 640
     assert target["framebuffer_height_px"] == 440
     assert snapshot["grid_clip_rect_px"] == snapshot["plot_rect_px"]
+
+
+def test_s050_case_registry_exposes_strict_depth_candidate() -> None:
+    """S050 adds the retained View3D strict-depth proof candidate as a focused case."""
+    case_ids = [case.case_id for case in list_cases(suite=S050_SUITE)]
+
+    assert case_ids == ["mesh3d/opaque_depth_intersecting_triangles_view3d"]
+
+
+def test_s050_view3d_depth_case_writes_scene_metadata(tmp_path: Path) -> None:
+    """S050 strict-depth fixture records View3D and sample expectations."""
+    report = run_visual_qa_suite(
+        suite=S050_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=("mesh3d/opaque_depth_intersecting_triangles_view3d",),
+        contact_sheet=False,
+        run_id="test-s050-depth",
+        resolution=(320, 240),
+    )
+
+    assert report["stage"] == "S050"
+    backend = report["cases"][0]["backends"]["matplotlib"]
+    assert backend["status"] == "rendered"
+    scene = json.loads(
+        (
+            tmp_path
+            / "scenes"
+            / "mesh3d_opaque_depth_intersecting_triangles_view3d.scene.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert scene["view3d"]["projection"]["kind"] == "orthographic"
+    assert scene["visuals"][0]["coordinate_space"] == "data"
+    assert scene["visuals"][0]["depth_test"] == "enabled"
+    assert scene["arrays"]["expected_sample_ndc_xy"]["shape"] == [2, 2]
 
 
 def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:

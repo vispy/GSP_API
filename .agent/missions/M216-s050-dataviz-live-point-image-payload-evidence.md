@@ -1,4 +1,4 @@
-# M206 - S050 Datoviz live point/image payload parity evidence
+# M216 - S050 Datoviz live point/image payload parity evidence
 
 ## Stage
 
@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft pending M205.
+Draft pending M215.
 
 ## Summary
 

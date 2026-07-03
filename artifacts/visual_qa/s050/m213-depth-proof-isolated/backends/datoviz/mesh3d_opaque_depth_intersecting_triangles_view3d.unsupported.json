@@ -1,0 +1,13 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "mesh3d/opaque_depth_intersecting_triangles_view3d",
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "diagnostics": {
+    "exception_type": "AttributeError",
+    "message": "type object 'DvzVisualCoordSpace' has no attribute 'DVZ_COORD_DATA'"
+  },
+  "reason": "AttributeError: type object 'DvzVisualCoordSpace' has no attribute 'DVZ_COORD_DATA'",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

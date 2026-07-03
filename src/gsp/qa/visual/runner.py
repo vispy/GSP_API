@@ -46,6 +46,7 @@ from gsp.protocol import (
     ResolvedGuideBox,
     ResolvedLayoutSnapshot,
     View2D,
+    View3D,
 )
 from gsp.qa.visual.artifacts import (
     ensure_run_dirs,
@@ -71,6 +72,7 @@ from gsp.qa.visual.cases import (
     S027_SUITE,
     S028_SUITE,
     S034_SUITE,
+    S050_SUITE,
     case_slug,
     list_cases,
 )
@@ -134,6 +136,7 @@ def run_visual_qa_suite(
         S027_SUITE,
         S028_SUITE,
         S034_SUITE,
+        S050_SUITE,
     ):
         raise ValueError(f"unknown visual QA suite: {suite}")
     normalized_backends = _normalize_backends(backends)
@@ -170,6 +173,9 @@ def run_visual_qa_suite(
         scene_path, arrays_path = write_scene_artifacts(out_dir, scene)
         write_case_note(out_dir, case.case_id, case.title, scene.notes)
         view = _scene_view(scene.views)
+        view3d = scene.view3d
+        if view is not None and view3d is not None:
+            raise ValueError("visual QA scenes cannot combine View2D and View3D")
         transform_resources = _transform_resource_map(scene.transform_resources)
         backend_reports: dict[str, object] = {}
         if MATPLOTLIB_BACKEND_ID in normalized_backends:
@@ -183,6 +189,7 @@ def run_visual_qa_suite(
                 panel_text_guides=scene.panel_text_guides,
                 colorbar_guides=scene.colorbar_guides,
                 view=view,
+                view3d=view3d,
                 transform_resources=transform_resources,
                 device_scale=device_scale,
             )
@@ -199,6 +206,7 @@ def run_visual_qa_suite(
                 axis_guides=scene.axis_guides,
                 panel_text_guides=scene.panel_text_guides,
                 view=view,
+                view3d=view3d,
                 transform_resources=transform_resources,
             )
         case_reports.append(
@@ -275,6 +283,7 @@ def _run_matplotlib(
     panel_text_guides: tuple[PanelTextGuide, ...],
     colorbar_guides: tuple[ColorbarGuide, ...],
     view: View2D | None,
+    view3d: View3D | None,
     transform_resources: dict[str, AffineTransform2DResource],
     device_scale: float,
 ) -> dict[str, object]:
@@ -314,6 +323,7 @@ def _run_matplotlib(
                 visual,
                 color_scales=color_scales,
                 view=view,
+                view3d=view3d,
                 transform_resources=transform_resources,
             )
         for guide in colorbar_guides:
@@ -425,6 +435,7 @@ def _run_datoviz(
     axis_guides: tuple[AxisGuide, ...],
     panel_text_guides: tuple[PanelTextGuide, ...],
     view: View2D | None,
+    view3d: View3D | None,
     transform_resources: dict[str, AffineTransform2DResource],
 ) -> dict[str, object]:
     backend_dir = out_dir / "backends" / DATOVIZ_BACKEND_ID
@@ -477,6 +488,7 @@ def _run_datoviz(
             color_pipeline=datoviz_color_pipeline,
             color_scales=color_scales,
             view=renderer_view,
+            view3d=view3d,
             transform_resources=transform_resources,
         ) as renderer:
             if guide_configuration is not None:
@@ -561,6 +573,7 @@ def _render_matplotlib_visual(
     *,
     color_scales: dict[str, ColorScale],
     view: View2D | None,
+    view3d: View3D | None,
     transform_resources: dict[str, AffineTransform2DResource],
 ) -> None:
     if isinstance(visual, PointVisual):
@@ -595,7 +608,11 @@ def _render_matplotlib_visual(
         )
     elif isinstance(visual, MeshVisual):
         render_mesh_visual(
-            ax, visual, view=view, transform_resources=transform_resources
+            ax,
+            visual,
+            view=view,
+            view3d=view3d,
+            transform_resources=transform_resources,
         )
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")

@@ -21,6 +21,7 @@ from gsp.protocol import (
     SegmentVisual,
     TextVisual,
     View2D,
+    View3D,
 )
 
 
@@ -48,6 +49,7 @@ class VisualQAScene:
     colorbar_guides: tuple[ColorbarGuide, ...] = ()
     transform_resources: tuple[AffineTransform2DResource, ...] = ()
     views: tuple[View2D, ...] = ()
+    view3d: View3D | None = None
     notes: tuple[str, ...] = ()
 
 

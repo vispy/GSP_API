@@ -1,0 +1,20 @@
+{
+  "backends": [
+    "matplotlib"
+  ],
+  "case_ids": [
+    "mesh3d/opaque_depth_intersecting_triangles_view3d"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "device_scale": 1.0,
+  "resolution": [
+    640,
+    480
+  ],
+  "run_id": "s050-m210-depth-matplotlib",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S050",
+  "started_at": "2026-07-03T11:00:45.606465+00:00",
+  "suite": "s050"
+}

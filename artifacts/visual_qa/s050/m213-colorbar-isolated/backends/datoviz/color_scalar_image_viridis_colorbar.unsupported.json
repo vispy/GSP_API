@@ -1,0 +1,13 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "color/scalar_image_viridis_colorbar",
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "diagnostics": {
+    "exception_type": "AttributeError",
+    "message": "type object 'DvzVisualCoordSpace' has no attribute 'DVZ_COORD_VIEW'"
+  },
+  "reason": "AttributeError: type object 'DvzVisualCoordSpace' has no attribute 'DVZ_COORD_VIEW'",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}
