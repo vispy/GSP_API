@@ -196,3 +196,15 @@ public GSP API.
 
 This does not change Matplotlib's adapted 3D rendering claim: `(N, 3)` meshes are still CPU-projected
 to 2D `PolyCollection` faces and sorted by average panel-NDC z for the adapted opaque fixture path.
+
+## S050 textured mesh policy
+
+Matplotlib must not advertise `meshvisual.material.texture2d_unlit.v1` through the current
+`PolyCollection` or CPU-projected 3D mesh path. Per-face or per-vertex colors are not texture
+mapping, and silently dropping texture fields would violate the S050 material contract.
+
+Until a fixture-backed CPU textured-triangle rasterizer exists, Matplotlib should reject
+`MeshVisual.shading="texture2d_unlit"` with
+`meshvisual_material_texture2d_unlit_unsupported`. A future CPU rasterizer would still need to prove
+the accepted UV orientation, nearest/clamp/no-mipmap sampling, color multiplication, alpha
+diagnostics, and any claimed depth behavior separately.

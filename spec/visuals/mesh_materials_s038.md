@@ -1,7 +1,8 @@
 # MeshVisual Materials - S038 Unlit RGBA Boundary
 
 Status: accepted S038 protocol boundary. S039 extends this boundary with
-`spec/visuals/mesh_flat_lambert_s039.md` for flat Lambert face-normal shading only.
+`spec/visuals/mesh_flat_lambert_s039.md` for flat Lambert face-normal shading only. S050 extends it
+with `spec/visuals/mesh_texture2d_unlit_s050.md` for unlit Texture2D sampling only.
 
 Semantic purpose: name the material behavior already required by accepted `MeshVisual` RGBA color
 rendering without accepting a public material object, lighting model, normal model, texture model, or
@@ -85,9 +86,9 @@ Deferred or reserved:
 | `meshvisual.material.flat_phong.v1` | Deferred. Requires Lambert prerequisites plus view-vector, specular, shininess, interpolation, and shader-parity semantics. |
 | `view3d.light.ambient.v1` | Deferred. No public lighting container exists in S038. |
 | `view3d.light.directional.v1` | Deferred. A future direction-space rule is required. |
-| `texture2d.rgba8.v1` | Deferred to a texture/resource decision. |
-| `meshvisual.uv.vertex2d.v1` | Deferred to a UV/texture decision. |
-| `meshvisual.material.texture2d_unlit.v1` | Deferred to a texture/material decision. |
+| `texture2d.rgba8.v1` | Accepted by S050 for immutable RGBA8 `Texture2D` resources. |
+| `meshvisual.uv.vertex2d.v1` | Accepted by S050 for per-vertex UVs only. |
+| `meshvisual.material.texture2d_unlit.v1` | Accepted by S050 for fixed-sampler unlit texture multiplication only. |
 
 S038 does not introduce normal capabilities such as `meshvisual.normals.vertex3d.v1` or
 `meshvisual.normals.face3d.v1`.
@@ -151,9 +152,10 @@ remain unaffected.
 
 ## Deferred Work
 
-S039 accepts a narrow flat Lambert face-normal extension. Concepts still deferred after S039 include
-vertex normals, smooth Lambert, Phong, specular, shininess, textures, UVs, samplers, transparency
-sorting, culling expansion, shadows, PBR, model loading, instancing, and scene graph semantics.
+S039 accepts a narrow flat Lambert face-normal extension. S050 accepts a narrow unlit Texture2D/UV
+extension. Concepts still deferred after S050 include vertex normals, smooth Lambert, Phong,
+specular, shininess, public sampler objects, transparency sorting, culling expansion, shadows, PBR,
+model loading, instancing, and scene graph semantics.
 
-The next material expansion must be a separate evidence-backed ADR for either Lambert-with-normals or
-unlit-texture-with-UVs, not both in the same stage.
+Any next material expansion must be a separate evidence-backed ADR and must not silently expand the
+accepted S038/S039/S050 material boundaries.

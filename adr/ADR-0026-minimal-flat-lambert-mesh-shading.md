@@ -4,6 +4,9 @@
 
 Accepted
 
+ADR-0029 later accepts unlit Texture2D sampling with per-vertex UVs. That later texture material
+does not change S039 flat Lambert semantics.
+
 ## Context
 
 S038 accepted only implicit `unlit_rgba` material semantics for existing `MeshVisual` RGBA colors.
@@ -119,15 +122,20 @@ meshvisual.positions3d.opaque_depth.v1
 meshvisual.material.unlit_rgba.v1
 ```
 
-Reserved or deferred:
+Accepted separately by ADR-0029:
+
+```text
+texture2d.rgba8.v1
+meshvisual.uv.vertex2d.v1
+meshvisual.material.texture2d_unlit.v1
+```
+
+Still reserved or deferred after ADR-0029:
 
 ```text
 meshvisual.normals.vertex3d.v1
 meshvisual.material.smooth_lambert.v1
 meshvisual.material.flat_phong.v1
-texture2d.rgba8.v1
-meshvisual.uv.vertex2d.v1
-meshvisual.material.texture2d_unlit.v1
 ```
 
 ## Backend Expectations

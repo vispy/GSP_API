@@ -196,7 +196,7 @@ and live input bindings are both available. The protocol renderer replays canoni
 state readback against canonical GSP state, preserves visual identity, and does not rewrite
 unchanged mesh vertex/index buffers during ordinary View3D navigation.
 
-## S038 MeshVisual material boundary and S039 Lambert extension
+## S038 MeshVisual material boundary, S039 Lambert extension, and S050 Texture2D extension
 
 S038 accepts only implicit unlit RGBA material semantics for existing `MeshVisual` colors:
 
@@ -230,18 +230,31 @@ constant color per canonical face, keeps native Datoviz lighting/material contro
 passes fixture-backed View3D/depth/unlit prerequisites. Native Datoviz lighting API availability is
 not strict GSP S039 evidence.
 
-The following lighting and texture capability names remain reserved/deferred after S039:
+S050 accepts the first texture material slice:
+
+```text
+texture2d.rgba8.v1
+meshvisual.uv.vertex2d.v1
+meshvisual.material.texture2d_unlit.v1
+vispy2.producer.mesh.texture2d_unlit.v1
+```
+
+Strict textured mesh support requires immutable RGBA8 `Texture2D` resources, per-vertex UVs, fixed
+nearest/clamp/no-mipmap sampling, multiplicative unlit RGBA output, and the diagnostics in
+`spec/visuals/mesh_texture2d_unlit_s050.md`. A renderer must not advertise
+`meshvisual.material.texture2d_unlit.v1` until automated fixtures prove those semantics. Matplotlib
+currently remains unsupported for textured meshes; Datoviz support requires public API evidence for
+canonical texture upload, UV binding, sampling, image origin, and color behavior.
+
+The following lighting and material capability names remain reserved/deferred after S050:
 
 ```text
 meshvisual.normals.vertex3d.v1
 meshvisual.material.smooth_lambert.v1
 meshvisual.material.flat_phong.v1
-texture2d.rgba8.v1
-meshvisual.uv.vertex2d.v1
-meshvisual.material.texture2d_unlit.v1
 ```
 
-Lighting or textured mesh support is strict only after public normal, light-space, texture, UV,
-sampler, color-space, alpha, and color-combination rules are accepted and evidence backed. Legacy
-Matplotlib Phong or per-triangle affine texture output is experimental/adapted until a public
-cross-backend contract exists.
+Textured lighting, public samplers, broader color-space rules, strict transparency, culling
+expansion, model loading, and expanded query payloads remain deferred. Legacy Matplotlib Phong or
+per-triangle affine texture output is experimental/adapted until a public cross-backend contract
+exists.

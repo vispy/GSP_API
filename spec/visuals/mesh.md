@@ -3,7 +3,8 @@
 Status: accepted protocol baseline for S025. Static orthographic `View3D` semantics for `(N,3)`
 mesh rendering are accepted separately by S036 in `spec/view3d.md`. S038 defines implicit
 `unlit_rgba` material semantics in `spec/visuals/mesh_materials_s038.md`; S039 accepts only the
-narrow flat Lambert face-normal extension in `spec/visuals/mesh_flat_lambert_s039.md`.
+narrow flat Lambert face-normal extension in `spec/visuals/mesh_flat_lambert_s039.md`; S050 accepts
+the unlit Texture2D/UV extension in `spec/visuals/mesh_texture2d_unlit_s050.md`.
 
 Semantic purpose: render explicit user-provided triangular meshes for filled 2D panel geometry and
 capability-gated 3D geometry. S025 does not define a surface, volume, material, texture, instancing,
@@ -24,7 +25,10 @@ S025 defines `MeshVisual` only. Geometry is inline and indexed.
 | `normal_mode` | `MeshNormalMode` | no | `none` | S039 accepts `face` only for flat Lambert; `vertex` remains deferred. |
 | `normals` | float32/float64 `(M,3)` or `(N,3)` | no | none | S039 accepts `(M,3)` face normals only; `(N,3)` vertex normals remain deferred. |
 | `normal_generation` | `MeshNormalGeneration` | no | `none` | S039 accepts deterministic `face_flat` generation for DATA-space 3D triangle faces. |
-| `shading` | `MeshShading` | no | `flat` | S039 canonical spelling is `unlit_rgba` or `flat_lambert`; legacy enum values require normalization during implementation. |
+| `shading` | `MeshShading` | no | `flat` | Canonical spelling is `unlit_rgba`, `flat_lambert`, or `texture2d_unlit`; legacy enum values require normalization during implementation. |
+| `texture2d_id` | protocol id string or `None` | no | `None` | S050 accepts a reference to a declared `Texture2D` only when `shading="texture2d_unlit"`. |
+| `uv_mode` | `MeshUVMode` | no | `none` | S050 accepts `vertex` only for per-vertex UVs. |
+| `uvs` | float32/float64 `(N,2)` or `None` | no | none | S050 accepts finite per-vertex UVs indexed by existing mesh faces. |
 | `face_culling` | `FaceCulling` | no | `none` | `none`, optional `back`/`front`. |
 | `depth_test` | `DepthMode` | no | `auto` | `auto`, `disabled`, or `enabled`. |
 | `depth_write` | `DepthMode` | no | `auto` | `auto`, `disabled`, or `enabled`. |
@@ -41,7 +45,9 @@ model files.
 - `MeshNormalMode`: `NONE`, `FACE`; `VERTEX` remains deferred after S039.
 - `MeshNormalGeneration`: `NONE`, `FACE_FLAT`.
 - `MeshShading`: canonical S039 protocol spelling is `UNLIT_RGBA` or `FLAT_LAMBERT`; legacy `FLAT`
-  may alias `UNLIT_RGBA`, while legacy `LAMBERT` is non-canonical.
+  may alias `UNLIT_RGBA`, while legacy `LAMBERT` is non-canonical. S050 adds
+  `TEXTURE2D_UNLIT`.
+- `MeshUVMode`: `NONE`, `VERTEX`.
 - `FaceCulling`: `NONE`, optional/capability-gated `BACK`, `FRONT`.
 - `DepthMode`: `AUTO`, `DISABLED`, `ENABLED`.
 - `OpacityPolicy`: `ORDINARY_ALPHA`.
@@ -63,6 +69,9 @@ No Datoviz slot names, material structs, or backend draw-state names are public 
 - S039 face normals must be finite, non-zero, and shaped `(M,3)`. Vertex normals remain deferred.
 - S039 `FACE_FLAT` normal generation is deterministic for DATA-space 3D triangle faces using
   `cross(p1 - p0, p2 - p0)` and fails on degenerate triangles.
+- S050 `texture2d_unlit` requires a declared RGBA8 `Texture2D`, `uv_mode="vertex"`, and finite
+  `uvs.shape == (N,2)`. Separate UV indices, per-corner UVs, generated UVs, sampler fields, and
+  color-space controls remain unsupported.
 - `order` is a finite dimensionless visual-order scalar.
 
 ## Geometry, color, and material policy
@@ -77,9 +86,10 @@ transparent triangle correctness, and automatic face sorting are not guaranteed.
 
 S038 names the unlit material boundary: existing RGBA mesh colors are implicit `unlit_rgba`, with
 `output.rgb = base.rgb` and `output.a = base.a`. S039 accepts flat Lambert face-normal shading for
-opaque DATA-space 3D triangle meshes. Public material objects, vertex normals, smooth Lambert,
-textures, UVs, samplers, Phong/specular/shininess, and backend material-struct fields remain
-deferred unless a later ADR/spec accepts them.
+opaque DATA-space 3D triangle meshes. S050 accepts unlit RGBA8 texture sampling with per-vertex UVs
+and fixed nearest/clamp/no-mipmap sampling. Public material objects, vertex normals, smooth Lambert,
+samplers, Phong/specular/shininess, and backend material-struct fields remain deferred unless a
+later ADR/spec accepts them.
 
 ## Transform, camera, and depth policy
 

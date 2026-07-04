@@ -4,6 +4,9 @@
 
 Accepted
 
+ADR-0026 later accepts flat Lambert face-normal shading. ADR-0029 later accepts unlit Texture2D
+sampling with per-vertex UVs. Those later ADRs do not change the S038 `unlit_rgba` boundary.
+
 ## Context
 
 S036 and S037 accepted a bounded orthographic `View3D` baseline, public `View3D` navigation
@@ -67,6 +70,11 @@ texture2d.rgba8.v1
 meshvisual.uv.vertex2d.v1
 meshvisual.material.texture2d_unlit.v1
 ```
+
+ADR-0026 later accepts `meshvisual.material.flat_lambert.v1`, `view3d.light.ambient.v1`, and
+`view3d.light.directional.v1`. ADR-0029 later accepts `texture2d.rgba8.v1`,
+`meshvisual.uv.vertex2d.v1`, and `meshvisual.material.texture2d_unlit.v1`. Phong and broader
+material/sampler behavior remain deferred.
 
 Future normal capability names such as `meshvisual.normals.vertex3d.v1` and
 `meshvisual.normals.face3d.v1` are not introduced by S038.

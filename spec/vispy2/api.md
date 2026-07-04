@@ -111,9 +111,42 @@ The bounded S025 mesh API exposes accepted `MeshVisual` protocol semantics:
   caller wants explicit association.
 - `coordinate_space` accepts existing GSP coordinate spaces, defaulting to `DATA`.
 
-The VisPy2 producer does not expose materials, lights, textures, normals, shading, culling, depth
-state, mesh-local transforms, Datoviz slots, or backend draw calls. Those remain protocol- or
-backend-capability work, not high-level producer API.
+The S025 VisPy2 producer does not expose materials, lights, textures, normals, shading, culling,
+depth state, mesh-local transforms, Datoviz slots, or backend draw calls. S050 later accepts one
+thin Texture2D/UV producer extension below.
+
+## S050 Texture2D mesh producer extension
+
+After the S050 protocol validator lands, VisPy2 may extend `Axes.mesh` only as:
+
+```python
+def mesh(
+    self,
+    positions,
+    faces,
+    *,
+    color=(1.0, 1.0, 1.0, 1.0),
+    color_mode=None,
+    coordinate_space="data",
+    order=0.0,
+    texture=None,
+    uvs=None,
+):
+    ...
+```
+
+`texture is None and uvs is None` preserves current behavior exactly. Supplying both emits one GSP
+`Texture2D` resource, sets `MeshVisual.texture2d_id`, `uv_mode="vertex"`, `uvs=uvs`, and
+`shading="texture2d_unlit"`. Supplying exactly one of `texture` or `uvs` is an error.
+
+`texture` must be strict `uint8 (H,W,4)` with no filename, URI, PIL object, RGB expansion, float
+scaling, or color-profile handling in v1. `uvs` must be finite `(N,2)`. `color` remains the
+multiplicative base color. VisPy2 must not add `sampler`, `wrap`, `filter`, `mipmap`, `material`,
+`normal`, `light`, `shading`, `texture_id`, culling/depth-state, or backend-specific keywords in
+this stage.
+
+`vispy2.producer.mesh.texture2d_unlit.v1` is producer-only. `Figure.render_matplotlib()` and other
+renderer paths must still check renderer capabilities and diagnose unsupported textured meshes.
 
 ## S026 color mapping direction
 

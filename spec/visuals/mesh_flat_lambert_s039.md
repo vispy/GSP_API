@@ -1,6 +1,7 @@
 # MeshVisual Flat Lambert Shading - S039
 
-Status: accepted S039 protocol boundary.
+Status: accepted S039 protocol boundary. S050 later accepts unlit Texture2D/UV semantics separately
+in `spec/visuals/mesh_texture2d_unlit_s050.md`; that does not change S039 Lambert behavior.
 
 Semantic purpose: add the smallest deterministic diffuse lighting model after S038 while preserving
 backend neutrality and keeping material objects, smooth shading, Phong, textures, UVs, samplers, and
@@ -25,7 +26,7 @@ Out of scope:
 - public `MeshMaterial3D`;
 - vertex normals or smooth Lambert;
 - Phong/specular/shininess;
-- textures, UVs, samplers, normal maps;
+- textured Lambert, samplers, normal maps;
 - multiple lights, colored lights, point/spot lights, attenuation, light IDs, scene graph;
 - backend-native material, shader, draw-state, or artist objects.
 
@@ -163,6 +164,8 @@ Deferred:
 - `meshvisual.normals.vertex3d.v1`;
 - `meshvisual.material.smooth_lambert.v1`;
 - `meshvisual.material.flat_phong.v1`;
+Accepted separately by S050:
+
 - `texture2d.rgba8.v1`;
 - `meshvisual.uv.vertex2d.v1`;
 - `meshvisual.material.texture2d_unlit.v1`.

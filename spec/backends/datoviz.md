@@ -177,6 +177,26 @@ Datoviz may advertise `meshvisual.material.flat_lambert.v1`,
 its View3D/depth/unlit prerequisites are fixture-backed. Non-opaque 3D mesh alpha remains
 non-strict via `mesh3d_alpha_not_strict`.
 
+## S050 textured mesh gate
+
+Datoviz may advertise `texture2d.rgba8.v1`, `meshvisual.uv.vertex2d.v1`, and
+`meshvisual.material.texture2d_unlit.v1` only after public Datoviz APIs prove all accepted S050
+semantics:
+
+- canonical RGBA8 texture upload from `uint8 (H,W,4)` data;
+- canonical per-vertex UV binding indexed by GSP mesh faces;
+- nearest min/mag filtering;
+- clamp-to-edge in `u` and `v`;
+- no mipmaps or LOD-dependent sampling;
+- compatible image-origin behavior for `image[0]` as the top row and high `v` sampling top texels;
+- unmanaged numeric RGBA sampling without implicit sRGB/color-profile conversion;
+- multiplicative unlit output with no native lighting/material tint.
+
+Private Vulkan objects, private shader slots, private mesh ids, backend-native texture handles, and
+draw-state names are not public GSP semantics and are not strict S050 evidence. Textured meshes may
+combine with `meshvisual.positions3d.opaque_depth.v1` only on the retained DATA-space View3D path
+and only when base alpha is `1.0` and every texture alpha byte is `255`.
+
 ## M066 PointVisual retained path
 
 Point visuals are attached with an explicit `DvzVisualAttachDesc` instead of relying on a NULL
