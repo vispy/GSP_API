@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -37,3 +37,17 @@ semantics.
 - Stop before using private Vulkan state, private shader slots, private mesh ids, or sibling
   Datoviz source edits.
 - Stop before advertising `meshvisual.material.texture2d_unlit.v1`.
+
+## Result
+
+Added `.agent/S050_DATOVIZ_TEXTURE2D_PUBLIC_API_FEASIBILITY.md`.
+
+The audit found a plausible public Datoviz v0.4-dev implementation path for mesh Texture2D upload:
+`dvz_mesh`, mesh `"texcoords"` via `dvz_visual_set_data`, indexed mesh upload, RGBA8 sampled fields,
+and `dvz_visual_set_field(..., "texture", field)` are present in the generated binding and public
+headers.
+
+Strict S050 Datoviz capability advertisement remains blocked. The current public evidence does not
+prove mesh nearest/clamp/no-mipmap sampler semantics, top-row/high-v origin behavior, unmanaged
+numeric RGBA behavior, or exact multiplicative unlit output. No private Datoviz APIs were used and
+no renderer capability was promoted.
