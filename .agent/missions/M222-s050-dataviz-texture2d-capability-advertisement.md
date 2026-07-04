@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft, dependent on M220.
+Blocked by M220.
 
 ## Summary
 
@@ -37,3 +37,11 @@ strict semantics.
 
 - Stop if the implementation needs private Datoviz APIs, unsupported sampler behavior, alpha/culling
   expansion, or mesh-picking payload expansion.
+
+## Blocker
+
+M220 found public Datoviz upload and mesh texture binding symbols, but strict capability
+advertisement remains blocked pending fixture evidence for mesh nearest/clamp/no-mipmap sampler
+behavior, texture-origin behavior, unmanaged numeric RGBA behavior, and exact unlit
+multiplication. Do not implement or advertise Datoviz Texture2D renderer capabilities until those
+blockers are resolved.

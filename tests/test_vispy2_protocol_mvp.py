@@ -24,6 +24,7 @@ from gsp.protocol import (
     MeshNormalGeneration,
     MeshNormalMode,
     MeshShading,
+    MeshUVMode,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -41,6 +42,7 @@ from gsp.protocol import (
     TextAnchorX,
     TextAnchorY,
     TextVisual,
+    Texture2D,
     TickSpecKind,
     View2D,
     VisualTransformBinding,
@@ -541,6 +543,107 @@ def test_vispy2_mesh_helper_emits_s039_flat_lambert_fields():
     assert visual.normal_mode is MeshNormalMode.FACE
     assert visual.normal_generation is MeshNormalGeneration.FACE_FLAT
     np.testing.assert_allclose(visual.normalized_face_normals(), [[0.0, 0.0, 1.0]])
+
+
+def test_vispy2_mesh_helper_emits_s050_texture2d_unlit_fields():
+    fig, ax = vp.subplots()
+    texture = np.array(
+        [
+            [[255, 0, 0, 255], [0, 255, 0, 255]],
+            [[0, 0, 255, 255], [255, 255, 255, 255]],
+        ],
+        dtype=np.uint8,
+    )
+    uvs = np.array([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]], dtype=np.float32)
+
+    visual = ax.mesh(
+        [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+        [[0, 1, 2]],
+        color=[255, 255, 255, 255],
+        texture=texture,
+        uvs=uvs,
+    )
+
+    assert visual.shading is MeshShading.TEXTURE2D_UNLIT
+    assert visual.texture2d_id is not None
+    assert visual.texture2d_id.startswith("texture:mesh-")
+    assert visual.uv_mode is MeshUVMode.VERTEX
+    np.testing.assert_allclose(visual.uvs, uvs)
+    resources = fig.texture_resources()
+    assert len(resources) == 1
+    assert isinstance(resources[0], Texture2D)
+    assert resources[0].id == visual.texture2d_id
+    np.testing.assert_array_equal(resources[0].image, texture)
+
+
+def test_vispy2_mesh_helper_requires_texture_and_uvs_together():
+    fig, ax = vp.subplots()
+    texture = np.zeros((2, 2, 4), dtype=np.uint8)
+
+    with pytest.raises(ValueError, match="texture and uvs must be supplied together"):
+        ax.mesh(
+            [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+            [[0, 1, 2]],
+            color=[255, 255, 255, 255],
+            texture=texture,
+        )
+    with pytest.raises(ValueError, match="texture and uvs must be supplied together"):
+        ax.mesh(
+            [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+            [[0, 1, 2]],
+            color=[255, 255, 255, 255],
+            uvs=[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+        )
+
+    assert fig.visuals() == ()
+    assert fig.texture_resources() == ()
+
+
+def test_vispy2_mesh_helper_rejects_invalid_s050_texture_and_uvs():
+    _, ax = vp.subplots()
+
+    with pytest.raises(TypeError, match="texture2d_invalid_resource"):
+        ax.mesh(
+            [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+            [[0, 1, 2]],
+            color=[255, 255, 255, 255],
+            texture=np.zeros((2, 2, 4), dtype=np.float32),
+            uvs=[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+        )
+    with pytest.raises(ValueError, match="meshvisual_uv_shape_mismatch"):
+        ax.mesh(
+            [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+            [[0, 1, 2]],
+            color=[255, 255, 255, 255],
+            texture=np.zeros((2, 2, 4), dtype=np.uint8),
+            uvs=[[0.0, 0.0], [1.0, 0.0]],
+        )
+    with pytest.raises(ValueError, match="texture2d_unlit does not accept explicit mesh shading"):
+        ax.mesh(
+            [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+            [[0, 1, 2]],
+            color=[255, 255, 255, 255],
+            shading="flat_lambert",
+            texture=np.zeros((2, 2, 4), dtype=np.uint8),
+            uvs=[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+        )
+
+
+def test_vispy2_textured_mesh_render_matplotlib_reports_unsupported():
+    fig, ax = vp.subplots()
+    ax.mesh(
+        [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+        [[0, 1, 2]],
+        color=[255, 255, 255, 255],
+        texture=np.zeros((2, 2, 4), dtype=np.uint8),
+        uvs=[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+    )
+
+    with pytest.raises(
+        NotImplementedError,
+        match="meshvisual_material_texture2d_unlit_unsupported",
+    ):
+        fig.render_matplotlib()
 
 
 def test_vispy2_mesh_helper_emits_s039_explicit_face_normals():

@@ -36,6 +36,7 @@ from gsp.protocol import (
     MeshNormalGeneration,
     MeshNormalMode,
     MeshShading,
+    MeshUVMode,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -55,6 +56,7 @@ from gsp.protocol import (
     TextVisual,
     TickSpec,
     TickSpecKind,
+    Texture2D,
     View2D,
     VisualAttachment,
     VisualTransformBinding,
@@ -76,6 +78,7 @@ from gsp_matplotlib.protocol_renderer import (
 
 _visual_counter = count(1)
 _scale_counter = count(1)
+_texture_counter = count(1)
 
 
 @dataclass(slots=True)
@@ -85,6 +88,7 @@ class Figure:
     axes: list["Axes"] = field(default_factory=list)
     id: str = "figure:main"
     color_scale_resources: list[ColorScale] = field(default_factory=list)
+    texture2d_resources: list[Texture2D] = field(default_factory=list)
 
     def add_axes(self) -> "Axes":
         """Add one protocol-producing axes to the figure."""
@@ -132,6 +136,10 @@ class Figure:
     def color_scales(self) -> tuple[ColorScale, ...]:
         """Return semantic scalar color scale resources."""
         return tuple(self.color_scale_resources)
+
+    def texture_resources(self) -> tuple[Texture2D, ...]:
+        """Return semantic Texture2D resources."""
+        return tuple(self.texture2d_resources)
 
     def colorbar_guides(self) -> tuple[ColorbarGuide, ...]:
         """Return semantic colorbar guide intent."""
@@ -703,11 +711,18 @@ class Axes:
         normal_generation: str | MeshNormalGeneration = MeshNormalGeneration.NONE,
         order: float = 0.0,
         transform: npt.ArrayLike | VisualTransformBinding | None = None,
+        texture: npt.ArrayLike | None = None,
+        uvs: npt.ArrayLike | None = None,
         id: str | None = None,
     ) -> MeshVisual:
         """Create a protocol MeshVisual for accepted inline triangle meshes."""
         position_array = _positions(positions, None)
         face_array = _faces(faces)
+        texture_resource = self._mesh_texture2d_resource(texture, uvs)
+        mesh_shading = _mesh_shading(shading)
+        mesh_uvs = None if texture_resource is None else _mesh_uvs(uvs, position_array.shape[0])
+        if texture_resource is not None and mesh_shading is not MeshShading.UNLIT_RGBA:
+            raise ValueError("texture2d_unlit does not accept explicit mesh shading")
         visual = MeshVisual(
             id=id or _visual_id("mesh"),
             positions=position_array,
@@ -715,13 +730,22 @@ class Axes:
             coordinate_space=_coordinate_space(coordinate_space),
             color=_mesh_color(color),
             color_mode=_mesh_color_mode(color_mode),
-            shading=_mesh_shading(shading),
+            shading=(
+                MeshShading.TEXTURE2D_UNLIT
+                if texture_resource is not None
+                else mesh_shading
+            ),
             normal_mode=_mesh_normal_mode(normal_mode),
             normals=_mesh_normals(normals),
             normal_generation=_mesh_normal_generation(normal_generation),
+            texture2d_id=None if texture_resource is None else texture_resource.id,
+            uv_mode=MeshUVMode.NONE if texture_resource is None else MeshUVMode.VERTEX,
+            uvs=mesh_uvs,
             order=float(order),
             transform=_visual_transform(transform),
         )
+        if texture_resource is not None:
+            self.figure.texture2d_resources.append(texture_resource)
         self.visuals.append(visual)
         self.attachments.append(
             VisualAttachment(
@@ -729,6 +753,18 @@ class Axes:
             )
         )
         return visual
+
+    def _mesh_texture2d_resource(
+        self, texture: npt.ArrayLike | None, uvs: npt.ArrayLike | None
+    ) -> Texture2D | None:
+        if texture is None and uvs is None:
+            return None
+        if texture is None or uvs is None:
+            raise ValueError("texture and uvs must be supplied together")
+        image = np.asarray(texture)
+        if image.dtype != np.dtype(np.uint8):
+            raise TypeError("texture2d_invalid_resource: texture must have dtype uint8")
+        return Texture2D(id=_texture_id("mesh"), image=image)
 
     @property
     def _index(self) -> int:
@@ -988,6 +1024,10 @@ def _scale_id(prefix: str) -> str:
     return f"scale:{prefix}-{next(_scale_counter)}"
 
 
+def _texture_id(prefix: str) -> str:
+    return f"texture:{prefix}-{next(_texture_counter)}"
+
+
 def _coordinate_space(value: str | CoordinateSpace) -> CoordinateSpace:
     if isinstance(value, CoordinateSpace):
         return value
@@ -1130,6 +1170,17 @@ def _mesh_normals(value: npt.ArrayLike | None) -> npt.NDArray[np.float32] | None
     array = np.asarray(value, dtype=np.float32)
     if array.ndim != 2 or array.shape[1] != 3:
         raise ValueError("mesh normals must have shape (F, 3) or (N, 3)")
+    return np.ascontiguousarray(array)
+
+
+def _mesh_uvs(value: npt.ArrayLike | None, vertex_count: int) -> npt.NDArray[np.float32]:
+    if value is None:
+        raise ValueError("texture and uvs must be supplied together")
+    array = np.asarray(value, dtype=np.float32)
+    if array.shape != (vertex_count, 2):
+        raise ValueError(f"meshvisual_uv_shape_mismatch: uvs must have shape ({vertex_count}, 2)")
+    if not np.all(np.isfinite(array)):
+        raise ValueError("meshvisual_uv_nonfinite: uvs must be finite")
     return np.ascontiguousarray(array)
 
 
