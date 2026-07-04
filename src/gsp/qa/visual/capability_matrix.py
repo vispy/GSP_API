@@ -99,6 +99,15 @@ _DATOVIZ_S029_STRICT_RENDER_CASES = {
     ],
 }
 
+_DATOVIZ_S050_STRICT_RENDER_CASES = {
+    "mesh3d/opaque_depth_intersecting_triangles_view3d": [
+        "S050 proves retained DATA-space View3D opaque depth with native Datoviz depth testing"
+    ],
+    "mesh3d/opaque_depth_intersecting_triangles_reversed_view3d": [
+        "S050 proves retained DATA-space View3D opaque depth is invariant to face submission order"
+    ],
+}
+
 _DATOVIZ_S029_RENDERED_BLOCKERS = {
     "text/basic_ndc": [
         "default BASELINE text-anchor semantics are not strictly verified by the Datoviz adapter"
@@ -331,7 +340,7 @@ def _datoviz_row(
             promotion = _datoviz_rendered_promotion(case)
             if promotion is not None:
                 status = "strict"
-                reason_code = "datoviz_rendered_strict_s029_family_audit"
+                reason_code = _datoviz_rendered_reason_code(case)
                 adaptations = promotion
                 missing = []
                 blockers = []
@@ -374,7 +383,16 @@ def _datoviz_rendered_promotion(case: Mapping[str, object]) -> list[str] | None:
     case_id = case.get("case_id")
     if not isinstance(case_id, str):
         return None
-    return _DATOVIZ_S029_STRICT_RENDER_CASES.get(case_id)
+    return _DATOVIZ_S029_STRICT_RENDER_CASES.get(
+        case_id
+    ) or _DATOVIZ_S050_STRICT_RENDER_CASES.get(case_id)
+
+
+def _datoviz_rendered_reason_code(case: Mapping[str, object]) -> str:
+    case_id = case.get("case_id")
+    if isinstance(case_id, str) and case_id in _DATOVIZ_S050_STRICT_RENDER_CASES:
+        return "datoviz_rendered_strict_s050_opaque_depth_audit"
+    return "datoviz_rendered_strict_s029_family_audit"
 
 
 def _datoviz_strict_guide_policy(

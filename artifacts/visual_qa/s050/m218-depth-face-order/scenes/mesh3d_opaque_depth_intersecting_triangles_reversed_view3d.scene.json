@@ -1,0 +1,150 @@
+{
+  "arrays": {
+    "expected_left_rgba": {
+      "dtype": "uint8",
+      "key": "expected_left_rgba",
+      "path": "mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.arrays.npz",
+      "shape": [
+        4
+      ]
+    },
+    "expected_right_rgba": {
+      "dtype": "uint8",
+      "key": "expected_right_rgba",
+      "path": "mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.arrays.npz",
+      "shape": [
+        4
+      ]
+    },
+    "expected_sample_ndc_xy": {
+      "dtype": "float32",
+      "key": "expected_sample_ndc_xy",
+      "path": "mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.arrays.npz",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "face_order_reversed": {
+      "dtype": "bool",
+      "key": "face_order_reversed",
+      "path": "mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.arrays.npz",
+      "shape": [
+        1
+      ]
+    },
+    "mesh_face_colors": {
+      "dtype": "uint8",
+      "key": "mesh_face_colors",
+      "path": "mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.arrays.npz",
+      "shape": [
+        2,
+        4
+      ]
+    },
+    "mesh_faces": {
+      "dtype": "uint32",
+      "key": "mesh_faces",
+      "path": "mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.arrays.npz",
+      "shape": [
+        2,
+        3
+      ]
+    },
+    "mesh_positions": {
+      "dtype": "float32",
+      "key": "mesh_positions",
+      "path": "mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.arrays.npz",
+      "shape": [
+        6,
+        3
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "mesh3d/opaque_depth_intersecting_triangles_reversed_view3d",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "transform_resources": [],
+  "view3d": {
+    "ambient_light_intensity": 0.0,
+    "camera": {
+      "eye": [
+        0.0,
+        0.0,
+        2.0
+      ],
+      "target": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    "depth_mode": "opaque_less",
+    "id": "view:mesh3d-depth-proof",
+    "kind": "view3d-camera",
+    "panel_id": "panel:main",
+    "projection": {
+      "kind": "orthographic",
+      "near_far": [
+        0.0,
+        4.0
+      ],
+      "xlim": [
+        -1.0,
+        1.0
+      ],
+      "ylim": [
+        -1.0,
+        1.0
+      ]
+    },
+    "revision": 0
+  },
+  "views": [],
+  "visuals": [
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      "color_mode": "face",
+      "coordinate_space": "data",
+      "depth_test": "enabled",
+      "depth_write": "enabled",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "visual:mesh3d-opaque-depth-intersecting-triangles-reversed",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          6,
+          3
+        ]
+      },
+      "shading": "unlit_rgba"
+    }
+  ]
+}

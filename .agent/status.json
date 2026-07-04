@@ -299,7 +299,7 @@
       "id": "S050",
       "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
       "state": "active",
-      "progress": 72
+      "progress": 84
     }
   ],
   "missions": [
@@ -2179,9 +2179,9 @@
       "id": "M210",
       "title": "S050 Datoviz retained View3D depth runtime proof",
       "stage": "S050",
-      "state": "blocked",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 80,
+      "progress": 100,
       "priority": 210
     },
     {
@@ -2347,16 +2347,17 @@
     "M208 completed: no new Datoviz TextVisual rows promote; isolated text artifacts render with only text/rotation_alpha_ndc strict, while the combined text review still crashes the Datoviz offscreen child.",
     "M214 completed latest Datoviz v0.4-dev generated-binding alignment without aliases, shims, or sibling Datoviz checkout edits.",
     "Do not promote Datoviz guide/View2D strictness: M207 real offscreen evidence crashed for guide rows, and native panel-title evidence remains required.",
-    "Do not promote S050 strict opaque depth beyond adapted until the M214 depth artifact is manually reviewed and a family-specific promotion audit is recorded.",
+    "M210 completed: S050 face-order invariance evidence at artifacts/visual_qa/s050/m218-depth-face-order supports Datoviz meshvisual.positions3d.opaque_depth.v1 only on the retained DATA-space View3D path for fully opaque meshes.",
     "M216 completed: current Datoviz query API uses dvz_panel_query_px; live point identity is proven, image texel/color/value remains unproven, and Datoviz now advertises panel-query plus point-item but not image-texel.",
     "M217 completed: Datoviz offscreen review packs now isolate one child process per case; complete post-report teardown crashes preserve rendered artifacts and record child_teardown_crash evidence.",
     "M215 completed: Datoviz query/readback docs now distinguish capability-gated guide/all-rendered query from still-deferred live rich payload parity, scientific readback, hit_policy=all, and mesh-triangle picking.",
     "Do not accept strict culling, non-opaque mesh alpha, or expanded 3D query payloads without ChatGPT Pro consultation output.",
-    "M204 remains blocked pending ChatGPT Pro consultation because materials/textures and broader VisPy2 public API design are architecture/API-shape decisions.",
+    "M204 has a self-contained ChatGPT Pro packet at .agent/consultations/P031-materials-textures-vispy2-api.md and remains blocked pending the user-provided response.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
     "M217 completed: reproduced the five-case TextVisual batch signal 11, classified it as Datoviz/native teardown behavior, changed datoviz-offscreen-opt-in review packs to one child per case, and recorded artifacts under artifacts/visual_qa/s050/m217-dataviz-offscreen-*.",
+    "M204 packet created: .agent/consultations/P031-materials-textures-vispy2-api.md asks ChatGPT Pro for the next materials/textures/UVs and VisPy2 API-shape decision; dependent implementation remains paused.",
     "M216 completed: added .agent/S050_DATOVIZ_LIVE_POINT_IMAGE_PAYLOAD_EVIDENCE.md and artifacts/visual_qa/s050/m216-live-query-payload/smoke.json; switched to current dvz_panel_query_px, kept point-item, removed image-texel, and rejected non-identity live Datoviz query payloads unless scalar extension decoration is explicitly supported.",
     "M208 completed: fixed packed RGBA8 latest-binding upload to pass POINTER(c_ubyte) into dvz_visual_set_texture_rgba8(); isolated Datoviz TextVisual artifacts render with only text/rotation_alpha_ndc strict, the other text rows adapted, and the combined text batch still crashed with signal 11.",
     "M215 completed: updated spec/backends/datoviz.md query/readback wording to reflect S043 panel-frame guide hit/readback capability gates and preserved unsupported boundaries for hit_policy=all, unsupported extension payloads, scientific readback, and mesh-triangle picking.",
@@ -2365,7 +2366,7 @@
     "M214 completed: added a latest-only Datoviz generated-binding contract, replaced stale coordinate/image/View3D camera API usage, archived P030 response, and generated real Datoviz review packs at artifacts/visual_qa/s050/m214-latest-colorbar and artifacts/visual_qa/s050/m214-latest-depth.",
     "M201 completed: scoped Datoviz query/readback follow-up after M200; mesh triangle picking waits on upstream Datoviz face/triangle query API, while M215 refreshed docs/status and M216 can later refresh live point/image payload evidence.",
     "M213 completed: datoviz-offscreen-opt-in review packs now isolate Datoviz in a child process, discard child staging unless it exits cleanly, and write parent review packs with structured Datoviz rows. M214 now replaces the stale symbol blockers with the current generated-binding contract.",
-    "M210 blocked: S050 strict-depth visual QA fixture and view3d harness support are in place; after M214 alignment, Datoviz renders the case as adapted at artifacts/visual_qa/s050/m214-latest-depth, so meshvisual.positions3d.opaque_depth.v1 remains unadvertised pending manual review and promotion audit.",
+    "M210 completed: added a reversed S050 strict-depth face-order fixture, generated Datoviz evidence at artifacts/visual_qa/s050/m218-depth-face-order, recorded .agent/S050_DATOVIZ_OPAQUE_DEPTH_PROMOTION_AUDIT.md, and promoted meshvisual.positions3d.opaque_depth.v1 only for retained DATA-space View3D opaque meshes.",
     "M209 completed: defined an overlapping opaque-triangle fixture that separates strict per-fragment depth from average-face painter sorting, plus promotion criteria that leave capability advertisements unchanged.",
     "M203 completed: strict opaque depth remains unadvertised pending independent less-depth evidence; Matplotlib remains adapted CPU-sorted 3D raster behavior; follow-ups split into M209 fixture planning, M210 Datoviz runtime proof, and M211/M212 consultation packets.",
     "M202 completed: split Datoviz guide/text/colorbar strictness into M206 colorbar proof, M207 guide query strictness audit, and M208 TextVisual strictness proof.",

@@ -125,9 +125,12 @@ The protocol renderer prefers a retained DATA-space View3D mesh path when the Da
 exposes `DvzPanelView3DDesc`, `DvzPanelView3DState`, `dvz_panel_set_view3d_desc()`,
 `dvz_panel_view3d_state()`, `dvz_panel_camera()`, and camera view/projection readback/update
 symbols. In that path, DATA `(N,3)` mesh vertices are uploaded unchanged, attached with panel DATA
-coordinates, and ordinary camera/projection updates touch retained View3D state only. Older bindings
-fall back to CPU-projected GSP panel NDC and adapted face ordering. Neither path claims strict
-`meshvisual.positions3d.opaque_depth.v1`.
+coordinates, and ordinary camera/projection updates touch retained View3D state only. After S050
+runtime evidence, this retained DATA-space path may claim strict
+`meshvisual.positions3d.opaque_depth.v1` for fully opaque meshes: the accepted proof renders the
+same nearer-fragment-wins red/blue samples with original and reversed face submission order. Older
+bindings fall back to CPU-projected GSP panel NDC and adapted face ordering, and must not claim
+strict opaque depth.
 
 GSP lowers retained `View3D.camera` through `dvz_panel_set_view3d_desc()` on setup and
 `dvz_camera_set_view()` on updates, and lowers `OrthographicProjection3D.xlim`, `.ylim`, and

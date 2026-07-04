@@ -439,6 +439,21 @@ def _s050_strict_depth_cases() -> tuple[VisualQACase, ...]:
             ),
             builder=_mesh3d_opaque_depth_intersecting_triangles_view3d,
         ),
+        VisualQACase(
+            case_id="mesh3d/opaque_depth_intersecting_triangles_reversed_view3d",
+            title="View3D opaque depth intersecting triangles reversed order",
+            family="mesh3d",
+            required_features=(
+                "mesh",
+                "view3d",
+                "data",
+                "rgba8",
+                "per-face",
+                "opaque-depth-candidate",
+                "face-order-invariance",
+            ),
+            builder=_mesh3d_opaque_depth_intersecting_triangles_reversed_view3d,
+        ),
     )
 
 
@@ -456,6 +471,27 @@ def case_slug(case_id: str) -> str:
 
 
 def _mesh3d_opaque_depth_intersecting_triangles_view3d() -> VisualQAScene:
+    return _mesh3d_opaque_depth_intersecting_triangles_scene(
+        case_id="mesh3d/opaque_depth_intersecting_triangles_view3d",
+        visual_id="visual:mesh3d-opaque-depth-intersecting-triangles",
+        reverse_face_order=False,
+    )
+
+
+def _mesh3d_opaque_depth_intersecting_triangles_reversed_view3d() -> VisualQAScene:
+    return _mesh3d_opaque_depth_intersecting_triangles_scene(
+        case_id="mesh3d/opaque_depth_intersecting_triangles_reversed_view3d",
+        visual_id="visual:mesh3d-opaque-depth-intersecting-triangles-reversed",
+        reverse_face_order=True,
+    )
+
+
+def _mesh3d_opaque_depth_intersecting_triangles_scene(
+    *,
+    case_id: str,
+    visual_id: str,
+    reverse_face_order: bool,
+) -> VisualQAScene:
     positions = np.array(
         [
             [-0.75, -0.70, 1.60],
@@ -468,12 +504,17 @@ def _mesh3d_opaque_depth_intersecting_triangles_view3d() -> VisualQAScene:
         dtype=np.float32,
     )
     faces = np.array([[0, 1, 2], [3, 4, 5]], dtype=np.uint32)
+    face_order = np.array([1, 0], dtype=np.int64) if reverse_face_order else None
+    if face_order is not None:
+        faces = faces[face_order]
     colors = np.array(
         [[230, 57, 70, 255], [69, 123, 157, 255]],
         dtype=np.uint8,
     )
+    if face_order is not None:
+        colors = colors[face_order]
     mesh = MeshVisual(
-        id="visual:mesh3d-opaque-depth-intersecting-triangles",
+        id=visual_id,
         positions=positions,
         faces=faces,
         coordinate_space=CoordinateSpace.DATA,
@@ -497,24 +538,26 @@ def _mesh3d_opaque_depth_intersecting_triangles_view3d() -> VisualQAScene:
         ),
     )
     return VisualQAScene(
-        case_id="mesh3d/opaque_depth_intersecting_triangles_view3d",
+        case_id=case_id,
         visuals=(mesh,),
         arrays={
             "mesh_positions": positions,
             "mesh_faces": faces,
             "mesh_face_colors": colors,
-            "expected_left_rgba": colors[0],
-            "expected_right_rgba": colors[1],
+            "expected_left_rgba": np.array([230, 57, 70, 255], dtype=np.uint8),
+            "expected_right_rgba": np.array([69, 123, 157, 255], dtype=np.uint8),
             "expected_sample_ndc_xy": np.array(
                 [[-0.55, -0.45], [0.20, -0.45]],
                 dtype=np.float32,
             ),
+            "face_order_reversed": np.array([bool(reverse_face_order)], dtype=np.bool_),
         },
         view3d=view3d,
         notes=(
             "Two opaque DATA-space triangles share the same projected XY footprint and cross in depth.",
             "Strict per-fragment depth should show red at the left sample and blue at the right sample.",
             "Average-face painter sorting draws blue last across the whole overlap, so this fixture separates adapted from strict depth.",
+            "The reversed-order companion must render the same strict-depth sample colors.",
         ),
     )
 

@@ -1,0 +1,124 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m218-depth-face-order/scenes/mesh3d_opaque_depth_intersecting_triangles_view3d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_view3d.png",
+          "backend_id": "datoviz",
+          "child_process_returncode": -11,
+          "child_process_status": "teardown_crash_after_report",
+          "child_teardown_crash_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_view3d.child_teardown_crash.json",
+          "child_teardown_log_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_view3d.child_teardown_crash.log.txt",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_view3d.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/matplotlib/mesh3d_opaque_depth_intersecting_triangles_view3d.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/matplotlib/mesh3d_opaque_depth_intersecting_triangles_view3d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "mesh3d/opaque_depth_intersecting_triangles_view3d",
+      "family": "mesh3d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "view3d",
+        "data",
+        "rgba8",
+        "per-face",
+        "opaque-depth-candidate"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m218-depth-face-order/scenes/mesh3d_opaque_depth_intersecting_triangles_view3d.scene.json",
+      "title": "View3D opaque depth intersecting triangles"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m218-depth-face-order/scenes/mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.png",
+          "backend_id": "datoviz",
+          "child_process_returncode": -11,
+          "child_process_status": "teardown_crash_after_report",
+          "child_teardown_crash_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.child_teardown_crash.json",
+          "child_teardown_log_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.child_teardown_crash.log.txt",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/datoviz/mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/matplotlib/mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m218-depth-face-order/backends/matplotlib/mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "mesh3d/opaque_depth_intersecting_triangles_reversed_view3d",
+      "family": "mesh3d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "view3d",
+        "data",
+        "rgba8",
+        "per-face",
+        "opaque-depth-candidate",
+        "face-order-invariance"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m218-depth-face-order/scenes/mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.scene.json",
+      "title": "View3D opaque depth intersecting triangles reversed order"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s050/m218-depth-face-order/contact_sheets/mesh3d_opaque_depth_intersecting_triangles_view3d.png",
+    "artifacts/visual_qa/s050/m218-depth-face-order/contact_sheets/mesh3d_opaque_depth_intersecting_triangles_reversed_view3d.png",
+    "artifacts/visual_qa/s050/m218-depth-face-order/contact_sheets/s050_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_child_strategy": "one_process_per_case",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "a9492af6526fbb722e2c0783811758f1b15be10e",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s050/m218-depth-face-order/environment.json",
+  "run_id": "s050-m218-depth-face-order",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S050",
+  "started_at": "2026-07-04T18:53:48.265402+00:00",
+  "suite": "s050"
+}

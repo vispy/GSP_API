@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Blocked pending manual review and family-specific promotion audit.
+Completed.
 
 ## Summary
 
@@ -50,7 +50,18 @@ now renders through real Datoviz offscreen review-pack evidence at
 `artifacts/visual_qa/s050/m214-latest-depth/`.
 
 Result: Datoviz rendered `mesh3d/opaque_depth_intersecting_triangles_view3d`, but the capability
-matrix still classifies it as `adapted` with reason code
-`datoviz_rendered_pending_promotion_audit`. Do not advertise
-`meshvisual.positions3d.opaque_depth.v1` until the artifact is manually reviewed and a
-family-specific strict-depth promotion audit is recorded.
+matrix still classified it as `adapted` with reason code
+`datoviz_rendered_pending_promotion_audit`. M210 remained blocked until manual review and a
+family-specific strict-depth promotion audit.
+
+M210 resumed on 2026-07-04. The S050 suite gained a reversed face-order companion case, and a fresh
+Datoviz offscreen run completed at `artifacts/visual_qa/s050/m218-depth-face-order/index.md`.
+Pixel sampling confirmed that both Datoviz original and reversed cases render red at the left
+sample and blue at the right sample, while Matplotlib remains adapted/painter-sorted with blue at
+both samples.
+
+Decision: Datoviz may advertise `meshvisual.positions3d.opaque_depth.v1` only for the retained
+DATA-space View3D path with fully opaque meshes and native depth test/write enabled. Transparent
+mesh alpha, culling, clipping strictness, and mesh triangle picking remain unpromoted.
+
+Audit: `.agent/S050_DATOVIZ_OPAQUE_DEPTH_PROMOTION_AUDIT.md`.

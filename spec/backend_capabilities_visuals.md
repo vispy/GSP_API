@@ -174,10 +174,12 @@ the P022 camera ctypes layouts and explicit orthographic-bounds API. Builds that
 revisioned panel `View3D` descriptor/state APIs may claim
 `view3d.retained_data_space_visuals.v1`: DATA `(N,3)` mesh vertices stay in DATA space, attach to
 the retained panel View3D, and ordinary camera/projection updates do not rewrite unchanged vertex or
-index buffers. Builds without that retained descriptor/state path use the adapted CPU projection
-path for DATA meshes. Datoviz must not claim `meshvisual.positions3d.opaque_depth.v1` until strict
-GPU less-depth behavior is independently proven. Older builds must continue reporting structured
-unsupported diagnostics rather than silently flattening z or exposing backend-native camera objects.
+index buffers. S050 face-order invariance evidence also permits those retained DATA-space View3D
+builds to claim `meshvisual.positions3d.opaque_depth.v1` for fully opaque meshes with native
+depth-test/write enabled. Builds without that retained descriptor/state path use the adapted CPU
+projection path for DATA meshes and must not claim strict opaque depth. Older builds must continue
+reporting structured unsupported diagnostics rather than silently flattening z or exposing
+backend-native camera objects.
 
 Datoviz may claim `query.view3d.ray_readback.v1` for canonical ray-context payload generation when
 the same P022 camera binding is available. This capability does not imply GPU visual hit picking for

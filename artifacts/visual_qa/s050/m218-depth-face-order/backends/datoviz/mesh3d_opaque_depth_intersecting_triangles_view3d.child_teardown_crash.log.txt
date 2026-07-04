@@ -1,0 +1,11 @@
+Datoviz offscreen child process terminated by signal 11
+
+Command:
+/home/cyrille/GIT/Viz/GSP_API/.venv/bin/python3 -m gsp.qa.visual run --suite s050 --backends datoviz --out artifacts/visual_qa/s050/m218-depth-face-order/_datoviz_offscreen_child/mesh3d_opaque_depth_intersecting_triangles_view3d --no-contact-sheet --resolution 640x480 --datoviz-color-pipeline legacy_srgb_blend --case mesh3d/opaque_depth_intersecting_triangles_view3d --run-id s050-m218-depth-face-order
+
+stdout:
+artifacts/visual_qa/s050/m218-depth-face-order/_datoviz_offscreen_child/mesh3d_opaque_depth_intersecting_triangles_view3d/report.json
+
+
+stderr:
+

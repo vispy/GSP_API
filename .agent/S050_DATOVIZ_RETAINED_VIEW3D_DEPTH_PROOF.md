@@ -82,11 +82,31 @@ Result: `artifacts/visual_qa/s050/m214-latest-depth/index.md`.
 The Datoviz backend rendered, with capability matrix status `adapted`, review classification
 `review.adapted`, and reason code `datoviz_rendered_pending_promotion_audit`.
 
+## S050 Promotion Audit
+
+M210 resumed on 2026-07-04 and added a reversed face-order companion case:
+
+- `mesh3d/opaque_depth_intersecting_triangles_view3d`
+- `mesh3d/opaque_depth_intersecting_triangles_reversed_view3d`
+
+Fresh Datoviz offscreen evidence was generated at:
+
+`artifacts/visual_qa/s050/m218-depth-face-order/index.md`
+
+Both Datoviz cases render the strict expected sample colors:
+
+- left NDC sample `(-0.55, -0.45)` -> red `[230, 57, 70]`
+- right NDC sample `(0.20, -0.45)` -> blue `[69, 123, 157]`
+
+Both Matplotlib adapted-reference cases render blue at both samples, confirming that the fixture
+still distinguishes strict fragment-depth behavior from average-face painter ordering.
+
+The family-specific promotion audit is recorded in:
+
+`.agent/S050_DATOVIZ_OPAQUE_DEPTH_PROMOTION_AUDIT.md`
+
 ## Decision
 
-Do not advertise `meshvisual.positions3d.opaque_depth.v1` for Datoviz.
-
-The crash and stale generated-binding blockers are resolved, but M210 remains blocked on manual
-review and a family-specific strict-depth promotion audit. The strict-depth fixture and local
-harness support are ready; promotion requires accepting the M214 Datoviz artifact as strict
-per-fragment depth evidence.
+Advertise `meshvisual.positions3d.opaque_depth.v1` for Datoviz only when the retained DATA-space
+View3D path is available and the mesh is fully opaque. Do not promote transparent alpha, culling,
+clipping strictness, or mesh triangle picking.

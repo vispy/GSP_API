@@ -1,0 +1,8 @@
+schema_version: 1
+cases:
+  - case_id: mesh3d/opaque_depth_intersecting_triangles_view3d
+    status: pending
+    notes: ''
+  - case_id: mesh3d/opaque_depth_intersecting_triangles_reversed_view3d
+    status: pending
+    notes: ''

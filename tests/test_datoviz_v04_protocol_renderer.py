@@ -4321,7 +4321,7 @@ def test_datoviz_capabilities_advertise_s040_lambert_cpu_resolve_when_view3d_rea
         dvz=FakeDatovizV04WithRetainedView3D()
     ).capabilities()
 
-    assert MESH3D_OPAQUE_DEPTH_CAPABILITY not in caps.view3d_capabilities
+    assert MESH3D_OPAQUE_DEPTH_CAPABILITY in caps.view3d_capabilities
     assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY in caps.view3d_capabilities
     assert MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMALS_FACE3D_CAPABILITY in caps.view3d_capabilities
@@ -4331,6 +4331,7 @@ def test_datoviz_capabilities_advertise_s040_lambert_cpu_resolve_when_view3d_rea
     assert VIEW3D_STATIC_PERSPECTIVE_CAPABILITY in caps.view3d_capabilities
     assert VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY not in caps.view3d_capabilities
     assert "flat_lambert_cpu_resolved_strict" in caps.metadata["s040_flat_lambert"]
+    assert "retained DATA-space View3D path" in caps.metadata["s050_opaque_depth"]
 
 
 def test_datoviz_capabilities_advertise_retained_view3d_data_space_when_ready():

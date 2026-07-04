@@ -16,6 +16,7 @@ from gsp.protocol import (
     LayoutCapability,
     MESH3D_DATA_VIEW3D_CAPABILITY,
     MESH3D_NDC_CAPABILITY,
+    MESH3D_OPAQUE_DEPTH_CAPABILITY,
     MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY,
     MESH_NORMALS_FACE3D_CAPABILITY,
     MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY,
@@ -447,9 +448,15 @@ def gsp_capability_snapshot_from_datoviz(
             view3d_capabilities = (
                 *view3d_capabilities,
                 VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY,
+                MESH3D_OPAQUE_DEPTH_CAPABILITY,
             )
             metadata["view3d_retained_data_space_visuals"] = (
                 "native DATA-space mesh attachments with retained camera/projection updates"
+            )
+            metadata["s050_opaque_depth"] = (
+                "meshvisual.positions3d.opaque_depth.v1 is strict only on the retained "
+                "DATA-space View3D path for fully opaque MeshVisuals; S050 face-order "
+                "invariance artifacts prove nearer-fragment-wins behavior"
             )
         else:
             metadata["datoviz_view3d_retained_data_diagnostics"] = (
