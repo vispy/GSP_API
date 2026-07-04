@@ -31,3 +31,10 @@ non-opaque mesh alpha semantics.
 
 - Stop before changing public culling or alpha semantics without an accepted consultation response.
 - Stop before using existing source code as authority where it conflicts with spec silence.
+
+## Packet
+
+Prepared `.agent/consultations/P032-culling-alpha-semantics.md`.
+
+This needs ChatGPT Pro consultation. Dependent implementation remains paused until the user pastes
+or commits the P032 response.
