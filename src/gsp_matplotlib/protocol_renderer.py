@@ -486,6 +486,11 @@ def render_mesh_visual(
     transform_resources: Mapping[str, AffineTransform2DResource] | None = None,
 ) -> matplotlib.collections.PolyCollection:
     """Render the bounded MeshVisual reference subset into a Matplotlib axes."""
+    if visual.canonical_shading() is MeshShading.TEXTURE2D_UNLIT:
+        raise NotImplementedError(
+            "meshvisual_material_texture2d_unlit_unsupported: Matplotlib "
+            "PolyCollection mesh rendering does not support Texture2D sampling"
+        )
     if visual.face_color_encoding is not None:
         raise NotImplementedError(
             "Matplotlib MeshVisual scalar face colors are capability-gated"

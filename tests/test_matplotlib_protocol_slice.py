@@ -31,6 +31,7 @@ from gsp.protocol import (
     MeshNormalGeneration,
     MeshNormalMode,
     MeshShading,
+    MeshUVMode,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -805,6 +806,34 @@ def test_render_mesh_visual_creates_poly_collection_for_uniform_color():
         np.testing.assert_allclose(
             artist.get_facecolors()[0], np.array([1.0, 0.0, 0.0, 1.0])
         )
+    finally:
+        plt.close(fig)
+
+
+def test_render_mesh_visual_rejects_texture2d_unlit_without_dropping_texture_fields():
+    """Matplotlib must not approximate S050 Texture2D meshes as flat colors."""
+    fig, ax = plt.subplots()
+    try:
+        visual = MeshVisual(
+            id="visual:textured-mesh",
+            positions=np.array(
+                [[-0.5, -0.5], [0.5, -0.5], [0.0, 0.5]], dtype=np.float32
+            ),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            shading=MeshShading.TEXTURE2D_UNLIT,
+            texture2d_id="texture:checker",
+            uv_mode=MeshUVMode.VERTEX,
+            uvs=np.array([[0.0, 0.0], [1.0, 0.0], [0.5, 1.0]], dtype=np.float32),
+        )
+
+        with pytest.raises(
+            NotImplementedError,
+            match="meshvisual_material_texture2d_unlit_unsupported",
+        ):
+            render_mesh_visual(ax, visual)
+        assert not ax.collections
     finally:
         plt.close(fig)
 

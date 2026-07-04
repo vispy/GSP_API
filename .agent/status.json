@@ -2278,9 +2278,9 @@
       "id": "M221",
       "title": "S050 Matplotlib Texture2D policy",
       "stage": "S050",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 221
     },
     {
@@ -2428,7 +2428,8 @@
     "M218 completed: Texture2D RGBA8 resources, MeshVisual texture2d_unlit fields, per-vertex UV validation, and texture resource resolution helper are implemented without renderer capability promotion.",
     "M219 completed: S050 Texture2D visual-QA fixtures now record texture resources, UV/probe expectations, alpha diagnostics, negative diagnostic metadata, and unsupported backend classification without renderer promotion.",
     "M220 completed: Datoviz v0.4-dev exposes public mesh Texture2D candidate symbols, but strict S050 promotion remains blocked pending sampler, origin, unmanaged RGBA, and unlit multiplication fixture evidence.",
-    "Continue the Texture2D path with M221 Matplotlib unsupported policy; do not promote Datoviz Texture2D capabilities until the M220 blockers are proven.",
+    "M221 completed: Matplotlib direct MeshVisual rendering now rejects texture2d_unlit with meshvisual_material_texture2d_unlit_unsupported instead of silently dropping texture fields.",
+    "Continue the Texture2D path with M223 VisPy2 producer work and M224 docs/capability audit; treat M222 Datoviz promotion as blocked until the M220 fixture blockers are proven.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
@@ -2438,6 +2439,7 @@
     "M218 completed: added S050 Texture2D protocol resources, MeshVisual texture2d_unlit UV fields, texture-id resolution validation, visual artifact metadata, and focused tests. No renderer capability was promoted.",
     "M219 completed: added S050 Texture2D visual-QA fixture cases and scene serialization for texture resources, plus expected probe arrays and negative diagnostic metadata; Matplotlib/Datoviz QA currently report texture2d_unlit as unsupported.",
     "M220 completed: added .agent/S050_DATOVIZ_TEXTURE2D_PUBLIC_API_FEASIBILITY.md; public Datoviz mesh texture upload/binding symbols exist, while mesh sampler controls, origin behavior, unmanaged RGBA behavior, and exact unlit multiplication remain promotion blockers.",
+    "M221 completed: added a Matplotlib render_mesh_visual guard and regression test so texture2d_unlit raises meshvisual_material_texture2d_unlit_unsupported before any PolyCollection approximation.",
     "M216 completed: added .agent/S050_DATOVIZ_LIVE_POINT_IMAGE_PAYLOAD_EVIDENCE.md and artifacts/visual_qa/s050/m216-live-query-payload/smoke.json; switched to current dvz_panel_query_px, kept point-item, removed image-texel, and rejected non-identity live Datoviz query payloads unless scalar extension decoration is explicitly supported.",
     "M208 completed: fixed packed RGBA8 latest-binding upload to pass POINTER(c_ubyte) into dvz_visual_set_texture_rgba8(); isolated Datoviz TextVisual artifacts render with only text/rotation_alpha_ndc strict, the other text rows adapted, and the combined text batch still crashed with signal 11.",
     "M215 completed: updated spec/backends/datoviz.md query/readback wording to reflect S043 panel-frame guide hit/readback capability gates and preserved unsupported boundaries for hit_policy=all, unsupported extension payloads, scientific readback, and mesh-triangle picking.",

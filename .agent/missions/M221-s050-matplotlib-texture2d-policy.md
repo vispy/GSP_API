@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -34,3 +34,15 @@ separate CPU textured-triangle rasterizer is approved.
 
 - Stop before implementing approximate texture rendering with face colors.
 - Stop before adding a CPU texture rasterizer without a separate approved mission.
+
+## Result
+
+Implemented the explicit Matplotlib unsupported policy for S050 textured meshes.
+
+`render_mesh_visual()` now rejects `MeshVisual.shading="texture2d_unlit"` with
+`meshvisual_material_texture2d_unlit_unsupported` before building a `PolyCollection`, so texture
+fields cannot be silently dropped or approximated as face colors. Added a focused regression test for
+the direct renderer path.
+
+Matplotlib capability advertisement remains unchanged and no CPU textured-triangle rasterizer was
+added.
