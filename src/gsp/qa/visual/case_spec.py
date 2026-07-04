@@ -20,6 +20,7 @@ from gsp.protocol import (
     PointVisual,
     SegmentVisual,
     TextVisual,
+    Texture2D,
     View2D,
     View3D,
 )
@@ -47,6 +48,7 @@ class VisualQAScene:
     panel_text_guides: tuple[PanelTextGuide, ...] = ()
     color_scales: tuple[ColorScale, ...] = ()
     colorbar_guides: tuple[ColorbarGuide, ...] = ()
+    texture_resources: tuple[Texture2D, ...] = ()
     transform_resources: tuple[AffineTransform2DResource, ...] = ()
     views: tuple[View2D, ...] = ()
     view3d: View3D | None = None

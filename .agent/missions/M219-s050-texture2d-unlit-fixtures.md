@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -36,3 +36,18 @@ Create deterministic conformance and manual review fixtures for S050 textured me
 
 - Stop before requiring Datoviz or Matplotlib renderer promotion.
 - Stop if fixture semantics require perspective-correct texturing, alpha sorting, or culling.
+
+## Result
+
+Added S050 Texture2D fixture coverage:
+
+- five positive fixture cases for UV orientation, checker/clamp, color multiplication plus duplicated
+  seams, opaque DATA-space View3D textured quad metadata, and alpha diagnostics;
+- texture resource serialization in visual-QA scene artifacts;
+- expected probe/texel/output metadata stored as sidecar arrays;
+- negative fixture metadata covering invalid resources, missing/unknown texture ids, invalid UVs,
+  unsupported sampler/color-space requests, and unsupported backend claims;
+- visual-QA runner classification of `texture2d_unlit` cases as explicit unsupported on current
+  Matplotlib/Datoviz QA backends.
+
+No renderer capability was promoted.

@@ -27,6 +27,7 @@ from gsp.protocol import (
     ScalarColorEncoding,
     SegmentVisual,
     TextVisual,
+    Texture2D,
     TransformRef,
     View2D,
     View3D,
@@ -166,6 +167,9 @@ def _scene_json(scene: VisualQAScene) -> dict[str, object]:
         "color_scales": [_color_scale_json(scale) for scale in scene.color_scales],
         "colorbar_guides": [
             _colorbar_guide_json(guide) for guide in scene.colorbar_guides
+        ],
+        "texture_resources": [
+            _texture2d_resource_json(texture) for texture in scene.texture_resources
         ],
         "transform_resources": [
             _transform_resource_json(transform)
@@ -427,6 +431,17 @@ def _add_transform_json(
 ) -> None:
     if binding is not None:
         payload["transform"] = _transform_binding_json(binding)
+
+
+def _texture2d_resource_json(texture: Texture2D) -> dict[str, object]:
+    return {
+        "id": texture.id,
+        "format": texture.format.value,
+        "image": {
+            "shape": list(texture.image.shape),
+            "dtype": str(texture.image.dtype),
+        },
+    }
 
 
 def _transform_resource_json(

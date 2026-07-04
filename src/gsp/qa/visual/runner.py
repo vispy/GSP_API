@@ -27,6 +27,7 @@ from gsp.protocol import (
     ImageVisual,
     GUIDE_QUERY_PAYLOAD_KIND,
     LogicalPixelRect,
+    MeshShading,
     MeshVisual,
     MarkerVisual,
     PanelTextGuide,
@@ -293,6 +294,23 @@ def _run_matplotlib(
     log_path = (
         out_dir / "backends" / "matplotlib" / f"{case_slug(case.case_id)}.log.txt"
     )
+    if _has_texture2d_unlit_visual(visuals):
+        return _write_matplotlib_unsupported(
+            out_dir
+            / "backends"
+            / "matplotlib"
+            / f"{case_slug(case.case_id)}.unsupported.json",
+            log_path,
+            case,
+            reason=(
+                "meshvisual_material_texture2d_unlit_unsupported: Matplotlib "
+                "visual QA does not render S050 textured meshes"
+            ),
+            diagnostics={
+                "capability": "meshvisual.material.texture2d_unlit.v1",
+                "status": "unsupported",
+            },
+        )
     canvas_size = CanvasSize.pixel_exact(resolution[0], resolution[1])
     resolved_canvas = canvas_size.resolve(output_dpi=100.0, device_scale=device_scale)
     fig, ax = plt.subplots(
@@ -442,6 +460,21 @@ def _run_datoviz(
     artifact_path = backend_dir / f"{case_slug(case.case_id)}.png"
     unsupported_path = backend_dir / f"{case_slug(case.case_id)}.unsupported.json"
     log_path = backend_dir / f"{case_slug(case.case_id)}.log.txt"
+    if _has_texture2d_unlit_visual(visuals):
+        return _write_datoviz_unsupported(
+            unsupported_path,
+            log_path,
+            case,
+            reason=(
+                "meshvisual_material_texture2d_unlit_unsupported: Datoviz "
+                "visual QA has not proven S050 textured mesh support"
+            ),
+            diagnostics={
+                "capability": "meshvisual.material.texture2d_unlit.v1",
+                "status": "unsupported",
+            },
+            datoviz_color_pipeline=datoviz_color_pipeline,
+        )
     if not probe_report.minimal_point_scene.supported:
         return _write_datoviz_unsupported(
             unsupported_path,
@@ -551,7 +584,9 @@ def _run_datoviz(
         if layout_snapshot_diagnostics:
             report["layout_snapshot_diagnostics"] = layout_snapshot_diagnostics
         if guide_diagnostics:
-            report["guide_diagnostics"] = guide_diagnostics | layout_snapshot_diagnostics
+            report["guide_diagnostics"] = (
+                guide_diagnostics | layout_snapshot_diagnostics
+            )
         elif layout_snapshot_diagnostics:
             report["guide_diagnostics"] = layout_snapshot_diagnostics
         return report
@@ -616,6 +651,14 @@ def _render_matplotlib_visual(
         )
     else:
         raise TypeError(f"unsupported visual type: {type(visual).__name__}")
+
+
+def _has_texture2d_unlit_visual(visuals: tuple[ProtocolVisual, ...]) -> bool:
+    return any(
+        isinstance(visual, MeshVisual)
+        and visual.canonical_shading() is MeshShading.TEXTURE2D_UNLIT
+        for visual in visuals
+    )
 
 
 def _datoviz_layout_snapshot_diagnostics(
@@ -845,7 +888,9 @@ def _datoviz_guide_diagnostics(
             "native-verified" if grid_clip_to_plot_rect else "unsupported"
         )
         if grid_clip_to_plot_rect:
-            diagnostics["grid_clip_evidence"] = "datoviz-native-axis-grid-plot-viewport-clip"
+            diagnostics["grid_clip_evidence"] = (
+                "datoviz-native-axis-grid-plot-viewport-clip"
+            )
         else:
             diagnostics["grid_clip_blockers"] = [
                 "grid_clip_not_enforced",
@@ -940,6 +985,34 @@ def _write_datoviz_unsupported(
     if datoviz_color_pipeline is not None:
         report["datoviz_color_pipeline"] = datoviz_color_pipeline
     return report
+
+
+def _write_matplotlib_unsupported(
+    unsupported_path: Path,
+    log_path: Path,
+    case: VisualQACase,
+    *,
+    reason: str,
+    diagnostics: object,
+) -> dict[str, object]:
+    payload = {
+        "schema_version": 1,
+        "schema_kind": "gsp.visual_qa.unsupported",
+        "backend_id": MATPLOTLIB_BACKEND_ID,
+        "case_id": case.case_id,
+        "status": "unsupported",
+        "reason": reason,
+        "diagnostics": diagnostics,
+    }
+    write_json(unsupported_path, payload)
+    log_path.write_text(reason + "\n", encoding="utf-8")
+    return {
+        "backend_id": MATPLOTLIB_BACKEND_ID,
+        "status": "unsupported",
+        "unsupported_path": str(unsupported_path),
+        "log_path": str(log_path),
+        "reason": reason,
+    }
 
 
 def _probe_summary(probe_report: DatovizV04ProbeReport) -> dict[str, object]:

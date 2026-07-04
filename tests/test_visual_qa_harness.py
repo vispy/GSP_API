@@ -26,6 +26,7 @@ from gsp.qa.visual.cases import (
     S050_SUITE,
     get_case,
     list_cases,
+    s050_texture2d_negative_fixtures,
 )
 from gsp.qa.visual.capability_matrix import build_capability_matrix
 from gsp.qa.visual.datoviz_probe import (
@@ -321,11 +322,7 @@ def test_capability_matrix_promotes_s050_datoviz_opaque_depth_audit() -> None:
     }
 
     matrix = build_capability_matrix(report)
-    datoviz_rows = [
-        row
-        for row in matrix["rows"]
-        if row["backend"] == "datoviz"
-    ]
+    datoviz_rows = [row for row in matrix["rows"] if row["backend"] == "datoviz"]
 
     assert [row["status"] for row in datoviz_rows] == ["strict", "strict"]
     assert {row["reason_code"] for row in datoviz_rows} == {
@@ -397,8 +394,7 @@ def test_datoviz_offscreen_review_pack_records_child_crash(
     }
     assert rows[("datoviz", "point/basic_ndc")]["status"] == "crashed"
     assert (
-        rows[("datoviz", "point/basic_ndc")]["reason_code"]
-        == "datoviz_runtime_error"
+        rows[("datoviz", "point/basic_ndc")]["reason_code"] == "datoviz_runtime_error"
     )
 
 
@@ -438,9 +434,7 @@ def test_datoviz_offscreen_review_pack_merges_clean_child_report(
                 }
             ],
         }
-        (child_out_dir / "report.json").write_text(
-            json.dumps(report), encoding="utf-8"
-        )
+        (child_out_dir / "report.json").write_text(json.dumps(report), encoding="utf-8")
         return subprocess.CompletedProcess(
             args=["fake-dataviz-child"],
             returncode=0,
@@ -513,9 +507,7 @@ def test_datoviz_offscreen_review_pack_runs_one_child_per_case(
                 }
             ],
         }
-        (child_out_dir / "report.json").write_text(
-            json.dumps(report), encoding="utf-8"
-        )
+        (child_out_dir / "report.json").write_text(json.dumps(report), encoding="utf-8")
         return subprocess.CompletedProcess(
             args=["fake-dataviz-child", case_id],
             returncode=0,
@@ -534,7 +526,9 @@ def test_datoviz_offscreen_review_pack_runs_one_child_per_case(
     )
 
     assert calls == [("point/basic_ndc",), ("point/diameter_ramp_ndc",)]
-    assert result["report"]["datoviz_offscreen_child_strategy"] == "one_process_per_case"  # type: ignore[index]
+    assert (
+        result["report"]["datoviz_offscreen_child_strategy"] == "one_process_per_case"
+    )  # type: ignore[index]
     for case in result["report"]["cases"]:  # type: ignore[index]
         assert case["backends"]["datoviz"]["status"] == "rendered"
 
@@ -575,9 +569,7 @@ def test_datoviz_offscreen_review_pack_preserves_complete_teardown_crash_report(
                 }
             ],
         }
-        (child_out_dir / "report.json").write_text(
-            json.dumps(report), encoding="utf-8"
-        )
+        (child_out_dir / "report.json").write_text(json.dumps(report), encoding="utf-8")
         return subprocess.CompletedProcess(
             args=["fake-dataviz-child"],
             returncode=-11,
@@ -1077,8 +1069,7 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
                     "datoviz": {
                         "status": "rendered",
                         "artifact_path": (
-                            "backends/datoviz/"
-                            "guide_view2d_grid_clip_title_boundary.png"
+                            "backends/datoviz/guide_view2d_grid_clip_title_boundary.png"
                         ),
                         "log_path": (
                             "backends/datoviz/"
@@ -1133,7 +1124,9 @@ def test_s030_rendered_datoviz_guide_rows_are_adapted_not_promoted() -> None:
     assert "guide-query support" in clip_boundary["promotion_blockers"][1]
 
 
-def test_s030_rendered_datoviz_guide_row_promotes_with_strict_snapshot_evidence() -> None:
+def test_s030_rendered_datoviz_guide_row_promotes_with_strict_snapshot_evidence() -> (
+    None
+):
     report = {
         "suite": "s028",
         "stage": "S043",
@@ -1142,7 +1135,13 @@ def test_s030_rendered_datoviz_guide_row_promotes_with_strict_snapshot_evidence(
             {
                 "case_id": "guide/view2d_auto_grid",
                 "family": "guide",
-                "required_features": ["guide", "view2d", "auto-ticks", "grid", "labels"],
+                "required_features": [
+                    "guide",
+                    "view2d",
+                    "auto-ticks",
+                    "grid",
+                    "labels",
+                ],
                 "backends": {
                     "matplotlib": {"status": "rendered"},
                     "datoviz": {
@@ -1382,9 +1381,7 @@ def test_s028_guide_view2d_visual_qa_run_writes_matplotlib_artifacts(
     assert scene["visuals"][0]["family"] == "point"
     clip_scene = json.loads(
         (
-            tmp_path
-            / "scenes"
-            / "guide_view2d_grid_clip_title_boundary.scene.json"
+            tmp_path / "scenes" / "guide_view2d_grid_clip_title_boundary.scene.json"
         ).read_text(encoding="utf-8")
     )
     assert clip_scene["panel_text_guides"][0]["text"] == "S028 grid clip boundary"
@@ -1485,7 +1482,9 @@ def test_s028_datoviz_guide_path_configures_view2d_before_data_visuals(
         == "dvz_panel_set_domain+DvzPanelView2D policy"
     )
     assert diagnostics["ordered_ranges_preserved"] is True
-    assert diagnostics["legacy_panel_domain_sync"] == "compat-before-dvz_panel_set_view2d"
+    assert (
+        diagnostics["legacy_panel_domain_sync"] == "compat-before-dvz_panel_set_view2d"
+    )
     assert diagnostics["grid_clip_to_plot_rect"] == "unsupported"
     assert diagnostics["grid_clip_blockers"] == [
         "grid_clip_not_enforced",
@@ -1561,7 +1560,10 @@ def test_s028_datoviz_guide_diagnostics_report_native_grid_clip_when_source_is_f
 
     diagnostics = report["cases"][0]["backends"]["datoviz"]["guide_diagnostics"]
     assert diagnostics["grid_clip_to_plot_rect"] == "native-verified"
-    assert diagnostics["grid_clip_evidence"] == "datoviz-native-axis-grid-plot-viewport-clip"
+    assert (
+        diagnostics["grid_clip_evidence"]
+        == "datoviz-native-axis-grid-plot-viewport-clip"
+    )
     assert "grid_clip_blockers" not in diagnostics
 
 
@@ -1643,8 +1645,14 @@ def test_s034_layout_snapshots_track_resized_viewports(tmp_path: Path) -> None:
     assert small_snapshot["render_target"]["logical_height_px"] == pytest.approx(220.0)
     assert large_snapshot["render_target"]["logical_width_px"] == pytest.approx(640.0)
     assert large_snapshot["render_target"]["logical_height_px"] == pytest.approx(360.0)
-    assert large_snapshot["plot_rect_px"]["width"] > small_snapshot["plot_rect_px"]["width"]
-    assert large_snapshot["plot_rect_px"]["height"] > small_snapshot["plot_rect_px"]["height"]
+    assert (
+        large_snapshot["plot_rect_px"]["width"]
+        > small_snapshot["plot_rect_px"]["width"]
+    )
+    assert (
+        large_snapshot["plot_rect_px"]["height"]
+        > small_snapshot["plot_rect_px"]["height"]
+    )
     assert small_snapshot["grid_clip_rect_px"] == small_snapshot["plot_rect_px"]
     assert large_snapshot["grid_clip_rect_px"] == large_snapshot["plot_rect_px"]
 
@@ -1679,9 +1687,16 @@ def test_s050_case_registry_exposes_strict_depth_candidate() -> None:
     """S050 adds retained View3D strict-depth proof candidates as focused cases."""
     case_ids = [case.case_id for case in list_cases(suite=S050_SUITE)]
 
-    assert case_ids == [
+    assert case_ids[:2] == [
         "mesh3d/opaque_depth_intersecting_triangles_view3d",
         "mesh3d/opaque_depth_intersecting_triangles_reversed_view3d",
+    ]
+    assert case_ids[-5:] == [
+        "mesh_texture2d/uv_orientation_triangle_ndc",
+        "mesh_texture2d/checker_quad_clamp_ndc",
+        "mesh_texture2d/color_multiply_seam_ndc",
+        "mesh_texture2d/opaque_view3d_quad",
+        "mesh_texture2d/alpha_diagnostic_ndc",
     ]
 
 
@@ -1710,9 +1725,7 @@ def test_s050_view3d_depth_case_writes_scene_metadata(tmp_path: Path) -> None:
         assert backend["status"] == "rendered"
         scene = json.loads(
             (
-                tmp_path
-                / "scenes"
-                / f"{case['case_id'].replace('/', '_')}.scene.json"
+                tmp_path / "scenes" / f"{case['case_id'].replace('/', '_')}.scene.json"
             ).read_text(encoding="utf-8")
         )
         assert scene["view3d"]["projection"]["kind"] == "orthographic"
@@ -1721,6 +1734,79 @@ def test_s050_view3d_depth_case_writes_scene_metadata(tmp_path: Path) -> None:
         assert scene["arrays"]["expected_sample_ndc_xy"]["shape"] == [2, 2]
         assert scene["arrays"]["expected_left_rgba"]["shape"] == [4]
         assert scene["arrays"]["expected_right_rgba"]["shape"] == [4]
+
+
+def test_s050_texture2d_cases_record_probe_metadata_and_unsupported_backend(
+    tmp_path: Path,
+) -> None:
+    """S050 Texture2D fixtures serialize metadata without renderer promotion."""
+    report = run_visual_qa_suite(
+        suite=S050_SUITE,
+        out_dir=tmp_path,
+        backends=("matplotlib",),
+        case_ids=(
+            "mesh_texture2d/uv_orientation_triangle_ndc",
+            "mesh_texture2d/color_multiply_seam_ndc",
+            "mesh_texture2d/alpha_diagnostic_ndc",
+        ),
+        contact_sheet=False,
+        run_id="test-s050-texture2d",
+        resolution=(320, 240),
+    )
+
+    assert report["stage"] == "S050"
+    for case in report["cases"]:
+        backend = case["backends"]["matplotlib"]
+        assert backend["status"] == "unsupported"
+        assert "texture2d_unlit_unsupported" in backend["reason"]
+
+    scene = json.loads(
+        (
+            tmp_path
+            / "scenes"
+            / "mesh_texture2d_uv_orientation_triangle_ndc.scene.json"
+        ).read_text(encoding="utf-8")
+    )
+    visual = scene["visuals"][0]
+    assert visual["shading"] == "texture2d_unlit"
+    assert visual["texture2d_id"] == "texture:s050-orientation"
+    assert visual["uv_mode"] == "vertex"
+    assert scene["texture_resources"][0]["format"] == "rgba8"
+    assert scene["arrays"]["expected_probe_uvs"]["shape"] == [3, 2]
+    assert scene["arrays"]["expected_probe_rgba"]["shape"] == [3, 4]
+
+    seam_arrays = np.load(
+        tmp_path / "scenes" / "mesh_texture2d_color_multiply_seam_ndc.arrays.npz"
+    )
+    np.testing.assert_array_equal(
+        seam_arrays["expected_sample_output_rgba"],
+        np.array([[115, 57, 70, 255], [21, 157, 143, 255]], dtype=np.uint8),
+    )
+
+    alpha_arrays = np.load(
+        tmp_path / "scenes" / "mesh_texture2d_alpha_diagnostic_ndc.arrays.npz"
+    )
+    assert alpha_arrays["expected_diagnostic"].tolist() == ["mesh3d_alpha_not_strict"]
+    assert alpha_arrays["texture_alpha_all_255"].tolist() == [False]
+
+
+def test_s050_texture2d_negative_fixture_metadata_lists_expected_diagnostics() -> None:
+    """Negative texture fixtures name expected diagnostics."""
+    diagnostics = {
+        str(fixture["expected_diagnostic"])
+        for fixture in s050_texture2d_negative_fixtures()
+    }
+
+    assert {
+        "texture2d_invalid_resource",
+        "meshvisual_texture_required",
+        "texture2d_unknown_id",
+        "meshvisual_uv_shape_mismatch",
+        "meshvisual_uv_nonfinite",
+        "texture2d_sampler_unsupported",
+        "texture2d_colorspace_unsupported",
+        "meshvisual_material_texture2d_unlit_unsupported",
+    } <= diagnostics
 
 
 def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:

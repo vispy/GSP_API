@@ -23,6 +23,8 @@ from gsp.protocol import (
     ImageOrigin,
     ImageVisual,
     MeshColorMode,
+    MeshShading,
+    MeshUVMode,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -41,6 +43,7 @@ from gsp.protocol import (
     TextAnchorX,
     TextAnchorY,
     TextVisual,
+    Texture2D,
     TickSpec,
     TickSpecKind,
     View2D,
@@ -103,7 +106,7 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
             + _s034_layout_cases()
         )
     if suite == S050_SUITE:
-        return _s050_strict_depth_cases()
+        return _s050_strict_depth_cases() + _s050_texture2d_cases()
     raise ValueError(f"unknown visual QA suite: {suite}")
 
 
@@ -457,6 +460,97 @@ def _s050_strict_depth_cases() -> tuple[VisualQACase, ...]:
     )
 
 
+def _s050_texture2d_cases() -> tuple[VisualQACase, ...]:
+    return (
+        VisualQACase(
+            case_id="mesh_texture2d/uv_orientation_triangle_ndc",
+            title="Texture2D UV orientation triangle",
+            family="mesh_texture2d",
+            required_features=("mesh", "texture2d", "uv", "orientation", "ndc"),
+            builder=_texture2d_uv_orientation_triangle_ndc,
+        ),
+        VisualQACase(
+            case_id="mesh_texture2d/checker_quad_clamp_ndc",
+            title="Texture2D checker quad with clamp probes",
+            family="mesh_texture2d",
+            required_features=("mesh", "texture2d", "checker", "clamp", "ndc"),
+            builder=_texture2d_checker_quad_clamp_ndc,
+        ),
+        VisualQACase(
+            case_id="mesh_texture2d/color_multiply_seam_ndc",
+            title="Texture2D color multiplication and duplicated seam",
+            family="mesh_texture2d",
+            required_features=("mesh", "texture2d", "color-multiply", "seam", "ndc"),
+            builder=_texture2d_color_multiply_seam_ndc,
+        ),
+        VisualQACase(
+            case_id="mesh_texture2d/opaque_view3d_quad",
+            title="Texture2D opaque DATA View3D quad",
+            family="mesh_texture2d",
+            required_features=("mesh", "texture2d", "view3d", "opaque-depth"),
+            builder=_texture2d_opaque_view3d_quad,
+        ),
+        VisualQACase(
+            case_id="mesh_texture2d/alpha_diagnostic_ndc",
+            title="Texture2D alpha non-strict diagnostic",
+            family="mesh_texture2d",
+            required_features=("mesh", "texture2d", "alpha-diagnostic", "ndc"),
+            builder=_texture2d_alpha_diagnostic_ndc,
+        ),
+    )
+
+
+def s050_texture2d_negative_fixtures() -> tuple[dict[str, object], ...]:
+    """Return S050 Texture2D negative fixture metadata."""
+    return (
+        {
+            "case_id": "texture2d/invalid_resource_rgb",
+            "expected_diagnostic": "texture2d_invalid_resource",
+            "description": "Texture image shape (H,W,3) is rejected.",
+        },
+        {
+            "case_id": "texture2d/invalid_resource_float",
+            "expected_diagnostic": "texture2d_invalid_resource",
+            "description": "Texture image dtype float32 is rejected.",
+        },
+        {
+            "case_id": "mesh_texture2d/missing_texture_id",
+            "expected_diagnostic": "meshvisual_texture_required",
+            "description": "texture2d_unlit requires texture2d_id.",
+        },
+        {
+            "case_id": "mesh_texture2d/unknown_texture_id",
+            "expected_diagnostic": "texture2d_unknown_id",
+            "description": "texture2d_id must resolve to a declared Texture2D.",
+        },
+        {
+            "case_id": "mesh_texture2d/invalid_uv_shape",
+            "expected_diagnostic": "meshvisual_uv_shape_mismatch",
+            "description": "UV cardinality must be exactly one (u,v) pair per vertex.",
+        },
+        {
+            "case_id": "mesh_texture2d/invalid_uv_nonfinite",
+            "expected_diagnostic": "meshvisual_uv_nonfinite",
+            "description": "UV coordinates must be finite.",
+        },
+        {
+            "case_id": "mesh_texture2d/sampler_requested",
+            "expected_diagnostic": "texture2d_sampler_unsupported",
+            "description": "Public sampler/filter/wrap/mipmap controls are unsupported in v1.",
+        },
+        {
+            "case_id": "mesh_texture2d/colorspace_requested",
+            "expected_diagnostic": "texture2d_colorspace_unsupported",
+            "description": "Public sRGB/ICC/linear-light controls are unsupported in v1.",
+        },
+        {
+            "case_id": "mesh_texture2d/backend_unsupported",
+            "expected_diagnostic": "meshvisual_material_texture2d_unlit_unsupported",
+            "description": "Backends without the material capability must not render untextured fallback geometry.",
+        },
+    )
+
+
 def get_case(case_id: str, *, suite: str = S023_SUITE) -> VisualQACase:
     """Return one registered case by id."""
     for case in list_cases(suite=suite):
@@ -560,6 +654,307 @@ def _mesh3d_opaque_depth_intersecting_triangles_scene(
             "The reversed-order companion must render the same strict-depth sample colors.",
         ),
     )
+
+
+def _texture2d_uv_orientation_triangle_ndc() -> VisualQAScene:
+    texture = _texture2d_quadrant_resource("texture:s050-orientation")
+    positions = np.array(
+        [[-0.75, -0.70], [0.75, -0.70], [-0.60, 0.75]], dtype=np.float32
+    )
+    faces = np.array([[0, 1, 2]], dtype=np.uint32)
+    uvs = np.array([[0.25, 0.25], [0.75, 0.25], [0.25, 0.75]], dtype=np.float32)
+    color = np.array([255, 255, 255, 255], dtype=np.uint8)
+    mesh = MeshVisual(
+        id="visual:texture2d-orientation",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=color,
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=uvs,
+    )
+    return VisualQAScene(
+        case_id="mesh_texture2d/uv_orientation_triangle_ndc",
+        visuals=(mesh,),
+        texture_resources=(texture,),
+        arrays={
+            "texture_rgba8": texture.image,
+            "mesh_positions": positions,
+            "mesh_faces": faces,
+            "mesh_uvs": uvs,
+            "base_color": color,
+            "expected_probe_uvs": np.array(
+                [[0.25, 0.75], [0.25, 0.25], [0.75, 0.25]], dtype=np.float32
+            ),
+            "expected_probe_rgba": np.array(
+                [[230, 57, 70, 255], [69, 123, 157, 255], [42, 157, 143, 255]],
+                dtype=np.uint8,
+            ),
+        },
+        notes=(
+            "Texture image row 0 is the top row; high v samples top texels.",
+            "Expected probes are away from triangle and texel boundaries.",
+        ),
+    )
+
+
+def _texture2d_checker_quad_clamp_ndc() -> VisualQAScene:
+    texture = Texture2D(
+        id="texture:s050-checker",
+        image=np.array(
+            [
+                [
+                    [20, 20, 20, 255],
+                    [240, 240, 240, 255],
+                    [20, 20, 20, 255],
+                    [240, 240, 240, 255],
+                ],
+                [
+                    [240, 240, 240, 255],
+                    [20, 20, 20, 255],
+                    [240, 240, 240, 255],
+                    [20, 20, 20, 255],
+                ],
+                [
+                    [20, 20, 20, 255],
+                    [240, 240, 240, 255],
+                    [20, 20, 20, 255],
+                    [240, 240, 240, 255],
+                ],
+                [
+                    [240, 240, 240, 255],
+                    [20, 20, 20, 255],
+                    [240, 240, 240, 255],
+                    [20, 20, 20, 255],
+                ],
+            ],
+            dtype=np.uint8,
+        ),
+    )
+    positions, faces = _texture2d_quad_geometry()
+    uvs = np.array(
+        [[-0.5, -0.5], [1.5, -0.5], [1.5, 1.5], [-0.5, 1.5]], dtype=np.float32
+    )
+    mesh = MeshVisual(
+        id="visual:texture2d-checker-clamp",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=uvs,
+    )
+    return VisualQAScene(
+        case_id="mesh_texture2d/checker_quad_clamp_ndc",
+        visuals=(mesh,),
+        texture_resources=(texture,),
+        arrays={
+            "texture_rgba8": texture.image,
+            "mesh_positions": positions,
+            "mesh_faces": faces,
+            "mesh_uvs": uvs,
+            "expected_probe_uvs": np.array(
+                [[-0.25, 0.50], [1.25, 0.50], [0.50, -0.25], [0.50, 1.25]],
+                dtype=np.float32,
+            ),
+            "expected_clamped_uvs": np.array(
+                [[0.0, 0.50], [1.0, 0.50], [0.50, 0.0], [0.50, 1.0]],
+                dtype=np.float32,
+            ),
+        },
+        notes=(
+            "UVs intentionally extend outside [0,1] to fixture fixed clamp_to_edge semantics.",
+            "Nearest/clamp probes avoid texel boundaries; full-image exact hashes are not required.",
+        ),
+    )
+
+
+def _texture2d_color_multiply_seam_ndc() -> VisualQAScene:
+    texture = _texture2d_quadrant_resource("texture:s050-seam")
+    positions = np.array(
+        [
+            [-0.75, -0.65],
+            [0.0, -0.65],
+            [0.0, 0.65],
+            [0.0, -0.65],
+            [0.75, -0.65],
+            [0.0, 0.65],
+        ],
+        dtype=np.float32,
+    )
+    faces = np.array([[0, 1, 2], [3, 4, 5]], dtype=np.uint32)
+    uvs = np.array(
+        [
+            [0.05, 0.05],
+            [0.45, 0.05],
+            [0.05, 0.95],
+            [0.95, 0.05],
+            [0.55, 0.05],
+            [0.95, 0.95],
+        ],
+        dtype=np.float32,
+    )
+    color = np.array([128, 255, 255, 255], dtype=np.uint8)
+    mesh = MeshVisual(
+        id="visual:texture2d-color-seam",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=color,
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=uvs,
+    )
+    return VisualQAScene(
+        case_id="mesh_texture2d/color_multiply_seam_ndc",
+        visuals=(mesh,),
+        texture_resources=(texture,),
+        arrays={
+            "texture_rgba8": texture.image,
+            "mesh_positions": positions,
+            "mesh_faces": faces,
+            "mesh_uvs": uvs,
+            "base_color": color,
+            "duplicated_position_pairs": np.array([[1, 3], [2, 5]], dtype=np.uint32),
+            "expected_sample_tex_rgba": np.array(
+                [[230, 57, 70, 255], [42, 157, 143, 255]], dtype=np.uint8
+            ),
+            "expected_sample_output_rgba": np.array(
+                [[115, 57, 70, 255], [21, 157, 143, 255]], dtype=np.uint8
+            ),
+        },
+        notes=(
+            "The seam is represented by duplicated positions with different per-vertex UVs.",
+            "Output RGB is base.rgb * tex.rgb in normalized channel space.",
+        ),
+    )
+
+
+def _texture2d_opaque_view3d_quad() -> VisualQAScene:
+    texture = _texture2d_quadrant_resource("texture:s050-view3d-opaque")
+    positions = np.array(
+        [
+            [-0.75, -0.75, 0.0],
+            [0.75, -0.75, 0.0],
+            [0.75, 0.75, 0.0],
+            [-0.75, 0.75, 0.0],
+        ],
+        dtype=np.float32,
+    )
+    faces = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32)
+    uvs = np.array([[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]], dtype=np.float32)
+    mesh = MeshVisual(
+        id="visual:texture2d-view3d-opaque",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=uvs,
+        depth_test=DepthMode.ENABLED,
+        depth_write=DepthMode.ENABLED,
+    )
+    view3d = View3D(
+        id="view:texture2d-opaque",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 2.5),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-1.0, 1.0),
+            ylim=(-1.0, 1.0),
+            near_far=(0.0, 5.0),
+        ),
+    )
+    return VisualQAScene(
+        case_id="mesh_texture2d/opaque_view3d_quad",
+        visuals=(mesh,),
+        texture_resources=(texture,),
+        arrays={
+            "texture_rgba8": texture.image,
+            "mesh_positions": positions,
+            "mesh_faces": faces,
+            "mesh_uvs": uvs,
+            "texture_alpha_all_255": np.array([True], dtype=np.bool_),
+            "expected_strict_depth_allowed_if_backend_already_supports_opaque_depth": np.array(
+                [True], dtype=np.bool_
+            ),
+        },
+        view3d=view3d,
+        notes=(
+            "This fixture may combine with strict opaque depth only on backends that already advertise retained DATA-space View3D opaque depth.",
+            "All texture alpha bytes are 255 and base alpha is 1.0.",
+        ),
+    )
+
+
+def _texture2d_alpha_diagnostic_ndc() -> VisualQAScene:
+    image = _texture2d_quadrant_image()
+    image = image.copy()
+    image[0, 0, 3] = 128
+    texture = Texture2D(id="texture:s050-alpha", image=image)
+    positions, faces = _texture2d_quad_geometry()
+    uvs = np.array([[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]], dtype=np.float32)
+    mesh = MeshVisual(
+        id="visual:texture2d-alpha",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=uvs,
+    )
+    return VisualQAScene(
+        case_id="mesh_texture2d/alpha_diagnostic_ndc",
+        visuals=(mesh,),
+        texture_resources=(texture,),
+        arrays={
+            "texture_rgba8": texture.image,
+            "mesh_positions": positions,
+            "mesh_faces": faces,
+            "mesh_uvs": uvs,
+            "expected_diagnostic": np.array(["mesh3d_alpha_not_strict"]),
+            "texture_alpha_all_255": np.array([False], dtype=np.bool_),
+        },
+        notes=(
+            "Texture alpha participates in output alpha multiplication.",
+            "Any alpha byte below 255 prevents strict opaque-depth claims for 3D textured meshes.",
+        ),
+    )
+
+
+def _texture2d_quadrant_resource(texture_id: str) -> Texture2D:
+    return Texture2D(id=texture_id, image=_texture2d_quadrant_image())
+
+
+def _texture2d_quadrant_image() -> np.ndarray:
+    return np.array(
+        [
+            [[230, 57, 70, 255], [42, 157, 143, 255]],
+            [[69, 123, 157, 255], [255, 255, 255, 255]],
+        ],
+        dtype=np.uint8,
+    )
+
+
+def _texture2d_quad_geometry() -> tuple[np.ndarray, np.ndarray]:
+    positions = np.array(
+        [[-0.75, -0.75], [0.75, -0.75], [0.75, 0.75], [-0.75, 0.75]],
+        dtype=np.float32,
+    )
+    faces = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32)
+    return positions, faces
 
 
 def _point_basic_ndc() -> VisualQAScene:
@@ -1448,10 +1843,10 @@ def _transform_inline_named_equivalence() -> VisualQAScene:
 
 
 def _transform_view2d_data_ndc_overlay() -> VisualQAScene:
-    data_positions = np.array(
-        [[-8.0, -4.0], [0.0, 0.0], [8.0, 4.0]], dtype=np.float32
+    data_positions = np.array([[-8.0, -4.0], [0.0, 0.0], [8.0, 4.0]], dtype=np.float32)
+    overlay_positions = np.array(
+        [[0.8, -0.8], [0.0, 0.0], [-0.8, 0.8]], dtype=np.float32
     )
-    overlay_positions = np.array([[0.8, -0.8], [0.0, 0.0], [-0.8, 0.8]], dtype=np.float32)
     colors_data = np.array(
         [[33, 102, 172, 255], [67, 147, 195, 255], [146, 197, 222, 255]],
         dtype=np.uint8,
@@ -1516,7 +1911,9 @@ def _transform_family_affine_view2d() -> VisualQAScene:
         y_range=(-1.2, 1.2),
     )
 
-    point_positions = np.array([[-1.0, -0.55], [-0.82, -0.30], [-0.62, -0.48]], dtype=np.float32)
+    point_positions = np.array(
+        [[-1.0, -0.55], [-0.82, -0.30], [-0.62, -0.48]], dtype=np.float32
+    )
     point_colors = np.array(
         [[230, 57, 70, 255], [244, 162, 97, 255], [251, 191, 36, 255]],
         dtype=np.uint8,
