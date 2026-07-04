@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import cast
@@ -127,8 +127,16 @@ class MeshShading(str, Enum):
 
     UNLIT_RGBA = "unlit_rgba"
     FLAT_LAMBERT = "flat_lambert"
+    TEXTURE2D_UNLIT = "texture2d_unlit"
     FLAT = "flat"
     LAMBERT = "lambert"
+
+
+class MeshUVMode(str, Enum):
+    """Association between mesh UVs and geometry."""
+
+    NONE = "none"
+    VERTEX = "vertex"
 
 
 class FaceCulling(str, Enum):
@@ -163,6 +171,14 @@ TextAnchorYTuple = tuple[TextAnchorY, ...]
 
 MESH_MATERIAL_UNLIT_RGBA_CAPABILITY = "meshvisual.material.unlit_rgba.v1"
 MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY = "meshvisual.material.flat_lambert.v1"
+TEXTURE2D_RGBA8_CAPABILITY = "texture2d.rgba8.v1"
+MESH_UV_VERTEX2D_CAPABILITY = "meshvisual.uv.vertex2d.v1"
+MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY = (
+    "meshvisual.material.texture2d_unlit.v1"
+)
+VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY = (
+    "vispy2.producer.mesh.texture2d_unlit.v1"
+)
 MESH_NORMALS_FACE3D_CAPABILITY = "meshvisual.normals.face3d.v1"
 MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY = (
     "meshvisual.normal_generation.face_flat.v1"
@@ -380,6 +396,9 @@ class MeshVisual:
     normals: FloatArray | None = None
     normal_generation: MeshNormalGeneration = MeshNormalGeneration.NONE
     shading: MeshShading = MeshShading.UNLIT_RGBA
+    texture2d_id: str | None = None
+    uv_mode: MeshUVMode = MeshUVMode.NONE
+    uvs: FloatArray | None = None
     face_culling: FaceCulling = FaceCulling.NONE
     depth_test: DepthMode = DepthMode.AUTO
     depth_write: DepthMode = DepthMode.AUTO
@@ -460,6 +479,16 @@ class MeshVisual:
                 normal_generation=self.normal_generation,
                 resolved_normal_mode=resolved_normal_mode,
             )
+        _validate_mesh_texture2d_fields(
+            shading=self.canonical_shading(),
+            texture2d_id=self.texture2d_id,
+            uv_mode=self.uv_mode,
+            uvs=self.uvs,
+            vertex_count=vertex_count,
+            normal_mode=resolved_normal_mode,
+            normal_generation=self.normal_generation,
+            face_color_encoding_present=self.face_color_encoding is not None,
+        )
         if not isinstance(self.face_culling, FaceCulling):
             raise TypeError("face_culling must be a FaceCulling")
         if not isinstance(self.depth_test, DepthMode):
@@ -492,7 +521,7 @@ class MeshVisual:
         )
 
     def canonical_shading(self) -> MeshShading:
-        """Return the canonical S038/S039 shading selector."""
+        """Return the canonical S038/S039/S050 shading selector."""
         if self.shading is MeshShading.FLAT:
             return MeshShading.UNLIT_RGBA
         return self.shading
@@ -810,6 +839,67 @@ def _validate_mesh_flat_lambert_intrinsic(
         )
 
 
+def _validate_mesh_texture2d_fields(
+    *,
+    shading: MeshShading,
+    texture2d_id: str | None,
+    uv_mode: MeshUVMode,
+    uvs: FloatArray | None,
+    vertex_count: int,
+    normal_mode: MeshNormalMode,
+    normal_generation: MeshNormalGeneration,
+    face_color_encoding_present: bool,
+) -> None:
+    if not isinstance(uv_mode, MeshUVMode):
+        raise TypeError("uv_mode must be a MeshUVMode")
+    if shading is not MeshShading.TEXTURE2D_UNLIT:
+        if texture2d_id is not None:
+            validate_id(texture2d_id)
+            raise ValueError(
+                'meshvisual_texture_lighting_conflict: texture2d_id requires '
+                'shading="texture2d_unlit"'
+            )
+        if uv_mode is not MeshUVMode.NONE or uvs is not None:
+            raise ValueError(
+                'meshvisual_uv_topology_unsupported: UV fields require '
+                'shading="texture2d_unlit"'
+            )
+        return
+
+    if texture2d_id is None:
+        raise ValueError("meshvisual_texture_required: texture2d_id is required")
+    validate_id(texture2d_id)
+    if uv_mode is not MeshUVMode.VERTEX or uvs is None:
+        raise ValueError(
+            'meshvisual_uv_required: texture2d_unlit requires uv_mode="vertex" and uvs'
+        )
+    if (
+        normal_mode is not MeshNormalMode.NONE
+        or normal_generation is not MeshNormalGeneration.NONE
+    ):
+        raise ValueError(
+            "meshvisual_texture_lighting_conflict: texture2d_unlit does not accept "
+            "normal or lighting material fields"
+        )
+    if face_color_encoding_present:
+        raise ValueError(
+            "meshvisual_texture_lighting_conflict: texture2d_unlit requires explicit "
+            "MeshVisual.color base color"
+        )
+    _validate_mesh_uvs(uvs, vertex_count)
+
+
+def _validate_mesh_uvs(uvs: FloatArray, vertex_count: int) -> None:
+    if uvs.dtype not in (np.dtype(np.float32), np.dtype(np.float64)):
+        raise TypeError("meshvisual_uv_shape_mismatch: uvs must be float32 or float64")
+    if uvs.shape != (vertex_count, 2):
+        raise ValueError(
+            f"meshvisual_uv_shape_mismatch: uvs must have shape ({vertex_count}, 2)"
+        )
+    if not np.all(np.isfinite(uvs)):
+        raise ValueError("meshvisual_uv_nonfinite: uvs must be finite")
+
+
 def _normalize_mesh_normal_array(normals: FloatArray, field_name: str) -> FloatArray:
     lengths = np.linalg.norm(normals, axis=1)
     if not np.all(np.isfinite(lengths)):
@@ -852,6 +942,29 @@ def validate_mesh_visual_flat_lambert(
     if not isinstance(view3d, View3D):
         raise ValueError("flat_lambert_requires_view3d: flat_lambert requires a View3D")
     visual.normalized_face_normals()
+
+
+def validate_mesh_visual_texture2d_unlit(
+    visual: MeshVisual, *, texture_resources: Mapping[str, object]
+) -> None:
+    """Validate one mesh against the accepted S050 Texture2D boundary."""
+    from .resources import Texture2D
+
+    if not isinstance(visual, MeshVisual):
+        raise TypeError("visual must be a MeshVisual")
+    if visual.canonical_shading() is not MeshShading.TEXTURE2D_UNLIT:
+        raise ValueError(
+            "validate_mesh_visual_texture2d_unlit requires texture2d_unlit shading"
+        )
+    if visual.texture2d_id is None:
+        raise ValueError("meshvisual_texture_required: texture2d_id is required")
+    texture = texture_resources.get(visual.texture2d_id)
+    if texture is None:
+        raise ValueError(
+            f"texture2d_unknown_id: unknown Texture2D id {visual.texture2d_id!r}"
+        )
+    if not isinstance(texture, Texture2D):
+        raise TypeError("texture2d_invalid_resource: expected Texture2D")
 
 
 def _validate_shapes(shape: MarkerShape | MarkerShapeTuple, count: int) -> None:

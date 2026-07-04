@@ -12,12 +12,17 @@ from gsp.protocol import (
     MeshNormalGeneration,
     MeshNormalMode,
     MeshShading,
+    MeshUVMode,
     MeshVisual,
     OpacityPolicy,
+    Texture2D,
+    Texture2DFormat,
     Camera3D,
     OrthographicProjection3D,
     View3D,
     validate_mesh_visual_flat_lambert,
+    validate_mesh_visual_texture2d_unlit,
+    validate_texture2d_resources,
 )
 
 
@@ -25,6 +30,9 @@ POSITIONS_2D = np.array(
     [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]], dtype=np.float32
 )
 FACES = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32)
+UVS = np.array(
+    [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]], dtype=np.float32
+)
 
 
 def test_mesh_visual_accepts_strict_uniform_2d_mesh():
@@ -268,6 +276,173 @@ def test_mesh_visual_s039_rejects_legacy_lambert_and_normal_conflicts():
             normal_mode=MeshNormalMode.FACE,
             normal_generation=MeshNormalGeneration.FACE_FLAT,
         )
+
+
+def test_texture2d_resource_accepts_strict_rgba8_image():
+    image = np.zeros((2, 3, 4), dtype=np.uint8)
+    texture = Texture2D(id="texture:checker", image=image)
+
+    assert texture.id == "texture:checker"
+    assert texture.format is Texture2DFormat.RGBA8
+    assert texture.image is image
+
+
+def test_texture2d_resource_rejects_invalid_shape_dtype_and_duplicate_ids():
+    with pytest.raises(TypeError, match="texture2d_invalid_resource"):
+        Texture2D(
+            id="texture:bad",
+            image=np.zeros((2, 2, 4), dtype=np.float32),  # type: ignore[arg-type]
+        )
+
+    with pytest.raises(ValueError, match="texture2d_invalid_resource"):
+        Texture2D(id="texture:bad", image=np.zeros((2, 2, 3), dtype=np.uint8))
+
+    texture = Texture2D(id="texture:dupe", image=np.zeros((1, 1, 4), dtype=np.uint8))
+    with pytest.raises(ValueError, match="duplicate id"):
+        validate_texture2d_resources((texture, texture))
+
+
+def test_mesh_visual_accepts_s050_texture2d_unlit_fields():
+    texture = Texture2D(
+        id="texture:checker",
+        image=np.array(
+            [
+                [[255, 0, 0, 255], [0, 255, 0, 255]],
+                [[0, 0, 255, 255], [255, 255, 255, 255]],
+            ],
+            dtype=np.uint8,
+        ),
+    )
+    visual = MeshVisual(
+        id="visual:textured-mesh",
+        positions=POSITIONS_2D,
+        faces=FACES,
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=UVS,
+    )
+
+    assert visual.canonical_shading() is MeshShading.TEXTURE2D_UNLIT
+    assert visual.texture2d_id == texture.id
+    assert visual.uv_mode is MeshUVMode.VERTEX
+    validate_mesh_visual_texture2d_unlit(
+        visual, texture_resources=validate_texture2d_resources((texture,))
+    )
+
+
+def test_mesh_visual_s050_texture2d_rejects_missing_texture_and_uvs():
+    with pytest.raises(ValueError, match="meshvisual_texture_required"):
+        MeshVisual(
+            id="visual:textured-mesh",
+            positions=POSITIONS_2D,
+            faces=FACES,
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            shading=MeshShading.TEXTURE2D_UNLIT,
+            uv_mode=MeshUVMode.VERTEX,
+            uvs=UVS,
+        )
+
+    with pytest.raises(ValueError, match="meshvisual_uv_required"):
+        MeshVisual(
+            id="visual:textured-mesh",
+            positions=POSITIONS_2D,
+            faces=FACES,
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            shading=MeshShading.TEXTURE2D_UNLIT,
+            texture2d_id="texture:checker",
+        )
+
+
+def test_mesh_visual_s050_texture2d_rejects_bad_uv_shape_and_nonfinite():
+    with pytest.raises(ValueError, match="meshvisual_uv_shape_mismatch"):
+        MeshVisual(
+            id="visual:textured-mesh",
+            positions=POSITIONS_2D,
+            faces=FACES,
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            shading=MeshShading.TEXTURE2D_UNLIT,
+            texture2d_id="texture:checker",
+            uv_mode=MeshUVMode.VERTEX,
+            uvs=np.ones((FACES.shape[0], 2), dtype=np.float32),
+        )
+
+    bad_uvs = UVS.copy()
+    bad_uvs[0, 0] = np.nan
+    with pytest.raises(ValueError, match="meshvisual_uv_nonfinite"):
+        MeshVisual(
+            id="visual:textured-mesh",
+            positions=POSITIONS_2D,
+            faces=FACES,
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            shading=MeshShading.TEXTURE2D_UNLIT,
+            texture2d_id="texture:checker",
+            uv_mode=MeshUVMode.VERTEX,
+            uvs=bad_uvs,
+        )
+
+
+def test_mesh_visual_s050_rejects_texture_fields_on_other_shading_modes():
+    with pytest.raises(ValueError, match="texture2d_id requires"):
+        MeshVisual(
+            id="visual:mesh",
+            positions=POSITIONS_2D,
+            faces=FACES,
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            texture2d_id="texture:checker",
+        )
+
+    with pytest.raises(ValueError, match="UV fields require"):
+        MeshVisual(
+            id="visual:mesh",
+            positions=POSITIONS_2D,
+            faces=FACES,
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            uv_mode=MeshUVMode.VERTEX,
+            uvs=UVS,
+        )
+
+
+def test_mesh_visual_s050_rejects_normal_and_scalar_color_conflicts():
+    with pytest.raises(ValueError, match="meshvisual_texture_lighting_conflict"):
+        MeshVisual(
+            id="visual:textured-mesh",
+            positions=np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=np.float32),
+            faces=np.array([[0, 1, 2]], dtype=np.uint32),
+            coordinate_space=CoordinateSpace.DATA,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            shading=MeshShading.TEXTURE2D_UNLIT,
+            texture2d_id="texture:checker",
+            uv_mode=MeshUVMode.VERTEX,
+            uvs=np.array([[0, 0], [1, 0], [0, 1]], dtype=np.float32),
+            normal_mode=MeshNormalMode.FACE,
+            normal_generation=MeshNormalGeneration.FACE_FLAT,
+        )
+
+
+def test_mesh_visual_s050_texture2d_rejects_unknown_texture_id():
+    visual = MeshVisual(
+        id="visual:textured-mesh",
+        positions=POSITIONS_2D,
+        faces=FACES,
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id="texture:missing",
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=UVS,
+    )
+
+    with pytest.raises(ValueError, match="texture2d_unknown_id"):
+        validate_mesh_visual_texture2d_unlit(visual, texture_resources={})
 
 
 def _canonical_view3d() -> View3D:

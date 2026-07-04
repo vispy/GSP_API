@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -39,3 +39,20 @@ Implement the accepted S050 protocol surface for unlit Texture2D mesh materials.
 - Stop before accepting public sampler objects, external image paths, material objects, textured
   lighting, alpha/culling semantics, model loading, or backend-native texture handles.
 - Stop if implementation would require changing S038/S039 material semantics.
+
+## Result
+
+Implemented the accepted S050 protocol surface:
+
+- `Texture2D` and `Texture2DFormat` resource models with strict RGBA8 validation;
+- duplicate texture-id validation through `validate_texture2d_resources()`;
+- `MeshShading.TEXTURE2D_UNLIT`;
+- `MeshUVMode`;
+- `MeshVisual.texture2d_id`, `uv_mode`, and `uvs`;
+- `validate_mesh_visual_texture2d_unlit()` for cross-resource texture id resolution;
+- focused tests for positive protocol construction, invalid textures, missing/unknown texture ids,
+  UV shape/non-finite failures, and material-field conflicts.
+
+Renderer capability promotion was not changed. Public sampler objects, external image paths,
+material objects, textured lighting, alpha/culling semantics, model loading, and backend-native
+texture handles remain out of scope.

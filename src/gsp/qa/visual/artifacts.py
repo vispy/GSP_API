@@ -19,8 +19,10 @@ from gsp.protocol import (
     InlineAffineTransform2D,
     MeshVisual,
     MarkerVisual,
+    OrthographicProjection3D,
     PanelTextGuide,
     PathVisual,
+    PerspectiveProjection3D,
     PointVisual,
     ScalarColorEncoding,
     SegmentVisual,
@@ -376,6 +378,8 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             "normal_mode": visual.resolved_normal_mode().value,
             "normal_generation": visual.normal_generation.value,
             "shading": visual.shading.value,
+            "texture2d_id": visual.texture2d_id,
+            "uv_mode": visual.uv_mode.value,
             "face_culling": visual.face_culling.value,
             "depth_test": visual.depth_test.value,
             "depth_write": visual.depth_write.value,
@@ -391,6 +395,11 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
             payload["face_color_encoding"] = _scalar_color_encoding_json(
                 visual.face_color_encoding
             )
+        if visual.uvs is not None:
+            payload["uvs"] = {
+                "shape": list(visual.uvs.shape),
+                "dtype": str(visual.uvs.dtype),
+            }
         _add_transform_json(payload, visual.transform)
         return payload
 
@@ -469,10 +478,10 @@ def _view3d_json(view: View3D) -> dict[str, object]:
         "kind": view.projection.kind.value,
         "near_far": list(view.projection.near_far),
     }
-    if hasattr(view.projection, "xlim"):
+    if isinstance(view.projection, OrthographicProjection3D):
         projection["xlim"] = list(view.projection.xlim)
         projection["ylim"] = list(view.projection.ylim)
-    if hasattr(view.projection, "fov_y_degrees"):
+    if isinstance(view.projection, PerspectiveProjection3D):
         projection["fov_y_degrees"] = view.projection.fov_y_degrees
         projection["aspect_ratio"] = view.projection.aspect_ratio
     return {

@@ -2251,9 +2251,9 @@
       "id": "M218",
       "title": "S050 Texture2D unlit protocol validation",
       "stage": "S050",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 218
     },
     {
@@ -2425,13 +2425,15 @@
     "M215 completed: Datoviz query/readback docs now distinguish capability-gated guide/all-rendered query from still-deferred live rich payload parity, scientific readback, hit_policy=all, and mesh-triangle picking.",
     "Do not accept strict culling, non-opaque mesh alpha, or expanded 3D query payloads without ChatGPT Pro consultation output.",
     "M204 completed: archived P031 response and accepted unlit Texture2D plus per-vertex UVs as the next material stage via ADR-0029 and spec/visuals/mesh_texture2d_unlit_s050.md.",
-    "Texture implementation path is drafted as M218-M225; start with M218 protocol validation if the user approves implementation.",
+    "M218 completed: Texture2D RGBA8 resources, MeshVisual texture2d_unlit fields, per-vertex UV validation, and texture resource resolution helper are implemented without renderer capability promotion.",
+    "Continue the Texture2D path with M219 conformance fixtures, then M220 Datoviz public API feasibility and M221 Matplotlib unsupported policy.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
     "M217 completed: reproduced the five-case TextVisual batch signal 11, classified it as Datoviz/native teardown behavior, changed datoviz-offscreen-opt-in review packs to one child per case, and recorded artifacts under artifacts/visual_qa/s050/m217-dataviz-offscreen-*.",
     "M204 completed: archived .agent/consultations/P031-response.md, added ADR-0029, spec/visuals/mesh_texture2d_unlit_s050.md, and .agent/decisions/S050_texture2d_unlit_contracts.md; alpha/culling and expanded 3D query payloads remain separate Pro-consultation blockers.",
     "Drafted M218-M225 for the S050 Texture2D implementation path: protocol validation, fixtures, Datoviz feasibility, Matplotlib policy, Datoviz promotion, VisPy2 producer, docs audit, and closeout.",
+    "M218 completed: added S050 Texture2D protocol resources, MeshVisual texture2d_unlit UV fields, texture-id resolution validation, visual artifact metadata, and focused tests. No renderer capability was promoted.",
     "M216 completed: added .agent/S050_DATOVIZ_LIVE_POINT_IMAGE_PAYLOAD_EVIDENCE.md and artifacts/visual_qa/s050/m216-live-query-payload/smoke.json; switched to current dvz_panel_query_px, kept point-item, removed image-texel, and rejected non-identity live Datoviz query payloads unless scalar extension decoration is explicitly supported.",
     "M208 completed: fixed packed RGBA8 latest-binding upload to pass POINTER(c_ubyte) into dvz_visual_set_texture_rgba8(); isolated Datoviz TextVisual artifacts render with only text/rotation_alpha_ndc strict, the other text rows adapted, and the combined text batch still crashed with signal 11.",
     "M215 completed: updated spec/backends/datoviz.md query/readback wording to reflect S043 panel-frame guide hit/readback capability gates and preserved unsupported boundaries for hit_policy=all, unsupported extension payloads, scientific readback, and mesh-triangle picking.",
