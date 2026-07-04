@@ -1,0 +1,239 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/scenes/text_basic_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_basic_ndc.png",
+          "backend_id": "datoviz",
+          "child_process_returncode": -11,
+          "child_process_status": "teardown_crash_after_report",
+          "child_teardown_crash_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_basic_ndc.child_teardown_crash.json",
+          "child_teardown_log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_basic_ndc.child_teardown_crash.log.txt",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_basic_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_basic_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_basic_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/basic_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rgba8",
+        "font-size"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/scenes/text_basic_ndc.scene.json",
+      "title": "Basic NDC text labels"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/scenes/text_anchor_grid_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_anchor_grid_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_anchor_grid_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_anchor_grid_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_anchor_grid_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/anchor_grid_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "anchor"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/scenes/text_anchor_grid_ndc.scene.json",
+      "title": "Text anchor grid in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/scenes/text_rotation_alpha_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_rotation_alpha_ndc.png",
+          "backend_id": "datoviz",
+          "child_process_returncode": -11,
+          "child_process_status": "teardown_crash_after_report",
+          "child_teardown_crash_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_rotation_alpha_ndc.child_teardown_crash.json",
+          "child_teardown_log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_rotation_alpha_ndc.child_teardown_crash.log.txt",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_rotation_alpha_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_rotation_alpha_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_rotation_alpha_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/rotation_alpha_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rotation",
+        "alpha",
+        "z-order"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/scenes/text_rotation_alpha_ndc.scene.json",
+      "title": "Text rotation and alpha overlap in NDC"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/scenes/text_data_vs_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_data_vs_ndc.png",
+          "backend_id": "datoviz",
+          "child_process_returncode": -11,
+          "child_process_status": "teardown_crash_after_report",
+          "child_teardown_crash_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_data_vs_ndc.child_teardown_crash.json",
+          "child_teardown_log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_data_vs_ndc.child_teardown_crash.log.txt",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_data_vs_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_data_vs_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_data_vs_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/data_vs_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "data",
+        "ndc"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/scenes/text_data_vs_ndc.scene.json",
+      "title": "Text DATA and NDC coordinate comparison"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/scenes/text_multiline_unicode_smoke.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_multiline_unicode_smoke.png",
+          "backend_id": "datoviz",
+          "child_process_returncode": -11,
+          "child_process_status": "teardown_crash_after_report",
+          "child_teardown_crash_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_multiline_unicode_smoke.child_teardown_crash.json",
+          "child_teardown_log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_multiline_unicode_smoke.child_teardown_crash.log.txt",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_multiline_unicode_smoke.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_multiline_unicode_smoke.png",
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_multiline_unicode_smoke.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/multiline_unicode_smoke",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "multiline",
+        "unicode"
+      ],
+      "scene_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/scenes/text_multiline_unicode_smoke.scene.json",
+      "title": "Text multiline and Unicode smoke"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/contact_sheets/text_basic_ndc.png",
+    "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/contact_sheets/text_anchor_grid_ndc.png",
+    "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/contact_sheets/text_rotation_alpha_ndc.png",
+    "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/contact_sheets/text_data_vs_ndc.png",
+    "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/contact_sheets/text_multiline_unicode_smoke.png",
+    "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/contact_sheets/s024_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_child_strategy": "one_process_per_case",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "a9492af6526fbb722e2c0783811758f1b15be10e",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/environment.json",
+  "run_id": "s050-m217-textvisual-per-case",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S024",
+  "started_at": "2026-07-04T09:05:30.826033+00:00",
+  "suite": "s024"
+}

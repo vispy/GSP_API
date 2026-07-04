@@ -413,6 +413,139 @@ def test_datoviz_offscreen_review_pack_merges_clean_child_report(
     assert rows[("datoviz", "point/basic_ndc")]["promotion_blockers"] == []
 
 
+def test_datoviz_offscreen_review_pack_runs_one_child_per_case(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Multi-case Datoviz offscreen packs isolate native lifecycle state per case."""
+    calls: list[tuple[str, ...]] = []
+
+    def fake_child(**kwargs: Any) -> subprocess.CompletedProcess[str]:
+        child_out_dir = Path(str(kwargs["out_dir"]))
+        child_case_ids = tuple(str(case_id) for case_id in kwargs["case_ids"])
+        calls.append(child_case_ids)
+        case_id = child_case_ids[0]
+        slug = case_id.replace("/", "_")
+        backend_dir = child_out_dir / "backends" / "datoviz"
+        backend_dir.mkdir(parents=True)
+        artifact_path = backend_dir / f"{slug}.png"
+        log_path = backend_dir / f"{slug}.log.txt"
+        mpimg.imsave(artifact_path, np.ones((4, 4, 4), dtype=np.float32))
+        log_path.write_text("rendered\n", encoding="utf-8")
+        report = {
+            "schema_version": 1,
+            "schema_kind": "gsp.visual_qa.report",
+            "stage": "S023",
+            "suite": "s023",
+            "run_id": "test-dataviz-child-success",
+            "cases": [
+                {
+                    "case_id": case_id,
+                    "title": case_id,
+                    "family": "point",
+                    "required_features": ["point", "ndc", "rgba8", "pixel-size"],
+                    "backends": {
+                        "datoviz": {
+                            "backend_id": "datoviz",
+                            "status": "rendered",
+                            "artifact_path": str(artifact_path),
+                            "log_path": str(log_path),
+                        }
+                    },
+                }
+            ],
+        }
+        (child_out_dir / "report.json").write_text(
+            json.dumps(report), encoding="utf-8"
+        )
+        return subprocess.CompletedProcess(
+            args=["fake-dataviz-child", case_id],
+            returncode=0,
+            stdout=str(child_out_dir / "report.json"),
+            stderr="",
+        )
+
+    monkeypatch.setattr(review_pack, "_run_datoviz_child", fake_child)
+
+    result = run_visual_review_pack(
+        out_dir=tmp_path,
+        mode="datoviz-offscreen-opt-in",
+        case_ids=("point/basic_ndc", "point/diameter_ramp_ndc"),
+        run_id="test-dataviz-child-per-case",
+        resolution=(96, 96),
+    )
+
+    assert calls == [("point/basic_ndc",), ("point/diameter_ramp_ndc",)]
+    assert result["report"]["datoviz_offscreen_child_strategy"] == "one_process_per_case"  # type: ignore[index]
+    for case in result["report"]["cases"]:  # type: ignore[index]
+        assert case["backends"]["datoviz"]["status"] == "rendered"
+
+
+def test_datoviz_offscreen_review_pack_preserves_complete_teardown_crash_report(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A post-report native teardown crash is recorded without discarding artifacts."""
+
+    def fake_child(**kwargs: Any) -> subprocess.CompletedProcess[str]:
+        child_out_dir = Path(str(kwargs["out_dir"]))
+        backend_dir = child_out_dir / "backends" / "datoviz"
+        backend_dir.mkdir(parents=True)
+        artifact_path = backend_dir / "point_basic_ndc.png"
+        log_path = backend_dir / "point_basic_ndc.log.txt"
+        mpimg.imsave(artifact_path, np.ones((4, 4, 4), dtype=np.float32))
+        log_path.write_text("rendered\n", encoding="utf-8")
+        report = {
+            "schema_version": 1,
+            "schema_kind": "gsp.visual_qa.report",
+            "stage": "S023",
+            "suite": "s023",
+            "run_id": "test-dataviz-child-teardown-crash",
+            "cases": [
+                {
+                    "case_id": "point/basic_ndc",
+                    "title": "Basic NDC point visual",
+                    "family": "point",
+                    "required_features": ["point", "ndc", "rgba8", "pixel-size"],
+                    "backends": {
+                        "datoviz": {
+                            "backend_id": "datoviz",
+                            "status": "rendered",
+                            "artifact_path": str(artifact_path),
+                            "log_path": str(log_path),
+                        }
+                    },
+                }
+            ],
+        }
+        (child_out_dir / "report.json").write_text(
+            json.dumps(report), encoding="utf-8"
+        )
+        return subprocess.CompletedProcess(
+            args=["fake-dataviz-child"],
+            returncode=-11,
+            stdout="complete report written",
+            stderr="segmentation fault during gc",
+        )
+
+    monkeypatch.setattr(review_pack, "_run_datoviz_child", fake_child)
+
+    result = run_visual_review_pack(
+        out_dir=tmp_path,
+        mode="datoviz-offscreen-opt-in",
+        case_ids=("point/basic_ndc",),
+        run_id="test-dataviz-child-teardown-crash",
+        resolution=(96, 96),
+    )
+
+    datoviz_entry = result["report"]["cases"][0]["backends"]["datoviz"]  # type: ignore[index]
+    assert datoviz_entry["status"] == "rendered"
+    assert datoviz_entry["child_process_status"] == "teardown_crash_after_report"
+    crash_path = Path(str(datoviz_entry["child_teardown_crash_path"]))
+    payload = json.loads(crash_path.read_text(encoding="utf-8"))
+    assert payload["schema_kind"] == "gsp.visual_qa.datoviz_child_teardown_crash"
+    assert payload["complete_child_report_preserved"] is True
+    assert Path(str(datoviz_entry["artifact_path"])).exists()
+
+
 def test_s029_datoviz_rendered_family_audit_promotes_only_exact_scopes() -> None:
     report = {
         "suite": "s028",

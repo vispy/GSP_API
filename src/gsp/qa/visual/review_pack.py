@@ -106,28 +106,32 @@ def _run_isolated_datoviz_offscreen_review_pack(
         resolution=resolution,
         datoviz_color_pipeline=datoviz_color_pipeline,
     )
-    child_out_dir = out_dir / "_datoviz_offscreen_child"
-    if child_out_dir.exists():
-        shutil.rmtree(child_out_dir)
-    completed = _run_datoviz_child(
-        suite=suite,
-        out_dir=child_out_dir,
-        case_ids=case_ids,
-        resolution=resolution,
-        run_id=run_id,
-        datoviz_color_pipeline=datoviz_color_pipeline,
-    )
-    if completed.returncode == 0 and (child_out_dir / "report.json").exists():
-        _merge_successful_datoviz_child_report(report, out_dir, child_out_dir)
-        shutil.rmtree(child_out_dir, ignore_errors=True)
-    else:
-        _merge_crashed_datoviz_child_report(
-            report,
-            out_dir,
-            child_out_dir=child_out_dir,
-            completed=completed,
-        )
-        shutil.rmtree(child_out_dir, ignore_errors=True)
+    child_root_dir = out_dir / "_datoviz_offscreen_child"
+    if child_root_dir.exists():
+        shutil.rmtree(child_root_dir)
+    try:
+        for case_id in _report_case_ids(report):
+            child_out_dir = child_root_dir / case_slug(case_id)
+            completed = _run_datoviz_child(
+                suite=suite,
+                out_dir=child_out_dir,
+                case_ids=(case_id,),
+                resolution=resolution,
+                run_id=run_id,
+                datoviz_color_pipeline=datoviz_color_pipeline,
+            )
+            _merge_datoviz_child_case_report(
+                report,
+                out_dir,
+                child_out_dir=child_out_dir,
+                completed=completed,
+                case_id=case_id,
+            )
+    finally:
+        shutil.rmtree(child_root_dir, ignore_errors=True)
+
+    report["datoviz_offscreen_child_strategy"] = "one_process_per_case"
+    report["datoviz_offscreen_isolated"] = True
 
     contact_paths = write_contact_sheets(
         out_dir,
@@ -136,7 +140,6 @@ def _run_isolated_datoviz_offscreen_review_pack(
         suite=suite,
     )
     report["contact_sheets"] = [str(path) for path in contact_paths]
-    report["datoviz_offscreen_isolated"] = True
     write_json(out_dir / "report.json", report)
     write_summary(out_dir, report)
     matrix = write_capability_matrix(out_dir, report)
@@ -152,6 +155,92 @@ def _run_isolated_datoviz_offscreen_review_pack(
         "report": report,
         "capability_matrix": matrix,
     }
+
+
+def _report_case_ids(report: dict[str, object]) -> tuple[str, ...]:
+    cases = report.get("cases", [])
+    if not isinstance(cases, list):
+        raise TypeError("visual QA report cases must be a list")
+    case_ids: list[str] = []
+    for case in cases:
+        if isinstance(case, dict):
+            case_ids.append(str(case["case_id"]))
+    return tuple(case_ids)
+
+
+def _merge_datoviz_child_case_report(
+    report: dict[str, object],
+    out_dir: Path,
+    *,
+    child_out_dir: Path,
+    completed: subprocess.CompletedProcess[str],
+    case_id: str,
+) -> None:
+    case = _report_case_by_id(report, case_id)
+    backends = case.get("backends")
+    if not isinstance(backends, dict):
+        return
+
+    if (child_out_dir / "report.json").exists():
+        child_entry = _datoviz_child_backend_entry(child_out_dir, case_id)
+        if child_entry is not None:
+            copied = _copy_datoviz_backend_entry(
+                child_entry, out_dir=out_dir, child_out_dir=child_out_dir
+            )
+            if completed.returncode != 0:
+                _record_datoviz_child_teardown_crash(
+                    copied,
+                    out_dir=out_dir,
+                    case_id=case_id,
+                    child_out_dir=child_out_dir,
+                    completed=completed,
+                )
+            backends[DATOVIZ_BACKEND_ID] = copied
+            return
+
+    if completed.returncode == 0:
+        backends[DATOVIZ_BACKEND_ID] = _write_datoviz_child_missing_entry(
+            out_dir, case_id
+        )
+        return
+
+    backends[DATOVIZ_BACKEND_ID] = _write_datoviz_child_crash_entry(
+        out_dir,
+        case_id,
+        child_out_dir=child_out_dir,
+        completed=completed,
+    )
+
+
+def _report_case_by_id(report: dict[str, object], case_id: str) -> dict[str, object]:
+    cases = report.get("cases", [])
+    if not isinstance(cases, list):
+        raise TypeError("visual QA report cases must be a list")
+    for case in cases:
+        if isinstance(case, dict) and str(case.get("case_id")) == case_id:
+            return case
+    raise KeyError(f"visual QA report is missing case: {case_id}")
+
+
+def _datoviz_child_backend_entry(
+    child_out_dir: Path, case_id: str
+) -> dict[str, object] | None:
+    child_report = json.loads((child_out_dir / "report.json").read_text(encoding="utf-8"))
+    child_cases = {
+        str(case["case_id"]): case
+        for case in child_report.get("cases", [])
+        if isinstance(case, dict)
+    }
+    child_case = child_cases.get(case_id)
+    if child_case is None:
+        return None
+    child_backends = child_case.get("backends")
+    if not isinstance(child_backends, dict):
+        return None
+    child_entry = child_backends.get(DATOVIZ_BACKEND_ID)
+    if not isinstance(child_entry, dict):
+        return None
+    return child_entry
 
 
 def _run_datoviz_child(
@@ -257,6 +346,60 @@ def _copy_datoviz_backend_entry(
         shutil.copy2(source, destination)
         copied[key] = str(destination)
     return copied
+
+
+def _record_datoviz_child_teardown_crash(
+    copied_entry: dict[str, object],
+    *,
+    out_dir: Path,
+    case_id: str,
+    child_out_dir: Path,
+    completed: subprocess.CompletedProcess[str],
+) -> None:
+    slug = case_slug(case_id)
+    backend_dir = out_dir / "backends" / DATOVIZ_BACKEND_ID
+    backend_dir.mkdir(parents=True, exist_ok=True)
+    crash_path = backend_dir / f"{slug}.child_teardown_crash.json"
+    log_path = backend_dir / f"{slug}.child_teardown_crash.log.txt"
+    reason = _datoviz_child_failure_reason(completed.returncode)
+    command = completed.args if isinstance(completed.args, list) else [completed.args]
+    payload = {
+        "schema_version": 1,
+        "schema_kind": "gsp.visual_qa.datoviz_child_teardown_crash",
+        "backend_id": DATOVIZ_BACKEND_ID,
+        "case_id": case_id,
+        "status": "warning",
+        "reason": reason,
+        "returncode": completed.returncode,
+        "command": [str(part) for part in command],
+        "child_out_dir": str(child_out_dir),
+        "complete_child_report_preserved": True,
+        "stdout": completed.stdout,
+        "stderr": completed.stderr,
+    }
+    write_json(crash_path, payload)
+    log_path.write_text(
+        "\n".join(
+            [
+                reason,
+                "",
+                "Command:",
+                " ".join(str(part) for part in command),
+                "",
+                "stdout:",
+                completed.stdout or "",
+                "",
+                "stderr:",
+                completed.stderr or "",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    copied_entry["child_process_status"] = "teardown_crash_after_report"
+    copied_entry["child_process_returncode"] = completed.returncode
+    copied_entry["child_teardown_crash_path"] = str(crash_path)
+    copied_entry["child_teardown_log_path"] = str(log_path)
 
 
 def _merge_crashed_datoviz_child_report(

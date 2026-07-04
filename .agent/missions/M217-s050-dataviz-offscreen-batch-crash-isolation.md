@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -39,3 +39,19 @@ isolated by one-case child processes.
 - Stop before editing the sibling Datoviz repository.
 - Stop before adding compatibility shims or legacy query/visual aliases.
 - Stop if native crash diagnosis requires Datoviz source changes or debugger-only intervention; record a handoff instead.
+
+## Result
+
+Completed locally. See `.agent/S050_DATOVIZ_OFFSCREEN_BATCH_CRASH_ISOLATION.md`.
+
+Outcome: the current Datoviz v0.4-dev checkout still reproduces the combined TextVisual batch crash
+as child signal 11. Direct child probes narrowed the behavior to Datoviz/native lifecycle teardown:
+single-case text runs write complete PNG and `report.json` artifacts before some processes segfault
+during garbage collection with no Python frame.
+
+The GSP review-pack isolation layer now runs Datoviz offscreen review packs one child process per
+case. If a child writes a complete report and then crashes during native teardown, the parent keeps
+the rendered artifact and writes a `*.child_teardown_crash.json` evidence file. Missing reports still
+remain structured crash rows.
+
+No sibling Datoviz files were edited. No public visual or query semantics changed.

@@ -1,0 +1,20 @@
+{
+  "backends": [
+    "datoviz"
+  ],
+  "case_ids": [
+    "text/multiline_unicode_smoke"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "device_scale": 1.0,
+  "resolution": [
+    800,
+    600
+  ],
+  "run_id": "s050-m217-one_text_multiline_unicode_smoke",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S024",
+  "started_at": "2026-07-04T09:01:45.767576+00:00",
+  "suite": "s024"
+}

@@ -1,0 +1,8 @@
+schema_version: 1
+cases:
+  - case_id: text/rotation_alpha_ndc
+    status: pending
+    notes: ''
+  - case_id: text/basic_ndc
+    status: pending
+    notes: ''

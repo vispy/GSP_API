@@ -1,0 +1,295 @@
+{
+  "generated_at": "2026-07-04T09:05:40.427895+00:00",
+  "review_classification_summary": {
+    "fail.layout": 0,
+    "fail.query": 0,
+    "fail.semantic": 0,
+    "pass.layout_strict": 0,
+    "pass.raster_tolerant": 0,
+    "pass.semantic_strict": 6,
+    "review.adapted": 4,
+    "review.native_backend": 0,
+    "unsupported.capability": 0
+  },
+  "review_classification_taxonomy": [
+    "pass.semantic_strict",
+    "pass.layout_strict",
+    "pass.raster_tolerant",
+    "review.adapted",
+    "review.native_backend",
+    "fail.semantic",
+    "fail.layout",
+    "fail.query",
+    "unsupported.capability"
+  ],
+  "rows": [
+    {
+      "backend": "matplotlib",
+      "case_id": "text/basic_ndc",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_basic_ndc.png",
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_basic_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "rgba8",
+        "font-size"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "text/basic_ndc",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_basic_ndc.png",
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_basic_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "default BASELINE text-anchor semantics are not strictly verified by the Datoviz adapter"
+      ],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "rgba8",
+        "font-size"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "text/anchor_grid_ndc",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_anchor_grid_ndc.png",
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_anchor_grid_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "anchor"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "text/anchor_grid_ndc",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_anchor_grid_ndc.png",
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_anchor_grid_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "baseline, top, center, and bottom text-box anchors need a focused fixture before strict promotion"
+      ],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "anchor"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "text/rotation_alpha_ndc",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_rotation_alpha_ndc.png",
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_rotation_alpha_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "rotation",
+        "alpha",
+        "z-order"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "text/rotation_alpha_ndc",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_rotation_alpha_ndc.png",
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_rotation_alpha_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [
+        "Datoviz retained text receives per-item NDC positions, UTF-8 ASCII strings, RGBA alpha, font size, center anchors, and rotation radians",
+        "S029 verifies the rendered text draws above the orientation image with alpha blending and center-anchored rotation"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "rotation",
+        "alpha",
+        "z-order"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "text/data_vs_ndc",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_data_vs_ndc.png",
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_data_vs_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "data",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "text/data_vs_ndc",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_data_vs_ndc.png",
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_data_vs_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "DATA and NDC text placement is only proven under the identity [-1,+1] review-pack view"
+      ],
+      "protocol_scope": [
+        "text",
+        "data",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "text/multiline_unicode_smoke",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_multiline_unicode_smoke.png",
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/matplotlib/text_multiline_unicode_smoke.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "multiline",
+        "unicode"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "text/multiline_unicode_smoke",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_multiline_unicode_smoke.png",
+        "artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/backends/datoviz/text_multiline_unicode_smoke.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Unicode fallback and multiline BASELINE anchoring remain unverified"
+      ],
+      "protocol_scope": [
+        "text",
+        "multiline",
+        "unicode"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    }
+  ],
+  "run_id": "s050-m217-textvisual-per-case",
+  "schema_kind": "gsp.visual_qa.capability_matrix",
+  "schema_version": 1,
+  "stage": "S024",
+  "status_taxonomy": [
+    "strict",
+    "adapted",
+    "experimental",
+    "unsupported",
+    "disabled",
+    "crashed",
+    "not_run"
+  ],
+  "suite": "s024",
+  "summary": {
+    "adapted": 4,
+    "crashed": 0,
+    "disabled": 0,
+    "experimental": 0,
+    "not_run": 0,
+    "strict": 6,
+    "unsupported": 0
+  }
+}

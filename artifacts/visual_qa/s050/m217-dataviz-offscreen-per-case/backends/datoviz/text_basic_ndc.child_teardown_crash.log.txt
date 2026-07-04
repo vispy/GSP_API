@@ -1,0 +1,11 @@
+Datoviz offscreen child process terminated by signal 11
+
+Command:
+/home/cyrille/GIT/Viz/GSP_API/.venv/bin/python3 -m gsp.qa.visual run --suite s024 --backends datoviz --out artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/_datoviz_offscreen_child/text_basic_ndc --no-contact-sheet --resolution 800x600 --datoviz-color-pipeline legacy_srgb_blend --case text/basic_ndc --run-id s050-m217-textvisual-per-case
+
+stdout:
+artifacts/visual_qa/s050/m217-dataviz-offscreen-per-case/_datoviz_offscreen_child/text_basic_ndc/report.json
+
+
+stderr:
+
