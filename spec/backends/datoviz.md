@@ -197,6 +197,13 @@ draw-state names are not public GSP semantics and are not strict S050 evidence. 
 combine with `meshvisual.positions3d.opaque_depth.v1` only on the retained DATA-space View3D path
 and only when base alpha is `1.0` and every texture alpha byte is `255`.
 
+M220 found that current v0.4-dev public bindings expose candidate mesh texture symbols:
+`dvz_mesh`, mesh `"texcoords"` uploads, RGBA8 sampled fields, `dvz_visual_set_field(...,
+"texture", field)`, and `dvz_visual_set_texture_rgba8()`. Datoviz must still keep S050 texture
+capabilities unadvertised until runtime fixtures or upstream public documentation prove mesh
+nearest/clamp/no-mipmap sampling, top-row/high-v origin behavior, unmanaged numeric RGBA behavior,
+and exact multiplicative unlit output.
+
 ## M066 PointVisual retained path
 
 Point visuals are attached with an explicit `DvzVisualAttachDesc` instead of relying on a NULL

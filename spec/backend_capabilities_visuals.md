@@ -246,6 +246,15 @@ nearest/clamp/no-mipmap sampling, multiplicative unlit RGBA output, and the diag
 currently remains unsupported for textured meshes; Datoviz support requires public API evidence for
 canonical texture upload, UV binding, sampling, image origin, and color behavior.
 
+Current S050 support summary:
+
+| Surface | `texture2d.rgba8.v1` | `meshvisual.uv.vertex2d.v1` | `meshvisual.material.texture2d_unlit.v1` | `vispy2.producer.mesh.texture2d_unlit.v1` | Notes |
+|---|---:|---:|---:|---:|---|
+| Protocol validation | supported | supported | validation only | n/a | Validates immutable RGBA8 textures and per-vertex UV fields; does not render. |
+| Matplotlib renderer | unsupported | unsupported | unsupported | n/a | Direct renderer and visual QA reject with `meshvisual_material_texture2d_unlit_unsupported`. |
+| Datoviz renderer | blocked | blocked | blocked | n/a | M220 found public upload/binding candidates but sampler, origin, unmanaged RGBA, and exact unlit multiplication remain unproven. |
+| VisPy2 producer | n/a | n/a | n/a | supported | Emits canonical `Texture2D` resources and `texture2d_unlit` `MeshVisual` records only; renderer support remains separate. |
+
 The following lighting and material capability names remain reserved/deferred after S050:
 
 ```text

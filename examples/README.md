@@ -71,8 +71,8 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | `mesh_basic_example.py` | Basic mesh material rendering | Solid face color and wireframe edges |
 | `mesh_normal_example.py` | Normal-based mesh material rendering | Face colors derived from view-space normals |
 | `mesh_depth_example.py` | Depth-based mesh material rendering | Face colors derived from view-space depth |
-| `mesh_phong_example.py` | Phong-shaded mesh rendering | Directional and ambient lighting |
-| `mesh_textured_example.py` | Textured mesh rendering | Texture loading and mesh UV attributes |
+| `mesh_phong_example.py` | Legacy Phong-shaded mesh rendering | Directional and ambient lighting outside the accepted GSP v1 material contract |
+| `mesh_textured_example.py` | Legacy textured mesh rendering | Texture loading and mesh UV attributes outside the accepted S050 renderer capability set |
 
 ### Advanced Examples
 

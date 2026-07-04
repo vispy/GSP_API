@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Draft.
+Completed.
 
 ## Summary
 
@@ -38,3 +38,24 @@ implementation missions.
 ## Stop Conditions
 
 - Stop before release-facing claims if Datoviz or Matplotlib capability evidence is incomplete.
+
+## Result
+
+Completed the S050 Texture2D docs and capability audit.
+
+Updated:
+
+- `spec/backend_capabilities_visuals.md` with a current S050 support table distinguishing protocol
+  validation, Matplotlib unsupported posture, Datoviz blocked posture, and VisPy2 producer support;
+- `spec/vispy2/api.md` to document the implemented `texture`/`uvs` extension, emitted
+  `Figure.texture_resources()`, and rejection of non-default shading for textured meshes;
+- `spec/backends/datoviz.md` with the M220 public-symbol evidence and remaining sampler/origin/color
+  blockers;
+- `spec/backends/matplotlib.md` to state that direct `render_mesh_visual()` rejects textured meshes
+  before building a `PolyCollection`;
+- `examples/README.md` to label legacy Phong/textured mesh examples as outside the accepted GSP v1
+  material and S050 renderer capability contracts.
+
+Audited capability strings in `src/`, `tests/`, `spec/`, `examples/`, and `.agent/`; renderer
+Texture2D capability advertisement remains absent. Datoviz and Matplotlib renderer claims remain
+incomplete and unpromoted.

@@ -111,13 +111,14 @@ The bounded S025 mesh API exposes accepted `MeshVisual` protocol semantics:
   caller wants explicit association.
 - `coordinate_space` accepts existing GSP coordinate spaces, defaulting to `DATA`.
 
-The S025 VisPy2 producer does not expose materials, lights, textures, normals, shading, culling,
-depth state, mesh-local transforms, Datoviz slots, or backend draw calls. S050 later accepts one
-thin Texture2D/UV producer extension below.
+The S025/S039 VisPy2 producer exposes only the accepted untextured `MeshVisual` fields, including
+the bounded flat-Lambert face-normal extension. It does not expose material objects, public sampler
+objects, texture handles, culling/depth-state controls, mesh-local transforms, Datoviz slots, or
+backend draw calls. S050 later accepts one thin Texture2D/UV producer extension below.
 
 ## S050 Texture2D mesh producer extension
 
-After the S050 protocol validator lands, VisPy2 may extend `Axes.mesh` only as:
+VisPy2 extends the existing `Axes.mesh` producer with `texture` and `uvs` only:
 
 ```python
 def mesh(
@@ -125,25 +126,32 @@ def mesh(
     positions,
     faces,
     *,
-    color=(1.0, 1.0, 1.0, 1.0),
+    color,
     color_mode=None,
     coordinate_space="data",
+    shading="unlit_rgba",
+    normal_mode=None,
+    normals=None,
+    normal_generation="none",
     order=0.0,
+    transform=None,
     texture=None,
     uvs=None,
 ):
     ...
 ```
 
-`texture is None and uvs is None` preserves current behavior exactly. Supplying both emits one GSP
-`Texture2D` resource, sets `MeshVisual.texture2d_id`, `uv_mode="vertex"`, `uvs=uvs`, and
-`shading="texture2d_unlit"`. Supplying exactly one of `texture` or `uvs` is an error.
+`texture is None and uvs is None` preserves current mesh behavior exactly, including the existing
+required `color` argument and the untextured S039 flat-Lambert parameters. Supplying both `texture`
+and `uvs` emits one GSP `Texture2D` resource, stores it on `Figure.texture_resources()`, sets
+`MeshVisual.texture2d_id`, `uv_mode="vertex"`, `uvs=uvs`, and `shading="texture2d_unlit"`.
+Supplying exactly one of `texture` or `uvs` is an error.
 
 `texture` must be strict `uint8 (H,W,4)` with no filename, URI, PIL object, RGB expansion, float
 scaling, or color-profile handling in v1. `uvs` must be finite `(N,2)`. `color` remains the
-multiplicative base color. VisPy2 must not add `sampler`, `wrap`, `filter`, `mipmap`, `material`,
-`normal`, `light`, `shading`, `texture_id`, culling/depth-state, or backend-specific keywords in
-this stage.
+multiplicative base color. When `texture` is supplied, VisPy2 rejects non-default `shading` and does
+not expose `sampler`, `wrap`, `filter`, `mipmap`, `material`, `light`, `texture_id`,
+culling/depth-state, or backend-specific keywords in this stage.
 
 `vispy2.producer.mesh.texture2d_unlit.v1` is producer-only. `Figure.render_matplotlib()` and other
 renderer paths must still check renderer capabilities and diagnose unsupported textured meshes.

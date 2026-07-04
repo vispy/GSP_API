@@ -2305,9 +2305,9 @@
       "id": "M224",
       "title": "S050 Texture2D docs and capability audit",
       "stage": "S050",
-      "state": "draft",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 224
     },
     {
@@ -2431,7 +2431,8 @@
     "M221 completed: Matplotlib direct MeshVisual rendering now rejects texture2d_unlit with meshvisual_material_texture2d_unlit_unsupported instead of silently dropping texture fields.",
     "M222 blocked: Datoviz Texture2D capability advertisement requires M220 sampler, origin, unmanaged RGBA, and unlit multiplication proof before implementation or promotion.",
     "M223 completed: VisPy2 Axes.mesh now emits strict Texture2D resources and texture2d_unlit MeshVisual fields when texture and uvs are supplied together.",
-    "Continue the Texture2D path with M224 docs/capability audit and M225 closeout.",
+    "M224 completed: capability/docs audit now distinguishes protocol validation, VisPy2 producer support, Matplotlib unsupported diagnostics, and Datoviz blocked renderer promotion.",
+    "Continue the Texture2D path with M225 closeout.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
@@ -2444,6 +2445,7 @@
     "M221 completed: added a Matplotlib render_mesh_visual guard and regression test so texture2d_unlit raises meshvisual_material_texture2d_unlit_unsupported before any PolyCollection approximation.",
     "M222 blocked by M220: do not advertise Datoviz Texture2D capabilities until strict sampler/origin/color multiplication evidence exists.",
     "M223 completed: added VisPy2 texture+uvs mesh producer support, Figure.texture_resources(), strict Texture2D/UV validation tests, and Matplotlib unsupported render-path coverage.",
+    "M224 completed: updated backend capability, Datoviz, Matplotlib, VisPy2, and examples docs so S050 renderer claims remain unpromoted and legacy textured/Phong examples are labeled outside accepted renderer capabilities.",
     "M216 completed: added .agent/S050_DATOVIZ_LIVE_POINT_IMAGE_PAYLOAD_EVIDENCE.md and artifacts/visual_qa/s050/m216-live-query-payload/smoke.json; switched to current dvz_panel_query_px, kept point-item, removed image-texel, and rejected non-identity live Datoviz query payloads unless scalar extension decoration is explicitly supported.",
     "M208 completed: fixed packed RGBA8 latest-binding upload to pass POINTER(c_ubyte) into dvz_visual_set_texture_rgba8(); isolated Datoviz TextVisual artifacts render with only text/rotation_alpha_ndc strict, the other text rows adapted, and the combined text batch still crashed with signal 11.",
     "M215 completed: updated spec/backends/datoviz.md query/readback wording to reflect S043 panel-frame guide hit/readback capability gates and preserved unsupported boundaries for hit_policy=all, unsupported extension payloads, scientific readback, and mesh-triangle picking.",

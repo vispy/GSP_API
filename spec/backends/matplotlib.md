@@ -208,3 +208,7 @@ Until a fixture-backed CPU textured-triangle rasterizer exists, Matplotlib shoul
 `meshvisual_material_texture2d_unlit_unsupported`. A future CPU rasterizer would still need to prove
 the accepted UV orientation, nearest/clamp/no-mipmap sampling, color multiplication, alpha
 diagnostics, and any claimed depth behavior separately.
+
+The direct `render_mesh_visual()` path also rejects `texture2d_unlit` before constructing a
+`PolyCollection`; texture fields must not be silently dropped into uniform, per-face, or per-vertex
+RGBA fallback geometry.
