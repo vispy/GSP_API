@@ -2345,6 +2345,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 228
+    },
+    {
+      "id": "M229",
+      "title": "S050 Datoviz pre-RC compatibility review and handoff",
+      "stage": "S050",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 229
     }
   ],
   "review_queue": [],
@@ -2464,7 +2473,8 @@
     "M226 completed: projected-NDC mesh face-culling helpers and Matplotlib CPU mesh-pick culling fixtures are implemented without renderer capability promotion; M227 is the next ready query-payload branch.",
     "M227 completed: geometry/facing mesh-pick payload protocol helpers, validators, and Matplotlib CPU-reference fixtures are implemented without mutating identity-only v1 or advertising Datoviz geometry capabilities.",
     "M228 completed: public sampled-field mesh texture rendering exists, but Datoviz Texture2D strict promotion remains blocked by missing convenience upload symbol, DATA-role crash, origin mismatch, non-nearest/blended samples, non-exact multiplication, and teardown abort evidence.",
-    "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
+    "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target.",
+    "M229 completed: GSP now accepts Datoviz pre-RC sampled-field image and View2D descriptor APIs; the S028 compatibility pack against api/pre-rc-cleanup recorded 12 Datoviz strict rows, 4 adapted text rows, and 14 native SIGSEGV crash rows. Keep M222 blocked until Texture2D runtime blockers have fresh positive evidence."
   ],
   "notes": [
     "M228 completed: added .agent/S050_DATOVIZ_TEXTURE2D_RUNTIME_SEMANTICS_PROOF.md and artifacts/visual_qa/s050/m228-dataviz-texture2d-runtime; M222 remains blocked because strict S050 sampler/origin/unmanaged RGBA/multiplication semantics are not proven with public Datoviz APIs.",
@@ -2588,7 +2598,8 @@
     "M109 completed: added S028 visual QA suite cases for auto-grid and reversed-explicit guide/View2D scenes; extended QA scene artifacts/rendering to carry axis and panel text guides; added VisPy2 reversed guide render coverage. Focused QA/VisPy2 tests and nearby guide tests passed; mypy was clean.",
     "M110 completed: added the S028 Datoviz guide/View2D capability report, kept Datoviz axis support adapted with explicit tick labels, strict reversed-domain proof, guide query, and all-rendered guide query reported by structured unsupported/unverified diagnostics, and closed S028.",
     "P013 response accepted: S029 should be Backend Capability Matrix and Visual Review Pack, with render-first review artifacts and strict promotion only after explicit contract evidence.",
-    "M112 completed: added the S029 capability matrix schema, review-pack generator, Datoviz review-pack runtime wrapper, focused tests, and Mission Control opening records."
+    "M112 completed: added the S029 capability matrix schema, review-pack generator, Datoviz review-pack runtime wrapper, focused tests, and Mission Control opening records.",
+    "M229 completed: GSP now accepts Datoviz pre-RC sampled-field image and View2D descriptor APIs; the S028 compatibility pack against api/pre-rc-cleanup recorded 12 Datoviz strict rows, 4 adapted text rows, and 14 native SIGSEGV crash rows. Keep M222 blocked until Texture2D runtime blockers have fresh positive evidence."
   ],
   "summaries": [
     "M216 completed: refreshed live Datoviz point/image query evidence and narrowed capability advertisement to current proven payloads.",
