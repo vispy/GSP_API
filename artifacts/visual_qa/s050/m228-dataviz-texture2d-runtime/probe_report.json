@@ -1,0 +1,20 @@
+{
+  "datoviz_file": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+  "exception": "DatovizV04Unavailable(\"Datoviz facade is missing v0.4 functions: ['dvz_visual_set_texture_rgba8']\")",
+  "source": "/Users/cyrille/GIT/Viz/datoviz",
+  "status": "exception",
+  "symbols": {
+    "dvz_field_data_view": true,
+    "dvz_mesh": true,
+    "dvz_sampled_field": true,
+    "dvz_sampled_field_desc": true,
+    "dvz_sampled_field_set_data": true,
+    "dvz_view_capture_png": true,
+    "dvz_view_render_once": true,
+    "dvz_visual_set_data": true,
+    "dvz_visual_set_field": true,
+    "dvz_visual_set_index_data": true,
+    "dvz_visual_set_texture_rgba8": false
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 33, in <module>\n  File \"<string>\", line 25, in __init__\n  File \"/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py\", line 959, in __post_init__\n    raise DatovizV04Unavailable(\n        f\"Datoviz facade is missing v0.4 functions: {missing}\"\n    )\ngsp_datoviz.protocol_renderer.DatovizV04Unavailable: Datoviz facade is missing v0.4 functions: ['dvz_visual_set_texture_rgba8']\n"
+}

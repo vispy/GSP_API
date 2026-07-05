@@ -1,0 +1,77 @@
+{
+  "bind_ok": true,
+  "capture_result": 0,
+  "datoviz_file": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+  "desc": {
+    "color_role": 1,
+    "dim": 0,
+    "format": 22,
+    "height": 2,
+    "semantic": 4,
+    "width": 2
+  },
+  "field_is_null": false,
+  "image_shape": [
+    128,
+    128,
+    4
+  ],
+  "png_path": "artifacts/visual_qa/s050/m228-dataviz-texture2d-runtime/texture2d_sampled_field_quad_srgb.png",
+  "prior_native_crash": "DVZ_COLOR_ROLE_DATA attempt aborted: field.c:130 color sampled fields require srgb_color or linear_color role; sampled_field_set_data asserted on NULL field.",
+  "render_result": 0,
+  "samples_rgba8": {
+    "bottom_left": [
+      255,
+      0,
+      255,
+      255
+    ],
+    "bottom_right": [
+      255,
+      0,
+      255,
+      255
+    ],
+    "center": [
+      255,
+      0,
+      255,
+      255
+    ],
+    "top_left": [
+      255,
+      0,
+      255,
+      255
+    ],
+    "top_right": [
+      255,
+      0,
+      255,
+      255
+    ]
+  },
+  "source": "/Users/cyrille/GIT/Viz/datoviz",
+  "status": "rendered-direct-srgb",
+  "symbols": {
+    "dvz_app": true,
+    "dvz_field_data_view": true,
+    "dvz_figure": true,
+    "dvz_mesh": true,
+    "dvz_panel_add_visual": true,
+    "dvz_panel_full": true,
+    "dvz_sampled_field": true,
+    "dvz_sampled_field_desc": true,
+    "dvz_sampled_field_set_data": true,
+    "dvz_scene": true,
+    "dvz_scene_destroy": true,
+    "dvz_view_capture_png": true,
+    "dvz_view_offscreen": true,
+    "dvz_view_render_once": true,
+    "dvz_visual_set_data": true,
+    "dvz_visual_set_field": true,
+    "dvz_visual_set_index_data": true,
+    "dvz_visual_set_texture_rgba8": false
+  },
+  "upload_ok": true
+}

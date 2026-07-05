@@ -1,0 +1,9 @@
+{
+  "attempt": "sampled_field_color_role_data",
+  "status": "native_abort",
+  "stderr_summary": [
+    "field.c:130: color sampled fields require srgb_color or linear_color role",
+    "Assertion failed: ((field) != NULL), function dvz_sampled_field_set_data, file field_data.c, line 181"
+  ],
+  "strict_s050_conclusion": "DVZ_COLOR_ROLE_DATA does not currently prove unmanaged numeric RGBA texture sampling for mesh Texture2D."
+}
