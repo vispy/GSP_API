@@ -1,0 +1,51 @@
+{
+  "arrays": {
+    "orientation_rgba": {
+      "dtype": "uint8",
+      "key": "orientation_rgba",
+      "path": "image_origin_lower_ndc.arrays.npz",
+      "shape": [
+        8,
+        8,
+        4
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "image/origin_lower_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [],
+  "transform_resources": [],
+  "view3d": null,
+  "views": [],
+  "visuals": [
+    {
+      "clim": null,
+      "color_scale_id": null,
+      "colormap": null,
+      "coordinate_space": "ndc",
+      "extent": [
+        -0.75,
+        0.75,
+        -0.55,
+        0.55
+      ],
+      "family": "image",
+      "id": "visual:image-origin-lower-ndc",
+      "image": {
+        "dtype": "uint8",
+        "shape": [
+          8,
+          8,
+          4
+        ]
+      },
+      "interpolation": "nearest",
+      "origin": "lower"
+    }
+  ]
+}

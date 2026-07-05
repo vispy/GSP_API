@@ -128,6 +128,7 @@ from gsp_datoviz.protocol_renderer import (
     is_datoviz_v04_facade,
     _DatovizLiveView2DNavigation,
     _DatovizLiveView3DNavigation,
+    _datoviz_call_succeeded,
     _image_texcoords,
     _datoviz_view_size_desc,
     _resolved_canvas_from_datoviz,
@@ -149,6 +150,16 @@ from gsp_datoviz.query import (
     datoviz_query_view3d_ray_context,
 )
 from gsp_matplotlib.protocol_query import query_view3d_ray_context
+
+
+def test_datoviz_call_succeeded_accepts_bool_and_result_conventions() -> None:
+    assert _datoviz_call_succeeded(True)
+    assert not _datoviz_call_succeeded(False)
+    assert _datoviz_call_succeeded(0)
+    assert not _datoviz_call_succeeded(-1)
+    assert not _datoviz_call_succeeded(1)
+    assert _datoviz_call_succeeded(ctypes.c_int32(0))
+    assert not _datoviz_call_succeeded(ctypes.c_int32(-1))
 
 
 class FakeDatovizV04:

@@ -636,9 +636,10 @@ def _configure_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> An
 
     desc = dvz.dvz_panel_view3d_desc()
     _fill_datoviz_camera_desc(dvz, desc.camera, view3d)
-    result = dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(desc))
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz retained View3D descriptor setup failed")
+    _require_datoviz_success(
+        dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(desc)),
+        "Datoviz retained View3D descriptor setup failed",
+    )
     camera = dvz.dvz_panel_camera(panel)
     if _is_null_handle(camera):
         raise DatovizV04Unsupported("Datoviz retained View3D panel camera is unavailable")
@@ -685,11 +686,12 @@ def _set_datoviz_camera_orthographic_bounds(
     x0, x1 = view3d.projection.xlim
     y0, y1 = view3d.projection.ylim
     near, far = view3d.projection.near_far
-    result = dvz.dvz_camera_set_orthographic_bounds(
-        camera, float(x0), float(x1), float(y0), float(y1), float(near), float(far)
+    _require_datoviz_success(
+        dvz.dvz_camera_set_orthographic_bounds(
+            camera, float(x0), float(x1), float(y0), float(y1), float(near), float(far)
+        ),
+        "Datoviz View3D orthographic bounds setup failed",
     )
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz View3D orthographic bounds setup failed")
 
 
 def _update_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> Any:
@@ -701,11 +703,10 @@ def _update_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> Any:
         )
     panel_desc = dvz.dvz_panel_view3d_desc()
     _fill_datoviz_camera_desc(dvz, panel_desc.camera, view3d)
-    result = dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(panel_desc))
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported(
-            "Datoviz retained View3D panel camera descriptor update failed"
-        )
+    _require_datoviz_success(
+        dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(panel_desc)),
+        "Datoviz retained View3D panel camera descriptor update failed",
+    )
     camera = dvz.dvz_panel_camera(panel)
     if _is_null_handle(camera):
         raise DatovizV04Unsupported("Datoviz retained View3D panel camera update failed")
@@ -1219,9 +1220,10 @@ class DatovizV04ProtocolRenderer:
         if dvz_visual is None:
             raise DatovizV04Unsupported("Datoviz segment visual allocation failed")
         cap = _stroke_cap_value(self.dvz, visual.cap)
-        result = self.dvz.dvz_segment_set_caps(dvz_visual, cap, cap)
-        if result not in (0, None, True):
-            raise DatovizV04Unsupported("Datoviz segment cap configuration failed")
+        _require_datoviz_success(
+            self.dvz.dvz_segment_set_caps(dvz_visual, cap, cap),
+            "Datoviz segment cap configuration failed",
+        )
         _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
         _set_visual_data(self.dvz, dvz_visual, "position_start", start_positions)
@@ -1287,21 +1289,22 @@ class DatovizV04ProtocolRenderer:
         if dvz_visual is None:
             raise DatovizV04Unsupported("Datoviz path visual allocation failed")
         cap = _stroke_cap_value(self.dvz, visual.cap)
-        cap_result = self.dvz.dvz_path_set_caps(dvz_visual, cap, cap)
-        if cap_result not in (0, None, True):
-            raise DatovizV04Unsupported("Datoviz path cap configuration failed")
-        join_result = self.dvz.dvz_path_set_join(
-            dvz_visual,
-            _stroke_join_value(self.dvz, visual.join),
-            float(visual.miter_limit),
+        _require_datoviz_success(
+            self.dvz.dvz_path_set_caps(dvz_visual, cap, cap),
+            "Datoviz path cap configuration failed",
         )
-        if join_result not in (0, None, True):
-            raise DatovizV04Unsupported("Datoviz path join configuration failed")
-        subpath_result = _set_path_subpaths(
-            self.dvz, dvz_visual, len(visual.path_lengths), subpaths
+        _require_datoviz_success(
+            self.dvz.dvz_path_set_join(
+                dvz_visual,
+                _stroke_join_value(self.dvz, visual.join),
+                float(visual.miter_limit),
+            ),
+            "Datoviz path join configuration failed",
         )
-        if subpath_result not in (0, None, True):
-            raise DatovizV04Unsupported("Datoviz path subpath configuration failed")
+        _require_datoviz_success(
+            _set_path_subpaths(self.dvz, dvz_visual, len(visual.path_lengths), subpaths),
+            "Datoviz path subpath configuration failed",
+        )
         _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
         _set_query_capabilities(self.dvz, dvz_visual, DVZ_QUERY_CAPABILITY_ITEM)
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
@@ -1448,9 +1451,10 @@ class DatovizV04ProtocolRenderer:
             if retained_view3d_data_path
             else False if is_3d_mesh else visual.depth_test is DepthMode.ENABLED
         )
-        result = self.dvz.dvz_visual_set_depth_test(dvz_visual, native_depth_test)
-        if result not in (0, None, True):
-            raise DatovizV04Unsupported("Datoviz mesh depth-test configuration failed")
+        _require_datoviz_success(
+            self.dvz.dvz_visual_set_depth_test(dvz_visual, native_depth_test),
+            "Datoviz mesh depth-test configuration failed",
+        )
         _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
         _add_visual_to_panel(
             self.dvz,
@@ -1521,9 +1525,10 @@ class DatovizV04ProtocolRenderer:
             style.size_px = float(sizes[index])
             style.renderer = _text_renderer_value(self.dvz)
             _assign_rgba8(style.color, colors[index])
-            style_result = self.dvz.dvz_text_set_style(text, style)
-            if style_result not in (0, None, True):
-                raise DatovizV04Unsupported("Datoviz text style configuration failed")
+            _require_datoviz_success(
+                self.dvz.dvz_text_set_style(text, style),
+                "Datoviz text style configuration failed",
+            )
 
             placement = _text_placement(self.dvz)
             placement.mode = mode
@@ -1636,11 +1641,12 @@ class DatovizV04ProtocolRenderer:
         self.dvz.dvz_colorbar_set_orientation(
             colorbar, _colorbar_orientation_value(self.dvz, guide.orientation)
         )
-        anchor_result = self.dvz.dvz_colorbar_set_anchor(
-            colorbar, _colorbar_anchor_value(self.dvz, guide.placement)
+        _require_datoviz_success(
+            self.dvz.dvz_colorbar_set_anchor(
+                colorbar, _colorbar_anchor_value(self.dvz, guide.placement)
+            ),
+            "Datoviz colorbar anchor configuration failed",
         )
-        if anchor_result not in (0, None, True):
-            raise DatovizV04Unsupported("Datoviz colorbar anchor configuration failed")
         _configure_colorbar_format(self.dvz, colorbar)
         _configure_colorbar_ticks(self.dvz, colorbar, guide)
         if guide.label:
@@ -1841,8 +1847,10 @@ class DatovizV04ProtocolRenderer:
         _set_data_view_payload(view, pixels)
         view.bytes_per_row = width * 4
         view.rows_per_image = height
-        if not self.dvz.dvz_sampled_field_set_data(sampled_field, view):
-            raise DatovizV04Unsupported("Datoviz sampled-field image upload failed")
+        _require_datoviz_success(
+            self.dvz.dvz_sampled_field_set_data(sampled_field, view),
+            "Datoviz sampled-field image upload failed",
+        )
         return sampled_field
 
     def capture_png_bytes(self) -> bytes:
@@ -1860,9 +1868,10 @@ class DatovizV04ProtocolRenderer:
         try:
             with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as file:
                 path = Path(file.name)
-            result = self.dvz.dvz_view_capture_png(view, str(path).encode())
-            if result != 0:
-                raise DatovizV04Unsupported("Datoviz offscreen PNG capture failed")
+            _require_datoviz_success(
+                self.dvz.dvz_view_capture_png(view, str(path).encode()),
+                "Datoviz offscreen PNG capture failed",
+            )
             return path.read_bytes()
         finally:
             if path is not None:
@@ -2285,9 +2294,10 @@ class DatovizV04ProtocolRenderer:
             )
         if hasattr(panel_view, "padding"):
             panel_view.padding = 0.0
-        result = self.dvz.dvz_panel_set_view2d(self.panel, panel_view)
-        if result not in (0, None, True):
-            raise DatovizV04Unsupported("Datoviz View2D data-domain setup failed")
+        _require_datoviz_success(
+            self.dvz.dvz_panel_set_view2d(self.panel, panel_view),
+            "Datoviz View2D data-domain setup failed",
+        )
         carrier = (
             "DvzPanelView2D.data_x/data_y"
             if descriptor_has_data_domains
@@ -3068,18 +3078,20 @@ def _configure_axis_review_style(dvz: Any, axis: Any) -> None:
     _assign_style_color(style, "major_tick_color", (32, 32, 32, 255))
     _assign_style_color(style, "minor_tick_color", (90, 90, 90, 220))
     _assign_style_color(style, "grid_color", (150, 150, 150, 190))
-    result = style_setter(axis, style)
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz axis style configuration failed")
+    _require_datoviz_success(
+        style_setter(axis, style),
+        "Datoviz axis style configuration failed",
+    )
 
 
 def _configure_axis_review_plot_margins(dvz: Any, axis: Any) -> None:
     margin_setter = getattr(dvz, "dvz_axis_set_plot_margins", None)
     if margin_setter is None:
         return
-    result = margin_setter(axis, *DATOVIZ_REVIEW_PLOT_MARGINS)
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz axis plot margin configuration failed")
+    _require_datoviz_success(
+        margin_setter(axis, *DATOVIZ_REVIEW_PLOT_MARGINS),
+        "Datoviz axis plot margin configuration failed",
+    )
 
 
 def _assign_style_color(
@@ -3131,9 +3143,10 @@ def _set_datoviz_panel_domains(
     dim_x = getattr(dvz, "DVZ_DIM_X", 0)
     dim_y = getattr(dvz, "DVZ_DIM_Y", 1)
     for dim, limits in ((dim_x, x_range), (dim_y, y_range)):
-        result = setter(panel, dim, float(limits[0]), float(limits[1]))
-        if result not in (0, None, True):
-            raise DatovizV04Unsupported("Datoviz panel data-domain setup failed")
+        _require_datoviz_success(
+            setter(panel, dim, float(limits[0]), float(limits[1])),
+            "Datoviz panel data-domain setup failed",
+        )
 
 
 def _set_axis_ticks(
@@ -3148,8 +3161,10 @@ def _set_axis_ticks(
     else:
         encoded_labels = tuple(label.encode("utf-8") for label in labels)
         result = dvz.dvz_axis_set_ticks(axis, tick_values, encoded_labels)
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz explicit axis tick configuration failed")
+    _require_datoviz_success(
+        result,
+        "Datoviz explicit axis tick configuration failed",
+    )
 
 
 def _positions_3d(
@@ -3526,9 +3541,10 @@ def _validate_visual_attach_desc_binding(desc: Any) -> None:
 
 
 def _add_visual_to_panel(dvz: Any, panel: Any, visual: Any, attach_desc: Any) -> None:
-    result = dvz.dvz_panel_add_visual(panel, visual, attach_desc)
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz visual panel attachment failed")
+    _require_datoviz_success(
+        dvz.dvz_panel_add_visual(panel, visual, attach_desc),
+        "Datoviz visual panel attachment failed",
+    )
 
 
 def _datoviz_visual_coord_space(coordinate_space: CoordinateSpace) -> str:
@@ -4397,9 +4413,10 @@ def _set_text_placement(dvz: Any, text: Any, placement: Any) -> None:
         raw_setter.restype = None
         raw_setter(ctypes.cast(text, ctypes.c_void_p), ctypes.byref(placement))
         return
-    result = dvz.dvz_text_set_placement(text, placement)
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz text placement configuration failed")
+    _require_datoviz_success(
+        dvz.dvz_text_set_placement(text, placement),
+        "Datoviz text placement configuration failed",
+    )
 
 
 def _text_anchor_x_value(anchor: TextAnchorX) -> float:
@@ -4590,13 +4607,36 @@ def _set_data_view_payload(view: Any, pixels: npt.NDArray[np.uint8]) -> None:
         view.data = pixels.ctypes.data
 
 
+def _datoviz_call_succeeded(result: Any) -> bool:
+    """Accept both old bool-returning mutators and pre-RC DvzResult returns."""
+    if result is None:
+        return True
+    if isinstance(result, bool):
+        return result
+    value = getattr(result, "value", None)
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int):
+        return value == 0
+    if isinstance(result, int):
+        return result == 0
+    return bool(result)
+
+
+def _require_datoviz_success(result: Any, message: str) -> None:
+    if not _datoviz_call_succeeded(result):
+        raise DatovizV04Unsupported(message)
+
+
 def _set_visual_field(
     dvz: Any, visual: Any, slot_name: str, sampled_field: Any
 ) -> bool:
     try:
-        return bool(dvz.dvz_visual_set_field(visual, slot_name, sampled_field))
+        return _datoviz_call_succeeded(
+            dvz.dvz_visual_set_field(visual, slot_name, sampled_field)
+        )
     except (ctypes.ArgumentError, TypeError):
-        return bool(
+        return _datoviz_call_succeeded(
             dvz.dvz_visual_set_field(visual, slot_name.encode("utf-8"), sampled_field)
         )
 
@@ -4765,11 +4805,10 @@ def _configure_colorbar_ticks(dvz: Any, colorbar: Any, guide: ColorbarGuide) -> 
 
     values = np.asarray(guide.ticks, dtype=np.float64)
     labels = list(guide.tick_labels) if guide.tick_labels else None
-    result = setter(colorbar, values, labels)
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported(
-            "Datoviz colorbar explicit tick configuration failed"
-        )
+    _require_datoviz_success(
+        setter(colorbar, values, labels),
+        "Datoviz colorbar explicit tick configuration failed",
+    )
 
 
 def _image_sampling_value(dvz: Any, interpolation: ImageInterpolation) -> int:
@@ -4799,9 +4838,10 @@ def _set_image_sampling(
     setter = getattr(dvz, "dvz_image_set_sampling", None)
     if setter is None:
         return
-    result = setter(visual, _image_sampling_value(dvz, interpolation))
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz image sampling configuration failed")
+    _require_datoviz_success(
+        setter(visual, _image_sampling_value(dvz, interpolation)),
+        "Datoviz image sampling configuration failed",
+    )
 
 
 def _set_query_capabilities(dvz: Any, visual: Any, capabilities: int) -> None:
@@ -4860,11 +4900,11 @@ def _set_visual_data(
     dvz: Any, visual: Any, attr_name: str, data: npt.NDArray[Any]
 ) -> None:
     result = dvz.dvz_visual_set_data(visual, attr_name, data)
-    if result == 0:
+    if _datoviz_call_succeeded(result):
         return
     for alias in _VISUAL_ATTRIBUTE_ALIASES.get(attr_name, ()):
         result = dvz.dvz_visual_set_data(visual, alias, data)
-        if result == 0:
+        if _datoviz_call_succeeded(result):
             return
     raise DatovizV04Unsupported(f"Datoviz visual attribute {attr_name!r} upload failed")
 
@@ -4872,9 +4912,10 @@ def _set_visual_data(
 def _set_visual_index_data(
     dvz: Any, visual: Any, indices: npt.NDArray[np.uint32]
 ) -> None:
-    result = dvz.dvz_visual_set_index_data(visual, indices, int(indices.shape[0]))
-    if result != 0:
-        raise DatovizV04Unsupported("Datoviz visual index upload failed")
+    _require_datoviz_success(
+        dvz.dvz_visual_set_index_data(visual, indices, int(indices.shape[0])),
+        "Datoviz visual index upload failed",
+    )
 
 
 def _set_filled_point_style(dvz: Any, visual: Any) -> None:
@@ -4888,11 +4929,10 @@ def _set_filled_point_style(dvz: Any, visual: Any) -> None:
         style.stroke_width = 0.0
     if hasattr(style, "aspect"):
         style.aspect = int(getattr(dvz, "DVZ_SHAPE_ASPECT_FILLED", 0))
-    result = style_setter(visual, style)
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported(
-            "Datoviz point filled/no-stroke style configuration failed"
-        )
+    _require_datoviz_success(
+        style_setter(visual, style),
+        "Datoviz point filled/no-stroke style configuration failed",
+    )
 
 
 def _set_alpha_mode_if_translucent(
@@ -4905,11 +4945,10 @@ def _set_alpha_mode_if_translucent(
         raise DatovizV04Unsupported(
             "Datoviz translucent colors require dvz_visual_set_alpha_mode"
         )
-    result = setter(
-        visual, _alpha_mode_value(dvz, "DVZ_ALPHA_BLENDED", DVZ_ALPHA_BLENDED)
+    _require_datoviz_success(
+        setter(visual, _alpha_mode_value(dvz, "DVZ_ALPHA_BLENDED", DVZ_ALPHA_BLENDED)),
+        "Datoviz alpha blending configuration failed",
     )
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz alpha blending configuration failed")
 
 
 def _alpha_mode_value(dvz: Any, name: str, fallback: int) -> int:
@@ -4991,9 +5030,10 @@ def _set_marker_style(
             style.aspect = int(
                 getattr(dvz, "DVZ_SHAPE_ASPECT_FILLED", DVZ_SHAPE_ASPECT_FILLED)
             )
-    result = dvz.dvz_marker_set_style(visual, style)
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz marker style configuration failed")
+    _require_datoviz_success(
+        dvz.dvz_marker_set_style(visual, style),
+        "Datoviz marker style configuration failed",
+    )
 
 
 def _rgba8_scalar(color: npt.NDArray[Any]) -> npt.NDArray[np.uint8]:
@@ -5095,9 +5135,10 @@ def _configure_ndc_panel_view2d(dvz: Any, panel: Any) -> None:
     if _datoviz_view2d_descriptor_has_data_domains(view):
         _set_datoviz_data_domain(view, "data_x", (-1.0, 1.0))
         _set_datoviz_data_domain(view, "data_y", (-1.0, 1.0))
-    result = view_setter(panel, view)
-    if result not in (0, None, True):
-        raise DatovizV04Unsupported("Datoviz NDC equal-aspect panel setup failed")
+    _require_datoviz_success(
+        view_setter(panel, view),
+        "Datoviz NDC equal-aspect panel setup failed",
+    )
 
 
 def _datoviz_panel_view2d_desc(dvz: Any) -> Any:

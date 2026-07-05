@@ -1,0 +1,162 @@
+{
+  "arrays": {
+    "affine_matrix": {
+      "dtype": "float64",
+      "key": "affine_matrix",
+      "path": "transform_inline_named_equivalence.arrays.npz",
+      "shape": [
+        3,
+        3
+      ]
+    },
+    "point_colors_inline": {
+      "dtype": "uint8",
+      "key": "point_colors_inline",
+      "path": "transform_inline_named_equivalence.arrays.npz",
+      "shape": [
+        4,
+        4
+      ]
+    },
+    "point_colors_named": {
+      "dtype": "uint8",
+      "key": "point_colors_named",
+      "path": "transform_inline_named_equivalence.arrays.npz",
+      "shape": [
+        4,
+        4
+      ]
+    },
+    "point_positions": {
+      "dtype": "float32",
+      "key": "point_positions",
+      "path": "transform_inline_named_equivalence.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "point_sizes": {
+      "dtype": "float32",
+      "key": "point_sizes",
+      "path": "transform_inline_named_equivalence.arrays.npz",
+      "shape": [
+        4
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "transform/inline_named_equivalence",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [],
+  "transform_resources": [
+    {
+      "id": "transform:inline-named-equivalent",
+      "kind": "affine-2d",
+      "label": "S027 inline/named equivalence",
+      "matrix": [
+        [
+          0.82,
+          -0.24,
+          0.22
+        ],
+        [
+          0.24,
+          0.82,
+          -0.06
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ],
+  "view3d": null,
+  "views": [],
+  "visuals": [
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          4,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "family": "point",
+      "id": "visual:transform-inline-points",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          4
+        ]
+      },
+      "transform": {
+        "inline": {
+          "kind": "affine-2d",
+          "matrix": [
+            [
+              0.82,
+              -0.24,
+              0.22
+            ],
+            [
+              0.24,
+              0.82,
+              -0.06
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          4,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "family": "point",
+      "id": "visual:transform-named-points",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          4
+        ]
+      },
+      "transform": {
+        "ref": {
+          "id": "transform:inline-named-equivalent",
+          "required": true
+        }
+      }
+    }
+  ]
+}

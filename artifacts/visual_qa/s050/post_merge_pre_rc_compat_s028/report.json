@@ -1,0 +1,1416 @@
+{
+  "cases": [
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/point_basic_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/point_basic_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/point_basic_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/point_basic_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/point_basic_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "point/basic_ndc",
+      "family": "point",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "ndc",
+        "rgba8",
+        "pixel-size"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/point_basic_ndc.scene.json",
+      "title": "Basic NDC point visual"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/point_diameter_ramp_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/point_diameter_ramp_ndc.png",
+          "backend_id": "datoviz",
+          "child_process_returncode": -11,
+          "child_process_status": "teardown_crash_after_report",
+          "child_teardown_crash_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/point_diameter_ramp_ndc.child_teardown_crash.json",
+          "child_teardown_log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/point_diameter_ramp_ndc.child_teardown_crash.log.txt",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/point_diameter_ramp_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/point_diameter_ramp_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/point_diameter_ramp_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "point/diameter_ramp_ndc",
+      "family": "point",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "ndc",
+        "rgba8",
+        "diameter-ramp"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/point_diameter_ramp_ndc.scene.json",
+      "title": "Point diameter ramp in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/point_alpha_overlap_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/point_alpha_overlap_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/point_alpha_overlap_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/point_alpha_overlap_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/point_alpha_overlap_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "point/alpha_overlap_ndc",
+      "family": "point",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "ndc",
+        "rgba8",
+        "alpha"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/point_alpha_overlap_ndc.scene.json",
+      "title": "Point alpha overlap in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/marker_shapes_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/marker_shapes_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/marker_shapes_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/marker_shapes_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/marker_shapes_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "marker/shapes_ndc",
+      "family": "marker",
+      "manual_review_status": "pending",
+      "required_features": [
+        "marker",
+        "ndc",
+        "rgba8",
+        "shape",
+        "stroke"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/marker_shapes_ndc.scene.json",
+      "title": "Marker built-in shapes in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/marker_angle_size_stroke_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/marker_angle_size_stroke_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/marker_angle_size_stroke_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/marker_angle_size_stroke_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/marker_angle_size_stroke_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "marker/angle_size_stroke_ndc",
+      "family": "marker",
+      "manual_review_status": "pending",
+      "required_features": [
+        "marker",
+        "ndc",
+        "rgba8",
+        "angle",
+        "pixel-size",
+        "stroke"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/marker_angle_size_stroke_ndc.scene.json",
+      "title": "Marker angle, size, and stroke in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/segment_width_cap_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/segment_width_cap_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/segment_width_cap_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/segment_width_cap_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/segment_width_cap_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "segment/width_cap_ndc",
+      "family": "segment",
+      "manual_review_status": "pending",
+      "required_features": [
+        "segment",
+        "ndc",
+        "rgba8",
+        "width",
+        "cap"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/segment_width_cap_ndc.scene.json",
+      "title": "Segment width and cap styles in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/segment_alpha_order_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/segment_alpha_order_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/segment_alpha_order_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/segment_alpha_order_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/segment_alpha_order_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "segment/alpha_order_ndc",
+      "family": "segment",
+      "manual_review_status": "pending",
+      "required_features": [
+        "segment",
+        "ndc",
+        "rgba8",
+        "alpha",
+        "layering"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/segment_alpha_order_ndc.scene.json",
+      "title": "Segment alpha and draw order in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/path_subpaths_width_join_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/path_subpaths_width_join_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/path_subpaths_width_join_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/path_subpaths_width_join_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/path_subpaths_width_join_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "path/subpaths_width_join_ndc",
+      "family": "path",
+      "manual_review_status": "pending",
+      "required_features": [
+        "path",
+        "ndc",
+        "rgba8",
+        "subpath",
+        "width",
+        "cap",
+        "join"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/path_subpaths_width_join_ndc.scene.json",
+      "title": "Path subpaths, widths, caps, and joins in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/image_checker_nearest_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/image_checker_nearest_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/image_checker_nearest_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/image_checker_nearest_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/image_checker_nearest_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "image/checker_nearest_ndc",
+      "family": "image",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "ndc",
+        "rgba8",
+        "nearest",
+        "extent",
+        "orientation"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/image_checker_nearest_ndc.scene.json",
+      "title": "Nearest asymmetric image in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/image_origin_lower_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/image_origin_lower_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/image_origin_lower_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/image_origin_lower_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/image_origin_lower_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "image/origin_lower_ndc",
+      "family": "image",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "ndc",
+        "rgba8",
+        "origin-lower",
+        "extent"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/image_origin_lower_ndc.scene.json",
+      "title": "Lower-origin asymmetric image in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/image_scalar_gray_clim_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/image_scalar_gray_clim_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/image_scalar_gray_clim_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/image_scalar_gray_clim_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/image_scalar_gray_clim_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "image/scalar_gray_clim_ndc",
+      "family": "image",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "ndc",
+        "scalar",
+        "gray",
+        "clim"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/image_scalar_gray_clim_ndc.scene.json",
+      "title": "Scalar grayscale image with clim in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/image_rgba_alpha_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/image_rgba_alpha_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/image_rgba_alpha_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/image_rgba_alpha_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/image_rgba_alpha_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "image/rgba_alpha_ndc",
+      "family": "image",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "ndc",
+        "rgba8",
+        "alpha"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/image_rgba_alpha_ndc.scene.json",
+      "title": "RGBA image alpha gradient in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/overlay_point_over_image_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/overlay_point_over_image_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/overlay_point_over_image_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/overlay_point_over_image_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/overlay_point_over_image_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "overlay/point_over_image_ndc",
+      "family": "overlay",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "image",
+        "ndc",
+        "rgba8",
+        "layering"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/overlay_point_over_image_ndc.scene.json",
+      "title": "Point over image overlay in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/text_basic_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/text_basic_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/text_basic_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/text_basic_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/text_basic_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/basic_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rgba8",
+        "font-size"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/text_basic_ndc.scene.json",
+      "title": "Basic NDC text labels"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/text_anchor_grid_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/text_anchor_grid_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/text_anchor_grid_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/text_anchor_grid_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/text_anchor_grid_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/anchor_grid_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "anchor"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/text_anchor_grid_ndc.scene.json",
+      "title": "Text anchor grid in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/text_rotation_alpha_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/text_rotation_alpha_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/text_rotation_alpha_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/text_rotation_alpha_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/text_rotation_alpha_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/rotation_alpha_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "ndc",
+        "rotation",
+        "alpha",
+        "z-order"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/text_rotation_alpha_ndc.scene.json",
+      "title": "Text rotation and alpha overlap in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/text_data_vs_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/text_data_vs_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/text_data_vs_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/text_data_vs_ndc.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/text_data_vs_ndc.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/data_vs_ndc",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "data",
+        "ndc"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/text_data_vs_ndc.scene.json",
+      "title": "Text DATA and NDC coordinate comparison"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/text_multiline_unicode_smoke.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/text_multiline_unicode_smoke.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/text_multiline_unicode_smoke.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/text_multiline_unicode_smoke.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/text_multiline_unicode_smoke.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "text/multiline_unicode_smoke",
+      "family": "text",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "multiline",
+        "unicode"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/text_multiline_unicode_smoke.scene.json",
+      "title": "Text multiline and Unicode smoke"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/mesh_single_triangle_uniform_ndc_2d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/mesh_single_triangle_uniform_ndc_2d.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/mesh_single_triangle_uniform_ndc_2d.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/mesh_single_triangle_uniform_ndc_2d.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/mesh_single_triangle_uniform_ndc_2d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "mesh/single_triangle_uniform_ndc_2d",
+      "family": "mesh",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "uniform",
+        "2d"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/mesh_single_triangle_uniform_ndc_2d.scene.json",
+      "title": "Single uniform 2D mesh triangle in NDC"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/mesh_indexed_square_uniform_ndc_2d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/mesh_indexed_square_uniform_ndc_2d.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/mesh_indexed_square_uniform_ndc_2d.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/mesh_indexed_square_uniform_ndc_2d.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/mesh_indexed_square_uniform_ndc_2d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "mesh/indexed_square_uniform_ndc_2d",
+      "family": "mesh",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "indexed",
+        "2d"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/mesh_indexed_square_uniform_ndc_2d.scene.json",
+      "title": "Indexed square 2D mesh with uniform color"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/mesh_indexed_square_per_face_ndc_2d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/mesh_indexed_square_per_face_ndc_2d.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/mesh_indexed_square_per_face_ndc_2d.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/mesh_indexed_square_per_face_ndc_2d.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/mesh_indexed_square_per_face_ndc_2d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "mesh/indexed_square_per_face_ndc_2d",
+      "family": "mesh",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "per-face",
+        "2d"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/mesh_indexed_square_per_face_ndc_2d.scene.json",
+      "title": "Indexed square 2D mesh with per-face color"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/color_scalar_image_viridis_colorbar.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/color_scalar_image_viridis_colorbar.native_crash.log.txt",
+          "reason": "Datoviz offscreen child process terminated by signal 11",
+          "status": "error",
+          "unsupported_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/color_scalar_image_viridis_colorbar.native_crash.json"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/color_scalar_image_viridis_colorbar.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/color_scalar_image_viridis_colorbar.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "color/scalar_image_viridis_colorbar",
+      "family": "color",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "scalar",
+        "colormap",
+        "colorbar",
+        "viridis"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/color_scalar_image_viridis_colorbar.scene.json",
+      "title": "Scalar image with viridis color scale and colorbar"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/color_point_scalar_gray_range.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/color_point_scalar_gray_range.png",
+          "backend_id": "datoviz",
+          "child_process_returncode": -11,
+          "child_process_status": "teardown_crash_after_report",
+          "child_teardown_crash_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/color_point_scalar_gray_range.child_teardown_crash.json",
+          "child_teardown_log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/color_point_scalar_gray_range.child_teardown_crash.log.txt",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/color_point_scalar_gray_range.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/color_point_scalar_gray_range.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/color_point_scalar_gray_range.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "color/point_scalar_gray_range",
+      "family": "color",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "scalar",
+        "colormap",
+        "range-clipping"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/color_point_scalar_gray_range.scene.json",
+      "title": "Point scalar colors with under and over clipping"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/color_marker_scalar_fill_alpha.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/color_marker_scalar_fill_alpha.png",
+          "backend_id": "datoviz",
+          "child_process_returncode": -11,
+          "child_process_status": "teardown_crash_after_report",
+          "child_teardown_crash_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/color_marker_scalar_fill_alpha.child_teardown_crash.json",
+          "child_teardown_log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/color_marker_scalar_fill_alpha.child_teardown_crash.log.txt",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/color_marker_scalar_fill_alpha.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/color_marker_scalar_fill_alpha.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/color_marker_scalar_fill_alpha.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "color/marker_scalar_fill_alpha",
+      "family": "color",
+      "manual_review_status": "pending",
+      "required_features": [
+        "marker",
+        "scalar",
+        "fill",
+        "alpha"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/color_marker_scalar_fill_alpha.scene.json",
+      "title": "Marker scalar fill colors with alpha"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/transform_inline_named_equivalence.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/transform_inline_named_equivalence.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/transform_inline_named_equivalence.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/transform_inline_named_equivalence.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/transform_inline_named_equivalence.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "transform/inline_named_equivalence",
+      "family": "transform",
+      "manual_review_status": "pending",
+      "required_features": [
+        "affine2d",
+        "inline-transform",
+        "named-transform"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/transform_inline_named_equivalence.scene.json",
+      "title": "Inline and named affine transform equivalence"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/transform_view2d_data_ndc_overlay.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/transform_view2d_data_ndc_overlay.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/transform_view2d_data_ndc_overlay.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/transform_view2d_data_ndc_overlay.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/transform_view2d_data_ndc_overlay.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "transform/view2d_data_ndc_overlay",
+      "family": "transform",
+      "manual_review_status": "pending",
+      "required_features": [
+        "view2d",
+        "data",
+        "ndc",
+        "reversed-limits"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/transform_view2d_data_ndc_overlay.scene.json",
+      "title": "View2D DATA mapping with NDC overlay"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/transform_family_affine_view2d.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/transform_family_affine_view2d.png",
+          "backend_id": "datoviz",
+          "child_process_returncode": -11,
+          "child_process_status": "teardown_crash_after_report",
+          "child_teardown_crash_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/transform_family_affine_view2d.child_teardown_crash.json",
+          "child_teardown_log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/transform_family_affine_view2d.child_teardown_crash.log.txt",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "'DvzPanelFrameInfo' object has no attribute 'panel_rect_px'",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/transform_family_affine_view2d.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/transform_family_affine_view2d.png",
+          "backend_id": "matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/transform_family_affine_view2d.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "transform/family_affine_view2d",
+      "family": "transform",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "marker",
+        "segment",
+        "path",
+        "text",
+        "mesh",
+        "affine2d",
+        "view2d"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/transform_family_affine_view2d.scene.json",
+      "title": "Affine transform and View2D family coverage"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/guide_view2d_auto_grid.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/guide_view2d_auto_grid.native_crash.log.txt",
+          "reason": "Datoviz offscreen child process terminated by signal 11",
+          "status": "error",
+          "unsupported_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/guide_view2d_auto_grid.native_crash.json"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/guide_view2d_auto_grid.png",
+          "backend_id": "matplotlib",
+          "layout_snapshot": {
+            "axis_label_boxes": [
+              {
+                "guide_id": "guide:s028-auto-x",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 14.0,
+                  "width": 44.0,
+                  "x": 403.8888888888889,
+                  "y": 508.5902777777778
+                },
+                "role": "x_axis_label"
+              },
+              {
+                "guide_id": "guide:s028-auto-y",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 44.0,
+                  "width": 14.000000000000002,
+                  "x": 11.11111111111112,
+                  "y": 278.0
+                },
+                "role": "y_axis_label"
+              }
+            ],
+            "diagnostics": [
+              {
+                "code": "matplotlib_native_layout_resolved",
+                "status": "resolved"
+              }
+            ],
+            "grid_clip_rect_px": {
+              "height": 358.625,
+              "width": 717.25,
+              "x": 67.2638888888889,
+              "y": 120.6875
+            },
+            "guide_box_count": 13,
+            "panel_rect_px": {
+              "height": 600.0,
+              "width": 800.0,
+              "x": 0.0,
+              "y": 0.0
+            },
+            "plot_rect_px": {
+              "height": 358.625,
+              "width": 717.25,
+              "x": 67.2638888888889,
+              "y": 120.6875
+            },
+            "render_target": {
+              "device_scale": 1.0,
+              "dpi": 100.0,
+              "framebuffer_height_px": 600,
+              "framebuffer_width_px": 800,
+              "logical_height_px": 600.0,
+              "logical_width_px": 800.0,
+              "pixel_origin": "top-left"
+            },
+            "snapshot_id": "layout:guide_view2d_auto_grid:matplotlib",
+            "tick_label_box_count": 10,
+            "title_boxes": [
+              {
+                "guide_id": "guide:s028-auto-title",
+                "kind": "title",
+                "rect_px": {
+                  "height": 18.0,
+                  "width": 204.5,
+                  "x": 323.6388888888889,
+                  "y": 98.35416666666669
+                },
+                "role": "title"
+              }
+            ],
+            "view_id": "view:s028-auto",
+            "z_layer_count": 3
+          },
+          "layout_snapshot_id": "layout:guide_view2d_auto_grid:matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/guide_view2d_auto_grid.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_auto_grid",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "auto-ticks",
+        "grid",
+        "labels"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/guide_view2d_auto_grid.scene.json",
+      "title": "View2D guide auto ticks and grids"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/guide_view2d_reversed_explicit.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/guide_view2d_reversed_explicit.native_crash.log.txt",
+          "reason": "Datoviz offscreen child process terminated by signal 11",
+          "status": "error",
+          "unsupported_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/guide_view2d_reversed_explicit.native_crash.json"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/guide_view2d_reversed_explicit.png",
+          "backend_id": "matplotlib",
+          "layout_snapshot": {
+            "axis_label_boxes": [
+              {
+                "guide_id": "guide:s028-reversed-x",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 14.0,
+                  "width": 73.625,
+                  "x": 363.5138888888889,
+                  "y": 574.8888888888889
+                },
+                "role": "x_axis_label"
+              },
+              {
+                "guide_id": "guide:s028-reversed-y",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 73.625,
+                  "width": 14.0,
+                  "x": 64.59027777777776,
+                  "y": 252.71527777777771
+                },
+                "role": "y_axis_label"
+              }
+            ],
+            "diagnostics": [
+              {
+                "code": "matplotlib_native_layout_resolved",
+                "status": "resolved"
+              }
+            ],
+            "grid_clip_rect_px": {
+              "height": 512.1666666666667,
+              "width": 512.1666666666667,
+              "x": 144.24305555555554,
+              "y": 33.44444444444434
+            },
+            "guide_box_count": 9,
+            "panel_rect_px": {
+              "height": 600.0,
+              "width": 800.0,
+              "x": 0.0,
+              "y": 0.0
+            },
+            "plot_rect_px": {
+              "height": 512.1666666666667,
+              "width": 512.1666666666667,
+              "x": 144.24305555555554,
+              "y": 33.44444444444434
+            },
+            "render_target": {
+              "device_scale": 1.0,
+              "dpi": 100.0,
+              "framebuffer_height_px": 600,
+              "framebuffer_width_px": 800,
+              "logical_height_px": 600.0,
+              "logical_width_px": 800.0,
+              "pixel_origin": "top-left"
+            },
+            "snapshot_id": "layout:guide_view2d_reversed_explicit:matplotlib",
+            "tick_label_box_count": 6,
+            "title_boxes": [
+              {
+                "guide_id": "guide:s028-reversed-title",
+                "kind": "title",
+                "rect_px": {
+                  "height": 18.0,
+                  "width": 240.5,
+                  "x": 280.0763888888889,
+                  "y": 11.111111111111086
+                },
+                "role": "title"
+              }
+            ],
+            "view_id": "view:s028-reversed",
+            "z_layer_count": 3
+          },
+          "layout_snapshot_id": "layout:guide_view2d_reversed_explicit:matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/guide_view2d_reversed_explicit.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_reversed_explicit",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "reversed-limits",
+        "explicit-ticks",
+        "grid",
+        "labels"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/guide_view2d_reversed_explicit.scene.json",
+      "title": "Reversed View2D guide explicit ticks"
+    },
+    {
+      "arrays_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/guide_view2d_grid_clip_title_boundary.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/guide_view2d_grid_clip_title_boundary.native_crash.log.txt",
+          "reason": "Datoviz offscreen child process terminated by signal 11",
+          "status": "error",
+          "unsupported_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/datoviz/guide_view2d_grid_clip_title_boundary.native_crash.json"
+        },
+        "matplotlib": {
+          "artifact_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/guide_view2d_grid_clip_title_boundary.png",
+          "backend_id": "matplotlib",
+          "layout_snapshot": {
+            "axis_label_boxes": [
+              {
+                "guide_id": "guide:s028-grid-clip-x",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 14.0,
+                  "width": 36.875,
+                  "x": 400.8888888888889,
+                  "y": 511.87152777777777
+                },
+                "role": "x_axis_label"
+              },
+              {
+                "guide_id": "guide:s028-grid-clip-y",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 36.875,
+                  "width": 14.000000000000002,
+                  "x": 11.11111111111112,
+                  "y": 281.5625
+                },
+                "role": "y_axis_label"
+              }
+            ],
+            "diagnostics": [
+              {
+                "code": "matplotlib_native_layout_resolved",
+                "status": "resolved"
+              }
+            ],
+            "grid_clip_rect_px": {
+              "height": 365.1875,
+              "width": 730.375,
+              "x": 54.1388888888889,
+              "y": 117.40625
+            },
+            "guide_box_count": 9,
+            "panel_rect_px": {
+              "height": 600.0,
+              "width": 800.0,
+              "x": 0.0,
+              "y": 0.0
+            },
+            "plot_rect_px": {
+              "height": 365.1875,
+              "width": 730.375,
+              "x": 54.1388888888889,
+              "y": 117.40625
+            },
+            "render_target": {
+              "device_scale": 1.0,
+              "dpi": 100.0,
+              "framebuffer_height_px": 600,
+              "framebuffer_width_px": 800,
+              "logical_height_px": 600.0,
+              "logical_width_px": 800.0,
+              "pixel_origin": "top-left"
+            },
+            "snapshot_id": "layout:guide_view2d_grid_clip_title_boundary:matplotlib",
+            "tick_label_box_count": 6,
+            "title_boxes": [
+              {
+                "guide_id": "guide:s028-grid-clip-title",
+                "kind": "title",
+                "rect_px": {
+                  "height": 18.0,
+                  "width": 198.25,
+                  "x": 320.2013888888889,
+                  "y": 95.07291666666669
+                },
+                "role": "title"
+              }
+            ],
+            "view_id": "view:s028-grid-clip",
+            "z_layer_count": 3
+          },
+          "layout_snapshot_id": "layout:guide_view2d_grid_clip_title_boundary:matplotlib",
+          "log_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/backends/matplotlib/guide_view2d_grid_clip_title_boundary.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "guide/view2d_grid_clip_title_boundary",
+      "family": "guide",
+      "manual_review_status": "pending",
+      "required_features": [
+        "guide",
+        "view2d",
+        "explicit-ticks",
+        "grid",
+        "plot-clip",
+        "title"
+      ],
+      "scene_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/scenes/guide_view2d_grid_clip_title_boundary.scene.json",
+      "title": "View2D grid clipping at title boundary"
+    }
+  ],
+  "contact_sheets": [
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/point_basic_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/point_diameter_ramp_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/point_alpha_overlap_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/marker_shapes_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/marker_angle_size_stroke_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/segment_width_cap_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/segment_alpha_order_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/path_subpaths_width_join_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/image_checker_nearest_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/image_origin_lower_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/image_scalar_gray_clim_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/image_rgba_alpha_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/overlay_point_over_image_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/text_basic_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/text_anchor_grid_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/text_rotation_alpha_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/text_data_vs_ndc.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/text_multiline_unicode_smoke.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/mesh_single_triangle_uniform_ndc_2d.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/mesh_indexed_square_uniform_ndc_2d.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/mesh_indexed_square_per_face_ndc_2d.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/color_scalar_image_viridis_colorbar.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/color_point_scalar_gray_range.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/color_marker_scalar_fill_alpha.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/transform_inline_named_equivalence.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/transform_view2d_data_ndc_overlay.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/transform_family_affine_view2d.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/guide_view2d_auto_grid.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/guide_view2d_reversed_explicit.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/guide_view2d_grid_clip_title_boundary.png",
+    "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/contact_sheets/s028_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_child_strategy": "one_process_per_case",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/home/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "bb867b2bafe8fb5ebaddb80695ff4c63a089f22e",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "/home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/post_merge_pre_rc_compat_s028/environment.json",
+  "run_id": "post-merge-pre-rc-compat-s028",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S028",
+  "started_at": "2026-07-05T17:35:01.510017+00:00",
+  "suite": "s028"
+}
