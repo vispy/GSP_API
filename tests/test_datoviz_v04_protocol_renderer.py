@@ -2995,7 +2995,7 @@ def test_add_image_visual_maps_linear_sampling():
     ]
 
 
-def test_add_image_visual_uploads_packed_rgba8_texture():
+def test_add_image_visual_uploads_packed_rgba8_sampled_field():
     fake = FakeDatovizV04WithQueryCapabilities()
     renderer = DatovizV04ProtocolRenderer(dvz=fake)
     image = np.array(
@@ -3015,11 +3015,14 @@ def test_add_image_visual_uploads_packed_rgba8_texture():
     renderer.add_image_visual(visual)
 
     assert _calls(fake, "image") == [("image", "scene", 0)]
-    texture_call = _calls(fake, "set_texture_rgba8")[0]
-    assert texture_call[1] == "image-visual"
-    np.testing.assert_array_equal(texture_call[2], image)
-    assert texture_call[3:] == (2, 2, image.nbytes)
-    assert _calls(fake, "sampled_field") == []
+    field_view = _calls(fake, "sampled_field_set_data")[0][2]
+    np.testing.assert_array_equal(field_view.data, image)
+    assert field_view.bytes_per_row == 8
+    assert field_view.rows_per_image == 2
+    assert _calls(fake, "set_field") == [
+        ("set_field", "image-visual", "field", "sampled-field")
+    ]
+    assert _calls(fake, "set_texture_rgba8") == []
 
 
 def test_add_image_visual_uses_sampled_field_path_with_sampling_api():
@@ -5224,7 +5227,7 @@ def test_apply_datoviz_data_view2d_populates_descriptor_domains_when_available()
 def test_datoviz_axis_symbol_report_includes_latest_readback_helpers():
     symbols = datoviz_v04_axis_symbols(FakeDatovizV04WithAxisTicks())
 
-    assert symbols["dvz_panel_view2d"]
+    assert symbols["dvz_panel_view2d_factory"]
     assert symbols["dvz_panel_set_view2d"]
     assert symbols["dvz_panel_set_domain"]
     assert symbols["dvz_panel_visible_domain"]
@@ -5288,7 +5291,6 @@ def test_imported_datoviz_binding_exposes_view2d_and_axis_tick_contract_when_ava
     dvz = pytest.importorskip("datoviz")
     required = (
         "dvz_panel_set_domain",
-        "dvz_panel_view2d",
         "dvz_panel_set_view2d",
         "dvz_panel_visible_domain",
         "dvz_panel_transform_point",
@@ -5298,7 +5300,13 @@ def test_imported_datoviz_binding_exposes_view2d_and_axis_tick_contract_when_ava
     if missing:
         pytest.skip(f"installed Datoviz binding is missing latest symbols: {missing}")
 
-    panel_view = dvz.dvz_panel_view2d()
+    view_factory = getattr(dvz, "dvz_panel_view2d_desc", None) or getattr(
+        dvz, "dvz_panel_view2d", None
+    )
+    if view_factory is None:
+        pytest.skip("installed Datoviz binding is missing a View2D descriptor factory")
+
+    panel_view = view_factory()
     descriptor_fields_present = True
     for field_name, expected in (
         ("data_x", (1.0, -1.0)),

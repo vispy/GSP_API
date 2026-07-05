@@ -383,9 +383,11 @@ def _datoviz_rendered_promotion(case: Mapping[str, object]) -> list[str] | None:
     case_id = case.get("case_id")
     if not isinstance(case_id, str):
         return None
-    return _DATOVIZ_S029_STRICT_RENDER_CASES.get(
-        case_id
-    ) or _DATOVIZ_S050_STRICT_RENDER_CASES.get(case_id)
+    if case_id in _DATOVIZ_S029_STRICT_RENDER_CASES:
+        return _DATOVIZ_S029_STRICT_RENDER_CASES[case_id]
+    if case_id in _DATOVIZ_S050_STRICT_RENDER_CASES:
+        return _DATOVIZ_S050_STRICT_RENDER_CASES[case_id]
+    return None
 
 
 def _datoviz_rendered_reason_code(case: Mapping[str, object]) -> str:

@@ -22,7 +22,6 @@ REQUIRED_DATOVIZ_V04_DEV_SYMBOLS: tuple[str, ...] = (
     "dvz_point",
     "dvz_image",
     "dvz_visual_set_data",
-    "dvz_visual_set_texture_rgba8",
     "dvz_sampled_field_desc",
     "dvz_field_data_view",
     "dvz_sampled_field",

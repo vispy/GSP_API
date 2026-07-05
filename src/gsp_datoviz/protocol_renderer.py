@@ -1346,15 +1346,7 @@ class DatovizV04ProtocolRenderer:
         )
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "texcoords", texcoords)
-        if _image_visual_is_packed_rgba8(visual):
-            self.dvz.dvz_visual_set_texture_rgba8(
-                dvz_visual,
-                _uint8_pointer_arg(pixels),
-                width,
-                height,
-                int(pixels.nbytes),
-            )
-        elif datoviz_v04_sampled_field_ready(self.dvz):
+        if datoviz_v04_sampled_field_ready(self.dvz):
             sampled_field = self._create_rgba8_sampled_field(pixels, width, height)
             if not _set_visual_field(self.dvz, dvz_visual, "field", sampled_field):
                 raise DatovizV04Unsupported(
@@ -2280,7 +2272,7 @@ class DatovizV04ProtocolRenderer:
         has_panel_domain = hasattr(self.dvz, "dvz_panel_set_domain")
         if has_panel_domain:
             _set_datoviz_panel_domains(self.dvz, self.panel, view.x_range, view.y_range)
-        panel_view = self.dvz.dvz_panel_view2d()
+        panel_view = _datoviz_panel_view2d_desc(self.dvz)
         descriptor_has_data_domains = _datoviz_view2d_descriptor_has_data_domains(
             panel_view
         )
@@ -3549,11 +3541,6 @@ def _datoviz_visual_coord_space(coordinate_space: CoordinateSpace) -> str:
     )
 
 
-def _image_visual_is_packed_rgba8(visual: ImageVisual) -> bool:
-    image = np.asarray(visual.image)
-    return image.dtype == np.uint8 and image.ndim == 3 and image.shape[2] == 4
-
-
 def _controller_mode_value(dvz: Any, name: str, fallback: int) -> int:
     value = getattr(dvz, name, None)
     if value is not None:
@@ -4620,10 +4607,6 @@ def _ctypes_pointer_arg(value: Any) -> Any:
     return value
 
 
-def _uint8_pointer_arg(pixels: npt.NDArray[np.uint8]) -> Any:
-    return np.ascontiguousarray(pixels).ctypes.data_as(ctypes.POINTER(ctypes.c_ubyte))
-
-
 def _enum_value(dvz: Any, enum_type_name: str, name: str, fallback: int) -> int:
     value = getattr(dvz, name, None)
     if value is not None:
@@ -5096,13 +5079,15 @@ def _expand_path_widths(visual: PathVisual) -> npt.NDArray[np.float32]:
 
 def _configure_ndc_panel_view2d(dvz: Any, panel: Any) -> None:
     """Configure the panel so NDC data keeps equal X/Y screen scale when possible."""
-    view_factory = getattr(dvz, "dvz_panel_view2d", None)
     view_setter = getattr(dvz, "dvz_panel_set_view2d", None)
-    if view_factory is None or view_setter is None:
+    if view_setter is None:
         return
     if hasattr(dvz, "dvz_panel_set_domain"):
         _set_datoviz_panel_domains(dvz, panel, (-1.0, 1.0), (-1.0, 1.0))
-    view = view_factory()
+    try:
+        view = _datoviz_panel_view2d_desc(dvz)
+    except DatovizV04Unavailable:
+        return
     if hasattr(view, "aspect"):
         view.aspect = int(getattr(dvz, "DVZ_PANEL_VIEW2D_ASPECT_EQUAL", 1))
     if hasattr(view, "padding"):
@@ -5113,6 +5098,19 @@ def _configure_ndc_panel_view2d(dvz: Any, panel: Any) -> None:
     result = view_setter(panel, view)
     if result not in (0, None, True):
         raise DatovizV04Unsupported("Datoviz NDC equal-aspect panel setup failed")
+
+
+def _datoviz_panel_view2d_desc(dvz: Any) -> Any:
+    """Create a View2D descriptor across Datoviz pre-RC factory renames."""
+    factory = getattr(dvz, "dvz_panel_view2d_desc", None)
+    if factory is None:
+        factory = getattr(dvz, "dvz_panel_view2d", None)
+    if factory is None:
+        raise DatovizV04Unavailable(
+            "Datoviz View2D descriptor factory is unavailable: missing "
+            "dvz_panel_view2d_desc/dvz_panel_view2d"
+        )
+    return factory()
 
 
 def _query_frame_resolution_ready(dvz: Any) -> bool:
@@ -5158,30 +5156,30 @@ def _datoviz_query_request_diagnostic(request: QueryRequest) -> str | None:
     if request.hit_policy != QueryHitPolicy.FRONTMOST:
         return f"Datoviz v0.4 query slice supports frontmost hit policy only, got {request.hit_policy.value!r}"
     if SCALAR_COLOR_QUERY_PAYLOAD_KIND not in request.requested_extension_payload_kinds:
-        unsupported_payloads = tuple(
+        unsupported_standard_payloads = tuple(
             payload
             for payload in request.requested_payload
             if payload != QueryPayload.IDENTITY
         )
-        if unsupported_payloads:
+        if unsupported_standard_payloads:
             return (
                 "Datoviz v0.4 live data query currently supports identity payloads "
-                f"only; unsupported requested payloads: {tuple(p.value for p in unsupported_payloads)}"
+                f"only; unsupported requested payloads: {tuple(p.value for p in unsupported_standard_payloads)}"
             )
-    unsupported_payloads = tuple(
+    unsupported_extension_payloads = tuple(
         kind
         for kind in request.requested_extension_payload_kinds
         if kind != SCALAR_COLOR_QUERY_PAYLOAD_KIND
     )
-    if TRANSFORM_QUERY_PAYLOAD_KIND in unsupported_payloads:
+    if TRANSFORM_QUERY_PAYLOAD_KIND in unsupported_extension_payloads:
         return (
             "GSP_QUERY_INVERSE_UNSUPPORTED: Datoviz v0.4 query slice does not "
             "support gsp.transform-query@0.1 inverse payloads"
         )
-    if unsupported_payloads:
+    if unsupported_extension_payloads:
         return (
             "Datoviz v0.4 query slice does not support requested extension query "
-            f"payloads: {unsupported_payloads}"
+            f"payloads: {unsupported_extension_payloads}"
         )
     return None
 

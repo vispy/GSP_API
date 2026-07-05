@@ -1832,7 +1832,8 @@ def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
         dvz_visual_set_index_data=lambda *args: None,
         dvz_visual_set_material=lambda *args: None,
         dvz_visual_set_depth_test=lambda *args: None,
-        dvz_visual_set_texture_rgba8=lambda *args: None,
+        dvz_sampled_field=lambda *args: None,
+        dvz_visual_set_field=lambda *args: None,
     )
 
     report = probe_datoviz_v04(source_path=source, facade_module=fake, raw_module=fake)

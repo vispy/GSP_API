@@ -168,7 +168,8 @@ MESH_SYMBOLS: tuple[str, ...] = (
     "dvz_visual_set_index_data",
     "dvz_visual_set_material",
     "dvz_visual_set_depth_test",
-    "dvz_visual_set_texture_rgba8",
+    "dvz_sampled_field",
+    "dvz_visual_set_field",
 )
 
 MESH_RENDERER_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
@@ -178,7 +179,7 @@ MESH_RENDERER_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
     "mesh.index.upload": ("dvz_visual_set_index_data",),
     "mesh.material.helper": ("dvz_visual_set_material",),
     "mesh.depth_test.helper": ("dvz_visual_set_depth_test",),
-    "mesh.texture.rgba8.evidence": ("dvz_visual_set_texture_rgba8",),
+    "mesh.sampled_field.binding.evidence": ("dvz_sampled_field", "dvz_visual_set_field"),
 }
 
 

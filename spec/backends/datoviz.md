@@ -63,7 +63,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 
 - Use `DvzCapabilitySnapshot` to build GSP `CapabilitySnapshot` before planning.
 - Treat screenshot capture as sRGB RGBA8 output, not scientific readback.
-- Use sampled fields (`dvz_sampled_field`, `dvz_visual_set_field`) for scalar/color images, and `dvz_visual_set_texture_rgba8` only for already-packed `uint8[..., 4]` RGBA images.
+- Use sampled fields (`dvz_sampled_field`, `dvz_visual_set_field`) for scalar/color images and already-packed `uint8[..., 4]` RGBA images. The transitional `dvz_visual_set_texture_rgba8` wrapper is not part of the pre-RC Datoviz contract.
 - Do not claim query support in the Python GSP adapter until query results are decodable.
 - Do not edit the Datoviz repository from this repo; create handoff tasks for Datoviz-side API or binding gaps.
 
@@ -72,7 +72,7 @@ Python wrapper surface (`datoviz.App`, `datoviz.visuals`, `datoviz._panel`, `dat
 The first Datoviz v0.4 protocol adapter lives in `src/gsp_datoviz/protocol_renderer.py`.
 It is intentionally separate from the legacy Datoviz renderer path and targets only the
 top-level C-shaped facade (`dvz_scene`, `dvz_figure`, `dvz_panel_full`, `dvz_point`,
-`dvz_marker`, `dvz_image`, `dvz_visual_set_data`, `dvz_visual_set_texture_rgba8`, and
+`dvz_marker`, `dvz_image`, `dvz_visual_set_data`, sampled fields, `dvz_visual_set_field`, and
 `dvz_panel_add_visual`).
 
 Current supported surface:
@@ -216,7 +216,7 @@ and only when base alpha is `1.0` and every texture alpha byte is `255`.
 
 M220 found that current v0.4-dev public bindings expose candidate mesh texture symbols:
 `dvz_mesh`, mesh `"texcoords"` uploads, RGBA8 sampled fields, `dvz_visual_set_field(...,
-"texture", field)`, and `dvz_visual_set_texture_rgba8()`. Datoviz must still keep S050 texture
+"texture", field)`. Datoviz must still keep S050 texture
 capabilities unadvertised until runtime fixtures or upstream public documentation prove mesh
 nearest/clamp/no-mipmap sampling, top-row/high-v origin behavior, unmanaged numeric RGBA behavior,
 and exact multiplicative unlit output.
@@ -323,8 +323,7 @@ the active v0.4 Python facade exposes:
 
 For scalar and RGB images, the adapter creates a scene-owned 2D `RGBA8_UNORM` sampled field with
 color semantic and sRGB role, uploads tightly packed data, and binds it to the image visual's
-`"field"` slot. Already-packed `uint8[..., 4]` RGBA images use the current
-`dvz_visual_set_texture_rgba8()` upload path.
+`"field"` slot. Already-packed `uint8[..., 4]` RGBA images use the same sampled-field path.
 
 Backend-native scalar float sampled fields and color-scale semantics remain deferred. The M070
 scalar path supports conservative CPU grayscale/clim normalization before upload; broader
@@ -504,7 +503,8 @@ data-source Datoviz support as explicit follow-ups unless required for the query
 Datoviz v0.4-dev headers expose a native panel-axis candidate provider:
 
 - `dvz_panel_set_domain()` carrying ordered GSP `View2D` X/Y endpoints;
-- `dvz_panel_view2d()` / `dvz_panel_set_view2d()` carrying fitting/aspect/padding policy only;
+- `dvz_panel_view2d_desc()` / `dvz_panel_set_view2d()` carrying fitting/aspect/padding policy only
+  on pre-RC Datoviz builds, with `dvz_panel_view2d()` accepted only as a historical factory name;
 - `dvz_panel_axis()`;
 - `dvz_axis_set_label()`;
 - `dvz_axis_set_tick_policy()`;
@@ -581,7 +581,8 @@ separate.
 The Datoviz v0.4 protocol renderer supports the retained target path for accepted S035 `View2D`
 navigation updates. `DatovizV04ProtocolRenderer.apply_retained_view2d_navigation()` replaces the
 canonical renderer view and reapplies the Datoviz panel domain/View2D state through
-`dvz_panel_set_domain()`, `dvz_panel_view2d()`, and `dvz_panel_set_view2d()`.
+`dvz_panel_set_domain()`, a View2D descriptor factory (`dvz_panel_view2d_desc()` on pre-RC builds),
+and `dvz_panel_set_view2d()`.
 
 The retained fast-path invariant is part of the backend contract: after the initial scene upload,
 pan/zoom must not call visual data upload, texture upload, index upload, sampled-field upload, or

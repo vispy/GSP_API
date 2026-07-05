@@ -137,12 +137,15 @@ _REQUIRED_DVZ_PANEL_FRAME_GUIDE_QUERY_FUNCTIONS = (
 
 _REQUIRED_DVZ_AXIS_FUNCTIONS = (
     "dvz_panel_set_domain",
-    "dvz_panel_view2d",
     "dvz_panel_set_view2d",
     "dvz_panel_axis",
     "dvz_axis_set_label",
     "dvz_axis_set_tick_policy",
 )
+
+_REQUIRED_DVZ_AXIS_ALTERNATIVE_FUNCTIONS = {
+    "dvz_panel_view2d_factory": ("dvz_panel_view2d_desc", "dvz_panel_view2d"),
+}
 
 _OPTIONAL_DVZ_AXIS_FUNCTIONS = (
     "dvz_axis_set_visible",
@@ -745,9 +748,15 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
         else:
             dvz = imported_dvz
 
-    missing = tuple(name for name in _REQUIRED_DVZ_AXIS_FUNCTIONS if not hasattr(dvz, name))
-    if missing:
-        return _unsupported(f"Datoviz Python binding is missing v0.4-dev axis symbols: {missing}")
+    missing = [name for name in _REQUIRED_DVZ_AXIS_FUNCTIONS if not hasattr(dvz, name)]
+    for name, alternatives in _REQUIRED_DVZ_AXIS_ALTERNATIVE_FUNCTIONS.items():
+        if not any(hasattr(dvz, alternative) for alternative in alternatives):
+            missing.append(f"{name} ({'/'.join(alternatives)})")
+    missing_tuple = tuple(missing)
+    if missing_tuple:
+        return _unsupported(
+            f"Datoviz Python binding is missing v0.4-dev axis symbols: {missing_tuple}"
+        )
 
     supports_explicit_ticks = hasattr(dvz, "dvz_axis_set_ticks")
     explicit_tick_diagnostic = (
@@ -810,7 +819,12 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
 def datoviz_v04_axis_symbols(dvz: ModuleType | Any) -> dict[str, bool]:
     """Return required/optional Datoviz axis symbol availability for diagnostics/tests."""
     names = _REQUIRED_DVZ_AXIS_FUNCTIONS + _OPTIONAL_DVZ_AXIS_FUNCTIONS
-    return {name: hasattr(dvz, name) for name in names}
+    symbols = {name: hasattr(dvz, name) for name in names}
+    for name, alternatives in _REQUIRED_DVZ_AXIS_ALTERNATIVE_FUNCTIONS.items():
+        symbols[name] = any(hasattr(dvz, alternative) for alternative in alternatives)
+        for alternative in alternatives:
+            symbols[alternative] = hasattr(dvz, alternative)
+    return symbols
 
 
 def _raw_capability_fields(raw_snapshot: Any) -> dict[str, object]:

@@ -32,6 +32,7 @@ DEFAULT_OUT = Path("artifacts/visual_qa/s030/datoviz-guide-axis-proof")
 
 AXIS_SYMBOLS = (
     "dvz_panel_set_domain",
+    "dvz_panel_view2d_desc",
     "dvz_panel_view2d",
     "dvz_panel_set_view2d",
     "dvz_panel_axis",
