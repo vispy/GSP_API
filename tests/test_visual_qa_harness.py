@@ -398,6 +398,45 @@ def test_datoviz_offscreen_review_pack_records_child_crash(
     )
 
 
+def test_datoviz_offscreen_review_pack_records_child_timeout(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Opt-in Datoviz offscreen review packs report hung child processes."""
+
+    def fake_run(*args: Any, **kwargs: Any) -> subprocess.CompletedProcess[str]:
+        raise subprocess.TimeoutExpired(
+            cmd=args[0],
+            timeout=float(kwargs["timeout"]),
+            output="partial stdout",
+            stderr="partial stderr",
+        )
+
+    monkeypatch.setenv(review_pack.DATOVIZ_CHILD_TIMEOUT_ENV, "0.01")
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    result = run_visual_review_pack(
+        out_dir=tmp_path,
+        mode="datoviz-offscreen-opt-in",
+        case_ids=("point/basic_ndc",),
+        run_id="test-dataviz-child-timeout",
+        resolution=(96, 96),
+    )
+
+    assert not (tmp_path / "_datoviz_offscreen_child").exists()
+    datoviz_entry = result["report"]["cases"][0]["backends"]["datoviz"]  # type: ignore[index]
+    assert datoviz_entry["status"] == "error"
+    assert datoviz_entry["reason"] == "Datoviz offscreen child process timed out"
+    crash_path = Path(str(datoviz_entry["unsupported_path"]))
+    payload = json.loads(crash_path.read_text(encoding="utf-8"))
+    assert payload["returncode"] == review_pack.DATOVIZ_CHILD_TIMEOUT_RETURNCODE
+    assert "timed out after 0.01 seconds" in payload["stderr"]
+    rows = {
+        (row["backend"], row["case_id"]): row
+        for row in result["capability_matrix"]["rows"]  # type: ignore[index]
+    }
+    assert rows[("datoviz", "point/basic_ndc")]["status"] == "crashed"
+
+
 def test_datoviz_offscreen_review_pack_merges_clean_child_report(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

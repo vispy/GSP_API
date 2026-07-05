@@ -8,7 +8,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
-from typing import Literal
+from typing import Literal, Mapping
 
 from gsp.qa.visual.artifacts import write_json, write_summary
 from gsp.qa.visual.capability_matrix import (
@@ -28,6 +28,10 @@ ReviewPackMode = Literal[
     "datoviz-diagnostic",
     "datoviz-offscreen-opt-in",
 ]
+
+DATOVIZ_CHILD_TIMEOUT_ENV = "GSP_DATOVIZ_QA_CHILD_TIMEOUT_SECONDS"
+DATOVIZ_CHILD_TIMEOUT_SECONDS = 180.0
+DATOVIZ_CHILD_TIMEOUT_RETURNCODE = 124
 
 
 def run_visual_review_pack(
@@ -275,13 +279,30 @@ def _run_datoviz_child(
         command.extend(["--run-id", run_id])
     env = os.environ.copy()
     env[DATOVIZ_QA_OFFSCREEN_ENV] = "1"
-    return subprocess.run(
-        command,
-        env=env,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
+    timeout_seconds = _datoviz_child_timeout_seconds(env)
+    try:
+        return subprocess.run(
+            command,
+            env=env,
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=timeout_seconds,
+        )
+    except subprocess.TimeoutExpired as exc:
+        stdout = _timeout_output_text(exc.stdout)
+        stderr = _timeout_output_text(exc.stderr)
+        timeout_message = (
+            "Datoviz offscreen child process timed out after "
+            f"{timeout_seconds:g} seconds"
+        )
+        stderr = f"{stderr}\n{timeout_message}\n" if stderr else timeout_message + "\n"
+        return subprocess.CompletedProcess(
+            args=command,
+            returncode=DATOVIZ_CHILD_TIMEOUT_RETURNCODE,
+            stdout=stdout,
+            stderr=stderr,
+        )
 
 
 def _merge_successful_datoviz_child_report(
@@ -510,6 +531,27 @@ def _write_datoviz_child_crash_entry(
 
 
 def _datoviz_child_failure_reason(returncode: int) -> str:
+    if returncode == DATOVIZ_CHILD_TIMEOUT_RETURNCODE:
+        return "Datoviz offscreen child process timed out"
     if returncode < 0:
         return f"Datoviz offscreen child process terminated by signal {-returncode}"
     return f"Datoviz offscreen child process exited with code {returncode}"
+
+
+def _datoviz_child_timeout_seconds(env: Mapping[str, str]) -> float:
+    raw = env.get(DATOVIZ_CHILD_TIMEOUT_ENV)
+    if raw is None or raw == "":
+        return DATOVIZ_CHILD_TIMEOUT_SECONDS
+    try:
+        value = float(raw)
+    except ValueError:
+        return DATOVIZ_CHILD_TIMEOUT_SECONDS
+    return value if value > 0 else DATOVIZ_CHILD_TIMEOUT_SECONDS
+
+
+def _timeout_output_text(value: object) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, bytes):
+        return value.decode(errors="replace")
+    return str(value)
