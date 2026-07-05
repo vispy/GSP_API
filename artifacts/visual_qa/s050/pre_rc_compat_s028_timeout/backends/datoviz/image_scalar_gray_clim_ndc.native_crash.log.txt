@@ -1,0 +1,10 @@
+Datoviz offscreen child process terminated by signal 11
+
+Command:
+/home/cyrille/GIT/Viz/GSP_API/.venv/bin/python3 -m gsp.qa.visual run --suite s028 --backends datoviz --out artifacts/visual_qa/s050/pre_rc_compat_s028_timeout/_datoviz_offscreen_child/image_scalar_gray_clim_ndc --no-contact-sheet --resolution 800x600 --datoviz-color-pipeline legacy_srgb_blend --case image/scalar_gray_clim_ndc --run-id pre-rc-compat-s028-timeout
+
+stdout:
+
+
+stderr:
+

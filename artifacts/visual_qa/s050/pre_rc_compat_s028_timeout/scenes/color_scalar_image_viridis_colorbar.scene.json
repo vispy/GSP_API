@@ -1,0 +1,86 @@
+{
+  "arrays": {
+    "scalar_field": {
+      "dtype": "float32",
+      "key": "scalar_field",
+      "path": "color_scalar_image_viridis_colorbar.arrays.npz",
+      "shape": [
+        18,
+        28
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "color/scalar_image_viridis_colorbar",
+  "color_scales": [
+    {
+      "colormap": {
+        "id": "viridis",
+        "kind": "named"
+      },
+      "description": null,
+      "id": "scale:viridis",
+      "normalize": {
+        "clip": true,
+        "kind": "linear",
+        "vmax": 1.25,
+        "vmin": -0.75
+      }
+    }
+  ],
+  "colorbar_guides": [
+    {
+      "color_scale_id": "scale:viridis",
+      "id": "guide:viridis",
+      "label": "value",
+      "linked_visual_ids": [
+        "visual:color-scalar-image"
+      ],
+      "orientation": "vertical",
+      "panel_id": "panel:visual-qa",
+      "placement": "right",
+      "tick_labels": [
+        "low",
+        "mid",
+        "high"
+      ],
+      "ticks": [
+        -0.75,
+        0.25,
+        1.25
+      ]
+    }
+  ],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [],
+  "transform_resources": [],
+  "view3d": null,
+  "views": [],
+  "visuals": [
+    {
+      "clim": null,
+      "color_scale_id": "scale:viridis",
+      "colormap": null,
+      "coordinate_space": "ndc",
+      "extent": [
+        -0.82,
+        0.58,
+        -0.62,
+        0.62
+      ],
+      "family": "image",
+      "id": "visual:color-scalar-image",
+      "image": {
+        "dtype": "float32",
+        "shape": [
+          18,
+          28
+        ]
+      },
+      "interpolation": "nearest",
+      "origin": "upper"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+schema_version: 1
+cases:
+  - case_id: point/basic_ndc
+    status: pending
+    notes: ''
+  - case_id: point/diameter_ramp_ndc
+    status: pending
+    notes: ''
+  - case_id: point/alpha_overlap_ndc
+    status: pending
+    notes: ''
+  - case_id: marker/shapes_ndc
+    status: pending
+    notes: ''
+  - case_id: marker/angle_size_stroke_ndc
+    status: pending
+    notes: ''
+  - case_id: segment/width_cap_ndc
+    status: pending
+    notes: ''
+  - case_id: segment/alpha_order_ndc
+    status: pending
+    notes: ''
+  - case_id: path/subpaths_width_join_ndc
+    status: pending
+    notes: ''
+  - case_id: image/checker_nearest_ndc
+    status: pending
+    notes: ''
+  - case_id: image/origin_lower_ndc
+    status: pending
+    notes: ''
+  - case_id: image/scalar_gray_clim_ndc
+    status: pending
+    notes: ''
+  - case_id: image/rgba_alpha_ndc
+    status: pending
+    notes: ''
+  - case_id: overlay/point_over_image_ndc
+    status: pending
+    notes: ''
+  - case_id: text/basic_ndc
+    status: pending
+    notes: ''
+  - case_id: text/anchor_grid_ndc
+    status: pending
+    notes: ''
+  - case_id: text/rotation_alpha_ndc
+    status: pending
+    notes: ''
+  - case_id: text/data_vs_ndc
+    status: pending
+    notes: ''
+  - case_id: text/multiline_unicode_smoke
+    status: pending
+    notes: ''
+  - case_id: mesh/single_triangle_uniform_ndc_2d
+    status: pending
+    notes: ''
+  - case_id: mesh/indexed_square_uniform_ndc_2d
+    status: pending
+    notes: ''
+  - case_id: mesh/indexed_square_per_face_ndc_2d
+    status: pending
+    notes: ''
+  - case_id: color/scalar_image_viridis_colorbar
+    status: pending
+    notes: ''
+  - case_id: color/point_scalar_gray_range
+    status: pending
+    notes: ''
+  - case_id: color/marker_scalar_fill_alpha
+    status: pending
+    notes: ''
+  - case_id: transform/inline_named_equivalence
+    status: pending
+    notes: ''
+  - case_id: transform/view2d_data_ndc_overlay
+    status: pending
+    notes: ''
+  - case_id: transform/family_affine_view2d
+    status: pending
+    notes: ''
+  - case_id: guide/view2d_auto_grid
+    status: pending
+    notes: ''
+  - case_id: guide/view2d_reversed_explicit
+    status: pending
+    notes: ''
+  - case_id: guide/view2d_grid_clip_title_boundary
+    status: pending
+    notes: ''
