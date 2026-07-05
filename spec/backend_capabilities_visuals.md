@@ -142,6 +142,13 @@ as strict opaque-depth support. Query ray readback is gated by `query.view3d.ray
 does not imply mesh triangle picking. S044 mesh triangle picking is separately gated by
 `query.view3d.mesh_triangle_pick.v1`.
 
+S050 accepts strict face culling only under the projected-NDC capability names
+`meshvisual.face_culling.data3d.projected_ndc.v1` and
+`meshvisual.face_culling.ndc3.panel_winding.v1`. These capabilities require the exact panel-NDC
+winding rule, reversed-bound behavior, framebuffer-y independence, and culling before depth/order
+and query selection. Culling-aware picking is separately gated by
+`query.view3d.mesh_triangle_pick.face_culling.v1`.
+
 Current S036 support summary:
 
 | Backend | Static View3D projection | `(N,3)` MeshVisual render | Opaque depth | Ray readback | 3D picking |
@@ -152,7 +159,10 @@ Current S036 support summary:
 
 Structured diagnostics include `view3d_not_supported`, `mesh3d_requires_view3d`,
 `mesh3d_coordinate_space_unsupported`, `mesh3d_alpha_not_strict`,
-`query_3d_visual_hit_deferred`, and `query_3d_snapshot_mismatch`.
+`mesh3d_face_culling_unsupported`, `mesh3d_face_culling_adapted`,
+`mesh3d_culling_winding_ambiguous`, `mesh3d_culling_transform_conflict`,
+`query_3d_mesh_culling_unsupported`, `query_3d_visual_hit_deferred`, and
+`query_3d_snapshot_mismatch`.
 
 ## S037 View3D navigation and Datoviz binding capability gates
 
@@ -267,3 +277,7 @@ Textured lighting, public samplers, broader color-space rules, strict transparen
 expansion, model loading, and expanded query payloads remain deferred. Legacy Matplotlib Phong or
 per-triangle affine texture output is experimental/adapted until a public cross-backend contract
 exists.
+
+S050 also accepts the first face-culling boundary without accepting strict transparency. Strict
+opaque-depth and strict mesh-triangle-pick paths remain limited to effective alpha `1.0` everywhere;
+texture alpha below `255` keeps textured 3D meshes out of strict opaque paths.

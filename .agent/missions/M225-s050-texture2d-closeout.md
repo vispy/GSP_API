@@ -41,7 +41,7 @@ Added `.agent/S050_TEXTURE2D_CLOSEOUT.md`.
 The closeout records implemented S050 Texture2D protocol/fixture/producer support, Matplotlib and
 Datoviz renderer unsupported or blocked posture, validation evidence, and remaining blockers.
 
-Recommended next branch: ChatGPT Pro consultation for M211 culling/alpha semantics before any
-renderer promotion work. M212 remains blocked for expanded 3D query payloads, and M222 remains
-blocked until Datoviz public API/runtime evidence proves strict S050 texture sampler, origin,
-unmanaged RGBA, and multiplicative unlit output semantics.
+Recommended next branch was M211. P032 has since resolved that consultation and opened M226 for
+projected-NDC face-culling protocol fixtures. M212 remains blocked for expanded 3D query payloads,
+and M222 remains blocked until Datoviz public API/runtime evidence proves strict S050 texture
+sampler, origin, unmanaged RGBA, and multiplicative unlit output semantics.

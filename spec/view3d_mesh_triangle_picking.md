@@ -36,8 +36,9 @@ Accepted v1 scope:
 - public GSP visual ids and public canonical triangle indices only.
 
 Deferred: NDC3 mesh picking, transparent meshes, non-mesh visuals, instancing, perspective
-projection, culling semantics, textures, multi-hit selection, barycentric coordinates, interpolated
-DATA/world hit positions, depth values, ray distance, and backend-native ids.
+projection, textures, multi-hit selection, barycentric coordinates, interpolated DATA/world hit
+positions, depth values, ray distance, and backend-native ids. S050 accepts culling-aware picking
+only as a separate additive capability, `query.view3d.mesh_triangle_pick.face_culling.v1`.
 
 ## Request
 
@@ -99,6 +100,13 @@ For v1, smaller projected depth wins under `opaque_less`. A miss means no suppor
 DATA-space `MeshVisual` triangle covers the query sample after applying v1 viewport, clipping, and
 depth semantics.
 
+When `query.view3d.mesh_triangle_pick.face_culling.v1` is advertised, the candidate set also
+excludes triangles culled by `MeshVisual.face_culling` under the projected-NDC rules in
+`spec/visuals/mesh_face_culling_alpha_s050.md`. Culled triangles and projected-degenerate triangles
+behave as absent: they do not occlude, do not win by depth, and must not be returned as hits. The
+response payload is unchanged and still returns only public GSP visual id plus canonical public
+triangle index.
+
 Triangle edge/vertex and exact depth-tie cases are intentionally not cross-backend deterministic in
 v1. Backends may report ambiguity diagnostics for those cases, and conformance fixtures should avoid
 them except for explicit ambiguity tests.
@@ -118,6 +126,7 @@ Stable diagnostic codes include:
 - `pick.unsupported.no_public_primitive_map`;
 - `pick.unsupported.scene_occluder`;
 - `pick.unsupported.native_state_only`;
+- `query_3d_mesh_culling_unsupported`;
 - `pick.stale.layout_snapshot`;
 - `pick.stale.view_revision`;
 - `pick.stale.view_projection_snapshot`;

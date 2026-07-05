@@ -172,6 +172,13 @@ This path provides projection/rendering coverage and an adapted face-order fixtu
 be advertised as strict `meshvisual.positions3d.opaque_depth.v1` support until S036 depth fixtures
 prove accepted fragment-depth semantics.
 
+For S050 culling, Matplotlib may use the canonical CPU projected-NDC winding rule from
+`spec/visuals/mesh_face_culling_alpha_s050.md` and filter faces before constructing
+`PolyCollection` geometry. Until fixture evidence proves the exact supported subset, this remains
+adapted/reference behavior and should report `mesh3d_face_culling_adapted` rather than advertising
+strict `meshvisual.face_culling.*.v1` capabilities. Matplotlib must not treat ordinary alpha
+blending or painter sorting as strict non-opaque 3D alpha semantics.
+
 `gsp_matplotlib.protocol_query.query_view3d_ray_context()` provides the S036 reference
 projection-inverse query path. It returns `gsp.view3d-query@0.1` payloads for panel coordinates,
 reports `query_3d_snapshot_mismatch` for stale layout/view-projection snapshots, and keeps `(N, 3)`

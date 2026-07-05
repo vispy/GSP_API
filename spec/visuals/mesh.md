@@ -4,7 +4,8 @@ Status: accepted protocol baseline for S025. Static orthographic `View3D` semant
 mesh rendering are accepted separately by S036 in `spec/view3d.md`. S038 defines implicit
 `unlit_rgba` material semantics in `spec/visuals/mesh_materials_s038.md`; S039 accepts only the
 narrow flat Lambert face-normal extension in `spec/visuals/mesh_flat_lambert_s039.md`; S050 accepts
-the unlit Texture2D/UV extension in `spec/visuals/mesh_texture2d_unlit_s050.md`.
+the unlit Texture2D/UV extension in `spec/visuals/mesh_texture2d_unlit_s050.md` and the
+projected-NDC face-culling/alpha boundary in `spec/visuals/mesh_face_culling_alpha_s050.md`.
 
 Semantic purpose: render explicit user-provided triangular meshes for filled 2D panel geometry and
 capability-gated 3D geometry. S025 does not define a surface, volume, material, texture, instancing,
@@ -29,7 +30,7 @@ S025 defines `MeshVisual` only. Geometry is inline and indexed.
 | `texture2d_id` | protocol id string or `None` | no | `None` | S050 accepts a reference to a declared `Texture2D` only when `shading="texture2d_unlit"`. |
 | `uv_mode` | `MeshUVMode` | no | `none` | S050 accepts `vertex` only for per-vertex UVs. |
 | `uvs` | float32/float64 `(N,2)` or `None` | no | none | S050 accepts finite per-vertex UVs indexed by existing mesh faces. |
-| `face_culling` | `FaceCulling` | no | `none` | `none`, optional `back`/`front`. |
+| `face_culling` | `FaceCulling` | no | `none` | `none`, optional/capability-gated `back`/`front`. For `(N,3)` strict paths, S050 classifies front/back by signed area after projection into panel NDC. |
 | `depth_test` | `DepthMode` | no | `auto` | `auto`, `disabled`, or `enabled`. |
 | `depth_write` | `DepthMode` | no | `auto` | `auto`, `disabled`, or `enabled`. |
 | `order` | finite scalar | no | `0` | 2D painter/order hint when depth is disabled or unavailable. |
@@ -91,6 +92,13 @@ and fixed nearest/clamp/no-mipmap sampling. Public material objects, vertex norm
 samplers, Phong/specular/shininess, and backend material-struct fields remain deferred unless a
 later ADR/spec accepts them.
 
+S050 accepts only a strict face-culling boundary, not strict transparent rendering. For `(N,3)`
+meshes, front/back classification is performed in projected panel NDC: counter-clockwise x/y winding
+is front-facing, and `FaceCulling.BACK` or `.FRONT` suppresses triangles before depth, order, alpha
+compositing, and query hit selection. Projected-degenerate triangles have no strict raster
+contribution or strict pick hit. Non-opaque 3D mesh alpha remains outside strict opaque-depth and
+strict mesh-triangle-pick paths.
+
 ## Transform, camera, and depth policy
 
 `MeshVisual` does not define a camera or mesh-local transform. `(N,2)` positions are interpreted as
@@ -146,9 +154,10 @@ Hidden lighting/material defaults must not alter strict flat RGBA semantics.
 - `mesh_validation_bad_color_shape`;
 - `mesh_query_face_2d`.
 
-Optional/capability-gated cases: vertex color interpolation, 3D cube depth/culling, alpha overlap,
-3D face query, and wireframe if later accepted. Normals, generated normals, Lambert, Phong, and
-texture demonstrations are private/experimental until a later material or texture ADR accepts them.
+Optional/capability-gated cases: vertex color interpolation, 3D cube depth/culling, projected-NDC
+face culling, alpha overlap, 3D face query, and wireframe if later accepted. Normals, generated
+normals, Lambert, Phong, and texture demonstrations are private/experimental until a later material
+or texture ADR accepts them.
 
 ## Deferred
 

@@ -33,3 +33,10 @@ S044 mesh triangle picking v1.
 
 - Stop before expanding S044 v1 payloads without consultation output.
 - Stop before relying on Datoviz private internals for public query identity.
+
+## Packet
+
+Prepared `.agent/consultations/P033-3d-query-payload-expansion.md`.
+
+This needs ChatGPT Pro consultation. Dependent implementation remains paused until the user pastes
+or commits the P033 response.

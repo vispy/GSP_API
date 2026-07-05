@@ -150,6 +150,15 @@ mesh triangles; Datoviz support remains unadvertised until public visual/triangl
 pick-state freshness are proven. Materials, lights, textures, perspective, and culling remain
 deferred.
 
+S050 accepts a culling contract but does not promote Datoviz culling by default. Datoviz may
+advertise `meshvisual.face_culling.data3d.projected_ndc.v1` or
+`meshvisual.face_culling.ndc3.panel_winding.v1` only after public runtime evidence proves GSP
+projected panel-NDC winding, reversed `xlim`/`ylim` behavior, culling before depth writes, and no
+leakage from framebuffer y-down or native front-face conventions. Datoviz may advertise
+`query.view3d.mesh_triangle_pick.face_culling.v1` only after the public query path applies the same
+culling rule and returns canonical public face identity. Private Vulkan state, private shader slots,
+native mesh ids, and backend draw-state names are not strict evidence.
+
 ## S040 flat Lambert CPU resolve
 
 Datoviz strict S039 flat Lambert support must use CPU-resolved exact per-face colors, not native

@@ -116,15 +116,16 @@ Blocked S050 missions:
 
 | Mission | Blocker |
 |---|---|
-| M211 - culling and alpha semantics consultation | Requires ChatGPT Pro consultation output before strict culling, non-opaque alpha, transparency, or alpha-test semantics are accepted. |
+| M211 - culling and alpha semantics consultation | Completed after P032; projected-NDC face culling is accepted, strict non-opaque alpha remains deferred. |
 | M212 - 3D query payload expansion consultation | Requires ChatGPT Pro consultation output before expanded UV/texel/material/3D query payloads are accepted. |
 | M222 - Datoviz Texture2D capability advertisement | Requires M220 sampler, origin, unmanaged RGBA, and exact unlit multiplication proof before implementation or promotion. |
+| M226 - projected-NDC face culling protocol fixtures | Ready follow-up for the accepted P032 boundary; renderer capability promotion remains gated on fixtures. |
 
 ## Recommendation
 
 Do not launch renderer promotion work next.
 
-The next branch should be a ChatGPT Pro consultation branch for either M211 or M212. M211 is the
-better first target because texture alpha, culling, transparency, and strict opaque-depth claims
-constrain any future textured 3D renderer promotion. M222 should stay blocked until Datoviz public
-API/runtime evidence proves the M220 fixture requirements.
+After P032, the next implementation branch is M226 for projected-NDC face-culling protocol fixtures
+and diagnostics. M212 remains the next ChatGPT Pro consultation track for expanded 3D query
+payloads. M222 should stay blocked until Datoviz public API/runtime evidence proves the M220 fixture
+requirements.

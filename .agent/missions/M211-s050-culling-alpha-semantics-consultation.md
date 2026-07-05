@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Blocked pending ChatGPT Pro consultation.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -36,5 +36,12 @@ non-opaque mesh alpha semantics.
 
 Prepared `.agent/consultations/P032-culling-alpha-semantics.md`.
 
-This needs ChatGPT Pro consultation. Dependent implementation remains paused until the user pastes
-or commits the P032 response.
+Response archived as `.agent/consultations/P032-response.md`.
+
+## Result
+
+Completed. Accepted projected panel-NDC face culling as a small capability-gated v1 contract via
+ADR-0030 and `spec/visuals/mesh_face_culling_alpha_s050.md`. Strict non-opaque 3D alpha remains
+deferred; strict opaque-depth and strict mesh-triangle-pick paths require effective alpha `1.0`
+everywhere. Opened M226 as the bounded implementation/fixture follow-up without changing renderer
+capability advertisements.

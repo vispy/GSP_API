@@ -299,7 +299,7 @@
       "id": "S050",
       "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
       "state": "active",
-      "progress": 84
+      "progress": 88
     }
   ],
   "missions": [
@@ -2188,9 +2188,9 @@
       "id": "M211",
       "title": "S050 culling and alpha semantics consultation",
       "stage": "S050",
-      "state": "blocked",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 211
     },
     {
@@ -2318,6 +2318,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 225
+    },
+    {
+      "id": "M226",
+      "title": "S050 projected-NDC face culling protocol fixtures",
+      "stage": "S050",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 226
     }
   ],
   "review_queue": [],
@@ -2423,7 +2432,8 @@
     "M216 completed: current Datoviz query API uses dvz_panel_query_px; live point identity is proven, image texel/color/value remains unproven, and Datoviz now advertises panel-query plus point-item but not image-texel.",
     "M217 completed: Datoviz offscreen review packs now isolate one child process per case; complete post-report teardown crashes preserve rendered artifacts and record child_teardown_crash evidence.",
     "M215 completed: Datoviz query/readback docs now distinguish capability-gated guide/all-rendered query from still-deferred live rich payload parity, scientific readback, hit_policy=all, and mesh-triangle picking.",
-    "Do not accept strict culling, non-opaque mesh alpha, or expanded 3D query payloads without ChatGPT Pro consultation output.",
+    "M211 completed: P032 accepts projected-NDC face culling as a capability-gated v1 boundary, keeps strict non-opaque 3D alpha deferred, and opens M226 for fixtures/implementation without renderer capability promotion.",
+    "M212 packet prepared: use .agent/consultations/P033-3d-query-payload-expansion.md for ChatGPT Pro; do not expand 3D query payloads until the P033 response is accepted.",
     "M204 completed: archived P031 response and accepted unlit Texture2D plus per-vertex UVs as the next material stage via ADR-0029 and spec/visuals/mesh_texture2d_unlit_s050.md.",
     "M218 completed: Texture2D RGBA8 resources, MeshVisual texture2d_unlit fields, per-vertex UV validation, and texture resource resolution helper are implemented without renderer capability promotion.",
     "M219 completed: S050 Texture2D visual-QA fixtures now record texture resources, UV/probe expectations, alpha diagnostics, negative diagnostic metadata, and unsupported backend classification without renderer promotion.",
@@ -2433,10 +2443,11 @@
     "M223 completed: VisPy2 Axes.mesh now emits strict Texture2D resources and texture2d_unlit MeshVisual fields when texture and uvs are supplied together.",
     "M224 completed: capability/docs audit now distinguishes protocol validation, VisPy2 producer support, Matplotlib unsupported diagnostics, and Datoviz blocked renderer promotion.",
     "M225 completed: S050 Texture2D closeout records protocol/fixture/producer support, Matplotlib unsupported policy, Datoviz blocked promotion, validation evidence, and remaining blockers.",
-    "M211 packet prepared: .agent/consultations/P032-culling-alpha-semantics.md needs ChatGPT Pro response before culling/alpha implementation; M212 and M222 remain blocked.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M212 packet prepared: .agent/consultations/P033-3d-query-payload-expansion.md needs ChatGPT Pro response before expanding View3D mesh-pick payloads.",
+    "M211 completed: archived .agent/consultations/P032-response.md, added ADR-0030, spec/visuals/mesh_face_culling_alpha_s050.md, and .agent/decisions/S050_mesh_face_culling_alpha_boundary.md; opened ready M226 for projected-NDC face-culling protocol fixtures.",
     "M217 completed: reproduced the five-case TextVisual batch signal 11, classified it as Datoviz/native teardown behavior, changed datoviz-offscreen-opt-in review packs to one child per case, and recorded artifacts under artifacts/visual_qa/s050/m217-dataviz-offscreen-*.",
     "M204 completed: archived .agent/consultations/P031-response.md, added ADR-0029, spec/visuals/mesh_texture2d_unlit_s050.md, and .agent/decisions/S050_texture2d_unlit_contracts.md; alpha/culling and expanded 3D query payloads remain separate Pro-consultation blockers.",
     "Drafted M218-M225 for the S050 Texture2D implementation path: protocol validation, fixtures, Datoviz feasibility, Matplotlib policy, Datoviz promotion, VisPy2 producer, docs audit, and closeout.",
@@ -2447,8 +2458,7 @@
     "M222 blocked by M220: do not advertise Datoviz Texture2D capabilities until strict sampler/origin/color multiplication evidence exists.",
     "M223 completed: added VisPy2 texture+uvs mesh producer support, Figure.texture_resources(), strict Texture2D/UV validation tests, and Matplotlib unsupported render-path coverage.",
     "M224 completed: updated backend capability, Datoviz, Matplotlib, VisPy2, and examples docs so S050 renderer claims remain unpromoted and legacy textured/Phong examples are labeled outside accepted renderer capabilities.",
-    "M225 completed: added .agent/S050_TEXTURE2D_CLOSEOUT.md and recommended M211 ChatGPT Pro culling/alpha consultation as the next branch; M212 expanded query payloads and M222 Datoviz Texture2D promotion remain blocked.",
-    "Prepared P032 ChatGPT Pro consultation packet for M211 culling/alpha semantics; dependent implementation remains blocked pending the P032 response.",
+    "M225 completed: added .agent/S050_TEXTURE2D_CLOSEOUT.md; after P032, M226 is now the projected-NDC face-culling fixture branch while M212 expanded query payloads and M222 Datoviz Texture2D promotion remain blocked.",
     "M216 completed: added .agent/S050_DATOVIZ_LIVE_POINT_IMAGE_PAYLOAD_EVIDENCE.md and artifacts/visual_qa/s050/m216-live-query-payload/smoke.json; switched to current dvz_panel_query_px, kept point-item, removed image-texel, and rejected non-identity live Datoviz query payloads unless scalar extension decoration is explicitly supported.",
     "M208 completed: fixed packed RGBA8 latest-binding upload to pass POINTER(c_ubyte) into dvz_visual_set_texture_rgba8(); isolated Datoviz TextVisual artifacts render with only text/rotation_alpha_ndc strict, the other text rows adapted, and the combined text batch still crashed with signal 11.",
     "M215 completed: updated spec/backends/datoviz.md query/readback wording to reflect S043 panel-frame guide hit/readback capability gates and preserved unsupported boundaries for hit_policy=all, unsupported extension payloads, scientific readback, and mesh-triangle picking.",
