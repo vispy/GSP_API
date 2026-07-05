@@ -1182,34 +1182,35 @@ class FakeDatovizV04WithRetainedView3D(FakeDatovizV04WithMesh):
 
     def dvz_panel_view3d_desc(self):
         self.calls.append(("panel_view3d_desc",))
-        return SimpleNamespace(camera=self.dvz_camera_desc())
+        camera = self.dvz_camera_desc()
+        return SimpleNamespace(view=camera.view, projection=camera.projection)
 
     def dvz_panel_set_view3d_desc(self, panel, desc):
         self.calls.append(
             (
                 "panel_set_view3d_desc",
                 panel,
-                tuple(desc.camera.view.eye),
-                tuple(desc.camera.view.target),
-                tuple(desc.camera.view.up),
-                desc.camera.projection.type,
-                desc.camera.projection.near_clip,
-                desc.camera.projection.far_clip,
-                desc.camera.projection.ortho_height,
-                desc.camera.projection.fov_y,
+                tuple(desc.view.eye),
+                tuple(desc.view.target),
+                tuple(desc.view.up),
+                desc.projection.type,
+                desc.projection.near_clip,
+                desc.projection.far_clip,
+                desc.projection.ortho_height,
+                desc.projection.fov_y,
             )
         )
         self.camera_view = SimpleNamespace(
-            eye=list(desc.camera.view.eye),
-            target=list(desc.camera.view.target),
-            up=list(desc.camera.view.up),
+            eye=list(desc.view.eye),
+            target=list(desc.view.target),
+            up=list(desc.view.up),
         )
         self.camera_projection = SimpleNamespace(
-            type=desc.camera.projection.type,
-            fov_y=desc.camera.projection.fov_y,
-            near_clip=desc.camera.projection.near_clip,
-            far_clip=desc.camera.projection.far_clip,
-            ortho_height=desc.camera.projection.ortho_height,
+            type=desc.projection.type,
+            fov_y=desc.projection.fov_y,
+            near_clip=desc.projection.near_clip,
+            far_clip=desc.projection.far_clip,
+            ortho_height=desc.projection.ortho_height,
         )
         self.view3d_revision += 1
         return 0

@@ -635,7 +635,7 @@ def _configure_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> An
         )
 
     desc = dvz.dvz_panel_view3d_desc()
-    _fill_datoviz_camera_desc(dvz, desc.camera, view3d)
+    _fill_datoviz_camera_desc(dvz, _panel_view3d_camera_desc(desc), view3d)
     _require_datoviz_success(
         dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(desc)),
         "Datoviz retained View3D descriptor setup failed",
@@ -702,7 +702,7 @@ def _update_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> Any:
             + "; ".join(diagnostics)
         )
     panel_desc = dvz.dvz_panel_view3d_desc()
-    _fill_datoviz_camera_desc(dvz, panel_desc.camera, view3d)
+    _fill_datoviz_camera_desc(dvz, _panel_view3d_camera_desc(panel_desc), view3d)
     _require_datoviz_success(
         dvz.dvz_panel_set_view3d_desc(panel, _ctypes_pointer_arg(panel_desc)),
         "Datoviz retained View3D panel camera descriptor update failed",
@@ -712,6 +712,11 @@ def _update_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> Any:
         raise DatovizV04Unsupported("Datoviz retained View3D panel camera update failed")
     _set_datoviz_camera_projection_state(dvz, camera, view3d)
     return camera
+
+
+def _panel_view3d_camera_desc(desc: Any) -> Any:
+    """Return the camera-shaped payload inside a Datoviz View3D panel descriptor."""
+    return getattr(desc, "camera", desc)
 
 
 def _resolve_datoviz_canvas_size(dvz: Any, requested: CanvasSize) -> ResolvedCanvas:
