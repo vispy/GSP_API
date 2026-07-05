@@ -21,6 +21,12 @@ new sibling Datoviz work after the replay baseline: local commit `bb867b2ba` plu
 controller-file edits. Treat the artifacts in this note as evidence for `af168b5a9`, not for that
 newer dirty sibling state.
 
+Update, 2026-07-05: the sibling Datoviz checkout has since advanced cleanly to `1ef626a56` on
+`api/pre-rc-cleanup`. The new tail includes controller `DvzResult` return-contract commits,
+GUI/canvas teardown timing changes, and post-result-contract planning/classification docs. M232 is
+the ready follow-up to replay GSP against that newer state. The M231 artifacts below remain valid
+only for `af168b5a9`.
+
 ## GSP compatibility fix
 
 The Datoviz refactor changed many stable mutators from boolean return values to `DvzResult`, where

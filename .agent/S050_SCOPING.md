@@ -27,11 +27,27 @@ because it is the most visible current "must not advertise" capability boundary.
 | Mission | State | Purpose |
 |---|---|---|
 | M199 | completed | Reconcile control-plane state, open S050, and draft the implementation batch. |
-| M200 | approved | Inspect/prove Datoviz native mesh-pick evidence without promoting capability prematurely. |
-| M201 | draft | Scope Datoviz query/readback parity after M200 reports its API evidence. |
-| M202 | draft | Scope Datoviz guide, text, and colorbar strictness after the picking evidence branch. |
-| M203 | draft | Scope strict 3D depth and mesh semantics. |
-| M204 | blocked | Prepare ChatGPT Pro consultation for materials/textures and broader VisPy2 public API shape. |
+| M200 | completed | Inspect/prove Datoviz native mesh-pick evidence without promoting capability prematurely. |
+| M201 | completed | Scope Datoviz query/readback parity after M200 reports its API evidence. |
+| M202 | completed | Scope Datoviz guide, text, and colorbar strictness after the picking evidence branch. |
+| M203 | completed | Scope strict 3D depth and mesh semantics. |
+| M204 | completed | Prepare ChatGPT Pro consultation for materials/textures and broader VisPy2 public API shape. |
+
+## Current Continuation
+
+As of 2026-07-05, S050 has advanced through the Texture2D, face-culling, mesh-pick payload, and
+Datoviz pre-RC compatibility branches. The actionable next step is no longer direct capability
+promotion.
+
+| Mission | State | Purpose |
+|---|---|---|
+| M222 | blocked | Datoviz Texture2D capability advertisement; still blocked by missing sampler, origin, unmanaged RGBA, and exact unlit multiplication evidence. |
+| M231 | completed | Replayed Datoviz `api/pre-rc-cleanup` at `af168b5a9` and added generic `DvzResult` mutator success handling. |
+| M232 | ready | Re-run compatibility against current Datoviz `api/pre-rc-cleanup` at `1ef626a56`, after controller result-contract and GUI/canvas teardown changes. |
+
+M232 should run before any M222 reassessment. The current Datoviz changes may affect adapter
+return-code handling, retained View3D camera updates, and offscreen crash frequency, but they do not
+by themselves prove S050 Texture2D sampler/origin/color-equation semantics.
 
 ## M200 Acceptance
 

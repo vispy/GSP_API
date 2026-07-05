@@ -45,3 +45,9 @@ advertisement remains blocked pending fixture evidence for mesh nearest/clamp/no
 behavior, texture-origin behavior, unmanaged numeric RGBA behavior, and exact unlit
 multiplication. Do not implement or advertise Datoviz Texture2D renderer capabilities until those
 blockers are resolved.
+
+## Current Ordering
+
+Run M232 before reassessing this mission. The latest sibling Datoviz pre-RC changes affect
+controller/result-contract return handling and teardown timing, but they do not by themselves prove
+the Texture2D sampler, origin, unmanaged RGBA, or unlit multiplication semantics required here.
