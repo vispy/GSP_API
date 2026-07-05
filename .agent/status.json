@@ -299,7 +299,7 @@
       "id": "S050",
       "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
       "state": "active",
-      "progress": 92
+      "progress": 95
     }
   ],
   "missions": [
@@ -2332,9 +2332,9 @@
       "id": "M227",
       "title": "S050 View3D mesh-pick geometry payload protocol",
       "stage": "S050",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 227
     }
   ],
@@ -2453,9 +2453,11 @@
     "M224 completed: capability/docs audit now distinguishes protocol validation, VisPy2 producer support, Matplotlib unsupported diagnostics, and Datoviz blocked renderer promotion.",
     "M225 completed: S050 Texture2D closeout records protocol/fixture/producer support, Matplotlib unsupported policy, Datoviz blocked promotion, validation evidence, and remaining blockers.",
     "M226 completed: projected-NDC mesh face-culling helpers and Matplotlib CPU mesh-pick culling fixtures are implemented without renderer capability promotion; M227 is the next ready query-payload branch.",
+    "M227 completed: geometry/facing mesh-pick payload protocol helpers, validators, and Matplotlib CPU-reference fixtures are implemented without mutating identity-only v1 or advertising Datoviz geometry capabilities.",
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M227 completed: added query.view3d.mesh_triangle_pick.geometry.v1 and facing.v1 constants, View3DMeshTrianglePickGeometryPayload, public barycentric/depth/DATA/facing helpers, and an opt-in Matplotlib geometry query wrapper. Focused protocol/query tests and strict mypy passed; existing Datoviz broad-suite debt remains separate.",
     "M226 completed: added canonical projected-NDC face-culling helpers/capabilities, applied culling before depth in the Matplotlib View3D mesh-pick CPU reference path, preserved the base mesh-pick payload shape, and validated focused protocol/query tests plus backend imports. Full-suite Datoviz fake/QA and full-tree mypy issues remain separate existing debt.",
     "M212 completed: archived .agent/consultations/P033-response.md, added ADR-0031, spec/view3d_mesh_triangle_pick_geometry.md, and .agent/decisions/S050_view3d_mesh_pick_geometry_payload.md; opened ready M227 for geometry/facing payload protocol fixtures.",
     "M211 completed: archived .agent/consultations/P032-response.md, added ADR-0030, spec/visuals/mesh_face_culling_alpha_s050.md, and .agent/decisions/S050_mesh_face_culling_alpha_boundary.md; opened ready M226 for projected-NDC face-culling protocol fixtures.",

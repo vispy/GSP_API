@@ -16,6 +16,8 @@ from gsp.protocol import (
     PerspectiveProjection3D,
     ProjectedFaceClassification,
     Projection3DKind,
+    QUERY_VIEW3D_MESH_TRIANGLE_PICK_FACING_CAPABILITY,
+    QUERY_VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_CAPABILITY,
     QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY,
     QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
     QueryDiagnostic,
@@ -31,6 +33,7 @@ from gsp.protocol import (
     View3D,
     View3DDiagnosticCode,
     View3DMeshPickDiagnosticCode,
+    View3DMeshTrianglePickGeometryPayload,
     View3DMeshTrianglePickPayload,
     View3DMeshTrianglePickRequest,
     View3DNavigationAction,
@@ -40,6 +43,10 @@ from gsp.protocol import (
     apply_view3d_navigation_action,
     classify_projected_triangle,
     face_culling_excludes,
+    mesh_pick_barycentric_2d,
+    mesh_pick_data_xyz,
+    mesh_pick_panel_ndc_z,
+    mesh_pick_projected_front_facing,
     orbit_view3d,
     pan_view3d,
     project_view3d_data_point,
@@ -330,6 +337,100 @@ def test_view3d_mesh_triangle_pick_request_and_payload_validate_s044_fields():
             view_projection_snapshot_id="view3d-projection:abc",
             pick_scene_snapshot_id="pick-scene:abc",
             depth_mode="opaque_less",
+        )
+
+
+def test_view3d_mesh_pick_geometry_helpers_interpolate_public_triangle_fields():
+    q0 = (-1.0, -1.0, -0.5)
+    q1 = (1.0, -1.0, 0.5)
+    q2 = (-1.0, 1.0, 0.0)
+    point_xy = (-0.5, -0.5)
+    barycentric = mesh_pick_barycentric_2d(point_xy, q0, q1, q2)
+
+    assert barycentric == pytest.approx((0.5, 0.25, 0.25))
+    assert mesh_pick_panel_ndc_z(barycentric, q0, q1, q2) == pytest.approx(-0.125)
+    assert mesh_pick_data_xyz(
+        barycentric,
+        (-1.0, -1.0, 0.0),
+        (1.0, -1.0, 2.0),
+        (-1.0, 1.0, 4.0),
+    ) == pytest.approx((-0.5, -0.5, 1.5))
+    assert mesh_pick_projected_front_facing(q0, q1, q2) is True
+    assert mesh_pick_projected_front_facing(q0, q2, q1) is False
+    assert mesh_pick_barycentric_2d((1.0, 1.0), q0, q1, q2) is None
+
+    with pytest.raises(ValueError, match="projected-degenerate"):
+        mesh_pick_projected_front_facing(q0, q0, q2)
+
+
+def test_view3d_mesh_triangle_pick_geometry_payload_validates_s050_fields():
+    diagnostic = QueryDiagnostic(
+        code=View3DMeshPickDiagnosticCode.ADAPTED_PUBLIC_GEOMETRY_RECONSTRUCTION,
+        severity=QueryDiagnosticSeverity.INFO,
+    )
+    payload = View3DMeshTrianglePickGeometryPayload(
+        status=QueryStatus.HIT,
+        hit=True,
+        view_id="view:main",
+        panel_id="panel:main",
+        panel_xy=(12.0, 24.0),
+        panel_ndc_xy=(0.0, 0.0),
+        layout_snapshot_id="layout:main",
+        view_revision=3,
+        view_projection_snapshot_id="view3d-projection:abc",
+        pick_scene_snapshot_id="pick-scene:abc",
+        depth_mode="opaque_less",
+        visual_id="visual:mesh",
+        visual_type="MeshVisual",
+        primitive_kind="triangle",
+        primitive_index=2,
+        hit_barycentric=(0.5, 0.25, 0.25),
+        hit_panel_ndc_z=-0.125,
+        hit_data_xyz=(-0.5, -0.5, 1.5),
+        front_facing=True,
+        diagnostics=(diagnostic,),
+    )
+
+    assert payload.kind == QUERY_VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_CAPABILITY
+    assert QUERY_VIEW3D_MESH_TRIANGLE_PICK_FACING_CAPABILITY.endswith(".facing.v1")
+    assert payload.hit_barycentric == pytest.approx((0.5, 0.25, 0.25))
+    assert payload.front_facing is True
+
+    with pytest.raises(ValueError, match="hit_barycentric is required"):
+        View3DMeshTrianglePickGeometryPayload(
+            status=QueryStatus.HIT,
+            hit=True,
+            view_id="view:main",
+            panel_id="panel:main",
+            panel_xy=(0.0, 0.0),
+            panel_ndc_xy=(0.0, 0.0),
+            layout_snapshot_id="layout:main",
+            view_revision=0,
+            view_projection_snapshot_id="view3d-projection:abc",
+            pick_scene_snapshot_id="pick-scene:abc",
+            depth_mode="opaque_less",
+            visual_id="visual:mesh",
+            visual_type="MeshVisual",
+            primitive_kind="triangle",
+            primitive_index=0,
+            hit_panel_ndc_z=0.0,
+            hit_data_xyz=(0.0, 0.0, 0.0),
+        )
+
+    with pytest.raises(ValueError, match="non-hit geometry payloads"):
+        View3DMeshTrianglePickGeometryPayload(
+            status=QueryStatus.MISS,
+            hit=False,
+            view_id="view:main",
+            panel_id="panel:main",
+            panel_xy=(0.0, 0.0),
+            panel_ndc_xy=(0.0, 0.0),
+            layout_snapshot_id="layout:main",
+            view_revision=0,
+            view_projection_snapshot_id="view3d-projection:abc",
+            pick_scene_snapshot_id="pick-scene:abc",
+            depth_mode="opaque_less",
+            hit_barycentric=(1.0, 0.0, 0.0),
         )
 
 

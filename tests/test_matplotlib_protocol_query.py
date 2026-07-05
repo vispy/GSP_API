@@ -22,6 +22,7 @@ from gsp.protocol import (
     MarkerShape,
     MarkerVisual,
     OrthographicProjection3D,
+    PerspectiveProjection3D,
     PointVisual,
     QueryContributionKind,
     QueryCoordinateSpace,
@@ -38,6 +39,7 @@ from gsp.protocol import (
     TEXT_QUERY_PAYLOAD_KIND,
     TRANSFORM_QUERY_PAYLOAD_KIND,
     VIEW3D_QUERY_PAYLOAD_KIND,
+    VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_QUERY_KIND,
     VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND,
     TextVisual,
     TransformQueryPayload,
@@ -45,11 +47,14 @@ from gsp.protocol import (
     View3D,
     View3DDiagnosticCode,
     View3DMeshPickDiagnosticCode,
+    View3DMeshTrianglePickGeometryPayload,
     View3DMeshTrianglePickPayload,
     View3DMeshTrianglePickRequest,
     View3DQueryPayload,
     VisualFamily,
     VisualTransformBinding,
+    mesh_pick_panel_ndc_z,
+    project_view3d_data_point,
     resolve_view3d_projection_snapshot,
 )
 from gsp_matplotlib.color_mapping import map_scalar_value
@@ -57,6 +62,7 @@ from gsp_matplotlib.protocol_query import (
     QueryVisualEntry,
     failed_query_result,
     query_view3d_mesh_triangle_pick,
+    query_view3d_mesh_triangle_pick_geometry,
     query_view3d_ray_context,
     query_visuals,
     unsupported_query_result,
@@ -464,6 +470,171 @@ def test_query_view3d_mesh_triangle_pick_returns_frontmost_public_triangle():
     assert payload.panel_ndc_xy == pytest.approx((0.0, 0.0))
     assert payload.pick_scene_snapshot_id == "pick-scene:fixture"
     assert payload.diagnostics[0].code == View3DMeshPickDiagnosticCode.ADAPTED_CPU_REFERENCE
+
+
+def test_query_view3d_mesh_triangle_pick_geometry_returns_required_hit_fields():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    positions = np.array(
+        [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.5], [-1.0, 1.0, 0.0]],
+        dtype=np.float32,
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=positions,
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    result = query_view3d_mesh_triangle_pick_geometry(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(25.0, 25.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+        pick_scene_snapshot_id="pick-scene:geometry",
+    )
+
+    assert result.status == QueryStatus.HIT
+    assert result.extension_payload_kind == VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_QUERY_KIND
+    payload = result.extension_payload
+    assert isinstance(payload, View3DMeshTrianglePickGeometryPayload)
+    assert payload.kind == VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_QUERY_KIND
+    assert payload.visual_id == "visual:mesh3d"
+    assert payload.primitive_index == 0
+    assert payload.hit_barycentric == pytest.approx((0.5, 0.25, 0.25))
+    assert payload.hit_data_xyz == pytest.approx((-0.5, -0.5, 0.125))
+    projected = tuple(project_view3d_data_point(view, tuple(row)) for row in positions)
+    assert payload.hit_panel_ndc_z == pytest.approx(
+        mesh_pick_panel_ndc_z(payload.hit_barycentric, *projected)
+    )
+    assert payload.front_facing is None
+    assert (
+        View3DMeshPickDiagnosticCode.ADAPTED_PUBLIC_GEOMETRY_RECONSTRUCTION
+        in tuple(diagnostic.code for diagnostic in payload.diagnostics)
+    )
+
+
+def test_query_view3d_mesh_triangle_pick_geometry_gates_projected_facing():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [-1.0, 1.0, 0.0]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 2, 1]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    without_facing = query_view3d_mesh_triangle_pick_geometry(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(25.0, 25.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+    with_facing = query_view3d_mesh_triangle_pick_geometry(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(25.0, 25.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+        include_facing=True,
+    )
+
+    assert without_facing.status == QueryStatus.HIT
+    assert isinstance(
+        without_facing.extension_payload, View3DMeshTrianglePickGeometryPayload
+    )
+    assert without_facing.extension_payload.front_facing is None
+    assert with_facing.status == QueryStatus.HIT
+    assert isinstance(with_facing.extension_payload, View3DMeshTrianglePickGeometryPayload)
+    assert with_facing.extension_payload.front_facing is False
+
+
+def test_query_view3d_mesh_triangle_pick_geometry_omits_fields_on_miss():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [[-0.25, -0.25, 0.0], [0.25, -0.25, 0.0], [0.0, 0.25, 0.0]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    result = query_view3d_mesh_triangle_pick_geometry(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(90.0, 90.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+
+    assert result.status == QueryStatus.MISS
+    assert result.extension_payload_kind == VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_QUERY_KIND
+    payload = result.extension_payload
+    assert isinstance(payload, View3DMeshTrianglePickGeometryPayload)
+    assert payload.visual_id is None
+    assert payload.hit_barycentric is None
+    assert payload.hit_panel_ndc_z is None
+    assert payload.hit_data_xyz is None
+    assert payload.front_facing is None
+
+
+def test_query_view3d_mesh_triangle_pick_geometry_rejects_perspective_scope():
+    view = View3D(
+        id="view:main",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 2.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=PerspectiveProjection3D(
+            fov_y_degrees=45.0,
+            near_far=(0.1, 10.0),
+        ),
+    )
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [[-0.5, -0.5, 0.0], [0.5, -0.5, 0.0], [0.0, 0.5, 0.0]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    result = query_view3d_mesh_triangle_pick_geometry(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(50.0, 50.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+
+    assert result.status == QueryStatus.UNSUPPORTED
+    assert result.diagnostic == View3DMeshPickDiagnosticCode.UNSUPPORTED_PROJECTION.value
+    assert isinstance(result.extension_payload, View3DMeshTrianglePickGeometryPayload)
+    assert result.extension_payload.hit_barycentric is None
 
 
 def test_query_view3d_mesh_triangle_pick_reports_miss_and_invalid_outside_panel():

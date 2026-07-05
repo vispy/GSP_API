@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -45,3 +45,27 @@ Implement the accepted P033/ADR-0031 protocol surface and fixtures for
 - Stop before mutating the v1 identity-only payload.
 - Stop before using private Datoviz state, raw backend depth, backend-native ids, or undocumented
   depth semantics as public GSP fields.
+
+## Result
+
+Completed locally.
+
+Implemented the accepted S050 geometry/facing protocol surface without mutating the identity-only
+`query.view3d.mesh_triangle_pick.v1` payload. Added public helpers for projected barycentric
+coordinates, panel-NDC z interpolation, DATA-space hit interpolation, and projected facing. Added a
+separate `View3DMeshTrianglePickGeometryPayload` for
+`query.view3d.mesh_triangle_pick.geometry.v1`; geometry fields are required on hits and forbidden
+on non-hits, while `front_facing` is emitted only through the opt-in facing path.
+
+The Matplotlib CPU reference path now has an opt-in
+`query_view3d_mesh_triangle_pick_geometry()` wrapper that reconstructs geometry from public GSP
+scene records and keeps the existing identity-only query unchanged. Datoviz geometry/facing
+capabilities remain unadvertised.
+
+Focused validation passed:
+
+- `uv run pytest tests/test_view3d_protocol.py tests/test_matplotlib_protocol_query.py -q`
+- `uv run mypy src/gsp/protocol/mesh_pick_geometry.py src/gsp/protocol/query.py src/gsp/protocol/__init__.py src/gsp_matplotlib/protocol_query.py --strict --show-error-codes`
+- `python -m compileall -q src/gsp/protocol src/gsp_matplotlib tests/test_view3d_protocol.py tests/test_matplotlib_protocol_query.py`
+
+Full-suite Datoviz fake/QA and full-tree mypy issues remain separate existing debt from M226.

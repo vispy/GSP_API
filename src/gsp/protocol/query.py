@@ -10,6 +10,10 @@ import numpy as np
 from .color import ScalarColorSlot, ScalarRangeClass
 from .ids import validate_id
 from .guides import AxisDimension
+from .mesh_pick_geometry import (
+    QUERY_VIEW3D_MESH_TRIANGLE_PICK_FACING_CAPABILITY,
+    QUERY_VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_CAPABILITY,
+)
 from .transforms import InverseStatus
 
 
@@ -80,6 +84,12 @@ SCALAR_COLOR_QUERY_PAYLOAD_KIND = "gsp.scalar-color-query@0.1"
 TRANSFORM_QUERY_PAYLOAD_KIND = "gsp.transform-query@0.1"
 VIEW3D_QUERY_PAYLOAD_KIND = "gsp.view3d-query@0.1"
 VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND = "query.view3d.mesh_triangle_pick.v1"
+VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_QUERY_KIND = (
+    QUERY_VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_CAPABILITY
+)
+VIEW3D_MESH_TRIANGLE_PICK_FACING_QUERY_KIND = (
+    QUERY_VIEW3D_MESH_TRIANGLE_PICK_FACING_CAPABILITY
+)
 
 
 class QueryDiagnosticSeverity(str, Enum):
@@ -106,6 +116,14 @@ class View3DMeshPickDiagnosticCode(str, Enum):
     UNSUPPORTED_NATIVE_STATE_ONLY = "pick.unsupported.native_state_only"
     UNSUPPORTED_FACE_CULLING = "pick.unsupported.face_culling"
     UNSUPPORTED_PROJECTED_DEGENERATE = "pick.unsupported.projected_degenerate"
+    UNSUPPORTED_GEOMETRY_PAYLOAD = "pick.unsupported.geometry_payload"
+    UNSUPPORTED_NO_PUBLIC_GEOMETRY_RECONSTRUCTION = (
+        "pick.unsupported.no_public_geometry_reconstruction"
+    )
+    UNSUPPORTED_NO_PUBLIC_PANEL_NDC_DEPTH = (
+        "pick.unsupported.no_public_panel_ndc_depth"
+    )
+    UNSUPPORTED_FACING_PAYLOAD = "pick.unsupported.facing_payload"
     QUERY_3D_MESH_CULLING_UNSUPPORTED = "query_3d_mesh_culling_unsupported"
     STALE_LAYOUT_SNAPSHOT = "pick.stale.layout_snapshot"
     STALE_VIEW_REVISION = "pick.stale.view_revision"
@@ -116,6 +134,9 @@ class View3DMeshPickDiagnosticCode(str, Enum):
     INVALID_PANEL_POINT = "pick.invalid.panel_point"
     INVALID_OUTSIDE_PANEL = "pick.invalid.outside_panel"
     ADAPTED_CPU_REFERENCE = "pick.adapted.cpu_reference"
+    ADAPTED_PUBLIC_GEOMETRY_RECONSTRUCTION = (
+        "pick.adapted.public_geometry_reconstruction"
+    )
     ADAPTED_RASTERIZATION_TOLERANCE = "pick.adapted.rasterization_tolerance"
     AMBIGUOUS_EDGE_OR_VERTEX = "pick.ambiguous.edge_or_vertex"
     AMBIGUOUS_DEPTH_TIE = "pick.ambiguous.depth_tie"
@@ -273,6 +294,162 @@ class View3DMeshTrianglePickPayload:
         for diagnostic in self.diagnostics:
             if not isinstance(diagnostic, QueryDiagnostic):
                 raise TypeError("diagnostics must contain QueryDiagnostic values")
+
+
+@dataclass(frozen=True, slots=True)
+class View3DMeshTrianglePickGeometryPayload:
+    """S050 geometry response payload for one View3D mesh triangle pick."""
+
+    status: QueryStatus | str
+    hit: bool
+    view_id: str
+    panel_xy: tuple[float, float]
+    kind: str = VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_QUERY_KIND
+    panel_id: str | None = None
+    panel_ndc_xy: tuple[float, float] | None = None
+    layout_snapshot_id: str | None = None
+    view_revision: int | str | None = None
+    view_projection_snapshot_id: str | None = None
+    pick_scene_snapshot_id: str | None = None
+    depth_mode: str | None = None
+    visual_id: str | None = None
+    visual_type: str | None = None
+    primitive_kind: str | None = None
+    primitive_index: int | None = None
+    hit_barycentric: tuple[float, float, float] | None = None
+    hit_panel_ndc_z: float | None = None
+    hit_data_xyz: tuple[float, float, float] | None = None
+    front_facing: bool | None = None
+    diagnostics: tuple[QueryDiagnostic, ...] = ()
+
+    def __post_init__(self) -> None:
+        if self.kind != VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_QUERY_KIND:
+            raise ValueError("kind must be query.view3d.mesh_triangle_pick.geometry.v1")
+        status = QueryStatus(self.status) if isinstance(self.status, str) else self.status
+        _validate_mesh_pick_payload_common(
+            status=status,
+            hit=self.hit,
+            view_id=self.view_id,
+            panel_xy=self.panel_xy,
+            panel_id=self.panel_id,
+            panel_ndc_xy=self.panel_ndc_xy,
+            layout_snapshot_id=self.layout_snapshot_id,
+            view_revision=self.view_revision,
+            view_projection_snapshot_id=self.view_projection_snapshot_id,
+            pick_scene_snapshot_id=self.pick_scene_snapshot_id,
+            depth_mode=self.depth_mode,
+            visual_id=self.visual_id,
+            visual_type=self.visual_type,
+            primitive_kind=self.primitive_kind,
+            primitive_index=self.primitive_index,
+            diagnostics=self.diagnostics,
+        )
+        if status is QueryStatus.HIT:
+            if self.hit_barycentric is None:
+                raise ValueError("hit_barycentric is required for geometry hits")
+            if self.hit_panel_ndc_z is None:
+                raise ValueError("hit_panel_ndc_z is required for geometry hits")
+            if self.hit_data_xyz is None:
+                raise ValueError("hit_data_xyz is required for geometry hits")
+            _validate_finite_triple("hit_barycentric", self.hit_barycentric)
+            if not np.isfinite(self.hit_panel_ndc_z):
+                raise ValueError("hit_panel_ndc_z must be finite")
+            _validate_finite_triple("hit_data_xyz", self.hit_data_xyz)
+            if self.front_facing is not None and not isinstance(self.front_facing, bool):
+                raise TypeError("front_facing must be a bool when provided")
+        elif any(
+            value is not None
+            for value in (
+                self.hit_barycentric,
+                self.hit_panel_ndc_z,
+                self.hit_data_xyz,
+                self.front_facing,
+            )
+        ):
+            raise ValueError("non-hit geometry payloads must not include geometry fields")
+
+
+def _validate_mesh_pick_payload_common(
+    *,
+    status: QueryStatus,
+    hit: bool,
+    view_id: str,
+    panel_xy: tuple[float, float],
+    panel_id: str | None,
+    panel_ndc_xy: tuple[float, float] | None,
+    layout_snapshot_id: str | None,
+    view_revision: int | str | None,
+    view_projection_snapshot_id: str | None,
+    pick_scene_snapshot_id: str | None,
+    depth_mode: str | None,
+    visual_id: str | None,
+    visual_type: str | None,
+    primitive_kind: str | None,
+    primitive_index: int | None,
+    diagnostics: tuple[QueryDiagnostic, ...],
+) -> None:
+    if status not in (
+        QueryStatus.HIT,
+        QueryStatus.MISS,
+        QueryStatus.UNSUPPORTED,
+        QueryStatus.STALE,
+        QueryStatus.INVALID,
+    ):
+        raise ValueError("mesh pick status must be hit, miss, unsupported, stale, or invalid")
+    if hit != (status is QueryStatus.HIT):
+        raise ValueError("hit must be true only when status is hit")
+    validate_id(view_id)
+    _validate_finite_pair("panel_xy", panel_xy)
+    if panel_id is not None:
+        validate_id(panel_id)
+    _validate_optional_finite_pair("panel_ndc_xy", panel_ndc_xy)
+    for field_name, value in (
+        ("layout_snapshot_id", layout_snapshot_id),
+        ("view_projection_snapshot_id", view_projection_snapshot_id),
+        ("pick_scene_snapshot_id", pick_scene_snapshot_id),
+    ):
+        if value is not None:
+            try:
+                validate_id(value)
+            except ValueError as exc:
+                raise ValueError(f"{field_name} invalid: {exc}") from exc
+    if isinstance(view_revision, int) and view_revision < 0:
+        raise ValueError("view_revision must be non-negative")
+    if status in (QueryStatus.HIT, QueryStatus.MISS):
+        if panel_id is None:
+            raise ValueError("panel_id is required for hit/miss mesh pick payloads")
+        if panel_ndc_xy is None:
+            raise ValueError("panel_ndc_xy is required for hit/miss mesh pick payloads")
+        if layout_snapshot_id is None:
+            raise ValueError("layout_snapshot_id is required for hit/miss mesh pick payloads")
+        if view_revision is None:
+            raise ValueError("view_revision is required for hit/miss mesh pick payloads")
+        if view_projection_snapshot_id is None:
+            raise ValueError(
+                "view_projection_snapshot_id is required for hit/miss mesh pick payloads"
+            )
+        if pick_scene_snapshot_id is None:
+            raise ValueError("pick_scene_snapshot_id is required for hit/miss mesh pick payloads")
+        if depth_mode != "opaque_less":
+            raise ValueError("depth_mode must be opaque_less for hit/miss mesh pick payloads")
+    if status is QueryStatus.HIT:
+        if visual_id is None:
+            raise ValueError("visual_id is required for mesh pick hits")
+        validate_id(visual_id)
+        if visual_type != "MeshVisual":
+            raise ValueError("visual_type must be MeshVisual for mesh pick hits")
+        if primitive_kind != "triangle":
+            raise ValueError("primitive_kind must be triangle for mesh pick hits")
+        if primitive_index is None or primitive_index < 0:
+            raise ValueError("primitive_index must be non-negative for mesh pick hits")
+    elif any(
+        value is not None
+        for value in (visual_id, visual_type, primitive_kind, primitive_index)
+    ):
+        raise ValueError("non-hit mesh pick payloads must not include hit identity fields")
+    for diagnostic in diagnostics:
+        if not isinstance(diagnostic, QueryDiagnostic):
+            raise TypeError("diagnostics must contain QueryDiagnostic values")
 
 
 @dataclass(frozen=True, slots=True)
@@ -577,6 +754,12 @@ class QueryResult:
             self.extension_payload_kind == VIEW3D_MESH_TRIANGLE_PICK_QUERY_KIND
             and isinstance(self.extension_payload, View3DMeshTrianglePickPayload)
         )
+        s050_mesh_pick_geometry_payload = (
+            self.extension_payload_kind == VIEW3D_MESH_TRIANGLE_PICK_GEOMETRY_QUERY_KIND
+            and isinstance(
+                self.extension_payload, View3DMeshTrianglePickGeometryPayload
+            )
+        )
         if self.status != QueryStatus.HIT and (
             self.hits
             or self.visual_id is not None
@@ -590,6 +773,7 @@ class QueryResult:
             or (
                 (self.extension_payload_kind is not None or self.extension_payload is not None)
                 and not s044_mesh_pick_payload
+                and not s050_mesh_pick_geometry_payload
             )
         ):
             raise ValueError(
