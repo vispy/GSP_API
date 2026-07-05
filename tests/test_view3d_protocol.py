@@ -8,11 +8,13 @@ from gsp.protocol import (
     CapabilitySnapshot,
     DepthMode3D,
     DirectionalLight3D,
+    FaceCulling,
     MESH3D_DATA_VIEW3D_CAPABILITY,
     Orbit3DPayload,
     OrthographicProjection3D,
     Pan3DPayload,
     PerspectiveProjection3D,
+    ProjectedFaceClassification,
     Projection3DKind,
     QUERY_VIEW3D_MESH_TRIANGLE_PICK_CAPABILITY,
     QUERY_VIEW3D_RAY_READBACK_CAPABILITY,
@@ -36,9 +38,13 @@ from gsp.protocol import (
     ViewKind,
     Zoom3DPayload,
     apply_view3d_navigation_action,
+    classify_projected_triangle,
+    face_culling_excludes,
     orbit_view3d,
     pan_view3d,
     project_view3d_data_point,
+    projected_triangle_area2,
+    projected_triangle_has_strict_contribution,
     resolve_view3d_projection_snapshot,
     unproject_view3d_panel_ndc_point,
     zoom_view3d,
@@ -615,6 +621,76 @@ def test_view3d_projects_canonical_cube_vertices_to_ndc3():
     )
     assert project_view3d_data_point(view, (0.0, 0.0, -0.5)) == pytest.approx(
         (0.0, 0.0, 0.0)
+    )
+
+
+def test_projected_ndc_face_culling_helpers_classify_panel_winding():
+    front_area = projected_triangle_area2(
+        (-0.5, -0.5, 0.0), (0.5, -0.5, 0.0), (0.0, 0.5, 0.0)
+    )
+    back_area = projected_triangle_area2(
+        (-0.5, -0.5, 0.0), (0.0, 0.5, 0.0), (0.5, -0.5, 0.0)
+    )
+
+    assert front_area == pytest.approx(1.0)
+    assert back_area == pytest.approx(-1.0)
+    assert classify_projected_triangle(front_area) is ProjectedFaceClassification.FRONT
+    assert classify_projected_triangle(back_area) is ProjectedFaceClassification.BACK
+    assert classify_projected_triangle(0.0) is ProjectedFaceClassification.DEGENERATE
+    assert not face_culling_excludes(
+        ProjectedFaceClassification.FRONT, FaceCulling.BACK
+    )
+    assert face_culling_excludes(ProjectedFaceClassification.BACK, FaceCulling.BACK)
+    assert projected_triangle_has_strict_contribution(front_area, FaceCulling.BACK)
+    assert not projected_triangle_has_strict_contribution(front_area, FaceCulling.FRONT)
+    assert not projected_triangle_has_strict_contribution(0.0, FaceCulling.NONE)
+
+
+def test_projected_ndc_face_culling_uses_projected_view3d_bounds():
+    normal_view = View3D(
+        id="view:main",
+        panel_id="panel:main",
+        camera=Camera3D(
+            eye=(0.0, 0.0, 1.0),
+            target=(0.0, 0.0, 0.0),
+            up=(0.0, 1.0, 0.0),
+        ),
+        projection=OrthographicProjection3D(
+            xlim=(-1.0, 1.0),
+            ylim=(-1.0, 1.0),
+            near_far=(0.0, 2.0),
+        ),
+    )
+    reversed_x_view = View3D(
+        id="view:main",
+        panel_id="panel:main",
+        camera=normal_view.camera,
+        projection=OrthographicProjection3D(
+            xlim=(1.0, -1.0),
+            ylim=(-1.0, 1.0),
+            near_far=(0.0, 2.0),
+        ),
+    )
+    data_triangle = (
+        (-0.5, -0.5, 0.0),
+        (0.5, -0.5, 0.0),
+        (0.0, 0.5, 0.0),
+    )
+
+    normal_projected = tuple(
+        project_view3d_data_point(normal_view, point) for point in data_triangle
+    )
+    reversed_projected = tuple(
+        project_view3d_data_point(reversed_x_view, point) for point in data_triangle
+    )
+
+    assert (
+        classify_projected_triangle(projected_triangle_area2(*normal_projected))
+        is ProjectedFaceClassification.FRONT
+    )
+    assert (
+        classify_projected_triangle(projected_triangle_area2(*reversed_projected))
+        is ProjectedFaceClassification.BACK
     )
 
 

@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Ready.
+Completed.
 
 ## Summary
 
@@ -45,3 +45,25 @@ Implement the accepted P032/ADR-0030 protocol support and fixtures for strict pr
   or legacy material culling behavior as protocol authority.
 - Stop if implementation requires mesh-local 3D transform semantics, transparent picking, or strict
   alpha blending.
+
+## Result
+
+Completed locally.
+
+Implemented canonical projected-NDC face-culling helpers and capability names in
+`gsp.protocol.mesh_culling`, exported them through `gsp.protocol`, and applied the rule to the
+Matplotlib View3D mesh-triangle CPU reference picker before depth selection. The base
+`query.view3d.mesh_triangle_pick.v1` payload shape is unchanged; projected-degenerate triangles miss
+with a warning diagnostic, and non-opaque alpha remains unsupported for strict mesh picking.
+
+Focused validation passed:
+
+- `uv run pytest tests/test_view3d_protocol.py tests/test_matplotlib_protocol_query.py -q`
+- `uv run mypy src/gsp/protocol/mesh_culling.py src/gsp/protocol/query.py src/gsp/protocol/__init__.py src/gsp_matplotlib/protocol_query.py --strict --show-error-codes`
+- `GSP_BACKEND=matplotlib uv run python -c "import gsp; print('Matplotlib backend OK')"`
+- `GSP_BACKEND=datoviz uv run python -c "import gsp; print('DatoViz backend OK')"`
+
+Full-suite validation still has pre-existing Datoviz-side debt outside this mission: the fake
+Datoviz navigation smoke lacks newly required v0.4 symbols, two visual-QA harness assertions still
+expect older strict/adapted Datoviz statuses, and full-tree mypy still reports the existing
+`src/gsp_datoviz/protocol_renderer.py:5172` generator literal mismatch.

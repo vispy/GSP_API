@@ -41,7 +41,11 @@ from gsp.protocol import (
     View3D,
     View3DDiagnosticCode,
     View3DProjectionSnapshot,
+    ProjectedFaceClassification,
+    classify_projected_triangle,
+    face_culling_excludes,
     project_view3d_data_point,
+    projected_triangle_area2,
     unproject_view3d_panel_ndc_point,
 )
 from gsp.protocol.visuals import (
@@ -283,6 +287,7 @@ def query_view3d_mesh_triangle_pick(
 
     panel_ndc = _panel_coordinate_to_ndc(request.panel_xy, panel_bounds)
     best: tuple[float, str, int] | None = None
+    projected_degenerate_seen = False
     for entry in entries:
         visual = entry.visual
         if not isinstance(visual, MeshVisual):
@@ -317,6 +322,15 @@ def query_view3d_mesh_triangle_pick(
         )
         for face_index, vertex_indices in enumerate(visual.faces):
             triangle = projected[vertex_indices]
+            area2 = projected_triangle_area2(
+                _float3(triangle[0]), _float3(triangle[1]), _float3(triangle[2])
+            )
+            classification = classify_projected_triangle(area2)
+            if classification is ProjectedFaceClassification.DEGENERATE:
+                projected_degenerate_seen = True
+                continue
+            if face_culling_excludes(classification, visual.face_culling):
+                continue
             if np.any(triangle[:, 2] < -1.0) or np.any(triangle[:, 2] > 1.0):
                 continue
             barycentric = _triangle_barycentric_2d(np.asarray(panel_ndc), triangle[:, :2])
@@ -342,6 +356,15 @@ def query_view3d_mesh_triangle_pick(
                 best = (depth, visual.id, int(face_index))
 
     if best is None:
+        diagnostics: tuple[QueryDiagnostic, ...] = (_pick_cpu_reference_diagnostic(),)
+        if projected_degenerate_seen:
+            diagnostics = diagnostics + (
+                _pick_diagnostic(
+                    View3DMeshPickDiagnosticCode.UNSUPPORTED_PROJECTED_DEGENERATE,
+                    "projected-degenerate triangles do not contribute strict pick hits",
+                    severity=QueryDiagnosticSeverity.WARNING,
+                ),
+            )
         return _mesh_pick_result(
             request,
             QueryStatus.MISS,
@@ -349,7 +372,7 @@ def query_view3d_mesh_triangle_pick(
             snapshot=snapshot,
             panel_ndc=panel_ndc,
             pick_scene_snapshot_id=actual_pick_scene_snapshot_id,
-            diagnostics=(_pick_cpu_reference_diagnostic(),),
+            diagnostics=diagnostics,
         )
 
     _, visual_id, primitive_index = best
@@ -959,11 +982,6 @@ def _mesh_pick_unsupported_diagnostic(visual: MeshVisual) -> QueryDiagnostic | N
             View3DMeshPickDiagnosticCode.UNSUPPORTED_NATIVE_STATE_ONLY,
             "S044 mesh picking does not accept transformed 3D meshes",
         )
-    if visual.face_culling.value != "none":
-        return _pick_diagnostic(
-            View3DMeshPickDiagnosticCode.UNSUPPORTED_NATIVE_STATE_ONLY,
-            "S044 mesh picking does not define public culling semantics",
-        )
     if visual.depth_test is DepthMode.DISABLED or visual.depth_write is DepthMode.DISABLED:
         return _pick_diagnostic(
             View3DMeshPickDiagnosticCode.UNSUPPORTED_DEPTH_MODE,
@@ -1031,6 +1049,7 @@ def _view3d_pick_scene_snapshot_id(
             digest.update(np.ascontiguousarray(visual.faces).tobytes())
             digest.update(visual.depth_test.value.encode("ascii"))
             digest.update(visual.depth_write.value.encode("ascii"))
+            digest.update(visual.face_culling.value.encode("ascii"))
             if visual.color is not None:
                 digest.update(np.ascontiguousarray(visual.color).tobytes())
     return f"pick-scene:{digest.hexdigest()[:24]}"

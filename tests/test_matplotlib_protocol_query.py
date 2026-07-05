@@ -10,6 +10,7 @@ from gsp.protocol import (
     ColorMapRef,
     ColorScale,
     CoordinateSpace,
+    FaceCulling,
     ImageOrigin,
     ImageVisual,
     LinearNormalize,
@@ -562,6 +563,112 @@ def test_query_view3d_mesh_triangle_pick_rejects_ndc3_mesh_scope():
 
     assert result.status == QueryStatus.UNSUPPORTED
     assert result.diagnostic == View3DMeshPickDiagnosticCode.UNSUPPORTED_COORDINATE_SPACE.value
+
+
+@pytest.mark.parametrize(
+    ("face_culling", "expected_primitive_index"),
+    ((FaceCulling.BACK, 0), (FaceCulling.FRONT, 1)),
+)
+def test_query_view3d_mesh_triangle_pick_applies_projected_ndc_culling_before_depth(
+    face_culling: FaceCulling, expected_primitive_index: int
+):
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [
+                [-0.5, -0.5, 0.0],
+                [0.5, -0.5, 0.0],
+                [0.0, 0.5, 0.0],
+                [-0.5, -0.5, 0.5],
+                [0.5, -0.5, 0.5],
+                [0.0, 0.5, 0.5],
+            ],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2], [3, 5, 4]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+        face_culling=face_culling,
+    )
+
+    result = query_view3d_mesh_triangle_pick(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(50.0, 50.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+        pick_scene_snapshot_id="pick-scene:culling",
+    )
+
+    assert result.status == QueryStatus.HIT
+    payload = result.extension_payload
+    assert isinstance(payload, View3DMeshTrianglePickPayload)
+    assert payload.primitive_index == expected_primitive_index
+
+
+def test_query_view3d_mesh_triangle_pick_reports_projected_degenerate_miss():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [[0.0, 0.0, 0.0], [0.0, 0.5, 0.0], [0.0, 0.0, 0.5]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 255], dtype=np.uint8),
+    )
+
+    result = query_view3d_mesh_triangle_pick(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(50.0, 50.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+
+    assert result.status == QueryStatus.MISS
+    payload = result.extension_payload
+    assert isinstance(payload, View3DMeshTrianglePickPayload)
+    assert (
+        View3DMeshPickDiagnosticCode.UNSUPPORTED_PROJECTED_DEGENERATE
+        in tuple(diagnostic.code for diagnostic in payload.diagnostics)
+    )
+
+
+def test_query_view3d_mesh_triangle_pick_rejects_nonopaque_alpha():
+    view = _canonical_query_view3d()
+    snapshot = resolve_view3d_projection_snapshot(
+        view, layout_snapshot_id="layout:main"
+    )
+    mesh = MeshVisual(
+        id="visual:mesh3d",
+        positions=np.array(
+            [[-0.5, -0.5, 0.0], [0.5, -0.5, 0.0], [0.0, 0.5, 0.0]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.DATA,
+        color=np.array([255, 0, 0, 128], dtype=np.uint8),
+    )
+
+    result = query_view3d_mesh_triangle_pick(
+        View3DMeshTrianglePickRequest(view_id=view.id, panel_xy=(50.0, 50.0)),
+        [QueryVisualEntry(mesh)],
+        view=view,
+        snapshot=snapshot,
+        panel_bounds=(0.0, 100.0, 0.0, 100.0),
+    )
+
+    assert result.status == QueryStatus.UNSUPPORTED
+    assert result.diagnostic == View3DMeshPickDiagnosticCode.UNSUPPORTED_TRANSPARENT.value
 
 
 def test_query_view3d_ray_context_returns_center_ray_payload():
