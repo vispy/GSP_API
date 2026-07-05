@@ -299,7 +299,7 @@
       "id": "S050",
       "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
       "state": "active",
-      "progress": 88
+      "progress": 90
     }
   ],
   "missions": [
@@ -2197,9 +2197,9 @@
       "id": "M212",
       "title": "S050 3D query payload expansion consultation",
       "stage": "S050",
-      "state": "blocked",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 212
     },
     {
@@ -2327,6 +2327,15 @@
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 226
+    },
+    {
+      "id": "M227",
+      "title": "S050 View3D mesh-pick geometry payload protocol",
+      "stage": "S050",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 227
     }
   ],
   "review_queue": [],
@@ -2433,7 +2442,7 @@
     "M217 completed: Datoviz offscreen review packs now isolate one child process per case; complete post-report teardown crashes preserve rendered artifacts and record child_teardown_crash evidence.",
     "M215 completed: Datoviz query/readback docs now distinguish capability-gated guide/all-rendered query from still-deferred live rich payload parity, scientific readback, hit_policy=all, and mesh-triangle picking.",
     "M211 completed: P032 accepts projected-NDC face culling as a capability-gated v1 boundary, keeps strict non-opaque 3D alpha deferred, and opens M226 for fixtures/implementation without renderer capability promotion.",
-    "M212 packet prepared: use .agent/consultations/P033-3d-query-payload-expansion.md for ChatGPT Pro; do not expand 3D query payloads until the P033 response is accepted.",
+    "M212 completed: P033 accepts query.view3d.mesh_triangle_pick.geometry.v1 and facing.v1 as sibling capabilities while keeping base v1 unchanged; M227 is ready for protocol/fixture implementation.",
     "M204 completed: archived P031 response and accepted unlit Texture2D plus per-vertex UVs as the next material stage via ADR-0029 and spec/visuals/mesh_texture2d_unlit_s050.md.",
     "M218 completed: Texture2D RGBA8 resources, MeshVisual texture2d_unlit fields, per-vertex UV validation, and texture resource resolution helper are implemented without renderer capability promotion.",
     "M219 completed: S050 Texture2D visual-QA fixtures now record texture resources, UV/probe expectations, alpha diagnostics, negative diagnostic metadata, and unsupported backend classification without renderer promotion.",
@@ -2446,7 +2455,7 @@
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
-    "M212 packet prepared: .agent/consultations/P033-3d-query-payload-expansion.md needs ChatGPT Pro response before expanding View3D mesh-pick payloads.",
+    "M212 completed: archived .agent/consultations/P033-response.md, added ADR-0031, spec/view3d_mesh_triangle_pick_geometry.md, and .agent/decisions/S050_view3d_mesh_pick_geometry_payload.md; opened ready M227 for geometry/facing payload protocol fixtures.",
     "M211 completed: archived .agent/consultations/P032-response.md, added ADR-0030, spec/visuals/mesh_face_culling_alpha_s050.md, and .agent/decisions/S050_mesh_face_culling_alpha_boundary.md; opened ready M226 for projected-NDC face-culling protocol fixtures.",
     "M217 completed: reproduced the five-case TextVisual batch signal 11, classified it as Datoviz/native teardown behavior, changed datoviz-offscreen-opt-in review packs to one child per case, and recorded artifacts under artifacts/visual_qa/s050/m217-dataviz-offscreen-*.",
     "M204 completed: archived .agent/consultations/P031-response.md, added ADR-0029, spec/visuals/mesh_texture2d_unlit_s050.md, and .agent/decisions/S050_texture2d_unlit_contracts.md; alpha/culling and expanded 3D query payloads remain separate Pro-consultation blockers.",

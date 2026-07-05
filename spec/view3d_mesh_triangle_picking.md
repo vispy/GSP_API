@@ -24,6 +24,15 @@ meshvisual.positions3d.opaque_depth.v1
 `query.view3d.ray_readback.v1` shares panel coordinate and snapshot conventions, but it is a
 camera/layout ray-context query and does not imply mesh-triangle picking.
 
+S050 accepts two additive sibling capabilities in `spec/view3d_mesh_triangle_pick_geometry.md`:
+
+```text
+query.view3d.mesh_triangle_pick.geometry.v1
+query.view3d.mesh_triangle_pick.facing.v1
+```
+
+They do not mutate this identity-only v1 contract.
+
 ## Scope
 
 Accepted v1 scope:
@@ -39,6 +48,8 @@ Deferred: NDC3 mesh picking, transparent meshes, non-mesh visuals, instancing, p
 projection, textures, multi-hit selection, barycentric coordinates, interpolated DATA/world hit
 positions, depth values, ray distance, and backend-native ids. S050 accepts culling-aware picking
 only as a separate additive capability, `query.view3d.mesh_triangle_pick.face_culling.v1`.
+S050 also accepts geometry payloads only through the separate
+`query.view3d.mesh_triangle_pick.geometry.v1` capability.
 
 ## Request
 
@@ -86,6 +97,9 @@ faces, it is the row index in the public face array. For unindexed triangle list
 triangle ordinal. If a backend cannot map its pick result to this public index, it must not claim
 strict support.
 
+Geometry payload fields such as barycentric coordinates, panel-NDC z, and DATA hit position belong
+to `query.view3d.mesh_triangle_pick.geometry.v1`, not this base payload.
+
 `pick_scene_snapshot_id` is a backend-neutral freshness id for the depth-affecting public scene used
 by the pick. It must change when eligible visual geometry, indices, visibility, depth mode, opacity
 classification, layout, `View3D` revision, or projection state affecting the pick answer changes.
@@ -127,6 +141,12 @@ Stable diagnostic codes include:
 - `pick.unsupported.scene_occluder`;
 - `pick.unsupported.native_state_only`;
 - `query_3d_mesh_culling_unsupported`;
+- `pick.unsupported.geometry_payload`;
+- `pick.unsupported.no_public_geometry_reconstruction`;
+- `pick.unsupported.no_public_panel_ndc_depth`;
+- `pick.unsupported.projected_degenerate`;
+- `pick.unsupported.facing_payload`;
+- `pick.adapted.public_geometry_reconstruction`;
 - `pick.stale.layout_snapshot`;
 - `pick.stale.view_revision`;
 - `pick.stale.view_projection_snapshot`;

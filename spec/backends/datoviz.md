@@ -159,6 +159,14 @@ leakage from framebuffer y-down or native front-face conventions. Datoviz may ad
 culling rule and returns canonical public face identity. Private Vulkan state, private shader slots,
 native mesh ids, and backend draw-state names are not strict evidence.
 
+Datoviz must also keep `query.view3d.mesh_triangle_pick.geometry.v1` and
+`query.view3d.mesh_triangle_pick.facing.v1` unadvertised until the public primitive-identity blocker
+for base `query.view3d.mesh_triangle_pick.v1` is solved. After Datoviz exposes a public visual id
+and canonical face/triangle row, GSP may reconstruct barycentric coordinates, panel-NDC z,
+DATA-space hit position, and projected facing from public GSP scene records. Native Datoviz
+barycentric/depth fields are optional, and raw or undocumented framebuffer depth is not public GSP
+evidence.
+
 ## S040 flat Lambert CPU resolve
 
 Datoviz strict S039 flat Lambert support must use CPU-resolved exact per-face colors, not native

@@ -17,6 +17,7 @@ This file tells agents where to find authoritative design information.
 | Static View3D/camera/projection | spec/view3d.md |
 | View3D navigation actions | spec/view3d_navigation.md |
 | View3D mesh triangle picking | spec/view3d_mesh_triangle_picking.md |
+| View3D mesh triangle pick geometry payload | spec/view3d_mesh_triangle_pick_geometry.md |
 | Mesh material boundary | spec/visuals/mesh_materials_s038.md |
 | Mesh flat Lambert shading | spec/visuals/mesh_flat_lambert_s039.md |
 | Mesh Texture2D unlit material | spec/visuals/mesh_texture2d_unlit_s050.md |
@@ -64,8 +65,10 @@ This file tells agents where to find authoritative design information.
 | View3D mesh triangle picking ADR | adr/ADR-0028-view3d-mesh-triangle-picking.md |
 | MeshVisual Texture2D unlit material ADR | adr/ADR-0029-mesh-texture2d-unlit.md |
 | MeshVisual face culling and alpha boundary ADR | adr/ADR-0030-mesh-face-culling-alpha-boundary.md |
+| View3D mesh pick geometry payload ADR | adr/ADR-0031-view3d-mesh-pick-geometry-payload.md |
 | S050 Texture2D unlit mesh decision | .agent/decisions/S050_texture2d_unlit_contracts.md |
 | S050 mesh face culling and alpha boundary decision | .agent/decisions/S050_mesh_face_culling_alpha_boundary.md |
+| S050 View3D mesh pick geometry payload decision | .agent/decisions/S050_view3d_mesh_pick_geometry_payload.md |
 | S044 View3D mesh triangle picking decision | .agent/decisions/S044_view3d_mesh_triangle_picking.md |
 | S040 Datoviz flat Lambert promotion decision | .agent/decisions/S040_datoviz_flat_lambert_promotion.md |
 | S040 closeout | .agent/S040_CLOSEOUT.md |

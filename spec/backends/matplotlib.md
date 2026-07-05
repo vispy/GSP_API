@@ -179,6 +179,11 @@ adapted/reference behavior and should report `mesh3d_face_culling_adapted` rathe
 strict `meshvisual.face_culling.*.v1` capabilities. Matplotlib must not treat ordinary alpha
 blending or painter sorting as strict non-opaque 3D alpha semantics.
 
+For S050 mesh-pick geometry payloads, Matplotlib may remain the CPU reference/adapted path by
+computing barycentric coordinates, `hit_panel_ndc_z`, `hit_data_xyz`, and projected `front_facing`
+from public GSP scene records. It should report CPU/public reconstruction diagnostics rather than
+claiming GPU fragment-depth strictness.
+
 `gsp_matplotlib.protocol_query.query_view3d_ray_context()` provides the S036 reference
 projection-inverse query path. It returns `gsp.view3d-query@0.1` payloads for panel coordinates,
 reports `query_3d_snapshot_mismatch` for stale layout/view-projection snapshots, and keeps `(N, 3)`

@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Blocked pending ChatGPT Pro consultation.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -38,5 +38,13 @@ S044 mesh triangle picking v1.
 
 Prepared `.agent/consultations/P033-3d-query-payload-expansion.md`.
 
-This needs ChatGPT Pro consultation. Dependent implementation remains paused until the user pastes
-or commits the P033 response.
+Response archived as `.agent/consultations/P033-response.md`.
+
+## Result
+
+Completed. Accepted `query.view3d.mesh_triangle_pick.geometry.v1` for required hit barycentric,
+panel-NDC z, and DATA hit position fields, plus separate
+`query.view3d.mesh_triangle_pick.facing.v1` for projected-facing payloads. Existing
+`query.view3d.mesh_triangle_pick.v1` remains unchanged. Multi-hit, vertex/edge, NDC3, perspective,
+transform, instancing, texture/material readback, raw backend depth, and backend-native ids remain
+deferred. Opened M227 as the bounded protocol/fixture follow-up.

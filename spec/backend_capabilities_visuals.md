@@ -149,6 +149,13 @@ winding rule, reversed-bound behavior, framebuffer-y independence, and culling b
 and query selection. Culling-aware picking is separately gated by
 `query.view3d.mesh_triangle_pick.face_culling.v1`.
 
+S050 also accepts the mesh-pick geometry payload capabilities
+`query.view3d.mesh_triangle_pick.geometry.v1` and
+`query.view3d.mesh_triangle_pick.facing.v1`. They are strict sibling capabilities layered on top of
+identity-only `query.view3d.mesh_triangle_pick.v1`; they do not change the base v1 payload and do
+not imply multi-hit, vertex/edge picking, NDC3 picking, perspective picking, texture/material
+readback, transforms, instancing, raw backend depth, or backend-native ids.
+
 Current S036 support summary:
 
 | Backend | Static View3D projection | `(N,3)` MeshVisual render | Opaque depth | Ray readback | 3D picking |
@@ -162,7 +169,10 @@ Structured diagnostics include `view3d_not_supported`, `mesh3d_requires_view3d`,
 `mesh3d_face_culling_unsupported`, `mesh3d_face_culling_adapted`,
 `mesh3d_culling_winding_ambiguous`, `mesh3d_culling_transform_conflict`,
 `query_3d_mesh_culling_unsupported`, `query_3d_visual_hit_deferred`, and
-`query_3d_snapshot_mismatch`.
+`query_3d_snapshot_mismatch`. S050 geometry payload diagnostics additionally include
+`pick.unsupported.geometry_payload`, `pick.unsupported.no_public_geometry_reconstruction`,
+`pick.unsupported.no_public_panel_ndc_depth`, `pick.unsupported.projected_degenerate`,
+`pick.unsupported.facing_payload`, and `pick.adapted.public_geometry_reconstruction`.
 
 ## S037 View3D navigation and Datoviz binding capability gates
 
