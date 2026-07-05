@@ -413,7 +413,7 @@ def datoviz_v04_live_input_diagnostics(module: ModuleType | Any) -> tuple[str, .
         for name in (
             "dvz_view_input",
             "dvz_input_subscribe_event",
-            "dvz_input_unsubscribe_event",
+            "dvz_input_unsubscribe",
             "DvzPointerEvent",
             "DvzInputEvent",
             "DvzInputEventContent",
@@ -1786,7 +1786,7 @@ class DatovizV04ProtocolRenderer:
             controller_id=controller_id,
             layout_snapshot_id=layout_snapshot_id,
         )
-        self.dvz.dvz_input_subscribe_event(
+        self.live_navigation.subscription_id = self.dvz.dvz_input_subscribe_event(
             router, self.live_navigation.handle_input_event, None
         )
         return self.live_navigation
@@ -1821,7 +1821,7 @@ class DatovizV04ProtocolRenderer:
             controller_id=controller_id,
             layout_snapshot_id=layout_snapshot_id,
         )
-        self.dvz.dvz_input_subscribe_event(
+        self.live_view3d_navigation.subscription_id = self.dvz.dvz_input_subscribe_event(
             router, self.live_view3d_navigation.handle_input_event, None
         )
         return self.live_view3d_navigation
@@ -1899,6 +1899,21 @@ class DatovizV04ProtocolRenderer:
             return self.live_view
 
         self._ensure_app("interactive")
+        view_window = getattr(self.dvz, "dvz_view_window", None)
+        if view_window is not None:
+            self.live_view = view_window(
+                self.app,
+                self.figure,
+                self.resolved_canvas.host_logical_width,
+                self.resolved_canvas.host_logical_height,
+                b"GSP Datoviz review",
+            )
+            if _is_null_handle(self.live_view):
+                raise DatovizV04Unavailable(
+                    "Datoviz interactive window view creation failed"
+                )
+            return self.live_view
+
         view_glfw = getattr(self.dvz, "dvz_view_glfw", None)
         if view_glfw is not None:
             self.live_view = view_glfw(
@@ -2505,6 +2520,7 @@ class _DatovizLiveView2DNavigation:
             panel_rect=self.panel_rect,
             layout_snapshot_id=layout_snapshot_id,
         )
+        self.subscription_id: Any = None
         self._closed = False
 
     @property
@@ -2525,9 +2541,15 @@ class _DatovizLiveView2DNavigation:
         """Unsubscribe from Datoviz pointer callbacks."""
         if self._closed:
             return
-        unsubscribe = getattr(self.renderer.dvz, "dvz_input_unsubscribe_event", None)
-        if unsubscribe is not None:
-            unsubscribe(self.router, self.handle_input_event, None)
+        unsubscribe = getattr(self.renderer.dvz, "dvz_input_unsubscribe", None)
+        if unsubscribe is not None and self.subscription_id is not None:
+            unsubscribe(self.router, self.subscription_id)
+        else:
+            unsubscribe_event = getattr(
+                self.renderer.dvz, "dvz_input_unsubscribe_event", None
+            )
+            if unsubscribe_event is not None:
+                unsubscribe_event(self.router, self.handle_input_event, None)
         self._closed = True
 
     def handle_input_event(
@@ -2644,6 +2666,7 @@ class _DatovizLiveView3DNavigation:
         self._panel_rect = self._initial_panel_rect()
         self._drag_last_px: tuple[float, float] | None = None
         self._drag_mode: Literal["orbit", "pan"] | None = None
+        self.subscription_id: Any = None
         self._closed = False
 
     @property
@@ -2664,9 +2687,15 @@ class _DatovizLiveView3DNavigation:
         """Unsubscribe from Datoviz pointer callbacks."""
         if self._closed:
             return
-        unsubscribe = getattr(self.renderer.dvz, "dvz_input_unsubscribe_event", None)
-        if unsubscribe is not None:
-            unsubscribe(self.router, self.handle_input_event, None)
+        unsubscribe = getattr(self.renderer.dvz, "dvz_input_unsubscribe", None)
+        if unsubscribe is not None and self.subscription_id is not None:
+            unsubscribe(self.router, self.subscription_id)
+        else:
+            unsubscribe_event = getattr(
+                self.renderer.dvz, "dvz_input_unsubscribe_event", None
+            )
+            if unsubscribe_event is not None:
+                unsubscribe_event(self.router, self.handle_input_event, None)
         self._closed = True
 
     def handle_input_event(

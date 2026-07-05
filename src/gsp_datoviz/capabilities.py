@@ -112,7 +112,7 @@ _REQUIRED_DVZ_VIEW3D_RETAINED_DATA_FUNCTIONS = (
 _REQUIRED_DVZ_LIVE_INPUT_FUNCTIONS = (
     "dvz_view_input",
     "dvz_input_subscribe_event",
-    "dvz_input_unsubscribe_event",
+    "dvz_input_unsubscribe",
     "DvzPointerEvent",
     "DvzInputEvent",
     "DvzInputEventContent",

@@ -870,9 +870,14 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
         self.pointer_user_data = None
         self.input_callback = None
         self.input_user_data = None
+        self.next_subscription_id = 1
 
     def dvz_view_glfw(self, app, figure, width, height, title):
         self.calls.append(("view_glfw", app, figure, width, height, title))
+        return "live-view"
+
+    def dvz_view_window(self, app, figure, width, height, title):
+        self.calls.append(("view_window", app, figure, width, height, title))
         return "live-view"
 
     def dvz_app_run(self, app, frame_count):
@@ -915,13 +920,14 @@ class FakeDatovizV04WithInteractive(FakeDatovizV04WithCapture):
         self.calls.append(("subscribe_event", router, user_data))
         self.input_callback = callback
         self.input_user_data = user_data
-        return None
+        subscription_id = self.next_subscription_id
+        self.next_subscription_id += 1
+        return subscription_id
 
-    def dvz_input_unsubscribe_event(self, router, callback, user_data):
-        self.calls.append(("unsubscribe_event", router, callback, user_data))
-        if callback == self.input_callback:
-            self.input_callback = None
-        return None
+    def dvz_input_unsubscribe(self, router, subscription_id):
+        self.calls.append(("unsubscribe", router, subscription_id))
+        self.input_callback = None
+        return True
 
     def dvz_view_request_frame(self, view):
         self.calls.append(("request_frame", view))
@@ -4606,8 +4612,8 @@ def test_renderer_show_creates_live_view_and_runs_app():
     renderer.show(frame_count=1)
 
     assert _calls(fake, "app") == [("app", "scene")]
-    assert _calls(fake, "view_glfw") == [
-        ("view_glfw", "app", "figure", 800, 600, b"GSP Datoviz review")
+    assert _calls(fake, "view_window") == [
+        ("view_window", "app", "figure", 800, 600, b"GSP Datoviz review")
     ]
     assert _calls(fake, "app_run") == [("app_run", "app", 1)]
 
@@ -4620,8 +4626,8 @@ def test_renderer_enable_native_panzoom_creates_live_view_and_controller():
 
     assert panzoom == "panzoom"
     assert renderer.native_panzoom == "panzoom"
-    assert _calls(fake, "view_glfw") == [
-        ("view_glfw", "app", "figure", 800, 600, b"GSP Datoviz review")
+    assert _calls(fake, "view_window") == [
+        ("view_window", "app", "figure", 800, 600, b"GSP Datoviz review")
     ]
     assert _calls(fake, "panzoom_desc") == [("panzoom_desc",)]
     assert _calls(fake, "view_panzoom") == [
@@ -4637,8 +4643,8 @@ def test_renderer_enable_native_view3d_arcball_creates_live_controller():
 
     assert arcball == "arcball"
     assert renderer.native_arcball == "arcball"
-    assert _calls(fake, "view_glfw") == [
-        ("view_glfw", "app", "figure", 800, 600, b"GSP Datoviz review")
+    assert _calls(fake, "view_window") == [
+        ("view_window", "app", "figure", 800, 600, b"GSP Datoviz review")
     ]
     assert _calls(fake, "arcball_desc") == [("arcball_desc",)]
     assert _calls(fake, "view_arcball") == [
@@ -4900,7 +4906,7 @@ def test_datoviz_live_navigation_unsubscribes_on_close():
     ) as renderer:
         renderer.enable_gsp_view2d_navigation()
 
-    assert _calls(fake, "unsubscribe_event")
+    assert _calls(fake, "unsubscribe") == [("unsubscribe", "input-router", 1)]
     assert fake.input_callback is None
 
 
@@ -4922,8 +4928,8 @@ def test_renderer_show_uses_resolved_host_logical_size_for_reference_canvas():
 
     renderer.show(frame_count=1)
 
-    assert _calls(fake, "view_glfw") == [
-        ("view_glfw", "app", "figure", 320, 240, b"GSP Datoviz review")
+    assert _calls(fake, "view_window") == [
+        ("view_window", "app", "figure", 320, 240, b"GSP Datoviz review")
     ]
 
 
