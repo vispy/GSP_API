@@ -1,0 +1,10 @@
+Datoviz offscreen child process terminated by signal 11
+
+Command:
+/home/cyrille/GIT/Viz/GSP_API/.venv/bin/python3 -m gsp.qa.visual run --suite s028 --backends datoviz --out /home/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/latest_pre_rc_compat_s028/_datoviz_offscreen_child/guide_view2d_reversed_explicit --no-contact-sheet --resolution 800x600 --datoviz-color-pipeline legacy_srgb_blend --case guide/view2d_reversed_explicit --run-id latest-pre-rc-compat-s028
+
+stdout:
+
+
+stderr:
+

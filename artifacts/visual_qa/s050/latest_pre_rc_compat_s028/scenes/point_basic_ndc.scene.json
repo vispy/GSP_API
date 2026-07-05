@@ -1,0 +1,68 @@
+{
+  "arrays": {
+    "point_colors": {
+      "dtype": "uint8",
+      "key": "point_colors",
+      "path": "point_basic_ndc.arrays.npz",
+      "shape": [
+        5,
+        4
+      ]
+    },
+    "point_positions": {
+      "dtype": "float32",
+      "key": "point_positions",
+      "path": "point_basic_ndc.arrays.npz",
+      "shape": [
+        5,
+        2
+      ]
+    },
+    "point_sizes": {
+      "dtype": "float32",
+      "key": "point_sizes",
+      "path": "point_basic_ndc.arrays.npz",
+      "shape": [
+        5
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "point/basic_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [],
+  "transform_resources": [],
+  "view3d": null,
+  "views": [],
+  "visuals": [
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          5,
+          4
+        ]
+      },
+      "coordinate_space": "ndc",
+      "family": "point",
+      "id": "visual:point-basic-ndc",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          5,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          5
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "arrays": {
+    "point_positions": {
+      "dtype": "float32",
+      "key": "point_positions",
+      "path": "color_point_scalar_gray_range.arrays.npz",
+      "shape": [
+        7,
+        2
+      ]
+    },
+    "point_scalar_values": {
+      "dtype": "float32",
+      "key": "point_scalar_values",
+      "path": "color_point_scalar_gray_range.arrays.npz",
+      "shape": [
+        7
+      ]
+    },
+    "point_sizes": {
+      "dtype": "float32",
+      "key": "point_sizes",
+      "path": "color_point_scalar_gray_range.arrays.npz",
+      "shape": [
+        7
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "color/point_scalar_gray_range",
+  "color_scales": [
+    {
+      "colormap": {
+        "id": "gray",
+        "kind": "named"
+      },
+      "description": null,
+      "id": "scale:gray",
+      "normalize": {
+        "clip": true,
+        "kind": "linear",
+        "vmax": 1.0,
+        "vmin": 0.0
+      }
+    }
+  ],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [],
+  "transform_resources": [],
+  "view3d": null,
+  "views": [],
+  "visuals": [
+    {
+      "color_encoding": {
+        "alpha": 1.0,
+        "color_scale_id": "scale:gray",
+        "domain": null,
+        "slot": "color",
+        "values": {
+          "dtype": "float32",
+          "shape": [
+            7
+          ]
+        }
+      },
+      "coordinate_space": "ndc",
+      "family": "point",
+      "id": "visual:color-point-scalar",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          7,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float32",
+        "shape": [
+          7
+        ]
+      }
+    }
+  ]
+}

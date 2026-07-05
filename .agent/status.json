@@ -2377,9 +2377,9 @@
       "id": "M232",
       "title": "S050 Datoviz latest pre-RC compatibility impact replay",
       "stage": "S050",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 232
     }
   ],
@@ -2504,9 +2504,10 @@
     "M229 completed: GSP now accepts Datoviz pre-RC sampled-field image and View2D descriptor APIs; the S028 compatibility pack against api/pre-rc-cleanup recorded 12 Datoviz strict rows, 4 adapted text rows, and 14 native SIGSEGV crash rows. Keep M222 blocked until Texture2D runtime blockers have fresh positive evidence.",
     "M230 completed: added python -m gsp.qa.visual compare-matrix and tools/run_datoviz_pre_rc_replay.sh so a future Datoviz post-merge S028 pack can be compared against the committed pre-RC baseline; M222 remains blocked pending fresh Texture2D runtime evidence.",
     "M231 completed: GSP replayed Datoviz api/pre-rc-cleanup at af168b5a9 and now accepts Datoviz DvzResult mutator success codes; post-refactor S028 replay improved 10 Datoviz rows from crashed to strict with no regressions, leaving 4 SIGSEGV rows. M222 remains blocked because Texture2D-specific sampler/origin/color-role/unlit-equation evidence is still absent.",
-    "M232 ready: sibling Datoviz api/pre-rc-cleanup is now at 1ef626a56 with a clean worktree after controller DvzResult contract, GUI/canvas teardown timing, and post-result-contract planning/classification doc changes. Run a latest pre-RC compatibility replay before acting on M222 or promoting any Datoviz capability rows."
+    "M232 completed: GSP replayed Datoviz api/pre-rc-cleanup at 1ef626a56; fast adapter validation passed, the latest S028 matrix matched M231 exactly with 52 strict, 4 adapted, 4 crashed, zero regressions, and zero improvements, and M222 remains blocked pending Texture2D sampler/origin/unmanaged-RGBA/unlit-equation evidence."
   ],
   "notes": [
+    "M232 completed: added .agent/S050_DATOVIZ_LATEST_PRE_RC_REPLAY.md and artifacts/visual_qa/s050/latest_pre_rc_compat_s028 plus latest_pre_rc_datoviz_guide_axis. Datoviz 1ef626a56 produced no regression or improvement versus M231; remaining crashed rows are color/scalar_image_viridis_colorbar and the three guide/View2D rows.",
     "M232 opened as ready after inspecting sibling Datoviz api/pre-rc-cleanup at 1ef626a56. The next GSP step is a latest pre-RC compatibility replay focused on controller/result-contract return handling, View2D/View3D adapter paths, isolated offscreen crash rows, and M222 Texture2D non-promotion guardrails.",
     "M228 completed: added .agent/S050_DATOVIZ_TEXTURE2D_RUNTIME_SEMANTICS_PROOF.md and artifacts/visual_qa/s050/m228-dataviz-texture2d-runtime; M222 remains blocked because strict S050 sampler/origin/unmanaged RGBA/multiplication semantics are not proven with public Datoviz APIs.",
     "M227 completed: added query.view3d.mesh_triangle_pick.geometry.v1 and facing.v1 constants, View3DMeshTrianglePickGeometryPayload, public barycentric/depth/DATA/facing helpers, and an opt-in Matplotlib geometry query wrapper. Focused protocol/query tests and strict mypy passed; existing Datoviz broad-suite debt remains separate.",
@@ -2633,7 +2634,8 @@
     "M229 completed: GSP now accepts Datoviz pre-RC sampled-field image and View2D descriptor APIs; the S028 compatibility pack against api/pre-rc-cleanup recorded 12 Datoviz strict rows, 4 adapted text rows, and 14 native SIGSEGV crash rows. Keep M222 blocked until Texture2D runtime blockers have fresh positive evidence.",
     "M230 completed: added python -m gsp.qa.visual compare-matrix and tools/run_datoviz_pre_rc_replay.sh so a future Datoviz post-merge S028 pack can be compared against the committed pre-RC baseline; M222 remains blocked pending fresh Texture2D runtime evidence.",
     "M231 completed: GSP replayed Datoviz api/pre-rc-cleanup at af168b5a9 and now accepts Datoviz DvzResult mutator success codes; post-refactor S028 replay improved 10 Datoviz rows from crashed to strict with no regressions, leaving 4 SIGSEGV rows. M222 remains blocked because Texture2D-specific sampler/origin/color-role/unlit-equation evidence is still absent.",
-    "M232 opened as ready after inspecting sibling Datoviz api/pre-rc-cleanup at 1ef626a56. The next GSP step is a latest pre-RC compatibility replay focused on controller/result-contract return handling, View2D/View3D adapter paths, isolated offscreen crash rows, and M222 Texture2D non-promotion guardrails."
+    "M232 opened as ready after inspecting sibling Datoviz api/pre-rc-cleanup at 1ef626a56. The next GSP step is a latest pre-RC compatibility replay focused on controller/result-contract return handling, View2D/View3D adapter paths, isolated offscreen crash rows, and M222 Texture2D non-promotion guardrails.",
+    "M232 completed: added .agent/S050_DATOVIZ_LATEST_PRE_RC_REPLAY.md and artifacts/visual_qa/s050/latest_pre_rc_compat_s028 plus latest_pre_rc_datoviz_guide_axis. Datoviz 1ef626a56 produced no regression or improvement versus M231; remaining crashed rows are color/scalar_image_viridis_colorbar and the three guide/View2D rows."
   ],
   "summaries": [
     "M216 completed: refreshed live Datoviz point/image query evidence and narrowed capability advertisement to current proven payloads.",

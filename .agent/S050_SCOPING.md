@@ -43,11 +43,11 @@ promotion.
 |---|---|---|
 | M222 | blocked | Datoviz Texture2D capability advertisement; still blocked by missing sampler, origin, unmanaged RGBA, and exact unlit multiplication evidence. |
 | M231 | completed | Replayed Datoviz `api/pre-rc-cleanup` at `af168b5a9` and added generic `DvzResult` mutator success handling. |
-| M232 | ready | Re-run compatibility against current Datoviz `api/pre-rc-cleanup` at `1ef626a56`, after controller result-contract and GUI/canvas teardown changes. |
+| M232 | completed | Replayed current Datoviz `api/pre-rc-cleanup` at `1ef626a56`; matrix matched M231 exactly and no capability rows promoted. |
 
-M232 should run before any M222 reassessment. The current Datoviz changes may affect adapter
-return-code handling, retained View3D camera updates, and offscreen crash frequency, but they do not
-by themselves prove S050 Texture2D sampler/origin/color-equation semantics.
+M222 remains blocked after M232. The current Datoviz changes did not affect adapter return-code
+handling, retained View3D camera updates, or S028 offscreen matrix outcomes, and they do not prove
+S050 Texture2D sampler/origin/color-equation semantics.
 
 ## M200 Acceptance
 

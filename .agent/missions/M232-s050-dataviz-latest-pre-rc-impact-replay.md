@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Ready.
+Completed by local-main-codex.
 
 ## Summary
 
@@ -50,3 +50,12 @@ Refresh GSP's Datoviz compatibility evidence against the current sibling Datoviz
   decision.
 - Stop and create a ChatGPT Pro consultation packet if the Datoviz API changes require a GSP
   protocol redesign.
+
+## Result
+
+Completed locally. See `.agent/S050_DATOVIZ_LATEST_PRE_RC_REPLAY.md`.
+
+GSP replayed Datoviz `api/pre-rc-cleanup` at `1ef626a56`. Fast adapter validation passed, the S028
+compatibility matrix matched M231 exactly with zero regressions and zero improvements, and M222
+remains blocked because Texture2D-specific sampler/origin/unmanaged-RGBA/unlit-equation evidence is
+still absent.
