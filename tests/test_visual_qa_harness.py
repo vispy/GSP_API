@@ -34,6 +34,7 @@ from gsp.qa.visual.datoviz_probe import (
     ImportProbe,
     MinimalPointProbe,
 )
+from gsp.qa.visual.review_compare import compare_capability_matrices
 import gsp.qa.visual.review_pack as review_pack
 from gsp.qa.visual.review_pack import run_visual_review_pack
 import gsp.qa.visual.runner as visual_runner
@@ -350,6 +351,94 @@ def test_visual_review_pack_writes_matrix_and_index(tmp_path: Path) -> None:
     assert matrix["schema_kind"] == "gsp.visual_qa.capability_matrix"
     assert matrix["summary"]["strict"] == 1
     assert matrix["summary"]["not_run"] == 1
+
+
+def test_capability_matrix_comparison_reports_improvements_and_regressions(
+    tmp_path: Path,
+) -> None:
+    baseline_dir = tmp_path / "baseline"
+    candidate_dir = tmp_path / "candidate"
+    out_dir = tmp_path / "comparison"
+    baseline_dir.mkdir()
+    candidate_dir.mkdir()
+    baseline = {
+        "schema_version": 1,
+        "schema_kind": "gsp.visual_qa.capability_matrix",
+        "suite": "s028",
+        "run_id": "baseline",
+        "summary": {"strict": 2, "crashed": 1},
+        "rows": [
+            {
+                "backend": "datoviz",
+                "case_id": "point/basic_ndc",
+                "status": "strict",
+                "reason_code": "datoviz_rendered_strict_s029_family_audit",
+            },
+            {
+                "backend": "datoviz",
+                "case_id": "point/diameter_ramp_ndc",
+                "status": "crashed",
+                "reason_code": "datoviz_runtime_error",
+            },
+            {
+                "backend": "matplotlib",
+                "case_id": "point/basic_ndc",
+                "status": "strict",
+                "reason_code": "matplotlib_reference_rendered",
+            },
+        ],
+    }
+    candidate = {
+        "schema_version": 1,
+        "schema_kind": "gsp.visual_qa.capability_matrix",
+        "suite": "s028",
+        "run_id": "candidate",
+        "summary": {"strict": 2, "crashed": 1},
+        "rows": [
+            {
+                "backend": "datoviz",
+                "case_id": "point/basic_ndc",
+                "status": "crashed",
+                "reason_code": "datoviz_runtime_error",
+            },
+            {
+                "backend": "datoviz",
+                "case_id": "point/diameter_ramp_ndc",
+                "status": "strict",
+                "reason_code": "datoviz_rendered_strict_s029_family_audit",
+            },
+            {
+                "backend": "matplotlib",
+                "case_id": "point/basic_ndc",
+                "status": "strict",
+                "reason_code": "matplotlib_reference_rendered",
+            },
+        ],
+    }
+    (baseline_dir / "capability_matrix.json").write_text(
+        json.dumps(baseline), encoding="utf-8"
+    )
+    (candidate_dir / "capability_matrix.json").write_text(
+        json.dumps(candidate), encoding="utf-8"
+    )
+
+    result = compare_capability_matrices(
+        baseline_path=baseline_dir,
+        candidate_path=candidate_dir,
+        out_dir=out_dir,
+    )
+
+    assert result["summary"]["outcomes"]["improved"] == 1  # type: ignore[index]
+    assert result["summary"]["outcomes"]["regressed"] == 1  # type: ignore[index]
+    assert result["summary"]["outcomes"]["unchanged"] == 1  # type: ignore[index]
+    rows = {
+        (row["backend"], row["case_id"]): row
+        for row in result["rows"]  # type: ignore[index]
+    }
+    assert rows[("datoviz", "point/diameter_ramp_ndc")]["outcome"] == "improved"
+    assert rows[("datoviz", "point/basic_ndc")]["outcome"] == "regressed"
+    assert (out_dir / "comparison.json").exists()
+    assert "## Regressions" in (out_dir / "comparison.md").read_text(encoding="utf-8")
 
 
 def test_datoviz_offscreen_review_pack_records_child_crash(

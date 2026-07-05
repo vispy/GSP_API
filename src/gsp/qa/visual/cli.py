@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Sequence
 
 from gsp.qa.visual.cases import S023_SUITE, list_cases
+from gsp.qa.visual.review_compare import compare_capability_matrices
 from gsp.qa.visual.review_pack import run_visual_review_pack
 from gsp.qa.visual.runner import run_visual_qa_suite
 
@@ -68,6 +69,26 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     review_parser.add_argument("--run-id", default=None)
 
+    compare_parser = subparsers.add_parser(
+        "compare-matrix",
+        help="compare two review-pack capability matrices",
+    )
+    compare_parser.add_argument(
+        "--baseline",
+        required=True,
+        help="baseline capability_matrix.json path or review-pack directory",
+    )
+    compare_parser.add_argument(
+        "--candidate",
+        required=True,
+        help="candidate capability_matrix.json path or review-pack directory",
+    )
+    compare_parser.add_argument(
+        "--out",
+        default=None,
+        help="optional output directory for comparison.json and comparison.md",
+    )
+
     args = parser.parse_args(argv)
     if args.command == "list":
         for case in list_cases(suite=args.suite):
@@ -106,6 +127,18 @@ def main(argv: Sequence[str] | None = None) -> int:
             datoviz_color_pipeline=args.datoviz_color_pipeline,
         )
         print(result["index_path"])
+        return 0
+    if args.command == "compare-matrix":
+        out_dir = Path(args.out) if args.out is not None else None
+        result = compare_capability_matrices(
+            baseline_path=Path(args.baseline),
+            candidate_path=Path(args.candidate),
+            out_dir=out_dir,
+        )
+        if out_dir is not None:
+            print(out_dir / "comparison.md")
+        else:
+            print(result["summary"])
         return 0
     raise AssertionError(f"unhandled command: {args.command}")
 
