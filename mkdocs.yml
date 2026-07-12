@@ -7,6 +7,10 @@ docs_dir: mkdocs_source
 
 theme:
   name: material # built-in theme
+  palette:
+    scheme: slate
+    primary: black
+    accent: indigo
 
 markdown_extensions:
   - toc:
