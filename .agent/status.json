@@ -1,5 +1,5 @@
 {
-  "current_stage": "S055",
+  "current_stage": "S056",
   "stages": [
     {
       "id": "S001",
@@ -330,6 +330,12 @@
       "title": "Experimental Datoviz Session Preview",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S056",
+      "title": "Public Session Conformance And Failure Isolation",
+      "state": "active",
+      "progress": 10
     }
   ],
   "missions": [
@@ -2501,6 +2507,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 242
+    },
+    {
+      "id": "M243",
+      "title": "S056 public session conformance and failure-isolation hardening",
+      "stage": "S056",
+      "state": "approved",
+      "agent": "local-main-codex",
+      "progress": 10,
+      "priority": 243
     }
   ],
   "review_queue": [],
