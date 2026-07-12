@@ -50,8 +50,13 @@ repo_name: GSP_API
 nav:
   - Home: index.md
   - About: about.md
+  - Status and releases: status.md
+  - Protocol specification: protocol.md
+  - Testing and conformance:
+      - Overview: conformance.md
+      - API review examples: review-examples.md
+      - Historical S023 QA: s023_visual_qa.md
   - Gallery: gallery.md
-  - S023 Visual QA: s023_visual_qa.md
   - Philosophy:
       - Overview: philosophy/README.md
       - Whitepaper: philosophy/whitepaper.md
