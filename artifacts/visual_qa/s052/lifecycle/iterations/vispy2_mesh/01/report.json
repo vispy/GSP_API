@@ -1,0 +1,72 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_mesh/01/scenes/vispy2_mesh.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_mesh/01/backends/datoviz/vispy2_mesh.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "all_rendered_guide_query": "unsupported",
+            "auto_ticks": "backend-native",
+            "axis_guide_count": 2,
+            "axis_provider": "datoviz.v04.panel_axis.wip",
+            "axis_rendering": "adapted-review",
+            "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-viewport-clip",
+            "grid_clip_to_plot_rect": "native-verified",
+            "guide_query": "unsupported",
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported",
+            "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
+            "ordered_ranges_preserved": true,
+            "view2d_present": true
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_mesh/01/backends/datoviz/vispy2_mesh.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "vispy2/mesh",
+      "family": "producer",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "view2d"
+      ],
+      "scene_path": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_mesh/01/scenes/vispy2_mesh.scene.json",
+      "title": "VisPy2 untextured mesh"
+    }
+  ],
+  "contact_sheets": [],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "ff62b3256f1de7dd2df2ee890c99968715789a27",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_mesh/01/environment.json",
+  "run_id": "s052-lifecycle-vispy2_mesh-01",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S051",
+  "started_at": "2026-07-12T12:15:11.896984+00:00",
+  "suite": "s051"
+}

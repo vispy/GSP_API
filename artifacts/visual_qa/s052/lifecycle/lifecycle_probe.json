@@ -1,0 +1,191 @@
+{
+  "cases": [
+    "vispy2/primitives",
+    "vispy2/text",
+    "vispy2/mesh"
+  ],
+  "datoviz_evidence": {
+    "git_branch": "v0.4-dev",
+    "git_path": "/Users/cyrille/GIT/Viz/datoviz",
+    "git_revision": "ff62b3256f1de7dd2df2ee890c99968715789a27",
+    "imported": true,
+    "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+    "version": null
+  },
+  "iterations_per_case": 5,
+  "results": [
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/primitives",
+      "iteration": 1,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_primitives/01/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/primitives",
+      "iteration": 2,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_primitives/02/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/primitives",
+      "iteration": 3,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_primitives/03/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/primitives",
+      "iteration": 4,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_primitives/04/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/primitives",
+      "iteration": 5,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_primitives/05/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/text",
+      "iteration": 1,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_text/01/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/text",
+      "iteration": 2,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_text/02/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/text",
+      "iteration": 3,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_text/03/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/text",
+      "iteration": 4,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_text/04/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/text",
+      "iteration": 5,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_text/05/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/mesh",
+      "iteration": 1,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_mesh/01/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/mesh",
+      "iteration": 2,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_mesh/02/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/mesh",
+      "iteration": 3,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_mesh/03/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/mesh",
+      "iteration": 4,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_mesh/04/report.json\n",
+      "timed_out": false
+    },
+    {
+      "artifact_complete": true,
+      "case_id": "vispy2/mesh",
+      "iteration": 5,
+      "phase": "closed",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_mesh/05/report.json\n",
+      "timed_out": false
+    }
+  ],
+  "schema_kind": "gsp.s052.datoviz_lifecycle_probe",
+  "schema_version": 1,
+  "summary": {
+    "attempted": 15,
+    "clean_exit": 15,
+    "complete_artifact": 15,
+    "complete_report": 15
+  }
+}

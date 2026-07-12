@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ctypes
 import os
 from pathlib import Path
 import subprocess
@@ -675,10 +676,14 @@ def datoviz_v04_panel_frame_snapshot_diagnostics(
     """Return why Datoviz panel frame snapshot readback is unavailable."""
     if dvz is None:
         return ("Datoviz is not importable",)
-    return tuple(
+    missing = tuple(
         f"missing {name}"
         for name in _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS
         if not hasattr(dvz, name)
+    )
+    return missing + _incomplete_ctypes_records(
+        dvz,
+        ("DvzPanelFrameInfo", "DvzGuideLayout", "DvzRenderedContribution"),
     )
 
 
@@ -688,11 +693,30 @@ def datoviz_v04_panel_frame_guide_query_diagnostics(
     """Return why Datoviz panel frame guide hit/readback is unavailable."""
     if dvz is None:
         return ("Datoviz is not importable",)
-    return tuple(
+    missing = tuple(
         f"missing {name}"
         for name in _REQUIRED_DVZ_PANEL_FRAME_GUIDE_QUERY_FUNCTIONS
         if not callable(getattr(dvz, name, None))
     )
+    return missing + _incomplete_ctypes_records(dvz, ("DvzGuideHit",))
+
+
+def _incomplete_ctypes_records(
+    dvz: ModuleType | Any, names: tuple[str, ...]
+) -> tuple[str, ...]:
+    """Report generated ctypes records that are only empty forward declarations."""
+    diagnostics: list[str] = []
+    for name in names:
+        record_type = getattr(dvz, name, None)
+        if not isinstance(record_type, type):
+            continue
+        try:
+            is_ctypes_record = issubclass(record_type, ctypes.Structure)
+        except TypeError:
+            continue
+        if is_ctypes_record and ctypes.sizeof(record_type) == 0:
+            diagnostics.append(f"incomplete ctypes layout for {name}")
+    return tuple(diagnostics)
 
 
 def datoviz_v04_capture_ready(dvz: ModuleType | Any) -> bool:

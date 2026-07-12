@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 546, in _run_datoviz
+    _render_datoviz_visual(renderer, visual)
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp/qa/visual/runner.py", line 816, in _render_datoviz_visual
+    renderer.add_image_visual(visual)
+  File "/Users/cyrille/GIT/Viz/GSP_API/src/gsp_datoviz/protocol_renderer.py", line 1365, in add_image_visual
+    raise DatovizV04Unsupported(
+gsp_datoviz.protocol_renderer.DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC image extents only

@@ -1,0 +1,149 @@
+{
+  "arrays": {
+    "s051_image_image": {
+      "dtype": "float32",
+      "key": "s051_image_image",
+      "path": "vispy2_scalar_image_colorbar.arrays.npz",
+      "shape": [
+        4,
+        4
+      ]
+    }
+  },
+  "axis_guides": [
+    {
+      "dimension": "x",
+      "grid_visible": false,
+      "id": "guide:x-1",
+      "label_text": null,
+      "query_policy": "non-queryable",
+      "side": "bottom",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": null,
+        "explicit_values": [],
+        "kind": "auto-linear-nice-v0",
+        "target_count": 7
+      },
+      "view_id": "view:1",
+      "visible": true
+    },
+    {
+      "dimension": "y",
+      "grid_visible": false,
+      "id": "guide:y-1",
+      "label_text": null,
+      "query_policy": "non-queryable",
+      "side": "left",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": null,
+        "explicit_values": [],
+        "kind": "auto-linear-nice-v0",
+        "target_count": 7
+      },
+      "view_id": "view:1",
+      "visible": true
+    }
+  ],
+  "case_id": "vispy2/scalar_image_colorbar",
+  "color_scales": [
+    {
+      "colormap": {
+        "id": "viridis",
+        "kind": "named"
+      },
+      "description": null,
+      "id": "scale:viridis-1",
+      "normalize": {
+        "clip": true,
+        "kind": "linear",
+        "vmax": 15.0,
+        "vmin": 0.0
+      }
+    }
+  ],
+  "colorbar_guides": [
+    {
+      "color_scale_id": "scale:viridis-1",
+      "id": "guide:colorbar-1-1",
+      "label": "value",
+      "linked_visual_ids": [
+        "s051:image"
+      ],
+      "orientation": "vertical",
+      "panel_id": "panel:1",
+      "placement": "right",
+      "tick_labels": null,
+      "ticks": []
+    }
+  ],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [],
+  "transform_resources": [],
+  "view3d": null,
+  "views": [
+    {
+      "aspect_policy": "auto",
+      "clip": true,
+      "id": "view:1",
+      "kind": "view2d-linear",
+      "panel_id": "panel:1",
+      "x_range": [
+        -1.0,
+        1.0
+      ],
+      "y_range": [
+        -1.0,
+        1.0
+      ]
+    }
+  ],
+  "visuals": [
+    {
+      "clim": null,
+      "color_scale_id": "scale:viridis-1",
+      "colormap": null,
+      "coordinate_space": "data",
+      "extent": [
+        -0.5,
+        3.5,
+        3.5,
+        -0.5
+      ],
+      "family": "image",
+      "id": "s051:image",
+      "image": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          4
+        ]
+      },
+      "interpolation": "nearest",
+      "origin": "upper"
+    }
+  ]
+}

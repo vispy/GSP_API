@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
+import subprocess
+from types import SimpleNamespace
 
 import numpy as np
+import pytest
 
 from gsp.qa.visual.artifacts import ensure_run_dirs, write_scene_artifacts
 from gsp.qa.visual.cases import list_cases
 from gsp.qa.visual.vispy2_acceptance import S051_SUITE, figure_to_visual_qa_scene
+from gsp.qa.visual import vispy2_acceptance
 from vispy2 import subplots
 
 
@@ -37,3 +42,34 @@ def test_s051_frozen_scene_artifact_has_array_sidecar(tmp_path) -> None:
     with np.load(arrays_path) as arrays:
         assert set(payload["arrays"]) == set(arrays.files)
     assert payload["schema_kind"] == "gsp.visual_qa.scene"
+
+
+def test_s052_lifecycle_probe_records_complete_clean_cycles(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def fake_run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        del kwargs
+        iteration_dir = Path(command[command.index("--out") + 1])
+        case_id = command[command.index("--case") + 1]
+        slug = case_id.replace("/", "_")
+        backend_dir = iteration_dir / "backends" / "datoviz"
+        backend_dir.mkdir(parents=True)
+        (iteration_dir / "report.json").write_text("{}\n", encoding="utf-8")
+        (backend_dir / f"{slug}.png").write_bytes(b"png")
+        return subprocess.CompletedProcess(command, 0, "ok\n", "")
+
+    monkeypatch.setattr(vispy2_acceptance.subprocess, "run", fake_run)
+    monkeypatch.setattr(
+        vispy2_acceptance,
+        "probe_datoviz_v04",
+        lambda: SimpleNamespace(installed_package={"path": None}),
+    )
+    path = vispy2_acceptance.run_s052_lifecycle_probe(tmp_path, iterations=2)
+    payload = json.loads(path.read_text(encoding="utf-8"))
+
+    assert payload["summary"] == {
+        "attempted": 6,
+        "clean_exit": 6,
+        "complete_artifact": 6,
+        "complete_report": 6,
+    }

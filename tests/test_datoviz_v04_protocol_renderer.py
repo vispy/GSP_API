@@ -103,6 +103,7 @@ from gsp_datoviz.capabilities import (
     datoviz_v04_capture_diagnostics,
     datoviz_v04_capture_ready,
     datoviz_v04_grid_clip_to_plot_rect_ready_for_source,
+    datoviz_v04_panel_frame_snapshot_diagnostics as capability_panel_frame_snapshot_diagnostics,
     datoviz_v04_view3d_retained_data_diagnostics,
     gsp_capability_snapshot_from_datoviz,
 )
@@ -1863,6 +1864,25 @@ def test_datoviz_capabilities_report_partial_layout_snapshot_when_frame_api_exis
     assert caps.query_layout_capability.reports_layout_snapshot_id is True
     assert caps.query_layout_capability.guide_query is False
     assert caps.query_layout_capability.all_rendered_guides is False
+
+
+def test_datoviz_panel_frame_rejects_empty_generated_ctypes_records() -> None:
+    class EmptyRecord(ctypes.Structure):
+        pass
+
+    fake = FakeDatovizV04WithPanelFrameSnapshotOnly()
+    fake.DvzPanelFrameInfo = EmptyRecord
+    fake.DvzGuideLayout = EmptyRecord
+    fake.DvzRenderedContribution = EmptyRecord
+
+    expected = (
+        "incomplete ctypes layout for DvzPanelFrameInfo",
+        "incomplete ctypes layout for DvzGuideLayout",
+        "incomplete ctypes layout for DvzRenderedContribution",
+    )
+    assert datoviz_v04_panel_frame_snapshot_diagnostics(fake) == expected
+    assert capability_panel_frame_snapshot_diagnostics(fake) == expected
+    assert not datoviz_v04_panel_frame_snapshot_ready(fake)
 
 
 def test_datoviz_capabilities_report_native_guide_query_when_frame_hit_api_exists():

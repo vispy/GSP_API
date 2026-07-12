@@ -1,0 +1,86 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_primitives/01/scenes/vispy2_primitives.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_primitives/01/backends/datoviz/vispy2_primitives.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "all_rendered_guide_query": "unsupported",
+            "auto_ticks": "backend-native",
+            "axis_guide_count": 2,
+            "axis_provider": "datoviz.v04.panel_axis.wip",
+            "axis_rendering": "adapted-review",
+            "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-viewport-clip",
+            "grid_clip_to_plot_rect": "native-verified",
+            "guide_query": "unsupported",
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported",
+            "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
+            "ordered_ranges_preserved": true,
+            "panel_text_adapter": "datoviz.ndc_text_visual",
+            "panel_text_guide_count": 1,
+            "panel_text_guides_adapted": [
+              {
+                "id": "guide:title-1",
+                "role": "title",
+                "text": "public primitives"
+              }
+            ],
+            "panel_title": "adapted-review",
+            "view2d_present": true
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_primitives/01/backends/datoviz/vispy2_primitives.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "vispy2/primitives",
+      "family": "producer",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "marker",
+        "segment",
+        "path",
+        "view2d",
+        "guides"
+      ],
+      "scene_path": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_primitives/01/scenes/vispy2_primitives.scene.json",
+      "title": "VisPy2 primitive families"
+    }
+  ],
+  "contact_sheets": [],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "ff62b3256f1de7dd2df2ee890c99968715789a27",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s052/lifecycle/iterations/vispy2_primitives/01/environment.json",
+  "run_id": "s052-lifecycle-vispy2_primitives-01",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S051",
+  "started_at": "2026-07-12T12:15:01.186922+00:00",
+  "suite": "s051"
+}

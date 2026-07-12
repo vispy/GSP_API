@@ -1,0 +1,1 @@
+meshvisual_material_texture2d_unlit_unsupported: Datoviz visual QA has not proven S050 textured mesh support

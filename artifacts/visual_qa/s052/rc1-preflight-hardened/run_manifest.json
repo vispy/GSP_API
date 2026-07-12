@@ -1,0 +1,24 @@
+{
+  "backends": [
+    "matplotlib"
+  ],
+  "case_ids": [
+    "vispy2/primitives",
+    "vispy2/scalar_image_colorbar",
+    "vispy2/text",
+    "vispy2/mesh",
+    "vispy2/texture2d_boundary"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "device_scale": 1.0,
+  "resolution": [
+    800,
+    600
+  ],
+  "run_id": "s052-vispy2-preflight-hardened",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S051",
+  "started_at": "2026-07-12T12:13:40.979062+00:00",
+  "suite": "s051"
+}

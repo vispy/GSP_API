@@ -19,3 +19,12 @@ Acceptance outcomes use `strict`, `adapted`, `deactivated`, `unsupported`, or `b
 Every non-strict result must have a diagnostic code; record IDs are preserved in the manifest.
 This matrix does not add `open_session()`, public backend selection, `Display`, or a public Datoviz
 execution method, and it does not promote renderer capabilities.
+
+## S052 preflight correction
+
+S052 established that the three original Datoviz backend failures shared an incomplete generated
+panel-frame ctypes binding, triggered by default VisPy2 axis guides during partial layout snapshot
+readback. Readiness now rejects zero-size generated records before native execution. The refreshed
+matrix renders primitives, text, and untextured mesh as adapted, with zero native crashes, while
+colorbar and Texture2D boundaries remain unsupported. Fifteen isolated create/capture/report/close
+cycles completed cleanly. This evidence remains internal and does not publish the session API.

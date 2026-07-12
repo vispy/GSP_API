@@ -1,0 +1,307 @@
+{
+  "arrays": {
+    "s051_marker_fill_colors": {
+      "dtype": "uint8",
+      "key": "s051_marker_fill_colors",
+      "path": "vispy2_primitives.arrays.npz",
+      "shape": [
+        2,
+        4
+      ]
+    },
+    "s051_marker_positions": {
+      "dtype": "float32",
+      "key": "s051_marker_positions",
+      "path": "vispy2_primitives.arrays.npz",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "s051_marker_stroke_color": {
+      "dtype": "uint8",
+      "key": "s051_marker_stroke_color",
+      "path": "vispy2_primitives.arrays.npz",
+      "shape": [
+        4
+      ]
+    },
+    "s051_path_colors": {
+      "dtype": "uint8",
+      "key": "s051_path_colors",
+      "path": "vispy2_primitives.arrays.npz",
+      "shape": [
+        1,
+        4
+      ]
+    },
+    "s051_path_positions": {
+      "dtype": "float32",
+      "key": "s051_path_positions",
+      "path": "vispy2_primitives.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "s051_point_colors": {
+      "dtype": "uint8",
+      "key": "s051_point_colors",
+      "path": "vispy2_primitives.arrays.npz",
+      "shape": [
+        2,
+        4
+      ]
+    },
+    "s051_point_positions": {
+      "dtype": "float32",
+      "key": "s051_point_positions",
+      "path": "vispy2_primitives.arrays.npz",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "s051_segment_colors": {
+      "dtype": "uint8",
+      "key": "s051_segment_colors",
+      "path": "vispy2_primitives.arrays.npz",
+      "shape": [
+        1,
+        4
+      ]
+    },
+    "s051_segment_end_positions": {
+      "dtype": "float32",
+      "key": "s051_segment_end_positions",
+      "path": "vispy2_primitives.arrays.npz",
+      "shape": [
+        1,
+        2
+      ]
+    },
+    "s051_segment_start_positions": {
+      "dtype": "float32",
+      "key": "s051_segment_start_positions",
+      "path": "vispy2_primitives.arrays.npz",
+      "shape": [
+        1,
+        2
+      ]
+    }
+  },
+  "axis_guides": [
+    {
+      "dimension": "x",
+      "grid_visible": false,
+      "id": "guide:x-1",
+      "label_text": "x",
+      "query_policy": "non-queryable",
+      "side": "bottom",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": null,
+        "explicit_values": [],
+        "kind": "auto-linear-nice-v0",
+        "target_count": 7
+      },
+      "view_id": "view:1",
+      "visible": true
+    },
+    {
+      "dimension": "y",
+      "grid_visible": false,
+      "id": "guide:y-1",
+      "label_text": "y",
+      "query_policy": "non-queryable",
+      "side": "left",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": null,
+        "explicit_values": [],
+        "kind": "auto-linear-nice-v0",
+        "target_count": 7
+      },
+      "view_id": "view:1",
+      "visible": true
+    }
+  ],
+  "case_id": "vispy2/primitives",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [
+    {
+      "id": "guide:title-1",
+      "panel_id": "panel:1",
+      "query_policy": "non-queryable",
+      "role": "title",
+      "style": {
+        "guide_margin_px": null,
+        "title_font_size_px": null
+      },
+      "text": "public primitives"
+    }
+  ],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [],
+  "transform_resources": [],
+  "view3d": null,
+  "views": [
+    {
+      "aspect_policy": "auto",
+      "clip": true,
+      "id": "view:1",
+      "kind": "view2d-linear",
+      "panel_id": "panel:1",
+      "x_range": [
+        -1.0,
+        1.0
+      ],
+      "y_range": [
+        -1.0,
+        1.0
+      ]
+    }
+  ],
+  "visuals": [
+    {
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      "coordinate_space": "data",
+      "family": "point",
+      "id": "s051:point",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "sizes": {
+        "dtype": "float",
+        "shape": []
+      }
+    },
+    {
+      "angle": {
+        "dtype": "float",
+        "shape": []
+      },
+      "coordinate_space": "data",
+      "family": "marker",
+      "fill_colors": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      "id": "s051:marker",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "shape": "triangle",
+      "sizes": {
+        "dtype": "float",
+        "shape": []
+      },
+      "stroke_color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "stroke_width": 0.0
+    },
+    {
+      "cap": "butt",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          1,
+          4
+        ]
+      },
+      "coordinate_space": "data",
+      "end_positions": {
+        "dtype": "float32",
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "family": "segment",
+      "id": "s051:segment",
+      "start_positions": {
+        "dtype": "float32",
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "widths": {
+        "dtype": "float",
+        "shape": []
+      }
+    },
+    {
+      "cap": "butt",
+      "colors": {
+        "dtype": "uint8",
+        "shape": [
+          1,
+          4
+        ]
+      },
+      "coordinate_space": "data",
+      "family": "path",
+      "id": "s051:path",
+      "join": "miter",
+      "miter_limit": 4.0,
+      "path_lengths": [
+        3
+      ],
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          3,
+          2
+        ]
+      },
+      "widths": {
+        "dtype": "float",
+        "shape": []
+      }
+    }
+  ]
+}

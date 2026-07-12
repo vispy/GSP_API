@@ -1,0 +1,189 @@
+{
+  "arrays": {
+    "s051_texture-mesh_color": {
+      "dtype": "uint8",
+      "key": "s051_texture-mesh_color",
+      "path": "vispy2_texture2d_boundary.arrays.npz",
+      "shape": [
+        4
+      ]
+    },
+    "s051_texture-mesh_faces": {
+      "dtype": "uint32",
+      "key": "s051_texture-mesh_faces",
+      "path": "vispy2_texture2d_boundary.arrays.npz",
+      "shape": [
+        2,
+        3
+      ]
+    },
+    "s051_texture-mesh_positions": {
+      "dtype": "float32",
+      "key": "s051_texture-mesh_positions",
+      "path": "vispy2_texture2d_boundary.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "s051_texture-mesh_uvs": {
+      "dtype": "float32",
+      "key": "s051_texture-mesh_uvs",
+      "path": "vispy2_texture2d_boundary.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "texture_mesh-1_image": {
+      "dtype": "uint8",
+      "key": "texture_mesh-1_image",
+      "path": "vispy2_texture2d_boundary.arrays.npz",
+      "shape": [
+        2,
+        2,
+        4
+      ]
+    }
+  },
+  "axis_guides": [
+    {
+      "dimension": "x",
+      "grid_visible": false,
+      "id": "guide:x-1",
+      "label_text": null,
+      "query_policy": "non-queryable",
+      "side": "bottom",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": null,
+        "explicit_values": [],
+        "kind": "auto-linear-nice-v0",
+        "target_count": 7
+      },
+      "view_id": "view:1",
+      "visible": true
+    },
+    {
+      "dimension": "y",
+      "grid_visible": false,
+      "id": "guide:y-1",
+      "label_text": null,
+      "query_policy": "non-queryable",
+      "side": "left",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": null,
+        "explicit_values": [],
+        "kind": "auto-linear-nice-v0",
+        "target_count": 7
+      },
+      "view_id": "view:1",
+      "visible": true
+    }
+  ],
+  "case_id": "vispy2/texture2d_boundary",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [
+    {
+      "format": "rgba8",
+      "id": "texture:mesh-1",
+      "image": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          2,
+          4
+        ]
+      }
+    }
+  ],
+  "transform_resources": [],
+  "view3d": null,
+  "views": [
+    {
+      "aspect_policy": "auto",
+      "clip": true,
+      "id": "view:1",
+      "kind": "view2d-linear",
+      "panel_id": "panel:1",
+      "x_range": [
+        -1.0,
+        1.0
+      ],
+      "y_range": [
+        -1.0,
+        1.0
+      ]
+    }
+  ],
+  "visuals": [
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "color_mode": "uniform",
+      "coordinate_space": "data",
+      "depth_test": "auto",
+      "depth_write": "auto",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "s051:texture-mesh",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "shading": "texture2d_unlit",
+      "texture2d_id": "texture:mesh-1",
+      "uv_mode": "vertex",
+      "uvs": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "vispy2/scalar_image_colorbar",
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "diagnostics": {
+    "exception_type": "DatovizV04Unsupported",
+    "message": "Datoviz v0.4 slice currently supports NDC image extents only"
+  },
+  "reason": "DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC image extents only",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

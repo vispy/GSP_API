@@ -1,0 +1,462 @@
+{
+  "cases": [
+    {
+      "arrays_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/scenes/vispy2_primitives.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/datoviz/vispy2_primitives.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "all_rendered_guide_query": "unsupported",
+            "auto_ticks": "backend-native",
+            "axis_guide_count": 2,
+            "axis_provider": "datoviz.v04.panel_axis.wip",
+            "axis_rendering": "adapted-review",
+            "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-viewport-clip",
+            "grid_clip_to_plot_rect": "native-verified",
+            "guide_query": "unsupported",
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported",
+            "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
+            "ordered_ranges_preserved": true,
+            "panel_text_adapter": "datoviz.ndc_text_visual",
+            "panel_text_guide_count": 1,
+            "panel_text_guides_adapted": [
+              {
+                "id": "guide:title-1",
+                "role": "title",
+                "text": "public primitives"
+              }
+            ],
+            "panel_title": "adapted-review",
+            "view2d_present": true
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/datoviz/vispy2_primitives.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/matplotlib/vispy2_primitives.png",
+          "backend_id": "matplotlib",
+          "layout_snapshot": {
+            "axis_label_boxes": [
+              {
+                "guide_id": "guide:x-1",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 14.0,
+                  "width": 8.25,
+                  "x": 395.87499999999994,
+                  "y": 574.8888888888889
+                },
+                "role": "x_axis_label"
+              },
+              {
+                "guide_id": "guide:y-1",
+                "kind": "axis_label",
+                "rect_px": {
+                  "height": 8.25,
+                  "width": 14.0,
+                  "x": 87.7638888888889,
+                  "y": 285.4027777777777
+                },
+                "role": "y_axis_label"
+              }
+            ],
+            "diagnostics": [
+              {
+                "code": "matplotlib_native_layout_resolved",
+                "status": "resolved"
+              }
+            ],
+            "grid_clip_rect_px": {
+              "height": 512.1666666666667,
+              "width": 512.1666666666665,
+              "x": 143.91666666666669,
+              "y": 33.44444444444434
+            },
+            "guide_box_count": 13,
+            "panel_rect_px": {
+              "height": 600.0,
+              "width": 800.0,
+              "x": 0.0,
+              "y": 0.0
+            },
+            "plot_rect_px": {
+              "height": 512.1666666666667,
+              "width": 512.1666666666665,
+              "x": 143.91666666666669,
+              "y": 33.44444444444434
+            },
+            "render_target": {
+              "device_scale": 1.0,
+              "dpi": 100.0,
+              "framebuffer_height_px": 600,
+              "framebuffer_width_px": 800,
+              "logical_height_px": 600.0,
+              "logical_width_px": 800.0,
+              "pixel_origin": "top-left"
+            },
+            "snapshot_id": "layout:vispy2_primitives:matplotlib",
+            "tick_label_box_count": 10,
+            "title_boxes": [
+              {
+                "guide_id": "guide:title-1",
+                "kind": "title",
+                "rect_px": {
+                  "height": 18.0,
+                  "width": 138.0,
+                  "x": 330.99999999999994,
+                  "y": 11.111111111111086
+                },
+                "role": "title"
+              }
+            ],
+            "view_id": "view:1",
+            "z_layer_count": 3
+          },
+          "layout_snapshot_id": "layout:vispy2_primitives:matplotlib",
+          "log_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/matplotlib/vispy2_primitives.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "vispy2/primitives",
+      "family": "producer",
+      "manual_review_status": "pending",
+      "required_features": [
+        "point",
+        "marker",
+        "segment",
+        "path",
+        "view2d",
+        "guides"
+      ],
+      "scene_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/scenes/vispy2_primitives.scene.json",
+      "title": "VisPy2 primitive families"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/scenes/vispy2_scalar_image_colorbar.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "log_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/datoviz/vispy2_scalar_image_colorbar.log.txt",
+          "reason": "DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC image extents only",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/datoviz/vispy2_scalar_image_colorbar.unsupported.json"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/matplotlib/vispy2_scalar_image_colorbar.png",
+          "backend_id": "matplotlib",
+          "layout_snapshot": {
+            "axis_label_boxes": [],
+            "diagnostics": [
+              {
+                "code": "matplotlib_native_layout_resolved",
+                "status": "resolved"
+              }
+            ],
+            "grid_clip_rect_px": {
+              "height": 548.5555555555554,
+              "width": 548.5555555555554,
+              "x": 125.72222222222229,
+              "y": 16.6111111111112
+            },
+            "guide_box_count": 10,
+            "panel_rect_px": {
+              "height": 600.0,
+              "width": 800.0,
+              "x": 0.0,
+              "y": 0.0
+            },
+            "plot_rect_px": {
+              "height": 548.5555555555554,
+              "width": 548.5555555555554,
+              "x": 125.72222222222229,
+              "y": 16.6111111111112
+            },
+            "render_target": {
+              "device_scale": 1.0,
+              "dpi": 100.0,
+              "framebuffer_height_px": 600,
+              "framebuffer_width_px": 800,
+              "logical_height_px": 600.0,
+              "logical_width_px": 800.0,
+              "pixel_origin": "top-left"
+            },
+            "snapshot_id": "layout:vispy2_scalar_image_colorbar:matplotlib",
+            "tick_label_box_count": 10,
+            "title_boxes": [],
+            "view_id": "view:1",
+            "z_layer_count": 2
+          },
+          "layout_snapshot_id": "layout:vispy2_scalar_image_colorbar:matplotlib",
+          "log_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/matplotlib/vispy2_scalar_image_colorbar.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "vispy2/scalar_image_colorbar",
+      "family": "producer",
+      "manual_review_status": "pending",
+      "required_features": [
+        "image",
+        "scalar-color",
+        "colorbar",
+        "guides"
+      ],
+      "scene_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/scenes/vispy2_scalar_image_colorbar.scene.json",
+      "title": "VisPy2 scalar image and colorbar"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/scenes/vispy2_text.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/datoviz/vispy2_text.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "all_rendered_guide_query": "unsupported",
+            "auto_ticks": "backend-native",
+            "axis_guide_count": 2,
+            "axis_provider": "datoviz.v04.panel_axis.wip",
+            "axis_rendering": "adapted-review",
+            "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-viewport-clip",
+            "grid_clip_to_plot_rect": "native-verified",
+            "guide_query": "unsupported",
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported",
+            "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
+            "ordered_ranges_preserved": true,
+            "view2d_present": true
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/datoviz/vispy2_text.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/matplotlib/vispy2_text.png",
+          "backend_id": "matplotlib",
+          "layout_snapshot": {
+            "axis_label_boxes": [],
+            "diagnostics": [
+              {
+                "code": "matplotlib_native_layout_resolved",
+                "status": "resolved"
+              }
+            ],
+            "grid_clip_rect_px": {
+              "height": 548.5555555555554,
+              "width": 548.5555555555554,
+              "x": 125.72222222222229,
+              "y": 16.6111111111112
+            },
+            "guide_box_count": 10,
+            "panel_rect_px": {
+              "height": 600.0,
+              "width": 800.0,
+              "x": 0.0,
+              "y": 0.0
+            },
+            "plot_rect_px": {
+              "height": 548.5555555555554,
+              "width": 548.5555555555554,
+              "x": 125.72222222222229,
+              "y": 16.6111111111112
+            },
+            "render_target": {
+              "device_scale": 1.0,
+              "dpi": 100.0,
+              "framebuffer_height_px": 600,
+              "framebuffer_width_px": 800,
+              "logical_height_px": 600.0,
+              "logical_width_px": 800.0,
+              "pixel_origin": "top-left"
+            },
+            "snapshot_id": "layout:vispy2_text:matplotlib",
+            "tick_label_box_count": 10,
+            "title_boxes": [],
+            "view_id": "view:1",
+            "z_layer_count": 2
+          },
+          "layout_snapshot_id": "layout:vispy2_text:matplotlib",
+          "log_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/matplotlib/vispy2_text.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "vispy2/text",
+      "family": "producer",
+      "manual_review_status": "pending",
+      "required_features": [
+        "text",
+        "guides"
+      ],
+      "scene_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/scenes/vispy2_text.scene.json",
+      "title": "VisPy2 text"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/scenes/vispy2_mesh.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/datoviz/vispy2_mesh.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "all_rendered_guide_query": "unsupported",
+            "auto_ticks": "backend-native",
+            "axis_guide_count": 2,
+            "axis_provider": "datoviz.v04.panel_axis.wip",
+            "axis_rendering": "adapted-review",
+            "datoviz_view2d_carrier": "dvz_panel_set_domain+DvzPanelView2D policy",
+            "grid_clip_evidence": "datoviz-native-axis-grid-plot-viewport-clip",
+            "grid_clip_to_plot_rect": "native-verified",
+            "guide_query": "unsupported",
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported",
+            "legacy_panel_domain_sync": "compat-before-dvz_panel_set_view2d",
+            "ordered_ranges_preserved": true,
+            "view2d_present": true
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/datoviz/vispy2_mesh.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "artifact_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/matplotlib/vispy2_mesh.png",
+          "backend_id": "matplotlib",
+          "layout_snapshot": {
+            "axis_label_boxes": [],
+            "diagnostics": [
+              {
+                "code": "matplotlib_native_layout_resolved",
+                "status": "resolved"
+              }
+            ],
+            "grid_clip_rect_px": {
+              "height": 548.5555555555554,
+              "width": 548.5555555555554,
+              "x": 125.72222222222229,
+              "y": 16.6111111111112
+            },
+            "guide_box_count": 10,
+            "panel_rect_px": {
+              "height": 600.0,
+              "width": 800.0,
+              "x": 0.0,
+              "y": 0.0
+            },
+            "plot_rect_px": {
+              "height": 548.5555555555554,
+              "width": 548.5555555555554,
+              "x": 125.72222222222229,
+              "y": 16.6111111111112
+            },
+            "render_target": {
+              "device_scale": 1.0,
+              "dpi": 100.0,
+              "framebuffer_height_px": 600,
+              "framebuffer_width_px": 800,
+              "logical_height_px": 600.0,
+              "logical_width_px": 800.0,
+              "pixel_origin": "top-left"
+            },
+            "snapshot_id": "layout:vispy2_mesh:matplotlib",
+            "tick_label_box_count": 10,
+            "title_boxes": [],
+            "view_id": "view:1",
+            "z_layer_count": 2
+          },
+          "layout_snapshot_id": "layout:vispy2_mesh:matplotlib",
+          "log_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/matplotlib/vispy2_mesh.log.txt",
+          "status": "rendered"
+        }
+      },
+      "case_id": "vispy2/mesh",
+      "family": "producer",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "view2d"
+      ],
+      "scene_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/scenes/vispy2_mesh.scene.json",
+      "title": "VisPy2 untextured mesh"
+    },
+    {
+      "arrays_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/scenes/vispy2_texture2d_boundary.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "log_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/datoviz/vispy2_texture2d_boundary.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Datoviz visual QA has not proven S050 textured mesh support",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/datoviz/vispy2_texture2d_boundary.unsupported.json"
+        },
+        "matplotlib": {
+          "backend_id": "matplotlib",
+          "log_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/matplotlib/vispy2_texture2d_boundary.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+          "status": "unsupported",
+          "unsupported_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/backends/matplotlib/vispy2_texture2d_boundary.unsupported.json"
+        }
+      },
+      "case_id": "vispy2/texture2d_boundary",
+      "family": "producer",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "texture2d-unlit",
+        "unsupported-boundary"
+      ],
+      "scene_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/scenes/vispy2_texture2d_boundary.scene.json",
+      "title": "VisPy2 Texture2D boundary"
+    }
+  ],
+  "contact_sheets": [
+    "artifacts/visual_qa/s052/rc1-preflight-hardened/contact_sheets/vispy2_primitives.png",
+    "artifacts/visual_qa/s052/rc1-preflight-hardened/contact_sheets/vispy2_scalar_image_colorbar.png",
+    "artifacts/visual_qa/s052/rc1-preflight-hardened/contact_sheets/vispy2_text.png",
+    "artifacts/visual_qa/s052/rc1-preflight-hardened/contact_sheets/vispy2_mesh.png",
+    "artifacts/visual_qa/s052/rc1-preflight-hardened/contact_sheets/vispy2_texture2d_boundary.png",
+    "artifacts/visual_qa/s052/rc1-preflight-hardened/contact_sheets/s051_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_child_strategy": "one_process_per_case",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "ff62b3256f1de7dd2df2ee890c99968715789a27",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "artifacts/visual_qa/s052/rc1-preflight-hardened/environment.json",
+  "run_id": "s052-vispy2-preflight-hardened",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S051",
+  "started_at": "2026-07-12T12:13:40.979062+00:00",
+  "suite": "s051"
+}

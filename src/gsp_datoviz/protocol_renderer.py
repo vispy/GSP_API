@@ -496,10 +496,14 @@ def datoviz_v04_panel_frame_snapshot_diagnostics(
     module: ModuleType | Any,
 ) -> tuple[str, ...]:
     """Return why Datoviz panel frame snapshot readback is unavailable."""
-    return tuple(
+    missing = tuple(
         f"missing {name}"
         for name in _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS
         if not hasattr(module, name)
+    )
+    return missing + _datoviz_incomplete_ctypes_records(
+        module,
+        ("DvzPanelFrameInfo", "DvzGuideLayout", "DvzRenderedContribution"),
     )
 
 
@@ -512,11 +516,30 @@ def datoviz_v04_panel_frame_guide_query_diagnostics(
     module: ModuleType | Any,
 ) -> tuple[str, ...]:
     """Return why Datoviz panel frame guide hit/readback is unavailable."""
-    return tuple(
+    missing = tuple(
         f"missing {name}"
         for name in _REQUIRED_DVZ_PANEL_FRAME_GUIDE_QUERY_FUNCTIONS
         if not callable(getattr(module, name, None))
     )
+    return missing + _datoviz_incomplete_ctypes_records(module, ("DvzGuideHit",))
+
+
+def _datoviz_incomplete_ctypes_records(
+    module: ModuleType | Any, names: tuple[str, ...]
+) -> tuple[str, ...]:
+    """Reject generated ctypes forward declarations with no usable layout."""
+    diagnostics: list[str] = []
+    for name in names:
+        record_type = getattr(module, name, None)
+        if not isinstance(record_type, type):
+            continue
+        try:
+            is_ctypes_record = issubclass(record_type, ctypes.Structure)
+        except TypeError:
+            continue
+        if is_ctypes_record and ctypes.sizeof(record_type) == 0:
+            diagnostics.append(f"incomplete ctypes layout for {name}")
+    return tuple(diagnostics)
 
 
 def datoviz_v04_panel_frame_guide_query_ready(module: ModuleType | Any) -> bool:

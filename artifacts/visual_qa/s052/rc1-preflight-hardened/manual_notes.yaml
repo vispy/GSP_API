@@ -1,0 +1,17 @@
+schema_version: 1
+cases:
+  - case_id: vispy2/primitives
+    status: pending
+    notes: ''
+  - case_id: vispy2/scalar_image_colorbar
+    status: pending
+    notes: ''
+  - case_id: vispy2/text
+    status: pending
+    notes: ''
+  - case_id: vispy2/mesh
+    status: pending
+    notes: ''
+  - case_id: vispy2/texture2d_boundary
+    status: pending
+    notes: ''

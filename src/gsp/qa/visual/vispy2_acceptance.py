@@ -5,9 +5,11 @@ from __future__ import annotations
 from dataclasses import fields, is_dataclass
 import hashlib
 import json
+import os
 import platform
 from pathlib import Path
 import subprocess
+import sys
 from typing import Any
 
 import numpy as np
@@ -15,12 +17,18 @@ import numpy.typing as npt
 
 from gsp.qa.visual.case_spec import VisualQACase, VisualQAScene
 from gsp.qa.visual.artifacts import write_json
+from gsp.qa.visual.datoviz_probe import probe_datoviz_v04
 from vispy2 import Figure, subplots
 
 
 S051_SUITE = "s051"
 S051_PRODUCER_API_VERSION = "experimental-rc1"
 GSP_SCENE_SCHEMA_VERSION = 1
+S052_LIFECYCLE_CASE_IDS = (
+    "vispy2/primitives",
+    "vispy2/text",
+    "vispy2/mesh",
+)
 
 
 def figure_to_visual_qa_scene(
@@ -115,6 +123,108 @@ def write_s051_acceptance_manifest(out_dir: Path) -> Path:
         "artifact_sha256": artifacts,
     }
     path = out_dir / "acceptance_manifest.json"
+    write_json(path, payload)
+    return path
+
+
+def run_s052_lifecycle_probe(
+    out_dir: Path,
+    *,
+    iterations: int = 5,
+    timeout_seconds: float = 45.0,
+) -> Path:
+    """Repeat isolated Datoviz create/capture/report/close cycles for S051 scenes."""
+    if iterations < 1:
+        raise ValueError("iterations must be positive")
+    results: list[dict[str, object]] = []
+    clean_exit_count = 0
+    complete_report_count = 0
+    complete_artifact_count = 0
+    env = os.environ.copy()
+    env["GSP_DATOVIZ_QA_ENABLE_OFFSCREEN"] = "1"
+    env.setdefault("PYTHONPATH", "src")
+    for case_id in S052_LIFECYCLE_CASE_IDS:
+        slug = case_id.replace("/", "_")
+        for iteration in range(1, iterations + 1):
+            iteration_dir = out_dir / "iterations" / slug / f"{iteration:02d}"
+            command = [
+                sys.executable,
+                "-m",
+                "gsp.qa.visual",
+                "run",
+                "--suite",
+                S051_SUITE,
+                "--backends",
+                "datoviz",
+                "--out",
+                str(iteration_dir),
+                "--no-contact-sheet",
+                "--case",
+                case_id,
+                "--run-id",
+                f"s052-lifecycle-{slug}-{iteration:02d}",
+            ]
+            try:
+                completed = subprocess.run(
+                    command,
+                    env=env,
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                    timeout=timeout_seconds,
+                )
+                returncode = completed.returncode
+                stdout = completed.stdout
+                stderr = completed.stderr
+                timed_out = False
+            except subprocess.TimeoutExpired as exc:
+                returncode = 124
+                stdout = str(exc.stdout or "")
+                stderr = str(exc.stderr or "")
+                timed_out = True
+            report_path = iteration_dir / "report.json"
+            artifact_path = (
+                iteration_dir / "backends" / "datoviz" / f"{slug}.png"
+            )
+            report_complete = report_path.is_file()
+            artifact_complete = artifact_path.is_file()
+            clean_exit_count += int(returncode == 0)
+            complete_report_count += int(report_complete)
+            complete_artifact_count += int(artifact_complete)
+            results.append(
+                {
+                    "case_id": case_id,
+                    "iteration": iteration,
+                    "returncode": returncode,
+                    "timed_out": timed_out,
+                    "report_complete": report_complete,
+                    "artifact_complete": artifact_complete,
+                    "phase": "closed" if returncode == 0 else "native_or_teardown_failure",
+                    "stdout": stdout,
+                    "stderr": stderr,
+                }
+            )
+    probe = probe_datoviz_v04()
+    installed = probe.installed_package
+    datoviz_evidence: dict[str, object] = dict(installed)
+    installed_path = installed.get("path")
+    if isinstance(installed_path, str):
+        datoviz_evidence.update(_git_evidence(Path(installed_path)))
+    payload = {
+        "schema_kind": "gsp.s052.datoviz_lifecycle_probe",
+        "schema_version": 1,
+        "iterations_per_case": iterations,
+        "cases": list(S052_LIFECYCLE_CASE_IDS),
+        "datoviz_evidence": datoviz_evidence,
+        "results": results,
+        "summary": {
+            "attempted": len(results),
+            "clean_exit": clean_exit_count,
+            "complete_report": complete_report_count,
+            "complete_artifact": complete_artifact_count,
+        },
+    }
+    path = out_dir / "lifecycle_probe.json"
     write_json(path, payload)
     return path
 
