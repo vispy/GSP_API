@@ -12,7 +12,7 @@ specific process, binding, and device.
 | `gsp_vispy2@0.2` | `view2d` | **strict** | ranges, reversed ranges and affine transform bindings | — |
 | `gsp_vispy2@0.2` | `view3d` | **partial** | producer records used by bounded review examples | general public session execution is separate |
 | `gsp_vispy2@0.2` | `execution.matplotlib` | **adapted** | transitional render_matplotlib/show/savefig conveniences | tuple return is transitional; backend-neutral session preview not public |
-| `gsp_vispy2@0.2` | `execution.datoviz` | **experimental** | explicit `open_session`, inspection, bounded blocking display, one-frame polling and owned cleanup | no implicit sessions, retained updates, close callbacks or embedding guarantee |
+| `gsp_vispy2@0.2` | `execution.datoviz` | **partial** | experimental explicit open_session, inspection, bounded blocking display, one-frame polling and owned cleanup | no implicit sessions, retained updates, close callbacks or embedding guarantee |
 | `gsp.matplotlib@0.2` | `visual.point` | **strict** | finite 2D DATA/NDC points, RGBA, logical-pixel diameters | — |
 | `gsp.matplotlib@0.2` | `visual.marker` | **strict** | accepted 2D marker shapes, fill, angle, stroke | — |
 | `gsp.matplotlib@0.2` | `visual.segment` | **strict** | accepted 2D independent segments | — |
