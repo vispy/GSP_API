@@ -334,8 +334,8 @@
     {
       "id": "S056",
       "title": "Public Session Conformance And Failure Isolation",
-      "state": "active",
-      "progress": 10
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2512,9 +2512,9 @@
       "id": "M243",
       "title": "S056 public session conformance and failure-isolation hardening",
       "stage": "S056",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 10,
+      "progress": 100,
       "priority": 243
     }
   ],

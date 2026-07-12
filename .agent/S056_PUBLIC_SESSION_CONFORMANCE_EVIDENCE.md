@@ -31,3 +31,12 @@ zero, and no public diagnostic error.
 The bounded experimental preview is conformance-ready at its existing scope. This evidence does not
 promote retained `Display.update()`, implicit sessions, user/window-close callbacks, thread-affinity
 semantics, or event-loop embedding guarantees.
+
+## Validation
+
+- full pytest with coverage: 666 passed, 2 skipped; 66% aggregate coverage;
+- focused public session and probe tests: 16 passed;
+- strict mypy: clean across 220 source files;
+- Ruff: clean across source, tests, and examples;
+- Matplotlib and Datoviz backend import smokes: clean;
+- strict MkDocs and profile consistency: clean.
