@@ -80,8 +80,8 @@ def build_requirement_registry() -> dict[str, object]:
                         "status": "accepted",
                         "source": _legacy_source_for(requirement_id),
                         "destination": relative,
-                        "tests": [],
-                        "notes": "Test mapping is populated by M239.",
+                        "tests": _tests_for(requirement_id),
+                        "notes": "Domain-level executable evidence; backend-specific limits are recorded in profiles/.",
                     }
                 )
     return {
@@ -207,6 +207,24 @@ def _legacy_source_for(requirement_id: str) -> str:
         "XPORT": "spec/transports.md",
         "EXT": "spec/extensions.md",
         "PROD": "spec/vispy2/api.md",
+    }[domain]
+
+
+def _tests_for(requirement_id: str) -> list[str]:
+    """Return maintained executable evidence for a normative requirement domain."""
+    domain = requirement_id.split("-")[1]
+    return {
+        "CORE": ["tests/test_protocol_spine.py", "tests/test_import_surface.py"],
+        "LIFE": ["tests/test_protocol_spine.py"],
+        "SCENE": ["tests/test_protocol_spine.py", "tests/test_vispy2_protocol_mvp.py"],
+        "DATA": ["tests/test_buffer.py", "tests/test_conformance_array_chunks.py"],
+        "VIS": ["tests/test_matplotlib_protocol_slice.py", "tests/test_mesh_visual_protocol.py"],
+        "VIEW": ["tests/test_transform_protocol.py", "tests/test_view3d_protocol.py"],
+        "CAP": ["tests/test_axis_provider_capabilities.py", "tests/test_datoviz_v04_protocol_renderer.py"],
+        "QUERY": ["tests/test_matplotlib_protocol_query.py", "tests/test_matplotlib_scoped_query.py"],
+        "XPORT": ["tests/test_protocol_spine.py", "tests/test_conformance_json_fixture.py"],
+        "EXT": ["tests/test_extension_data_sources.py", "tests/test_s020_security_validation.py"],
+        "PROD": ["tests/test_vispy2_protocol_mvp.py", "tests/test_vispy2_s051_acceptance.py"],
     }[domain]
 
 

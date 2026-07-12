@@ -1,0 +1,16 @@
+{
+  "schema": "gsp.profile@0.2",
+  "profile_id": "gsp_vispy2@0.2",
+  "kind": "producer",
+  "protocol_version": "0.2",
+  "implementation": "gsp_vispy2 independent experimental producer",
+  "features": [
+    {"id": "visual.primitives2d", "status": "strict", "scope": "point, marker, segment, path, image and text record production", "evidence": ["tests/test_vispy2_protocol_mvp.py", "tests/test_vispy2_s051_acceptance.py"]},
+    {"id": "visual.mesh", "status": "strict", "scope": "accepted indexed mesh, color, flat Lambert and Texture2D record production", "evidence": ["tests/test_vispy2_protocol_mvp.py"]},
+    {"id": "guide.semantic", "status": "strict", "scope": "axes, ticks, labels, title, grid and colorbar intent", "evidence": ["tests/test_vispy2_protocol_mvp.py", "tests/test_matplotlib_guides.py"]},
+    {"id": "view2d", "status": "strict", "scope": "ranges, reversed ranges and affine transform bindings", "evidence": ["tests/test_vispy2_protocol_mvp.py", "tests/test_transform_protocol.py"]},
+    {"id": "view3d", "status": "partial", "scope": "producer records used by bounded review examples", "evidence": ["tests/test_vispy2_s051_acceptance.py"], "limitations": ["general public session execution is separate"]},
+    {"id": "execution.matplotlib", "status": "adapted", "scope": "transitional render_matplotlib/show/savefig conveniences", "evidence": ["tests/test_vispy2_protocol_mvp.py"], "limitations": ["tuple return is transitional", "backend-neutral session preview not public"]},
+    {"id": "execution.datoviz", "status": "blocked", "scope": "internal acceptance only", "evidence": ["artifacts/visual_qa/s053/live-session/live_session_probe.json"], "limitations": ["no public open_session/Display contract"]}
+  ]
+}

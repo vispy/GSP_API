@@ -47,11 +47,19 @@ def capability_snapshot() -> CapabilitySnapshot:
     """Return the Matplotlib reference capability surface."""
     return CapabilitySnapshot(
         server_name="matplotlib-reference",
-        protocol_versions=("0.1", "0.2"),
+        protocol_versions=("0.2",),
         transports=(TransportKind.INPROC,),
         buffer_dtypes=("float32", "float64", "uint8", "rgba8"),
         texture_formats=("rgba8",),
-        visual_families=("point", "image"),
+        visual_families=(
+            "point",
+            "marker",
+            "segment",
+            "path",
+            "image",
+            "text",
+            "mesh",
+        ),
         query_modes=("panel-query", "point-item", "image-texel"),
         navigation_placements=(NavigationPlacement.CLIENT_SIDE.value,),
         navigation_capabilities=("interaction.view2d.navigation.v1",),
@@ -75,6 +83,7 @@ def capability_snapshot() -> CapabilitySnapshot:
         max_tiles_per_request=256,
         max_mosaic_pixels=4096,
         deterministic=True,
+        metadata={"profile_id": "gsp.matplotlib@0.2"},
         axis_providers=(matplotlib_axis_provider_capability(),),
         layout_capability=LayoutCapability(
             semantic_guides=True,

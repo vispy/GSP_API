@@ -274,6 +274,7 @@ def gsp_capability_snapshot_from_datoviz(
     )
 
     metadata: dict[str, object] = {
+        "profile_id": "gsp.datoviz-v0.4@0.2",
         "datoviz_api": "v0.4 dvz_* facade",
         "datoviz_capability_source": source,
         "image_path": (
@@ -511,11 +512,19 @@ def gsp_capability_snapshot_from_datoviz(
 
     return CapabilitySnapshot(
         server_name="datoviz-v0.4-protocol-slice",
-        protocol_versions=("0.1",),
+        protocol_versions=("0.2",),
         transports=(TransportKind.INPROC,),
         buffer_dtypes=("float32", "uint8", "rgba8"),
         texture_formats=tuple(texture_formats),
-        visual_families=("point", "image"),
+        visual_families=(
+            "point",
+            "marker",
+            "segment",
+            "path",
+            "image",
+            "text",
+            "mesh",
+        ),
         transform_placements=(
             TransformPlacement.CPU_ADAPTER.value,
             TransformPlacement.UNSUPPORTED.value,

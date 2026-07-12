@@ -2,7 +2,7 @@
 
 Status: accepted for S023; S024 TextVisual implemented; S025 MeshVisual producer API implemented.
 
-The `vispy2` package is the high-level protocol producer used by S023 examples. It emits formal GSP
+The `gsp_vispy2` package is the independent high-level protocol producer. It emits formal GSP
 protocol visuals and does not call backend implementation APIs directly.
 
 Accepted producer methods:

@@ -1,0 +1,23 @@
+{
+  "schema": "gsp.profile@0.2",
+  "profile_id": "gsp.datoviz-v0.4@0.2",
+  "kind": "renderer",
+  "protocol_version": "0.2",
+  "implementation": "gsp_datoviz adapter over the active public Datoviz v0.4 binding",
+  "features": [
+    {"id": "visual.point", "status": "strict", "scope": "proven retained point scopes", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py", "artifacts/visual_qa/s052/rc1-preflight-hardened/report.json"]},
+    {"id": "visual.marker", "status": "partial", "scope": "proven shapes/style combinations only", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py"], "limitations": ["support depends on active public binding symbols"]},
+    {"id": "visual.segment", "status": "strict", "scope": "proven segment width/cap scopes", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py"]},
+    {"id": "visual.path", "status": "strict", "scope": "proven retained subpath scopes", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py"]},
+    {"id": "visual.image", "status": "partial", "scope": "RGBA and bounded scalar-image paths", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py"], "limitations": ["image texel/color/value query parity unadvertised"]},
+    {"id": "visual.text", "status": "adapted", "scope": "isolated proven text rows", "evidence": ["artifacts/visual_qa/s050/m208-textvisual-strictness-isolated/text_basic_ndc/summary.md"], "limitations": ["combined/offscreen and advanced layout behavior remains feature-specific"]},
+    {"id": "visual.mesh2d", "status": "adapted", "scope": "bounded triangle mesh paths; per-face color may expand vertices", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py"]},
+    {"id": "guide.axis-layout", "status": "partial", "scope": "native axes and partial panel-frame layout when complete bindings are available", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py"], "limitations": ["full guide/all-rendered query and strict layout not advertised"]},
+    {"id": "view2d.navigation", "status": "strict", "scope": "retained programmatic View2D updates and proven live bounded lifecycle", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py", "artifacts/visual_qa/s053/live-session/live_session_probe.json"]},
+    {"id": "view3d.mesh", "status": "partial", "scope": "retained DATA-space opaque meshes for advertised projection/depth combinations", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py", "artifacts/visual_qa/s050/m210-depth-proof-diagnostic/summary.md"], "limitations": ["mesh triangle identity query not advertised"]},
+    {"id": "mesh.flat-lambert", "status": "strict", "scope": "CPU-resolved exact per-face Lambert colors on the proven retained path", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py"]},
+    {"id": "mesh.texture2d-unlit", "status": "blocked", "scope": "public API feasibility only", "evidence": ["spec/visuals/mesh_texture2d_unlit_s050.md"], "limitations": ["sampler, origin, unmanaged RGBA, multiplication and stability evidence incomplete"]},
+    {"id": "query.panel-data", "status": "partial", "scope": "panel query and live point identity", "evidence": ["tests/test_datoviz_v04_protocol_renderer.py"], "limitations": ["scientific readback, hit_policy=all, image texel/value and mesh triangle picking unadvertised"]},
+    {"id": "output.png", "status": "partial", "scope": "isolated offscreen/live PNG capture when advertised by active binding", "evidence": ["artifacts/visual_qa/s052/rc1-preflight-hardened/report.json"], "limitations": ["capture is not scientific readback"]}
+  ]
+}

@@ -1701,7 +1701,16 @@ def test_capability_snapshot_defers_query_support():
     )
 
     assert caps.server_name == "datoviz-v0.4-protocol-slice"
-    assert caps.visual_families == ("point", "image")
+    assert caps.visual_families == (
+        "point",
+        "marker",
+        "segment",
+        "path",
+        "image",
+        "text",
+        "mesh",
+    )
+    assert caps.metadata["profile_id"] == "gsp.datoviz-v0.4@0.2"
     assert caps.texture_formats == ("rgba8",)
     assert caps.query_modes == ()
     assert caps.transform_placements == ("cpu-adapter", "unsupported")

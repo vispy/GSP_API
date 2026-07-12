@@ -1,0 +1,23 @@
+{
+  "schema": "gsp.profile@0.2",
+  "profile_id": "gsp.matplotlib@0.2",
+  "kind": "renderer",
+  "protocol_version": "0.2",
+  "implementation": "gsp_matplotlib reference adapter",
+  "features": [
+    {"id": "visual.point", "status": "strict", "scope": "finite 2D DATA/NDC points, RGBA, logical-pixel diameters", "evidence": ["tests/test_matplotlib_protocol_slice.py"]},
+    {"id": "visual.marker", "status": "strict", "scope": "accepted 2D marker shapes, fill, angle, stroke", "evidence": ["tests/test_matplotlib_protocol_slice.py"]},
+    {"id": "visual.segment", "status": "strict", "scope": "accepted 2D independent segments", "evidence": ["tests/test_matplotlib_protocol_slice.py"]},
+    {"id": "visual.path", "status": "strict", "scope": "accepted 2D subpaths, widths, caps, joins", "evidence": ["tests/test_matplotlib_protocol_slice.py"]},
+    {"id": "visual.image", "status": "strict", "scope": "RGBA/scalar 2D images with accepted origin and interpolation", "evidence": ["tests/test_matplotlib_protocol_slice.py", "tests/test_color_mapping_protocol.py"]},
+    {"id": "visual.text", "status": "strict", "scope": "accepted TextVisual layout roles and item query identity", "evidence": ["tests/test_matplotlib_protocol_slice.py", "tests/test_matplotlib_protocol_query.py"]},
+    {"id": "visual.mesh2d", "status": "strict", "scope": "accepted 2D triangle mesh uniform/per-face RGBA", "evidence": ["tests/test_matplotlib_protocol_slice.py"]},
+    {"id": "guide.axis-layout", "status": "partial", "scope": "native axes, deterministic GSP ticks, labels, grid and partial resolved layout", "evidence": ["tests/test_matplotlib_guides.py", "tests/test_layout_protocol.py"], "limitations": ["layout_strict remains unadvertised", "colorbar query unsupported"]},
+    {"id": "view2d.navigation", "status": "strict", "scope": "canonical client-side pan/zoom/set/reset reference behavior", "evidence": ["tests/test_navigation_protocol.py", "tests/test_review_runner_interactive.py"]},
+    {"id": "view3d.mesh", "status": "adapted", "scope": "canonical CPU projection and 2D raster reference", "evidence": ["tests/test_matplotlib_protocol_slice.py", "tests/test_view3d_protocol.py"], "limitations": ["not strict GPU clipping or fragment depth"]},
+    {"id": "mesh.flat-lambert", "status": "adapted", "scope": "strict canonical face-color resolution with adapted 3D raster", "evidence": ["tests/test_matplotlib_protocol_slice.py"]},
+    {"id": "mesh.texture2d-unlit", "status": "unsupported", "scope": "protocol accepted; renderer rejects explicitly", "evidence": ["tests/test_mesh_textured_material.py"], "limitations": ["no textured mesh renderer"]},
+    {"id": "query.panel-data", "status": "partial", "scope": "point, image, text, 2D mesh, transforms and bounded View3D reference payloads", "evidence": ["tests/test_matplotlib_protocol_query.py", "tests/test_matplotlib_scoped_query.py"], "limitations": ["payload and scope capabilities remain independent"]},
+    {"id": "output.publication", "status": "strict", "scope": "PNG, SVG and PDF reference output", "evidence": ["tests/test_matplotlib_protocol_slice.py"]}
+  ]
+}

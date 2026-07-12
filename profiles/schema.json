@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GSP 0.2 implementation profile",
+  "type": "object",
+  "required": ["schema", "profile_id", "kind", "protocol_version", "implementation", "features"],
+  "properties": {
+    "schema": {"const": "gsp.profile@0.2"},
+    "profile_id": {"type": "string"},
+    "kind": {"enum": ["producer", "renderer"]},
+    "protocol_version": {"const": "0.2"},
+    "implementation": {"type": "string"},
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "scope", "evidence"],
+        "properties": {
+          "id": {"type": "string"},
+          "status": {"enum": ["strict", "adapted", "partial", "unsupported", "blocked", "not-assessed"]},
+          "scope": {"type": "string"},
+          "evidence": {"type": "array", "items": {"type": "string"}},
+          "limitations": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
