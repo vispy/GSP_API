@@ -3,7 +3,7 @@
   "schema_version": 1,
   "target_version": "0.2.0",
   "audit_date": "2026-07-12",
-  "source_commit": "9c3f8aa",
+  "source_commit": "a09d920",
   "publication_performed": false,
   "distributions": [
     {
@@ -50,5 +50,18 @@
     "event-loop embedding guarantees",
     "Datoviz Texture2D promotion",
     "Datoviz mesh-triangle identity"
-  ]
+  ],
+  "validation": {
+    "pytest_passed": 666,
+    "pytest_skipped": 2,
+    "aggregate_coverage_percent": 66,
+    "session_module_coverage_percent": 93,
+    "strict_mypy_files": 220,
+    "ruff": "passed",
+    "strict_mkdocs": "passed",
+    "profile_consistency": "passed",
+    "spec_traceability": "passed",
+    "clean_wheel_install": "passed"
+  },
+  "decision": "ship_conditional_on_explicit_release_approval"
 }

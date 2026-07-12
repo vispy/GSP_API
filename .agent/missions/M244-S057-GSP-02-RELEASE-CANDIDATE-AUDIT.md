@@ -6,7 +6,7 @@ S057 - GSP 0.2 Release-Candidate Audit And Decision
 
 ## Status
 
-Approved.
+Completed.
 
 ## Summary
 
@@ -53,3 +53,11 @@ and distribution artifacts and produce a ship/defer decision packet without tagg
 
 The project owner explicitly approved this release-candidate audit in the active Mission Control
 conversation. This approval does not authorize tagging or publication.
+
+## Result
+
+Completed and pushed. The audit recommends shipping `gsp-vispy2` 0.2.0 after separate explicit
+approval for the tag, GitHub release, and PyPI target. Fresh distributions, clean Python 3.13
+installation, maintained Matplotlib/Datoviz visuals, bounded Datoviz examples, lifecycle evidence,
+release notes, documentation, profiles, tests, typing, lint, and package contents passed review. No
+tag or publication occurred.

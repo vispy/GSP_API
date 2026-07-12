@@ -340,8 +340,8 @@
     {
       "id": "S057",
       "title": "GSP 0.2 Release-Candidate Audit And Decision",
-      "state": "active",
-      "progress": 10
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2527,9 +2527,9 @@
       "id": "M244",
       "title": "S057 GSP 0.2 release-candidate audit",
       "stage": "S057",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 10,
+      "progress": 100,
       "priority": 244
     }
   ],
