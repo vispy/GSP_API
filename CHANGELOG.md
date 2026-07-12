@@ -35,10 +35,12 @@ development releases.
 - Matplotlib remains the required portable reference backend and publishes an exact 0.2 profile.
 - Datoviz v0.4 remains optional and capability-gated; no symbol, screenshot, or unrelated test is
   treated as feature promotion.
+- Added an experimental explicit `open_session("datoviz")` preview for capability inspection,
+  bounded blocking display, one-frame polling, structured diagnostics, and deterministic cleanup.
 - Texture2D mesh rendering remains unsupported by Matplotlib and blocked from Datoviz promotion;
   producer support does not imply renderer support.
-- No production current-protocol remote transport or general backend-neutral live display API is
-  claimed.
+- No production current-protocol remote transport, general retained display-update API, close
+  callbacks, or event-loop embedding contract is claimed.
 
 ### Validation
 

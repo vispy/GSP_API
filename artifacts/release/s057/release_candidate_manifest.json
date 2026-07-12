@@ -1,0 +1,54 @@
+{
+  "schema_kind": "gsp.s057.release_candidate_manifest",
+  "schema_version": 1,
+  "target_version": "0.2.0",
+  "audit_date": "2026-07-12",
+  "source_commit": "9c3f8aa",
+  "publication_performed": false,
+  "distributions": [
+    {
+      "filename": "gsp_vispy2-0.2.0-py3-none-any.whl",
+      "sha256": "1646104f5b9742698d42cc70d787540c37a494c230e265e01476ae539d3f8dc4",
+      "clean_python": "3.13.4",
+      "clean_install": "passed",
+      "distribution_version": "0.2.0",
+      "module_version": "0.2.0",
+      "file_count": 246,
+      "legacy_vispy2_package_present": false
+    },
+    {
+      "filename": "gsp_vispy2-0.2.0.tar.gz",
+      "sha256": "3cd3f4c62cbc1e15e985ccccd83690a576abf61fa0250297a6803319787a48db"
+    }
+  ],
+  "visual_examples": [
+    {
+      "id": "01_scatter_basic",
+      "matplotlib": "rendered",
+      "datoviz": "review.adapted",
+      "comparison": "visuals/scatter/compare.png"
+    },
+    {
+      "id": "10_view3d_flat_lambert",
+      "matplotlib": "rendered",
+      "datoviz": "review.adapted",
+      "comparison": "visuals/lambert/compare.png"
+    }
+  ],
+  "public_datoviz_examples": {
+    "bounded_blocking": "passed",
+    "explicit_polling": "passed"
+  },
+  "lifecycle_evidence": [
+    "artifacts/visual_qa/s053/live-session/live_session_probe.json",
+    "artifacts/visual_qa/s056/public-session/public_session_probe.json"
+  ],
+  "known_deferred": [
+    "implicit sessions",
+    "retained Display.update",
+    "user/window-close callbacks",
+    "event-loop embedding guarantees",
+    "Datoviz Texture2D promotion",
+    "Datoviz mesh-triangle identity"
+  ]
+}

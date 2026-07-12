@@ -1,0 +1,27 @@
+[
+  {
+    "backend": "matplotlib",
+    "status": "rendered",
+    "log_path": "artifacts/release/s057/visuals/lambert/matplotlib.log.txt",
+    "path": "artifacts/release/s057/visuals/lambert/matplotlib.png"
+  },
+  {
+    "backend": "datoviz",
+    "status": "rendered",
+    "classification": "review.adapted",
+    "diagnostics": [
+      {
+        "code": "panel_text_guide_as_screen_text",
+        "status": "adapted",
+        "message": "PanelTextGuide TITLE rendered as adapted screen text; it does not participate in GSP layout strictness."
+      },
+      {
+        "code": "guide_query_missing",
+        "status": "unsupported",
+        "message": "Datoviz review title does not provide guide query geometry."
+      }
+    ],
+    "log_path": "artifacts/release/s057/visuals/lambert/datoviz.log.txt",
+    "path": "artifacts/release/s057/visuals/lambert/datoviz.png"
+  }
+]
