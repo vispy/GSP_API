@@ -10,7 +10,7 @@ from pathlib import Path
 import subprocess
 import sys
 from time import monotonic
-from typing import Literal, Sequence
+from typing import Any, Literal, Sequence
 
 import numpy as np
 
@@ -20,11 +20,19 @@ from gsp.qa.visual.datoviz_probe import probe_datoviz_v04
 from gsp_datoviz.protocol_renderer import DatovizV04ProtocolRenderer
 
 
-ProbeMode = Literal["bounded_run", "polled_run", "retained_view2d"]
-PROBE_MODES: tuple[ProbeMode, ...] = (
+ProbeMode = Literal[
     "bounded_run",
+    "blocking_auto_stop",
     "polled_run",
     "retained_view2d",
+    "retained_point",
+]
+PROBE_MODES: tuple[ProbeMode, ...] = (
+    "bounded_run",
+    "blocking_auto_stop",
+    "polled_run",
+    "retained_view2d",
+    "retained_point",
 )
 
 
@@ -121,9 +129,12 @@ def run_live_session_probe(
 
 def run_child(mode: ProbeMode, report_path: Path) -> None:
     """Execute one bounded live lifecycle inside a crash-isolated process."""
+    report_path.parent.mkdir(parents=True, exist_ok=True)
     phases: list[str] = ["create_requested"]
     before_hash: str | None = None
     after_hash: str | None = None
+    frame_count = 0
+    callback: Any | None = None
     view = View2D(id="view:s053", panel_id="panel:s053")
     renderer = DatovizV04ProtocolRenderer(
         canvas_size=CanvasSize.pixel_exact(320, 240), view=view
@@ -135,11 +146,28 @@ def run_child(mode: ProbeMode, report_path: Path) -> None:
         if mode == "bounded_run":
             renderer.show(frame_count=2)
             phases.extend(("first_frame", "bounded_run_complete"))
+        elif mode == "blocking_auto_stop":
+            live_view = renderer._ensure_live_view()
+            callback_type = renderer.dvz.DvzViewFrameCallback
+
+            def on_frame(_view: object, _user_data: object) -> None:
+                nonlocal frame_count
+                frame_count += 1
+                if frame_count == 1:
+                    phases.append("first_frame")
+                if frame_count >= 3:
+                    renderer.dvz.dvz_app_stop(renderer.app)
+                    phases.append("stop_requested")
+
+            callback = callback_type(on_frame)
+            renderer.dvz.dvz_view_set_frame_callback(live_view, callback, None)
+            renderer.show(frame_count=0)
+            phases.append("blocking_run_complete")
         elif mode == "polled_run":
             for _ in range(3):
                 renderer.show(frame_count=1)
             phases.extend(("first_frame", "poll_complete"))
-        else:
+        elif mode == "retained_view2d":
             before = renderer.capture_png_bytes()
             before_hash = hashlib.sha256(before).hexdigest()
             phases.append("first_frame")
@@ -156,12 +184,26 @@ def run_child(mode: ProbeMode, report_path: Path) -> None:
             if before_hash == after_hash:
                 raise RuntimeError("retained View2D update did not change captured output")
             phases.append("updated_frame_verified")
+        else:
+            live_view = renderer._ensure_live_view()
+            renderer.dvz.dvz_app_render_once(renderer.app)
+            phases.append("first_frame")
+            before_path = report_path.with_name("before.png")
+            after_path = report_path.with_name("after.png")
+            before_hash = _capture_live_hash(renderer, live_view, before_path)
+            renderer.update_point_visual(_point_visual(shift=0.45))
+            phases.append("retained_point_update")
+            renderer.dvz.dvz_view_request_frame(live_view)
+            renderer.dvz.dvz_app_render_once(renderer.app)
+            after_hash = _capture_live_hash(renderer, live_view, after_path)
+            if before_hash == after_hash:
+                raise RuntimeError("retained point update did not change live capture")
+            phases.append("updated_frame_verified")
     finally:
         phases.append("close_requested")
         renderer.close()
         renderer.close()
         phases.extend(("owner_closed", "double_close_idempotent"))
-    report_path.parent.mkdir(parents=True, exist_ok=True)
     write_json(
         report_path,
         {
@@ -171,19 +213,31 @@ def run_child(mode: ProbeMode, report_path: Path) -> None:
             "phases": phases,
             "before_sha256": before_hash,
             "after_sha256": after_hash,
+            "frame_callback_count": frame_count,
             "semantic_visual_id": "visual:s053:point",
         },
     )
 
 
-def _point_visual() -> PointVisual:
+def _point_visual(*, shift: float = 0.0) -> PointVisual:
     return PointVisual(
         id="visual:s053:point",
-        positions=np.array([[-0.6, -0.2], [0.4, 0.3]], dtype=np.float32),
+        positions=np.array(
+            [[-0.6 + shift, -0.2], [0.4 + shift, 0.3]], dtype=np.float32
+        ),
         colors=np.array([[230, 60, 70, 255], [40, 150, 210, 255]], dtype=np.uint8),
         sizes=np.array([24.0, 36.0], dtype=np.float32),
         coordinate_space=CoordinateSpace.DATA,
     )
+
+
+def _capture_live_hash(
+    renderer: DatovizV04ProtocolRenderer, live_view: object, path: Path
+) -> str:
+    result = renderer.dvz.dvz_view_capture_png(live_view, str(path).encode())
+    if result not in (0, None):
+        raise RuntimeError(f"live capture failed with result {result!r}")
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def main(argv: Sequence[str] | None = None) -> int:

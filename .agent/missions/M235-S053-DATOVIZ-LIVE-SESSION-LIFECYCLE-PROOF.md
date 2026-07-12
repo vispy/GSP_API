@@ -105,3 +105,8 @@ Validation:
 A minimal explicit experimental session preview is implementation-ready for capability inspection,
 bounded blocking display, explicit-session polling, structured diagnostics, and deterministic
 context cleanup. No public API was implemented by M235.
+
+An immediate evidence addendum extended the pack to 25/25 clean subprocesses. Five interactive
+runs stopped through a public frame callback and `dvz_app_stop`; five retained point-data updates
+produced different before/after live captures through the semantic visual ID. The addendum adds no
+public session API and leaves user-driven close and general retained-update contracts deferred.

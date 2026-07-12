@@ -20,11 +20,15 @@ each mode:
 | Mode | Iterations | Clean exit | Complete report | Timeout |
 |---|---:|---:|---:|---:|
 | bounded two-frame run | 5 | 5 | 5 | 0 |
+| callback-stopped blocking run | 5 | 5 | 5 | 0 |
 | three explicit one-frame polls | 5 | 5 | 5 | 0 |
 | retained View2D update | 5 | 5 | 5 | 0 |
+| retained point-data update | 5 | 5 | 5 | 0 |
 
-Every retained View2D iteration captured deterministic but different before/after PNG hashes,
-proving output changed from semantic View2D state rather than only recording native call counts.
+Every retained View2D and point-data iteration captured deterministic but different before/after
+PNG hashes, proving output changed from semantic GSP state rather than only recording native call
+counts. Callback-stopped runs entered the interactive loop and stopped after three frames through
+the public frame-callback and app-stop APIs.
 Every child recorded create, visual attachment, first-frame/update, close request, owner close, and
 idempotent double-close phases.
 
@@ -48,7 +52,6 @@ bounded blocking display, explicit-session one-frame polling, deterministic cont
 capability inspection, and structured diagnostics. Bare `Figure.show()` remains Matplotlib during
 0.x, and `subplots()` remains backend-independent.
 
-Retained visual-data replacement, user-driven close observation, implicit non-blocking sessions,
-callback/event-loop interop, and a stable `Display.update()` contract remain deferred. Retained
-View2D evidence may support internal navigation but does not by itself promote general retained
-updates.
+User-driven close observation, implicit non-blocking sessions, general callback/event-loop interop,
+and a stable `Display.update()` contract remain deferred. The retained point proof establishes one
+bounded semantic update mechanism but does not promote general retained updates.

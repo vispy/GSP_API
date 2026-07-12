@@ -8,7 +8,7 @@
     "sibling_source": {
       "exists": true,
       "path": "../datoviz",
-      "revision": "ff62b3256f1de7dd2df2ee890c99968715789a27"
+      "revision": "15f53464ca109beb2940dea0cc6568ef2144770a"
     }
   },
   "future_wrapper_misuse_policy": {
@@ -21,12 +21,14 @@
   "iterations_per_mode": 5,
   "modes": [
     "bounded_run",
+    "blocking_auto_stop",
     "polled_run",
-    "retained_view2d"
+    "retained_view2d",
+    "retained_point"
   ],
   "results": [
     {
-      "elapsed_seconds": 0.683418124972377,
+      "elapsed_seconds": 0.7088278750306927,
       "iteration": 1,
       "mode": "bounded_run",
       "report_complete": true,
@@ -36,7 +38,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.7316401659627445,
+      "elapsed_seconds": 0.736642791016493,
       "iteration": 2,
       "mode": "bounded_run",
       "report_complete": true,
@@ -46,7 +48,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.7326627090224065,
+      "elapsed_seconds": 0.7247897499473765,
       "iteration": 3,
       "mode": "bounded_run",
       "report_complete": true,
@@ -56,7 +58,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.7217676250147633,
+      "elapsed_seconds": 0.7171159170102328,
       "iteration": 4,
       "mode": "bounded_run",
       "report_complete": true,
@@ -66,7 +68,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.7493967500049621,
+      "elapsed_seconds": 0.7234024170320481,
       "iteration": 5,
       "mode": "bounded_run",
       "report_complete": true,
@@ -76,7 +78,57 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.7506170829874463,
+      "elapsed_seconds": 0.7329247500165366,
+      "iteration": 1,
+      "mode": "blocking_auto_stop",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.720556708984077,
+      "iteration": 2,
+      "mode": "blocking_auto_stop",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7340447090100497,
+      "iteration": 3,
+      "mode": "blocking_auto_stop",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7262001250055619,
+      "iteration": 4,
+      "mode": "blocking_auto_stop",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7274272089707665,
+      "iteration": 5,
+      "mode": "blocking_auto_stop",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.75093687500339,
       "iteration": 1,
       "mode": "polled_run",
       "report_complete": true,
@@ -86,7 +138,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.7538705000188202,
+      "elapsed_seconds": 0.7484465829911642,
       "iteration": 2,
       "mode": "polled_run",
       "report_complete": true,
@@ -96,7 +148,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.7397000839700922,
+      "elapsed_seconds": 0.7422177499975078,
       "iteration": 3,
       "mode": "polled_run",
       "report_complete": true,
@@ -106,7 +158,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.7501951670274138,
+      "elapsed_seconds": 0.745131500007119,
       "iteration": 4,
       "mode": "polled_run",
       "report_complete": true,
@@ -116,7 +168,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.7519688330357894,
+      "elapsed_seconds": 0.737304457987193,
       "iteration": 5,
       "mode": "polled_run",
       "report_complete": true,
@@ -126,7 +178,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.6197415830101818,
+      "elapsed_seconds": 0.6333940000040457,
       "iteration": 1,
       "mode": "retained_view2d",
       "report_complete": true,
@@ -136,7 +188,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.6099455839721486,
+      "elapsed_seconds": 0.6192597079789266,
       "iteration": 2,
       "mode": "retained_view2d",
       "report_complete": true,
@@ -146,7 +198,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.6081827080342919,
+      "elapsed_seconds": 0.612224749987945,
       "iteration": 3,
       "mode": "retained_view2d",
       "report_complete": true,
@@ -156,7 +208,7 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.6037900419905782,
+      "elapsed_seconds": 0.6165401670150459,
       "iteration": 4,
       "mode": "retained_view2d",
       "report_complete": true,
@@ -166,9 +218,59 @@
       "timed_out": false
     },
     {
-      "elapsed_seconds": 0.6053051250055432,
+      "elapsed_seconds": 0.6115836250246502,
       "iteration": 5,
       "mode": "retained_view2d",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7435251250280999,
+      "iteration": 1,
+      "mode": "retained_point",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7942377919680439,
+      "iteration": 2,
+      "mode": "retained_point",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7677924589952454,
+      "iteration": 3,
+      "mode": "retained_point",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7750737919704989,
+      "iteration": 4,
+      "mode": "retained_point",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7459018340450712,
+      "iteration": 5,
+      "mode": "retained_point",
       "report_complete": true,
       "returncode": 0,
       "stderr": "",
@@ -179,9 +281,9 @@
   "schema_kind": "gsp.s053.datoviz_live_session_probe",
   "schema_version": 1,
   "summary": {
-    "attempted": 15,
-    "clean_exit": 15,
-    "complete_report": 15,
+    "attempted": 25,
+    "clean_exit": 25,
+    "complete_report": 25,
     "timeouts": 0
   }
 }

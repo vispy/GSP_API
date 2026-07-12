@@ -1,14 +1,14 @@
 {
-  "after_sha256": "76cfdb90469e2e102815ab00ea96c05b69d5b180f34ef82003dd353104f8b8c7",
-  "before_sha256": "64fac7fc772c367719f0e37a3e1539d9e7780064bcb9a70539f507ec47a80c3e",
+  "after_sha256": "6495dc7f6637bca65b82bc785cd36f51ed87244dc30794b2986820a236619088",
+  "before_sha256": "0fdb07d91e3c353552a6c0d13ae35662c2ac21089da46a0198c74c72493119f0",
   "frame_callback_count": 0,
-  "mode": "retained_view2d",
+  "mode": "retained_point",
   "phases": [
     "create_requested",
     "owner_created",
     "visual_attached",
     "first_frame",
-    "retained_view2d_update",
+    "retained_point_update",
     "updated_frame_verified",
     "close_requested",
     "owner_closed",

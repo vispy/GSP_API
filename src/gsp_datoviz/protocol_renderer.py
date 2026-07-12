@@ -1126,6 +1126,44 @@ class DatovizV04ProtocolRenderer:
             )
         return dvz_visual
 
+    def update_point_visual(self, visual: PointVisual) -> None:
+        """Update one retained point visual from semantic GSP state.
+
+        This is an adapter operation used by bounded lifecycle/conformance probes. It keeps native
+        handles private and deliberately rejects updates after close or for unknown visual IDs.
+        """
+        if self._closed:
+            raise RuntimeError("Datoviz renderer is closed")
+        native_visual = self.visuals.get(visual.id)
+        if native_visual is None:
+            raise ValueError(f"unknown retained point visual {visual.id!r}")
+
+        positions = _positions_3d(
+            _adapt_visual_positions(
+                visual.id,
+                visual.positions,
+                visual.transform,
+                visual.coordinate_space,
+                self.view,
+                self.transform_resources,
+                cpu_map_data_to_view=self._cpu_map_data_visuals_to_view,
+            )
+        )
+        colors = _point_colors(visual, color_scales=self.color_scales)
+        diameters = self._scale_canvas_px_array(
+            _diameters_from_pixel_diameters(visual.sizes, positions.shape[0])
+        )
+        _set_visual_data(self.dvz, native_visual, "position", positions)
+        _set_visual_data(self.dvz, native_visual, "color", colors)
+        _set_visual_data(self.dvz, native_visual, "diameter_px", diameters)
+
+        for upload in self.retained_view2d_position_uploads:
+            if upload.visual_id == visual.id:
+                upload.positions = visual.positions
+                upload.transform = visual.transform
+                upload.coordinate_space = visual.coordinate_space
+                break
+
     def add_marker_visual(self, visual: MarkerVisual) -> Any:
         """Create and attach a Datoviz marker visual."""
         marker_diagnostics = _datoviz_marker_diagnostics(self.dvz)

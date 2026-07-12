@@ -1,15 +1,15 @@
 {
-  "after_sha256": "76cfdb90469e2e102815ab00ea96c05b69d5b180f34ef82003dd353104f8b8c7",
-  "before_sha256": "64fac7fc772c367719f0e37a3e1539d9e7780064bcb9a70539f507ec47a80c3e",
-  "frame_callback_count": 0,
-  "mode": "retained_view2d",
+  "after_sha256": null,
+  "before_sha256": null,
+  "frame_callback_count": 3,
+  "mode": "blocking_auto_stop",
   "phases": [
     "create_requested",
     "owner_created",
     "visual_attached",
     "first_frame",
-    "retained_view2d_update",
-    "updated_frame_verified",
+    "stop_requested",
+    "blocking_run_complete",
     "close_requested",
     "owner_closed",
     "double_close_idempotent"

@@ -30,10 +30,11 @@ def test_live_session_probe_counts_clean_isolated_results(
     path = live_session_probe.run_live_session_probe(tmp_path, iterations=2)
     payload = json.loads(path.read_text(encoding="utf-8"))
 
+    expected = len(live_session_probe.PROBE_MODES) * 2
     assert payload["summary"] == {
-        "attempted": 6,
-        "clean_exit": 6,
-        "complete_report": 6,
+        "attempted": expected,
+        "clean_exit": expected,
+        "complete_report": expected,
         "timeouts": 0,
     }
 

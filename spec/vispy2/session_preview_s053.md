@@ -20,3 +20,8 @@ The preview must not add backend selection to `subplots()`, store backend state 
 the default bare `Figure.show()`, expose native handles, or promise backend parity. It must not yet
 expose retained visual-data mutation, user-close callbacks, generic `Display.update()`, or event-loop
 embedding as stable behavior.
+
+The M235 evidence addendum proves one bounded semantic `PointVisual` data-replacement path and
+callback-requested app stop. This is implementation evidence for a future wrapper, not a general
+`Display.update()` contract. User-driven window close, thread affinity, and arbitrary retained
+resource mutation remain promotion gates.

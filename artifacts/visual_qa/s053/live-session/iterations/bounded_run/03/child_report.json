@@ -1,6 +1,7 @@
 {
   "after_sha256": null,
   "before_sha256": null,
+  "frame_callback_count": 0,
   "mode": "bounded_run",
   "phases": [
     "create_requested",
