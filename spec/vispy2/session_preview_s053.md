@@ -30,3 +30,12 @@ The M235 evidence addendum proves one bounded semantic `PointVisual` data-replac
 callback-requested app stop. This is implementation evidence for a future wrapper, not a general
 `Display.update()` contract. User-driven window close, thread affinity, and arbitrary retained
 resource mutation remain promotion gates.
+
+## S056 conformance hardening
+
+Public-wrapper lifecycle evidence repeats the bounded blocking and explicit polling paths five times
+each in isolated subprocesses, with ten clean exits and zero timeouts. Renderer creation, partial
+attachment, blocking, and polling failures are normalized as `SessionExecutionError` with immutable
+diagnostic codes, and owned resources close on partial preparation, context exceptions, and repeated
+close. Representative point, image, text, mesh, guide, and colorbar producer records are covered by
+focused routing tests. The deferred surface above remains unchanged.

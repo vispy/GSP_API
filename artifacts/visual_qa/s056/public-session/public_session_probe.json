@@ -1,0 +1,206 @@
+{
+  "schema_kind": "gsp.s056.public_session_lifecycle",
+  "schema_version": 1,
+  "iterations_per_mode": 5,
+  "timeout_seconds": 20.0,
+  "modes": [
+    "blocking",
+    "polling"
+  ],
+  "clean_count": 10,
+  "total_count": 10,
+  "timeout_count": 0,
+  "passed": true,
+  "results": [
+    {
+      "mode": "blocking",
+      "iteration": 1,
+      "returncode": 0,
+      "timed_out": false,
+      "report_complete": true,
+      "phases": [
+        "figure_created",
+        "scene_ready",
+        "session_opened",
+        "inspection_complete",
+        "blocking_complete",
+        "session_closed"
+      ],
+      "diagnostic_codes": [],
+      "stderr": "",
+      "clean": true
+    },
+    {
+      "mode": "blocking",
+      "iteration": 2,
+      "returncode": 0,
+      "timed_out": false,
+      "report_complete": true,
+      "phases": [
+        "figure_created",
+        "scene_ready",
+        "session_opened",
+        "inspection_complete",
+        "blocking_complete",
+        "session_closed"
+      ],
+      "diagnostic_codes": [],
+      "stderr": "",
+      "clean": true
+    },
+    {
+      "mode": "blocking",
+      "iteration": 3,
+      "returncode": 0,
+      "timed_out": false,
+      "report_complete": true,
+      "phases": [
+        "figure_created",
+        "scene_ready",
+        "session_opened",
+        "inspection_complete",
+        "blocking_complete",
+        "session_closed"
+      ],
+      "diagnostic_codes": [],
+      "stderr": "",
+      "clean": true
+    },
+    {
+      "mode": "blocking",
+      "iteration": 4,
+      "returncode": 0,
+      "timed_out": false,
+      "report_complete": true,
+      "phases": [
+        "figure_created",
+        "scene_ready",
+        "session_opened",
+        "inspection_complete",
+        "blocking_complete",
+        "session_closed"
+      ],
+      "diagnostic_codes": [],
+      "stderr": "",
+      "clean": true
+    },
+    {
+      "mode": "blocking",
+      "iteration": 5,
+      "returncode": 0,
+      "timed_out": false,
+      "report_complete": true,
+      "phases": [
+        "figure_created",
+        "scene_ready",
+        "session_opened",
+        "inspection_complete",
+        "blocking_complete",
+        "session_closed"
+      ],
+      "diagnostic_codes": [],
+      "stderr": "",
+      "clean": true
+    },
+    {
+      "mode": "polling",
+      "iteration": 1,
+      "returncode": 0,
+      "timed_out": false,
+      "report_complete": true,
+      "phases": [
+        "figure_created",
+        "scene_ready",
+        "session_opened",
+        "inspection_complete",
+        "display_created",
+        "poll_1_complete",
+        "poll_2_complete",
+        "session_closed"
+      ],
+      "diagnostic_codes": [],
+      "stderr": "",
+      "clean": true
+    },
+    {
+      "mode": "polling",
+      "iteration": 2,
+      "returncode": 0,
+      "timed_out": false,
+      "report_complete": true,
+      "phases": [
+        "figure_created",
+        "scene_ready",
+        "session_opened",
+        "inspection_complete",
+        "display_created",
+        "poll_1_complete",
+        "poll_2_complete",
+        "session_closed"
+      ],
+      "diagnostic_codes": [],
+      "stderr": "",
+      "clean": true
+    },
+    {
+      "mode": "polling",
+      "iteration": 3,
+      "returncode": 0,
+      "timed_out": false,
+      "report_complete": true,
+      "phases": [
+        "figure_created",
+        "scene_ready",
+        "session_opened",
+        "inspection_complete",
+        "display_created",
+        "poll_1_complete",
+        "poll_2_complete",
+        "session_closed"
+      ],
+      "diagnostic_codes": [],
+      "stderr": "",
+      "clean": true
+    },
+    {
+      "mode": "polling",
+      "iteration": 4,
+      "returncode": 0,
+      "timed_out": false,
+      "report_complete": true,
+      "phases": [
+        "figure_created",
+        "scene_ready",
+        "session_opened",
+        "inspection_complete",
+        "display_created",
+        "poll_1_complete",
+        "poll_2_complete",
+        "session_closed"
+      ],
+      "diagnostic_codes": [],
+      "stderr": "",
+      "clean": true
+    },
+    {
+      "mode": "polling",
+      "iteration": 5,
+      "returncode": 0,
+      "timed_out": false,
+      "report_complete": true,
+      "phases": [
+        "figure_created",
+        "scene_ready",
+        "session_opened",
+        "inspection_complete",
+        "display_created",
+        "poll_1_complete",
+        "poll_2_complete",
+        "session_closed"
+      ],
+      "diagnostic_codes": [],
+      "stderr": "",
+      "clean": true
+    }
+  ]
+}

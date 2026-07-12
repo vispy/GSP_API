@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import numpy as np
 import pytest
 
 from gsp.protocol import CapabilitySnapshot, TransportKind
@@ -206,6 +207,30 @@ def test_context_exception_closes_multiple_owned_displays() -> None:
     assert first.closed
     assert second.closed
     assert all(renderer.closed for renderer in FakeRenderer.instances)
+
+
+def test_representative_producer_families_route_before_execution() -> None:
+    figure, axes = vp.subplots()
+    axes.scatter([0.0], [0.0])
+    axes.imshow(np.zeros((2, 2, 4), dtype=np.uint8))
+    axes.text([0.0], [0.0], ["label"])
+    axes.mesh(
+        [[-0.5, -0.5], [0.5, -0.5], [0.0, 0.5]],
+        [[0, 1, 2]],
+        color=[255, 0, 0, 255],
+    )
+    scale = axes.color_scale(cmap="viridis", clim=(0.0, 1.0))
+    axes.colorbar(scale, label="value")
+
+    with vp.open_session("datoviz") as session:
+        display = session.show(figure, block=False)
+        renderer = FakeRenderer.instances[-1]
+        call_names = [call[0] for call in renderer.calls]
+        assert {"axes", "point", "image", "text", "mesh", "colorbar"} <= set(
+            call_names
+        )
+        assert not any(name == "show" for name in call_names)
+    assert display.closed
 
 
 def test_bare_figure_show_remains_matplotlib(monkeypatch: pytest.MonkeyPatch) -> None:
