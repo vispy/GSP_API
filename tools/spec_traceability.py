@@ -6,15 +6,20 @@ import argparse
 import json
 from pathlib import Path
 import re
-from typing import Iterable
+from typing import Iterable, cast
 
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_DIR = ROOT / "spec" / "requirements"
 SOURCE_INVENTORY = REGISTRY_DIR / "source_inventory.json"
 REQUIREMENTS = REGISTRY_DIR / "requirements.json"
+REGISTRIES = REGISTRY_DIR / "registries.json"
+SOURCE_DISPOSITIONS = REGISTRY_DIR / "source_dispositions.json"
 REQUIREMENT_ID = re.compile(
     r"^GSP-(CORE|LIFE|SCENE|DATA|VIS|VIEW|CAP|QUERY|XPORT|EXT|PROD)-\d{3}$"
+)
+REQUIREMENT_REF = re.compile(
+    r"GSP-(CORE|LIFE|SCENE|DATA|VIS|VIEW|CAP|QUERY|XPORT|EXT|PROD)-\d{3}"
 )
 
 
@@ -57,6 +62,76 @@ def build_source_inventory() -> dict[str, object]:
     return {"schema": "gsp.source-inventory@0.2", "sources": sorted(rows, key=lambda row: row["path"])}
 
 
+def build_requirement_registry() -> dict[str, object]:
+    """Extract stable labeled requirements from the GSP 0.2 target chapters."""
+    rows: list[dict[str, object]] = []
+    for path in _markdown_files(ROOT / "spec" / "current"):
+        relative = path.relative_to(ROOT).as_posix()
+        for line in path.read_text(encoding="utf-8").splitlines():
+            matches = list(REQUIREMENT_REF.finditer(line.replace("`", "")))
+            for match in matches:
+                requirement_id = match.group(0)
+                statement = _requirement_statement(line, requirement_id)
+                rows.append(
+                    {
+                        "id": requirement_id,
+                        "domain": requirement_id.split("-")[1].lower(),
+                        "statement": statement,
+                        "status": "accepted",
+                        "source": _legacy_source_for(requirement_id),
+                        "destination": relative,
+                        "tests": [],
+                        "notes": "Test mapping is populated by M239.",
+                    }
+                )
+    return {
+        "schema": "gsp.requirements@0.2",
+        "requirements": sorted(rows, key=lambda row: str(row["id"])),
+    }
+
+
+def build_source_dispositions() -> dict[str, object]:
+    """Assign every detailed specification source one explicit consolidation disposition."""
+    inventory = build_source_inventory()
+    rows: list[dict[str, str]] = []
+    sources = cast(list[dict[str, str]], inventory["sources"])
+    for source in sources:
+        if source["classification"] != "detailed-normative-source":
+            continue
+        path = source["path"]
+        if "backend" in path or "datoviz_v04_api_boundary" in path:
+            disposition = "move-to-backend-profile"
+            destination = "spec/current/backend-profiles.md"
+        elif "conformance" in path or "visual_qa" in path:
+            disposition = "move-to-conformance"
+            destination = "spec/requirements/requirements.json"
+        elif "vispy2" in path:
+            disposition = "move-to-producer-profile"
+            destination = "spec/current/scene.md"
+        else:
+            disposition = "migrated-to-normative-chapter"
+            destination = source["destination"]
+        notes = "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes."
+        if "mesh_materials_s038" in path:
+            notes = "Bounded unlit/flat-Lambert/Texture2D contracts migrated; general material graphs remain outside GSP 0.2."
+        elif "mesh_face_culling_alpha" in path:
+            notes = "Projected-NDC culling migrated; strict non-opaque 3D compositing remains outside GSP 0.2."
+        elif "data_sources" in path:
+            notes = "Bounded preconfigured/tiled/HTTP-array rules migrated; general remote-data support is not claimed."
+        rows.append(
+            {
+                "source": path,
+                "disposition": disposition,
+                "destination": destination,
+                "notes": notes,
+            }
+        )
+    return {
+        "schema": "gsp.source-dispositions@0.2",
+        "dispositions": sorted(rows, key=lambda row: row["source"]),
+    }
+
+
 def validate() -> list[str]:
     """Return registry validation errors without mutating the repository."""
     errors: list[str] = []
@@ -69,6 +144,16 @@ def validate() -> list[str]:
             errors.append("source_inventory.json is stale; run tools/spec_traceability.py --write")
 
     payload = json.loads(REQUIREMENTS.read_text(encoding="utf-8"))
+    expected_requirements = build_requirement_registry()
+    if payload != expected_requirements:
+        errors.append("requirements.json is stale; run tools/spec_traceability.py --write")
+    expected_dispositions = build_source_dispositions()
+    if not SOURCE_DISPOSITIONS.exists():
+        errors.append("source_dispositions.json is missing")
+    else:
+        dispositions = json.loads(SOURCE_DISPOSITIONS.read_text(encoding="utf-8"))
+        if dispositions != expected_dispositions:
+            errors.append("source_dispositions.json is stale; run tools/spec_traceability.py --write")
     if payload.get("schema") != "gsp.requirements@0.2":
         errors.append("requirements.json has an unsupported schema")
     seen: set[str] = set()
@@ -94,6 +179,35 @@ def validate() -> list[str]:
                 if not isinstance(test, str) or not (ROOT / test.split("::", 1)[0]).exists():
                     errors.append(f"{requirement_id} references missing test {test!r}")
     return errors
+
+
+def _requirement_statement(line: str, requirement_id: str) -> str:
+    cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+    for index, cell in enumerate(cells):
+        if requirement_id in cell and index + 1 < len(cells):
+            statement = cells[index + 1]
+            if statement:
+                return statement
+    plain = line.replace("`", "")
+    suffix = plain.split(requirement_id, 1)[1].lstrip(" :—-")
+    return suffix.strip() or f"Normative requirement {requirement_id}."
+
+
+def _legacy_source_for(requirement_id: str) -> str:
+    domain = requirement_id.split("-")[1]
+    return {
+        "CORE": "PROJECT_CHARTER.md",
+        "LIFE": "spec/protocol.md",
+        "SCENE": "spec/visual_families_v1.md",
+        "DATA": "spec/resources.md",
+        "VIS": "spec/visual_cross_cutting_rules.md",
+        "VIEW": "spec/transforms.md",
+        "CAP": "spec/capabilities.md",
+        "QUERY": "spec/query.md",
+        "XPORT": "spec/transports.md",
+        "EXT": "spec/extensions.md",
+        "PROD": "spec/vispy2/api.md",
+    }[domain]
 
 
 def _markdown_files(directory: Path) -> Iterable[Path]:
@@ -131,6 +245,14 @@ def main() -> int:
     if args.write:
         SOURCE_INVENTORY.write_text(
             json.dumps(build_source_inventory(), indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        REQUIREMENTS.write_text(
+            json.dumps(build_requirement_registry(), indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        SOURCE_DISPOSITIONS.write_text(
+            json.dumps(build_source_dispositions(), indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
     errors = validate()

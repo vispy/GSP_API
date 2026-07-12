@@ -26,6 +26,7 @@ deleting its history.
 ## Files
 
 - `source_inventory.json` classifies every specification, ADR, and accepted decision source.
+- `source_dispositions.json` records the GSP 0.2 destination of every detailed specification.
 - `requirements.json` is the normative requirement registry populated during M237.
 - `schema.json` defines the machine-checkable registry format.
 

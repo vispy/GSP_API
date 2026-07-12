@@ -99,6 +99,7 @@ nav:
       - Queries and readback: specification/queries.md
       - Transports and extensions: specification/transports-extensions.md
       - Backend profiles: specification/backend-profiles.md
+      - Normative registries: specification/registries.md
   - Python API: api/index.md
   - Examples:
       - Example index: examples/index.md

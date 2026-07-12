@@ -1,0 +1,239 @@
+{
+  "dispositions": [
+    {
+      "destination": "spec/current/backend-profiles.md",
+      "disposition": "move-to-backend-profile",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/backend_capabilities_visuals.md"
+    },
+    {
+      "destination": "spec/current/backend-profiles.md",
+      "disposition": "move-to-backend-profile",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/backends/datoviz.md"
+    },
+    {
+      "destination": "spec/current/backend-profiles.md",
+      "disposition": "move-to-backend-profile",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/backends/matplotlib.md"
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/canvas_size.md"
+    },
+    {
+      "destination": "spec/current/capabilities.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/capabilities.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/color_mapping.md"
+    },
+    {
+      "destination": "spec/requirements/requirements.json",
+      "disposition": "move-to-conformance",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/conformance-fixtures.md"
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Bounded preconfigured/tiled/HTTP-array rules migrated; general remote-data support is not claimed.",
+      "source": "spec/data_sources.md"
+    },
+    {
+      "destination": "spec/current/backend-profiles.md",
+      "disposition": "move-to-backend-profile",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/datoviz_v04_api_boundary.md"
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/extensions.md"
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/layout.md"
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/navigation.md"
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/protocol.md"
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/query.md"
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/resources.md"
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/transforms.md"
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/transports.md"
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/view3d.md"
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/view3d_mesh_triangle_pick_geometry.md"
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/view3d_mesh_triangle_picking.md"
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/view3d_navigation.md"
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "disposition": "move-to-producer-profile",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/vispy2/acceptance_s051.md"
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "disposition": "move-to-producer-profile",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/vispy2/api.md"
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "disposition": "move-to-producer-profile",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/vispy2/session_preview_s053.md"
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "disposition": "move-to-producer-profile",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/vispy2_visual_api.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visual_cross_cutting_rules.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visual_families_v1.md"
+    },
+    {
+      "destination": "spec/requirements/requirements.json",
+      "disposition": "move-to-conformance",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visual_qa_harness.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visuals/image.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visuals/marker.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visuals/mesh.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Projected-NDC culling migrated; strict non-opaque 3D compositing remains outside GSP 0.2.",
+      "source": "spec/visuals/mesh_face_culling_alpha_s050.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visuals/mesh_flat_lambert_s039.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Bounded unlit/flat-Lambert/Texture2D contracts migrated; general material graphs remain outside GSP 0.2.",
+      "source": "spec/visuals/mesh_materials_s038.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visuals/mesh_texture2d_unlit_s050.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visuals/path.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visuals/point.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visuals/segment.md"
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "disposition": "migrated-to-normative-chapter",
+      "notes": "Detailed source retained for provenance; GSP 0.2 target text and registry control future changes.",
+      "source": "spec/visuals/text.md"
+    }
+  ],
+  "schema": "gsp.source-dispositions@0.2"
+}

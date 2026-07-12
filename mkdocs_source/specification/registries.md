@@ -1,0 +1,1 @@
+../../spec/current/registries.md

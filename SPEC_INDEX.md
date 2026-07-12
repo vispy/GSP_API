@@ -19,6 +19,7 @@ topic specifications retain normative authority for rules not yet migrated.
 | Panel queries, readback, payloads, and snapshot coherence | `spec/current/queries.md` |
 | Transport independence, in-process exchange, debug JSON, and extensions | `spec/current/transports-extensions.md` |
 | Matplotlib, Datoviz v0.4, and legacy implementation boundaries | `spec/current/backend-profiles.md` |
+| Stable command, capability, diagnostic, and payload identifiers | `spec/current/registries.md` |
 
 The documentation website publishes these files under its **Specification** navigation. Their
 purpose is to provide a coherent semantic map while the detailed contracts are normalized.

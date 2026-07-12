@@ -1,0 +1,56 @@
+{
+  "schema": "gsp.registries@0.2",
+  "command_kinds": [
+    "initialize",
+    "query-capabilities",
+    "create-resource",
+    "update-resource",
+    "create-transform",
+    "update-transform",
+    "set-panel-state",
+    "create-visual",
+    "update-visual",
+    "submit-frame",
+    "panel-query",
+    "shutdown"
+  ],
+  "visual_families": ["point", "marker", "segment", "path", "image", "text", "mesh"],
+  "capabilities": [
+    "interaction.view2d.navigation.v1",
+    "view3d.static.orthographic.v1",
+    "view3d.static.perspective.v1",
+    "meshvisual.positions3d.data_view3d.v1",
+    "meshvisual.positions3d.ndc.v1",
+    "meshvisual.positions3d.opaque_depth.v1",
+    "meshvisual.material.unlit_rgba.v1",
+    "meshvisual.material.flat_lambert.v1",
+    "texture2d.rgba8.v1",
+    "meshvisual.material.texture2d_unlit.v1",
+    "query.view3d.ray_readback.v1",
+    "query.view3d.mesh_triangle_pick.v1",
+    "query.view3d.mesh_triangle_pick.geometry.v1",
+    "query.view3d.mesh_triangle_pick.facing.v1"
+  ],
+  "payload_kinds": [
+    "gsp.guide-query@0.1",
+    "gsp.text-query@0.1",
+    "gsp.mesh-query@0.1",
+    "gsp.scalar-color-query@0.1",
+    "gsp.transform-query@0.1",
+    "gsp.view3d-query@0.1"
+  ],
+  "diagnostic_namespaces": [
+    "protocol",
+    "id",
+    "resource",
+    "visual",
+    "view",
+    "layout",
+    "capability",
+    "adaptation",
+    "query",
+    "pick",
+    "security",
+    "backend"
+  ]
+}

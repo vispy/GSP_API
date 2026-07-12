@@ -1,4 +1,905 @@
 {
-  "schema": "gsp.requirements@0.2",
-  "requirements": []
+  "requirements": [
+    {
+      "destination": "spec/current/capabilities.md",
+      "domain": "cap",
+      "id": "GSP-CAP-001",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "A capability snapshot is immutable and has a stable identity for its contents. Changed support or limits require a new snapshot ID.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/capabilities.md",
+      "domain": "cap",
+      "id": "GSP-CAP-002",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "Capability IDs are registered semantic strings. Backend function names and private implementation flags are not protocol capabilities.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/capabilities.md",
+      "domain": "cap",
+      "id": "GSP-CAP-003",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "A coarse family capability never implies optional fields, materials, queries, guides, layouts, outputs, or interaction capabilities.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/capabilities.md",
+      "domain": "cap",
+      "id": "GSP-CAP-004",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "Numeric limits are explicit and non-negative. Zero means unavailable only where the field contract says so; absence is not guessed as unlimited.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/capabilities.md",
+      "domain": "cap",
+      "id": "GSP-CAP-005",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "planning evaluates the complete requested feature combination. Individually",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/capabilities.md",
+      "domain": "cap",
+      "id": "GSP-CAP-006",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "blocked and not-assessed are documentation/profile states, not executable success",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/capabilities.md",
+      "domain": "cap",
+      "id": "GSP-CAP-007",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "stable behavior is machine-readable through code and typed data; applications must",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/capabilities.md",
+      "domain": "cap",
+      "id": "GSP-CAP-008",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "backend exceptions, native signals, timeouts, and teardown failures are execution",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/capabilities.md",
+      "domain": "cap",
+      "id": "GSP-CAP-009",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "diagnostic payloads comply with the negotiated redaction profile. Secrets, raw",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/capabilities.md",
+      "domain": "cap",
+      "id": "GSP-CAP-010",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "support tables and backend profiles use the same separation as runtime planning:",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/registries.md",
+      "domain": "cap",
+      "id": "GSP-CAP-011",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/capabilities.md",
+      "statement": "the registry entry defines only semantic identity. Backend support is declared by a",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "domain": "data",
+      "id": "GSP-DATA-001",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/resources.md",
+      "statement": "Resource metadata is validated before any payload is read, copied, mapped, decoded, fetched, or uploaded.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "domain": "data",
+      "id": "GSP-DATA-002",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/resources.md",
+      "statement": "The tuple `(dtype, shape, byte_order, strides/contiguity policy)` defines array interpretation; byte length alone never does.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "domain": "data",
+      "id": "GSP-DATA-003",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/resources.md",
+      "statement": "A resource reference resolves by public resource ID and expected kind, never by a backend pointer or allocation handle.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "domain": "data",
+      "id": "GSP-DATA-004",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/resources.md",
+      "statement": "zero-length dimensions and zero-byte buffers are valid only where the consuming",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "domain": "data",
+      "id": "GSP-DATA-005",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/resources.md",
+      "statement": "immutable data cannot be updated. Dynamic updates replace an explicitly bounded",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "domain": "data",
+      "id": "GSP-DATA-006",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/resources.md",
+      "statement": "protocol acceptance of Texture2D does not imply renderer support for any material.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "domain": "data",
+      "id": "GSP-DATA-007",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/resources.md",
+      "statement": "a URI is inert data until an accepted source kind, locality, credential policy,",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "domain": "data",
+      "id": "GSP-DATA-008",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/resources.md",
+      "statement": "every request is bounded before execution. A tile request declares source, index,",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "domain": "data",
+      "id": "GSP-DATA-009",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/resources.md",
+      "statement": "decoders are separately identified and validated. The accepted .npy proof parses",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/resources.md",
+      "domain": "data",
+      "id": "GSP-DATA-010",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/resources.md",
+      "statement": "ownership and copy behavior are transport/profile properties. Accepting a native",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "ext",
+      "id": "GSP-EXT-001",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/extensions.md",
+      "statement": "Manifest identity, version, schema, and dependencies validate before extension records are accepted.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "ext",
+      "id": "GSP-EXT-002",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/extensions.md",
+      "statement": "A manifest is declarative and grants no execution effect by itself. Dynamic imports/hooks require a separate accepted security capability.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "ext",
+      "id": "GSP-EXT-003",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/extensions.md",
+      "statement": "Extension record and query payload kinds are namespaced and versioned. Unknown required payloads reject; optional payload behavior is schema-defined.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "ext",
+      "id": "GSP-EXT-004",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/extensions.md",
+      "statement": "Fallback is explicit and produces diagnostics for adaptation or deactivation.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "ext",
+      "id": "GSP-EXT-005",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/extensions.md",
+      "statement": "data-source extensions declare request bounds, availability/error states, cache",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "ext",
+      "id": "GSP-EXT-006",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/extensions.md",
+      "statement": "the accepted no-network profile rejects server fetch, local-file access, package",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "domain": "life",
+      "id": "GSP-LIFE-001",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/protocol.md",
+      "statement": "Initialization must negotiate one version supported by both peers before any state-changing command executes.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "domain": "life",
+      "id": "GSP-LIFE-002",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/protocol.md",
+      "statement": "A peer must reject an unknown major version. During major `0`, a minor-version change may be breaking and must be identified explicitly in release and migration records.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "domain": "life",
+      "id": "GSP-LIFE-003",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/protocol.md",
+      "statement": "Capabilities refine a negotiated version; they never silently change the meaning of an accepted field.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "domain": "life",
+      "id": "GSP-LIFE-004",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/protocol.md",
+      "statement": "initialization must be atomic. Failure creates no usable session and returns or",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "domain": "life",
+      "id": "GSP-LIFE-005",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/protocol.md",
+      "statement": "operations invalid for the current state must fail before backend execution.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "domain": "life",
+      "id": "GSP-LIFE-006",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/protocol.md",
+      "statement": "sequence numbers are strictly increasing per session. Duplicate, decreasing, or",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "domain": "life",
+      "id": "GSP-LIFE-007",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/protocol.md",
+      "statement": "validation covers the complete batch before its first externally visible mutation.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "domain": "life",
+      "id": "GSP-LIFE-008",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/protocol.md",
+      "statement": "accepted scene mutations increment a monotonic scene revision. A submitted frame",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "domain": "life",
+      "id": "GSP-LIFE-009",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/protocol.md",
+      "statement": "shutdown is ordered after all previously accepted commands. The shutdown result",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/protocol.md",
+      "domain": "life",
+      "id": "GSP-LIFE-010",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/protocol.md",
+      "statement": "cleanup is deterministic and idempotent at the protocol-owner boundary. Backend",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "domain": "query",
+      "id": "GSP-QUERY-001",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/query.md",
+      "statement": "Query support is negotiated independently from rendering. A rendered visual does not imply identity, value, coordinate, color, depth, or primitive payload support.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "domain": "query",
+      "id": "GSP-QUERY-002",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/query.md",
+      "statement": "Query coordinates and their coordinate space are explicit. Outside-panel detection occurs against the named resolved panel rectangle.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "domain": "query",
+      "id": "GSP-QUERY-003",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/query.md",
+      "statement": "Requested payloads are planned before execution. Missing required payload capability returns unsupported, not a partial hit with silently omitted fields.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "domain": "query",
+      "id": "GSP-QUERY-004",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/query.md",
+      "statement": "result invariants are strict. hit=true requires at least one hit. Miss/outside",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "domain": "query",
+      "id": "GSP-QUERY-005",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/query.md",
+      "statement": "frontmost returns at most one contribution under the advertised ordering model.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "domain": "query",
+      "id": "GSP-QUERY-006",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/query.md",
+      "statement": "displayed color payload means the contribution color defined by the advertised",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "domain": "query",
+      "id": "GSP-QUERY-007",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/query.md",
+      "statement": "identity-only, geometry, and facing mesh-pick capabilities are siblings. Geometry",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "domain": "query",
+      "id": "GSP-QUERY-008",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/query.md",
+      "statement": "culling, clipping, projection, and opaque depth used for picking match the rendered",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "domain": "query",
+      "id": "GSP-QUERY-009",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/query.md",
+      "statement": "freshness comparison happens before returning semantic hit data. A stale request",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/queries.md",
+      "domain": "query",
+      "id": "GSP-QUERY-010",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/query.md",
+      "statement": "query execution never mutates scene state. Internal caches are allowed but cannot",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-001",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "An identifier is a non-empty Unicode string with no surrounding whitespace or control characters.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-002",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "Identity comparison is exact code-point equality; implementations must not case-fold or normalize identifiers implicitly.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-003",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "IDs are unique among simultaneously live entities of all core kinds unless a command schema explicitly defines a separate namespace.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-004",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "References are session-local. Cross-session references are invalid even when their text matches.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-005",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "the session owns accepted semantic records. A producer may reuse its local values,",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-006",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "deleting an entity that is still referenced is rejected unless the same atomic",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-007",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "panel geometry is not stored as an unqualified backend rectangle. Requested layout",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-008",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "a panel may have at most one active primary data view per view role in core GSP",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-009",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "attachments are explicit scene relationships. A visual can be attached more than",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-010",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "guides participate in layout and queries only when the corresponding capability is",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-011",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "an update validates the complete replacement semantic record. Patch operations are",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/scene.md",
+      "domain": "scene",
+      "id": "GSP-SCENE-012",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_families_v1.md",
+      "statement": "a renderer may retain or rebuild native objects, but identity, revision, ordering,",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "domain": "view",
+      "id": "GSP-VIEW-001",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transforms.md",
+      "statement": "a record declares its coordinate space. No implementation may guess DATA versus NDC",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "domain": "view",
+      "id": "GSP-VIEW-002",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transforms.md",
+      "statement": "DATA\u2192NDC and inverse query mapping use the same accepted view/transform snapshot.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "domain": "view",
+      "id": "GSP-VIEW-003",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transforms.md",
+      "statement": "singular matrices are invalid in the core invertible",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "domain": "view",
+      "id": "GSP-VIEW-004",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transforms.md",
+      "statement": "navigation actions name the view, base revision, parameters, and expected snapshot",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "domain": "view",
+      "id": "GSP-VIEW-005",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transforms.md",
+      "statement": "camera",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "domain": "view",
+      "id": "GSP-VIEW-006",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transforms.md",
+      "statement": "a view projection snapshot ID changes when camera, projection, relevant layout, or",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "domain": "view",
+      "id": "GSP-VIEW-007",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transforms.md",
+      "statement": "non-blocking/native controllers do not redefine replay semantics. Canonical actions",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "domain": "view",
+      "id": "GSP-VIEW-008",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transforms.md",
+      "statement": "render, hit testing, guide geometry, and screen-coordinate queries use the",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "domain": "view",
+      "id": "GSP-VIEW-009",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transforms.md",
+      "statement": "canvas sizing policies distinguish pixel-exact output from reference-pixel physical",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/views-layout.md",
+      "domain": "view",
+      "id": "GSP-VIEW-010",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transforms.md",
+      "statement": "strict guides require plot-rectangle grid clipping and deterministic explicit tick",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-001",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "Numeric position, size, angle, width, UV, normal, and scalar arrays contain finite values unless a family explicitly defines a sentinel encoding.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-002",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "Array cardinalities are exact. Broadcasting is limited to fields explicitly documented as scalar-or-per-item.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-003",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "RGBA8 uses four `uint8` channels in red, green, blue, alpha order. Floating colors, where accepted, are finite and within `[0,1]`; implicit clipping is invalid.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-004",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "Screen-space values are logical-pixel lengths or diameters, not backend area units or device pixels. Negative widths and sizes are invalid.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-005",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "An unsupported field produces rejection or an advertised adaptation; silently dropping it is forbidden.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-006",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "exactly one direct color source or scalar color encoding controls the point color",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-007",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "marker angle is radians, measured according to the panel orientation contract.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-008",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "segment independence and path connectivity are distinct semantics. Converting one to",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-009",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "image row orientation is defined before view transforms. Interpolation describes",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-010",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "anchor semantics refer to the resolved text layout box. A backend that cannot shape",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-011",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "mesh topology is triangles. Degenerate triangles, projected clipping, depth,",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-012",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "flat Lambert uses deterministic face normals and accepted light/color arithmetic.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-013",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "strict opaque 3D depth requires per-fragment ordering for the advertised view and",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-014",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "face culling is evaluated from projected NDC winding under the accepted front-face",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/visuals.md",
+      "domain": "vis",
+      "id": "GSP-VIS-015",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/visual_cross_cutting_rules.md",
+      "statement": "named colormap identity is protocol vocabulary, not a backend registry lookup.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "xport",
+      "id": "GSP-XPORT-001",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transports.md",
+      "statement": "A transport preserves record types, field values, ordering, identities, numeric meaning, result states, and diagnostics.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "xport",
+      "id": "GSP-XPORT-002",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transports.md",
+      "statement": "Transport success only means exchange succeeded; it does not convert a rejected or failed protocol result into success.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "xport",
+      "id": "GSP-XPORT-003",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transports.md",
+      "statement": "Size, timeout, authentication, and backpressure policies are explicit transport/profile limits.",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "xport",
+      "id": "GSP-XPORT-004",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transports.md",
+      "statement": "the in-process boundary performs the same validation, capability planning,",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "xport",
+      "id": "GSP-XPORT-005",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transports.md",
+      "statement": "decoding validates metadata, chunk vocabulary/limits, decoded byte length, and",
+      "status": "accepted",
+      "tests": []
+    },
+    {
+      "destination": "spec/current/transports-extensions.md",
+      "domain": "xport",
+      "id": "GSP-XPORT-006",
+      "notes": "Test mapping is populated by M239.",
+      "source": "spec/transports.md",
+      "statement": "reserved transport names are not advertised by a session without an accepted",
+      "status": "accepted",
+      "tests": []
+    }
+  ],
+  "schema": "gsp.requirements@0.2"
 }

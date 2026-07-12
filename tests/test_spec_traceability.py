@@ -28,3 +28,24 @@ def test_every_detailed_spec_has_a_migration_destination() -> None:
 
 def test_registry_validation_is_clean() -> None:
     assert spec_traceability.validate() == []
+
+
+def test_requirement_ids_are_unique_and_substantial() -> None:
+    registry = spec_traceability.build_requirement_registry()
+    requirements = registry["requirements"]
+    ids = [requirement["id"] for requirement in requirements]
+    assert len(ids) >= 80
+    assert len(ids) == len(set(ids))
+
+
+def test_every_detailed_source_has_exactly_one_disposition() -> None:
+    inventory = spec_traceability.build_source_inventory()
+    detailed = {
+        source["path"]
+        for source in inventory["sources"]
+        if source["classification"] == "detailed-normative-source"
+    }
+    dispositions = spec_traceability.build_source_dispositions()["dispositions"]
+    disposition_sources = [row["source"] for row in dispositions]
+    assert set(disposition_sources) == detailed
+    assert len(disposition_sources) == len(set(disposition_sources))

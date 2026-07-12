@@ -323,7 +323,7 @@
       "id": "S054",
       "title": "GSP 0.2 Protocol API And Documentation Consolidation",
       "state": "active",
-      "progress": 17
+      "progress": 33
     }
   ],
   "missions": [
@@ -2446,16 +2446,16 @@
       "id": "M237",
       "title": "S054 detailed GSP 0.2 normative specification and registries",
       "stage": "S054",
-      "state": "running",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 237
     },
     {
       "id": "M238",
       "title": "S054 breaking public protocol and producer API consolidation",
       "stage": "S054",
-      "state": "approved",
+      "state": "running",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 238
@@ -2583,6 +2583,7 @@
     }
   ],
   "recommendations": [
+    "M237 completed: the GSP 0.2 target specification is now about 9,100 words with 90 stable requirements and explicit source dispositions; M238 is running to align the breaking Python protocol and producer APIs without violating ADR-0033.",
     "M236 completed: the protocol-centered site builds strictly, spec/current is explicitly a consolidation draft, and 101 specification/ADR/decision sources are classified with 39 detailed normative sources mapped to GSP 0.2 target chapters; M237 is now running for requirement-level specification detail.",
     "S054 is approved: consolidate GSP 0.2 with deliberate pre-1.0 breaking changes, detailed normative requirements, synchronized implementation and conformance, executable public documentation, and traceable commits; preserve ADR-0033 producer/session ownership and do not publish, tag, push, or merge.",
     "M235 evidence addendum completed: 25/25 isolated live lifecycle probes now include public callback-stopped blocking loops and retained semantic point-data updates with changed live captures; keep general Display.update, user-close observation, and thread-affinity contracts deferred.",

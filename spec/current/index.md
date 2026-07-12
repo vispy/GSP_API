@@ -31,6 +31,25 @@ The words **must**, **must not**, **should**, and **may** describe requirements.
 | [Queries and readback](queries.md) | Panel queries, result states, payloads, and snapshot coherence |
 | [Transports and extensions](transports-extensions.md) | Encoding independence, local transport, manifests, and data sources |
 | [Backend profiles](backend-profiles.md) | Current Matplotlib and Datoviz implementation posture |
+| [Normative registries](registries.md) | Command kinds, visual families, capabilities, diagnostics, and payload IDs |
+
+## Conformance language
+
+`must` and `must not` are requirements. `should` identifies a recommended default whose deviation
+requires documented rationale. `may` grants permission. Descriptive text does not weaken a labeled
+`GSP-<DOMAIN>-NNN` requirement.
+
+A conforming implementation identifies:
+
+1. the exact GSP protocol version;
+2. the transport profile;
+3. a capability snapshot;
+4. the requirement set claimed for each feature scope;
+5. any adaptations and limits;
+6. conformance evidence mapped to stable requirement IDs.
+
+Protocol conformance, producer conformance, renderer conformance, query conformance, and transport
+conformance are independent claims.
 
 ## Authority and status
 

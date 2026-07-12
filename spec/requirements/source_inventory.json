@@ -387,6 +387,12 @@
     },
     {
       "classification": "consolidation-draft",
+      "destination": "spec/current/registries.md",
+      "disposition": "target",
+      "path": "spec/current/registries.md"
+    },
+    {
+      "classification": "consolidation-draft",
       "destination": "spec/current/resources.md",
       "disposition": "target",
       "path": "spec/current/resources.md"
