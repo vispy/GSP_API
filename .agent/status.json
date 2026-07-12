@@ -1,5 +1,5 @@
 {
-  "current_stage": "S054",
+  "current_stage": "S055",
   "stages": [
     {
       "id": "S001",
@@ -324,6 +324,12 @@
       "title": "GSP 0.2 Protocol API And Documentation Consolidation",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S055",
+      "title": "Experimental Datoviz Session Preview",
+      "state": "active",
+      "progress": 10
     }
   ],
   "missions": [
@@ -2486,6 +2492,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 241
+    },
+    {
+      "id": "M242",
+      "title": "S055 experimental Datoviz session preview",
+      "stage": "S055",
+      "state": "approved",
+      "agent": "local-main-codex",
+      "progress": 10,
+      "priority": 242
     }
   ],
   "review_queue": [],
