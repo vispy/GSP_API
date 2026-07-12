@@ -22,11 +22,26 @@ from .protocol import (
     subplots,
     text,
 )
+from .session import (
+    Display,
+    Session,
+    SessionDiagnostic,
+    SessionExecutionError,
+    SessionInspection,
+    SessionLifecycleError,
+    open_session,
+)
 
 __all__ = [
     "__version__",
     "Axes",
     "Figure",
+    "Display",
+    "Session",
+    "SessionDiagnostic",
+    "SessionExecutionError",
+    "SessionInspection",
+    "SessionLifecycleError",
     "affine2d",
     "axes",
     "color_scale",
@@ -34,6 +49,7 @@ __all__ = [
     "imshow",
     "markers",
     "mesh",
+    "open_session",
     "path",
     "plot",
     "scatter",
