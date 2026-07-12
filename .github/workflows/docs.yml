@@ -26,5 +26,23 @@ jobs:
         run: make mkdocs_philosophy_copy
       - name: Check generated documentation
         run: git diff --exit-code
+      - name: Check specification and profiles
+        run: |
+          uv run python tools/spec_traceability.py --check
+          uv run python tools/profile_consistency.py --check
+          uv run python tools/check_public_docs.py
+      - name: Test
+        run: uv run pytest -q
+      - name: Check public type and lint surfaces
+        run: |
+          uv run mypy src/gsp/protocol src/gsp_vispy2 --strict
+          uv run ruff check src/gsp/protocol src/gsp_vispy2 tools/profile_consistency.py tools/spec_traceability.py tools/check_public_docs.py
       - name: Build documentation
         run: uv run mkdocs build --strict
+      - name: Check compatibility redirects
+        run: |
+          test -s mkdocs_build/protocol/index.html
+          test -s mkdocs_build/conformance/index.html
+          test -s mkdocs_build/api/vispy_2/index.html
+      - name: Build distribution
+        run: uv build

@@ -322,8 +322,8 @@
     {
       "id": "S054",
       "title": "GSP 0.2 Protocol API And Documentation Consolidation",
-      "state": "active",
-      "progress": 83
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2482,9 +2482,9 @@
       "id": "M241",
       "title": "S054 documentation CI validation and consolidation closeout",
       "stage": "S054",
-      "state": "running",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 241
     }
   ],
@@ -2583,7 +2583,7 @@
     }
   ],
   "recommendations": [
-    "M240 completed: the README and public site now teach GSP 0.2 and gsp_vispy2, the first tutorial is executable and included from source, curated API pages and migration guidance replace legacy-first learning, old public URLs redirect, and M241 is running for permanent CI gates and closeout.",
+    "S054 completed: GSP now has a detailed 90-requirement 0.2 specification, deliberately breaking gsp_vispy2 public API, evidence-backed versioned profiles, executable public documentation, migration redirects, and CI-enforced traceability; the full closeout passed 650 tests with 2 skips, strict mypy, Ruff, strict MkDocs, redirects, and 0.2.0 package builds.",
     "M237 completed: the GSP 0.2 target specification is now about 9,100 words with 90 stable requirements and explicit source dispositions; M238 is running to align the breaking Python protocol and producer APIs without violating ADR-0033.",
     "M236 completed: the protocol-centered site builds strictly, spec/current is explicitly a consolidation draft, and 101 specification/ADR/decision sources are classified with 39 detailed normative sources mapped to GSP 0.2 target chapters; M237 is now running for requirement-level specification detail.",
     "S054 is approved: consolidate GSP 0.2 with deliberate pre-1.0 breaking changes, detailed normative requirements, synchronized implementation and conformance, executable public documentation, and traceable commits; preserve ADR-0033 producer/session ownership and do not publish, tag, push, or merge.",

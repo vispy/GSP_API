@@ -3,7 +3,7 @@ help: ## Show this help message
 
 clean: clean_output ## Clean all
 
-.PHONY: mkdocs_serve mkdocs_build mkdocs_deploy
+.PHONY: mkdocs_serve mkdocs_build mkdocs_deploy docs_check
 
 ###############################################################################
 
@@ -87,6 +87,13 @@ mkdocs_serve: ## Serve the MkDocs documentation locally
 
 mkdocs_build: mkdocs_philosophy_copy ## Build the MkDocs documentation site
 	mkdocs build
+
+docs_check: ## Validate GSP 0.2 spec, profiles, public docs, examples, and site
+	uv run python tools/spec_traceability.py --check
+	uv run python tools/profile_consistency.py --check
+	uv run python tools/check_public_docs.py
+	uv run pytest -q tests/test_spec_traceability.py tests/test_profile_consistency.py tests/test_docs_examples.py tests/test_public_docs_consistency.py
+	uv run mkdocs build --strict
 
 mkdocs_deploy: mkdocs_build ## Deploy the MkDocs documentation site to GitHub Pages
 	mkdocs gh-deploy --clean

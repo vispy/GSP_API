@@ -1,108 +1,57 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+All notable changes are recorded here. The project is pre-1.0 and follows semantic versioning for
+development releases.
 
 ## [Unreleased]
 
-### Added
-- Changed `Text` alignement options from a vector to number with 9 options `TOP_LEFT`, `TOP_CENTER`, `TOP_RIGHT`, `CENTER_LEFT`, `CENTER_CENTER`, `CENTER_RIGHT`, `BOTTOM_LEFT`, `BOTTOM_CENTER`, and `BOTTOM_RIGHT` (default is now `CENTER_CENTER`).
-- Changed `Text` angle from radiant to degree
-- `AxesDisplay.set_title()`, `set_xlabel()`, `set_ylabel()` — render a plot title (14 pt, centered above the inner viewport), an x-axis label (13 pt, centered below tick labels), and a y-axis label (13 pt, rotated 90°, centered left of tick labels). Each label has its own position and visual style, is optional (pass `None` to clear), and follows the existing UUID-preservation pattern so redraws on pan/zoom are efficient.
-- `AxesManaged.set_title()`, `set_xlabel()`, `set_ylabel()` — thin delegating methods for the same functionality on the higher-level managed axes API.
-- Updated `examples/vispy_axes_display_example.py` to demonstrate all three labels.
-- Added release checklist and tag policy documentation for S019 closeout.
-- Added conformance fixture packaging, import-surface smoke coverage, and release-facing docs polish.
-- Added strict mypy closure for `src/` with documented optional/vendored typing boundaries.
-- Added resolved layout snapshots, layout-aware guide query support, device-scale layout metadata,
-  and layout visual QA fixtures.
-- Added retained semantic `View2D` navigation and live review wiring for supported backends.
-- Added static orthographic `View3D`, `(N,3)` mesh rendering paths, canonical ray readback payloads,
-  and View3D navigation action semantics.
-- Added flat Lambert face-normal mesh shading, Datoviz CPU-resolved Lambert promotion, and 3D manual
-  review examples.
-- Added backend-neutral `query.view3d.mesh_triangle_pick.v1` protocol payloads with a Matplotlib CPU
-  reference oracle for bounded opaque DATA-space mesh triangle picking.
-- Added perspective `View3D`, center-dolly zoom, and stabilized Matplotlib/Datoviz live-review
-  arcball paths while keeping native interaction separate from canonical GSP replay.
-- Added immutable RGBA8 `Texture2D` resources, per-vertex mesh UVs, strict validation and fixtures,
-  and a VisPy2 `texture2d_unlit` producer surface without claiming renderer support.
-- Added projected-NDC mesh face-culling contracts and reference fixtures.
-- Added optional mesh-pick geometry and facing payload capabilities without changing the base
-  identity-only mesh-pick payload.
-- Added the first GSP white paper draft and kept its research-prototype status explicit.
+### Breaking changes
 
-### Changed
-- Clarified Datoviz packaging policy: legacy Datoviz wrapper support is optional, while Datoviz v0.4
-  adapter work remains capability-gated until compatible release artifacts exist.
-- Enforced `legacy_srgb_blend` as the Datoviz v0.4 renderer and visual-QA default for
-  Matplotlib-parity comparisons; `linear_srgb` is now an explicit diagnostic option.
-- Updated README, MkDocs, and examples documentation to use `GSP_RENDERER` consistently and to
-  distinguish Matplotlib, optional legacy Datoviz, network, and Datoviz v0.4 protocol surfaces.
-- Updated `examples/README.md` to list shipped public example scripts and to show the current
-  `renderer.render(...)` API pattern.
-- Promoted Datoviz guide, grid-clipping, View3D rendering, View3D navigation, and Lambert support
-  only where local v0.4 evidence and capability gates prove the accepted semantics.
-- Kept Datoviz native grid clipping separate from full guide strictness; grid clipping is not a
-  guide-query or all-rendered contribution claim.
-- Deferred Datoviz Texture2D mesh capability promotion until post-RC1 engine work and fresh
-  sampler, orientation, color, multiplication, and runtime-stability fixtures pass.
+- Renamed the distribution to `gsp-vispy2` 0.2.0 and the independent producer import to
+  `gsp_vispy2`; removed the ambiguous `vispy2` compatibility package.
+- Moved the public learning path from the legacy `Canvas`/`RendererBase` system to semantic GSP 0.2
+  records, explicit capabilities, structured results, and explicit execution boundaries.
+- Removed legacy mesh-shading aliases and tightened transport initialization, sequencing, lifecycle,
+  snapshot identity, command status, and diagnostic contracts.
 
-### Fixed
-- Fixed Matplotlib-only example execution so public examples no longer import optional legacy
-  Datoviz modules unless the `datoviz-v03` renderer path is selected.
-- Fixed `examples/protocol_live_window.py` so `GSP_TEST=True` closes the Matplotlib figure instead
-  of opening a blocking live window during batch example validation.
+### Specification and conformance
 
-### Validation
-- `PYTHONPATH=. uv run mypy src/ --strict --show-error-codes`
-- `PYTHONPATH=. uv run pytest -q`
-- `uv run mkdocs build --strict`
-- `uv build`
-- `PYTHONPATH=. uv run python tools/run_all_examples.py`
-- `PYTHONPATH=. uv run python tools/check_expected_output.py`
-- Focused S034-S050 validation includes layout, guide, navigation, orthographic/perspective
-  View3D, Lambert, culling, Texture2D protocol/producer behavior, Datoviz v0.4 capability gates,
-  and mesh-triangle-pick tests recorded in the corresponding `.agent/S0xx_*` and mission files.
+- Consolidated the GSP 0.2 target specification into ten detailed normative chapters with 90 stable
+  requirement identifiers and explicit dispositions for 101 source documents.
+- Added machine-readable producer and renderer profiles that separate strict, adapted, partial,
+  unsupported, and blocked scopes with concrete evidence.
+- Added requirement-to-test traceability, a generated public feature matrix, and consistency tools
+  enforced by CI.
+
+### Public documentation
+
+- Added an executable first tutorial sourced directly from `examples/docs/first_scene.py`.
+- Added curated producer, lifecycle/transport, scene/resource/visual, query, and diagnostic API pages.
+- Added 0.2 migration guidance, legacy URL redirects, screenshot provenance, repository links, and
+  explicit source-only/pre-1.0 maturity boundaries.
 
 ### Backend support
-- Matplotlib remains the required reference and release-readiness backend.
-- Legacy Datoviz wrapper support is optional through `pip install -e ".[datoviz-legacy]"` and the
-  `GSP_RENDERER=datoviz-v03` example path.
-- Datoviz v0.4 protocol adapter work remains capability-gated and is not declared as a package
-  dependency until compatible release artifacts exist.
-- Datoviz v0.4 may support retained View2D navigation, retained DATA-space View3D rendering,
-  orthographic/perspective View3D, live navigation, opaque depth, grid clipping, and CPU-resolved
-  flat Lambert only when the active local v0.4 facade exposes the required symbols and the adapter
-  advertises the corresponding capability.
-- No renderer currently advertises strict `meshvisual.material.texture2d_unlit.v1`; the VisPy2
-  producer can emit canonical records independently of renderer availability.
-- The network renderer requires a separate server process and remote renderer configuration.
 
-### Known limitations
-- Datoviz v0.4 text and guide/View2D review rows include adapted, not strict, cases: several text
-  anchor/placement/unicode semantics remain verification-gated, while guide panel-title and
-  guide/all-rendered query semantics remain unsupported.
-- Datoviz face-culling capabilities, perspective mesh picking, strict non-opaque 3D compositing,
-  smooth/Phong lighting, and public material/sampler objects remain deferred.
-- Datoviz Texture2D mesh rendering remains deferred beyond RC1; current protocol and VisPy2
-  producer support must not be presented as renderer support.
-- Datoviz v0.4 does not advertise `query.view3d.mesh_triangle_pick.v1`; native visual/triangle
-  mapping and pick-scene freshness remain unproven.
-- Optional Datoviz, network, and session replay checks are outside the required release validation
-  path unless their exact environment is recorded separately.
+- Matplotlib remains the required portable reference backend and publishes an exact 0.2 profile.
+- Datoviz v0.4 remains optional and capability-gated; no symbol, screenshot, or unrelated test is
+  treated as feature promotion.
+- Texture2D mesh rendering remains unsupported by Matplotlib and blocked from Datoviz promotion;
+  producer support does not imply renderer support.
+- No production current-protocol remote transport or general backend-neutral live display API is
+  claimed.
+
+### Validation
+
+- Full pytest, targeted strict mypy, Ruff, package build, specification/profile/public-doc checks,
+  executable tutorial, compatibility redirects, and strict MkDocs build.
 
 ## [0.1.0] - 2026-03-16
 
 ### Added
 
-- Initial release with core plotting and visualization infrastructure
-- AxesDisplay and AxesManaged for interactive axes with pan/zoom
-- Support for scatter, line, and point visuals
-- Matplotlib and DatoViz backend support
-- Comprehensive documentation and examples
+- Initial object-oriented plotting and visualization prototype.
+- Matplotlib, legacy Datoviz, network, Pydantic, and high-level plotting experiments.
+- Early examples, tests, and project documentation.
 
 [Unreleased]: https://github.com/vispy/GSP_API/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/vispy/GSP_API/releases/tag/v0.1.0
