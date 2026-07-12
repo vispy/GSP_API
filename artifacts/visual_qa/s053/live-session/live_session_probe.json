@@ -1,0 +1,187 @@
+{
+  "datoviz": {
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "sibling_source": {
+      "exists": true,
+      "path": "../datoviz",
+      "revision": "ff62b3256f1de7dd2df2ee890c99968715789a27"
+    }
+  },
+  "future_wrapper_misuse_policy": {
+    "double_close": "idempotent",
+    "hidden_nonblocking_owner": "forbidden",
+    "poll_after_owner_close": "must_raise_lifecycle_error",
+    "show_after_close": "must_raise_lifecycle_error",
+    "update_after_close": "must_raise_lifecycle_error"
+  },
+  "iterations_per_mode": 5,
+  "modes": [
+    "bounded_run",
+    "polled_run",
+    "retained_view2d"
+  ],
+  "results": [
+    {
+      "elapsed_seconds": 0.683418124972377,
+      "iteration": 1,
+      "mode": "bounded_run",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7316401659627445,
+      "iteration": 2,
+      "mode": "bounded_run",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7326627090224065,
+      "iteration": 3,
+      "mode": "bounded_run",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7217676250147633,
+      "iteration": 4,
+      "mode": "bounded_run",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7493967500049621,
+      "iteration": 5,
+      "mode": "bounded_run",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7506170829874463,
+      "iteration": 1,
+      "mode": "polled_run",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7538705000188202,
+      "iteration": 2,
+      "mode": "polled_run",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7397000839700922,
+      "iteration": 3,
+      "mode": "polled_run",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7501951670274138,
+      "iteration": 4,
+      "mode": "polled_run",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.7519688330357894,
+      "iteration": 5,
+      "mode": "polled_run",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.6197415830101818,
+      "iteration": 1,
+      "mode": "retained_view2d",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.6099455839721486,
+      "iteration": 2,
+      "mode": "retained_view2d",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.6081827080342919,
+      "iteration": 3,
+      "mode": "retained_view2d",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.6037900419905782,
+      "iteration": 4,
+      "mode": "retained_view2d",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.6053051250055432,
+      "iteration": 5,
+      "mode": "retained_view2d",
+      "report_complete": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    }
+  ],
+  "schema_kind": "gsp.s053.datoviz_live_session_probe",
+  "schema_version": 1,
+  "summary": {
+    "attempted": 15,
+    "clean_exit": 15,
+    "complete_report": 15,
+    "timeouts": 0
+  }
+}
