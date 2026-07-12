@@ -10,7 +10,7 @@ The `examples/` directory contains 50+ scripts. They are not a random grab-bag â
 
 ```bash
 GSP_RENDERER=matplotlib python examples/<file>.py
-GSP_RENDERER=datoviz    python examples/<file>.py
+GSP_RENDERER=datoviz-v03 python examples/<file>.py
 ```
 
 ---
@@ -23,7 +23,7 @@ The "why" before the "what".
 The same example script runs unchanged under three backends â€” `matplotlib` (static, ubiquitous), `datoviz` (GPU, interactive), and `network` (remote rendering over HTTP). A single environment variable picks the implementation:
 
 ```bash
-GSP_RENDERER=datoviz python examples/points_example.py
+GSP_RENDERER=datoviz-v03 python examples/points_example.py
 ```
 
 **Payoff.** Examples are simultaneously a tutorial *and* a cross-backend conformance test suite. If a feature renders differently under matplotlib vs datoviz, that is a bug, and the existing example is the regression test.
@@ -383,7 +383,7 @@ See [`svg_pdf_example.py`](https://github.com/vispy/GSP_API/blob/main/examples/s
 **Remote rendering.** `NetworkRenderer` implements the same `RendererBase` contract but sends the scene over HTTP to a remote `gsp_server` (which itself runs matplotlib or datoviz):
 
 ```python
-renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", remote_renderer_name="datoviz")
+renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000", remote_renderer_name="datoviz-v03")
 rendered_image = renderer.render([viewport], [pixels], [model_matrix], [camera])
 ```
 
@@ -448,7 +448,7 @@ The "now you do it" section. Each box mirrors a step in the canonical skeleton o
 - [ ] **Verify under configured backends:**
   ```bash
   GSP_RENDERER=matplotlib python examples/<your_example>.py
-  GSP_RENDERER=datoviz    python examples/<your_example>.py
+  GSP_RENDERER=datoviz-v03 python examples/<your_example>.py
   ```
   Look for both PNGs in `examples/output/`. They should be visually equivalent.
 - [ ] **For animated examples**, use `@animator.event_listener` and return only changed visuals.

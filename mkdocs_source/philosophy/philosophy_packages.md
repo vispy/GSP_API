@@ -214,7 +214,7 @@ renderer = RendererRegistry.create_renderer("datoviz", canvas)
 ```python
 from gsp_network.renderer.network_renderer import NetworkRenderer
 renderer = NetworkRenderer(canvas, server_base_url="http://localhost:5000",
-                           remote_renderer_name="datoviz")  # or "matplotlib"
+                           remote_renderer_name="datoviz-v03")  # or "matplotlib"
 png_bytes = renderer.render([viewport], [visual], [model_matrix], [camera])
 ```
 

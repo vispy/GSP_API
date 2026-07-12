@@ -12,7 +12,7 @@ This document names the conventions that make the three packages a coherent ecos
 
 ```bash
 GSP_RENDERER=matplotlib python examples/points_example.py
-GSP_RENDERER=datoviz    python examples/points_example.py
+GSP_RENDERER=datoviz-v03 python examples/points_example.py
 GSP_RENDERER=network    python examples/points_example.py    # needs the gsp_network server running
 ```
 
