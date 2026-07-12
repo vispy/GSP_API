@@ -304,8 +304,8 @@
     {
       "id": "S051",
       "title": "VisPy2 Public Producer And Datoviz RC1 Acceptance",
-      "state": "active",
-      "progress": 0
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2392,9 +2392,9 @@
       "id": "M233",
       "title": "S051 VisPy2 to Datoviz RC1 acceptance pack",
       "stage": "S051",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 233
     }
   ],
@@ -2493,7 +2493,7 @@
     }
   ],
   "recommendations": [
-    "M233 is approved: validate public VisPy2 producer scenes through paired Matplotlib and Datoviz pre-RC execution, preserving diagnostics, manifests, artifacts, and replay fixtures without publishing the post-RC session API.",
+    "M233 completed: the public VisPy2 producer acceptance pack records four strict Matplotlib rows, two Datoviz unsupported rows, three isolated Datoviz backend failures, and explicit Texture2D unsupported boundaries; do not publish the post-RC session preview until failures reject before execution and deterministic lifecycle evidence exists.",
     "Do not promote Datoviz query.view3d.mesh_triangle_pick.v1 until upstream Datoviz exposes public canonical mesh face/triangle identity and native tests cover it.",
     "M208 completed: no new Datoviz TextVisual rows promote; isolated text artifacts render with only text/rotation_alpha_ndc strict, while the combined text review still crashes the Datoviz offscreen child.",
     "M214 completed latest Datoviz v0.4-dev generated-binding alignment without aliases, shims, or sibling Datoviz checkout edits.",

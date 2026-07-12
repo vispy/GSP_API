@@ -6,7 +6,7 @@ S051 - VisPy2 Public Producer And Datoviz RC1 Acceptance
 
 ## Status
 
-Approved.
+Completed.
 
 ## Summary
 
@@ -80,3 +80,25 @@ Existing unrelated documentation changes outside these paths must remain untouch
 
 The project owner approved the proposed VisPy2 to GSP to Datoviz RC1 acceptance pack in the active
 Mission Control conversation and instructed Mission Control to continue with commits along the way.
+
+## Result
+
+Completed through run `R20260712-133642-M233` and integrated on `main` in commit `0721db1`.
+
+Five public-API-authored VisPy2 scenes now lower to the existing in-memory `VisualQAScene` model and
+produce paired Matplotlib/Datoviz evidence plus versioned JSON/NPZ replay fixtures and a hashed
+acceptance manifest. The recorded matrix has four strict Matplotlib rows, explicit Texture2D
+unsupported boundaries, two Datoviz unsupported rows, and three isolated Datoviz backend failures.
+No public session API or renderer capability was promoted.
+
+Validation:
+
+- full pytest: 634 passed, 2 skipped;
+- focused S051/VisPy2/visual-QA pytest: 86 passed;
+- strict mypy for `vispy2_acceptance.py`: clean;
+- Matplotlib and Datoviz backend imports: passed;
+- repository-wide strict mypy: 148 pre-existing errors in 32 legacy/optional files;
+- coverage unavailable because the active environment does not provide `pytest-cov`.
+
+The ADR-0033 post-RC session promotion conditions are not met because native backend failures are
+not rejected before execution and deterministic interactive lifecycle evidence is still absent.
