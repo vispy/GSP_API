@@ -1,0 +1,1 @@
+../../spec/current/resources.md

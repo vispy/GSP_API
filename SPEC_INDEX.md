@@ -1,93 +1,37 @@
-# Spec Index
+# GSP Specification Index
 
-This file tells agents where to find authoritative design information.
+This index identifies the GSP 0.2 specification consolidation. The concise `spec/current/`
+chapters are the target organization and public reading path, but they remain a **consolidation
+draft** until requirement-level traceability is complete. During this transition, accepted detailed
+topic specifications retain normative authority for rules not yet migrated.
 
-| Topic | Authoritative file |
+## GSP 0.2 consolidation draft
+
+| Topic | Authoritative chapter |
 |---|---|
-| Project goal | PROJECT_CHARTER.md |
-| Architecture | ARCHITECTURE.md |
-| Protocol/session model | spec/protocol.md |
-| Physical canvas sizing | spec/canvas_size.md |
-| Transports/local fast path | spec/transports.md |
-| Capabilities/adaptation | spec/capabilities.md |
-| Resources/buffers/textures | spec/resources.md |
-| Query/readback | spec/query.md |
-| Transform/view/query inverse | spec/transforms.md |
-| View2D navigation actions | spec/navigation.md |
-| Static View3D/camera/projection | spec/view3d.md |
-| View3D navigation actions | spec/view3d_navigation.md |
-| View3D mesh triangle picking | spec/view3d_mesh_triangle_picking.md |
-| View3D mesh triangle pick geometry payload | spec/view3d_mesh_triangle_pick_geometry.md |
-| Mesh material boundary | spec/visuals/mesh_materials_s038.md |
-| Mesh flat Lambert shading | spec/visuals/mesh_flat_lambert_s039.md |
-| Mesh Texture2D unlit material | spec/visuals/mesh_texture2d_unlit_s050.md |
-| Mesh face culling and alpha boundary | spec/visuals/mesh_face_culling_alpha_s050.md |
-| Resolved layout and guide geometry | spec/layout.md |
-| Resolved guide layout direction | .agent/decisions/S029_resolved_layout_contracts.md |
-| Conformance fixtures/schema | spec/conformance-fixtures.md |
-| Extensions | spec/extensions.md |
-| Virtual data sources/LOD | spec/data_sources.md |
-| Point visual | spec/visuals/point.md |
-| Marker visual | spec/visuals/marker.md |
-| Path visual | spec/visuals/path.md |
-| Image visual | spec/visuals/image.md |
-| Color mapping and colorbars | spec/color_mapping.md |
-| Matplotlib backend | spec/backends/matplotlib.md |
-| Datoviz backend | spec/backends/datoviz.md |
-| VisPy2 API | spec/vispy2/api.md |
-| Visual families v1 | spec/visual_families_v1.md |
-| Visual cross-cutting rules | spec/visual_cross_cutting_rules.md |
-| Visual QA harness | spec/visual_qa_harness.md |
-| Backend visual capabilities | spec/backend_capabilities_visuals.md |
-| Datoviz v0.4 API boundary | spec/datoviz_v04_api_boundary.md |
-| VisPy2 visual API | spec/vispy2_visual_api.md |
-| Segment visual | spec/visuals/segment.md |
-| Text visual | spec/visuals/text.md |
-| Mesh visual | spec/visuals/mesh.md |
-| S023 visual-family decision | .agent/decisions/S023_visual_family_contracts.md |
-| S023 visual family order ADR | adr/ADR-0011-s023-visual-family-order.md |
-| Screen-space units ADR | adr/ADR-0012-s023-screen-space-units.md |
-| Datoviz v0.4 retained API ADR | adr/ADR-0013-datoviz-v04-retained-scene-api.md |
-| Coordinate-space mapping ADR | adr/ADR-0014-s023-coordinate-space-mapping.md |
-| Image scalar gray/clim ADR | adr/ADR-0015-imagevisual-scalar-gray-clim.md |
-| TextVisual v1 ADR | adr/ADR-0016-textvisual-v1-no-public-glyphvisual.md |
-| MeshVisual v1 ADR | adr/ADR-0017-meshvisual-v1-triangle-mesh.md |
-| Color mapping/colorbars v1 ADR | adr/ADR-0018-color-mapping-colorbars-v1.md |
-| Transform/view/query inverse v1 ADR | adr/ADR-0019-transform-view-query-inverse-v1.md |
-| Guide layout semantics boundary ADR | adr/ADR-0020-gsp-guide-layout-semantics-boundary.md |
-| Physical canvas size policy ADR | adr/ADR-0021-physical-canvas-size-policies.md |
-| View2D navigation actions ADR | adr/ADR-0022-view2d-navigation-actions.md |
-| Static View3D orthographic ADR | adr/ADR-0023-static-view3d-orthographic-baseline.md |
-| View3D navigation and Datoviz binding ADR | adr/ADR-0024-view3d-navigation-dataviz-binding.md |
-| MeshVisual unlit RGBA material boundary ADR | adr/ADR-0025-meshvisual-unlit-rgba-material-boundary.md |
-| MeshVisual flat Lambert shading ADR | adr/ADR-0026-minimal-flat-lambert-mesh-shading.md |
-| Datoviz flat Lambert CPU resolve ADR | adr/ADR-0027-dataviz-flat-lambert-cpu-resolve.md |
-| View3D mesh triangle picking ADR | adr/ADR-0028-view3d-mesh-triangle-picking.md |
-| MeshVisual Texture2D unlit material ADR | adr/ADR-0029-mesh-texture2d-unlit.md |
-| MeshVisual face culling and alpha boundary ADR | adr/ADR-0030-mesh-face-culling-alpha-boundary.md |
-| View3D mesh pick geometry payload ADR | adr/ADR-0031-view3d-mesh-pick-geometry-payload.md |
-| S050 Texture2D unlit mesh decision | .agent/decisions/S050_texture2d_unlit_contracts.md |
-| S050 mesh face culling and alpha boundary decision | .agent/decisions/S050_mesh_face_culling_alpha_boundary.md |
-| S050 View3D mesh pick geometry payload decision | .agent/decisions/S050_view3d_mesh_pick_geometry_payload.md |
-| S044 View3D mesh triangle picking decision | .agent/decisions/S044_view3d_mesh_triangle_picking.md |
-| S040 Datoviz flat Lambert promotion decision | .agent/decisions/S040_datoviz_flat_lambert_promotion.md |
-| S040 closeout | .agent/S040_CLOSEOUT.md |
-| S041 closeout | .agent/S041_CLOSEOUT.md |
-| S039 flat Lambert normals decision | .agent/decisions/S039_flat_lambert_normals.md |
-| S039 closeout | .agent/S039_CLOSEOUT.md |
-| S038 mesh material boundary decision | .agent/decisions/S038_mesh_material_boundary.md |
-| S038 closeout | .agent/S038_CLOSEOUT.md |
-| S037 View3D navigation/Datoviz decision | .agent/decisions/S037_view3d_navigation_datoviz_contracts.md |
-| S037 Datoviz View3D evidence | .agent/S037_DATOVIZ_VIEW3D_EVIDENCE.md |
-| S037 closeout | .agent/S037_CLOSEOUT.md |
-| S036 View3D decision | .agent/decisions/S036_view3d_contracts.md |
-| S047 Perspective View3D direction | .agent/decisions/S047_perspective_view3d_direction.md |
-| S036 closeout | .agent/S036_CLOSEOUT.md |
-| S035 View2D navigation decision | .agent/decisions/S035_view2d_navigation_contracts.md |
-| S029 resolved layout decision | .agent/decisions/S029_resolved_layout_contracts.md |
-| S027 transform/view decision | .agent/decisions/S027_transform_view_contracts.md |
-| S026 color mapping decision | .agent/decisions/S026_color_mapping_contracts.md |
-| S025 MeshVisual decision | .agent/decisions/S025_meshvisual_contracts.md |
-| S024 TextVisual decision | .agent/decisions/S024_textvisual_contracts.md |
-| Existing repo reuse | LEGACY_MAP.md |
-| Agent workflow | AGENTS.md and .agent/project.json |
+| Scope, conformance language, and reading order | `spec/current/index.md` |
+| Sessions, commands, batches, frames, and shutdown | `spec/current/protocol.md` |
+| Identifiers, panels, views, visuals, guides, and state relationships | `spec/current/scene.md` |
+| Buffers, textures, locality, and virtual data | `spec/current/resources.md` |
+| Point, marker, segment, path, image, text, and mesh semantics | `spec/current/visuals.md` |
+| Coordinate spaces, transforms, View2D, View3D, navigation, and layout | `spec/current/views-layout.md` |
+| Capability negotiation, adaptation, and diagnostics | `spec/current/capabilities.md` |
+| Panel queries, readback, payloads, and snapshot coherence | `spec/current/queries.md` |
+| Transport independence, in-process exchange, debug JSON, and extensions | `spec/current/transports-extensions.md` |
+| Matplotlib, Datoviz v0.4, and legacy implementation boundaries | `spec/current/backend-profiles.md` |
+
+The documentation website publishes these files under its **Specification** navigation. Their
+purpose is to provide a coherent semantic map while the detailed contracts are normalized.
+
+## Supporting material
+
+The topic files directly under `spec/` retain detailed validation tables, diagnostic vocabularies,
+fixture requirements, and accepted semantic rules while that material is folded into the target
+chapters. A rule remains normative in its accepted topic specification until the traceability
+registry records its GSP 0.2 destination or explicit disposition. The source inventory lives under
+`spec/requirements/`.
+
+When wording conflicts, use the authority order in `AGENTS.md`: charter, architecture, this index,
+accepted detailed topic specification, then implementation. Accepted ADRs explain rationale.
+Conformance fixtures and backend evidence validate implementation claims but do not redefine
+protocol semantics.

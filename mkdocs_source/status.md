@@ -1,23 +1,23 @@
-# Status and releases
+# Project status
 
-GSP and VisPy2 are experimental research prototypes at version `0.1.0`. They are not published on
-PyPI and their APIs may change before a stable release.
+GSP and VisPy2 are experimental `0.1.0` research prototypes. They require Python 3.13 or newer, are
+installed from source, and do not yet offer stable API compatibility.
 
-## Current baseline
+## Available today
 
-- Development stages S001–S050 are complete.
-- Matplotlib is the reference backend.
-- Datoviz v0.4 support is capability-gated and optional.
-- Datoviz Texture2D renderer promotion is deferred; protocol validation and the VisPy2 producer do
-  not imply backend support.
-- The conformance baseline lives under `fixtures/conformance/`.
+- Validated protocol records for core 2D and bounded 3D scenes.
+- Matplotlib reference rendering and query paths for documented scopes.
+- A capability-gated Datoviz v0.4 adapter with substantial 2D and 3D coverage.
+- VisPy2 producer helpers for many accepted visual, guide, transform, color, and mesh records.
+- Conformance fixtures, structured diagnostics, and visual review tooling.
 
-## Release sources
+## Important gaps
 
-- [Current project status](https://github.com/vispy/GSP_API/blob/main/STATUS.md)
-- [Changelog](https://github.com/vispy/GSP_API/blob/main/CHANGELOG.md)
-- [Release checklist](https://github.com/vispy/GSP_API/blob/main/docs/release_checklist.md)
-- [Repository releases](https://github.com/vispy/GSP_API/releases)
+- The complete application-facing session that executes arbitrary command batches is not shipped.
+- Datoviz support is not global; text, guides, queries, and textures have narrower or blocked scopes.
+- A production current-protocol remote transport is not available.
+- Protocol acceptance does not guarantee producer or renderer support.
+- Several large-data and extension paths remain bounded research proofs.
 
-Stage and mission records are development evidence. Normative behavior is defined by the
-[protocol specifications](protocol.md).
+Internal delivery history is not a product maturity signal. Use the [feature matrix](support/feature-matrix.md)
+and runtime capabilities to assess a concrete use case.

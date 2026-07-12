@@ -1,0 +1,14 @@
+.backend-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.backend-comparison figure { margin: 0; }
+.backend-comparison img { display: block; width: 100%; border: 1px solid var(--md-default-fg-color--lightest); }
+.backend-comparison figcaption { font-size: .78rem; line-height: 1.45; padding-top: .45rem; }
+
+@media (max-width: 720px) {
+  .backend-comparison { grid-template-columns: 1fr; }
+}

@@ -1,5 +1,5 @@
 {
-  "current_stage": "S053",
+  "current_stage": "S054",
   "stages": [
     {
       "id": "S001",
@@ -318,6 +318,12 @@
       "title": "Datoviz Live Session Lifecycle Evidence",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S054",
+      "title": "GSP 0.2 Protocol API And Documentation Consolidation",
+      "state": "active",
+      "progress": 17
     }
   ],
   "missions": [
@@ -2426,6 +2432,60 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 235
+    },
+    {
+      "id": "M236",
+      "title": "S054 documentation baseline and normative requirement inventory",
+      "stage": "S054",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 236
+    },
+    {
+      "id": "M237",
+      "title": "S054 detailed GSP 0.2 normative specification and registries",
+      "stage": "S054",
+      "state": "running",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 237
+    },
+    {
+      "id": "M238",
+      "title": "S054 breaking public protocol and producer API consolidation",
+      "stage": "S054",
+      "state": "approved",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 238
+    },
+    {
+      "id": "M239",
+      "title": "S054 backend profiles capability evidence and conformance mapping",
+      "stage": "S054",
+      "state": "approved",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 239
+    },
+    {
+      "id": "M240",
+      "title": "S054 executable public documentation API reference and legacy migration",
+      "stage": "S054",
+      "state": "approved",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 240
+    },
+    {
+      "id": "M241",
+      "title": "S054 documentation CI validation and consolidation closeout",
+      "stage": "S054",
+      "state": "approved",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 241
     }
   ],
   "review_queue": [],
@@ -2523,6 +2583,8 @@
     }
   ],
   "recommendations": [
+    "M236 completed: the protocol-centered site builds strictly, spec/current is explicitly a consolidation draft, and 101 specification/ADR/decision sources are classified with 39 detailed normative sources mapped to GSP 0.2 target chapters; M237 is now running for requirement-level specification detail.",
+    "S054 is approved: consolidate GSP 0.2 with deliberate pre-1.0 breaking changes, detailed normative requirements, synchronized implementation and conformance, executable public documentation, and traceable commits; preserve ADR-0033 producer/session ownership and do not publish, tag, push, or merge.",
     "M235 evidence addendum completed: 25/25 isolated live lifecycle probes now include public callback-stopped blocking loops and retained semantic point-data updates with changed live captures; keep general Display.update, user-close observation, and thread-affinity contracts deferred.",
     "M235 completed: bounded Datoviz blocking, explicit one-frame polling, cleanup, and retained View2D capture evidence passed 15/15 isolated iterations. A minimal explicit experimental session preview is ready for implementation; keep user-close observation, retained visual-data replacement, and hidden non-blocking ownership deferred.",
     "M234 completed: zero-size generated Datoviz panel-frame ctypes records caused all three S051 native failures; GSP now rejects incomplete layouts before native calls, the refreshed pack has zero crashes, and 15 isolated lifecycle cycles completed cleanly. Keep the public session preview deferred pending live-window ownership and retained-update evidence.",

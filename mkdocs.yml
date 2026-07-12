@@ -5,8 +5,30 @@ site_dir: mkdocs_build
 
 docs_dir: mkdocs_source
 
+exclude_docs: |
+  /about.md
+  /protocol.md
+  /conformance.md
+  /gallery.md
+  /review-examples.md
+  /s023_visual_qa.md
+  /philosophy/
+  /api/gsp.md
+  /api/gsp_datoviz.md
+  /api/gsp_extra.md
+  /api/gsp_matplotlib.md
+  /api/gsp_network.md
+  /api/gsp_pydantic.md
+  /api/vispy_2.md
+
 theme:
-  name: material # built-in theme
+  name: material
+  font: false
+  features:
+    - navigation.footer
+    - navigation.indexes
+    - content.code.copy
+    - content.code.annotate
   palette:
     scheme: slate
     primary: black
@@ -18,6 +40,13 @@ markdown_extensions:
       permalink: true
   - tables
   - fenced_code
+  - attr_list
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
 
 plugins:
   - search
@@ -34,42 +63,45 @@ plugins:
             napoleon_google_docstring: true
             napoleon_numpy_docstring: true
 
+extra:
+  generator: false
+
 extra_css:
   - stylesheets/gallery.css
-
-# Social media links in the footer
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/vispy/GSP_API
-
-# Github repository information
-repo_url: https://github.com/vispy/GSP_API
-repo_name: GSP_API
+  - stylesheets/site.css
 
 # Navigation structure
 nav:
   - Home: index.md
-  - About: about.md
-  - Status and releases: status.md
-  - Protocol specification: protocol.md
-  - Testing and conformance:
-      - Overview: conformance.md
-      - API review examples: review-examples.md
-      - Historical S023 QA: s023_visual_qa.md
-  - Gallery: gallery.md
-  - Philosophy:
-      - Overview: philosophy/README.md
-      - Whitepaper: philosophy/whitepaper.md
-      - GSP Core: philosophy/philosophy_gsp_core.md
-      - Packages: philosophy/philosophy_packages.md
-      - Renderers: philosophy/philosophy_renderers.md
-      - Examples: philosophy/philosophy_examples.md
-  - API Reference:
-      - GSP: api/gsp.md
-      - GSP Network: api/gsp_network.md
-      - GSP Pydantic: api/gsp_pydantic.md
-      - GSP Matplotlib: api/gsp_matplotlib.md
-      - GSP Datoviz: api/gsp_datoviz.md
-      - GSP Extra: api/gsp_extra.md
-      - Vispy 2: api/vispy_2.md
+  - Getting Started:
+      - What is GSP?: getting-started/what-is-gsp.md
+      - Install from source: getting-started/installation.md
+      - First scene: getting-started/first-scene.md
+      - Choose a backend: getting-started/backends.md
+  - Concepts:
+      - Architecture and roles: concepts/architecture.md
+      - Scene model: concepts/scene-model.md
+      - Capabilities and adaptation: concepts/capabilities.md
+      - Queries and diagnostics: concepts/queries.md
+  - User Guide: guide/index.md
+  - Backend Support:
+      - Reading support tables: support/index.md
+      - Feature matrix: support/feature-matrix.md
+  - Project Status: status.md
+  - Specification:
+      - Overview: specification/index.md
+      - Protocol lifecycle: specification/protocol.md
+      - Scene model: specification/scene.md
+      - Resources and data: specification/resources.md
+      - Visual semantics: specification/visuals.md
+      - Views, transforms, and layout: specification/views-layout.md
+      - Capabilities and diagnostics: specification/capabilities.md
+      - Queries and readback: specification/queries.md
+      - Transports and extensions: specification/transports-extensions.md
+      - Backend profiles: specification/backend-profiles.md
+  - Python API: api/index.md
+  - Examples:
+      - Example index: examples/index.md
+      - Backend comparisons: comparisons/index.md
+  - Contributing: contributing.md
+  - Development History: development-history/index.md

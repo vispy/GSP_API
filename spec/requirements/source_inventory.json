@@ -1,0 +1,611 @@
+{
+  "schema": "gsp.source-inventory@0.2",
+  "sources": [
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S023_visual_family_contracts.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S023_visual_family_contracts.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S024_textvisual_contracts.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S024_textvisual_contracts.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S025_meshvisual_contracts.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S025_meshvisual_contracts.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S026_color_mapping_contracts.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S026_color_mapping_contracts.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S027_transform_view_contracts.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S027_transform_view_contracts.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S029_resolved_layout_contracts.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S029_resolved_layout_contracts.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S035_view2d_navigation_contracts.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S035_view2d_navigation_contracts.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S036_view3d_contracts.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S036_view3d_contracts.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S037_view3d_navigation_datoviz_contracts.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S037_view3d_navigation_datoviz_contracts.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S038_mesh_material_boundary.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S038_mesh_material_boundary.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S039_flat_lambert_normals.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S039_flat_lambert_normals.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S040_datoviz_flat_lambert_promotion.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S040_datoviz_flat_lambert_promotion.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S043_datoviz_panel_frame_architecture.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S043_datoviz_panel_frame_architecture.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S044_view3d_mesh_triangle_picking.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S044_view3d_mesh_triangle_picking.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S047_perspective_view3d_direction.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S047_perspective_view3d_direction.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S050_mesh_face_culling_alpha_boundary.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S050_mesh_face_culling_alpha_boundary.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S050_texture2d_unlit_contracts.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S050_texture2d_unlit_contracts.md"
+    },
+    {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S050_view3d_mesh_pick_geometry_payload.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S050_view3d_mesh_pick_geometry_payload.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0001-gsp-name.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0001-gsp-name.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0002-local-fast-path.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0002-local-fast-path.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0003-agent-first-workflow.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0003-agent-first-workflow.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0003-gsp-v0.1-vertical-slice.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0003-gsp-v0.1-vertical-slice.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0004-extensions-virtual-data-sources-v01.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0004-extensions-virtual-data-sources-v01.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0005-axis-realization-providers-v04dev.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0005-axis-realization-providers-v04dev.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0006-unified-query-scopes.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0006-unified-query-scopes.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0007-versioned-conformance-fixture-schema.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0007-versioned-conformance-fixture-schema.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0008-remote-data-dynamic-extension-security.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0008-remote-data-dynamic-extension-security.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0009-http-single-resource-npy-proof.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0009-http-single-resource-npy-proof.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0010-pointvisual-size-units.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0010-pointvisual-size-units.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0011-s023-visual-family-order.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0011-s023-visual-family-order.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0012-s023-screen-space-units.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0012-s023-screen-space-units.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0013-datoviz-v04-retained-scene-api.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0013-datoviz-v04-retained-scene-api.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0014-s023-coordinate-space-mapping.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0014-s023-coordinate-space-mapping.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0015-imagevisual-scalar-gray-clim.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0015-imagevisual-scalar-gray-clim.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0016-textvisual-v1-no-public-glyphvisual.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0016-textvisual-v1-no-public-glyphvisual.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0017-meshvisual-v1-triangle-mesh.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0017-meshvisual-v1-triangle-mesh.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0018-color-mapping-colorbars-v1.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0018-color-mapping-colorbars-v1.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0019-transform-view-query-inverse-v1.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0019-transform-view-query-inverse-v1.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0020-gsp-guide-layout-semantics-boundary.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0020-gsp-guide-layout-semantics-boundary.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0021-physical-canvas-size-policies.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0021-physical-canvas-size-policies.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0022-view2d-navigation-actions.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0022-view2d-navigation-actions.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0023-static-view3d-orthographic-baseline.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0023-static-view3d-orthographic-baseline.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0024-view3d-navigation-dataviz-binding.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0024-view3d-navigation-dataviz-binding.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0025-meshvisual-unlit-rgba-material-boundary.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0025-meshvisual-unlit-rgba-material-boundary.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0026-minimal-flat-lambert-mesh-shading.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0026-minimal-flat-lambert-mesh-shading.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0027-dataviz-flat-lambert-cpu-resolve.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0027-dataviz-flat-lambert-cpu-resolve.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0028-view3d-mesh-triangle-picking.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0028-view3d-mesh-triangle-picking.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0029-mesh-texture2d-unlit.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0029-mesh-texture2d-unlit.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0030-mesh-face-culling-alpha-boundary.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0030-mesh-face-culling-alpha-boundary.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0031-view3d-mesh-pick-geometry-payload.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0031-view3d-mesh-pick-geometry-payload.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0032-protocol-centered-documentation.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0032-protocol-centered-documentation.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0033-vispy2-producer-session-boundary.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0033-vispy2-producer-session-boundary.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/backend_capabilities_visuals.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/capabilities.md",
+      "disposition": "migration-required",
+      "path": "spec/backends/datoviz.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/capabilities.md",
+      "disposition": "migration-required",
+      "path": "spec/backends/matplotlib.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migration-required",
+      "path": "spec/canvas_size.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/capabilities.md",
+      "disposition": "migration-required",
+      "path": "spec/capabilities.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/color_mapping.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/protocol.md",
+      "disposition": "migration-required",
+      "path": "spec/conformance-fixtures.md"
+    },
+    {
+      "classification": "consolidation-draft",
+      "destination": "spec/current/backend-profiles.md",
+      "disposition": "target",
+      "path": "spec/current/backend-profiles.md"
+    },
+    {
+      "classification": "consolidation-draft",
+      "destination": "spec/current/capabilities.md",
+      "disposition": "target",
+      "path": "spec/current/capabilities.md"
+    },
+    {
+      "classification": "consolidation-draft",
+      "destination": "spec/current/index.md",
+      "disposition": "target",
+      "path": "spec/current/index.md"
+    },
+    {
+      "classification": "consolidation-draft",
+      "destination": "spec/current/protocol.md",
+      "disposition": "target",
+      "path": "spec/current/protocol.md"
+    },
+    {
+      "classification": "consolidation-draft",
+      "destination": "spec/current/queries.md",
+      "disposition": "target",
+      "path": "spec/current/queries.md"
+    },
+    {
+      "classification": "consolidation-draft",
+      "destination": "spec/current/resources.md",
+      "disposition": "target",
+      "path": "spec/current/resources.md"
+    },
+    {
+      "classification": "consolidation-draft",
+      "destination": "spec/current/scene.md",
+      "disposition": "target",
+      "path": "spec/current/scene.md"
+    },
+    {
+      "classification": "consolidation-draft",
+      "destination": "spec/current/transports-extensions.md",
+      "disposition": "target",
+      "path": "spec/current/transports-extensions.md"
+    },
+    {
+      "classification": "consolidation-draft",
+      "destination": "spec/current/views-layout.md",
+      "disposition": "target",
+      "path": "spec/current/views-layout.md"
+    },
+    {
+      "classification": "consolidation-draft",
+      "destination": "spec/current/visuals.md",
+      "disposition": "target",
+      "path": "spec/current/visuals.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/resources.md",
+      "disposition": "migration-required",
+      "path": "spec/data_sources.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/index.md",
+      "disposition": "migration-required",
+      "path": "spec/datoviz_v04_api_boundary.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/transports-extensions.md",
+      "disposition": "migration-required",
+      "path": "spec/extensions.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migration-required",
+      "path": "spec/layout.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migration-required",
+      "path": "spec/navigation.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/protocol.md",
+      "disposition": "migration-required",
+      "path": "spec/protocol.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/queries.md",
+      "disposition": "migration-required",
+      "path": "spec/query.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/resources.md",
+      "disposition": "migration-required",
+      "path": "spec/resources.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migration-required",
+      "path": "spec/transforms.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/transports-extensions.md",
+      "disposition": "migration-required",
+      "path": "spec/transports.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migration-required",
+      "path": "spec/view3d.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migration-required",
+      "path": "spec/view3d_mesh_triangle_pick_geometry.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migration-required",
+      "path": "spec/view3d_mesh_triangle_picking.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/views-layout.md",
+      "disposition": "migration-required",
+      "path": "spec/view3d_navigation.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/scene.md",
+      "disposition": "migration-required",
+      "path": "spec/vispy2/acceptance_s051.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/scene.md",
+      "disposition": "migration-required",
+      "path": "spec/vispy2/api.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/scene.md",
+      "disposition": "migration-required",
+      "path": "spec/vispy2/session_preview_s053.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/vispy2_visual_api.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visual_cross_cutting_rules.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visual_families_v1.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visual_qa_harness.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/image.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/marker.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/mesh.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/mesh_face_culling_alpha_s050.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/mesh_flat_lambert_s039.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/mesh_materials_s038.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/mesh_texture2d_unlit_s050.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/path.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/point.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/segment.md"
+    },
+    {
+      "classification": "detailed-normative-source",
+      "destination": "spec/current/visuals.md",
+      "disposition": "migration-required",
+      "path": "spec/visuals/text.md"
+    }
+  ]
+}

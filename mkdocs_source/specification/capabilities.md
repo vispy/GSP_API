@@ -1,0 +1,1 @@
+../../spec/current/capabilities.md

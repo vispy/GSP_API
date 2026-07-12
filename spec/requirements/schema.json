@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vispy.org/gsp/spec/requirements/schema-0.2.json",
+  "title": "GSP 0.2 requirement registry",
+  "type": "object",
+  "required": ["schema", "requirements"],
+  "properties": {
+    "schema": {"const": "gsp.requirements@0.2"},
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "domain", "statement", "status", "source", "destination", "tests"],
+        "properties": {
+          "id": {"pattern": "^GSP-(CORE|LIFE|SCENE|DATA|VIS|VIEW|CAP|QUERY|XPORT|EXT|PROD)-[0-9]{3}$"},
+          "domain": {"type": "string"},
+          "statement": {"type": "string", "minLength": 1},
+          "status": {"enum": ["accepted", "replaced", "removed", "reserved"]},
+          "source": {"type": "string", "minLength": 1},
+          "destination": {"type": "string", "minLength": 1},
+          "tests": {"type": "array", "items": {"type": "string"}},
+          "notes": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

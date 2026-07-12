@@ -1,59 +1,53 @@
 # Graphics Server Protocol
 
-GSP is an experimental, backend-agnostic protocol and Python API for describing scientific 2D and
-3D scenes. Matplotlib provides the reference behavior; optional Datoviz v0.4 paths are enabled only
-for capabilities supported by the installed facade.
+**Describe a scientific visualization once, then execute it through a backend that declares what it can do.**
+
+GSP is an experimental semantic protocol for 2D and 3D scientific visualization. A producer such as VisPy2 creates validated scene records. A GSP session negotiates capabilities, accepts operations, and delegates supported work to a backend adapter. Matplotlib defines reference behavior; Datoviz v0.4 provides capability-gated GPU paths.
 
 !!! warning "Research prototype"
-    GSP and VisPy2 are currently at version `0.1.0`, are not published on PyPI, and may change before
-    a stable release.
+    GSP and VisPy2 are source-only `0.1.0` prototypes requiring Python 3.13 or newer. APIs can change, and backend support is intentionally uneven.
 
-## Try the current API
+[Build a first scene](getting-started/first-scene.md){ .md-button .md-button--primary }
+[Understand the architecture](concepts/architecture.md){ .md-button }
 
-GSP requires Python 3.13 or newer and uses `uv` for development environments:
+## One protocol, explicit support
 
-```bash
-git clone https://github.com/vispy/GSP_API.git
-cd GSP_API
-uv sync
-uv run python examples/review/01_scatter_basic.py --backend matplotlib
+```text
+VisPy2 / domain library / direct records
+                  |
+                  v
+       GSP session and protocol
+       commands, resources, queries
+                  |
+          capability negotiation
+                  |
+                  v
+            backend adapter
+           /               \
+  Matplotlib reference    Datoviz v0.4 GPU
 ```
 
-The numbered [API review examples](review-examples.md) are the shortest route into the current
-surface. They progress from scatter and images through guides, color mapping, View3D navigation,
-lighting, and mesh picking.
+Protocol meaning does not depend on JSON, a network connection, or one renderer. The local path can carry Python objects, NumPy arrays, and memory views directly. Remote and binary transports are architectural targets, not current production claims.
 
-## Choose the right reference
+## See the same scene
 
-| Need | Start here |
-| --- | --- |
-| Understand maturity and backend boundaries | [Status and releases](status.md) |
-| Implement or review protocol behavior | [Protocol specification](protocol.md) |
-| Use Python packages and types | [API reference](api/gsp.md) |
-| Compare renderer behavior | [Testing and conformance](conformance.md) |
-| Review small executable scenes | [API review examples](review-examples.md) |
-| Understand design history | [Philosophy overview](philosophy/README.md) |
+| Matplotlib reference | Datoviz v0.4 |
+|---|---|
+| ![A shaded three-dimensional terrain mesh rendered by Matplotlib](comparisons/terrain-matplotlib.png) | ![The same terrain mesh rendered by Datoviz](comparisons/terrain-datoviz.png) |
+| Reference rendering; this 3D raster path includes documented adaptations. | Capability-gated retained rendering; the complete capture is `review.adapted` because title layout and guide-query geometry are not strict. |
 
-## Architecture at a glance
+These captures show executions of the same protocol scene. Similar output is useful review evidence, but it does not by itself prove that all backend semantics are identical.
 
-GSP scene records describe canvases, panels, views, visuals, resources, guides, navigation actions,
-and queries without embedding a renderer implementation. VisPy2 is a higher-level producer of GSP
-records. Backends consume those records according to explicitly advertised capabilities.
+## Choose your path
 
-- `gsp`: protocol records, validation, views, queries, resources, and core types
-- `vispy2`: experimental plotting-style producer API
-- `gsp_matplotlib`: reference renderer
-- `gsp_datoviz`: optional legacy renderer and capability-gated Datoviz v0.4 adapter
-- `gsp_network`: experimental remote rendering path
-- `gsp_pydantic`: serialization support
+| You want to... | Start here |
+|---|---|
+| Learn what GSP changes | [What is GSP?](getting-started/what-is-gsp.md) |
+| Run a current example | [First scene](getting-started/first-scene.md) |
+| Integrate protocol records | [Architecture and roles](concepts/architecture.md) |
+| Check whether a backend supports a feature | [Feature matrix](support/feature-matrix.md) |
+| Review exact semantic contracts | [Specification](specification/index.md) |
 
-Backend support is not all-or-nothing. Consult the
-[capability matrix](https://github.com/vispy/GSP_API/blob/main/spec/backend_capabilities_visuals.md)
-before depending on a renderer-specific behavior.
+## Current boundary
 
-## Project links
-
-- [Source repository](https://github.com/vispy/GSP_API)
-- [White paper](philosophy/whitepaper.md)
-- [Changelog](https://github.com/vispy/GSP_API/blob/main/CHANGELOG.md)
-- [Issue tracker](https://github.com/vispy/GSP_API/issues)
+The protocol defines semantic visuals, views, guides, resources, transforms, navigation, queries, capabilities, and diagnostics. The Python repository already exposes these records and executable reference renderers. A complete application-facing session that executes every `CommandBatch` against Matplotlib or Datoviz is still under development; the documentation distinguishes that target lifecycle from the executable record-level paths available today.
