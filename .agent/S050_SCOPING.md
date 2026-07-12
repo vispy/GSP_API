@@ -41,13 +41,15 @@ promotion.
 
 | Mission | State | Purpose |
 |---|---|---|
-| M222 | blocked | Datoviz Texture2D capability advertisement; still blocked by missing sampler, origin, unmanaged RGBA, and exact unlit multiplication evidence. |
+| M222 | deferred | Datoviz Texture2D capability advertisement; reassess after RC1 as an RC2 candidate once the sibling `spec/scene/integration/GSP_TEXTURE2D_MESH_PLAN.md` lands and fresh fixtures prove sampler, origin, unmanaged RGBA, and exact unlit multiplication semantics. |
 | M231 | completed | Replayed Datoviz `api/pre-rc-cleanup` at `af168b5a9` and added generic `DvzResult` mutator success handling. |
 | M232 | completed | Replayed current Datoviz `api/pre-rc-cleanup` at `1ef626a56`; matrix matched M231 exactly and no capability rows promoted. |
 
-M222 remains blocked after M232. The current Datoviz changes did not affect adapter return-code
-handling, retained View3D camera updates, or S028 offscreen matrix outcomes, and they do not prove
-S050 Texture2D sampler/origin/color-equation semantics.
+M222 remains capability-blocked after M232 but is operationally deferred beyond Datoviz RC1. The
+current Datoviz changes did not affect adapter return-code handling, retained View3D camera updates,
+or S028 offscreen matrix outcomes, and they do not prove S050 Texture2D
+sampler/origin/color-equation semantics. This deferral closes S050 without promising the work for
+RC2 or weakening the capability gate.
 
 ## M200 Acceptance
 

@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Blocked by M220.
+Deferred to post-RC1 Datoviz work; candidate for RC2 reassessment.
 
 ## Summary
 
@@ -16,6 +16,7 @@ strict semantics.
 ## Required Context
 
 - M220 evidence note
+- sibling Datoviz `spec/scene/integration/GSP_TEXTURE2D_MESH_PLAN.md`
 - `spec/visuals/mesh_texture2d_unlit_s050.md`
 - `spec/backends/datoviz.md`
 
@@ -43,11 +44,14 @@ strict semantics.
 M220 found public Datoviz upload and mesh texture binding symbols, but strict capability
 advertisement remains blocked pending fixture evidence for mesh nearest/clamp/no-mipmap sampler
 behavior, texture-origin behavior, unmanaged numeric RGBA behavior, and exact unlit
-multiplication. Do not implement or advertise Datoviz Texture2D renderer capabilities until those
-blockers are resolved.
+multiplication. Datoviz records the required engine work in
+`spec/scene/integration/GSP_TEXTURE2D_MESH_PLAN.md` as a post-RC1, RC2-candidate increment. Do not
+implement or advertise Datoviz Texture2D renderer capabilities until that work lands and the GSP
+fixtures pass. `DVZ_COLOR_ROLE_LINEAR_COLOR` must be proven conversion-free for the accepted GSP
+resource contract; its name alone is not conformance evidence.
 
 ## Current Ordering
 
-Run M232 before reassessing this mission. The latest sibling Datoviz pre-RC changes affect
-controller/result-contract return handling and teardown timing, but they do not by themselves prove
-the Texture2D sampler, origin, unmanaged RGBA, or unlit multiplication semantics required here.
+M232 is complete. Reassess this mission after Datoviz RC1 and the Datoviz Texture2D mesh plan, with
+RC2 as a candidate rather than a release blocker. Keep the capability unadvertised until fresh
+runtime fixtures prove sampler, origin, unmanaged RGBA, and unlit multiplication semantics.

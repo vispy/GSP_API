@@ -110,22 +110,18 @@ Results:
 - `.agent/status.json` is valid JSON;
 - `git diff --check` passed.
 
-## Remaining Blockers
+## Deferred Follow-Up
 
-Blocked S050 missions:
+S050 closes without Datoviz renderer capability promotion:
 
 | Mission | Blocker |
 |---|---|
-| M211 - culling and alpha semantics consultation | Completed after P032; projected-NDC face culling is accepted, strict non-opaque alpha remains deferred. |
-| M212 - 3D query payload expansion consultation | Requires ChatGPT Pro consultation output before expanded UV/texel/material/3D query payloads are accepted. |
-| M222 - Datoviz Texture2D capability advertisement | Requires M220 sampler, origin, unmanaged RGBA, and exact unlit multiplication proof before implementation or promotion. |
-| M226 - projected-NDC face culling protocol fixtures | Ready follow-up for the accepted P032 boundary; renderer capability promotion remains gated on fixtures. |
+| M222 - Datoviz Texture2D capability advertisement | Deferred until after Datoviz RC1. Reassess as an RC2 candidate after the sibling `spec/scene/integration/GSP_TEXTURE2D_MESH_PLAN.md` lands and fresh fixtures prove sampler, origin, unmanaged RGBA, and exact unlit multiplication semantics. |
 
 ## Recommendation
 
 Do not launch renderer promotion work next.
 
-After P032, the next implementation branch is M226 for projected-NDC face-culling protocol fixtures
-and diagnostics. M212 remains the next ChatGPT Pro consultation track for expanded 3D query
-payloads. M222 should stay blocked until Datoviz public API/runtime evidence proves the M220 fixture
-requirements.
+M211, M212, and M226 are complete. M222 is deferred beyond Datoviz RC1 and should stay
+capability-blocked until Datoviz public API/runtime evidence proves the M220 fixture requirements.
+RC2 is a candidate, not a release commitment.

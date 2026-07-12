@@ -298,8 +298,8 @@
     {
       "id": "S050",
       "title": "Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence",
-      "state": "active",
-      "progress": 95
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2287,7 +2287,7 @@
       "id": "M222",
       "title": "S050 Datoviz Texture2D capability advertisement",
       "stage": "S050",
-      "state": "blocked",
+      "state": "deferred",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 222
