@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../review-examples/">
+        <link rel="prev" href="../conformance/">
       
       
-        <link rel="next" href="../gallery/">
+        <link rel="next" href="../s023_visual_qa/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Historical S023 QA - Graphics Server Protocol</title>
+        <title>API review examples - Graphics Server Protocol</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#s023-visual-qa" class="md-skip">
+        <a href="#api-review-examples" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Historical S023 QA
+              API review examples
             
           </span>
         </div>
@@ -418,10 +418,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../review-examples/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -437,6 +446,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -446,37 +456,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Historical S023 QA
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../s023_visual_qa/" class="md-nav__link">
         
   
   
@@ -492,70 +475,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#run-the-review-pack" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run the review pack
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#inspect-artifacts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Inspect artifacts
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#protocol-examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Protocol examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#scope-boundaries" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Scope boundaries
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1087,58 +1006,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#run-the-review-pack" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run the review pack
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#inspect-artifacts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Inspect artifacts
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#protocol-examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Protocol examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#scope-boundaries" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Scope boundaries
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -1157,64 +1024,23 @@
   
 
 
-<h1 id="s023-visual-qa">S023 Visual QA<a class="headerlink" href="#s023-visual-qa" title="Permanent link">&para;</a></h1>
-<p>S023 defines the first protocol visual-family review pack for GSP's formal protocol path. It covers
-point, marker, segment, path, image, and simple overlay scenes. The scenes are built from formal GSP
-protocol visuals and rendered through the Matplotlib reference backend and the Datoviz v0.4 adapter.</p>
-<h2 id="run-the-review-pack">Run the review pack<a class="headerlink" href="#run-the-review-pack" title="Permanent link">&para;</a></h2>
-<p>Use the visual QA harness to regenerate scenes, backend renders, contact sheets, and manual review
-notes:</p>
-<pre><code class="language-bash">PYTHONPATH=../datoviz:. \
-DYLD_LIBRARY_PATH=../datoviz/build/src \
-DVZ_SHADERC_RUNTIME_LIBRARY=../datoviz/build/src/libshaderc_shared.dylib \
-uv run python -m gsp.qa.visual run \
-  --backends matplotlib,datoviz \
-  --out artifacts/visual_qa/s023/latest-local \
-  --run-id latest-local \
-  --contact-sheet \
-  --resolution 800x600
+<h1 id="api-review-examples">API review examples<a class="headerlink" href="#api-review-examples" title="Permanent link">&para;</a></h1>
+<p>The numbered scripts in <code>examples/review/</code> are the current compact review surface for GSP and
+VisPy2. They cover 2D visuals, guides, color mapping, text, View3D, navigation, lighting, and mesh
+picking.</p>
+<p>Run one example with the Matplotlib reference backend:</p>
+<pre><code class="language-bash">uv run python examples/review/01_scatter_basic.py --backend matplotlib
 </code></pre>
-<p>When Datoviz v0.4 is not available, run the Matplotlib-only path:</p>
-<pre><code class="language-bash">uv run python -m gsp.qa.visual run \
-  --backends matplotlib \
-  --out artifacts/visual_qa/s023/latest-local \
-  --run-id latest-local \
-  --contact-sheet \
-  --resolution 800x600
+<p>Compare supported Matplotlib and Datoviz v0.4 paths offscreen:</p>
+<pre><code class="language-bash">tools/compare-review-examples examples/review/01_scatter_basic.py --offscreen
 </code></pre>
-<h2 id="inspect-artifacts">Inspect artifacts<a class="headerlink" href="#inspect-artifacts" title="Permanent link">&para;</a></h2>
-<p>Primary review artifacts:</p>
-<ul>
-<li><code>artifacts/visual_qa/s023/latest-local/contact_sheets/s023_all_cases.png</code></li>
-<li><code>artifacts/visual_qa/s023/latest-local/manual_notes.yaml</code></li>
-<li><code>artifacts/visual_qa/s023/latest-local/report.json</code></li>
-<li><code>artifacts/visual_qa/s023/latest-local/summary.md</code></li>
-</ul>
-<p>Per-case notes live under:</p>
-<ul>
-<li><code>artifacts/visual_qa/s023/latest-local/notes/</code></li>
-</ul>
-<h2 id="protocol-examples">Protocol examples<a class="headerlink" href="#protocol-examples" title="Permanent link">&para;</a></h2>
-<p>The S023 producer examples use the VisPy2 protocol API and do not call backend implementation APIs
-directly:</p>
-<ul>
-<li><code>examples/vispy2_protocol_scatter.py</code></li>
-<li><code>examples/vispy2_protocol_marker.py</code></li>
-<li><code>examples/vispy2_protocol_segment.py</code></li>
-<li><code>examples/vispy2_protocol_path.py</code></li>
-<li><code>examples/vispy2_protocol_imshow.py</code></li>
-<li><code>examples/vispy2_protocol_image_scalar.py</code></li>
-<li><code>examples/vispy2_protocol_point_over_image.py</code></li>
-<li><code>examples/vispy2_protocol_guides.py</code></li>
-</ul>
-<p>Run any example directly, for example:</p>
-<pre><code class="language-bash">uv run python examples/vispy2_protocol_path.py
+<p>Open supported live backends side by side:</p>
+<pre><code class="language-bash">tools/compare-review-examples --live-side-by-side examples/review/07_view3d_cube.py
 </code></pre>
-<p>Outputs are written under <code>examples/output/</code>.</p>
-<h2 id="scope-boundaries">Scope boundaries<a class="headerlink" href="#scope-boundaries" title="Permanent link">&para;</a></h2>
-<p>S023 deliberately stops before remote images, tiled data, volume rendering, colorbars, broad colormap
-registries, text/glyph visuals, mesh visuals, and advanced normalization. Those belong to later
-missions.</p>
+<p>Datoviz results remain capability-gated. An unsupported diagnostic or isolated child-process crash
+is evidence, not permission to relabel a capability as strict.</p>
+<p>See the <a href="https://github.com/vispy/GSP_API/blob/main/examples/review/README.md">complete review guide</a>
+for the example matrix, interaction controls, artifact layout, and acceptance checklist.</p>
 
 
 

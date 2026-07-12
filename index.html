@@ -31,6 +31,9 @@
     
       <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
       
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
       
 
 
@@ -61,7 +64,12 @@
   </head>
   
   
-    <body dir="ltr">
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -70,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#gsp-documentation" class="md-skip">
+        <a href="#graphics-server-protocol" class="md-skip">
           Skip to content
         </a>
       
@@ -113,8 +121,8 @@
       </div>
     </div>
     
+      
     
-      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
     
@@ -286,10 +294,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#philosophy" class="md-nav__link">
+  <a href="#try-the-current-api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Philosophy
+        Try the current API
       
     </span>
   </a>
@@ -297,10 +305,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#api-reference" class="md-nav__link">
+  <a href="#choose-the-right-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API Reference
+        Choose the right reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture at a glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project links
       
     </span>
   </a>
@@ -349,14 +379,14 @@
   
   
     <li class="md-nav__item">
-      <a href="gallery/" class="md-nav__link">
+      <a href="status/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Gallery
+    Status and releases
   
 
     
@@ -376,14 +406,14 @@
   
   
     <li class="md-nav__item">
-      <a href="s023_visual_qa/" class="md-nav__link">
+      <a href="protocol/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    S023 Visual QA
+    Protocol specification
   
 
     
@@ -421,7 +451,7 @@
   <span class="md-ellipsis">
     
   
-    Philosophy
+    Testing and conformance
   
 
     
@@ -434,6 +464,171 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Testing and conformance
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="conformance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="review-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API review examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="s023_visual_qa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Historical S023 QA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Philosophy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -633,10 +828,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -654,8 +849,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -895,10 +1090,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#philosophy" class="md-nav__link">
+  <a href="#try-the-current-api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Philosophy
+        Try the current API
       
     </span>
   </a>
@@ -906,10 +1101,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#api-reference" class="md-nav__link">
+  <a href="#choose-the-right-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API Reference
+        Choose the right reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture at a glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project links
       
     </span>
   </a>
@@ -936,29 +1153,81 @@
   
 
 
-<h1 id="gsp-documentation">GSP Documentation<a class="headerlink" href="#gsp-documentation" title="Permanent link">&para;</a></h1>
-<p>Graphics Server Protocol — a backend-agnostic scene-description API for 2D/3D scientific visualization in Python.</p>
-<p>GSP provides a unified, declarative interface for describing scientific visualizations across multiple rendering backends. Whether you're building plots with Matplotlib, optional Datoviz-backed scenes, or remote visualization systems over the network, GSP abstracts away backend-specific details. This documentation covers the core protocol, available renderers, and the architectural principles that make GSP flexible and extensible.</p>
-<h2 id="philosophy">Philosophy<a class="headerlink" href="#philosophy" title="Permanent link">&para;</a></h2>
-<p>GSP is built on a set of core design principles that prioritize clarity, flexibility, and composability. This section explores the architectural decisions, design patterns, and philosophical foundations that guide GSP's development. Whether you're contributing to GSP or simply curious about why certain decisions were made, these documents provide a comprehensive view of the project's vision and technical rationale.</p>
+<h1 id="graphics-server-protocol">Graphics Server Protocol<a class="headerlink" href="#graphics-server-protocol" title="Permanent link">&para;</a></h1>
+<p>GSP is an experimental, backend-agnostic protocol and Python API for describing scientific 2D and
+3D scenes. Matplotlib provides the reference behavior; optional Datoviz v0.4 paths are enabled only
+for capabilities supported by the installed facade.</p>
+<div class="admonition warning">
+<p class="admonition-title">Research prototype</p>
+<p>GSP and VisPy2 are currently at version <code>0.1.0</code>, are not published on PyPI, and may change before
+a stable release.</p>
+</div>
+<h2 id="try-the-current-api">Try the current API<a class="headerlink" href="#try-the-current-api" title="Permanent link">&para;</a></h2>
+<p>GSP requires Python 3.13 or newer and uses <code>uv</code> for development environments:</p>
+<pre><code class="language-bash">git clone https://github.com/vispy/GSP_API.git
+cd GSP_API
+uv sync
+uv run python examples/review/01_scatter_basic.py --backend matplotlib
+</code></pre>
+<p>The numbered <a href="review-examples/">API review examples</a> are the shortest route into the current
+surface. They progress from scatter and images through guides, color mapping, View3D navigation,
+lighting, and mesh picking.</p>
+<h2 id="choose-the-right-reference">Choose the right reference<a class="headerlink" href="#choose-the-right-reference" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Start here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Understand maturity and backend boundaries</td>
+<td><a href="status/">Status and releases</a></td>
+</tr>
+<tr>
+<td>Implement or review protocol behavior</td>
+<td><a href="protocol/">Protocol specification</a></td>
+</tr>
+<tr>
+<td>Use Python packages and types</td>
+<td><a href="api/gsp/">API reference</a></td>
+</tr>
+<tr>
+<td>Compare renderer behavior</td>
+<td><a href="conformance/">Testing and conformance</a></td>
+</tr>
+<tr>
+<td>Review small executable scenes</td>
+<td><a href="review-examples/">API review examples</a></td>
+</tr>
+<tr>
+<td>Understand design history</td>
+<td><a href="philosophy/">Philosophy overview</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="architecture-at-a-glance">Architecture at a glance<a class="headerlink" href="#architecture-at-a-glance" title="Permanent link">&para;</a></h2>
+<p>GSP scene records describe canvases, panels, views, visuals, resources, guides, navigation actions,
+and queries without embedding a renderer implementation. VisPy2 is a higher-level producer of GSP
+records. Backends consume those records according to explicitly advertised capabilities.</p>
 <ul>
-<li><a href="philosophy/">Overview</a> — Index of all philosophy and design documents</li>
-<li><a href="philosophy/whitepaper/">Whitepaper</a> — High-level pitch: motivation, architecture, ecosystem positioning</li>
-<li><a href="philosophy/philosophy_gsp_core/">GSP Core</a> — Deep dive on the contract layer and the five design principles behind <code>src/gsp/</code></li>
-<li><a href="philosophy/philosophy_packages/">Packages</a> — Seven packages and the three-tier layered architecture</li>
-<li><a href="philosophy/philosophy_renderers/">Renderers</a> — Conventions shared across <code>gsp_matplotlib</code>, <code>gsp_datoviz</code>, and <code>gsp_network</code></li>
-<li><a href="philosophy/philosophy_examples/">Examples</a> — Pattern catalog and design principles behind the 50+ example scripts</li>
+<li><code>gsp</code>: protocol records, validation, views, queries, resources, and core types</li>
+<li><code>vispy2</code>: experimental plotting-style producer API</li>
+<li><code>gsp_matplotlib</code>: reference renderer</li>
+<li><code>gsp_datoviz</code>: optional legacy renderer and capability-gated Datoviz v0.4 adapter</li>
+<li><code>gsp_network</code>: experimental remote rendering path</li>
+<li><code>gsp_pydantic</code>: serialization support</li>
 </ul>
-<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
-<p>GSP is organized into seven core packages, each serving a specific role in the visualization pipeline. The Core protocol provides the foundational abstractions, while specialized packages handle rendering across different backends, network communication, and high-level utilities. Each module below exposes a cohesive API designed for both simplicity and extensibility.</p>
+<p>Backend support is not all-or-nothing. Consult the
+<a href="https://github.com/vispy/GSP_API/blob/main/spec/backend_capabilities_visuals.md">capability matrix</a>
+before depending on a renderer-specific behavior.</p>
+<h2 id="project-links">Project links<a class="headerlink" href="#project-links" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="api/gsp/">GSP</a> — Core protocol: canvas, viewport, camera, visuals, transforms, and utilities</li>
-<li><a href="api/gsp_network/">GSP Network</a> — Network-based rendering for remote visualization and client-server architectures</li>
-<li><a href="api/gsp_pydantic/">GSP Pydantic</a> — Serialization and validation of GSP objects using Pydantic models</li>
-<li><a href="api/gsp_matplotlib/">GSP Matplotlib</a> — Matplotlib rendering backend</li>
-<li><a href="api/gsp_datoviz/">GSP Datoviz</a> — Optional legacy Datoviz support and capability-gated v0.4 adapter work</li>
-<li><a href="api/gsp_extra/">GSP Extra</a> — Additional utilities, animation helpers, and high-level 3D components</li>
-<li><a href="api/vispy_2/">VisPy 2</a> — Interactive axes display and pan/zoom built on top of GSP</li>
+<li><a href="https://github.com/vispy/GSP_API">Source repository</a></li>
+<li><a href="philosophy/whitepaper/">White paper</a></li>
+<li><a href="https://github.com/vispy/GSP_API/blob/main/CHANGELOG.md">Changelog</a></li>
+<li><a href="https://github.com/vispy/GSP_API/issues">Issue tracker</a></li>
 </ul>
 
 
