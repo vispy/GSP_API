@@ -6,7 +6,7 @@ S052 - Datoviz RC1 Acceptance Failure Decomposition
 
 ## Status
 
-Approved.
+Completed.
 
 ## Summary
 
@@ -79,3 +79,28 @@ Existing unrelated documentation changes outside these paths must remain untouch
 
 The project owner explicitly approved this recommended mission in the active Mission Control
 conversation and instructed Mission Control to execute it.
+
+## Result
+
+Completed locally after run `R20260712-140913-M234` incorrectly attempted a nested worker launch
+inside its already-isolated worktree. The implementation and evidence are in commit `67a87c5`.
+
+All three S051 native failures reduced to one unsafe readiness assumption: the Datoviz facade
+exported zero-byte ctypes forward declarations for panel-frame copy records. Default VisPy2 axis
+guides reached partial layout snapshot readback, which passed a zero-size record to native code.
+Removing guides allowed the otherwise identical primitives scene to render.
+
+GSP now rejects incomplete ctypes layouts before native calls. The refreshed pack records zero
+crashes, three adapted Datoviz renders, and two explicit Datoviz unsupported rows. Fifteen isolated
+create/capture/report/close cycles completed with clean exits and complete artifacts/reports.
+
+Validation:
+
+- full pytest: 636 passed, 2 skipped;
+- focused Datoviz/QA/VisPy2 pytest: 193 passed;
+- strict mypy for the new acceptance module and capabilities module: clean;
+- full renderer-module strict mypy retains two pre-existing ndarray assignment errors;
+- Matplotlib and Datoviz backend imports: passed.
+
+No public session API or renderer capability was promoted. Live-window event-loop ownership,
+non-blocking display, and retained-update lifecycle remain separate post-RC preview gates.
