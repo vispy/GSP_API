@@ -1,136 +1,78 @@
-# GSP_API
-Graphics Server Protocol Application User Interface
+# Graphics Server Protocol (GSP)
 
-A Python library for backend-agnostic scientific visualization scenes and protocol records, with a
-Matplotlib reference backend plus optional Datoviz and network renderer paths.
+GSP is a backend-neutral protocol and Python toolkit for scientific visualization. Version 0.2
+defines semantic scenes, validated visual and resource records, explicit capabilities, structured
+diagnostics, queries, and a transport-independent session lifecycle.
 
-The current protocol prototype includes 2D visual families, color mapping, guide/layout metadata,
-retained `View2D` navigation, static perspective/orthographic `View3D`, bounded 3D mesh rendering, flat Lambert
-mesh shading, and first-class query/readback payloads. Matplotlib is the reference backend. Datoviz
-v0.4 support is capability-gated against the local v0.4 facade and must not be treated as a required
-package dependency.
+The repository currently provides:
 
----
+- `gsp.protocol`: the normative Python protocol surface;
+- `gsp_vispy2`: an independent experimental high-level producer (not upstream VisPy 2.0);
+- `gsp_matplotlib`: the portable reference renderer;
+- `gsp_datoviz`: a capability-gated adapter for a compatible local Datoviz v0.4 build.
 
-## Installation
+GSP is pre-1.0. Version 0.2 deliberately breaks the old `vispy2` import and does not provide a
+compatibility alias. Use `gsp_vispy2`.
 
-Create a virtual environment and install the package in editable mode:
+## Quick start
 
-```bash
-# Create a virtual environment
-python -m venv .venv
-source .venv/bin/activate
-
-# Install required packages
-pip install -e .
-```
-
-Python `>=3.13` is required (see `pyproject.toml`).
-
----
-
-## Running
-
-Run any of the bundled examples:
+GSP requires Python 3.13 or newer and is not currently published on PyPI.
 
 ```bash
-python examples/buffer_example.py
+git clone https://github.com/vispy/GSP_API.git
+cd GSP_API
+uv sync
+uv run python examples/docs/first_scene.py --output /tmp/gsp-first-scene.png
 ```
 
-Select a renderer with the `GSP_RENDERER` environment variable:
+The executable example uses the current producer API:
 
-```bash
-# Matplotlib (default)
-GSP_RENDERER=matplotlib python examples/buffer_example.py
+```python
+import numpy as np
+import gsp_vispy2 as vp
 
-# Legacy Datoviz v0.3 renderer examples
-GSP_RENDERER=datoviz-v03 python examples/buffer_example.py
+fig, ax = vp.subplots()
+values = np.array([0.2, 0.8, 0.5, 1.0], dtype=np.float32)
+ax.scatter([0, 1, 2, 3], [0.4, 1.2, 0.7, 1.6], c=values, cmap="viridis", clim=(0, 1))
+ax.set_xlabel("sample")
+ax.set_ylabel("response")
+ax.set_title("GSP 0.2 first scene")
+fig.savefig("gsp-first-scene.png", dpi=150)
 ```
 
----
+`Figure` and `Axes` hold semantic producer state. Rendering is explicit; Matplotlib is the current
+public convenience path. A general backend-neutral live display/session API is intentionally not
+claimed yet.
 
 ## Documentation
 
-In-depth design documents live under [docs/philosophy/](docs/philosophy/):
+- [Public documentation](https://vispy.github.io/GSP_API/)
+- [GSP 0.2 consolidated specification](spec/current/index.md)
+- [Normative requirement registry](spec/requirements/requirements.json)
+- [Implementation profiles and exact support claims](profiles/)
+- [Examples](examples/docs/README.md)
+- [Contributing](mkdocs_source/contributing.md)
 
-- [Whitepaper](docs/philosophy/markdowns/whitepaper.md) — backend-agnostic scene-description API for scientific visualization in Python.
-- [Philosophy: Packages](docs/philosophy/markdowns/philosophy_packages.md) — the seven-package split and how dependencies flow downward.
-- [Philosophy: GSP Core](docs/philosophy/markdowns/philosophy_gsp_core.md) — the contract layer (`Canvas`, `Viewport`, `Camera`, `Buffer`, `Visual`).
-- [Philosophy: Renderers](docs/philosophy/markdowns/philosophy_renderers.md) — the `RendererBase` contract and the Matplotlib / Datoviz / Network backends.
-- [Philosophy: Examples](docs/philosophy/markdowns/philosophy_examples.md) — the shared skeleton behind every script in `examples/`.
-
----
-
-## FAQ
-
-### Q. How do I install it?
-A. Create a virtual environment, activate it, and run `pip install -e .` from the project root. See the [Installation](#installation) section above.
-
-### Q. How do I run an example?
-A. After installation, run any script under `examples/`, e.g. `python examples/buffer_example.py`. See the [Running](#running) section.
-
-### Q. How do I switch renderers?
-A. Set the `GSP_RENDERER` environment variable to `matplotlib`, `datoviz-v03`, or `network` before running legacy examples that use `examples/common/example_helper.py`:
+## Validate a checkout
 
 ```bash
-GSP_RENDERER=datoviz-v03 python your_script.py
+uv run pytest -q
+uv run python tools/spec_traceability.py --check
+uv run python tools/profile_consistency.py --check
+uv run mkdocs build --strict
 ```
 
-Plain `datoviz` is reserved for the Datoviz v0.4 protocol backend. Datoviz legacy renderer support is optional. Install it with `pip install -e ".[datoviz-legacy]"` when using examples that require the older Datoviz Python wrapper.
+Datoviz is optional. Its runtime capabilities depend on the active public v0.4 binding and device;
+consult runtime discovery and the versioned profile instead of assuming backend parity.
 
-For protocol/API review, including View2D navigation and View3D mesh examples, see
-[`examples/review/README.md`](examples/review/README.md). The Datoviz v0.4 path reports structured
-unsupported diagnostics when a local binding lacks the required capability; it does not silently
-claim support for unproven features such as View3D mesh triangle picking.
+## Legacy code
 
-### Q. How do I run the tests?
-A. Tests live under `tests/` and run with pytest:
+The older object-oriented `Canvas`/`Viewport`/`RendererBase` system, `GSP_RENDERER`, `datoviz-v03`,
+and its examples remain in the repository as historical implementation material. They do not define
+GSP 0.2 and are not the recommended user path. See the
+[development-history documentation](mkdocs_source/development-history/index.md) for migration rules.
 
-```bash
-pytest tests/ -v
-```
+## Project status
 
-Or run the full pipeline (lint + tests + examples + expected-output check) via the Makefile:
-
-```bash
-make test
-```
-
-### Q. How do I use the Makefile?
-A. The Makefile is a task runner. List all targets with:
-
-```bash
-make help
-```
-
-Common targets:
-
-| Target | What it does |
-|---|---|
-| `make test` | Full pipeline: lint, pytest, run all examples, check expected output |
-| `make pytest` / `make pytest_verbose` | Run pytest only |
-| `make lint` | Run pyright + ruff |
-| `make run_all_examples` | Execute every example script |
-| `make clean_output` | Remove generated png/json/pdf/svg/mp4 from `examples/output/` |
-| `make stubs_gsp` | Regenerate type stubs |
-| `make network_server` | Start the network renderer server |
-| `make network_server_dev` | Start the server with auto-restart on file changes |
-| `make mkdocs_serve` | Preview docs locally |
-| `make mkdocs_build` / `make mkdocs_deploy` | Build / deploy docs to GitHub Pages |
-
-### Q. How do I remove datoviz logs?
-A. Set the datoviz log level via the `DVZ_LOG_LEVEL` environment variable. See the [datoviz docs](https://datoviz.org/discussions/CONTRIBUTING/#console-logging).
-
-```bash
-DVZ_LOG_LEVEL=4 GSP_RENDERER=datoviz-v03 python your_script.py
-```
-
-### Q. Where is the documentation?
-A. Source documentation lives under `mkdocs_source/`. Build it locally with:
-
-```bash
-mkdocs serve
-```
-
-### Q. Where do I report bugs or request features?
-A. Open an issue on the project repository.
+GSP 0.2 is an experimental, source-installed development release. No tag, PyPI publication, stable
+compatibility guarantee, or general production remote transport is claimed.

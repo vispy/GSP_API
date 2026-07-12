@@ -1,7 +1,8 @@
-"""Minimal VisPy2 producer API for GSP protocol visuals.
+"""GSP VisPy2 0.2 producer API for semantic protocol scenes.
 
-This MVP makes VisPy2 a small user-facing producer of formal GSP protocol
-objects. Rendering is delegated to the Matplotlib reference protocol backend.
+The independent producer creates formal GSP records without retaining backend
+objects. Current public rendering conveniences delegate explicitly to the
+Matplotlib reference protocol backend.
 """
 
 from __future__ import annotations
@@ -83,7 +84,7 @@ _texture_counter = count(1)
 
 @dataclass(slots=True)
 class Figure:
-    """Container for the minimal VisPy2 protocol scene."""
+    """Backend-neutral container for semantic producer scene state."""
 
     axes: list["Axes"] = field(default_factory=list)
     id: str = "figure:main"
@@ -222,7 +223,7 @@ class Figure:
 
 @dataclass(slots=True)
 class Axes:
-    """Minimal axes object that produces GSP protocol visuals."""
+    """Axes-like producer that appends GSP visuals, guides, and resources."""
 
     figure: Figure
     visuals: list[
@@ -919,7 +920,7 @@ class Axes:
 
 
 def subplots() -> tuple[Figure, Axes]:
-    """Create a one-axes VisPy2 protocol figure."""
+    """Create a one-axes GSP VisPy2 protocol figure."""
     fig = Figure()
     ax = fig.add_axes()
     return fig, ax

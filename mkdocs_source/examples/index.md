@@ -1,5 +1,8 @@
 # Examples
 
+Start with the [executable first scene](../getting-started/first-scene.md). Its checked-in source is
+`examples/docs/first_scene.py`, and the documentation includes that file directly.
+
 The numbered review examples are the maintained current-protocol demonstrations.
 
 ```bash
@@ -27,4 +30,4 @@ options shown above.
 | ![A faceted mesh with flat Lambert shading rendered by Matplotlib](../comparisons/lambert-matplotlib.png) | ![The same mesh rendered by Datoviz](../comparisons/lambert-datoviz.png) |
 | Adapted 3D raster reference for the accepted flat-Lambert color semantics. | `review.adapted`: mesh rendering succeeds, while title layout and guide-query geometry are not strict. |
 
-Both images were regenerated from `10_view3d_flat_lambert.py` at 1280x720 for this documentation review. See `docs/screenshot_provenance.md` for the recorded classifications.
+Both images were regenerated from `10_view3d_flat_lambert.py` at 1280x720 for this documentation review. See [screenshot provenance](../comparisons/provenance.md) for the recorded classifications.

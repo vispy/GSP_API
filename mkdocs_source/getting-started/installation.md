@@ -12,9 +12,12 @@ uv sync
 Verify the portable Matplotlib path:
 
 ```bash
-uv run python examples/review/01_scatter_basic.py --backend matplotlib --offscreen
+uv run python examples/docs/first_scene.py --output /tmp/gsp-first-scene.png
 ```
 
-The command writes a PNG and structured run summary under `artifacts/example_review/`. Datoviz is
+The command writes a PNG through the current public producer and Matplotlib reference path. Datoviz is
 optional and requires a compatible local v0.4 build; its availability does not imply support for
 every GSP capability.
+
+The distribution name is `gsp-vispy2`; the import is `gsp_vispy2`. There is deliberately no
+`vispy2` compatibility import in 0.2.

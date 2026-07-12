@@ -1,23 +1,20 @@
 # Python API
 
-The current recommended Python surface is `gsp.protocol`. It contains validated records and helpers
-for capabilities, commands, transports, panels, views, visuals, resources, guides, navigation,
-layout, queries, extensions, and diagnostics.
+GSP 0.2 has two public layers:
 
-## Start with these types
+| Layer | Import | Purpose |
+|---|---|---|
+| Producer | `gsp_vispy2` | Build semantic figures and visuals with a compact plotting API. |
+| Protocol | `gsp.protocol` | Construct, validate, negotiate, transport, query, or implement GSP records directly. |
 
-| Task | Types |
-|---|---|
-| Session contract | `InProcessGSPServer`, `InProcessTransport`, `InitializeResult`, `CommandResult` |
-| Commands | `ProtocolCommand`, `CommandKind`, `CommandBatch` |
-| Capability discovery | `CapabilitySnapshot`, `AdaptationDecision`, `AdaptationOutcome` |
-| 2D scenes | `Panel`, `View2D`, `PointVisual`, `ImageVisual`, `AxisGuide` |
-| 3D scenes | `View3D`, `Camera3D`, `MeshVisual`, projection records |
-| Queries | `QueryRequest`, `QueryResult`, typed query payloads |
+Most application authors should start with the [producer](producer.md). Renderer and transport
+authors should start with [lifecycle and transport](lifecycle.md), then the record-family pages.
 
-The generated module dumps from the older website mixed protocol and legacy implementation APIs and
-are no longer part of the recommended navigation. The `gsp.core`, `gsp.visuals`, `RendererBase`, and
-registry-based renderer surfaces remain compatibility material.
+The normative specification controls semantics. Generated Python signatures document this
+implementation; they do not silently expand backend support. Consult the
+[feature matrix](../support/feature-matrix.md) and runtime capability snapshot.
 
-The package exports these records from `gsp.protocol`; applications should not import protocol
-implementation modules by filesystem location.
+## Stability
+
+The 0.2 API is experimental and may break before 1.0. The removed `vispy2` package name has no alias.
+Legacy object-graph APIs are documented only in [development history](../development-history/index.md).

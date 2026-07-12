@@ -2,10 +2,10 @@
 
 **Describe a scientific visualization once, then execute it through a backend that declares what it can do.**
 
-GSP is an experimental semantic protocol for 2D and 3D scientific visualization. A producer such as VisPy2 creates validated scene records. A GSP session negotiates capabilities, accepts operations, and delegates supported work to a backend adapter. Matplotlib defines reference behavior; Datoviz v0.4 provides capability-gated GPU paths.
+GSP is an experimental semantic protocol for 2D and 3D scientific visualization. A producer such as GSP VisPy2 creates validated scene records. A GSP session negotiates capabilities, accepts operations, and delegates supported work to a backend adapter. Matplotlib defines reference behavior; Datoviz v0.4 provides capability-gated GPU paths.
 
 !!! warning "Research prototype"
-    GSP and VisPy2 are source-only `0.1.0` prototypes requiring Python 3.13 or newer. APIs can change, and backend support is intentionally uneven.
+    GSP 0.2 and the independent `gsp_vispy2` producer are source-only prototypes requiring Python 3.13 or newer. APIs can change, and backend support is intentionally uneven.
 
 [Build a first scene](getting-started/first-scene.md){ .md-button .md-button--primary }
 [Understand the architecture](concepts/architecture.md){ .md-button }
@@ -13,7 +13,7 @@ GSP is an experimental semantic protocol for 2D and 3D scientific visualization.
 ## One protocol, explicit support
 
 ```text
-VisPy2 / domain library / direct records
+GSP VisPy2 / domain library / direct records
                   |
                   v
        GSP session and protocol

@@ -11,7 +11,7 @@ them, reports an explicit adaptation, or rejects them with a diagnostic.
 
 | Role | Responsibility |
 |---|---|
-| Producer | Creates valid GSP operations. VisPy2 is the intended high-level Python producer. |
+| Producer | Creates valid GSP operations. The independent `gsp_vispy2` package is the current high-level Python producer. |
 | Protocol | Defines commands, records, validation, capabilities, results, and diagnostics. |
 | Session | Owns identifiers and state while operations are negotiated and executed. |
 | Transport | Carries operations. It does not define their meaning. |

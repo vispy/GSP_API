@@ -11,3 +11,7 @@ GSP learning path and does not define current protocol semantics.
 The repository retains that code, its examples, the former Philosophy essays, implementation stage
 records, consultations, closeouts, and QA evidence for maintenance and traceability. They should not
 be read as an alternative definition of GSP.
+
+Use the [0.2 migration table](migration-0.2.md) for concrete replacements. Historical implementation
+specifications remain linked through the [normative source registry](../specification/registries.md);
+their retained wording does not override `spec/current/`.

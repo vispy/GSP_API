@@ -1,6 +1,9 @@
 site_name: Graphics Server Protocol
 site_description: "GSP: A high-performance graphics server protocol for efficient rendering and visualization."
 site_author: GSP Team
+repo_name: vispy/GSP_API
+repo_url: https://github.com/vispy/GSP_API
+edit_uri: edit/main/mkdocs_source/
 site_dir: mkdocs_build
 
 docs_dir: mkdocs_source
@@ -29,10 +32,22 @@ theme:
     - navigation.indexes
     - content.code.copy
     - content.code.annotate
+    - navigation.top
   palette:
-    scheme: slate
-    primary: black
-    accent: indigo
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
 
 markdown_extensions:
   - admonition
@@ -47,9 +62,22 @@ markdown_extensions:
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.superfences
+  - pymdownx.snippets:
+      base_path: .
+      check_paths: true
 
 plugins:
   - search
+  - redirects:
+      redirect_maps:
+        about.md: getting-started/what-is-gsp.md
+        protocol.md: specification/index.md
+        conformance.md: specification/registries.md
+        gallery.md: examples/index.md
+        api/gsp.md: api/index.md
+        api/gsp_matplotlib.md: support/feature-matrix.md
+        api/gsp_datoviz.md: support/feature-matrix.md
+        api/vispy_2.md: api/producer.md
   - mkdocstrings:
       handlers:
         python:
@@ -100,9 +128,17 @@ nav:
       - Transports and extensions: specification/transports-extensions.md
       - Backend profiles: specification/backend-profiles.md
       - Normative registries: specification/registries.md
-  - Python API: api/index.md
+  - Python API:
+      - Overview: api/index.md
+      - Producer: api/producer.md
+      - Lifecycle and transport: api/lifecycle.md
+      - Scene, resources, and visuals: api/scene-records.md
+      - Queries and diagnostics: api/queries-diagnostics.md
   - Examples:
       - Example index: examples/index.md
       - Backend comparisons: comparisons/index.md
+      - Screenshot provenance: comparisons/provenance.md
   - Contributing: contributing.md
-  - Development History: development-history/index.md
+  - Development History:
+      - Boundary: development-history/index.md
+      - Migrate to 0.2: development-history/migration-0.2.md

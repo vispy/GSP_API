@@ -1,6 +1,6 @@
 # Project status
 
-GSP and VisPy2 are experimental `0.1.0` research prototypes. They require Python 3.13 or newer, are
+GSP and the independent GSP VisPy2 producer are experimental `0.2.0` research prototypes. They require Python 3.13 or newer, are
 installed from source, and do not yet offer stable API compatibility.
 
 ## Available today
@@ -8,7 +8,7 @@ installed from source, and do not yet offer stable API compatibility.
 - Validated protocol records for core 2D and bounded 3D scenes.
 - Matplotlib reference rendering and query paths for documented scopes.
 - A capability-gated Datoviz v0.4 adapter with substantial 2D and 3D coverage.
-- VisPy2 producer helpers for many accepted visual, guide, transform, color, and mesh records.
+- `gsp_vispy2` producer helpers for accepted visual, guide, transform, color, and mesh records.
 - Conformance fixtures, structured diagnostics, and visual review tooling.
 
 ## Important gaps
