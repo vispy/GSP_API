@@ -1,5 +1,5 @@
 {
-  "current_stage": "S051",
+  "current_stage": "S052",
   "stages": [
     {
       "id": "S001",
@@ -306,6 +306,12 @@
       "title": "VisPy2 Public Producer And Datoviz RC1 Acceptance",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S052",
+      "title": "Datoviz RC1 Acceptance Failure Decomposition",
+      "state": "active",
+      "progress": 0
     }
   ],
   "missions": [
@@ -2396,6 +2402,15 @@
       "agent": "codex-ucl",
       "progress": 100,
       "priority": 233
+    },
+    {
+      "id": "M234",
+      "title": "S052 Datoviz acceptance failure decomposition and preflight hardening",
+      "stage": "S052",
+      "state": "approved",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 234
     }
   ],
   "review_queue": [],
@@ -2493,6 +2508,7 @@
     }
   ],
   "recommendations": [
+    "M234 is approved: decompose the three S051 Datoviz native failures, distinguish execution from teardown faults, harden only evidence-backed semantic preflight, and record repeated lifecycle evidence before any public session preview.",
     "M233 completed: the public VisPy2 producer acceptance pack records four strict Matplotlib rows, two Datoviz unsupported rows, three isolated Datoviz backend failures, and explicit Texture2D unsupported boundaries; do not publish the post-RC session preview until failures reject before execution and deterministic lifecycle evidence exists.",
     "Do not promote Datoviz query.view3d.mesh_triangle_pick.v1 until upstream Datoviz exposes public canonical mesh face/triangle identity and native tests cover it.",
     "M208 completed: no new Datoviz TextVisual rows promote; isolated text artifacts render with only text/rotation_alpha_ndc strict, while the combined text review still crashes the Datoviz offscreen child.",
