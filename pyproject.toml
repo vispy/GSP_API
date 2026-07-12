@@ -1,6 +1,6 @@
 [project]
-name = "gsp"
-version = "0.1.0"
+name = "gsp-vispy2"
+version = "0.2.0"
 description = "Backend-agnostic scene and protocol tools for scientific visualization."
 authors = [
     {name = "Jerome Etienne",email = "jerome.etienne@gmail.com"}
@@ -34,7 +34,7 @@ packages = [
     {include = "gsp_matplotlib", from = "src"},
     {include = "gsp_network", from = "src"},
     {include = "gsp_pydantic", from = "src"},
-    {include = "vispy2", from = "src"},
+    {include = "gsp_vispy2", from = "src"},
     {include = "fixtures"},
 ]
 include = [

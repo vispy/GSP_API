@@ -5,7 +5,7 @@ This example creates independent SegmentVisual strokes through the VisPy2 produc
 
 import numpy as np
 
-import vispy2 as vp
+import gsp_vispy2 as vp
 
 
 starts = np.array(

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-import vispy2 as vp
+import gsp_vispy2 as vp
 from gsp.protocol import (
     AxisDimension,
     ColorMapId,

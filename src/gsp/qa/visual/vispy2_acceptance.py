@@ -18,7 +18,7 @@ import numpy.typing as npt
 from gsp.qa.visual.case_spec import VisualQACase, VisualQAScene
 from gsp.qa.visual.artifacts import write_json
 from gsp.qa.visual.datoviz_probe import probe_datoviz_v04
-from vispy2 import Figure, subplots
+from gsp_vispy2 import Figure, subplots
 
 
 S051_SUITE = "s051"
@@ -111,7 +111,7 @@ def write_s051_acceptance_manifest(out_dir: Path) -> Path:
     payload: dict[str, object] = {
         "schema_kind": "gsp.s051.vispy2_rc1_acceptance_manifest",
         "schema_version": 1,
-        "producer": {"import": "vispy2", "api_version": S051_PRODUCER_API_VERSION},
+        "producer": {"import": "gsp_vispy2", "api_version": S051_PRODUCER_API_VERSION},
         "gsp_scene_schema_version": GSP_SCENE_SCHEMA_VERSION,
         "backends": ["matplotlib", "datoviz"],
         "datoviz_evidence": datoviz_evidence,

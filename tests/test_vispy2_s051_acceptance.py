@@ -12,7 +12,7 @@ from gsp.qa.visual.artifacts import ensure_run_dirs, write_scene_artifacts
 from gsp.qa.visual.cases import list_cases
 from gsp.qa.visual.vispy2_acceptance import S051_SUITE, figure_to_visual_qa_scene
 from gsp.qa.visual import vispy2_acceptance
-from vispy2 import subplots
+from gsp_vispy2 import subplots
 
 
 def test_adapter_preserves_in_memory_protocol_records() -> None:

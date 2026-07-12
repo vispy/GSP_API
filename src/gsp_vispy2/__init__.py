@@ -1,4 +1,9 @@
-"""VisPy2 experimental producer API."""
+"""Independent experimental VisPy2 producer for GSP.
+
+This package is not the official upstream VisPy 2.0 API or release.
+"""
+
+__version__ = "0.2.0"
 
 from . import axes
 from .plot.plot import plot
@@ -19,6 +24,7 @@ from .protocol import (
 )
 
 __all__ = [
+    "__version__",
     "Axes",
     "Figure",
     "affine2d",

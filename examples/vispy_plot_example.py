@@ -24,7 +24,7 @@ from gsp_extra.bufferx import Bufferx
 from gsp.constants import Constants
 from common.example_helper import ExampleHelper
 from gsp_extra.misc.render_item import RenderItem
-import vispy2 as Vispy2
+import gsp_vispy2 as Vispy2
 
 
 def main():

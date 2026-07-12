@@ -6,7 +6,7 @@ the Matplotlib protocol backend. It intentionally does not call backend implemen
 
 import numpy as np
 
-import vispy2 as vp
+import gsp_vispy2 as vp
 
 
 fig, ax = vp.subplots()

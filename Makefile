@@ -28,13 +28,13 @@ lint: lint_pyright lint_ruff ## Run all linters
 	
 
 lint_pyright: ## Run pyright type checker on src and examples
-	pyright ./src/gsp/ ./src/gsp_matplotlib/ ./src/gsp_datoviz/ ./src/gsp_pydantic/ ./src/gsp_extra ./src/vispy2 ./examples/
+	pyright ./src/gsp/ ./src/gsp_matplotlib/ ./src/gsp_datoviz/ ./src/gsp_pydantic/ ./src/gsp_extra ./src/gsp_vispy2 ./examples/
 
 # lint_pydoclint: ## Run pydocstyle to check for docstring style issues
 # 	pydoclint ./src/gsp ./src/gsp_matplotlib ./src/gsp_datoviz ./src/gsp_pydantic ./src/gsp_network ./examples/gsp_extra
 
 lint_ruff: ## Run ruff linter 
-	ruff check ./src/gsp ./src/gsp_matplotlib ./src/gsp_datoviz ./src/gsp_pydantic/ ./src/gsp_network/ ./src/gsp_extra ./src/vispy2
+	ruff check ./src/gsp ./src/gsp_matplotlib ./src/gsp_datoviz ./src/gsp_pydantic/ ./src/gsp_network/ ./src/gsp_extra ./src/gsp_vispy2
 
 test: lint pytest_verbose run_all_examples check_expected_output ## Run all tests
 	@echo "All tests passed!"	
@@ -90,4 +90,3 @@ mkdocs_build: mkdocs_philosophy_copy ## Build the MkDocs documentation site
 
 mkdocs_deploy: mkdocs_build ## Deploy the MkDocs documentation site to GitHub Pages
 	mkdocs gh-deploy --clean
-

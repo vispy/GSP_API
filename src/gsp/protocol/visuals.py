@@ -128,8 +128,6 @@ class MeshShading(str, Enum):
     UNLIT_RGBA = "unlit_rgba"
     FLAT_LAMBERT = "flat_lambert"
     TEXTURE2D_UNLIT = "texture2d_unlit"
-    FLAT = "flat"
-    LAMBERT = "lambert"
 
 
 class MeshUVMode(str, Enum):
@@ -176,8 +174,8 @@ MESH_UV_VERTEX2D_CAPABILITY = "meshvisual.uv.vertex2d.v1"
 MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY = (
     "meshvisual.material.texture2d_unlit.v1"
 )
-VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY = (
-    "vispy2.producer.mesh.texture2d_unlit.v1"
+GSP_VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY = (
+    "gsp_vispy2.producer.mesh.texture2d_unlit.v1"
 )
 MESH_NORMALS_FACE3D_CAPABILITY = "meshvisual.normals.face3d.v1"
 MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY = (
@@ -466,10 +464,6 @@ class MeshVisual:
 
         if not isinstance(self.shading, MeshShading):
             raise TypeError("shading must be a MeshShading")
-        if self.shading is MeshShading.LAMBERT:
-            raise ValueError(
-                'legacy_lambert_shading_not_canonical: use shading="flat_lambert"'
-            )
         if self.canonical_shading() is MeshShading.FLAT_LAMBERT:
             _validate_mesh_flat_lambert_intrinsic(
                 positions=self.positions,
@@ -521,9 +515,7 @@ class MeshVisual:
         )
 
     def canonical_shading(self) -> MeshShading:
-        """Return the canonical S038/S039/S050 shading selector."""
-        if self.shading is MeshShading.FLAT:
-            return MeshShading.UNLIT_RGBA
+        """Return the GSP 0.2 shading selector."""
         return self.shading
 
     def normalized_face_normals(self) -> FloatArray:

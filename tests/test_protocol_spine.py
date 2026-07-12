@@ -9,9 +9,14 @@ from gsp.protocol import (
     CommandBatch,
     CommandKind,
     CommandResult,
+    CommandStatus,
+    Diagnostic,
+    DiagnosticCategory,
+    DiagnosticSeverity,
     InitializeResult,
     InProcessTransport,
     ProtocolCommand,
+    PROTOCOL_VERSION,
     AxisProviderCapability,
     QueryPlanningContext,
     QueryHitPolicy,
@@ -41,6 +46,8 @@ def test_validate_id_rejects_invalid_values():
     with pytest.raises(ValueError):
         validate_id("1starts-with-number")
 
+    assert PROTOCOL_VERSION == "0.2"
+
 
 def test_new_id_uses_readable_prefix():
     """Generated IDs keep their object-family prefix."""
@@ -66,6 +73,43 @@ def test_capability_snapshot_adaptation_decision():
     rejected = caps.adapt_visual("image")
     assert rejected.outcome == AdaptationOutcome.REJECT
     assert rejected.diagnostic is not None
+    assert caps.snapshot_id.startswith("capabilities:")
+    assert caps.snapshot_id == CapabilitySnapshot(
+        server_name="test-server",
+        protocol_versions=("0.1",),
+        transports=(TransportKind.INPROC,),
+        buffer_dtypes=("float32",),
+        visual_families=("point",),
+    ).snapshot_id
+
+
+def test_structured_diagnostic_and_command_result_invariants():
+    diagnostic = Diagnostic(
+        code="protocol.sequence.invalid",
+        severity=DiagnosticSeverity.ERROR,
+        category=DiagnosticCategory.VALIDATION,
+        message="sequence is invalid",
+        operation_id="command:test",
+        data={"expected": 1, "actual": 2},
+    )
+    rejected = CommandResult(
+        sequence=2,
+        status=CommandStatus.REJECTED,
+        diagnostics=(diagnostic,),
+    )
+    assert rejected.status is CommandStatus.REJECTED
+    assert rejected.diagnostics[0].code == "protocol.sequence.invalid"
+
+    with pytest.raises(ValueError, match="require diagnostics"):
+        CommandResult(sequence=2, status=CommandStatus.FAILED)
+
+    with pytest.raises(ValueError, match="no whitespace"):
+        Diagnostic(
+            code="bad code",
+            severity=DiagnosticSeverity.ERROR,
+            category=DiagnosticCategory.VALIDATION,
+            message="invalid",
+        )
 
 
 def test_capability_snapshot_query_mode_adaptation_decision():
@@ -389,14 +433,18 @@ class _FakeInProcessServer:
         )
 
     def initialize(self):
-        return InitializeResult(session_id="session:fake", capabilities=self._capabilities)
+        return InitializeResult(
+            session_id="session:fake",
+            protocol_version="0.1",
+            capabilities=self._capabilities,
+        )
 
     def capabilities(self):
         return self._capabilities
 
     def submit(self, batch):
         self.submitted.append(batch)
-        return CommandResult(sequence=batch.sequence, accepted=True)
+        return CommandResult(sequence=batch.sequence, status=CommandStatus.ACCEPTED)
 
     def shutdown(self):
         self.closed = True
@@ -413,14 +461,21 @@ def test_inprocess_transport_checks_session_and_forwards_batch():
     initialized = transport.initialize()
     assert initialized.session_id == "session:fake"
 
-    batch = CommandBatch.single("session:fake", 1, ProtocolCommand(CommandKind.QUERY_CAPABILITIES))
+    batch = CommandBatch.single("session:fake", 0, ProtocolCommand(CommandKind.QUERY_CAPABILITIES))
     result = transport.submit(batch)
 
-    assert result.accepted
+    assert result.status is CommandStatus.ACCEPTED
     assert server.submitted == [batch]
+
+    with pytest.raises(ValueError, match="next sequence"):
+        transport.submit(batch)
 
     with pytest.raises(ValueError, match="does not match"):
         transport.submit(CommandBatch.single("session:other", 2, ProtocolCommand(CommandKind.QUERY_CAPABILITIES)))
 
     transport.shutdown()
     assert server.closed
+
+    transport.shutdown()
+    with pytest.raises(RuntimeError, match="closed"):
+        transport.initialize()

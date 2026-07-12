@@ -253,17 +253,12 @@ def test_mesh_visual_s039_flat_lambert_rejects_ndc_and_vertex_normals():
         )
 
 
-def test_mesh_visual_s039_rejects_legacy_lambert_and_normal_conflicts():
-    with pytest.raises(ValueError, match="legacy_lambert_shading_not_canonical"):
-        MeshVisual(
-            id="visual:mesh",
-            positions=np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=np.float32),
-            faces=np.array([[0, 1, 2]], dtype=np.uint32),
-            coordinate_space=CoordinateSpace.DATA,
-            color=np.array([255, 255, 255, 255], dtype=np.uint8),
-            shading=MeshShading.LAMBERT,
-        )
-
+def test_mesh_visual_s039_rejects_normal_conflicts():
+    assert {member.value for member in MeshShading} == {
+        "unlit_rgba",
+        "flat_lambert",
+        "texture2d_unlit",
+    }
     with pytest.raises(ValueError, match="normal_source_conflict"):
         MeshVisual(
             id="visual:mesh",

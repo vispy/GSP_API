@@ -15,14 +15,18 @@ import pytest
 
 def test_core_import_surface() -> None:
     gsp = importlib.import_module("gsp")
-    vispy2 = importlib.import_module("vispy2")
+    gsp_vispy2 = importlib.import_module("gsp_vispy2")
     matplotlib_backend = importlib.import_module("gsp_matplotlib")
     network_backend = importlib.import_module("gsp_network")
 
     assert gsp.__doc__ is not None
-    assert hasattr(vispy2, "Figure")
+    assert hasattr(gsp_vispy2, "Figure")
+    assert gsp_vispy2.__version__ == "0.2.0"
     assert hasattr(matplotlib_backend, "register_renderer_matplotlib")
     assert hasattr(network_backend, "register_renderer_network")
+
+    with pytest.raises(ModuleNotFoundError):
+        importlib.import_module("vispy2")
 
 
 def test_datoviz_protocol_modules_import_without_datoviz() -> None:

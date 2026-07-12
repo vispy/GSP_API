@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-import vispy2 as vp
+import gsp_vispy2 as vp
 from gsp.protocol import TickSpec, TickSpecKind, resolve_ticks
 
 

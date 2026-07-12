@@ -21,7 +21,7 @@ from gsp.constants import Constants
 
 from gsp_extra.misc.render_item import RenderItem
 from common.example_helper import ExampleHelper
-from vispy2.scatter.scatter import scatter
+from gsp_vispy2.scatter.scatter import scatter
 
 
 def main():

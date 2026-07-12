@@ -323,7 +323,7 @@
       "id": "S054",
       "title": "GSP 0.2 Protocol API And Documentation Consolidation",
       "state": "active",
-      "progress": 33
+      "progress": 50
     }
   ],
   "missions": [
@@ -2455,16 +2455,16 @@
       "id": "M238",
       "title": "S054 breaking public protocol and producer API consolidation",
       "stage": "S054",
-      "state": "running",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 238
     },
     {
       "id": "M239",
       "title": "S054 backend profiles capability evidence and conformance mapping",
       "stage": "S054",
-      "state": "approved",
+      "state": "running",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 239
@@ -2583,6 +2583,7 @@
     }
   ],
   "recommendations": [
+    "M238 completed: GSP VisPy2 is now the deliberately breaking gsp-vispy2 0.2.0 distribution with gsp_vispy2 as its only producer import; protocol results, diagnostics, snapshot identity, sequencing, and lifecycle match GSP 0.2. M239 is running for evidence-backed profiles and conformance mapping.",
     "M237 completed: the GSP 0.2 target specification is now about 9,100 words with 90 stable requirements and explicit source dispositions; M238 is running to align the breaking Python protocol and producer APIs without violating ADR-0033.",
     "M236 completed: the protocol-centered site builds strictly, spec/current is explicitly a consolidation draft, and 101 specification/ADR/decision sources are classified with 39 detailed normative sources mapped to GSP 0.2 target chapters; M237 is now running for requirement-level specification detail.",
     "S054 is approved: consolidate GSP 0.2 with deliberate pre-1.0 breaking changes, detailed normative requirements, synchronized implementation and conformance, executable public documentation, and traceable commits; preserve ADR-0033 producer/session ownership and do not publish, tag, push, or merge.",

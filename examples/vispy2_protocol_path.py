@@ -5,7 +5,7 @@ This example creates an open multi-subpath PathVisual through the VisPy2 produce
 
 import numpy as np
 
-import vispy2 as vp
+import gsp_vispy2 as vp
 
 
 subpath_a = np.array(

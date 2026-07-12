@@ -6,7 +6,7 @@ the Matplotlib protocol backend. It intentionally uses the strict S025 2D flat t
 
 import numpy as np
 
-import vispy2 as vp
+import gsp_vispy2 as vp
 
 
 positions = np.array(

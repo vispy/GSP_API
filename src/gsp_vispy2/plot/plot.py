@@ -4,7 +4,7 @@ Provides a matplotlib-style plot() function that generates line and/or marker vi
 from x, y coordinate data. Supports matplotlib-style format strings for flexible styling.
 
 Example:
-    from vispy2 import plot
+    from gsp_vispy2 import plot
     import numpy as np
 
     x = np.linspace(0, 2*np.pi, 100)
@@ -163,7 +163,7 @@ def plot(
 
     Examples:
     >>> import numpy as np
-    >>> from vispy2 import plot
+    >>> from gsp_vispy2 import plot
     >>> x = np.linspace(0, 2*np.pi, 50)
     >>> y = np.sin(x)
     >>> visuals = plot(x, y, fmt='ro-')  # Red circles with line

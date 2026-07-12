@@ -8,7 +8,7 @@ not be treated as a full Matplotlib compatibility layer.
 Current first API:
 
 ```python
-import vispy2 as vp
+import gsp_vispy2 as vp
 
 fig, ax = vp.subplots()
 ax.set_xlim(-1, 1)
@@ -153,7 +153,7 @@ multiplicative base color. When `texture` is supplied, VisPy2 rejects non-defaul
 not expose `sampler`, `wrap`, `filter`, `mipmap`, `material`, `light`, `texture_id`,
 culling/depth-state, or backend-specific keywords in this stage.
 
-`vispy2.producer.mesh.texture2d_unlit.v1` is producer-only. `Figure.render_matplotlib()` and other
+`gsp_vispy2.producer.mesh.texture2d_unlit.v1` is producer-only. `Figure.render_matplotlib()` and other
 renderer paths must still check renderer capabilities and diagnose unsupported textured meshes.
 
 ## S026 color mapping direction

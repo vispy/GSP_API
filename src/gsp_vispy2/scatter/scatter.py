@@ -17,7 +17,7 @@ Mode Selection:
 
 Examples:
     >>> import numpy as np
-    >>> from vispy2 import scatter
+    >>> from gsp_vispy2 import scatter
     >>> positions = np.random.rand(100, 3)
     >>>
     >>> # Points mode (default, full customization)
@@ -300,7 +300,7 @@ def scatter(
 
     Examples:
         >>> import numpy as np
-        >>> from vispy2 import scatter
+        >>> from gsp_vispy2 import scatter
         >>> from gsp.types import MarkerShape
         >>> from gsp.constants import Constants
         >>>

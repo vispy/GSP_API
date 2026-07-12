@@ -2,7 +2,7 @@
 
 import numpy as np
 
-import vispy2 as vp
+import gsp_vispy2 as vp
 
 
 image = np.zeros((16, 16, 4), dtype=np.uint8)

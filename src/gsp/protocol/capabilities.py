@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+import hashlib
 from collections.abc import Iterable
 from typing import Literal, TypeVar
 
@@ -11,6 +12,7 @@ from .extensions import ExtensionManifest, validate_extension_manifest
 from .layout import ConformanceTier
 from .navigation import NavigationPlacement
 from .query import QueryCoordinateSpace, QueryHitPolicy, QueryPayload, QueryRequest, QueryScope
+from .ids import validate_id
 from .transforms import TransformPlacement
 
 
@@ -448,6 +450,7 @@ class CapabilitySnapshot:
     render_target_capability: RenderTargetCapability = field(default_factory=RenderTargetCapability)
     query_layout_capability: QueryLayoutCapability = field(default_factory=QueryLayoutCapability)
     metadata: dict[str, object] = field(default_factory=dict)
+    snapshot_id: str = ""
 
     def __post_init__(self) -> None:
         if not self.server_name:
@@ -456,6 +459,28 @@ class CapabilitySnapshot:
             raise ValueError("at least one protocol version is required")
         if not self.transports:
             raise ValueError("at least one transport kind is required")
+        if not self.snapshot_id:
+            digest = hashlib.sha256(
+                repr(
+                    (
+                        self.server_name,
+                        self.protocol_versions,
+                        self.transports,
+                        self.buffer_dtypes,
+                        self.texture_formats,
+                        self.visual_families,
+                        self.transform_capabilities,
+                        self.view3d_capabilities,
+                        self.navigation_capabilities,
+                        self.query_modes,
+                        self.output_formats,
+                        self.extensions,
+                        self.metadata,
+                    )
+                ).encode("utf-8")
+            ).hexdigest()[:16]
+            object.__setattr__(self, "snapshot_id", f"capabilities:{digest}")
+        validate_id(self.snapshot_id)
         if self.max_buffer_bytes is not None and self.max_buffer_bytes < 0:
             raise ValueError("max_buffer_bytes must be non-negative")
         if self.max_tiles_per_request < 0:

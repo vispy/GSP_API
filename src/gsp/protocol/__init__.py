@@ -4,6 +4,8 @@ This package contains transport-independent protocol models. It is designed to
 coexist with the legacy object graph while the protocol layer is introduced.
 """
 
+PROTOCOL_VERSION = "0.2"
+
 from .capabilities import (
     AdaptationDecision,
     AdaptationOutcome,
@@ -77,6 +79,7 @@ from .decoders import (
     S022NpyHeader,
     validate_s022_npy_decoder_payload,
 )
+from .diagnostics import Diagnostic, DiagnosticCategory, DiagnosticSeverity
 from .extensions import (
     ExtensionKind,
     ExtensionManifest,
@@ -259,6 +262,7 @@ from .security import (
 )
 from .transports import (
     CommandResult,
+    CommandStatus,
     InProcessGSPServer,
     InProcessTransport,
     InitializeResult,
@@ -312,10 +316,11 @@ from .visuals import (
     TEXTURE2D_RGBA8_CAPABILITY,
     validate_mesh_visual_flat_lambert,
     validate_mesh_visual_texture2d_unlit,
-    VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY,
+    GSP_VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY,
 )
 
 __all__ = [
+    "PROTOCOL_VERSION",
     "AdaptationDecision",
     "AdaptationOutcome",
     "AffineTransform2DResource",
@@ -339,6 +344,7 @@ __all__ = [
     "CommandBatch",
     "CommandKind",
     "CommandResult",
+    "CommandStatus",
     "ColorbarGuide",
     "ColorbarGuideStyle",
     "ColorbarOrientation",
@@ -350,6 +356,9 @@ __all__ = [
     "ConformanceTier",
     "CoordinateSpace",
     "CredentialPolicy",
+    "Diagnostic",
+    "DiagnosticCategory",
+    "DiagnosticSeverity",
     "DataLocality",
     "DataSourceDescriptor",
     "DataSourceKind",
@@ -548,7 +557,7 @@ __all__ = [
     "VisualCoordinateSpace",
     "VisualFamily",
     "VisualTransformBinding",
-    "VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY",
+    "GSP_VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY",
     "ZoomAboutAction",
     "zoom_view2d_about",
     "demo_no_network_preconfigured_source_resolver",
