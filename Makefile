@@ -83,10 +83,10 @@ mkdocs_build_gallery: ## Build the MkDocs documentation site for the gallery
 	python ./tools/build_gallery.py
 
 mkdocs_serve: ## Serve the MkDocs documentation locally
-	mkdocs serve
+	uv run mkdocs serve
 
 mkdocs_build: mkdocs_philosophy_copy ## Build the MkDocs documentation site
-	mkdocs build
+	uv run mkdocs build
 
 docs_check: ## Validate GSP 0.2 spec, profiles, public docs, examples, and site
 	uv run python tools/spec_traceability.py --check
@@ -96,4 +96,4 @@ docs_check: ## Validate GSP 0.2 spec, profiles, public docs, examples, and site
 	uv run mkdocs build --strict
 
 mkdocs_deploy: mkdocs_build ## Deploy the MkDocs documentation site to GitHub Pages
-	mkdocs gh-deploy --clean
+	uv run mkdocs gh-deploy --clean
