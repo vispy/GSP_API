@@ -1,6 +1,6 @@
 # VisPy2 experimental session preview boundary
 
-Status: implementation-ready draft from S053 evidence; not implemented by M235.
+Status: implemented as an experimental bounded preview by S055/M242.
 
 The first session preview may expose only:
 
@@ -8,7 +8,7 @@ The first session preview may expose only:
 with vp.open_session("datoviz") as session:
     plan = session.inspect(fig, operation="display")
     plan.require_executable()
-    display = session.show(fig, block=True)
+    display = session.show(fig, block=True, frame_count=2)
 ```
 
 An explicit session may additionally expose a bounded `poll()` operation implemented through one
@@ -20,6 +20,11 @@ The preview must not add backend selection to `subplots()`, store backend state 
 the default bare `Figure.show()`, expose native handles, or promise backend parity. It must not yet
 expose retained visual-data mutation, user-close callbacks, generic `Display.update()`, or event-loop
 embedding as stable behavior.
+
+S055 implements only this boundary. A blocking call requires a positive `frame_count` and defaults
+to one bounded frame. `block=False` creates an explicitly owned display without advancing the app;
+each `session.poll(display)` call advances exactly one frame. `Display` is an opaque lifecycle token
+and exposes no native backend handles.
 
 The M235 evidence addendum proves one bounded semantic `PointVisual` data-replacement path and
 callback-requested app stop. This is implementation evidence for a future wrapper, not a general

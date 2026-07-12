@@ -23,6 +23,13 @@ Datoviz runs require a compatible local v0.4 build. Each generated `summary.json
 The maintained scripts live in `examples/review/`; each is directly executable with the same runner
 options shown above.
 
+The bounded experimental Datoviz session example is separate from the review runner:
+
+```bash
+uv run python examples/vispy2_datoviz_session.py
+uv run python examples/vispy2_datoviz_session.py --poll
+```
+
 ## Backend comparison
 
 | Matplotlib reference | Datoviz v0.4 |
