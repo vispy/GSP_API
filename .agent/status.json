@@ -1,5 +1,5 @@
 {
-  "current_stage": "S056",
+  "current_stage": "S057",
   "stages": [
     {
       "id": "S001",
@@ -336,6 +336,12 @@
       "title": "Public Session Conformance And Failure Isolation",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S057",
+      "title": "GSP 0.2 Release-Candidate Audit And Decision",
+      "state": "active",
+      "progress": 10
     }
   ],
   "missions": [
@@ -2516,6 +2522,15 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 243
+    },
+    {
+      "id": "M244",
+      "title": "S057 GSP 0.2 release-candidate audit",
+      "stage": "S057",
+      "state": "approved",
+      "agent": "local-main-codex",
+      "progress": 10,
+      "priority": 244
     }
   ],
   "review_queue": [],
