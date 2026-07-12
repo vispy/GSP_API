@@ -199,6 +199,36 @@ class _ScriptedSession:
 class _FakeDatovizV04:
     DVZ_COLOR_PIPELINE_LINEAR_SRGB = 10
     DVZ_COLOR_PIPELINE_LEGACY_SRGB_BLEND = 11
+    DVZ_VISUAL_COORD_VIEW = 0
+    DVZ_VISUAL_COORD_DATA = 1
+    DVZ_VISUAL_COORD_PANEL = 2
+    DvzCameraDesc = object
+    DvzCameraView = object
+    DvzCameraProjection = object
+    DvzPanelView3DDesc = object
+    DvzPanelView3DState = object
+    DvzPanelFrameInfo = object
+    dvz_sampled_field_desc = None
+    dvz_field_data_view = None
+    dvz_sampled_field = None
+    dvz_sampled_field_set_data = None
+    dvz_visual_set_field = None
+    dvz_sampled_field_destroy = None
+    dvz_panel_view3d_desc = None
+    dvz_panel_set_view3d_desc = None
+    dvz_panel_view3d_state = None
+    dvz_panel_camera = None
+    dvz_camera_desc = None
+    dvz_camera_set_orthographic_bounds = None
+    dvz_camera_set_view = None
+    dvz_camera_get_view = None
+    dvz_camera_get_projection = None
+    dvz_camera_get_orthographic_bounds = None
+
+    class DvzVisualCoordSpace:
+        DVZ_VISUAL_COORD_VIEW = 0
+        DVZ_VISUAL_COORD_DATA = 1
+        DVZ_VISUAL_COORD_PANEL = 2
 
     def __init__(self) -> None:
         self.calls = []

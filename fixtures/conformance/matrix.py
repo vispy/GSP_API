@@ -6,8 +6,6 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Literal
 
-from gsp_datoviz.query import datoviz_v04_query_binding_diagnostics
-
 from .replay import InProcessReplayResult, replay_conformance_fixtures
 
 
@@ -36,21 +34,9 @@ def backend_conformance_matrix() -> tuple[BackendConformanceExpectation, ...]:
         BackendConformanceExpectation(
             backend_id="datoviz",
             status="skip",
-            reason=_datoviz_skip_reason(),
+            reason=(
+                "Datoviz runtime conformance replay is deferred; capability probes are validated "
+                "separately."
+            ),
         ),
-    )
-
-
-def _datoviz_skip_reason() -> str:
-    try:
-        import datoviz as dvz
-    except ModuleNotFoundError:
-        return "Datoviz is not importable; runtime conformance replay is deferred."
-
-    diagnostics = datoviz_v04_query_binding_diagnostics(dvz)
-    if diagnostics:
-        return "Datoviz query binding is not ready for conformance replay: " + "; ".join(diagnostics)
-    return (
-        "Datoviz query binding is ready, but S018 conformance replay still needs a backend adapter "
-        "with stable application visual-id mapping and guide/tiled-source expectations."
     )

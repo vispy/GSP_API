@@ -90,10 +90,10 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | File | Description | Demonstrates |
 |------|-------------|--------------|
 | `viewport_events_example.py` | Handling viewport events and interactions | Mouse, keyboard, and resize events |
-| `viewport_inch_matplotlib.py` | Matplotlib viewport sizing | Inch-based viewport configuration |
+| `viewport_inch_matplotlib.py` | Matplotlib viewport sizing | Inch-based viewport configuration; requires PyQt5 and a live display |
 | `viewport_multi_example.py` | Multiple viewports in one scene | Multi-panel visualizations |
 | `viewport_overlapping_example.py` | Overlapping viewport layouts | Complex viewport arrangements |
-| `viewport_ndc_metric.py` | Normalized device coordinates | NDC coordinate system usage |
+| `viewport_ndc_metric.py` | Normalized device coordinates | NDC coordinate system usage; requires PyQt5 and a live display |
 
 ### Plot and Grid Examples
 

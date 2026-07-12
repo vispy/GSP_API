@@ -25,6 +25,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   review examples.
 - Added backend-neutral `query.view3d.mesh_triangle_pick.v1` protocol payloads with a Matplotlib CPU
   reference oracle for bounded opaque DATA-space mesh triangle picking.
+- Added perspective `View3D`, center-dolly zoom, and stabilized Matplotlib/Datoviz live-review
+  arcball paths while keeping native interaction separate from canonical GSP replay.
+- Added immutable RGBA8 `Texture2D` resources, per-vertex mesh UVs, strict validation and fixtures,
+  and a VisPy2 `texture2d_unlit` producer surface without claiming renderer support.
+- Added projected-NDC mesh face-culling contracts and reference fixtures.
+- Added optional mesh-pick geometry and facing payload capabilities without changing the base
+  identity-only mesh-pick payload.
+- Added the first GSP white paper draft and kept its research-prototype status explicit.
 
 ### Changed
 - Clarified Datoviz packaging policy: legacy Datoviz wrapper support is optional, while Datoviz v0.4
@@ -39,6 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   only where local v0.4 evidence and capability gates prove the accepted semantics.
 - Kept Datoviz native grid clipping separate from full guide strictness; grid clipping is not a
   guide-query or all-rendered contribution claim.
+- Deferred Datoviz Texture2D mesh capability promotion until post-RC1 engine work and fresh
+  sampler, orientation, color, multiplication, and runtime-stability fixtures pass.
 
 ### Fixed
 - Fixed Matplotlib-only example execution so public examples no longer import optional legacy
@@ -53,9 +63,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `uv build`
 - `PYTHONPATH=. uv run python tools/run_all_examples.py`
 - `PYTHONPATH=. uv run python tools/check_expected_output.py`
-- Focused S034-S044 validation includes layout, guide, navigation, View3D, Lambert, Datoviz v0.4
-  capability gates, and mesh-triangle-pick tests recorded in the corresponding `.agent/S0xx_*` and
-  mission files.
+- Focused S034-S050 validation includes layout, guide, navigation, orthographic/perspective
+  View3D, Lambert, culling, Texture2D protocol/producer behavior, Datoviz v0.4 capability gates,
+  and mesh-triangle-pick tests recorded in the corresponding `.agent/S0xx_*` and mission files.
 
 ### Backend support
 - Matplotlib remains the required reference and release-readiness backend.
@@ -64,16 +74,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Datoviz v0.4 protocol adapter work remains capability-gated and is not declared as a package
   dependency until compatible release artifacts exist.
 - Datoviz v0.4 may support retained View2D navigation, retained DATA-space View3D rendering,
-  View3D live navigation, grid clipping, and CPU-resolved flat Lambert only when the active local
-  v0.4 facade exposes the required symbols and the adapter advertises the corresponding capability.
+  orthographic/perspective View3D, live navigation, opaque depth, grid clipping, and CPU-resolved
+  flat Lambert only when the active local v0.4 facade exposes the required symbols and the adapter
+  advertises the corresponding capability.
+- No renderer currently advertises strict `meshvisual.material.texture2d_unlit.v1`; the VisPy2
+  producer can emit canonical records independently of renderer availability.
 - The network renderer requires a separate server process and remote renderer configuration.
 
 ### Known limitations
 - Datoviz v0.4 text and guide/View2D review rows include adapted, not strict, cases: several text
   anchor/placement/unicode semantics remain verification-gated, while guide panel-title and
   guide/all-rendered query semantics remain unsupported.
-- Strict opaque GPU depth, perspective projection, textures/UVs, smooth/Phong lighting, and public
-  material resources remain deferred.
+- Datoviz face-culling capabilities, perspective mesh picking, strict non-opaque 3D compositing,
+  smooth/Phong lighting, and public material/sampler objects remain deferred.
+- Datoviz Texture2D mesh rendering remains deferred beyond RC1; current protocol and VisPy2
+  producer support must not be presented as renderer support.
 - Datoviz v0.4 does not advertise `query.view3d.mesh_triangle_pick.v1`; native visual/triangle
   mapping and pick-scene freshness remain unproven.
 - Optional Datoviz, network, and session replay checks are outside the required release validation

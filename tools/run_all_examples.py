@@ -114,6 +114,9 @@ def main() -> None:
         "network_client_example.py",
         "session_01_record_example.py",
         "session_02_player_example.py",
+        # Require optional PyQt5 screen metrics and a live display.
+        "viewport_inch_matplotlib.py",
+        "viewport_ndc_metric.py",
     ]
     basenames = [basename for basename in basenames if basename not in blacklisted_basenames]
 
