@@ -316,8 +316,8 @@
     {
       "id": "S053",
       "title": "Datoviz Live Session Lifecycle Evidence",
-      "state": "active",
-      "progress": 0
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2422,9 +2422,9 @@
       "id": "M235",
       "title": "S053 Datoviz live session lifecycle proof",
       "stage": "S053",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 235
     }
   ],
@@ -2523,7 +2523,7 @@
     }
   ],
   "recommendations": [
-    "M235 is approved: prove bounded Datoviz live-window blocking/polled ownership, cleanup, and retained updates through internal subprocess probes before implementing the public VisPy2 session preview.",
+    "M235 completed: bounded Datoviz blocking, explicit one-frame polling, cleanup, and retained View2D capture evidence passed 15/15 isolated iterations. A minimal explicit experimental session preview is ready for implementation; keep user-close observation, retained visual-data replacement, and hidden non-blocking ownership deferred.",
     "M234 completed: zero-size generated Datoviz panel-frame ctypes records caused all three S051 native failures; GSP now rejects incomplete layouts before native calls, the refreshed pack has zero crashes, and 15 isolated lifecycle cycles completed cleanly. Keep the public session preview deferred pending live-window ownership and retained-update evidence.",
     "M233 completed: the public VisPy2 producer acceptance pack records four strict Matplotlib rows, two Datoviz unsupported rows, three isolated Datoviz backend failures, and explicit Texture2D unsupported boundaries; do not publish the post-RC session preview until failures reject before execution and deterministic lifecycle evidence exists.",
     "Do not promote Datoviz query.view3d.mesh_triangle_pick.v1 until upstream Datoviz exposes public canonical mesh face/triangle identity and native tests cover it.",

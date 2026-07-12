@@ -6,7 +6,7 @@ S053 - Datoviz Live Session Lifecycle Evidence
 
 ## Status
 
-Approved.
+Completed.
 
 ## Summary
 
@@ -80,3 +80,28 @@ Existing unrelated documentation changes outside these paths must remain untouch
 
 The project owner explicitly approved this next lifecycle-evidence mission in the active Mission
 Control conversation and instructed Mission Control to execute it.
+
+## Result
+
+Completed locally in commit `92accd5`.
+
+The public Datoviz binding exposes bounded `dvz_app_run(app, frame_count)` but no separate poll or
+bounded close-request API. Internal probes validated two-frame blocking execution, repeated
+one-frame polling, and retained View2D updates in isolated subprocesses. Each mode completed five
+iterations: 15/15 clean exits, 15/15 complete reports, and zero timeouts. Retained View2D before/
+after capture hashes differed deterministically in every iteration.
+
+Renderer close is idempotent. A future public wrapper must reject show, poll, and update after close
+and forbid hidden non-blocking temporary ownership. User/window-close observation and retained
+visual-data replacement remain unproven and deferred.
+
+Validation:
+
+- full pytest: 638 passed, 2 skipped;
+- focused live/Datoviz/navigation pytest: 149 passed;
+- strict mypy for the new live probe: clean;
+- Matplotlib and Datoviz backend imports remain validated by M234 and the full suite.
+
+A minimal explicit experimental session preview is implementation-ready for capability inspection,
+bounded blocking display, explicit-session polling, structured diagnostics, and deterministic
+context cleanup. No public API was implemented by M235.
