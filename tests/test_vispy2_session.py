@@ -13,8 +13,13 @@ import gsp_vispy2.session as session_module
 
 class FakeRenderer:
     instances: list["FakeRenderer"] = []
+    fail_init = False
+    fail_add_point = False
+    fail_show = False
 
     def __init__(self, **kwargs: Any) -> None:
+        if self.__class__.fail_init:
+            raise RuntimeError("native renderer creation failed")
         self.kwargs = kwargs
         self.calls: list[tuple[object, ...]] = []
         self.closed = False
@@ -24,6 +29,8 @@ class FakeRenderer:
         self.calls.append(("axes", view, kwargs))
 
     def add_point_visual(self, visual: object) -> None:
+        if self.__class__.fail_add_point:
+            raise RuntimeError("native point attachment failed")
         self.calls.append(("point", visual))
 
     def add_marker_visual(self, visual: object) -> None:
@@ -48,6 +55,8 @@ class FakeRenderer:
         self.calls.append(("colorbar", guide))
 
     def show(self, *, frame_count: int) -> None:
+        if self.__class__.fail_show:
+            raise RuntimeError("native app execution failed")
         self.calls.append(("show", frame_count))
 
     def close(self) -> None:
@@ -58,6 +67,9 @@ class FakeRenderer:
 @pytest.fixture(autouse=True)
 def fake_backend(monkeypatch: pytest.MonkeyPatch) -> None:
     FakeRenderer.instances.clear()
+    FakeRenderer.fail_init = False
+    FakeRenderer.fail_add_point = False
+    FakeRenderer.fail_show = False
     capabilities = CapabilitySnapshot(
         server_name="datoviz-test",
         protocol_versions=("0.2",),
@@ -147,6 +159,53 @@ def test_poll_rejects_foreign_and_blocking_displays() -> None:
         first.poll(blocking)
     first.close()
     second.close()
+
+
+def test_renderer_creation_failure_is_normalized_with_diagnostic() -> None:
+    FakeRenderer.fail_init = True
+    with vp.open_session("datoviz") as session:
+        with pytest.raises(vp.SessionExecutionError, match="creation failed"):
+            session.show(_figure())
+        assert session.diagnostics[-1].code == "session.backend.preparation_failed"
+
+
+def test_partial_attachment_failure_closes_renderer_and_is_normalized() -> None:
+    FakeRenderer.fail_add_point = True
+    with vp.open_session("datoviz") as session:
+        with pytest.raises(vp.SessionExecutionError, match="attachment failed"):
+            session.show(_figure())
+        renderer = FakeRenderer.instances[-1]
+        assert renderer.closed
+        assert renderer.calls[-1] == ("close",)
+        assert session.diagnostics[-1].code == "session.backend.preparation_failed"
+
+
+def test_blocking_and_poll_failures_are_normalized_and_owned() -> None:
+    FakeRenderer.fail_show = True
+    with vp.open_session("datoviz") as session:
+        with pytest.raises(vp.SessionExecutionError, match="execution failed"):
+            session.show(_figure(), block=True)
+        blocking_renderer = FakeRenderer.instances[-1]
+        assert blocking_renderer.closed
+        assert session.diagnostics[-1].code == "session.backend.execution_failed"
+
+        display = session.show(_figure(), block=False)
+        with pytest.raises(vp.SessionExecutionError, match="execution failed"):
+            session.poll(display)
+        assert not display.closed
+        assert session.diagnostics[-1].code == "session.backend.poll_failed"
+    assert display.closed
+
+
+def test_context_exception_closes_multiple_owned_displays() -> None:
+    with pytest.raises(RuntimeError, match="application failure"):
+        with vp.open_session("datoviz") as session:
+            first = session.show(_figure(), block=False)
+            second = session.show(_figure(), block=False)
+            raise RuntimeError("application failure")
+    assert first.closed
+    assert second.closed
+    assert all(renderer.closed for renderer in FakeRenderer.instances)
 
 
 def test_bare_figure_show_remains_matplotlib(monkeypatch: pytest.MonkeyPatch) -> None:

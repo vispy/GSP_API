@@ -200,7 +200,14 @@ class Session:
             raise ValueError("frame_count must be positive for bounded display")
         inspection = self.inspect(figure, operation="display")
         inspection.require_executable()
-        renderer = self._build_renderer(figure)
+        try:
+            renderer = self._build_renderer(figure)
+        except Exception as exc:
+            diagnostic = SessionDiagnostic(
+                "session.backend.preparation_failed", str(exc)
+            )
+            self._diagnostics.append(diagnostic)
+            raise SessionExecutionError(str(exc)) from exc
         display = Display(
             session=self,
             renderer=renderer,
