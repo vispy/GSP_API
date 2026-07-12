@@ -1,5 +1,23 @@
 # Examples Gallery
 
+## Current API review set
+
+These compact examples are the maintained review path. Use the
+[review guide](review-examples.md) for commands and backend boundaries.
+
+| Area | Examples |
+| --- | --- |
+| 2D scenes | [Scatter](https://github.com/vispy/GSP_API/blob/main/examples/review/01_scatter_basic.py), [image](https://github.com/vispy/GSP_API/blob/main/examples/review/02_image_basic.py), [overlay](https://github.com/vispy/GSP_API/blob/main/examples/review/03_points_over_image.py) |
+| Guides and color | [Axes and ticks](https://github.com/vispy/GSP_API/blob/main/examples/review/04_guides_axes_ticks.py), [colorbar](https://github.com/vispy/GSP_API/blob/main/examples/review/05_color_mapping_colorbar.py), [text](https://github.com/vispy/GSP_API/blob/main/examples/review/06_text_labels.py) |
+| View3D | [Cube](https://github.com/vispy/GSP_API/blob/main/examples/review/07_view3d_cube.py), [terrain](https://github.com/vispy/GSP_API/blob/main/examples/review/08_view3d_terrain.py), [depth](https://github.com/vispy/GSP_API/blob/main/examples/review/09_view3d_ndc_depth.py) |
+| Materials and interaction | [Lambert](https://github.com/vispy/GSP_API/blob/main/examples/review/10_view3d_flat_lambert.py), [arcball](https://github.com/vispy/GSP_API/blob/main/examples/review/11_view3d_lit_mesh_arcball.py), [Suzanne](https://github.com/vispy/GSP_API/blob/main/examples/review/13_view3d_suzanne_lambert.py) |
+| Queries and navigation | [Mesh pick](https://github.com/vispy/GSP_API/blob/main/examples/review/12_view3d_mesh_pick.py), [camera path](https://github.com/vispy/GSP_API/blob/main/examples/review/14_view3d_camera_path.py) |
+
+Datoviz renderings are capability-gated. The image gallery below records older Matplotlib example
+outputs and is retained as visual history, not as the normative API surface.
+
+## Legacy Matplotlib gallery
+
 <div class="gallery-grid">
 
 <div class="gallery-card">
@@ -90,13 +108,6 @@
   <a href="https://github.com/vispy/GSP_API/blob/main/examples/texts_animated_example.py" target="_blank">
     <img src="images/texts_animated_example_animator_matplotlib.png" alt="Texts Animated Example">
     <p>texts_animated_example.py</p>
-  </a>
-</div>
-
-<div class="gallery-card">
-  <a href="https://github.com/vispy/GSP_API/blob/main/examples/transform_visual_example.py" target="_blank">
-    <img src="images/transform_visual_example_2_matplotlib.png" alt="Transform Visual Example">
-    <p>transform_visual_example.py</p>
   </a>
 </div>
 

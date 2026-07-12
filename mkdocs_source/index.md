@@ -1,29 +1,59 @@
-# GSP Documentation
+# Graphics Server Protocol
 
-Graphics Server Protocol — a backend-agnostic scene-description API for 2D/3D scientific visualization in Python.
+GSP is an experimental, backend-agnostic protocol and Python API for describing scientific 2D and
+3D scenes. Matplotlib provides the reference behavior; optional Datoviz v0.4 paths are enabled only
+for capabilities supported by the installed facade.
 
-GSP provides a unified, declarative interface for describing scientific visualizations across multiple rendering backends. Whether you're building plots with Matplotlib, optional Datoviz-backed scenes, or remote visualization systems over the network, GSP abstracts away backend-specific details. This documentation covers the core protocol, available renderers, and the architectural principles that make GSP flexible and extensible.
+!!! warning "Research prototype"
+    GSP and VisPy2 are currently at version `0.1.0`, are not published on PyPI, and may change before
+    a stable release.
 
-## Philosophy
+## Try the current API
 
-GSP is built on a set of core design principles that prioritize clarity, flexibility, and composability. This section explores the architectural decisions, design patterns, and philosophical foundations that guide GSP's development. Whether you're contributing to GSP or simply curious about why certain decisions were made, these documents provide a comprehensive view of the project's vision and technical rationale.
+GSP requires Python 3.13 or newer and uses `uv` for development environments:
 
-- [Overview](philosophy/README.md) — Index of all philosophy and design documents
-- [Whitepaper](philosophy/whitepaper.md) — High-level pitch: motivation, architecture, ecosystem positioning
-- [GSP Core](philosophy/philosophy_gsp_core.md) — Deep dive on the contract layer and the five design principles behind `src/gsp/`
-- [Packages](philosophy/philosophy_packages.md) — Seven packages and the three-tier layered architecture
-- [Renderers](philosophy/philosophy_renderers.md) — Conventions shared across `gsp_matplotlib`, `gsp_datoviz`, and `gsp_network`
-- [Examples](philosophy/philosophy_examples.md) — Pattern catalog and design principles behind the 50+ example scripts
+```bash
+git clone https://github.com/vispy/GSP_API.git
+cd GSP_API
+uv sync
+uv run python examples/review/01_scatter_basic.py --backend matplotlib
+```
 
+The numbered [API review examples](review-examples.md) are the shortest route into the current
+surface. They progress from scatter and images through guides, color mapping, View3D navigation,
+lighting, and mesh picking.
 
-## API Reference
+## Choose the right reference
 
-GSP is organized into seven core packages, each serving a specific role in the visualization pipeline. The Core protocol provides the foundational abstractions, while specialized packages handle rendering across different backends, network communication, and high-level utilities. Each module below exposes a cohesive API designed for both simplicity and extensibility.
+| Need | Start here |
+| --- | --- |
+| Understand maturity and backend boundaries | [Status and releases](status.md) |
+| Implement or review protocol behavior | [Protocol specification](protocol.md) |
+| Use Python packages and types | [API reference](api/gsp.md) |
+| Compare renderer behavior | [Testing and conformance](conformance.md) |
+| Review small executable scenes | [API review examples](review-examples.md) |
+| Understand design history | [Philosophy overview](philosophy/README.md) |
 
-- [GSP](api/gsp.md) — Core protocol: canvas, viewport, camera, visuals, transforms, and utilities
-- [GSP Network](api/gsp_network.md) — Network-based rendering for remote visualization and client-server architectures
-- [GSP Pydantic](api/gsp_pydantic.md) — Serialization and validation of GSP objects using Pydantic models
-- [GSP Matplotlib](api/gsp_matplotlib.md) — Matplotlib rendering backend
-- [GSP Datoviz](api/gsp_datoviz.md) — Optional legacy Datoviz support and capability-gated v0.4 adapter work
-- [GSP Extra](api/gsp_extra.md) — Additional utilities, animation helpers, and high-level 3D components
-- [VisPy 2](api/vispy_2.md) — Interactive axes display and pan/zoom built on top of GSP
+## Architecture at a glance
+
+GSP scene records describe canvases, panels, views, visuals, resources, guides, navigation actions,
+and queries without embedding a renderer implementation. VisPy2 is a higher-level producer of GSP
+records. Backends consume those records according to explicitly advertised capabilities.
+
+- `gsp`: protocol records, validation, views, queries, resources, and core types
+- `vispy2`: experimental plotting-style producer API
+- `gsp_matplotlib`: reference renderer
+- `gsp_datoviz`: optional legacy renderer and capability-gated Datoviz v0.4 adapter
+- `gsp_network`: experimental remote rendering path
+- `gsp_pydantic`: serialization support
+
+Backend support is not all-or-nothing. Consult the
+[capability matrix](https://github.com/vispy/GSP_API/blob/main/spec/backend_capabilities_visuals.md)
+before depending on a renderer-specific behavior.
+
+## Project links
+
+- [Source repository](https://github.com/vispy/GSP_API)
+- [White paper](philosophy/whitepaper.md)
+- [Changelog](https://github.com/vispy/GSP_API/blob/main/CHANGELOG.md)
+- [Issue tracker](https://github.com/vispy/GSP_API/issues)
