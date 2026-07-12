@@ -61,6 +61,7 @@ S027_SUITE = "s027"
 S028_SUITE = "s028"
 S034_SUITE = "s034"
 S050_SUITE = "s050"
+S051_SUITE = "s051"
 
 
 def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
@@ -107,6 +108,10 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
         )
     if suite == S050_SUITE:
         return _s050_strict_depth_cases() + _s050_texture2d_cases()
+    if suite == S051_SUITE:
+        from gsp.qa.visual.vispy2_acceptance import s051_cases
+
+        return s051_cases()
     raise ValueError(f"unknown visual QA suite: {suite}")
 
 

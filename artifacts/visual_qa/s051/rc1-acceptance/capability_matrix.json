@@ -1,0 +1,296 @@
+{
+  "generated_at": "2026-07-12T11:39:43.046382+00:00",
+  "review_classification_summary": {
+    "fail.layout": 0,
+    "fail.query": 0,
+    "fail.semantic": 3,
+    "pass.layout_strict": 0,
+    "pass.raster_tolerant": 0,
+    "pass.semantic_strict": 4,
+    "review.adapted": 0,
+    "review.native_backend": 0,
+    "unsupported.capability": 3
+  },
+  "review_classification_taxonomy": [
+    "pass.semantic_strict",
+    "pass.layout_strict",
+    "pass.raster_tolerant",
+    "review.adapted",
+    "review.native_backend",
+    "fail.semantic",
+    "fail.layout",
+    "fail.query",
+    "unsupported.capability"
+  ],
+  "rows": [
+    {
+      "backend": "matplotlib",
+      "case_id": "vispy2/primitives",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/matplotlib/vispy2_primitives.png",
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/matplotlib/vispy2_primitives.log.txt"
+      ],
+      "family": "producer",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "marker",
+        "segment",
+        "path",
+        "view2d",
+        "guides"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "vispy2/primitives",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/datoviz/vispy2_primitives.native_crash.json",
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/datoviz/vispy2_primitives.native_crash.log.txt"
+      ],
+      "family": "producer",
+      "known_adaptations": [],
+      "known_missing_semantics": [
+        "Datoviz offscreen child process terminated by signal 6"
+      ],
+      "promotion_blockers": [
+        "runtime error must be isolated before promotion"
+      ],
+      "protocol_scope": [
+        "point",
+        "marker",
+        "segment",
+        "path",
+        "view2d",
+        "guides"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_runtime_error",
+      "rendering_supported": false,
+      "review_classification": "fail.semantic",
+      "status": "crashed"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "vispy2/scalar_image_colorbar",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/matplotlib/vispy2_scalar_image_colorbar.png",
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/matplotlib/vispy2_scalar_image_colorbar.log.txt"
+      ],
+      "family": "producer",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "scalar-color",
+        "colorbar",
+        "guides"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "vispy2/scalar_image_colorbar",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/datoviz/vispy2_scalar_image_colorbar.unsupported.json",
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/datoviz/vispy2_scalar_image_colorbar.log.txt"
+      ],
+      "family": "producer",
+      "known_adaptations": [],
+      "known_missing_semantics": [
+        "DatovizV04Unsupported: Datoviz v0.4 slice currently supports NDC image extents only"
+      ],
+      "promotion_blockers": [
+        "promote only after a focused Datoviz capability audit"
+      ],
+      "protocol_scope": [
+        "image",
+        "scalar-color",
+        "colorbar",
+        "guides"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_adapter_unsupported",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "unsupported"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "vispy2/text",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/matplotlib/vispy2_text.png",
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/matplotlib/vispy2_text.log.txt"
+      ],
+      "family": "producer",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "guides"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "vispy2/text",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/datoviz/vispy2_text.native_crash.json",
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/datoviz/vispy2_text.native_crash.log.txt"
+      ],
+      "family": "producer",
+      "known_adaptations": [],
+      "known_missing_semantics": [
+        "Datoviz offscreen child process terminated by signal 6"
+      ],
+      "promotion_blockers": [
+        "runtime error must be isolated before promotion"
+      ],
+      "protocol_scope": [
+        "text",
+        "guides"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_runtime_error",
+      "rendering_supported": false,
+      "review_classification": "fail.semantic",
+      "status": "crashed"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "vispy2/mesh",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/matplotlib/vispy2_mesh.png",
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/matplotlib/vispy2_mesh.log.txt"
+      ],
+      "family": "producer",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "mesh",
+        "view2d"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "vispy2/mesh",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/datoviz/vispy2_mesh.native_crash.json",
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/datoviz/vispy2_mesh.native_crash.log.txt"
+      ],
+      "family": "producer",
+      "known_adaptations": [],
+      "known_missing_semantics": [
+        "Datoviz offscreen child process terminated by signal 6"
+      ],
+      "promotion_blockers": [
+        "runtime error must be isolated before promotion"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "view2d"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_runtime_error",
+      "rendering_supported": false,
+      "review_classification": "fail.semantic",
+      "status": "crashed"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "vispy2/texture2d_boundary",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/matplotlib/vispy2_texture2d_boundary.unsupported.json",
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/matplotlib/vispy2_texture2d_boundary.log.txt"
+      ],
+      "family": "producer",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Matplotlib reference was not rendered"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d-unlit",
+        "unsupported-boundary"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_not_run",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "not_run"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "vispy2/texture2d_boundary",
+      "evidence_artifacts": [
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/datoviz/vispy2_texture2d_boundary.unsupported.json",
+        "artifacts/visual_qa/s051/rc1-acceptance/backends/datoviz/vispy2_texture2d_boundary.log.txt"
+      ],
+      "family": "producer",
+      "known_adaptations": [],
+      "known_missing_semantics": [
+        "meshvisual_material_texture2d_unlit_unsupported: Datoviz visual QA has not proven S050 textured mesh support"
+      ],
+      "promotion_blockers": [
+        "promote only after a focused Datoviz capability audit"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d-unlit",
+        "unsupported-boundary"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_adapter_unsupported",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "unsupported"
+    }
+  ],
+  "run_id": "s051-vispy2-rc1-acceptance",
+  "schema_kind": "gsp.visual_qa.capability_matrix",
+  "schema_version": 1,
+  "stage": "S051",
+  "status_taxonomy": [
+    "strict",
+    "adapted",
+    "experimental",
+    "unsupported",
+    "disabled",
+    "crashed",
+    "not_run"
+  ],
+  "suite": "s051",
+  "summary": {
+    "adapted": 0,
+    "crashed": 3,
+    "disabled": 0,
+    "experimental": 0,
+    "not_run": 1,
+    "strict": 4,
+    "unsupported": 2
+  }
+}

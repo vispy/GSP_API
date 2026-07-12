@@ -1,0 +1,140 @@
+{
+  "arrays": {
+    "s051_text_positions": {
+      "dtype": "float32",
+      "key": "s051_text_positions",
+      "path": "vispy2_text.arrays.npz",
+      "shape": [
+        1,
+        2
+      ]
+    },
+    "s051_text_rgba": {
+      "dtype": "uint8",
+      "key": "s051_text_rgba",
+      "path": "vispy2_text.arrays.npz",
+      "shape": [
+        1,
+        4
+      ]
+    }
+  },
+  "axis_guides": [
+    {
+      "dimension": "x",
+      "grid_visible": false,
+      "id": "guide:x-1",
+      "label_text": null,
+      "query_policy": "non-queryable",
+      "side": "bottom",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": null,
+        "explicit_values": [],
+        "kind": "auto-linear-nice-v0",
+        "target_count": 7
+      },
+      "view_id": "view:1",
+      "visible": true
+    },
+    {
+      "dimension": "y",
+      "grid_visible": false,
+      "id": "guide:y-1",
+      "label_text": null,
+      "query_policy": "non-queryable",
+      "side": "left",
+      "spine_visible": true,
+      "style": {
+        "axis_label_font_size_px": null,
+        "axis_label_padding_px": null,
+        "grid_width_px": null,
+        "guide_margin_px": null,
+        "tick_label_font_size_px": null,
+        "tick_label_padding_px": null,
+        "tick_length_px": null,
+        "tick_width_px": null
+      },
+      "tick_spec": {
+        "explicit_labels": null,
+        "explicit_values": [],
+        "kind": "auto-linear-nice-v0",
+        "target_count": 7
+      },
+      "view_id": "view:1",
+      "visible": true
+    }
+  ],
+  "case_id": "vispy2/text",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [],
+  "transform_resources": [],
+  "view3d": null,
+  "views": [
+    {
+      "aspect_policy": "auto",
+      "clip": true,
+      "id": "view:1",
+      "kind": "view2d-linear",
+      "panel_id": "panel:1",
+      "x_range": [
+        -1.0,
+        1.0
+      ],
+      "y_range": [
+        -1.0,
+        1.0
+      ]
+    }
+  ],
+  "visuals": [
+    {
+      "anchor_x": "center",
+      "anchor_y": "baseline",
+      "coordinate_space": "data",
+      "family": "text",
+      "font_role": "default",
+      "font_size_px": {
+        "dtype": "float",
+        "shape": []
+      },
+      "id": "s051:text",
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "rgba": {
+        "dtype": "uint8",
+        "shape": [
+          1,
+          4
+        ]
+      },
+      "rotation_rad": {
+        "dtype": "float",
+        "shape": []
+      },
+      "texts": [
+        "VisPy2 \u03b1"
+      ],
+      "z_order": 0
+    }
+  ]
+}

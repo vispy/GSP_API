@@ -1,0 +1,213 @@
+{
+  "artifact_sha256": {
+    "backends/datoviz/vispy2_mesh.native_crash.json": "a1b74cead38a996c96552224c1f06d020a1269ce5430bc249ee9fd7da14d7204",
+    "backends/datoviz/vispy2_mesh.native_crash.log.txt": "b47dabe773db9ddbe9f12ea46e85ef10ebf2a9b9225e08ffb1204c95fe275f0f",
+    "backends/datoviz/vispy2_primitives.native_crash.json": "db9296d73a2ffe70db763ebe5bdaa130b22a12991b03c1cad36cb8e6914277df",
+    "backends/datoviz/vispy2_primitives.native_crash.log.txt": "d32468a2ab9c93c3387b4ed11f2f97018b324e50c9f4af3f597ebf277a349032",
+    "backends/datoviz/vispy2_scalar_image_colorbar.log.txt": "d05e9691a3863badb2940aea45f1bf81176105cc091f853f1ab0b52beb524a16",
+    "backends/datoviz/vispy2_scalar_image_colorbar.unsupported.json": "17304f4bbf6d633e1ae01e9d6047e5c060a86a7a078a47a6556a26e51d42a096",
+    "backends/datoviz/vispy2_text.native_crash.json": "4f2684c333c993ca6f76e077e48cca5efa56247beae6ad8fbfdfabaf6f12a3d8",
+    "backends/datoviz/vispy2_text.native_crash.log.txt": "0ae1f29ca16e0f9c6fee197bc8eaf5788109fa003358609346673606a8facd6d",
+    "backends/datoviz/vispy2_texture2d_boundary.log.txt": "dedef8e648785c160fbe5719e2f3bb06252c75c3e99ebd62734880b973641633",
+    "backends/datoviz/vispy2_texture2d_boundary.unsupported.json": "b5754f49bbb0d2d07b4177dd5e754a971e841ee78124e7fd472c864289a00c13",
+    "backends/matplotlib/vispy2_mesh.log.txt": "da4a2335501236bf6ad093c3a82da5f88b2b0880894ee09caf840394c45044f5",
+    "backends/matplotlib/vispy2_mesh.png": "17456c8276b4acea8f9dbc338f26dc2419b130331a8e7f7e8f97e2838159adb1",
+    "backends/matplotlib/vispy2_primitives.log.txt": "da4a2335501236bf6ad093c3a82da5f88b2b0880894ee09caf840394c45044f5",
+    "backends/matplotlib/vispy2_primitives.png": "c83fda7a27d7328200c12b3223c34ecc9a800099d8131db0d37a213a494d83d2",
+    "backends/matplotlib/vispy2_scalar_image_colorbar.log.txt": "da4a2335501236bf6ad093c3a82da5f88b2b0880894ee09caf840394c45044f5",
+    "backends/matplotlib/vispy2_scalar_image_colorbar.png": "1651a2314cf5546fe2ddf8d3fb93c0cd76bfd520e1069f9e7952a42c1eefa504",
+    "backends/matplotlib/vispy2_text.log.txt": "da4a2335501236bf6ad093c3a82da5f88b2b0880894ee09caf840394c45044f5",
+    "backends/matplotlib/vispy2_text.png": "141f730da02199998d030acbd7e3e7dc1ff7eef8f405b6a990a7d8884b009d84",
+    "backends/matplotlib/vispy2_texture2d_boundary.log.txt": "6b374f9ff18b63d92aff6e5ad1d21ac7fec8a4be69aafae08c5b505ab31214db",
+    "backends/matplotlib/vispy2_texture2d_boundary.unsupported.json": "8fd85ab5199e1e76b27a391798e367d372d5e50d75eed9f74462ce38d7e63bb4",
+    "capability_matrix.json": "205947b69da3fbe3fa594b2b50cea617ca1a3309551fd13ed92f317c65865512",
+    "capability_matrix.md": "73fcebfb7d8cc04eda7e52f2df5e1108ce35527e5eb80508fdf38a3507d04a9a",
+    "contact_sheets/s051_all_cases.png": "7fbd871a69470fe3181eca6cf53bd6682569a5410b64d689495d67bea0f91144",
+    "contact_sheets/vispy2_mesh.png": "f5520a13b0d6740f30f337ff638b5a8bece0e4c9c39d12f3ca62dc9e294c91f2",
+    "contact_sheets/vispy2_primitives.png": "372d0cb28c14b6089b0aec779448bf30494728c7d2d3b851f10fd787753ddd06",
+    "contact_sheets/vispy2_scalar_image_colorbar.png": "137ec3e6c1df5cb6758ca5f59a387bb90defc4d345e3ee8a9a3b83b2276b5f02",
+    "contact_sheets/vispy2_text.png": "e5294b472840a1aa2fa1427835e9bf10bf662ca474ac576d991be774372b458d",
+    "contact_sheets/vispy2_texture2d_boundary.png": "31e24691828ce88cdb6d502e552052652b5784b00c94db74a520e555dc431314",
+    "environment.json": "20eaf6854afa7d0fcb816277966697add6057cb03c0441c94db4b6fba04ae6cb",
+    "index.md": "0becc7d98cc57c2d3f45b11ac90efe95a94e07c6b5a0913e428620c50a1dfd70",
+    "manual_notes.yaml": "f43c7dcd5330170a07fbacaed67666673a5d72148da05ec2fa51b28552bf004f",
+    "notes/vispy2_mesh.md": "7989c8619b890e71915de8c76f3287a085987b7846d2065f0d8e3f025019f247",
+    "notes/vispy2_primitives.md": "607cf0b83e175928e346af4137fee68de7a7f5aac482021e9e4e1543957f8124",
+    "notes/vispy2_scalar_image_colorbar.md": "89781803a032eee0be929e5bd1bf08adc19f11723570cb2261d818b76b67ccc5",
+    "notes/vispy2_text.md": "8cf0fc9343ce471e1cd0ad60e864fad0f90d35f75f970dcb1ee6c00f90a426d7",
+    "notes/vispy2_texture2d_boundary.md": "140ffe66e14653413568f98ff06684fddd2cbefd173255e091e4174675ca7107",
+    "report.json": "cd78e6e9bda7062c47f9e6a7604c70bf952a5646927b1523d866469921c822a4",
+    "run_manifest.json": "b83014ded82f758f06e204bfd3d4b2ac1b208a5a0fc815508903c9dea27cea68",
+    "scenes/vispy2_mesh.arrays.npz": "58635596bd5cd2e5d23556d7cdd0dc7220b3edecb0cc5c43cbe132ed24c7f8ce",
+    "scenes/vispy2_mesh.scene.json": "1c8d3f90c9b5b32df484d638edbbac2e51a381252c1f62e7ffec70bda7bed5c6",
+    "scenes/vispy2_primitives.arrays.npz": "de1cc34138d157b848a0332159062cf0c05d1d1965c8bb4b9635ca9c2fc5b5fe",
+    "scenes/vispy2_primitives.scene.json": "fd368047abd4bee4b98ff1ff54efd789a59255836c167e149ce6f9c453619921",
+    "scenes/vispy2_scalar_image_colorbar.arrays.npz": "bf5167ea3dccf6048557631a977588002415a1953535cf3324b0608dc703ed14",
+    "scenes/vispy2_scalar_image_colorbar.scene.json": "831f6e30e1d33b7cf5f820431a445d0c33880d1717f0fb4025c6bf48bc937af8",
+    "scenes/vispy2_text.arrays.npz": "cb83a9c0722e86e3678e034b9cd0d36ae05afd2eaed67e55e5aa81359eebdc13",
+    "scenes/vispy2_text.scene.json": "d66125da761eeb4e277cdb49c59e3649710e127a718315253ed35d51bd33c169",
+    "scenes/vispy2_texture2d_boundary.arrays.npz": "e656b0541652134b354cf0a696e54635d0553ac4d71921dbe1e3fa5f900c0214",
+    "scenes/vispy2_texture2d_boundary.scene.json": "22988b9a6187efded4d9308fdcc4a31d2854607657cb2bffee271dcdde65f9c3",
+    "summary.json": "4b7482cc55171f168ce181e9ef48328cd3a8f77b7b2561939be445dd0e3bb8cc",
+    "summary.md": "c96007fbd2d409db2538cf9839ae74d85fd03144ebad40c260112ae003e891dd"
+  },
+  "backends": [
+    "matplotlib",
+    "datoviz"
+  ],
+  "capability_snapshot": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": null,
+    "unexpected_banned_hits": 0
+  },
+  "datoviz_evidence": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "git_branch": "v0.4-dev",
+    "git_path": "/Users/cyrille/GIT/Viz/datoviz",
+    "git_revision": "ff62b3256f1de7dd2df2ee890c99968715789a27",
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": null,
+    "unexpected_banned_hits": 0
+  },
+  "gsp_scene_schema_version": 1,
+  "local_execution_encoding": "inproc-python-records-and-ndarray",
+  "outcomes": [
+    {
+      "backend": "matplotlib",
+      "case_id": "vispy2/primitives",
+      "diagnostic_code": "matplotlib_reference_rendered",
+      "outcome": "strict",
+      "raw_status": "strict",
+      "semantic_record_ids": [
+        "s051:point",
+        "s051:marker",
+        "s051:segment",
+        "s051:path"
+      ]
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "vispy2/primitives",
+      "diagnostic_code": "datoviz_runtime_error",
+      "outcome": "backend_failure",
+      "raw_status": "crashed",
+      "semantic_record_ids": [
+        "s051:point",
+        "s051:marker",
+        "s051:segment",
+        "s051:path"
+      ]
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "vispy2/scalar_image_colorbar",
+      "diagnostic_code": "matplotlib_reference_rendered",
+      "outcome": "strict",
+      "raw_status": "strict",
+      "semantic_record_ids": [
+        "s051:image"
+      ]
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "vispy2/scalar_image_colorbar",
+      "diagnostic_code": "datoviz_adapter_unsupported",
+      "outcome": "unsupported",
+      "raw_status": "unsupported",
+      "semantic_record_ids": [
+        "s051:image"
+      ]
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "vispy2/text",
+      "diagnostic_code": "matplotlib_reference_rendered",
+      "outcome": "strict",
+      "raw_status": "strict",
+      "semantic_record_ids": [
+        "s051:text"
+      ]
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "vispy2/text",
+      "diagnostic_code": "datoviz_runtime_error",
+      "outcome": "backend_failure",
+      "raw_status": "crashed",
+      "semantic_record_ids": [
+        "s051:text"
+      ]
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "vispy2/mesh",
+      "diagnostic_code": "matplotlib_reference_rendered",
+      "outcome": "strict",
+      "raw_status": "strict",
+      "semantic_record_ids": [
+        "s051:mesh"
+      ]
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "vispy2/mesh",
+      "diagnostic_code": "datoviz_runtime_error",
+      "outcome": "backend_failure",
+      "raw_status": "crashed",
+      "semantic_record_ids": [
+        "s051:mesh"
+      ]
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "vispy2/texture2d_boundary",
+      "diagnostic_code": "matplotlib_reference_not_run",
+      "outcome": "unsupported",
+      "raw_status": "not_run",
+      "semantic_record_ids": [
+        "s051:texture-mesh"
+      ]
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "vispy2/texture2d_boundary",
+      "diagnostic_code": "datoviz_adapter_unsupported",
+      "outcome": "unsupported",
+      "raw_status": "unsupported",
+      "semantic_record_ids": [
+        "s051:texture-mesh"
+      ]
+    }
+  ],
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "producer": {
+    "api_version": "experimental-rc1",
+    "import": "vispy2"
+  },
+  "replay_encoding": "debug-json-plus-npz-sidecars",
+  "schema_kind": "gsp.s051.vispy2_rc1_acceptance_manifest",
+  "schema_version": 1
+}

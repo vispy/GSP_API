@@ -1,0 +1,10 @@
+Datoviz offscreen child process terminated by signal 6
+
+Command:
+/opt/homebrew/opt/python@3.12/bin/python3.12 -m gsp.qa.visual run --suite s051 --backends datoviz --out artifacts/visual_qa/s051/rc1-acceptance/_datoviz_offscreen_child/vispy2_mesh --no-contact-sheet --resolution 800x600 --datoviz-color-pipeline legacy_srgb_blend --case vispy2/mesh --run-id s051-vispy2-rc1-acceptance
+
+stdout:
+
+
+stderr:
+

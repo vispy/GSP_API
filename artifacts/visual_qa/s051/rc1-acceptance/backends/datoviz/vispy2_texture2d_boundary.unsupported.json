@@ -1,0 +1,13 @@
+{
+  "backend_id": "datoviz",
+  "case_id": "vispy2/texture2d_boundary",
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "diagnostics": {
+    "capability": "meshvisual.material.texture2d_unlit.v1",
+    "status": "unsupported"
+  },
+  "reason": "meshvisual_material_texture2d_unlit_unsupported: Datoviz visual QA has not proven S050 textured mesh support",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

@@ -74,6 +74,7 @@ from gsp.qa.visual.cases import (
     S028_SUITE,
     S034_SUITE,
     S050_SUITE,
+    S051_SUITE,
     case_slug,
     list_cases,
 )
@@ -138,6 +139,7 @@ def run_visual_qa_suite(
         S028_SUITE,
         S034_SUITE,
         S050_SUITE,
+        S051_SUITE,
     ):
         raise ValueError(f"unknown visual QA suite: {suite}")
     normalized_backends = _normalize_backends(backends)
