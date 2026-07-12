@@ -49,13 +49,17 @@ The core scene model has six concept families:
 - **Materials.** Extensible material descriptors attached to visuals.
 - **Types.** Typed buffers (`Buffer`, `BufferType`), the `TransBuf` union (`Buffer | TransformChain`), and abstract bases (`VisualBase`, `RendererBase`, `AnimatorBase`, `ViewportEventsBase`).
 
-Three renderer packages implement the same renderer contract:
+Three renderer packages implement the same base renderer contract, with different capability and
+maturity boundaries:
 
 - `gsp_matplotlib` — CPU rendering via Matplotlib.
-- `gsp_datoviz` — GPU rendering via Datoviz on Vulkan.
+- `gsp_datoviz` — optional legacy Datoviz rendering plus a capability-gated v0.4 protocol adapter.
 - `gsp_network` — Flask-based remote rendering (the client serializes the scene; the server runs `gsp_matplotlib` or `gsp_datoviz` and returns a PNG).
 
-Selection is performed at runtime by a string name: `RendererRegistry.create_renderer("matplotlib"|"datoviz"|"network", canvas)`. Switching renderers is a one-line change.
+Legacy renderer selection uses a string name:
+`RendererRegistry.create_renderer("matplotlib"|"datoviz-v03"|"network", canvas)`. The Datoviz
+v0.4 protocol adapter is capability-gated and is not interchangeable with the legacy renderer by
+name alone.
 
 ## 4. System Architecture
 
@@ -113,7 +117,7 @@ Client (NetworkRenderer)
   │
   ├── HTTP POST /render
   │       body = NetworkPayload {
-  │           renderer_name: "matplotlib" | "datoviz",
+│           renderer_name: "matplotlib" | "datoviz-v03",
   │           data:          PydanticDict
   │       }
   │
@@ -211,7 +215,10 @@ Both `Animator` and `ViewportEvents` are abstract in core and implemented per ba
 
 ### 5.7 Documentation and example gallery
 
-The repository ships a Material-themed mkdocs site (`mkdocs.yml`, `mkdocs_source/`) with seven API reference pages (`gsp`, `gsp_network`, `gsp_pydantic`, `gsp_matplotlib`, `gsp_datoviz`, `gsp_extra`, `vispy_2`) and an `examples/` directory with on the order of 58 production-ready examples plus roughly 17 work-in-progress examples (underscore-prefixed). Trade-off: the docs build is local-only; no public docs URL is configured.
+The repository ships a Material-themed MkDocs site at
+<https://vispy.github.io/GSP_API/> with seven generated package-reference sections and a curated
+example gallery. The broader `examples/` tree also contains legacy and work-in-progress scripts;
+use `examples/review/` for the current API-review surface.
 
 ## 6. Technical Deep Dive
 
@@ -271,7 +278,8 @@ The server selects the backend by `renderer_name`, reconstructs the scene with `
 
 ### 6.5 Performance considerations
 
-The three backends define three performance regimes:
+The three backend paths have different qualitative performance regimes; these descriptions are not
+feature-parity or benchmark claims:
 
 - **Matplotlib (CPU).** Bound by the Agg rasterizer. Suitable for tens of thousands of primitives at interactive rates; degrades smoothly past that. Bottleneck: per-primitive Python and rasterization overhead.
 - **Datoviz (GPU).** Bound by Vulkan driver and PCIe upload. Suitable for millions of primitives at 60 Hz on commodity GPUs. Bottleneck: buffer upload and shader compilation; cold-start latency is non-trivial.

@@ -22,7 +22,7 @@ GSP_RENDERER=network    python examples/points_example.py    # needs the gsp_net
 
 The "why" before the "what".
 
-### 2.1 One interface, three backends
+### 2.1 One base interface, capability-dependent backends
 
 The contract is a six-method abstract base class — [`RendererBase`](https://github.com/vispy/GSP_API/blob/main/src/gsp/types/renderer_base.py) at [src/gsp/types/renderer_base.py:15-74](https://github.com/vispy/GSP_API/blob/main/src/gsp/types/renderer_base.py#L15-L74):
 

@@ -20,7 +20,9 @@ GSP_RENDERER=datoviz-v03 python examples/<file>.py
 The "why" before the "what".
 
 ### 2.1 Backend independence
-The same example script runs unchanged under three backends — `matplotlib` (static, ubiquitous), `datoviz` (GPU, interactive), and `network` (remote rendering over HTTP). A single environment variable picks the implementation:
+Legacy examples share one construction pattern across `matplotlib`, optional `datoviz-v03`, and
+`network` paths. Availability and feature support still depend on the selected backend; a single
+environment variable chooses the implementation:
 
 ```bash
 GSP_RENDERER=datoviz-v03 python examples/points_example.py

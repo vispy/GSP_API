@@ -12,7 +12,7 @@ Scientific visualization in Python has historically coupled the scene API to the
 
 - Unified declarative scene model across all backends (Canvas, Viewport, Camera, eight visual primitives, TransformChain)
 - Three first-party renderer surfaces: Matplotlib, optional Datoviz support, and a network renderer
-- Runtime backend selection — `RendererRegistry.create_renderer("matplotlib"|"datoviz"|"network", canvas)` — no code changes required to switch
+- Runtime selection for the legacy renderer stack: `matplotlib`, `datoviz-v03`, or `network`
 - Pydantic v2 serialization layer (`gsp_pydantic`) for JSON export and base64-encoded buffer transport
 - Network rendering over Flask: client serializes the scene, server renders and returns a PNG
 - Python 3.13+ with strict mypy compliance throughout
@@ -24,6 +24,11 @@ Scientific visualization in Python has historically coupled the scene API to the
 | Matplotlib | CPU rasterization | `gsp_matplotlib` | Publication figures, portable environments |
 | Datoviz | GPU (Vulkan) | `gsp_datoviz` | Optional legacy wrapper support and capability-gated v0.4 adapter work |
 | Network | Remote / Flask | `gsp_network` | Headless servers, HPC clusters, cloud notebooks |
+
+Backend names do not imply feature parity. Matplotlib is the reference implementation. Datoviz
+v0.4 support is advertised per capability, while `datoviz-v03` identifies the separate legacy
+renderer path. See the canonical
+[specification index](https://github.com/vispy/GSP_API/blob/main/SPEC_INDEX.md) for backend contracts.
 
 ## Project Status
 

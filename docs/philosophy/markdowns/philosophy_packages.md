@@ -74,7 +74,9 @@ Three packages that build on `gsp` *without* taking a dependency on any backend.
 
 The table describes the **renderer-side** dependency graph — the part of each package a user imports to render. The `gsp_network` package additionally ships an executable Flask server under [tools/](../../src/gsp_network/tools/) that does import both backends to dispatch incoming requests. That tool is a deployment artefact, not a library dependency — see §3.4.
 
-This is what makes the env-var swap `GSP_RENDERER=matplotlib|datoviz|network` actually work — see [philosophy_examples.md §2.1](./philosophy_examples.md).
+Legacy examples select `GSP_RENDERER=matplotlib|datoviz-v03|network`; the Datoviz v0.4 protocol
+adapter uses capability-gated rendering instead of this legacy name swap. See
+[philosophy_examples.md §2.1](./philosophy_examples.md).
 
 ---
 
@@ -190,7 +192,7 @@ Same per-visual file split as the matplotlib backend.
 
 ```python
 import gsp_datoviz
-renderer = RendererRegistry.create_renderer("datoviz", canvas)
+renderer = RendererRegistry.create_renderer("datoviz-v03", canvas)
 ```
 
 **Registration.** [renderer_registration.py:10-17](../../src/gsp_datoviz/renderer_registration.py#L10-L17).
@@ -361,7 +363,7 @@ from gsp.visuals import Points
 from gsp_extra.bufferx import Bufferx
 from gsp.utils.renderer_registery import RendererRegistry
 
-import gsp_datoviz                                   # registers "datoviz"
+import gsp_datoviz                                   # registers "datoviz-v03"
 
 canvas    = Canvas(width=512, height=512, dpi=127.5)
 viewport  = Viewport(0, 0, 512, 512)
@@ -369,7 +371,7 @@ view      = View2D.from_bounds(0.0, 1.0, 0.0, 1.0)
 positions = Bufferx.from_numpy(np.random.rand(1000, 3), BufferType.vec3)
 points    = Points(positions, ...)
 
-renderer  = RendererRegistry.create_renderer("datoviz", canvas)
+renderer  = RendererRegistry.create_renderer("datoviz-v03", canvas)
 adapter   = View2DNavigationInputAdapter(view, viewport_width_px=512, viewport_height_px=512)
 
 action = adapter.handle_pointer_event(pointer_event)
