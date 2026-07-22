@@ -6,7 +6,7 @@ S062 - Clean GSP And VisPy2 Repository Bootstrap
 
 ## Status
 
-Approved; M264 completed.
+Completed in local `vispy2` commit `99e4875`, with GSP typing marker commit `c76a403`.
 
 ## Summary
 

@@ -6,7 +6,7 @@ S062 - Clean GSP And VisPy2 Repository Bootstrap
 
 ## Status
 
-Draft; blocked on M265.
+Approved; M265 completed.
 
 ## Summary
 
@@ -25,4 +25,3 @@ bootstrap without external publication.
 
 Stop if any validation relies on editable/source imports, provenance is incomplete, package extras
 cannot resolve within approved artifact boundaries, or remote/release action would be required.
-
