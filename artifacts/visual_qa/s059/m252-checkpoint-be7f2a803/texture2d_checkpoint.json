@@ -1,0 +1,21 @@
+{
+  "schema_kind": "gsp.s059.datoviz_texture2d_checkpoint",
+  "schema_version": 1,
+  "datoviz_revision": "be7f2a80354c25e85bab88c85f5ea7340975b569",
+  "case_count": 9,
+  "nearest_regression_case_count": 5,
+  "linear_filter_case_count": 4,
+  "rendered_count": 9,
+  "artifacts": [
+    "review/backends/datoviz/mesh_texture2d_uv_orientation_triangle_ndc.png",
+    "review/backends/datoviz/mesh_texture2d_checker_quad_clamp_ndc.png",
+    "review/backends/datoviz/mesh_texture2d_color_multiply_seam_ndc.png",
+    "review/backends/datoviz/mesh_texture2d_opaque_view3d_quad.png",
+    "review/backends/datoviz/mesh_texture2d_alpha_diagnostic_ndc.png",
+    "review/backends/datoviz/mesh_texture2d_shared_nearest_linear_ndc.png",
+    "review/backends/datoviz/mesh_texture2d_linear_centers_clamp_ndc.png",
+    "review/backends/datoviz/mesh_texture2d_linear_minification_ndc.png",
+    "review/backends/datoviz/mesh_texture2d_linear_alpha_multiply_ndc.png"
+  ],
+  "status": "passed"
+}

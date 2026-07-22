@@ -20,6 +20,7 @@ from gsp.protocol import (
     MESH3D_OPAQUE_DEPTH_CAPABILITY,
     MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY,
     MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY,
+    MESH_TEXTURE_FILTER_LINEAR_CAPABILITY,
     MESH_NORMALS_FACE3D_CAPABILITY,
     MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY,
     NavigationPlacement,
@@ -205,7 +206,9 @@ _DVZ_CAPABILITY_FIELDS = (
 )
 
 
-def datoviz_v04_capability_snapshot(dvz: ModuleType | Any | None = None) -> CapabilitySnapshot:
+def datoviz_v04_capability_snapshot(
+    dvz: ModuleType | Any | None = None,
+) -> CapabilitySnapshot:
     """Return the bounded GSP capability snapshot for the Datoviz v0.4 adapter."""
     raw_snapshot = None
     source = "static-gsp-slice"
@@ -216,16 +219,22 @@ def datoviz_v04_capability_snapshot(dvz: ModuleType | Any | None = None) -> Capa
         try:
             import datoviz as imported_dvz
         except ModuleNotFoundError:
-            diagnostics = ("Datoviz is not importable; using conservative static GSP slice capabilities",)
+            diagnostics = (
+                "Datoviz is not importable; using conservative static GSP slice capabilities",
+            )
         else:
             dvz = imported_dvz
     if dvz is not None and hasattr(dvz, "dvz_capability_snapshot"):
         raw_snapshot = dvz.dvz_capability_snapshot()
         source = "dvz_capability_snapshot"
     elif dvz is not None:
-        diagnostics = ("Datoviz Python binding is missing dvz_capability_snapshot; using conservative static GSP slice capabilities",)
+        diagnostics = (
+            "Datoviz Python binding is missing dvz_capability_snapshot; using conservative static GSP slice capabilities",
+        )
 
-    return gsp_capability_snapshot_from_datoviz(raw_snapshot, dvz=dvz, source=source, diagnostics=diagnostics)
+    return gsp_capability_snapshot_from_datoviz(
+        raw_snapshot, dvz=dvz, source=source, diagnostics=diagnostics
+    )
 
 
 def gsp_capability_snapshot_from_datoviz(
@@ -240,14 +249,20 @@ def gsp_capability_snapshot_from_datoviz(
     The translation deliberately advertises only features implemented by the current GSP Datoviz
     adapter. Raw Datoviz capability fields are retained in metadata for later parity missions.
     """
-    raw_fields = _raw_capability_fields(raw_snapshot) if raw_snapshot is not None else {}
+    raw_fields = (
+        _raw_capability_fields(raw_snapshot) if raw_snapshot is not None else {}
+    )
     texture_formats = ["rgba8"]
     if raw_fields.get("texture_format_r32uint") is True:
         texture_formats.append("r32uint")
     if raw_fields.get("texture_format_rg32uint") is True:
         texture_formats.append("rg32uint")
 
-    capture_diagnostics = datoviz_v04_capture_diagnostics(dvz) if dvz is not None else ("Datoviz is not importable",)
+    capture_diagnostics = (
+        datoviz_v04_capture_diagnostics(dvz)
+        if dvz is not None
+        else ("Datoviz is not importable",)
+    )
     grid_clip_diagnostics = datoviz_v04_grid_clip_to_plot_rect_diagnostics(dvz)
     grid_clip_supported = not grid_clip_diagnostics
     grid_clip_status = "native-verified" if grid_clip_supported else "unsupported"
@@ -327,7 +342,9 @@ def gsp_capability_snapshot_from_datoviz(
             "resolved_layout_consume": "none",
             "layout_strict": False,
             "panel_text_title": "adapted: panel_text_guide_as_screen_text",
-            "axis_style_mapping": "partial" if dvz is not None and hasattr(dvz, "dvz_axis_set_style") else "unsupported",
+            "axis_style_mapping": "partial"
+            if dvz is not None and hasattr(dvz, "dvz_axis_set_style")
+            else "unsupported",
             "axis_style_fields": DATOVIZ_S034_AXIS_STYLE_FIELDS,
             "grid_clip_to_plot_rect": grid_clip_status,
             "layout_snapshot_partial": frame_snapshot_supported,
@@ -431,8 +448,14 @@ def gsp_capability_snapshot_from_datoviz(
         metadata["datoviz_capture_diagnostics"] = capture_diagnostics
     else:
         output_formats = ("png",)
-        metadata["capture_support"] = "offscreen PNG screenshot/export; not scientific readback"
-    query_diagnostics = datoviz_v04_query_binding_diagnostics(dvz) if dvz is not None else ("Datoviz is not importable",)
+        metadata["capture_support"] = (
+            "offscreen PNG screenshot/export; not scientific readback"
+        )
+    query_diagnostics = (
+        datoviz_v04_query_binding_diagnostics(dvz)
+        if dvz is not None
+        else ("Datoviz is not importable",)
+    )
     query_modes: tuple[str, ...] = ()
     query_capabilities: tuple[QueryScopeCapability, ...] = ()
     if query_diagnostics:
@@ -474,15 +497,14 @@ def gsp_capability_snapshot_from_datoviz(
             view3d_capabilities = (
                 *view3d_capabilities,
                 MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY,
+                MESH_TEXTURE_FILTER_LINEAR_CAPABILITY,
             )
             metadata["s050_texture2d_unlit"] = (
-                "public RGBA8 sampled-field mesh binding with vertex UVs, nearest "
+                "public RGBA8 sampled-field mesh binding with vertex UVs, nearest-or-linear "
                 "clamp/no-mipmap slot sampling, linear color role, and unlit material"
             )
         else:
-            metadata["datoviz_texture2d_mesh_diagnostics"] = (
-                texture2d_mesh_diagnostics
-            )
+            metadata["datoviz_texture2d_mesh_diagnostics"] = texture2d_mesh_diagnostics
         if not retained_view3d_diagnostics:
             view3d_capabilities = (
                 *view3d_capabilities,
@@ -590,7 +612,9 @@ def gsp_capability_snapshot_from_datoviz(
         ),
         guide_layout_capability=GuideLayoutCapability(
             axis_native=True,
-            axis_explicit_ticks=hasattr(dvz, "dvz_axis_set_ticks") if dvz is not None else False,
+            axis_explicit_ticks=hasattr(dvz, "dvz_axis_set_ticks")
+            if dvz is not None
+            else False,
             axis_deterministic_gsp_ticks=False,
             axis_labels=True,
             axis_grid=True,
@@ -670,7 +694,9 @@ def _datoviz_data_query_capability() -> QueryScopeCapability:
     )
 
 
-def _datoviz_v04_view3d_binding_diagnostics(dvz: ModuleType | Any | None) -> tuple[str, ...]:
+def _datoviz_v04_view3d_binding_diagnostics(
+    dvz: ModuleType | Any | None,
+) -> tuple[str, ...]:
     if dvz is None:
         return ("Datoviz is not importable",)
     return tuple(
@@ -769,9 +795,15 @@ def datoviz_v04_capture_ready(dvz: ModuleType | Any) -> bool:
 
 def datoviz_v04_capture_diagnostics(dvz: ModuleType | Any) -> tuple[str, ...]:
     """Return missing requirements for v0.4 offscreen PNG capture."""
-    diagnostics = [f"missing {name}" for name in _REQUIRED_DVZ_CAPTURE_FUNCTIONS if not hasattr(dvz, name)]
+    diagnostics = [
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_CAPTURE_FUNCTIONS
+        if not hasattr(dvz, name)
+    ]
     if not any(hasattr(dvz, name) for name in _DVZ_CAPTURE_RENDER_FUNCTIONS):
-        diagnostics.append("missing one of dvz_view_render_once, dvz_app_render_once, dvz_app_run")
+        diagnostics.append(
+            "missing one of dvz_view_render_once, dvz_app_render_once, dvz_app_run"
+        )
     return tuple(diagnostics)
 
 
@@ -782,10 +814,9 @@ def datoviz_v04_grid_clip_to_plot_rect_ready_for_source(
     if source is None:
         return False
     source_path = Path(source)
-    return (
-        _datoviz_commit_contains(source_path, DATOVIZ_GRID_CLIP_TO_PLOT_RECT_COMMIT)
-        or _datoviz_source_has_grid_clip_fix(source_path)
-    )
+    return _datoviz_commit_contains(
+        source_path, DATOVIZ_GRID_CLIP_TO_PLOT_RECT_COMMIT
+    ) or _datoviz_source_has_grid_clip_fix(source_path)
 
 
 def datoviz_v04_grid_clip_to_plot_rect_diagnostics(
@@ -795,12 +826,16 @@ def datoviz_v04_grid_clip_to_plot_rect_diagnostics(
     if dvz is None:
         return ("grid_clip_not_enforced", "grid_clip_native_api_unverified")
     source = _datoviz_module_source_root(dvz)
-    if source is not None and datoviz_v04_grid_clip_to_plot_rect_ready_for_source(source):
+    if source is not None and datoviz_v04_grid_clip_to_plot_rect_ready_for_source(
+        source
+    ):
         return ()
     return ("grid_clip_not_enforced", "grid_clip_native_api_unverified")
 
 
-def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) -> AxisProviderCapability:
+def datoviz_v04_axis_provider_capability(
+    dvz: ModuleType | Any | None = None,
+) -> AxisProviderCapability:
     """Return the Datoviz v0.4-dev native axis provider capability.
 
     The local v0.4-dev headers contain the native axis API. Runtime support is
@@ -836,10 +871,9 @@ def datoviz_v04_axis_provider_capability(dvz: ModuleType | Any | None = None) ->
         if not datoviz_v04_grid_clip_to_plot_rect_diagnostics(dvz)
         else "axis-provider-grid-clip-to-plot-rect-unverified: native grid endpoint clipping is not verified for this Datoviz build"
     )
-    guide_query_supported = (
-        not datoviz_v04_panel_frame_snapshot_diagnostics(dvz)
-        and not datoviz_v04_panel_frame_guide_query_diagnostics(dvz)
-    )
+    guide_query_supported = not datoviz_v04_panel_frame_snapshot_diagnostics(
+        dvz
+    ) and not datoviz_v04_panel_frame_guide_query_diagnostics(dvz)
     guide_query_diagnostic = (
         "axis-guide-query-native-verified: Datoviz panel frame guide hit/readback uses the same snapshot id as guide layout records"
         if guide_query_supported

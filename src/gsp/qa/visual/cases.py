@@ -44,6 +44,7 @@ from gsp.protocol import (
     TextAnchorY,
     TextVisual,
     Texture2D,
+    TextureFilter,
     TickSpec,
     TickSpecKind,
     View2D,
@@ -62,6 +63,7 @@ S028_SUITE = "s028"
 S034_SUITE = "s034"
 S050_SUITE = "s050"
 S051_SUITE = "s051"
+S059_SUITE = "s059"
 
 
 def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
@@ -112,6 +114,8 @@ def list_cases(*, suite: str = S023_SUITE) -> tuple[VisualQACase, ...]:
         from gsp.qa.visual.vispy2_acceptance import s051_cases
 
         return s051_cases()
+    if suite == S059_SUITE:
+        return _s050_texture2d_cases() + _s059_texture_filter_cases()
     raise ValueError(f"unknown visual QA suite: {suite}")
 
 
@@ -505,6 +509,67 @@ def _s050_texture2d_cases() -> tuple[VisualQACase, ...]:
     )
 
 
+def _s059_texture_filter_cases() -> tuple[VisualQACase, ...]:
+    return (
+        VisualQACase(
+            case_id="mesh_texture2d/shared_nearest_linear_ndc",
+            title="Shared Texture2D with nearest and linear field slots",
+            family="mesh_texture2d",
+            required_features=(
+                "mesh",
+                "texture2d",
+                "nearest",
+                "linear",
+                "shared-resource",
+                "ndc",
+            ),
+            builder=_texture2d_shared_nearest_linear_ndc,
+        ),
+        VisualQACase(
+            case_id="mesh_texture2d/linear_centers_clamp_ndc",
+            title="Linear Texture2D texel centers, orientation, and clamp",
+            family="mesh_texture2d",
+            required_features=(
+                "mesh",
+                "texture2d",
+                "linear",
+                "texel-centers",
+                "orientation",
+                "clamp",
+                "ndc",
+            ),
+            builder=_texture2d_linear_centers_clamp_ndc,
+        ),
+        VisualQACase(
+            case_id="mesh_texture2d/linear_minification_ndc",
+            title="Linear Texture2D minification at a quadrant boundary",
+            family="mesh_texture2d",
+            required_features=(
+                "mesh",
+                "texture2d",
+                "linear",
+                "minification",
+                "ndc",
+            ),
+            builder=_texture2d_linear_minification_ndc,
+        ),
+        VisualQACase(
+            case_id="mesh_texture2d/linear_alpha_multiply_ndc",
+            title="Linear Texture2D straight-alpha and base-color multiplication",
+            family="mesh_texture2d",
+            required_features=(
+                "mesh",
+                "texture2d",
+                "linear",
+                "straight-alpha",
+                "color-multiply",
+                "ndc",
+            ),
+            builder=_texture2d_linear_alpha_multiply_ndc,
+        ),
+    )
+
+
 def s050_texture2d_negative_fixtures() -> tuple[dict[str, object], ...]:
     """Return S050 Texture2D negative fixture metadata."""
     return (
@@ -701,6 +766,205 @@ def _texture2d_uv_orientation_triangle_ndc() -> VisualQAScene:
         notes=(
             "Texture image row 0 is the top row; high v samples top texels.",
             "Expected probes are away from triangle and texel boundaries.",
+        ),
+    )
+
+
+def _texture2d_shared_nearest_linear_ndc() -> VisualQAScene:
+    texture = _texture2d_quadrant_resource("texture:s059-shared-filter")
+    left_positions, faces = _texture2d_quad_geometry(
+        xmin=-0.9, xmax=-0.1, ymin=-0.75, ymax=0.75
+    )
+    right_positions, _ = _texture2d_quad_geometry(
+        xmin=0.1, xmax=0.9, ymin=-0.75, ymax=0.75
+    )
+    center_uvs = np.full((4, 2), 0.5, dtype=np.float32)
+    base_color = np.array([128, 255, 128, 255], dtype=np.uint8)
+    nearest = MeshVisual(
+        id="visual:texture2d-nearest-shared",
+        positions=left_positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=base_color,
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=center_uvs,
+        texture_filter=TextureFilter.NEAREST,
+    )
+    linear = MeshVisual(
+        id="visual:texture2d-linear-shared",
+        positions=right_positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=base_color,
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=center_uvs,
+        texture_filter=TextureFilter.LINEAR,
+    )
+    linear_sample = texture.image.astype(np.float64).mean(axis=(0, 1)) / 255.0
+    base = base_color.astype(np.float64) / 255.0
+    return VisualQAScene(
+        case_id="mesh_texture2d/shared_nearest_linear_ndc",
+        visuals=(nearest, linear),
+        texture_resources=(texture,),
+        arrays={
+            "texture_rgba8": texture.image,
+            "mesh_faces": faces,
+            "nearest_positions": left_positions,
+            "linear_positions": right_positions,
+            "shared_uvs": center_uvs,
+            "base_color": base_color,
+            "expected_nearest_rgba": np.rint(
+                texture.image[1, 1].astype(np.float64) * base
+            ).astype(np.uint8),
+            "expected_linear_rgba": np.rint(255.0 * linear_sample * base).astype(
+                np.uint8
+            ),
+            "expected_probe_ndc_xy": np.array(
+                [[-0.5, 0.0], [0.5, 0.0]], dtype=np.float32
+            ),
+        },
+        notes=(
+            "Both visuals reference one protocol Texture2D and differ only by field-slot filtering.",
+            "Constant UV=(0.5,0.5) avoids geometry edges and perspective interpolation.",
+            "Nearest selects the lower-right texel; linear averages all four straight-alpha texels before base-color multiplication.",
+        ),
+    )
+
+
+def _texture2d_linear_centers_clamp_ndc() -> VisualQAScene:
+    texture = _texture2d_quadrant_resource("texture:s059-linear-centers-clamp")
+    faces = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32)
+    specs = (
+        ("top-left", -0.5, 0.5, (0.25, 0.75), texture.image[0, 0]),
+        ("bottom-left", -0.5, -0.5, (0.25, 0.25), texture.image[1, 0]),
+        ("clamp-top-left", 0.5, 0.5, (-1.0, 2.0), texture.image[0, 0]),
+        ("clamp-bottom-right", 0.5, -0.5, (2.0, -1.0), texture.image[1, 1]),
+    )
+    visuals: list[MeshVisual] = []
+    expected: list[np.ndarray] = []
+    probes: list[tuple[float, float]] = []
+    for label, cx, cy, uv, expected_rgba in specs:
+        positions, _ = _texture2d_quad_geometry(
+            xmin=cx - 0.3, xmax=cx + 0.3, ymin=cy - 0.3, ymax=cy + 0.3
+        )
+        visuals.append(
+            MeshVisual(
+                id=f"visual:texture2d-linear-{label}",
+                positions=positions,
+                faces=faces,
+                coordinate_space=CoordinateSpace.NDC,
+                color=np.array([255, 255, 255, 255], dtype=np.uint8),
+                shading=MeshShading.TEXTURE2D_UNLIT,
+                texture2d_id=texture.id,
+                uv_mode=MeshUVMode.VERTEX,
+                uvs=np.tile(np.asarray(uv, dtype=np.float32), (4, 1)),
+                texture_filter=TextureFilter.LINEAR,
+            )
+        )
+        probes.append((cx, cy))
+        expected.append(expected_rgba)
+    return VisualQAScene(
+        case_id="mesh_texture2d/linear_centers_clamp_ndc",
+        visuals=tuple(visuals),
+        texture_resources=(texture,),
+        arrays={
+            "texture_rgba8": texture.image,
+            "expected_probe_ndc_xy": np.asarray(probes, dtype=np.float32),
+            "expected_probe_rgba": np.asarray(expected, dtype=np.uint8),
+        },
+        notes=(
+            "The left probes pin top-row/high-v orientation at exact texel centers.",
+            "The right probes pin linear clamp-to-edge outside the unit UV square.",
+        ),
+    )
+
+
+def _texture2d_linear_minification_ndc() -> VisualQAScene:
+    small = _texture2d_quadrant_image()
+    image = np.repeat(np.repeat(small, 128, axis=0), 128, axis=1)
+    texture = Texture2D(id="texture:s059-linear-minification", image=image)
+    positions, faces = _texture2d_quad_geometry(
+        xmin=-0.1, xmax=0.1, ymin=-0.1, ymax=0.1
+    )
+    uvs = np.array([[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]], dtype=np.float32)
+    visual = MeshVisual(
+        id="visual:texture2d-linear-minification",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=uvs,
+        texture_filter=TextureFilter.LINEAR,
+    )
+    return VisualQAScene(
+        case_id="mesh_texture2d/linear_minification_ndc",
+        visuals=(visual,),
+        texture_resources=(texture,),
+        arrays={
+            "texture_rgba8": texture.image,
+            "mesh_positions": positions,
+            "mesh_faces": faces,
+            "mesh_uvs": uvs,
+            "expected_probe_ndc_xy": np.array([[0.0, 0.0]], dtype=np.float32),
+            "expected_probe_rgba": np.rint(small.astype(np.float64).mean(axis=(0, 1)))
+            .astype(np.uint8)
+            .reshape(1, 4),
+        },
+        notes=(
+            "A 256x256 base-level texture maps to a small viewport footprint, forcing minification.",
+            "The center probe lies on the four-quadrant boundary and must bilinearly average the adjacent texels without mipmaps.",
+        ),
+    )
+
+
+def _texture2d_linear_alpha_multiply_ndc() -> VisualQAScene:
+    image = _texture2d_quadrant_image().copy()
+    image[..., 3] = np.array([[0, 64], [128, 255]], dtype=np.uint8)
+    texture = Texture2D(id="texture:s059-linear-alpha", image=image)
+    positions, faces = _texture2d_quad_geometry()
+    center_uvs = np.full((4, 2), 0.5, dtype=np.float32)
+    base_color = np.array([128, 255, 128, 128], dtype=np.uint8)
+    visual = MeshVisual(
+        id="visual:texture2d-linear-alpha",
+        positions=positions,
+        faces=faces,
+        coordinate_space=CoordinateSpace.NDC,
+        color=base_color,
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=center_uvs,
+        texture_filter=TextureFilter.LINEAR,
+    )
+    sample = image.astype(np.float64).mean(axis=(0, 1)) / 255.0
+    source = sample * (base_color.astype(np.float64) / 255.0)
+    composited = source[:3] * source[3] + (1.0 - source[3])
+    return VisualQAScene(
+        case_id="mesh_texture2d/linear_alpha_multiply_ndc",
+        visuals=(visual,),
+        texture_resources=(texture,),
+        arrays={
+            "texture_rgba8": texture.image,
+            "base_color": base_color,
+            "expected_linear_sample_rgba": sample,
+            "expected_source_rgba": source,
+            "expected_probe_ndc_xy": np.array([[0.0, 0.0]], dtype=np.float32),
+            "expected_probe_rgba_over_white": np.rint(
+                255.0 * np.append(composited, 1.0)
+            )
+            .astype(np.uint8)
+            .reshape(1, 4),
+        },
+        notes=(
+            "Straight-alpha texture channels are bilinearly interpolated before multiplication by base RGBA.",
+            "The expected capture value applies ordinary source-over compositing to the white offscreen background.",
         ),
     )
 
@@ -953,9 +1217,15 @@ def _texture2d_quadrant_image() -> np.ndarray:
     )
 
 
-def _texture2d_quad_geometry() -> tuple[np.ndarray, np.ndarray]:
+def _texture2d_quad_geometry(
+    *,
+    xmin: float = -0.75,
+    xmax: float = 0.75,
+    ymin: float = -0.75,
+    ymax: float = 0.75,
+) -> tuple[np.ndarray, np.ndarray]:
     positions = np.array(
-        [[-0.75, -0.75], [0.75, -0.75], [0.75, 0.75], [-0.75, 0.75]],
+        [[xmin, ymin], [xmax, ymin], [xmax, ymax], [xmin, ymax]],
         dtype=np.float32,
     )
     faces = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32)

@@ -1,0 +1,28 @@
+{
+  "backends": [
+    "matplotlib"
+  ],
+  "case_ids": [
+    "mesh_texture2d/uv_orientation_triangle_ndc",
+    "mesh_texture2d/checker_quad_clamp_ndc",
+    "mesh_texture2d/color_multiply_seam_ndc",
+    "mesh_texture2d/opaque_view3d_quad",
+    "mesh_texture2d/alpha_diagnostic_ndc",
+    "mesh_texture2d/shared_nearest_linear_ndc",
+    "mesh_texture2d/linear_centers_clamp_ndc",
+    "mesh_texture2d/linear_minification_ndc",
+    "mesh_texture2d/linear_alpha_multiply_ndc"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "device_scale": 1.0,
+  "resolution": [
+    801,
+    601
+  ],
+  "run_id": "datoviz-texture2d-be7f2a803",
+  "schema_kind": "gsp.visual_qa.run_manifest",
+  "schema_version": 1,
+  "stage": "S059",
+  "started_at": "2026-07-22T12:34:51.430555+00:00",
+  "suite": "s059"
+}

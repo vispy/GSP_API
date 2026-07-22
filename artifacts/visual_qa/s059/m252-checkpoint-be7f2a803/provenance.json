@@ -1,0 +1,12 @@
+{
+  "schema_kind": "gsp.s059.datoviz_texture2d_checkpoint_provenance",
+  "schema_version": 1,
+  "datoviz_repo": "/Users/cyrille/GIT/Viz/datoviz",
+  "datoviz_revision": "be7f2a80354c25e85bab88c85f5ea7340975b569",
+  "datoviz_describe": "v0.4.0rc2-15-gbe7f2a803",
+  "datoviz_module": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+  "field_slot_sampling_symbols": [
+    "dvz_field_sampling_desc",
+    "dvz_visual_set_field_sampling"
+  ]
+}

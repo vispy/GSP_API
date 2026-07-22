@@ -353,7 +353,7 @@
       "id": "S059",
       "title": "Texture2D Nearest-Or-Linear Filtering Extension",
       "state": "in_progress",
-      "progress": 60
+      "progress": 80
     }
   ],
   "missions": [
@@ -2611,16 +2611,16 @@
       "id": "M252",
       "title": "S059 Datoviz linear filter promotion",
       "stage": "S059",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 252
     },
     {
       "id": "M253",
       "title": "S059 linear filter documentation and closeout",
       "stage": "S059",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 253
@@ -2728,6 +2728,7 @@
     }
   ],
   "recommendations": [
+    "M252 completed: Datoviz be7f2a803 now maps linear filtering to both field-slot filters and advertises the separate renderer capability after 9/9 native cases, 8 exact numeric probes, and 241 focused tests; M253 is ready for public docs/example and full closeout validation.",
     "M251 completed: VisPy2 now lowers the bounded nearest-or-linear texture_filter keyword and exports the producer-only linear capability; M252 is ready to wire and prove the separate Datoviz renderer capability.",
     "M250 completed: protocol state, compatibility-preserving canonical encoding, exact diagnostics, and backend-neutral linear sampling fixtures are implemented; M251 is ready for the bounded VisPy2 producer argument and capability.",
     "M247 and M222 completed: Datoviz be7f2a803 field-slot sampling unblocks the bounded GSP nearest-only Texture2D path; five of five native S050 cases render, the current-protocol example inspects successfully, and tools/run_datoviz_texture2d_checkpoint.sh preserves exact provenance for later RC3 commits.",

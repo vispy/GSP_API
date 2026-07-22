@@ -1,0 +1,540 @@
+{
+  "generated_at": "2026-07-22T12:35:01.602904+00:00",
+  "review_classification_summary": {
+    "fail.layout": 0,
+    "fail.query": 0,
+    "fail.semantic": 0,
+    "pass.layout_strict": 0,
+    "pass.raster_tolerant": 0,
+    "pass.semantic_strict": 0,
+    "review.adapted": 9,
+    "review.native_backend": 0,
+    "unsupported.capability": 9
+  },
+  "review_classification_taxonomy": [
+    "pass.semantic_strict",
+    "pass.layout_strict",
+    "pass.raster_tolerant",
+    "review.adapted",
+    "review.native_backend",
+    "fail.semantic",
+    "fail.layout",
+    "fail.query",
+    "unsupported.capability"
+  ],
+  "rows": [
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh_texture2d/uv_orientation_triangle_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_uv_orientation_triangle_ndc.unsupported.json",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_uv_orientation_triangle_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Matplotlib reference was not rendered"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "uv",
+        "orientation",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_not_run",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "not_run"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh_texture2d/uv_orientation_triangle_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_uv_orientation_triangle_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_uv_orientation_triangle_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "strict promotion requires a family-specific capability audit"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "uv",
+        "orientation",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh_texture2d/checker_quad_clamp_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_checker_quad_clamp_ndc.unsupported.json",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_checker_quad_clamp_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Matplotlib reference was not rendered"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "checker",
+        "clamp",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_not_run",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "not_run"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh_texture2d/checker_quad_clamp_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_checker_quad_clamp_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_checker_quad_clamp_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "strict promotion requires a family-specific capability audit"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "checker",
+        "clamp",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh_texture2d/color_multiply_seam_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_color_multiply_seam_ndc.unsupported.json",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_color_multiply_seam_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Matplotlib reference was not rendered"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "color-multiply",
+        "seam",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_not_run",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "not_run"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh_texture2d/color_multiply_seam_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_color_multiply_seam_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_color_multiply_seam_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "strict promotion requires a family-specific capability audit"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "color-multiply",
+        "seam",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh_texture2d/opaque_view3d_quad",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_opaque_view3d_quad.unsupported.json",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_opaque_view3d_quad.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Matplotlib reference was not rendered"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "view3d",
+        "opaque-depth"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_not_run",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "not_run"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh_texture2d/opaque_view3d_quad",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_opaque_view3d_quad.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_opaque_view3d_quad.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "strict promotion requires a family-specific capability audit"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "view3d",
+        "opaque-depth"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh_texture2d/alpha_diagnostic_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_alpha_diagnostic_ndc.unsupported.json",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_alpha_diagnostic_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Matplotlib reference was not rendered"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "alpha-diagnostic",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_not_run",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "not_run"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh_texture2d/alpha_diagnostic_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_alpha_diagnostic_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_alpha_diagnostic_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "strict promotion requires a family-specific capability audit"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "alpha-diagnostic",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh_texture2d/shared_nearest_linear_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_shared_nearest_linear_ndc.unsupported.json",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_shared_nearest_linear_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Matplotlib reference was not rendered"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "nearest",
+        "linear",
+        "shared-resource",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_not_run",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "not_run"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh_texture2d/shared_nearest_linear_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_shared_nearest_linear_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_shared_nearest_linear_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "strict promotion requires a family-specific capability audit"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "nearest",
+        "linear",
+        "shared-resource",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh_texture2d/linear_centers_clamp_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_centers_clamp_ndc.unsupported.json",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_centers_clamp_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Matplotlib reference was not rendered"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "linear",
+        "texel-centers",
+        "orientation",
+        "clamp",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_not_run",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "not_run"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh_texture2d/linear_centers_clamp_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_centers_clamp_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_centers_clamp_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "strict promotion requires a family-specific capability audit"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "linear",
+        "texel-centers",
+        "orientation",
+        "clamp",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh_texture2d/linear_minification_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_minification_ndc.unsupported.json",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_minification_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Matplotlib reference was not rendered"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "linear",
+        "minification",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_not_run",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "not_run"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh_texture2d/linear_minification_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_minification_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_minification_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "strict promotion requires a family-specific capability audit"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "linear",
+        "minification",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh_texture2d/linear_alpha_multiply_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_alpha_multiply_ndc.unsupported.json",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_alpha_multiply_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Matplotlib reference was not rendered"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "linear",
+        "straight-alpha",
+        "color-multiply",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_not_run",
+      "rendering_supported": false,
+      "review_classification": "unsupported.capability",
+      "status": "not_run"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh_texture2d/linear_alpha_multiply_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_alpha_multiply_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_alpha_multiply_ndc.log.txt"
+      ],
+      "family": "mesh_texture2d",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "strict promotion requires a family-specific capability audit"
+      ],
+      "protocol_scope": [
+        "mesh",
+        "texture2d",
+        "linear",
+        "straight-alpha",
+        "color-multiply",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    }
+  ],
+  "run_id": "datoviz-texture2d-be7f2a803",
+  "schema_kind": "gsp.visual_qa.capability_matrix",
+  "schema_version": 1,
+  "stage": "S059",
+  "status_taxonomy": [
+    "strict",
+    "adapted",
+    "experimental",
+    "unsupported",
+    "disabled",
+    "crashed",
+    "not_run"
+  ],
+  "suite": "s059",
+  "summary": {
+    "adapted": 9,
+    "crashed": 0,
+    "disabled": 0,
+    "experimental": 0,
+    "not_run": 9,
+    "strict": 0,
+    "unsupported": 0
+  }
+}

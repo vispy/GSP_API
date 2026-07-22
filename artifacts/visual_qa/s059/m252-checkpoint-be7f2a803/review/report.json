@@ -1,0 +1,397 @@
+{
+  "cases": [
+    {
+      "arrays_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_uv_orientation_triangle_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_uv_orientation_triangle_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_uv_orientation_triangle_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "backend_id": "matplotlib",
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_uv_orientation_triangle_ndc.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+          "status": "unsupported",
+          "unsupported_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_uv_orientation_triangle_ndc.unsupported.json"
+        }
+      },
+      "case_id": "mesh_texture2d/uv_orientation_triangle_ndc",
+      "family": "mesh_texture2d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "texture2d",
+        "uv",
+        "orientation",
+        "ndc"
+      ],
+      "scene_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_uv_orientation_triangle_ndc.scene.json",
+      "title": "Texture2D UV orientation triangle"
+    },
+    {
+      "arrays_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_checker_quad_clamp_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_checker_quad_clamp_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_checker_quad_clamp_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "backend_id": "matplotlib",
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_checker_quad_clamp_ndc.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+          "status": "unsupported",
+          "unsupported_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_checker_quad_clamp_ndc.unsupported.json"
+        }
+      },
+      "case_id": "mesh_texture2d/checker_quad_clamp_ndc",
+      "family": "mesh_texture2d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "texture2d",
+        "checker",
+        "clamp",
+        "ndc"
+      ],
+      "scene_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_checker_quad_clamp_ndc.scene.json",
+      "title": "Texture2D checker quad with clamp probes"
+    },
+    {
+      "arrays_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_color_multiply_seam_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_color_multiply_seam_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_color_multiply_seam_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "backend_id": "matplotlib",
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_color_multiply_seam_ndc.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+          "status": "unsupported",
+          "unsupported_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_color_multiply_seam_ndc.unsupported.json"
+        }
+      },
+      "case_id": "mesh_texture2d/color_multiply_seam_ndc",
+      "family": "mesh_texture2d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "texture2d",
+        "color-multiply",
+        "seam",
+        "ndc"
+      ],
+      "scene_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_color_multiply_seam_ndc.scene.json",
+      "title": "Texture2D color multiplication and duplicated seam"
+    },
+    {
+      "arrays_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_opaque_view3d_quad.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_opaque_view3d_quad.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_opaque_view3d_quad.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "backend_id": "matplotlib",
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_opaque_view3d_quad.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+          "status": "unsupported",
+          "unsupported_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_opaque_view3d_quad.unsupported.json"
+        }
+      },
+      "case_id": "mesh_texture2d/opaque_view3d_quad",
+      "family": "mesh_texture2d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "texture2d",
+        "view3d",
+        "opaque-depth"
+      ],
+      "scene_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_opaque_view3d_quad.scene.json",
+      "title": "Texture2D opaque DATA View3D quad"
+    },
+    {
+      "arrays_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_alpha_diagnostic_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_alpha_diagnostic_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_alpha_diagnostic_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "backend_id": "matplotlib",
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_alpha_diagnostic_ndc.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+          "status": "unsupported",
+          "unsupported_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_alpha_diagnostic_ndc.unsupported.json"
+        }
+      },
+      "case_id": "mesh_texture2d/alpha_diagnostic_ndc",
+      "family": "mesh_texture2d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "texture2d",
+        "alpha-diagnostic",
+        "ndc"
+      ],
+      "scene_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_alpha_diagnostic_ndc.scene.json",
+      "title": "Texture2D alpha non-strict diagnostic"
+    },
+    {
+      "arrays_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_shared_nearest_linear_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_shared_nearest_linear_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_shared_nearest_linear_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "backend_id": "matplotlib",
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_shared_nearest_linear_ndc.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+          "status": "unsupported",
+          "unsupported_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_shared_nearest_linear_ndc.unsupported.json"
+        }
+      },
+      "case_id": "mesh_texture2d/shared_nearest_linear_ndc",
+      "family": "mesh_texture2d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "texture2d",
+        "nearest",
+        "linear",
+        "shared-resource",
+        "ndc"
+      ],
+      "scene_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_shared_nearest_linear_ndc.scene.json",
+      "title": "Shared Texture2D with nearest and linear field slots"
+    },
+    {
+      "arrays_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_linear_centers_clamp_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_centers_clamp_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_centers_clamp_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "backend_id": "matplotlib",
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_centers_clamp_ndc.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+          "status": "unsupported",
+          "unsupported_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_centers_clamp_ndc.unsupported.json"
+        }
+      },
+      "case_id": "mesh_texture2d/linear_centers_clamp_ndc",
+      "family": "mesh_texture2d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "texture2d",
+        "linear",
+        "texel-centers",
+        "orientation",
+        "clamp",
+        "ndc"
+      ],
+      "scene_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_linear_centers_clamp_ndc.scene.json",
+      "title": "Linear Texture2D texel centers, orientation, and clamp"
+    },
+    {
+      "arrays_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_linear_minification_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_minification_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_minification_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "backend_id": "matplotlib",
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_minification_ndc.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+          "status": "unsupported",
+          "unsupported_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_minification_ndc.unsupported.json"
+        }
+      },
+      "case_id": "mesh_texture2d/linear_minification_ndc",
+      "family": "mesh_texture2d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "texture2d",
+        "linear",
+        "minification",
+        "ndc"
+      ],
+      "scene_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_linear_minification_ndc.scene.json",
+      "title": "Linear Texture2D minification at a quadrant boundary"
+    },
+    {
+      "arrays_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_linear_alpha_multiply_ndc.arrays.npz",
+      "backends": {
+        "datoviz": {
+          "artifact_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_alpha_multiply_ndc.png",
+          "backend_id": "datoviz",
+          "datoviz_color_pipeline": "legacy_srgb_blend",
+          "guide_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "layout_snapshot_diagnostics": {
+            "layout_snapshot_blocker": "Datoviz panel frame snapshot binding is unavailable: incomplete ctypes layout for DvzPanelFrameInfo; incomplete ctypes layout for DvzGuideLayout",
+            "layout_snapshot_partial": "unsupported"
+          },
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/datoviz/mesh_texture2d_linear_alpha_multiply_ndc.log.txt",
+          "status": "rendered"
+        },
+        "matplotlib": {
+          "backend_id": "matplotlib",
+          "log_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_alpha_multiply_ndc.log.txt",
+          "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+          "status": "unsupported",
+          "unsupported_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/backends/matplotlib/mesh_texture2d_linear_alpha_multiply_ndc.unsupported.json"
+        }
+      },
+      "case_id": "mesh_texture2d/linear_alpha_multiply_ndc",
+      "family": "mesh_texture2d",
+      "manual_review_status": "pending",
+      "required_features": [
+        "mesh",
+        "texture2d",
+        "linear",
+        "straight-alpha",
+        "color-multiply",
+        "ndc"
+      ],
+      "scene_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/scenes/mesh_texture2d_linear_alpha_multiply_ndc.scene.json",
+      "title": "Linear Texture2D straight-alpha and base-color multiplication"
+    }
+  ],
+  "contact_sheets": [
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_uv_orientation_triangle_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_checker_quad_clamp_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_color_multiply_seam_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_opaque_view3d_quad.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_alpha_diagnostic_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_shared_nearest_linear_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_linear_centers_clamp_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_linear_minification_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_linear_alpha_multiply_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/s059_all_cases.png"
+  ],
+  "datoviz_color_pipeline": "legacy_srgb_blend",
+  "datoviz_offscreen_child_strategy": "one_process_per_case",
+  "datoviz_offscreen_isolated": true,
+  "datoviz_probe_summary": {
+    "capture": {
+      "offscreen_symbols_available": true,
+      "run_symbols_available": true,
+      "top_level_capture_available": true
+    },
+    "facade_imported": true,
+    "installed_package": {
+      "imported": true,
+      "path": "/Users/cyrille/GIT/Viz/datoviz/datoviz/__init__.py",
+      "version": null
+    },
+    "minimal_point_supported": true,
+    "raw_imported": true,
+    "source_revision": "be7f2a80354c25e85bab88c85f5ea7340975b569",
+    "unexpected_banned_hits": 0
+  },
+  "device_scale": 1.0,
+  "environment_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/environment.json",
+  "run_id": "datoviz-texture2d-be7f2a803",
+  "schema_kind": "gsp.visual_qa.report",
+  "schema_version": 1,
+  "stage": "S059",
+  "started_at": "2026-07-22T12:34:51.430555+00:00",
+  "suite": "s059"
+}

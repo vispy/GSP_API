@@ -1,0 +1,29 @@
+schema_version: 1
+cases:
+  - case_id: mesh_texture2d/uv_orientation_triangle_ndc
+    status: pending
+    notes: ''
+  - case_id: mesh_texture2d/checker_quad_clamp_ndc
+    status: pending
+    notes: ''
+  - case_id: mesh_texture2d/color_multiply_seam_ndc
+    status: pending
+    notes: ''
+  - case_id: mesh_texture2d/opaque_view3d_quad
+    status: pending
+    notes: ''
+  - case_id: mesh_texture2d/alpha_diagnostic_ndc
+    status: pending
+    notes: ''
+  - case_id: mesh_texture2d/shared_nearest_linear_ndc
+    status: pending
+    notes: ''
+  - case_id: mesh_texture2d/linear_centers_clamp_ndc
+    status: pending
+    notes: ''
+  - case_id: mesh_texture2d/linear_minification_ndc
+    status: pending
+    notes: ''
+  - case_id: mesh_texture2d/linear_alpha_multiply_ndc
+    status: pending
+    notes: ''

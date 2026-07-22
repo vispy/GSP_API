@@ -60,6 +60,7 @@ from gsp.protocol import (
     SetViewAction,
     TextVisual,
     Texture2D,
+    TextureFilter,
     TextAnchorX,
     TextAnchorY,
     StrokeCap,
@@ -252,6 +253,7 @@ DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
 DVZ_FIELD_SEMANTIC_COLOR = 4
 DVZ_COLOR_ROLE_SRGB_COLOR = 1
 DVZ_COLOR_ROLE_LINEAR_COLOR = 2
+DVZ_FIELD_FILTER_LINEAR = 0
 DVZ_FIELD_FILTER_NEAREST = 1
 DVZ_MATERIAL_MODEL_UNLIT = 0
 DVZ_SCENE_TARGET_NONE = 0
@@ -566,10 +568,9 @@ def _datoviz_incomplete_ctypes_records(
 
 def datoviz_v04_panel_frame_guide_query_ready(module: ModuleType | Any) -> bool:
     """Return whether the facade exposes Datoviz guide hit/readback APIs."""
-    return (
-        datoviz_v04_panel_frame_snapshot_ready(module)
-        and not datoviz_v04_panel_frame_guide_query_diagnostics(module)
-    )
+    return datoviz_v04_panel_frame_snapshot_ready(
+        module
+    ) and not datoviz_v04_panel_frame_guide_query_diagnostics(module)
 
 
 def datoviz_v04_view3d_live_navigation_diagnostics(
@@ -687,7 +688,9 @@ def _configure_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> An
     )
     camera = dvz.dvz_panel_camera(panel)
     if _is_null_handle(camera):
-        raise DatovizV04Unsupported("Datoviz retained View3D panel camera is unavailable")
+        raise DatovizV04Unsupported(
+            "Datoviz retained View3D panel camera is unavailable"
+        )
     _set_datoviz_camera_projection_state(dvz, camera, view3d)
     return camera
 
@@ -716,9 +719,7 @@ def _fill_datoviz_camera_desc(dvz: Any, desc: Any, view3d: View3D) -> None:
         )
 
 
-def _set_datoviz_camera_projection_state(
-    dvz: Any, camera: Any, view3d: View3D
-) -> None:
+def _set_datoviz_camera_projection_state(dvz: Any, camera: Any, view3d: View3D) -> None:
     if isinstance(view3d.projection, OrthographicProjection3D):
         _set_datoviz_camera_orthographic_bounds(dvz, camera, view3d)
 
@@ -727,7 +728,9 @@ def _set_datoviz_camera_orthographic_bounds(
     dvz: Any, camera: Any, view3d: View3D
 ) -> None:
     if not isinstance(view3d.projection, OrthographicProjection3D):
-        raise DatovizV04Unsupported("Datoviz orthographic bounds require OrthographicProjection3D")
+        raise DatovizV04Unsupported(
+            "Datoviz orthographic bounds require OrthographicProjection3D"
+        )
     x0, x1 = view3d.projection.xlim
     y0, y1 = view3d.projection.ylim
     near, far = view3d.projection.near_far
@@ -754,7 +757,9 @@ def _update_datoviz_view3d_camera(dvz: Any, panel: Any, view3d: View3D) -> Any:
     )
     camera = dvz.dvz_panel_camera(panel)
     if _is_null_handle(camera):
-        raise DatovizV04Unsupported("Datoviz retained View3D panel camera update failed")
+        raise DatovizV04Unsupported(
+            "Datoviz retained View3D panel camera update failed"
+        )
     _set_datoviz_camera_projection_state(dvz, camera, view3d)
     return camera
 
@@ -982,9 +987,7 @@ class DatovizV04ProtocolRenderer:
     retained_view3d_update_stats: DatovizRetainedView3DUpdateStats = field(
         default_factory=DatovizRetainedView3DUpdateStats, init=False
     )
-    view2d_axis_state: _DatovizView2DAxisState | None = field(
-        default=None, init=False
-    )
+    view2d_axis_state: _DatovizView2DAxisState | None = field(default=None, init=False)
     native_view3d_camera: Any | None = field(default=None, init=False)
     transform_adaptations: dict[str, tuple[str, ...]] = field(
         default_factory=dict, init=False
@@ -1391,7 +1394,9 @@ class DatovizV04ProtocolRenderer:
             "Datoviz path join configuration failed",
         )
         _require_datoviz_success(
-            _set_path_subpaths(self.dvz, dvz_visual, len(visual.path_lengths), subpaths),
+            _set_path_subpaths(
+                self.dvz, dvz_visual, len(visual.path_lengths), subpaths
+            ),
             "Datoviz path subpath configuration failed",
         )
         _set_alpha_mode_if_translucent(self.dvz, dvz_visual, colors)
@@ -1551,7 +1556,9 @@ class DatovizV04ProtocolRenderer:
             visual.depth_test is not DepthMode.DISABLED
             and visual.depth_write is not DepthMode.DISABLED
             if retained_view3d_data_path
-            else False if is_3d_mesh else visual.depth_test is DepthMode.ENABLED
+            else False
+            if is_3d_mesh
+            else visual.depth_test is DepthMode.ENABLED
         )
         _require_datoviz_success(
             self.dvz.dvz_visual_set_depth_test(dvz_visual, native_depth_test),
@@ -1573,8 +1580,11 @@ class DatovizV04ProtocolRenderer:
                 ),
                 z_layer=round(visual.order),
                 controller_mode=(
-                    "apply" if retained_view3d_data_path
-                    else "fixed" if is_3d_mesh else "apply"
+                    "apply"
+                    if retained_view3d_data_path
+                    else "fixed"
+                    if is_3d_mesh
+                    else "apply"
                 ),
             ),
         )
@@ -1594,9 +1604,11 @@ class DatovizV04ProtocolRenderer:
         visual: MeshVisual,
         positions: npt.NDArray[np.float32],
     ) -> None:
-        """Bind the strict RGBA8/nearest/unlit Texture2D mesh state."""
+        """Bind strict RGBA8 nearest-or-linear unlit Texture2D mesh state."""
         if visual.texture2d_id is None or visual.uvs is None:
-            raise DatovizV04Unsupported("texture2d_unlit mesh is missing texture or UV data")
+            raise DatovizV04Unsupported(
+                "texture2d_unlit mesh is missing texture or UV data"
+            )
         texture = (self.texture_resources or {}).get(visual.texture2d_id)
         if texture is None:
             raise DatovizV04Unsupported(
@@ -1622,16 +1634,19 @@ class DatovizV04ProtocolRenderer:
             raise DatovizV04Unsupported("Datoviz textured-mesh field binding failed")
 
         sampling = self.dvz.dvz_field_sampling_desc()
+        if visual.texture_filter is TextureFilter.LINEAR:
+            filter_member = "DVZ_FIELD_FILTER_LINEAR"
+            filter_fallback = DVZ_FIELD_FILTER_LINEAR
+        else:
+            filter_member = "DVZ_FIELD_FILTER_NEAREST"
+            filter_fallback = DVZ_FIELD_FILTER_NEAREST
         sampling.min_filter = _enum_value(
-            self.dvz,
-            "DvzFieldFilter",
-            "DVZ_FIELD_FILTER_NEAREST",
-            DVZ_FIELD_FILTER_NEAREST,
+            self.dvz, "DvzFieldFilter", filter_member, filter_fallback
         )
         sampling.mag_filter = sampling.min_filter
         _require_datoviz_success(
             _set_visual_field_sampling(self.dvz, dvz_visual, "texture", sampling),
-            "Datoviz textured-mesh nearest sampling configuration failed",
+            "Datoviz textured-mesh field-slot sampling configuration failed",
         )
 
         material = self.dvz.dvz_material_desc()
@@ -1642,9 +1657,7 @@ class DatovizV04ProtocolRenderer:
             DVZ_MATERIAL_MODEL_UNLIT,
         )
         _require_datoviz_success(
-            self.dvz.dvz_visual_set_material(
-                dvz_visual, _ctypes_pointer_arg(material)
-            ),
+            self.dvz.dvz_visual_set_material(dvz_visual, _ctypes_pointer_arg(material)),
             "Datoviz textured-mesh unlit material configuration failed",
         )
         self.sampled_fields[visual.id] = sampled_field
@@ -1984,8 +1997,10 @@ class DatovizV04ProtocolRenderer:
             controller_id=controller_id,
             layout_snapshot_id=layout_snapshot_id,
         )
-        self.live_view3d_navigation.subscription_id = self.dvz.dvz_input_subscribe_event(
-            router, self.live_view3d_navigation.handle_input_event, None
+        self.live_view3d_navigation.subscription_id = (
+            self.dvz.dvz_input_subscribe_event(
+                router, self.live_view3d_navigation.handle_input_event, None
+            )
         )
         return self.live_view3d_navigation
 
@@ -2308,7 +2323,8 @@ class DatovizV04ProtocolRenderer:
             status=QueryStatus.UNSUPPORTED,
             hit=False,
             view_id=request.view_id,
-            panel_id=request.panel_id or (self.view3d.panel_id if self.view3d else None),
+            panel_id=request.panel_id
+            or (self.view3d.panel_id if self.view3d else None),
             panel_xy=request.panel_xy,
             diagnostics=(diagnostic,),
         )
@@ -2720,9 +2736,7 @@ class _DatovizLiveView2DNavigation:
                 unsubscribe_event(self.router, self.handle_input_event, None)
         self._closed = True
 
-    def handle_input_event(
-        self, _router: Any, event_ptr: Any, _user_data: Any
-    ) -> None:
+    def handle_input_event(self, _router: Any, event_ptr: Any, _user_data: Any) -> None:
         """Handle one routed Datoviz input callback."""
         input_event = getattr(event_ptr, "contents", event_ptr)
         input_event_type = int(getattr(input_event, "type"))
@@ -2866,9 +2880,7 @@ class _DatovizLiveView3DNavigation:
                 unsubscribe_event(self.router, self.handle_input_event, None)
         self._closed = True
 
-    def handle_input_event(
-        self, _router: Any, event_ptr: Any, _user_data: Any
-    ) -> None:
+    def handle_input_event(self, _router: Any, event_ptr: Any, _user_data: Any) -> None:
         """Handle one routed Datoviz input callback."""
         input_event = getattr(event_ptr, "contents", event_ptr)
         input_event_type = int(getattr(input_event, "type"))
@@ -2935,7 +2947,7 @@ class _DatovizLiveView3DNavigation:
         if event.kind is NavigationPointerEventKind.WHEEL and event.scroll_steps != 0.0:
             self._apply_payload(
                 View3DNavigationActionKind.ZOOM,
-                Zoom3DPayload(scale=1.1 ** event.scroll_steps),
+                Zoom3DPayload(scale=1.1**event.scroll_steps),
             )
             return
         if event.kind is NavigationPointerEventKind.DOUBLE_CLICK:
@@ -3726,9 +3738,7 @@ def _visual_attach_desc(
 
 def _validate_visual_attach_desc_binding(desc: Any) -> None:
     missing = [
-        name
-        for name in ("clip_rect", "viewport_rect")
-        if not hasattr(desc, name)
+        name for name in ("clip_rect", "viewport_rect") if not hasattr(desc, name)
     ]
     if missing:
         raise DatovizV04Unavailable(
@@ -3885,9 +3895,7 @@ def _resolve_datoviz_partial_layout_snapshot(
         z_layers, contribution_diagnostics = _datoviz_frame_contribution_layers(
             dvz, snapshot, frame_snapshot_id
         )
-        transform, transform_diagnostics = _datoviz_frame_data_to_screen_transform(
-            info
-        )
+        transform, transform_diagnostics = _datoviz_frame_data_to_screen_transform(info)
         grid_clip_rect = _optional_dvz_rect(getattr(info, "grid_clip_rect_px", None))
 
         guide_query_supported = datoviz_v04_panel_frame_guide_query_ready(dvz)
@@ -3961,9 +3969,7 @@ def _resolve_datoviz_partial_layout_snapshot(
             ),
             title_boxes=tuple(box for box in guide_boxes if box.kind == "title"),
             legend_boxes=tuple(box for box in guide_boxes if box.kind == "legend"),
-            colorbar_boxes=tuple(
-                box for box in guide_boxes if box.kind == "colorbar"
-            ),
+            colorbar_boxes=tuple(box for box in guide_boxes if box.kind == "colorbar"),
             grid_clip_rect_px=grid_clip_rect,
             z_layers=z_layers,
             diagnostics=snapshot_diagnostics,
@@ -4007,7 +4013,9 @@ def _query_datoviz_panel_frame_guides(
             frame_snapshot_id = _native_uint_id(dvz.dvz_panel_frame_id(snapshot))
         native_layout_snapshot_id = f"layout:datoviz:{frame_snapshot_id:x}"
         layout_snapshot_id = request.layout_snapshot_id or native_layout_snapshot_id
-        if not _datoviz_layout_snapshot_id_matches(layout_snapshot_id, frame_snapshot_id):
+        if not _datoviz_layout_snapshot_id_matches(
+            layout_snapshot_id, frame_snapshot_id
+        ):
             return QueryResult(
                 request_id=request.id,
                 status=QueryStatus.STALE,
@@ -4058,9 +4066,7 @@ def _query_datoviz_panel_frame_guides(
         label = _datoviz_label(getattr(hit_record, "label", b""))
         has_data_value = bool(getattr(hit_record, "has_data_value", False))
         data_value = (
-            float(getattr(hit_record, "data_value"))
-            if has_data_value
-            else None
+            float(getattr(hit_record, "data_value")) if has_data_value else None
         )
         item_id = (
             int(getattr(hit_record, "item_index"))
@@ -4075,9 +4081,7 @@ def _query_datoviz_panel_frame_guides(
             text_value=label,
         )
         diagnostic = (
-            "datoviz_all_rendered_guide_contribution_verified"
-            if all_rendered
-            else None
+            "datoviz_all_rendered_guide_contribution_verified" if all_rendered else None
         )
         return QueryResult(
             request_id=request.id,
@@ -4102,7 +4106,9 @@ def _datoviz_frame_device_scale(info: Any) -> float:
     scale_x = float(getattr(info, "device_scale_x", 1.0))
     scale_y = float(getattr(info, "device_scale_y", scale_x))
     if scale_x <= 0.0 or scale_y <= 0.0:
-        raise DatovizV04Unsupported("Datoviz panel frame reported non-positive device scale")
+        raise DatovizV04Unsupported(
+            "Datoviz panel frame reported non-positive device scale"
+        )
     if not np.isclose(scale_x, scale_y, rtol=1e-6, atol=1e-6):
         raise DatovizV04Unsupported(
             "Datoviz panel frame reported asymmetric device_scale_x/device_scale_y; "
@@ -4122,7 +4128,9 @@ def _validate_datoviz_frame_units(info: Any, render_target: RenderTarget) -> Non
         raise DatovizV04Unsupported(
             "Datoviz panel frame framebuffer width disagrees with logical width/device scale"
         )
-    if not np.isclose(framebuffer_height, render_target.framebuffer_height_px, atol=1.0):
+    if not np.isclose(
+        framebuffer_height, render_target.framebuffer_height_px, atol=1.0
+    ):
         raise DatovizV04Unsupported(
             "Datoviz panel frame framebuffer height disagrees with logical height/device scale"
         )
@@ -4147,7 +4155,9 @@ def _datoviz_frame_guide_boxes(
                 )
             )
             continue
-        if frame_snapshot_id and _native_uint_id(getattr(record, "snapshot_id", 0)) not in (
+        if frame_snapshot_id and _native_uint_id(
+            getattr(record, "snapshot_id", 0)
+        ) not in (
             0,
             frame_snapshot_id,
         ):
@@ -4181,7 +4191,9 @@ def _datoviz_frame_guide_boxes(
         if bool(getattr(record, "has_anchor", False)):
             anchor_values = getattr(record, "anchor_px", None)
             if anchor_values is not None:
-                anchor = LayoutAnchor(x=float(anchor_values[0]), y=float(anchor_values[1]))
+                anchor = LayoutAnchor(
+                    x=float(anchor_values[0]), y=float(anchor_values[1])
+                )
         role = _datoviz_guide_role(dvz, int(getattr(record, "role", 0)))
         boxes.append(
             ResolvedGuideBox(
@@ -4224,7 +4236,9 @@ def _datoviz_frame_contribution_layers(
                 )
             )
             continue
-        if frame_snapshot_id and _native_uint_id(getattr(record, "snapshot_id", 0)) not in (
+        if frame_snapshot_id and _native_uint_id(
+            getattr(record, "snapshot_id", 0)
+        ) not in (
             0,
             frame_snapshot_id,
         ):
@@ -4418,9 +4432,7 @@ def _datoviz_enum_values(
     }
 
 
-def _datoviz_enum_value(
-    dvz: Any, enum_type_name: str, name: str, fallback: int
-) -> int:
+def _datoviz_enum_value(dvz: Any, enum_type_name: str, name: str, fallback: int) -> int:
     value = getattr(dvz, name, None)
     if value is not None:
         return int(value)

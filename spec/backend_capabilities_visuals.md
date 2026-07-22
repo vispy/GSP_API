@@ -279,8 +279,8 @@ Current S050 support summary:
 |---|---:|---:|---:|---:|---:|---|
 | Protocol validation | supported | supported | validation only | validation only | n/a | Validates resource, UV, material, filter, and applicability semantics; does not render. |
 | Matplotlib renderer | unsupported | unsupported | unsupported | unsupported | n/a | Rejects all textured meshes explicitly. |
-| Datoviz renderer | supported | supported | supported | pending runtime promotion | n/a | Nearest is proven; linear remains unadvertised until M252 offscreen conformance. |
-| VisPy2 producer | n/a | n/a | n/a | n/a | planned | M251 adds only the bounded `texture_filter` keyword; renderer support remains separate. |
+| Datoviz renderer | supported | supported | supported | supported | n/a | Post-RC2 field-slot min/mag mapping passes the S059 offscreen numeric probes with 0/255 maximum channel error. |
+| VisPy2 producer | n/a | n/a | n/a | n/a | supported | Emits the bounded `texture_filter` field; renderer support remains separate. |
 
 The following lighting and material capability names remain reserved/deferred after S050:
 

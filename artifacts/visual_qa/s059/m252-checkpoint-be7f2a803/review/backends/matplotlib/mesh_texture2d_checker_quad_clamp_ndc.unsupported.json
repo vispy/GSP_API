@@ -1,0 +1,12 @@
+{
+  "backend_id": "matplotlib",
+  "case_id": "mesh_texture2d/checker_quad_clamp_ndc",
+  "diagnostics": {
+    "capability": "meshvisual.material.texture2d_unlit.v1",
+    "status": "unsupported"
+  },
+  "reason": "meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes",
+  "schema_kind": "gsp.visual_qa.unsupported",
+  "schema_version": 1,
+  "status": "unsupported"
+}

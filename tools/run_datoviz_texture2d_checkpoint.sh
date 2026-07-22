@@ -5,7 +5,14 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 repo_root="$(cd "${script_dir}/.." && pwd -P)"
 
 DATOVIZ_REPO="${DATOVIZ_REPO:-${repo_root}/../datoviz}"
-RESOLUTION="${RESOLUTION:-800x600}"
+RESOLUTION="${RESOLUTION:-801x601}"
+
+resolution_width="${RESOLUTION%x*}"
+resolution_height="${RESOLUTION#*x}"
+if (( resolution_width % 2 == 0 || resolution_height % 2 == 0 )); then
+  echo "Texture-filter checkpoint resolution must have odd dimensions: ${RESOLUTION}" >&2
+  exit 2
+fi
 
 if [[ ! -d "${DATOVIZ_REPO}/.git" ]]; then
   echo "Datoviz checkout not found: ${DATOVIZ_REPO}" >&2
@@ -16,7 +23,7 @@ datoviz_revision="$(git -C "${DATOVIZ_REPO}" rev-parse HEAD)"
 datoviz_short_revision="$(git -C "${DATOVIZ_REPO}" rev-parse --short=9 HEAD)"
 datoviz_describe="$(git -C "${DATOVIZ_REPO}" describe --tags --always --dirty)"
 run_id="${RUN_ID:-datoviz-texture2d-${datoviz_short_revision}}"
-out_root="${OUT_ROOT:-${repo_root}/artifacts/visual_qa/s050/checkpoints/${datoviz_short_revision}}"
+out_root="${OUT_ROOT:-${repo_root}/artifacts/visual_qa/s059/checkpoints/${datoviz_short_revision}}"
 
 mkdir -p "${out_root}"
 cd "${repo_root}"
@@ -44,7 +51,7 @@ if missing:
     raise SystemExit(f"Datoviz current API is missing required symbols: {missing}")
 
 payload = {
-    "schema_kind": "gsp.s050.datoviz_texture2d_checkpoint_provenance",
+    "schema_kind": "gsp.s059.datoviz_texture2d_checkpoint_provenance",
     "schema_version": 1,
     "datoviz_repo": str(repo),
     "datoviz_revision": os.environ["DATOVIZ_REVISION"],
@@ -61,7 +68,7 @@ print(path)
 PY
 
 tools/run_datoviz_visual_review_pack.sh \
-  --suite s050 \
+  --suite s059 \
   --out "${out_root}/review" \
   --resolution "${RESOLUTION}" \
   --run-id "${run_id}" \
@@ -69,7 +76,13 @@ tools/run_datoviz_visual_review_pack.sh \
   --case mesh_texture2d/checker_quad_clamp_ndc \
   --case mesh_texture2d/color_multiply_seam_ndc \
   --case mesh_texture2d/opaque_view3d_quad \
-  --case mesh_texture2d/alpha_diagnostic_ndc
+  --case mesh_texture2d/alpha_diagnostic_ndc \
+  --case mesh_texture2d/shared_nearest_linear_ndc \
+  --case mesh_texture2d/linear_centers_clamp_ndc \
+  --case mesh_texture2d/linear_minification_ndc \
+  --case mesh_texture2d/linear_alpha_multiply_ndc
+
+uv run python tools/verify_datoviz_texture_filter_artifacts.py "${out_root}/review"
 
 OUT_ROOT="${out_root}" DATOVIZ_REVISION="${datoviz_revision}" uv run python - <<'PY'
 from __future__ import annotations
@@ -85,8 +98,8 @@ report = json.loads(report_path.read_text(encoding="utf-8"))
 texture_cases = [
     case for case in report["cases"] if case["case_id"].startswith("mesh_texture2d/")
 ]
-if len(texture_cases) != 5:
-    raise SystemExit(f"expected five Texture2D cases, found {len(texture_cases)}")
+if len(texture_cases) != 9:
+    raise SystemExit(f"expected nine Texture2D cases, found {len(texture_cases)}")
 
 failures: list[str] = []
 artifacts: list[str] = []
@@ -99,15 +112,17 @@ for case in texture_cases:
     if not artifact.is_file():
         failures.append(f"{case['case_id']}: missing artifact {artifact}")
         continue
-    artifacts.append(str(artifact))
+    artifacts.append(str(artifact.relative_to(out_root)))
 if failures:
     raise SystemExit("Datoviz Texture2D checkpoint failed: " + "; ".join(failures))
 
 summary = {
-    "schema_kind": "gsp.s050.datoviz_texture2d_checkpoint",
+    "schema_kind": "gsp.s059.datoviz_texture2d_checkpoint",
     "schema_version": 1,
     "datoviz_revision": os.environ["DATOVIZ_REVISION"],
     "case_count": len(texture_cases),
+    "nearest_regression_case_count": 5,
+    "linear_filter_case_count": 4,
     "rendered_count": len(artifacts),
     "artifacts": artifacts,
     "status": "passed",

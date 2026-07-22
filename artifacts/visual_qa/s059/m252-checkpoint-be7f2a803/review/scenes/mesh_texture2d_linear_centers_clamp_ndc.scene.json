@@ -1,0 +1,234 @@
+{
+  "arrays": {
+    "expected_probe_ndc_xy": {
+      "dtype": "float32",
+      "key": "expected_probe_ndc_xy",
+      "path": "mesh_texture2d_linear_centers_clamp_ndc.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "expected_probe_rgba": {
+      "dtype": "uint8",
+      "key": "expected_probe_rgba",
+      "path": "mesh_texture2d_linear_centers_clamp_ndc.arrays.npz",
+      "shape": [
+        4,
+        4
+      ]
+    },
+    "texture_rgba8": {
+      "dtype": "uint8",
+      "key": "texture_rgba8",
+      "path": "mesh_texture2d_linear_centers_clamp_ndc.arrays.npz",
+      "shape": [
+        2,
+        2,
+        4
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "mesh_texture2d/linear_centers_clamp_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [
+    {
+      "format": "rgba8",
+      "id": "texture:s059-linear-centers-clamp",
+      "image": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          2,
+          4
+        ]
+      }
+    }
+  ],
+  "transform_resources": [],
+  "view3d": null,
+  "views": [],
+  "visuals": [
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "color_mode": "uniform",
+      "coordinate_space": "ndc",
+      "depth_test": "auto",
+      "depth_write": "auto",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "visual:texture2d-linear-top-left",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "shading": "texture2d_unlit",
+      "texture2d_id": "texture:s059-linear-centers-clamp",
+      "texture_filter": "linear",
+      "uv_mode": "vertex",
+      "uvs": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "color_mode": "uniform",
+      "coordinate_space": "ndc",
+      "depth_test": "auto",
+      "depth_write": "auto",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "visual:texture2d-linear-bottom-left",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "shading": "texture2d_unlit",
+      "texture2d_id": "texture:s059-linear-centers-clamp",
+      "texture_filter": "linear",
+      "uv_mode": "vertex",
+      "uvs": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "color_mode": "uniform",
+      "coordinate_space": "ndc",
+      "depth_test": "auto",
+      "depth_write": "auto",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "visual:texture2d-linear-clamp-top-left",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "shading": "texture2d_unlit",
+      "texture2d_id": "texture:s059-linear-centers-clamp",
+      "texture_filter": "linear",
+      "uv_mode": "vertex",
+      "uvs": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "color_mode": "uniform",
+      "coordinate_space": "ndc",
+      "depth_test": "auto",
+      "depth_write": "auto",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "visual:texture2d-linear-clamp-bottom-right",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "shading": "texture2d_unlit",
+      "texture2d_id": "texture:s059-linear-centers-clamp",
+      "texture_filter": "linear",
+      "uv_mode": "vertex",
+      "uvs": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      }
+    }
+  ]
+}

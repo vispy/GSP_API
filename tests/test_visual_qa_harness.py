@@ -30,6 +30,7 @@ from gsp.qa.visual.cases import (
     S028_SUITE,
     S034_SUITE,
     S050_SUITE,
+    S059_SUITE,
     get_case,
     list_cases,
     s050_texture2d_negative_fixtures,
@@ -1940,6 +1941,34 @@ def test_s059_linear_texture_filter_is_explicit_in_canonical_scene_json() -> Non
     )
 
     assert _visual_json(visual)["texture_filter"] == "linear"
+
+
+def test_s059_texture_filter_cases_cover_runtime_contract() -> None:
+    case_ids = [case.case_id for case in list_cases(suite=S059_SUITE)]
+    assert case_ids[-4:] == [
+        "mesh_texture2d/shared_nearest_linear_ndc",
+        "mesh_texture2d/linear_centers_clamp_ndc",
+        "mesh_texture2d/linear_minification_ndc",
+        "mesh_texture2d/linear_alpha_multiply_ndc",
+    ]
+
+    shared = get_case(case_ids[-4], suite=S059_SUITE).build()
+    assert len(shared.texture_resources) == 1
+    assert [visual.texture2d_id for visual in shared.visuals] == [
+        shared.texture_resources[0].id,
+        shared.texture_resources[0].id,
+    ]
+    assert [visual.texture_filter for visual in shared.visuals] == [
+        TextureFilter.NEAREST,
+        TextureFilter.LINEAR,
+    ]
+
+    minification = get_case(case_ids[-2], suite=S059_SUITE).build()
+    assert minification.texture_resources[0].image.shape == (256, 256, 4)
+    assert minification.visuals[0].texture_filter is TextureFilter.LINEAR
+
+    alpha = get_case(case_ids[-1], suite=S059_SUITE).build()
+    assert alpha.arrays["expected_source_rgba"][3] < 0.5
 
 
 def test_s050_texture2d_negative_fixture_metadata_lists_expected_diagnostics() -> None:

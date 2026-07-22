@@ -6,7 +6,7 @@ S059 - Texture2D Nearest-Or-Linear Filtering Extension
 
 ## Status
 
-Draft; depends on M252.
+Approved; M252 completed.
 
 ## Summary
 

@@ -1,0 +1,40 @@
+{
+  "capability_matrix_path": "capability_matrix.json",
+  "case_count": 9,
+  "contact_sheets": [
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_uv_orientation_triangle_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_checker_quad_clamp_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_color_multiply_seam_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_opaque_view3d_quad.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_alpha_diagnostic_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_shared_nearest_linear_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_linear_centers_clamp_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_linear_minification_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/mesh_texture2d_linear_alpha_multiply_ndc.png",
+    "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/contact_sheets/s059_all_cases.png"
+  ],
+  "datoviz_review_classification_counts": {
+    "fail.layout": 0,
+    "fail.query": 0,
+    "fail.semantic": 0,
+    "pass.layout_strict": 0,
+    "pass.raster_tolerant": 0,
+    "pass.semantic_strict": 0,
+    "review.adapted": 9,
+    "review.native_backend": 0,
+    "unsupported.capability": 0
+  },
+  "datoviz_status_counts": {
+    "adapted": 9,
+    "crashed": 0,
+    "disabled": 0,
+    "experimental": 0,
+    "not_run": 0,
+    "strict": 0,
+    "unsupported": 0
+  },
+  "run_id": "datoviz-texture2d-be7f2a803",
+  "schema_kind": "gsp.visual_qa.review_summary",
+  "schema_version": 1,
+  "suite": "s059"
+}

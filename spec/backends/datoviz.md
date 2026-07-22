@@ -224,9 +224,12 @@ the alpha diagnostic against Datoviz commit `be7f2a80354c25e85bab88c85f5ea734097
 
 S059 exposes Datoviz's linear field-slot filtering through visual-owned
 `MeshVisual.texture_filter`. The existing material capability continues to guarantee nearest;
-Datoviz advertises `meshvisual.texture_filter.linear.v1` separately and only after offscreen
-fixtures prove ADR-0034 interpolation within `2/255`. Clamp-to-edge, no mipmaps, and base-level-only
-sampling remain fixed.
+Datoviz advertises `meshvisual.texture_filter.linear.v1` separately after the S059 offscreen
+checkpoint against `be7f2a80354c25e85bab88c85f5ea7340975b569` rendered all nine nearest/linear
+cases and all eight numeric linear probes matched with 0/255 maximum channel error. The adapter
+maps the selected protocol enum to both minification and magnification filters. Clamp-to-edge, no
+mipmaps, and base-level-only sampling remain fixed. The durable evidence is
+`artifacts/visual_qa/s059/m252-checkpoint-be7f2a803/review/linear_filter_conformance.json`.
 
 ## M066 PointVisual retained path
 

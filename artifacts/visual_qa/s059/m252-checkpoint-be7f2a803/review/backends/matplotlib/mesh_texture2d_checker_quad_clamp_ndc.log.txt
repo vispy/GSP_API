@@ -1,0 +1,1 @@
+meshvisual_material_texture2d_unlit_unsupported: Matplotlib visual QA does not render S050 textured meshes

@@ -1,0 +1,136 @@
+{
+  "arrays": {
+    "base_color": {
+      "dtype": "uint8",
+      "key": "base_color",
+      "path": "mesh_texture2d_uv_orientation_triangle_ndc.arrays.npz",
+      "shape": [
+        4
+      ]
+    },
+    "expected_probe_rgba": {
+      "dtype": "uint8",
+      "key": "expected_probe_rgba",
+      "path": "mesh_texture2d_uv_orientation_triangle_ndc.arrays.npz",
+      "shape": [
+        3,
+        4
+      ]
+    },
+    "expected_probe_uvs": {
+      "dtype": "float32",
+      "key": "expected_probe_uvs",
+      "path": "mesh_texture2d_uv_orientation_triangle_ndc.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "mesh_faces": {
+      "dtype": "uint32",
+      "key": "mesh_faces",
+      "path": "mesh_texture2d_uv_orientation_triangle_ndc.arrays.npz",
+      "shape": [
+        1,
+        3
+      ]
+    },
+    "mesh_positions": {
+      "dtype": "float32",
+      "key": "mesh_positions",
+      "path": "mesh_texture2d_uv_orientation_triangle_ndc.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "mesh_uvs": {
+      "dtype": "float32",
+      "key": "mesh_uvs",
+      "path": "mesh_texture2d_uv_orientation_triangle_ndc.arrays.npz",
+      "shape": [
+        3,
+        2
+      ]
+    },
+    "texture_rgba8": {
+      "dtype": "uint8",
+      "key": "texture_rgba8",
+      "path": "mesh_texture2d_uv_orientation_triangle_ndc.arrays.npz",
+      "shape": [
+        2,
+        2,
+        4
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "mesh_texture2d/uv_orientation_triangle_ndc",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [
+    {
+      "format": "rgba8",
+      "id": "texture:s050-orientation",
+      "image": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          2,
+          4
+        ]
+      }
+    }
+  ],
+  "transform_resources": [],
+  "view3d": null,
+  "views": [],
+  "visuals": [
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "color_mode": "uniform",
+      "coordinate_space": "ndc",
+      "depth_test": "auto",
+      "depth_write": "auto",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          1,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "visual:texture2d-orientation",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          3,
+          2
+        ]
+      },
+      "shading": "texture2d_unlit",
+      "texture2d_id": "texture:s050-orientation",
+      "uv_mode": "vertex",
+      "uvs": {
+        "dtype": "float32",
+        "shape": [
+          3,
+          2
+        ]
+      }
+    }
+  ]
+}

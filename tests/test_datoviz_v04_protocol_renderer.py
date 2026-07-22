@@ -19,6 +19,7 @@ from gsp.protocol import (
     ImageVisual,
     MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY,
     MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY,
+    MESH_TEXTURE_FILTER_LINEAR_CAPABILITY,
     MESH_NORMALS_FACE3D_CAPABILITY,
     MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY,
     MeshColorMode,
@@ -34,6 +35,7 @@ from gsp.protocol import (
     SegmentVisual,
     TextVisual,
     Texture2D,
+    TextureFilter,
     StrokeCap,
     StrokeJoin,
 )
@@ -693,7 +695,10 @@ class FakeDatovizV04WithPanelFrameSnapshot(FakeDatovizV04WithAxes):
         self.calls.append(("panel_frame_guide_hit", snapshot, x, y))
         for index, layout in enumerate(self.guide_layouts):
             rect = layout.box_px
-            if rect.x <= x <= rect.x + rect.width and rect.y <= y <= rect.y + rect.height:
+            if (
+                rect.x <= x <= rect.x + rect.width
+                and rect.y <= y <= rect.y + rect.height
+            ):
                 vars(out).update(vars(layout))
                 out.point_px = [float(x), float(y)]
                 out.data_value = 1.25
@@ -1042,7 +1047,7 @@ def _emit_fake_datoviz_pointer(
                     button=button,
                     wheel_y=wheel_y,
                     window_size=window_size,
-                )
+                ),
             )
         ),
         None,
@@ -1893,9 +1898,12 @@ def test_datoviz_capabilities_report_partial_layout_snapshot_when_frame_api_exis
     )
 
     audit = caps.metadata["s034_guide_layout_audit"]
-    assert datoviz_v04_panel_frame_snapshot_diagnostics(
-        FakeDatovizV04WithPanelFrameSnapshotOnly()
-    ) == ()
+    assert (
+        datoviz_v04_panel_frame_snapshot_diagnostics(
+            FakeDatovizV04WithPanelFrameSnapshotOnly()
+        )
+        == ()
+    )
     assert audit["resolved_layout_produce"] == "partial"
     assert audit["layout_snapshot_partial"] is True
     assert audit["layout_strict"] is False
@@ -3682,6 +3690,41 @@ def test_add_mesh_visual_lowers_strict_texture2d_unlit_state():
     assert renderer.sampled_fields == {"visual:textured": "sampled-field"}
 
 
+def test_add_mesh_visual_maps_linear_texture_filter_to_both_field_filters():
+    fake = FakeDatovizV04WithMesh()
+    texture = Texture2D(
+        id="texture:linear",
+        image=np.zeros((2, 2, 4), dtype=np.uint8),
+    )
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=fake, texture_resources={texture.id: texture}
+    )
+    visual = MeshVisual(
+        id="visual:linear-textured",
+        positions=np.array(
+            [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=np.array(
+            [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]],
+            dtype=np.float32,
+        ),
+        texture_filter=TextureFilter.LINEAR,
+    )
+
+    renderer.add_mesh_visual(visual)
+
+    sampling = _calls(fake, "set_field_sampling")[0][3]
+    assert sampling.min_filter == 0
+    assert sampling.mag_filter == 0
+
+
 def test_add_mesh_visual_configures_retained_orthographic_view3d_descriptor():
     fake = FakeDatovizV04WithRetainedView3D()
     view3d = View3D(
@@ -3967,9 +4010,14 @@ def test_retained_view3d_navigation_updates_camera_without_reuploading_mesh_buff
     assert not _calls_from(new_calls, "mesh")
     assert not _calls_from(new_calls, "add_visual")
     assert renderer.visuals["visual:retained-mesh-3d"] == "mesh-visual"
-    assert renderer.retained_view3d_update_stats.vertex_uploads == baseline_vertex_uploads
+    assert (
+        renderer.retained_view3d_update_stats.vertex_uploads == baseline_vertex_uploads
+    )
     assert renderer.retained_view3d_update_stats.index_uploads == baseline_index_uploads
-    assert renderer.retained_view3d_update_stats.visual_rebuilds == baseline_visual_rebuilds
+    assert (
+        renderer.retained_view3d_update_stats.visual_rebuilds
+        == baseline_visual_rebuilds
+    )
     assert (
         renderer.retained_view3d_update_stats.view_projection_uniform_updates
         == baseline_uniform_updates + 1
@@ -4043,7 +4091,9 @@ def test_retained_view3d_navigation_updates_perspective_camera_without_reupload(
     ]
     assert not _calls_from(new_calls, "camera_set_orthographic_bounds")
     assert not _calls_from(new_calls, "set_data")
-    assert renderer.retained_view3d_update_stats.vertex_uploads == baseline_vertex_uploads
+    assert (
+        renderer.retained_view3d_update_stats.vertex_uploads == baseline_vertex_uploads
+    )
     assert snapshot["camera_eye"] == (1.0, 1.0, 2.0)
     assert snapshot["near_far"] == (0.2, 50.0)
     assert snapshot["fov_y_radians"] == pytest.approx(math.radians(60.0))
@@ -4065,8 +4115,7 @@ def test_retained_view3d_state_readback_reports_snapshot_identity():
     assert snapshot["native_view_id"] == 0x43
     assert snapshot["layout_snapshot_id"] == "layout:datoviz:2a"
     assert (
-        snapshot["view_projection_snapshot_id"]
-        == expected.view_projection_snapshot_id
+        snapshot["view_projection_snapshot_id"] == expected.view_projection_snapshot_id
     )
     assert snapshot["camera_eye"] == view3d.camera.eye
     assert renderer.retained_view3d_update_stats.snapshot_resolves == 1
@@ -4160,9 +4209,14 @@ def test_datoviz_live_view3d_navigation_replays_canonical_actions_without_reuplo
     assert not _calls_from(new_calls, "mesh")
     assert not _calls_from(new_calls, "add_visual")
     assert renderer.visuals["visual:retained-live-mesh-3d"] == "mesh-visual"
-    assert renderer.retained_view3d_update_stats.vertex_uploads == baseline_vertex_uploads
+    assert (
+        renderer.retained_view3d_update_stats.vertex_uploads == baseline_vertex_uploads
+    )
     assert renderer.retained_view3d_update_stats.index_uploads == baseline_index_uploads
-    assert renderer.retained_view3d_update_stats.visual_rebuilds == baseline_visual_rebuilds
+    assert (
+        renderer.retained_view3d_update_stats.visual_rebuilds
+        == baseline_visual_rebuilds
+    )
     assert _calls(fake, "request_frame") == [("request_frame", "live-view")]
 
     snapshot = renderer.resolve_retained_view3d_state_snapshot(
@@ -4292,8 +4346,9 @@ def test_datoviz_view3d_navigation_action_rejects_stale_snapshot_before_camera_u
     result = renderer.apply_gsp_view3d_navigation_action(action)
 
     assert not result.accepted
-    assert View3DDiagnosticCode.VIEW3D_NAVIGATION_SNAPSHOT_MISMATCH.value in (
-        result.diagnostics[0]
+    assert (
+        View3DDiagnosticCode.VIEW3D_NAVIGATION_SNAPSHOT_MISMATCH.value
+        in (result.diagnostics[0])
     )
     assert not _calls_from(fake.calls[baseline_call_count:], "panel_set_view3d_desc")
     assert not _calls_from(fake.calls[baseline_call_count:], "camera_set_view")
@@ -4472,6 +4527,7 @@ def test_datoviz_capabilities_advertise_s040_lambert_cpu_resolve_when_view3d_rea
     assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY in caps.view3d_capabilities
     assert MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY in caps.view3d_capabilities
     assert MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY in caps.view3d_capabilities
+    assert MESH_TEXTURE_FILTER_LINEAR_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMALS_FACE3D_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY in caps.view3d_capabilities
     assert VIEW3D_LIGHT_AMBIENT_CAPABILITY in caps.view3d_capabilities
@@ -4505,9 +4561,11 @@ def test_datoviz_capabilities_hide_texture2d_without_field_slot_sampling(
     )
 
     assert MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY not in caps.view3d_capabilities
-    assert "missing dvz_visual_set_field_sampling" in caps.metadata[
-        "datoviz_texture2d_mesh_diagnostics"
-    ]
+    assert MESH_TEXTURE_FILTER_LINEAR_CAPABILITY not in caps.view3d_capabilities
+    assert (
+        "missing dvz_visual_set_field_sampling"
+        in caps.metadata["datoviz_texture2d_mesh_diagnostics"]
+    )
 
 
 def test_datoviz_capabilities_hide_live_view3d_navigation_by_default():
@@ -4517,7 +4575,9 @@ def test_datoviz_capabilities_hide_live_view3d_navigation_by_default():
 
     assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY in caps.view3d_capabilities
     assert VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY not in caps.view3d_capabilities
-    assert VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY not in caps.navigation_capabilities
+    assert (
+        VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY not in caps.navigation_capabilities
+    )
     assert not caps.supports_view3d_capability(
         VIEW3D_NAVIGATION_ORBIT_PAN_ZOOM_CAPABILITY
     )
@@ -5036,9 +5096,7 @@ def test_datoviz_live_scale_refreshes_axes_without_changing_panel_rect_or_view()
         ("clear_ticks", "axis:0"),
         ("clear_ticks", "axis:1"),
     ]
-    assert _calls_from(scale_calls, "request_frame") == [
-        ("request_frame", "live-view")
-    ]
+    assert _calls_from(scale_calls, "request_frame") == [("request_frame", "live-view")]
 
 
 def test_datoviz_live_navigation_unsubscribes_on_close():
@@ -5061,7 +5119,9 @@ def test_datoviz_view3d_live_navigation_requires_retained_data_space_binding():
     assert any("missing dvz_panel_view3d_desc" in item for item in diagnostics)
     assert any("retained DATA-space View3D visual path" in item for item in diagnostics)
     with pytest.raises(DatovizV04Unavailable, match="missing dvz_panel_view3d_desc"):
-        DatovizV04ProtocolRenderer(dvz=fake, view3d=_canonical_view3d_for_datoviz_query())
+        DatovizV04ProtocolRenderer(
+            dvz=fake, view3d=_canonical_view3d_for_datoviz_query()
+        )
 
 
 def test_renderer_show_uses_resolved_host_logical_size_for_reference_canvas():

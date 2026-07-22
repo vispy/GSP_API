@@ -1,0 +1,142 @@
+{
+  "schema_kind": "gsp.s059.datoviz_texture_filter_conformance",
+  "schema_version": 1,
+  "tolerance_255": 2,
+  "case_count": 4,
+  "probe_count": 8,
+  "status": "passed",
+  "cases": [
+    {
+      "case_id": "mesh_texture2d/shared_nearest_linear_ndc",
+      "probe_count": 2,
+      "max_channel_error_255": 0,
+      "actual_rgba8": [
+        [
+          128,
+          255,
+          128,
+          255
+        ],
+        [
+          75,
+          148,
+          78,
+          255
+        ]
+      ],
+      "expected_rgba8": [
+        [
+          128,
+          255,
+          128,
+          255
+        ],
+        [
+          75,
+          148,
+          78,
+          255
+        ]
+      ]
+    },
+    {
+      "case_id": "mesh_texture2d/linear_centers_clamp_ndc",
+      "probe_count": 4,
+      "max_channel_error_255": 0,
+      "actual_rgba8": [
+        [
+          230,
+          57,
+          70,
+          255
+        ],
+        [
+          69,
+          123,
+          157,
+          255
+        ],
+        [
+          230,
+          57,
+          70,
+          255
+        ],
+        [
+          255,
+          255,
+          255,
+          255
+        ]
+      ],
+      "expected_rgba8": [
+        [
+          230,
+          57,
+          70,
+          255
+        ],
+        [
+          69,
+          123,
+          157,
+          255
+        ],
+        [
+          230,
+          57,
+          70,
+          255
+        ],
+        [
+          255,
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    {
+      "case_id": "mesh_texture2d/linear_minification_ndc",
+      "probe_count": 1,
+      "max_channel_error_255": 0,
+      "actual_rgba8": [
+        [
+          149,
+          148,
+          156,
+          255
+        ]
+      ],
+      "expected_rgba8": [
+        [
+          149,
+          148,
+          156,
+          255
+        ]
+      ]
+    },
+    {
+      "case_id": "mesh_texture2d/linear_alpha_multiply_ndc",
+      "probe_count": 1,
+      "max_channel_error_255": 0,
+      "actual_rgba8": [
+        [
+          215,
+          231,
+          216,
+          255
+        ]
+      ],
+      "expected_rgba8": [
+        [
+          215,
+          231,
+          216,
+          255
+        ]
+      ]
+    }
+  ]
+}

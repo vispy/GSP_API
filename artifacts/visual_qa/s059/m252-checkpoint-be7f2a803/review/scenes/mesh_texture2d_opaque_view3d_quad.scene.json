@@ -1,0 +1,165 @@
+{
+  "arrays": {
+    "expected_strict_depth_allowed_if_backend_already_supports_opaque_depth": {
+      "dtype": "bool",
+      "key": "expected_strict_depth_allowed_if_backend_already_supports_opaque_depth",
+      "path": "mesh_texture2d_opaque_view3d_quad.arrays.npz",
+      "shape": [
+        1
+      ]
+    },
+    "mesh_faces": {
+      "dtype": "uint32",
+      "key": "mesh_faces",
+      "path": "mesh_texture2d_opaque_view3d_quad.arrays.npz",
+      "shape": [
+        2,
+        3
+      ]
+    },
+    "mesh_positions": {
+      "dtype": "float32",
+      "key": "mesh_positions",
+      "path": "mesh_texture2d_opaque_view3d_quad.arrays.npz",
+      "shape": [
+        4,
+        3
+      ]
+    },
+    "mesh_uvs": {
+      "dtype": "float32",
+      "key": "mesh_uvs",
+      "path": "mesh_texture2d_opaque_view3d_quad.arrays.npz",
+      "shape": [
+        4,
+        2
+      ]
+    },
+    "texture_alpha_all_255": {
+      "dtype": "bool",
+      "key": "texture_alpha_all_255",
+      "path": "mesh_texture2d_opaque_view3d_quad.arrays.npz",
+      "shape": [
+        1
+      ]
+    },
+    "texture_rgba8": {
+      "dtype": "uint8",
+      "key": "texture_rgba8",
+      "path": "mesh_texture2d_opaque_view3d_quad.arrays.npz",
+      "shape": [
+        2,
+        2,
+        4
+      ]
+    }
+  },
+  "axis_guides": [],
+  "case_id": "mesh_texture2d/opaque_view3d_quad",
+  "color_scales": [],
+  "colorbar_guides": [],
+  "panel_text_guides": [],
+  "schema_kind": "gsp.visual_qa.scene",
+  "schema_version": 1,
+  "texture_resources": [
+    {
+      "format": "rgba8",
+      "id": "texture:s050-view3d-opaque",
+      "image": {
+        "dtype": "uint8",
+        "shape": [
+          2,
+          2,
+          4
+        ]
+      }
+    }
+  ],
+  "transform_resources": [],
+  "view3d": {
+    "ambient_light_intensity": 0.0,
+    "camera": {
+      "eye": [
+        0.0,
+        0.0,
+        2.5
+      ],
+      "target": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    "depth_mode": "opaque_less",
+    "id": "view:texture2d-opaque",
+    "kind": "view3d-camera",
+    "panel_id": "panel:main",
+    "projection": {
+      "kind": "orthographic",
+      "near_far": [
+        0.0,
+        5.0
+      ],
+      "xlim": [
+        -1.0,
+        1.0
+      ],
+      "ylim": [
+        -1.0,
+        1.0
+      ]
+    },
+    "revision": 0
+  },
+  "views": [],
+  "visuals": [
+    {
+      "color": {
+        "dtype": "uint8",
+        "shape": [
+          4
+        ]
+      },
+      "color_mode": "uniform",
+      "coordinate_space": "data",
+      "depth_test": "enabled",
+      "depth_write": "enabled",
+      "face_culling": "none",
+      "faces": {
+        "dtype": "uint32",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "family": "mesh",
+      "id": "visual:texture2d-view3d-opaque",
+      "normal_generation": "none",
+      "normal_mode": "none",
+      "opacity_policy": "ordinary_alpha",
+      "order": 0.0,
+      "positions": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          3
+        ]
+      },
+      "shading": "texture2d_unlit",
+      "texture2d_id": "texture:s050-view3d-opaque",
+      "uv_mode": "vertex",
+      "uvs": {
+        "dtype": "float32",
+        "shape": [
+          4,
+          2
+        ]
+      }
+    }
+  ]
+}
