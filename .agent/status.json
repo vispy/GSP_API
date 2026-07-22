@@ -1,5 +1,5 @@
 {
-  "current_stage": "S058",
+  "current_stage": "S059",
   "stages": [
     {
       "id": "S001",
@@ -348,6 +348,12 @@
       "title": "Datoviz v0.4-dev Rolling Compatibility And RC3 Feedback",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S059",
+      "title": "Texture2D Nearest-Or-Linear Filtering Extension",
+      "state": "planned",
+      "progress": 0
     }
   ],
   "missions": [
@@ -2573,6 +2579,51 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 248
+    },
+    {
+      "id": "M249",
+      "title": "S059 linear filter ADR and specification baseline",
+      "stage": "S059",
+      "state": "ready",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 249
+    },
+    {
+      "id": "M250",
+      "title": "S059 linear filter protocol and fixtures",
+      "stage": "S059",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 250
+    },
+    {
+      "id": "M251",
+      "title": "S059 VisPy2 linear filter producer",
+      "stage": "S059",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 251
+    },
+    {
+      "id": "M252",
+      "title": "S059 Datoviz linear filter promotion",
+      "stage": "S059",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 252
+    },
+    {
+      "id": "M253",
+      "title": "S059 linear filter documentation and closeout",
+      "stage": "S059",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 253
     }
   ],
   "review_queue": [],
@@ -2670,15 +2721,15 @@
     },
     {
       "id": "Q160-TEXTURE2D-LINEAR-FILTERING-SEMANTICS",
-      "summary": "P036 asks where a bounded nearest-or-linear texture filter belongs, how it is capability-versioned, and what numeric conformance rule applies. Public implementation is paused pending the ChatGPT Pro response.",
-      "requires_human": true,
+      "summary": "Resolved by P036: add visual-owned TextureFilter nearest/linear, preserve nearest as the existing default capability, add a separate linear capability, and use base-level unmanaged straight-alpha bilinear sampling with 2/255 tolerance.",
+      "requires_human": false,
       "requires_chatgpt_pro": true,
-      "state": "open"
+      "state": "closed"
     }
   ],
   "recommendations": [
     "M247 and M222 completed: Datoviz be7f2a803 field-slot sampling unblocks the bounded GSP nearest-only Texture2D path; five of five native S050 cases render, the current-protocol example inspects successfully, and tools/run_datoviz_texture2d_checkpoint.sh preserves exact provenance for later RC3 commits.",
-    "Q160 is open: paste the P036 ChatGPT Pro response before adding public GSP linear filtering; nearest support, the Datoviz linear engine capability, and the compatibility image helper remain independent and complete.",
+    "S059 is planned from the accepted P036 response: approve M249-M253 before implementing visual-owned nearest-or-linear filtering; the plan preserves nearest compatibility and keeps broader sampler concepts deferred.",
     "S054 completed: GSP now has a detailed 90-requirement 0.2 specification, deliberately breaking gsp_vispy2 public API, evidence-backed versioned profiles, executable public documentation, migration redirects, and CI-enforced traceability; the full closeout passed 650 tests with 2 skips, strict mypy, Ruff, strict MkDocs, redirects, and 0.2.0 package builds.",
     "M237 completed: the GSP 0.2 target specification is now about 9,100 words with 90 stable requirements and explicit source dispositions; M238 is running to align the breaking Python protocol and producer APIs without violating ADR-0033.",
     "M236 completed: the protocol-centered site builds strictly, spec/current is explicitly a consolidation draft, and 101 specification/ADR/decision sources are classified with 39 detailed normative sources mapped to GSP 0.2 target chapters; M237 is now running for requirement-level specification detail.",
