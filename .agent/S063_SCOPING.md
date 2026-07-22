@@ -2,7 +2,7 @@
 
 Date: 2026-07-22
 
-Status: approved; M267 is approved and M268-M270 are authorized sequential follow-ups.
+Status: completed; M267-M270 passed all automated gates and owner live acceptance.
 
 ## Trigger
 

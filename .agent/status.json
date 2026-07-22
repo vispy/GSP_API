@@ -376,8 +376,8 @@
     {
       "id": "S063",
       "title": "Live View2D Interaction Parity And Regression Safety",
-      "state": "active",
-      "progress": 75
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2797,9 +2797,9 @@
       "id": "M270",
       "title": "S063 installed-wheel interaction qualification and closeout",
       "stage": "S063",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 270
     }
   ],
@@ -2912,7 +2912,7 @@
     }
   ],
   "recommendations": [
-    "S063 is proposed for live View2D interaction parity: first freeze failing regression tests, then synchronize Matplotlib toolbar state with canonical View2D, wire Datoviz sessions to the existing GSP navigation controller, and finish with installed-wheel plus manual live acceptance. Explicit owner approval is required before implementation.",
+    "S063 completed: Matplotlib native toolbar limits synchronize with canonical View2D while DATA and NDC placement remain distinct; Datoviz interactive 2D sessions activate retained canonical navigation; all wheel, lifecycle, parity, and owner live-review gates passed.",
     "S062 completed: fresh-root local gsp and vispy2 repositories are independently recoverable, clean, fully committed, and qualified from installed wheels; neither repository has a remote.",
     "Next recommended stage: create vispy/gsp and vispy/vispy2 GitHub repositories, add remotes, and push the qualified histories only after new explicit owner approval; keep tagging and publication separate.",
     "Datoviz remains an explicit development-source dependency at commit be7f2a80354c25e85bab88c85f5ea7340975b569 until an ordinary RC3-compatible artifact passes the same installed-wheel gates.",

@@ -6,8 +6,8 @@ S063 - Live View2D Interaction Parity And Regression Safety
 
 ## Status
 
-Approved; M269 completed and the project owner authorized sequential execution. Final closeout
-still requires owner acceptance of both live windows.
+Completed. All installed-wheel, parity, offscreen, lifecycle, type, lint, and live review gates
+passed; the project owner accepted both live windows on 2026-07-22.
 
 ## Summary
 
