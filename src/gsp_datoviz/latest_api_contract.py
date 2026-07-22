@@ -27,6 +27,8 @@ REQUIRED_DATOVIZ_V04_DEV_SYMBOLS: tuple[str, ...] = (
     "dvz_sampled_field",
     "dvz_sampled_field_set_data",
     "dvz_visual_set_field",
+    "dvz_field_sampling_desc",
+    "dvz_visual_set_field_sampling",
     "dvz_sampled_field_destroy",
     "DvzCameraDesc",
     "DvzCameraView",

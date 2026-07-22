@@ -170,6 +170,8 @@ MESH_SYMBOLS: tuple[str, ...] = (
     "dvz_visual_set_depth_test",
     "dvz_sampled_field",
     "dvz_visual_set_field",
+    "dvz_field_sampling_desc",
+    "dvz_visual_set_field_sampling",
 )
 
 MESH_RENDERER_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
@@ -180,6 +182,10 @@ MESH_RENDERER_CAPABILITIES: Mapping[str, tuple[str, ...]] = {
     "mesh.material.helper": ("dvz_visual_set_material",),
     "mesh.depth_test.helper": ("dvz_visual_set_depth_test",),
     "mesh.sampled_field.binding.evidence": ("dvz_sampled_field", "dvz_visual_set_field"),
+    "mesh.field_slot_sampling": (
+        "dvz_field_sampling_desc",
+        "dvz_visual_set_field_sampling",
+    ),
 }
 
 

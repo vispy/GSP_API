@@ -43,6 +43,7 @@ from gsp.protocol import (
     TextAnchorX,
     TextAnchorY,
     TextVisual,
+    Texture2D,
     TickSpecKind,
     ResolvedGuideBox,
     ResolvedLayoutSnapshot,
@@ -205,6 +206,9 @@ def run_visual_qa_suite(
                 probe_report,
                 datoviz_color_pipeline,
                 color_scales={scale.id: scale for scale in scene.color_scales},
+                texture_resources={
+                    texture.id: texture for texture in scene.texture_resources
+                },
                 colorbar_guides=scene.colorbar_guides,
                 axis_guides=scene.axis_guides,
                 panel_text_guides=scene.panel_text_guides,
@@ -451,6 +455,7 @@ def _run_datoviz(
     datoviz_color_pipeline: DatovizColorPipeline,
     *,
     color_scales: dict[str, ColorScale],
+    texture_resources: dict[str, Texture2D],
     colorbar_guides: tuple[ColorbarGuide, ...],
     axis_guides: tuple[AxisGuide, ...],
     panel_text_guides: tuple[PanelTextGuide, ...],
@@ -462,21 +467,6 @@ def _run_datoviz(
     artifact_path = backend_dir / f"{case_slug(case.case_id)}.png"
     unsupported_path = backend_dir / f"{case_slug(case.case_id)}.unsupported.json"
     log_path = backend_dir / f"{case_slug(case.case_id)}.log.txt"
-    if _has_texture2d_unlit_visual(visuals):
-        return _write_datoviz_unsupported(
-            unsupported_path,
-            log_path,
-            case,
-            reason=(
-                "meshvisual_material_texture2d_unlit_unsupported: Datoviz "
-                "visual QA has not proven S050 textured mesh support"
-            ),
-            diagnostics={
-                "capability": "meshvisual.material.texture2d_unlit.v1",
-                "status": "unsupported",
-            },
-            datoviz_color_pipeline=datoviz_color_pipeline,
-        )
     if not probe_report.minimal_point_scene.supported:
         return _write_datoviz_unsupported(
             unsupported_path,
@@ -522,6 +512,7 @@ def _run_datoviz(
             canvas_size=canvas_size,
             color_pipeline=datoviz_color_pipeline,
             color_scales=color_scales,
+            texture_resources=texture_resources,
             view=renderer_view,
             view3d=view3d,
             transform_resources=transform_resources,

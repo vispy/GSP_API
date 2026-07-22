@@ -59,6 +59,7 @@ from gsp.protocol import (
     SegmentVisual,
     SetViewAction,
     TextVisual,
+    Texture2D,
     TextAnchorX,
     TextAnchorY,
     StrokeCap,
@@ -97,6 +98,7 @@ from gsp.protocol import (
     ZoomAboutAction,
     pan_view2d,
     validate_mesh_visual_flat_lambert,
+    validate_mesh_visual_texture2d_unlit,
     zoom_view2d_about,
 )
 from gsp.protocol.view3d import (
@@ -170,6 +172,14 @@ _REQUIRED_DVZ_MESH_FUNCTIONS = (
     "dvz_visual_set_depth_test",
 )
 
+_REQUIRED_DVZ_TEXTURE2D_MESH_FUNCTIONS = (
+    "dvz_field_sampling_desc",
+    "dvz_visual_set_field_sampling",
+    "dvz_material_desc",
+    "dvz_visual_set_material",
+    *_REQUIRED_DVZ_SAMPLED_FIELD_FUNCTIONS,
+)
+
 _OPTIONAL_UNVERIFIED_DVZ_MESH_FUNCTIONS: tuple[str, ...] = ()
 
 _REQUIRED_DVZ_VIEW3D_CAMERA_FUNCTIONS = (
@@ -241,6 +251,9 @@ DVZ_FIELD_DIM_2D = 0
 DVZ_FIELD_FORMAT_RGBA8_UNORM = 22
 DVZ_FIELD_SEMANTIC_COLOR = 4
 DVZ_COLOR_ROLE_SRGB_COLOR = 1
+DVZ_COLOR_ROLE_LINEAR_COLOR = 2
+DVZ_FIELD_FILTER_NEAREST = 1
+DVZ_MATERIAL_MODEL_UNLIT = 0
 DVZ_SCENE_TARGET_NONE = 0
 DVZ_SCENE_TARGET_ITEM = 2
 DVZ_QUERY_HIT_FRONTMOST = 0
@@ -462,6 +475,15 @@ def datoviz_v04_mesh_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
 def datoviz_v04_mesh_ready(module: ModuleType | Any) -> bool:
     """Return whether this adapter slice may render MeshVisual through Datoviz."""
     return not datoviz_v04_mesh_diagnostics(module)
+
+
+def _datoviz_texture2d_mesh_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
+    """Return missing public APIs for the strict Texture2D mesh slice."""
+    return tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_TEXTURE2D_MESH_FUNCTIONS
+        if not hasattr(module, name)
+    )
 
 
 def datoviz_v04_view3d_camera_diagnostics(module: ModuleType | Any) -> tuple[str, ...]:
@@ -918,6 +940,7 @@ class DatovizV04ProtocolRenderer:
 
     dvz: Any = None
     color_scales: Mapping[str, ColorScale] | None = None
+    texture_resources: Mapping[str, Texture2D] | None = None
     width: int = 800
     height: int = 600
     canvas_size: CanvasSize | None = None
@@ -1448,6 +1471,17 @@ class DatovizV04ProtocolRenderer:
 
     def add_mesh_visual(self, visual: MeshVisual) -> Any:
         """Create and attach a bounded Datoviz triangle mesh visual."""
+        texture2d_unlit = visual.canonical_shading() is MeshShading.TEXTURE2D_UNLIT
+        if texture2d_unlit:
+            diagnostics = _datoviz_texture2d_mesh_diagnostics(self.dvz)
+            if diagnostics:
+                raise DatovizV04Unsupported(
+                    "meshvisual_material_texture2d_unlit_unsupported: "
+                    + "; ".join(diagnostics)
+                )
+            validate_mesh_visual_texture2d_unlit(
+                visual, texture_resources=self.texture_resources or {}
+            )
         is_3d_mesh = visual.positions.shape[1] == 3
         if is_3d_mesh:
             _validate_datoviz_mesh3d_visual(visual, self.view3d)
@@ -1507,6 +1541,8 @@ class DatovizV04ProtocolRenderer:
         _set_visual_data(self.dvz, dvz_visual, "position", positions)
         _set_visual_data(self.dvz, dvz_visual, "color", colors)
         _set_visual_index_data(self.dvz, dvz_visual, indices)
+        if texture2d_unlit:
+            self._configure_texture2d_unlit_mesh(dvz_visual, visual, positions)
         if is_3d_mesh:
             self.retained_view3d_update_stats.vertex_uploads += 1
             self.retained_view3d_update_stats.index_uploads += 1
@@ -1551,6 +1587,67 @@ class DatovizV04ProtocolRenderer:
                 )
             )
         return dvz_visual
+
+    def _configure_texture2d_unlit_mesh(
+        self,
+        dvz_visual: Any,
+        visual: MeshVisual,
+        positions: npt.NDArray[np.float32],
+    ) -> None:
+        """Bind the strict RGBA8/nearest/unlit Texture2D mesh state."""
+        if visual.texture2d_id is None or visual.uvs is None:
+            raise DatovizV04Unsupported("texture2d_unlit mesh is missing texture or UV data")
+        texture = (self.texture_resources or {}).get(visual.texture2d_id)
+        if texture is None:
+            raise DatovizV04Unsupported(
+                f"texture2d_unknown_id: unknown Texture2D id {visual.texture2d_id!r}"
+            )
+
+        texcoords = np.ascontiguousarray(np.asarray(visual.uvs, dtype=np.float32))
+        texcoords = texcoords.copy()
+        texcoords[:, 1] = 1.0 - texcoords[:, 1]
+        normals = np.zeros((positions.shape[0], 3), dtype=np.float32)
+        normals[:, 2] = 1.0
+        _set_visual_data(self.dvz, dvz_visual, "normal", normals)
+        _set_visual_data(self.dvz, dvz_visual, "texcoords", texcoords)
+
+        height, width = texture.image.shape[:2]
+        sampled_field = self._create_rgba8_sampled_field(
+            texture.image,
+            width,
+            height,
+            color_role=DVZ_COLOR_ROLE_LINEAR_COLOR,
+        )
+        if not _set_visual_field(self.dvz, dvz_visual, "texture", sampled_field):
+            raise DatovizV04Unsupported("Datoviz textured-mesh field binding failed")
+
+        sampling = self.dvz.dvz_field_sampling_desc()
+        sampling.min_filter = _enum_value(
+            self.dvz,
+            "DvzFieldFilter",
+            "DVZ_FIELD_FILTER_NEAREST",
+            DVZ_FIELD_FILTER_NEAREST,
+        )
+        sampling.mag_filter = sampling.min_filter
+        _require_datoviz_success(
+            _set_visual_field_sampling(self.dvz, dvz_visual, "texture", sampling),
+            "Datoviz textured-mesh nearest sampling configuration failed",
+        )
+
+        material = self.dvz.dvz_material_desc()
+        material.model = _enum_value(
+            self.dvz,
+            "DvzMaterialModel",
+            "DVZ_MATERIAL_MODEL_UNLIT",
+            DVZ_MATERIAL_MODEL_UNLIT,
+        )
+        _require_datoviz_success(
+            self.dvz.dvz_visual_set_material(
+                dvz_visual, _ctypes_pointer_arg(material)
+            ),
+            "Datoviz textured-mesh unlit material configuration failed",
+        )
+        self.sampled_fields[visual.id] = sampled_field
 
     def add_text_visual(self, visual: TextVisual) -> Any:
         """Create Datoviz retained text objects for bounded S024 text cases."""
@@ -1893,14 +1990,19 @@ class DatovizV04ProtocolRenderer:
         return self.live_view3d_navigation
 
     def _create_rgba8_sampled_field(
-        self, pixels: npt.NDArray[np.uint8], width: int, height: int
+        self,
+        pixels: npt.NDArray[np.uint8],
+        width: int,
+        height: int,
+        *,
+        color_role: int = DVZ_COLOR_ROLE_SRGB_COLOR,
     ) -> Any:
         """Create and upload a scene-owned RGBA8 sampled field."""
         desc = self.dvz.dvz_sampled_field_desc()
         desc.dim = DVZ_FIELD_DIM_2D
         desc.format = DVZ_FIELD_FORMAT_RGBA8_UNORM
         desc.semantic = DVZ_FIELD_SEMANTIC_COLOR
-        desc.color_role = DVZ_COLOR_ROLE_SRGB_COLOR
+        desc.color_role = color_role
         desc.width = width
         desc.height = height
         desc.depth = 1
@@ -4733,6 +4835,19 @@ def _set_visual_field(
     except (ctypes.ArgumentError, TypeError):
         return _datoviz_call_succeeded(
             dvz.dvz_visual_set_field(visual, slot_name.encode("utf-8"), sampled_field)
+        )
+
+
+def _set_visual_field_sampling(
+    dvz: Any, visual: Any, slot_name: str, sampling: Any
+) -> Any:
+    """Call the slot-sampling setter across direct and ctypes facades."""
+    sampling_arg = _ctypes_pointer_arg(sampling)
+    try:
+        return dvz.dvz_visual_set_field_sampling(visual, slot_name, sampling_arg)
+    except (ctypes.ArgumentError, TypeError):
+        return dvz.dvz_visual_set_field_sampling(
+            visual, slot_name.encode("utf-8"), sampling_arg
         )
 
 

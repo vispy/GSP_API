@@ -18,12 +18,14 @@ from gsp.protocol import (
     ImageOrigin,
     ImageVisual,
     MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY,
+    MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY,
     MESH_NORMALS_FACE3D_CAPABILITY,
     MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY,
     MeshColorMode,
     MeshNormalGeneration,
     MeshNormalMode,
     MeshShading,
+    MeshUVMode,
     MeshVisual,
     MarkerShape,
     MarkerVisual,
@@ -31,6 +33,7 @@ from gsp.protocol import (
     PointVisual,
     SegmentVisual,
     TextVisual,
+    Texture2D,
     StrokeCap,
     StrokeJoin,
 )
@@ -108,6 +111,7 @@ from gsp_datoviz.capabilities import (
     gsp_capability_snapshot_from_datoviz,
 )
 from gsp_datoviz.protocol_renderer import (
+    DVZ_FIELD_FORMAT_RGBA8_UNORM,
     DatovizV04ProtocolRenderer,
     DatovizV04Unavailable,
     DatovizV04Unsupported,
@@ -345,6 +349,22 @@ class FakeDatovizV04:
     def dvz_visual_set_field(self, visual, slot_name, sampled_field):
         self.calls.append(("set_field", visual, slot_name, sampled_field))
         return True
+
+    def dvz_field_sampling_desc(self):
+        self.calls.append(("field_sampling_desc",))
+        return FakeFieldSamplingDesc()
+
+    def dvz_visual_set_field_sampling(self, visual, slot_name, sampling):
+        self.calls.append(("set_field_sampling", visual, slot_name, sampling))
+        return 0
+
+    def dvz_material_desc(self):
+        self.calls.append(("material_desc",))
+        return FakeMaterialDesc()
+
+    def dvz_visual_set_material(self, visual, material):
+        self.calls.append(("set_material", visual, material))
+        return 0
 
     def dvz_sampled_field_destroy(self, sampled_field):
         self.calls.append(("sampled_field_destroy", sampled_field))
@@ -773,6 +793,19 @@ class FakeFieldDataView:
     data = None
     bytes_per_row = 0
     rows_per_image = 0
+
+
+class FakeFieldSamplingDesc:
+    min_filter = 0
+    mag_filter = 0
+    address_u = 0
+    address_v = 0
+    address_w = 0
+    mipmap_mode = 0
+
+
+class FakeMaterialDesc:
+    model = None
 
 
 class FakeDatovizV04WithSampledFields(FakeDatovizV04):
@@ -3585,6 +3618,70 @@ def test_add_mesh_visual_accepts_default_data_domain_and_requires_view3d_for_dat
         renderer.add_mesh_visual(mesh_3d)
 
 
+def test_add_mesh_visual_lowers_strict_texture2d_unlit_state():
+    fake = FakeDatovizV04WithMesh()
+    texture = Texture2D(
+        id="texture:quadrants",
+        image=np.array(
+            [
+                [[255, 0, 0, 255], [0, 255, 0, 255]],
+                [[0, 0, 255, 255], [255, 255, 255, 255]],
+            ],
+            dtype=np.uint8,
+        ),
+    )
+    renderer = DatovizV04ProtocolRenderer(
+        dvz=fake, texture_resources={texture.id: texture}
+    )
+    visual = MeshVisual(
+        id="visual:textured",
+        positions=np.array(
+            [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]],
+            dtype=np.float32,
+        ),
+        faces=np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id=texture.id,
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=np.array(
+            [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]],
+            dtype=np.float32,
+        ),
+    )
+
+    renderer.add_mesh_visual(visual)
+
+    uploads = _calls(fake, "set_data")
+    assert [upload[2] for upload in uploads] == [
+        "position",
+        "color",
+        "normal",
+        "texcoords",
+    ]
+    np.testing.assert_array_equal(
+        uploads[2][3],
+        np.array([[0.0, 0.0, 1.0]] * 4, dtype=np.float32),
+    )
+    np.testing.assert_allclose(
+        uploads[3][3],
+        [[0.0, 1.0], [1.0, 1.0], [1.0, 0.0], [0.0, 0.0]],
+    )
+    field_desc = _calls(fake, "sampled_field")[0][2]
+    assert field_desc.format == DVZ_FIELD_FORMAT_RGBA8_UNORM
+    assert field_desc.color_role == 2
+    assert _calls(fake, "set_field") == [
+        ("set_field", "mesh-visual", "texture", "sampled-field")
+    ]
+    sampling = _calls(fake, "set_field_sampling")[0][3]
+    assert sampling.min_filter == 1
+    assert sampling.mag_filter == 1
+    material = _calls(fake, "set_material")[0][2]
+    assert material.model == 0
+    assert renderer.sampled_fields == {"visual:textured": "sampled-field"}
+
+
 def test_add_mesh_visual_configures_retained_orthographic_view3d_descriptor():
     fake = FakeDatovizV04WithRetainedView3D()
     view3d = View3D(
@@ -4374,6 +4471,7 @@ def test_datoviz_capabilities_advertise_s040_lambert_cpu_resolve_when_view3d_rea
     assert MESH3D_OPAQUE_DEPTH_CAPABILITY in caps.view3d_capabilities
     assert VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY in caps.view3d_capabilities
     assert MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY in caps.view3d_capabilities
+    assert MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMALS_FACE3D_CAPABILITY in caps.view3d_capabilities
     assert MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY in caps.view3d_capabilities
     assert VIEW3D_LIGHT_AMBIENT_CAPABILITY in caps.view3d_capabilities
@@ -4395,6 +4493,21 @@ def test_datoviz_capabilities_advertise_retained_view3d_data_space_when_ready():
         VIEW3D_RETAINED_DATA_SPACE_VISUALS_CAPABILITY
     )
     assert "view3d_retained_data_space_visuals" in caps.metadata
+
+
+def test_datoviz_capabilities_hide_texture2d_without_field_slot_sampling(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.delattr(FakeDatovizV04, "dvz_visual_set_field_sampling")
+
+    caps = gsp_capability_snapshot_from_datoviz(
+        None, dvz=FakeDatovizV04WithRetainedView3D()
+    )
+
+    assert MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY not in caps.view3d_capabilities
+    assert "missing dvz_visual_set_field_sampling" in caps.metadata[
+        "datoviz_texture2d_mesh_diagnostics"
+    ]
 
 
 def test_datoviz_capabilities_hide_live_view3d_navigation_by_default():

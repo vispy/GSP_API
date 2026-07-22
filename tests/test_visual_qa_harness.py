@@ -1962,6 +1962,8 @@ def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
         dvz_visual_set_depth_test=lambda *args: None,
         dvz_sampled_field=lambda *args: None,
         dvz_visual_set_field=lambda *args: None,
+        dvz_field_sampling_desc=lambda *args: None,
+        dvz_visual_set_field_sampling=lambda *args: None,
     )
 
     report = probe_datoviz_v04(source_path=source, facade_module=fake, raw_module=fake)
@@ -1974,6 +1976,10 @@ def test_datoviz_probe_reports_mesh_capabilities(tmp_path: Path) -> None:
         is True
     )
     assert payload["mesh_capability_matrix"]["mesh.index.upload"]["supported"] is True
+    assert (
+        payload["mesh_capability_matrix"]["mesh.field_slot_sampling"]["supported"]
+        is True
+    )
     assert payload["source_symbol_matrix"]["dvz_mesh"]
 
 

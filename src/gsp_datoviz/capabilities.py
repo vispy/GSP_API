@@ -19,6 +19,7 @@ from gsp.protocol import (
     MESH3D_NDC_CAPABILITY,
     MESH3D_OPAQUE_DEPTH_CAPABILITY,
     MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY,
+    MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY,
     MESH_NORMALS_FACE3D_CAPABILITY,
     MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY,
     NavigationPlacement,
@@ -117,6 +118,21 @@ _REQUIRED_DVZ_LIVE_INPUT_FUNCTIONS = (
     "DvzPointerEvent",
     "DvzInputEvent",
     "DvzInputEventContent",
+)
+
+_REQUIRED_DVZ_TEXTURE2D_MESH_FUNCTIONS = (
+    "dvz_mesh",
+    "dvz_visual_set_data",
+    "dvz_visual_set_index_data",
+    "dvz_sampled_field_desc",
+    "dvz_field_data_view",
+    "dvz_sampled_field",
+    "dvz_sampled_field_set_data",
+    "dvz_visual_set_field",
+    "dvz_field_sampling_desc",
+    "dvz_visual_set_field_sampling",
+    "dvz_material_desc",
+    "dvz_visual_set_material",
 )
 
 _REQUIRED_DVZ_PANEL_FRAME_SNAPSHOT_FUNCTIONS = (
@@ -432,6 +448,11 @@ def gsp_capability_snapshot_from_datoviz(
     view3d_diagnostics = _datoviz_v04_view3d_binding_diagnostics(dvz)
     retained_view3d_diagnostics = datoviz_v04_view3d_retained_data_diagnostics(dvz)
     live_input_diagnostics = datoviz_v04_live_input_diagnostics(dvz)
+    texture2d_mesh_diagnostics = tuple(
+        f"missing {name}"
+        for name in _REQUIRED_DVZ_TEXTURE2D_MESH_FUNCTIONS
+        if dvz is None or not hasattr(dvz, name)
+    )
     navigation_capabilities = ["interaction.view2d.navigation.v1"]
     view3d_capabilities: tuple[str, ...] = ()
     if view3d_diagnostics:
@@ -449,6 +470,19 @@ def gsp_capability_snapshot_from_datoviz(
             VIEW3D_LIGHT_AMBIENT_CAPABILITY,
             VIEW3D_LIGHT_DIRECTIONAL_CAPABILITY,
         )
+        if not texture2d_mesh_diagnostics:
+            view3d_capabilities = (
+                *view3d_capabilities,
+                MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY,
+            )
+            metadata["s050_texture2d_unlit"] = (
+                "public RGBA8 sampled-field mesh binding with vertex UVs, nearest "
+                "clamp/no-mipmap slot sampling, linear color role, and unlit material"
+            )
+        else:
+            metadata["datoviz_texture2d_mesh_diagnostics"] = (
+                texture2d_mesh_diagnostics
+            )
         if not retained_view3d_diagnostics:
             view3d_capabilities = (
                 *view3d_capabilities,
