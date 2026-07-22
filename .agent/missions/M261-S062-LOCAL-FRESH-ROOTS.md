@@ -6,7 +6,7 @@ S062 - Clean GSP And VisPy2 Repository Bootstrap
 
 ## Status
 
-Approved.
+Completed.
 
 ## Summary
 
@@ -25,3 +25,9 @@ rules. Do not migrate implementation code yet.
 
 Stop if either target path exists unexpectedly, repository ownership/visibility is inferred, history
 is imported, a remote is added, or package boundaries conflict with ADR-0035.
+
+## Result
+
+Created local fresh-root `gsp` and `vispy2` repositories with one independent root commit each,
+package skeletons, exact source/bundle provenance, migration manifests, and no remotes. See
+`.agent/S062_M261_LOCAL_FRESH_ROOTS.md`.

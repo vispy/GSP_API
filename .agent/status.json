@@ -371,7 +371,7 @@
       "id": "S062",
       "title": "Clean GSP And VisPy2 Repository Bootstrap",
       "state": "in_progress",
-      "progress": 0
+      "progress": 17
     }
   ],
   "missions": [
@@ -2710,16 +2710,16 @@
       "id": "M261",
       "title": "S062 local fresh-root repositories",
       "stage": "S062",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 261
     },
     {
       "id": "M262",
       "title": "S062 gsp-core curation and isolation",
       "stage": "S062",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 262
@@ -2870,6 +2870,7 @@
     }
   ],
   "recommendations": [
+    "M261 completed: local fresh-root gsp and vispy2 repositories now have one independent committed skeleton each, exact migration provenance, declared package boundaries, and no remotes; M262 is approved for gsp-core curation and isolation.",
     "S062 approved: execute M261-M266 locally to create fresh-root gsp and vispy2 repositories, isolate gsp-core, implement lazy providers and both adapters, migrate VisPy2, and qualify built wheels; do not create remotes, push, tag, release, or publish.",
     "S061 completed: architecture, naming, reproducible baseline, verified full-history bundle, and a validated 31-component migration manifest are ready for the approved local S062 bootstrap.",
     "M259 completed: the validated 31-component manifest classifies 16 migrate-now, 11 archive-only, and four defer/reassess components with exact baseline Git objects and destination owners; four expected coupling rewrites are explicit.",

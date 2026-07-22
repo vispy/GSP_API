@@ -6,7 +6,7 @@ S062 - Clean GSP And VisPy2 Repository Bootstrap
 
 ## Status
 
-Draft; blocked on M261.
+Approved; M261 completed.
 
 ## Summary
 
@@ -24,4 +24,3 @@ Curate formal protocol records, specifications, accepted rationale, fixtures, an
 
 Stop if named colormap semantics cannot be preserved without a backend dependency, an archive-only
 module is required, or wheel tests depend on source-tree paths.
-
