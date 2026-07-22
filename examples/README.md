@@ -52,6 +52,7 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | `vispy2_protocol_imshow.py` | VisPy2 protocol image producer | High-level image API rendered through the protocol backend |
 | `vispy2_protocol_point_over_image.py` | VisPy2 protocol overlay producer | Point/image composition through the protocol backend |
 | `vispy2_protocol_guides.py` | VisPy2 protocol guide API | Scatter, image, limits, labels, title, ticks, and grid intent |
+| `vispy2_datoviz_texture2d.py` | Current-protocol Datoviz Texture2D mesh | Capability inspection and optional display of the fixed nearest/clamp/no-mipmap profile |
 
 ### 3D and Camera Examples
 
@@ -72,7 +73,7 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | `mesh_normal_example.py` | Normal-based mesh material rendering | Face colors derived from view-space normals |
 | `mesh_depth_example.py` | Depth-based mesh material rendering | Face colors derived from view-space depth |
 | `mesh_phong_example.py` | Legacy Phong-shaded mesh rendering | Directional and ambient lighting outside the accepted GSP v1 material contract |
-| `mesh_textured_example.py` | Legacy textured mesh rendering | Texture loading and mesh UV attributes outside the accepted S050 renderer capability set |
+| `mesh_textured_example.py` | Legacy textured mesh rendering | Legacy texture loading and Phong material API, distinct from the bounded current-protocol example above |
 
 ### Advanced Examples
 

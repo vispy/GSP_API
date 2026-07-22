@@ -834,6 +834,20 @@ def test_vispy2_guide_example_covers_public_guide_surface():
     assert len(fig.panel_text_guides()) == 1
 
 
+def test_vispy2_datoviz_texture2d_example_builds_current_protocol_records():
+    namespace = runpy.run_path(str(Path("examples/vispy2_datoviz_texture2d.py")))
+    fig = namespace["build_figure"]()
+
+    (visual,) = fig.visuals()
+    assert isinstance(visual, MeshVisual)
+    assert visual.shading is MeshShading.TEXTURE2D_UNLIT
+    assert visual.uv_mode is MeshUVMode.VERTEX
+    assert visual.texture2d_id is not None
+    (texture,) = fig.texture_resources()
+    assert texture.id == visual.texture2d_id
+    assert texture.image.shape == (2, 2, 4)
+
+
 @pytest.mark.parametrize(
     "example",
     [
