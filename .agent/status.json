@@ -377,7 +377,7 @@
       "id": "S063",
       "title": "Live View2D Interaction Parity And Regression Safety",
       "state": "active",
-      "progress": 25
+      "progress": 50
     }
   ],
   "missions": [
@@ -2779,16 +2779,16 @@
       "id": "M268",
       "title": "S063 Matplotlib canonical live View2D synchronization",
       "stage": "S063",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 268
     },
     {
       "id": "M269",
       "title": "S063 Datoviz session navigation wiring",
       "stage": "S063",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 269
