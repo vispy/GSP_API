@@ -371,7 +371,7 @@
       "id": "S062",
       "title": "Clean GSP And VisPy2 Repository Bootstrap",
       "state": "in_progress",
-      "progress": 33
+      "progress": 50
     }
   ],
   "missions": [
@@ -2728,16 +2728,16 @@
       "id": "M263",
       "title": "S062 provider SPI and Matplotlib adapter",
       "stage": "S062",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 263
     },
     {
       "id": "M264",
       "title": "S062 Datoviz v0.4 provider",
       "stage": "S062",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 264

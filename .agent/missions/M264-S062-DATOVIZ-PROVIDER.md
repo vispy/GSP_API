@@ -6,7 +6,7 @@ S062 - Clean GSP And VisPy2 Repository Bootstrap
 
 ## Status
 
-Draft; blocked on M263.
+Approved; M263 completed.
 
 ## Summary
 
@@ -24,4 +24,3 @@ replay exact source-development checkpoints without making a release claim.
 
 Stop on unisolated native failure, capability overclaim, type leakage into core, implicit local-path
 dependency in publishable metadata, or any edit to the sibling Datoviz repository.
-
