@@ -6,7 +6,8 @@ S063 - Live View2D Interaction Parity And Regression Safety
 
 ## Status
 
-Approved; M268 completed and the project owner authorized sequential execution.
+Completed in fresh-root GSP commit `7738b5c`; full pytest, strict mypy, Ruff, retained no-upload,
+source-provenance, and cleanup gates pass.
 
 ## Summary
 

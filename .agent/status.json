@@ -377,7 +377,7 @@
       "id": "S063",
       "title": "Live View2D Interaction Parity And Regression Safety",
       "state": "active",
-      "progress": 50
+      "progress": 75
     }
   ],
   "missions": [
@@ -2788,16 +2788,16 @@
       "id": "M269",
       "title": "S063 Datoviz session navigation wiring",
       "stage": "S063",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 269
     },
     {
       "id": "M270",
       "title": "S063 installed-wheel interaction qualification and closeout",
       "stage": "S063",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 270
