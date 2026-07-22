@@ -52,7 +52,7 @@ GSP_RENDERER=network GSP_REMOTE_RENDERER=matplotlib python examples/example_name
 | `vispy2_protocol_imshow.py` | VisPy2 protocol image producer | High-level image API rendered through the protocol backend |
 | `vispy2_protocol_point_over_image.py` | VisPy2 protocol overlay producer | Point/image composition through the protocol backend |
 | `vispy2_protocol_guides.py` | VisPy2 protocol guide API | Scatter, image, limits, labels, title, ticks, and grid intent |
-| `vispy2_datoviz_texture2d.py` | Current-protocol Datoviz Texture2D mesh | Capability inspection and optional display of the fixed nearest/clamp/no-mipmap profile |
+| `vispy2_datoviz_texture2d.py` | Current-protocol Datoviz Texture2D mesh | Side-by-side nearest/linear field-slot filtering, capability inspection, and optional display |
 
 ### 3D and Camera Examples
 

@@ -30,6 +30,15 @@ uv run python examples/vispy2_datoviz_session.py
 uv run python examples/vispy2_datoviz_session.py --poll
 ```
 
+The current-protocol Texture2D example compares nearest and linear field-slot filtering. It first
+inspects the separate material and linear-filter capabilities; `--show` opens the bounded Datoviz
+display. Matplotlib intentionally rejects textured meshes rather than substituting flat color.
+
+```bash
+uv run python examples/vispy2_datoviz_texture2d.py
+uv run python examples/vispy2_datoviz_texture2d.py --show
+```
+
 ## Backend comparison
 
 | Matplotlib reference | Datoviz v0.4 |

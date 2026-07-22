@@ -39,7 +39,9 @@ development releases.
   bounded blocking display, one-frame polling, structured diagnostics, and deterministic cleanup.
 - Texture2D mesh rendering remains unsupported by Matplotlib. The Datoviz adapter now advertises
   the bounded strict capability when the post-RC2 field-slot sampling API is present, using the GSP
-  fixed nearest/clamp/no-mipmap profile; Datoviz linear sampling is not yet a GSP protocol option.
+  nearest/clamp/no-mipmap profile. GSP now also exposes visual-owned nearest-or-linear filtering;
+  Datoviz maps the choice to both field-slot filters and advertises linear support separately after
+  exact offscreen conformance, while VisPy2 emits it through `texture_filter="linear"`.
 - No production current-protocol remote transport, general retained display-update API, close
   callbacks, or event-loop embedding contract is claimed.
 

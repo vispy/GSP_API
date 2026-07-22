@@ -881,14 +881,23 @@ def test_vispy2_datoviz_texture2d_example_builds_current_protocol_records():
     namespace = runpy.run_path(str(Path("examples/vispy2_datoviz_texture2d.py")))
     fig = namespace["build_figure"]()
 
-    (visual,) = fig.visuals()
-    assert isinstance(visual, MeshVisual)
-    assert visual.shading is MeshShading.TEXTURE2D_UNLIT
-    assert visual.uv_mode is MeshUVMode.VERTEX
-    assert visual.texture2d_id is not None
-    (texture,) = fig.texture_resources()
-    assert texture.id == visual.texture2d_id
-    assert texture.image.shape == (2, 2, 4)
+    nearest, linear = fig.visuals()
+    assert all(isinstance(visual, MeshVisual) for visual in (nearest, linear))
+    assert all(
+        visual.shading is MeshShading.TEXTURE2D_UNLIT for visual in (nearest, linear)
+    )
+    assert all(visual.uv_mode is MeshUVMode.VERTEX for visual in (nearest, linear))
+    assert [visual.texture_filter for visual in (nearest, linear)] == [
+        TextureFilter.NEAREST,
+        TextureFilter.LINEAR,
+    ]
+    textures = fig.texture_resources()
+    assert len(textures) == 2
+    assert [texture.id for texture in textures] == [
+        nearest.texture2d_id,
+        linear.texture2d_id,
+    ]
+    assert all(texture.image.shape == (2, 2, 4) for texture in textures)
 
 
 @pytest.mark.parametrize(

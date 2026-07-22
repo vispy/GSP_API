@@ -12,7 +12,7 @@ Texture2D mesh rendering is unsupported and must produce an explicit diagnostic 
 
 Datoviz is the flagship retained GPU target. Support is advertised per capability and exact feature combination. Current evidence includes substantial point, marker, segment, path, image, transform, retained View2D, View3D mesh, opaque depth, bounded flat-Lambert, and bounded Texture2D-unlit scopes.
 
-The Texture2D path requires the post-RC2 field-slot sampling API and advertises support only when the generated binding exposes it. The existing material capability guarantees nearest/clamp/no-mipmap sampling. S059 accepts visual-owned linear filtering through a separate capability that remains unadvertised until runtime conformance is complete.
+The Texture2D path requires the post-RC2 field-slot sampling API and advertises support only when the generated binding exposes it. The existing material capability guarantees nearest/clamp/no-mipmap sampling. S059 adds visual-owned linear filtering through a separate capability, promoted after the Datoviz `be7f2a803` checkpoint rendered 9/9 cases and matched all eight numeric probes exactly.
 
 Important limitations include feature-specific adapted text and guide behavior, independent query coverage, and crash-isolated offscreen cases. A successful image capture does not establish query or layout strictness.
 
