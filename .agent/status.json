@@ -1,5 +1,5 @@
 {
-  "current_stage": "S060",
+  "current_stage": "S062",
   "stages": [
     {
       "id": "S001",
@@ -2870,9 +2870,9 @@
     }
   ],
   "recommendations": [
-    "M262 completed: gsp-core 0.2.0a1 is isolated in local GSP commit a0d76b7, passes 164 tests from its installed wheel plus strict mypy/Ruff, depends only on NumPy, and imports no backend; M263 is approved for the provider/session SPI and Matplotlib adapter.",
-    "M261 completed: local fresh-root gsp and vispy2 repositories now have one independent committed skeleton each, exact migration provenance, declared package boundaries, and no remotes; M262 is approved for gsp-core curation and isolation.",
-    "S062 approved: execute M261-M266 locally to create fresh-root gsp and vispy2 repositories, isolate gsp-core, implement lazy providers and both adapters, migrate VisPy2, and qualify built wheels; do not create remotes, push, tag, release, or publish.",
+    "S062 completed: fresh-root local gsp and vispy2 repositories are independently recoverable, clean, fully committed, and qualified from installed wheels; neither repository has a remote.",
+    "Next recommended stage: create vispy/gsp and vispy/vispy2 GitHub repositories, add remotes, and push the qualified histories only after new explicit owner approval; keep tagging and publication separate.",
+    "Datoviz remains an explicit development-source dependency at commit be7f2a80354c25e85bab88c85f5ea7340975b569 until an ordinary RC3-compatible artifact passes the same installed-wheel gates.",
     "S061 completed: architecture, naming, reproducible baseline, verified full-history bundle, and a validated 31-component migration manifest are ready for the approved local S062 bootstrap.",
     "M259 completed: the validated 31-component manifest classifies 16 migrate-now, 11 archive-only, and four defer/reassess components with exact baseline Git objects and destination owners; four expected coupling rewrites are explicit.",
     "M258 completed: clean baseline 463d34d reproduces all repository, package, and Datoviz gates; a complete external 42 MiB bundle with SHA-256 4b6b8bdd0e403ea9f0ed7d169a7694ac0985e7a8906890d2f74cf1dc5c611f8b passes checksum, bundle, clean-clone, exact-commit, and fsck recovery checks.",
