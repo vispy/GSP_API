@@ -12,11 +12,17 @@ import numpy as np
 import pytest
 
 from gsp.protocol import (
+    CoordinateSpace,
+    MeshShading,
+    MeshUVMode,
+    MeshVisual,
     TRANSFORM_QUERY_PAYLOAD_KIND,
+    TextureFilter,
     QueryRequest,
     QueryStatus,
     TransformQueryPayload,
 )
+from gsp.qa.visual.artifacts import _visual_json
 from gsp.qa.visual.cases import (
     S024_SUITE,
     S026_SUITE,
@@ -1899,6 +1905,7 @@ def test_s050_texture2d_cases_record_probe_metadata_and_unsupported_backend(
     assert visual["shading"] == "texture2d_unlit"
     assert visual["texture2d_id"] == "texture:s050-orientation"
     assert visual["uv_mode"] == "vertex"
+    assert "texture_filter" not in visual
     assert scene["texture_resources"][0]["format"] == "rgba8"
     assert scene["arrays"]["expected_probe_uvs"]["shape"] == [3, 2]
     assert scene["arrays"]["expected_probe_rgba"]["shape"] == [3, 4]
@@ -1916,6 +1923,23 @@ def test_s050_texture2d_cases_record_probe_metadata_and_unsupported_backend(
     )
     assert alpha_arrays["expected_diagnostic"].tolist() == ["mesh3d_alpha_not_strict"]
     assert alpha_arrays["texture_alpha_all_255"].tolist() == [False]
+
+
+def test_s059_linear_texture_filter_is_explicit_in_canonical_scene_json() -> None:
+    visual = MeshVisual(
+        id="visual:linear-texture",
+        positions=np.array([[-0.5, -0.5], [0.5, -0.5], [0.0, 0.5]], dtype=np.float32),
+        faces=np.array([[0, 1, 2]], dtype=np.uint32),
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id="texture:shared",
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=np.array([[0.0, 0.0], [1.0, 0.0], [0.5, 1.0]], dtype=np.float32),
+        texture_filter=TextureFilter.LINEAR,
+    )
+
+    assert _visual_json(visual)["texture_filter"] == "linear"
 
 
 def test_s050_texture2d_negative_fixture_metadata_lists_expected_diagnostics() -> None:

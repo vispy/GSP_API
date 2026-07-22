@@ -137,6 +137,13 @@ class MeshUVMode(str, Enum):
     VERTEX = "vertex"
 
 
+class TextureFilter(str, Enum):
+    """Texture sampling filter owned by a textured mesh field slot."""
+
+    NEAREST = "nearest"
+    LINEAR = "linear"
+
+
 class FaceCulling(str, Enum):
     """Conservative mesh face culling policy."""
 
@@ -171,9 +178,8 @@ MESH_MATERIAL_UNLIT_RGBA_CAPABILITY = "meshvisual.material.unlit_rgba.v1"
 MESH_MATERIAL_FLAT_LAMBERT_CAPABILITY = "meshvisual.material.flat_lambert.v1"
 TEXTURE2D_RGBA8_CAPABILITY = "texture2d.rgba8.v1"
 MESH_UV_VERTEX2D_CAPABILITY = "meshvisual.uv.vertex2d.v1"
-MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY = (
-    "meshvisual.material.texture2d_unlit.v1"
-)
+MESH_MATERIAL_TEXTURE2D_UNLIT_CAPABILITY = "meshvisual.material.texture2d_unlit.v1"
+MESH_TEXTURE_FILTER_LINEAR_CAPABILITY = "meshvisual.texture_filter.linear.v1"
 GSP_VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY = (
     "gsp_vispy2.producer.mesh.texture2d_unlit.v1"
 )
@@ -403,6 +409,7 @@ class MeshVisual:
     order: float = 0.0
     opacity_policy: OpacityPolicy = OpacityPolicy.ORDINARY_ALPHA
     transform: VisualTransformBinding | None = None
+    texture_filter: TextureFilter = TextureFilter.NEAREST
 
     def __post_init__(self) -> None:
         validate_id(self.id)
@@ -482,6 +489,7 @@ class MeshVisual:
             normal_mode=resolved_normal_mode,
             normal_generation=self.normal_generation,
             face_color_encoding_present=self.face_color_encoding is not None,
+            texture_filter=self.texture_filter,
         )
         if not isinstance(self.face_culling, FaceCulling):
             raise TypeError("face_culling must be a FaceCulling")
@@ -841,19 +849,27 @@ def _validate_mesh_texture2d_fields(
     normal_mode: MeshNormalMode,
     normal_generation: MeshNormalGeneration,
     face_color_encoding_present: bool,
+    texture_filter: TextureFilter,
 ) -> None:
     if not isinstance(uv_mode, MeshUVMode):
         raise TypeError("uv_mode must be a MeshUVMode")
+    if not isinstance(texture_filter, TextureFilter):
+        raise TypeError("texture_filter must be a TextureFilter")
     if shading is not MeshShading.TEXTURE2D_UNLIT:
+        if texture_filter is not TextureFilter.NEAREST:
+            raise ValueError(
+                "meshvisual_texture_filter_inapplicable: linear filtering requires "
+                'shading="texture2d_unlit"'
+            )
         if texture2d_id is not None:
             validate_id(texture2d_id)
             raise ValueError(
-                'meshvisual_texture_lighting_conflict: texture2d_id requires '
+                "meshvisual_texture_lighting_conflict: texture2d_id requires "
                 'shading="texture2d_unlit"'
             )
         if uv_mode is not MeshUVMode.NONE or uvs is not None:
             raise ValueError(
-                'meshvisual_uv_topology_unsupported: UV fields require '
+                "meshvisual_uv_topology_unsupported: UV fields require "
                 'shading="texture2d_unlit"'
             )
         return
@@ -910,7 +926,9 @@ def _generate_flat_face_normals(positions: FloatArray, faces: IndexArray) -> Flo
     edge_b = triangles[:, 2, :] - triangles[:, 0, :]
     raw = np.cross(edge_a, edge_b)
     if not np.all(np.isfinite(raw)):
-        raise ValueError("face_normal_generation_degenerate: generated normals must be finite")
+        raise ValueError(
+            "face_normal_generation_degenerate: generated normals must be finite"
+        )
     lengths = np.linalg.norm(raw, axis=1)
     if not np.all(np.isfinite(lengths)) or np.any(lengths == 0.0):
         raise ValueError(
@@ -930,7 +948,9 @@ def validate_mesh_visual_flat_lambert(
     if not isinstance(visual, MeshVisual):
         raise TypeError("visual must be a MeshVisual")
     if visual.canonical_shading() is not MeshShading.FLAT_LAMBERT:
-        raise ValueError("validate_mesh_visual_flat_lambert requires flat_lambert shading")
+        raise ValueError(
+            "validate_mesh_visual_flat_lambert requires flat_lambert shading"
+        )
     if not isinstance(view3d, View3D):
         raise ValueError("flat_lambert_requires_view3d: flat_lambert requires a View3D")
     visual.normalized_face_normals()

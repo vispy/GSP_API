@@ -28,6 +28,7 @@ from gsp.protocol import (
     SegmentVisual,
     TextVisual,
     Texture2D,
+    TextureFilter,
     TransformRef,
     View2D,
     View3D,
@@ -404,6 +405,8 @@ def _visual_json(visual: ProtocolVisual) -> dict[str, Any]:
                 "shape": list(visual.uvs.shape),
                 "dtype": str(visual.uvs.dtype),
             }
+        if visual.texture_filter is not TextureFilter.NEAREST:
+            payload["texture_filter"] = visual.texture_filter.value
         _add_transform_json(payload, visual.transform)
         return payload
 

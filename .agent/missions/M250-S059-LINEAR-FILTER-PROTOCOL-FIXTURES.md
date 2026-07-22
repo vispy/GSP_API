@@ -6,7 +6,7 @@ S059 - Texture2D Nearest-Or-Linear Filtering Extension
 
 ## Status
 
-Draft; depends on M249.
+Completed.
 
 ## Summary
 
@@ -23,3 +23,11 @@ and shared-resource distinct filters.
 
 Stop if default omission cannot be preserved or fixtures depend on geometry edges, blending, or
 unspecified perspective interpolation.
+
+## Result
+
+Added the visual-owned `TextureFilter` enum and appended `MeshVisual.texture_filter` field with a
+nearest default, exact applicability validation, and canonical nearest omission/linear emission.
+Backend-neutral CPU fixtures pin texel centers and V orientation, bilinear interpolation,
+clamp-to-edge behavior, straight-alpha channels, base-color multiplication, and distinct filters
+sharing one texture. Focused protocol, artifact, numeric, Ruff, and strict mypy checks pass.

@@ -353,7 +353,7 @@
       "id": "S059",
       "title": "Texture2D Nearest-Or-Linear Filtering Extension",
       "state": "in_progress",
-      "progress": 20
+      "progress": 40
     }
   ],
   "missions": [
@@ -2593,16 +2593,16 @@
       "id": "M250",
       "title": "S059 linear filter protocol and fixtures",
       "stage": "S059",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 250
     },
     {
       "id": "M251",
       "title": "S059 VisPy2 linear filter producer",
       "stage": "S059",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 251
@@ -2728,8 +2728,8 @@
     }
   ],
   "recommendations": [
+    "M250 completed: protocol state, compatibility-preserving canonical encoding, exact diagnostics, and backend-neutral linear sampling fixtures are implemented; M251 is ready for the bounded VisPy2 producer argument and capability.",
     "M247 and M222 completed: Datoviz be7f2a803 field-slot sampling unblocks the bounded GSP nearest-only Texture2D path; five of five native S050 cases render, the current-protocol example inspects successfully, and tools/run_datoviz_texture2d_checkpoint.sh preserves exact provenance for later RC3 commits.",
-    "S059 is planned from the accepted P036 response: approve M249-M253 before implementing visual-owned nearest-or-linear filtering; the plan preserves nearest compatibility and keeps broader sampler concepts deferred.",
     "S054 completed: GSP now has a detailed 90-requirement 0.2 specification, deliberately breaking gsp_vispy2 public API, evidence-backed versioned profiles, executable public documentation, migration redirects, and CI-enforced traceability; the full closeout passed 650 tests with 2 skips, strict mypy, Ruff, strict MkDocs, redirects, and 0.2.0 package builds.",
     "M237 completed: the GSP 0.2 target specification is now about 9,100 words with 90 stable requirements and explicit source dispositions; M238 is running to align the breaking Python protocol and producer APIs without violating ADR-0033.",
     "M236 completed: the protocol-centered site builds strictly, spec/current is explicitly a consolidation draft, and 101 specification/ADR/decision sources are classified with 39 detailed normative sources mapped to GSP 0.2 target chapters; M237 is now running for requirement-level specification detail.",

@@ -17,6 +17,7 @@ from gsp.protocol import (
     OpacityPolicy,
     Texture2D,
     Texture2DFormat,
+    TextureFilter,
     Camera3D,
     OrthographicProjection3D,
     View3D,
@@ -30,9 +31,7 @@ POSITIONS_2D = np.array(
     [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]], dtype=np.float32
 )
 FACES = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32)
-UVS = np.array(
-    [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]], dtype=np.float32
-)
+UVS = np.array([[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]], dtype=np.float32)
 
 
 def test_mesh_visual_accepts_strict_uniform_2d_mesh():
@@ -323,9 +322,53 @@ def test_mesh_visual_accepts_s050_texture2d_unlit_fields():
     assert visual.canonical_shading() is MeshShading.TEXTURE2D_UNLIT
     assert visual.texture2d_id == texture.id
     assert visual.uv_mode is MeshUVMode.VERTEX
+    assert visual.texture_filter is TextureFilter.NEAREST
     validate_mesh_visual_texture2d_unlit(
         visual, texture_resources=validate_texture2d_resources((texture,))
     )
+
+
+def test_mesh_visual_accepts_s059_linear_texture_filter():
+    visual = MeshVisual(
+        id="visual:textured-mesh",
+        positions=POSITIONS_2D,
+        faces=FACES,
+        coordinate_space=CoordinateSpace.NDC,
+        color=np.array([255, 255, 255, 255], dtype=np.uint8),
+        shading=MeshShading.TEXTURE2D_UNLIT,
+        texture2d_id="texture:checker",
+        uv_mode=MeshUVMode.VERTEX,
+        uvs=UVS,
+        texture_filter=TextureFilter.LINEAR,
+    )
+
+    assert visual.texture_filter is TextureFilter.LINEAR
+
+
+def test_mesh_visual_s059_rejects_inapplicable_or_invalid_texture_filter():
+    with pytest.raises(ValueError, match="meshvisual_texture_filter_inapplicable"):
+        MeshVisual(
+            id="visual:mesh",
+            positions=POSITIONS_2D,
+            faces=FACES,
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            texture_filter=TextureFilter.LINEAR,
+        )
+
+    with pytest.raises(TypeError, match="texture_filter must be a TextureFilter"):
+        MeshVisual(
+            id="visual:textured-mesh",
+            positions=POSITIONS_2D,
+            faces=FACES,
+            coordinate_space=CoordinateSpace.NDC,
+            color=np.array([255, 255, 255, 255], dtype=np.uint8),
+            shading=MeshShading.TEXTURE2D_UNLIT,
+            texture2d_id="texture:checker",
+            uv_mode=MeshUVMode.VERTEX,
+            uvs=UVS,
+            texture_filter="linear",  # type: ignore[arg-type]
+        )
 
 
 def test_mesh_visual_s050_texture2d_rejects_missing_texture_and_uvs():
