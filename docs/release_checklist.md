@@ -20,8 +20,9 @@ it does not publish artifacts or create a tag.
   - release-facing docs must reflect accepted work through S050;
   - Matplotlib remains the reference for layout, navigation, perspective View3D, Lambert shading,
     projected-NDC face culling, and mesh-triangle-pick CPU oracle behavior;
-  - Texture2D resources, per-vertex UVs, and the VisPy2 textured-mesh producer are protocol/API
-    surfaces only; no renderer advertises strict Texture2D mesh support;
+  - Texture2D resources, per-vertex UVs, and the VisPy2 textured-mesh producer are public protocol/API
+    surfaces; the Datoviz adapter advertises the bounded strict renderer capability only with the
+    post-RC2 field-slot sampling API, while Matplotlib remains unsupported;
   - Datoviz v0.4 support is advertised only through runtime capability gates and structured
     unsupported diagnostics.
 - Public fixture data included in release artifacts:
@@ -81,7 +82,8 @@ Backend support must explicitly distinguish:
 - network renderer server requirements.
 
 Known limitations must explicitly mention that Datoviz v0.4 does not advertise
-`query.view3d.mesh_triangle_pick.v1`, face-culling, or Texture2D mesh capabilities; that
+`query.view3d.mesh_triangle_pick.v1` or face-culling; that its Texture2D capability requires the
+post-RC2 development API and remains fixed to the GSP nearest/clamp/no-mipmap profile; that
 perspective mesh picking and strict non-opaque 3D compositing remain deferred; and that native grid
 clipping is not full guide strictness.
 

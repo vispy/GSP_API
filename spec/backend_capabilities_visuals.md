@@ -263,8 +263,8 @@ Strict textured mesh support requires immutable RGBA8 `Texture2D` resources, per
 nearest/clamp/no-mipmap sampling, multiplicative unlit RGBA output, and the diagnostics in
 `spec/visuals/mesh_texture2d_unlit_s050.md`. A renderer must not advertise
 `meshvisual.material.texture2d_unlit.v1` until automated fixtures prove those semantics. Matplotlib
-currently remains unsupported for textured meshes; Datoviz support requires public API evidence for
-canonical texture upload, UV binding, sampling, image origin, and color behavior.
+currently remains unsupported for textured meshes. Datoviz's post-RC2 field-slot sampling API and
+the S050 runtime fixtures now provide the required evidence for the bounded Datoviz path.
 
 Current S050 support summary:
 
@@ -272,7 +272,7 @@ Current S050 support summary:
 |---|---:|---:|---:|---:|---|
 | Protocol validation | supported | supported | validation only | n/a | Validates immutable RGBA8 textures and per-vertex UV fields; does not render. |
 | Matplotlib renderer | unsupported | unsupported | unsupported | n/a | Direct renderer and visual QA reject with `meshvisual_material_texture2d_unlit_unsupported`. |
-| Datoviz renderer | blocked | blocked | blocked | n/a | M220 found public upload/binding candidates but sampler, origin, unmanaged RGBA, and exact unlit multiplication remain unproven. |
+| Datoviz renderer | supported | supported | supported | n/a | Capability-gated on the post-RC2 field-slot sampling API; fixtures prove nearest/clamp/no-mipmap sampling, UV-origin adaptation, linear-color RGBA8 upload, unlit multiplication, and retained View3D execution. |
 | VisPy2 producer | n/a | n/a | n/a | supported | Emits canonical `Texture2D` resources and `texture2d_unlit` `MeshVisual` records only; renderer support remains separate. |
 
 The following lighting and material capability names remain reserved/deferred after S050:

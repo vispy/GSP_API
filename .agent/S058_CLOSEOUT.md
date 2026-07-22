@@ -15,11 +15,18 @@ later RC3 commits.
 - `tools/run_datoviz_v04dev_checkpoint.sh` reproduces provenance verification, native replay,
   comparison, lifecycle, and 168 focused tests in one bounded command.
 
-## Capability decision
+## Capability decision and post-closeout follow-up
 
-No GSP capability changes in this stage. Guide execution is now crash-free but remains adapted.
-Texture2D mesh sampling, canonical mesh-triangle identity, and rich live image payloads remain
-blocked by incomplete public Datoviz semantics or runtime evidence.
+The original rolling checkpoint made no capability changes. A same-day follow-up against Datoviz
+`be7f2a80354c25e85bab88c85f5ea7340975b569` added the missing public field-slot sampling API and
+proved the bounded S050 Texture2D path. GSP now capability-gates and renders RGBA8 textures with
+per-vertex UVs, nearest/clamp/no-mipmap sampling, top-row/high-v origin adaptation, linear-color
+upload, vertex-color multiplication, the unlit material model, and retained DATA-space View3D.
+
+The S050 review pack rendered all five Datoviz Texture2D cases with no unsupported or crashed
+Datoviz rows. Datoviz also supports linear sampling, but GSP continues to request nearest because
+linear filtering is outside the current S050 protocol profile. Canonical mesh-triangle identity and
+rich live image payloads remain blocked by incomplete public Datoviz semantics or runtime evidence.
 
 ## Next trigger
 

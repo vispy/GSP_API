@@ -214,12 +214,17 @@ draw-state names are not public GSP semantics and are not strict S050 evidence. 
 combine with `meshvisual.positions3d.opaque_depth.v1` only on the retained DATA-space View3D path
 and only when base alpha is `1.0` and every texture alpha byte is `255`.
 
-M220 found that current v0.4-dev public bindings expose candidate mesh texture symbols:
-`dvz_mesh`, mesh `"texcoords"` uploads, RGBA8 sampled fields, `dvz_visual_set_field(...,
-"texture", field)`. Datoviz must still keep S050 texture
-capabilities unadvertised until runtime fixtures or upstream public documentation prove mesh
-nearest/clamp/no-mipmap sampling, top-row/high-v origin behavior, unmanaged numeric RGBA behavior,
-and exact multiplicative unlit output.
+The post-RC2 v0.4-dev API exposes mesh `"texcoords"` uploads, RGBA8 sampled fields,
+`dvz_visual_set_field(..., "texture", field)`, and per-slot sampling through
+`dvz_visual_set_field_sampling()`. The GSP adapter flips the protocol's top-row/high-v UV convention
+to the Datoviz mesh convention, uploads the texture with the linear-color role, requests nearest
+minification and magnification, and selects the unlit material model. S050 runtime fixtures prove UV
+orientation, nearest/clamp behavior, vertex-color multiplication, retained DATA-space View3D, and
+the alpha diagnostic against Datoviz commit `be7f2a80354c25e85bab88c85f5ea7340975b569`.
+
+Datoviz also permits linear field-slot filtering. GSP S050 does not expose that choice: its accepted
+sampler remains fixed to nearest/clamp/no-mipmap. Adding linear sampling to GSP requires a future
+protocol capability or versioned sampler extension, not an adapter-only option.
 
 ## M066 PointVisual retained path
 

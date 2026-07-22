@@ -37,8 +37,9 @@ development releases.
   treated as feature promotion.
 - Added an experimental explicit `open_session("datoviz")` preview for capability inspection,
   bounded blocking display, one-frame polling, structured diagnostics, and deterministic cleanup.
-- Texture2D mesh rendering remains unsupported by Matplotlib and blocked from Datoviz promotion;
-  producer support does not imply renderer support.
+- Texture2D mesh rendering remains unsupported by Matplotlib. The Datoviz adapter now advertises
+  the bounded strict capability when the post-RC2 field-slot sampling API is present, using the GSP
+  fixed nearest/clamp/no-mipmap profile; Datoviz linear sampling is not yet a GSP protocol option.
 - No production current-protocol remote transport, general retained display-update API, close
   callbacks, or event-loop embedding contract is claimed.
 
