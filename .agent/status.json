@@ -372,6 +372,12 @@
       "title": "Clean GSP And VisPy2 Repository Bootstrap",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S063",
+      "title": "Live View2D Interaction Parity And Regression Safety",
+      "state": "proposed",
+      "progress": 0
     }
   ],
   "missions": [
@@ -2759,6 +2765,42 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 266
+    },
+    {
+      "id": "M267",
+      "title": "S063 interaction contract and failing regression baseline",
+      "stage": "S063",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 267
+    },
+    {
+      "id": "M268",
+      "title": "S063 Matplotlib canonical live View2D synchronization",
+      "stage": "S063",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 268
+    },
+    {
+      "id": "M269",
+      "title": "S063 Datoviz session navigation wiring",
+      "stage": "S063",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 269
+    },
+    {
+      "id": "M270",
+      "title": "S063 installed-wheel interaction qualification and closeout",
+      "stage": "S063",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 270
     }
   ],
   "review_queue": [],
@@ -2870,6 +2912,7 @@
     }
   ],
   "recommendations": [
+    "S063 is proposed for live View2D interaction parity: first freeze failing regression tests, then synchronize Matplotlib toolbar state with canonical View2D, wire Datoviz sessions to the existing GSP navigation controller, and finish with installed-wheel plus manual live acceptance. Explicit owner approval is required before implementation.",
     "S062 completed: fresh-root local gsp and vispy2 repositories are independently recoverable, clean, fully committed, and qualified from installed wheels; neither repository has a remote.",
     "Next recommended stage: create vispy/gsp and vispy/vispy2 GitHub repositories, add remotes, and push the qualified histories only after new explicit owner approval; keep tagging and publication separate.",
     "Datoviz remains an explicit development-source dependency at commit be7f2a80354c25e85bab88c85f5ea7340975b569 until an ordinary RC3-compatible artifact passes the same installed-wheel gates.",
