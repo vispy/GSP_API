@@ -1,6 +1,6 @@
 # ADR-0035: Separate GSP Protocol Authority From The VisPy2 Producer
 
-Status: proposed
+Status: accepted
 
 Date: 2026-07-22
 
@@ -26,7 +26,7 @@ public producer execution, provenance, and release sequencing.
 - Matplotlib is the reference/publication backend and the 0.x one-shot default.
 - Datoviz v0.4 is the flagship GPU backend.
 
-## Proposed decision
+## Decision
 
 Create two repositories with fresh root commits:
 
@@ -79,9 +79,10 @@ Texture2D checkpoints.
 - direct VisPy2 imports of Matplotlib or Datoviz adapters;
 - implicit backend state, fallback, or silent adaptation.
 
-## Approval gate
+## Approval
 
-This ADR remains proposed. Acceptance requires explicit project-owner approval of both the
-two-repository topology and the target `vispy2` distribution/import identity. It does not authorize
-repository creation, tags, pushes, publication, archival hosting changes, or history modification.
-
+The project owner explicitly approved the two-repository topology, the target `vispy2`
+distribution/import identity, and the bounded S061 migration-foundation stage in the active Mission
+Control conversation on 2026-07-22. This acceptance does not authorize remote repository creation,
+pushes, publication, archival hosting changes, destructive history modification, or the later
+new-repository bootstrap stage.

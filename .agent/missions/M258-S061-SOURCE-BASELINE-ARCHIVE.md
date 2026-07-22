@@ -6,7 +6,7 @@ S061 - GSP And VisPy2 Migration Foundation
 
 ## Status
 
-Draft; blocked on M257 and explicit S061 approval.
+Approved; M257 completed.
 
 ## Summary
 
@@ -24,4 +24,3 @@ Git bundle outside the working tree. This is archival preparation, not repositor
 
 Stop if the source baseline is not reproducible, the working tree contains unexplained changes, the
 bundle is not independently recoverable, or storage outside the repository cannot be resolved.
-

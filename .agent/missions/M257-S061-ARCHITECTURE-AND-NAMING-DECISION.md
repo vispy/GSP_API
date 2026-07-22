@@ -6,7 +6,7 @@ S061 - GSP And VisPy2 Migration Foundation
 
 ## Status
 
-Draft; awaiting explicit project-owner approval.
+Completed.
 
 ## Summary
 
@@ -25,3 +25,9 @@ repositories and on the target `vispy2` distribution/import identity.
 Stop if the project owner does not approve the two-repository topology or if use of the `vispy2`
 identity remains undecided.
 
+## Result
+
+The project owner approved separate fresh-root `gsp` and `vispy2` repositories, the target `vispy2`
+distribution/import identity, and the bounded S061 migration-foundation stage. ADR-0035 is accepted,
+ADR-0033's temporary identity is superseded for the migration target, and M258 is approved next. No
+repository, tag, archive, push, release, or publication operation was performed.

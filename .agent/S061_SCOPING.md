@@ -2,7 +2,7 @@
 
 Date: 2026-07-22
 
-Status: proposed; awaiting explicit project-owner approval.
+Status: approved; M257 completed and M258 is ready.
 
 ## Objective
 
@@ -14,8 +14,8 @@ source baseline, preserve a recoverable local archive, and approve a curated mig
 
 | Mission | State | Scope |
 |---|---|---|
-| M257 | draft | Accept or revise ADR-0035 and record the owner decision on the `vispy2` identity. |
-| M258 | draft | Reproduce the source baseline and prepare a verified local source archive with exact provenance. |
+| M257 | completed | Accepted ADR-0035 and recorded owner approval of the two-repository topology and `vispy2` identity. |
+| M258 | approved | Reproduce the source baseline and prepare a verified local source archive with exact provenance. |
 | M259 | draft | Classify authoritative files and logical components as migrate-now, archive-only, or defer/reassess. |
 | M260 | draft | Review the manifest, close S061, and propose the separately approved local bootstrap of new repositories. |
 
@@ -29,8 +29,8 @@ source baseline, preserve a recoverable local archive, and approve a curated mig
   verification, clean clone, and `git fsck`; its durable destination remains an owner decision.
 - Creating the new `gsp` and `vispy2` repositories requires a later explicit mission approval.
 
-## Approval requested
+## Approval
 
-Approve the P037 two-repository topology and the target `vispy2` distribution/import identity, then
-approve M257-M260 as the bounded S061 migration-foundation sequence.
-
+The project owner explicitly approved the P037 two-repository topology, the target `vispy2`
+distribution/import identity, and M257-M260 as the bounded S061 migration-foundation sequence in the
+active Mission Control conversation on 2026-07-22.
