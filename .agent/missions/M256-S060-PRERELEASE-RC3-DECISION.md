@@ -6,7 +6,7 @@ S060 - Post-S059 Stabilization And RC3 Handoff
 
 ## Status
 
-Draft; depends on M255.
+Approved; M255 completed.
 
 ## Summary
 
