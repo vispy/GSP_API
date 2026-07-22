@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft; authorized after M272 succeeds.
+Approved; M272 completed and the project owner authorized sequential execution.
 
 ## Acceptance
 

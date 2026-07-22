@@ -383,7 +383,7 @@
       "id": "S064",
       "title": "GitHub Predecessor Archival And Fresh-Root Publication",
       "state": "active",
-      "progress": 33
+      "progress": 67
     }
   ],
   "missions": [
@@ -2821,16 +2821,16 @@
       "id": "M272",
       "title": "S064 create fresh GitHub roots",
       "stage": "S064",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 272
     },
     {
       "id": "M273",
       "title": "S064 GitHub CI qualification and closeout",
       "stage": "S064",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 273

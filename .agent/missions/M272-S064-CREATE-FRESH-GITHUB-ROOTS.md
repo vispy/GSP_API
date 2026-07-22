@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved; M271 completed and the project owner authorized sequential execution.
+Completed. Fresh repository identities, exact pushed heads, and normal tracked remotes are recorded
+in `.agent/S064_M272_FRESH_GITHUB_ROOTS.md`.
 
 ## Acceptance
 
