@@ -358,8 +358,8 @@
     {
       "id": "S060",
       "title": "Post-S059 Stabilization And RC3 Handoff",
-      "state": "in_progress",
-      "progress": 67
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2653,9 +2653,9 @@
       "id": "M256",
       "title": "S060 prerelease versus RC3 decision",
       "stage": "S060",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 256
     }
   ],
@@ -2761,9 +2761,7 @@
     }
   ],
   "recommendations": [
-    "M255 completed: gsp-vispy2 0.2.0 wheel and sdist build and install cleanly, all repository and native Texture2D gates pass, and the remaining release constraint is that compatible Datoviz v0.4 exists only as the validated local development checkout; M256 is ready for the prerelease-versus-wait decision.",
-    "M254 completed: current release guidance now separates the nearest material baseline from linear filtering, and live Mission Control recommendations no longer repeat superseded Texture2D blockers; M255 is ready for package and release-readiness validation.",
-    "S060 approved: reconcile stale post-S059 current guidance, validate package artifacts and release readiness, then record whether to prerelease GSP or wait for the next Datoviz RC3 development checkpoint without performing release operations.",
+    "S060 completed: GSP 0.2 source and package artifacts are release-ready, but release operations should wait for the next Datoviz RC3 development commit or artifact, exact checkpoint replay, and explicit version/tag/publication approval.",
     "S059 completed: nearest compatibility is preserved, VisPy2 emits the bounded filter choice, and Datoviz linear field-slot sampling is promoted with exact native evidence; broader sampler state and Matplotlib textured rendering remain deferred.",
     "S054 completed: GSP now has a detailed 90-requirement 0.2 specification, deliberately breaking gsp_vispy2 public API, evidence-backed versioned profiles, executable public documentation, migration redirects, and CI-enforced traceability; the full closeout passed 650 tests with 2 skips, strict mypy, Ruff, strict MkDocs, redirects, and 0.2.0 package builds.",
     "M237 completed: the GSP 0.2 target specification is now about 9,100 words with 90 stable requirements and explicit source dispositions; M238 is running to align the breaking Python protocol and producer APIs without violating ADR-0033.",
