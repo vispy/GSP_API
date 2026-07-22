@@ -370,8 +370,8 @@
     {
       "id": "S062",
       "title": "Clean GSP And VisPy2 Repository Bootstrap",
-      "state": "in_progress",
-      "progress": 83
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2755,9 +2755,9 @@
       "id": "M266",
       "title": "S062 installed-wheel qualification and closeout",
       "stage": "S062",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 266
     }
   ],
