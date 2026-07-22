@@ -360,6 +360,12 @@
       "title": "Post-S059 Stabilization And RC3 Handoff",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S061",
+      "title": "GSP And VisPy2 Migration Foundation",
+      "state": "draft",
+      "progress": 0
     }
   ],
   "missions": [
@@ -2657,6 +2663,42 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 256
+    },
+    {
+      "id": "M257",
+      "title": "S061 architecture and naming decision",
+      "stage": "S061",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 257
+    },
+    {
+      "id": "M258",
+      "title": "S061 source baseline and recoverable archive",
+      "stage": "S061",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 258
+    },
+    {
+      "id": "M259",
+      "title": "S061 curated migration inventory",
+      "stage": "S061",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 259
+    },
+    {
+      "id": "M260",
+      "title": "S061 migration-foundation closeout",
+      "stage": "S061",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 260
     }
   ],
   "review_queue": [],
@@ -2758,9 +2800,17 @@
       "requires_human": false,
       "requires_chatgpt_pro": true,
       "state": "closed"
+    },
+    {
+      "id": "Q170-GSP-VISPY2-REPOSITORY-AND-NAMING",
+      "summary": "P037 recommends separate fresh-root gsp and vispy2 repositories and a target vispy2 distribution/import, superseding ADR-0033's temporary gsp-vispy2 identity only after explicit owner approval.",
+      "requires_human": true,
+      "requires_chatgpt_pro": false,
+      "state": "open"
     }
   ],
   "recommendations": [
+    "P037 reviewed: Mission Control recommends separate fresh-root gsp and vispy2 repositories, split adapter distributions, lazy GSP backend discovery, and preserving GSP_API as the full archive; approve the topology, target vispy2 identity, and bounded S061 migration-foundation stage before work begins.",
     "S060 completed: GSP 0.2 source and package artifacts are release-ready, but release operations should wait for the next Datoviz RC3 development commit or artifact, exact checkpoint replay, and explicit version/tag/publication approval.",
     "S059 completed: nearest compatibility is preserved, VisPy2 emits the bounded filter choice, and Datoviz linear field-slot sampling is promoted with exact native evidence; broader sampler state and Matplotlib textured rendering remain deferred.",
     "S054 completed: GSP now has a detailed 90-requirement 0.2 specification, deliberately breaking gsp_vispy2 public API, evidence-backed versioned profiles, executable public documentation, migration redirects, and CI-enforced traceability; the full closeout passed 650 tests with 2 skips, strict mypy, Ruff, strict MkDocs, redirects, and 0.2.0 package builds.",
