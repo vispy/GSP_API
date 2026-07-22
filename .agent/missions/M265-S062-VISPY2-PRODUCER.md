@@ -6,7 +6,7 @@ S062 - Clean GSP And VisPy2 Repository Bootstrap
 
 ## Status
 
-Draft; blocked on M264.
+Approved; M264 completed.
 
 ## Summary
 
@@ -25,4 +25,3 @@ route publication and interactive execution through GSP sessions without concret
 
 Stop if the public API requires backend state on producer objects, direct adapter imports, silent
 fallback/adaptation, or a compatibility alias for the unpublished prototype identity.
-

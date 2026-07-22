@@ -6,7 +6,7 @@ S062 - Clean GSP And VisPy2 Repository Bootstrap
 
 ## Status
 
-Approved; M263 completed.
+Completed in local `gsp` commit `8afa0e5`.
 
 ## Summary
 

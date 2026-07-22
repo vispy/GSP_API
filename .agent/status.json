@@ -371,7 +371,7 @@
       "id": "S062",
       "title": "Clean GSP And VisPy2 Repository Bootstrap",
       "state": "in_progress",
-      "progress": 50
+      "progress": 67
     }
   ],
   "missions": [
@@ -2737,16 +2737,16 @@
       "id": "M264",
       "title": "S062 Datoviz v0.4 provider",
       "stage": "S062",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 264
     },
     {
       "id": "M265",
       "title": "S062 VisPy2 producer migration",
       "stage": "S062",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 265
