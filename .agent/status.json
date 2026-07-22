@@ -359,7 +359,7 @@
       "id": "S060",
       "title": "Post-S059 Stabilization And RC3 Handoff",
       "state": "in_progress",
-      "progress": 0
+      "progress": 33
     }
   ],
   "missions": [
@@ -2635,16 +2635,16 @@
       "id": "M254",
       "title": "S060 current-state reconciliation",
       "stage": "S060",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 254
     },
     {
       "id": "M255",
       "title": "S060 package and release-readiness validation",
       "stage": "S060",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 255
@@ -2761,6 +2761,7 @@
     }
   ],
   "recommendations": [
+    "M254 completed: current release guidance now separates the nearest material baseline from linear filtering, and live Mission Control recommendations no longer repeat superseded Texture2D blockers; M255 is ready for package and release-readiness validation.",
     "S060 approved: reconcile stale post-S059 current guidance, validate package artifacts and release readiness, then record whether to prerelease GSP or wait for the next Datoviz RC3 development checkpoint without performing release operations.",
     "S059 completed: nearest compatibility is preserved, VisPy2 emits the bounded filter choice, and Datoviz linear field-slot sampling is promoted with exact native evidence; broader sampler state and Matplotlib textured rendering remain deferred.",
     "S054 completed: GSP now has a detailed 90-requirement 0.2 specification, deliberately breaking gsp_vispy2 public API, evidence-backed versioned profiles, executable public documentation, migration redirects, and CI-enforced traceability; the full closeout passed 650 tests with 2 skips, strict mypy, Ruff, strict MkDocs, redirects, and 0.2.0 package builds.",
@@ -2784,20 +2785,12 @@
     "M204 completed: archived P031 response and accepted unlit Texture2D plus per-vertex UVs as the next material stage via ADR-0029 and spec/visuals/mesh_texture2d_unlit_s050.md.",
     "M218 completed: Texture2D RGBA8 resources, MeshVisual texture2d_unlit fields, per-vertex UV validation, and texture resource resolution helper are implemented without renderer capability promotion.",
     "M219 completed: S050 Texture2D visual-QA fixtures now record texture resources, UV/probe expectations, alpha diagnostics, negative diagnostic metadata, and unsupported backend classification without renderer promotion.",
-    "M220 completed: Datoviz v0.4-dev exposes public mesh Texture2D candidate symbols, but strict S050 promotion remains blocked pending sampler, origin, unmanaged RGBA, and unlit multiplication fixture evidence.",
     "M221 completed: Matplotlib direct MeshVisual rendering now rejects texture2d_unlit with meshvisual_material_texture2d_unlit_unsupported instead of silently dropping texture fields.",
     "M222 completed: public post-RC2 Datoviz field-slot sampling plus five runtime fixtures prove the bounded nearest/clamp/no-mipmap Texture2D capability.",
     "M223 completed: VisPy2 Axes.mesh now emits strict Texture2D resources and texture2d_unlit MeshVisual fields when texture and uvs are supplied together.",
-    "M224 completed: capability/docs audit now distinguishes protocol validation, VisPy2 producer support, Matplotlib unsupported diagnostics, and Datoviz blocked renderer promotion.",
-    "M225 completed: S050 Texture2D closeout records protocol/fixture/producer support, Matplotlib unsupported policy, Datoviz blocked promotion, validation evidence, and remaining blockers.",
     "M226 completed: projected-NDC mesh face-culling helpers and Matplotlib CPU mesh-pick culling fixtures are implemented without renderer capability promotion; M227 is the next ready query-payload branch.",
     "M227 completed: geometry/facing mesh-pick payload protocol helpers, validators, and Matplotlib CPU-reference fixtures are implemented without mutating identity-only v1 or advertising Datoviz geometry capabilities.",
-    "M228 completed: public sampled-field mesh texture rendering exists, but Datoviz Texture2D strict promotion remains blocked by missing convenience upload symbol, DATA-role crash, origin mismatch, non-nearest/blended samples, non-exact multiplication, and teardown abort evidence.",
-    "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target.",
-    "M229 completed: GSP now accepts Datoviz pre-RC sampled-field image and View2D descriptor APIs; the S028 compatibility pack against api/pre-rc-cleanup recorded 12 Datoviz strict rows, 4 adapted text rows, and 14 native SIGSEGV crash rows. Keep M222 blocked until Texture2D runtime blockers have fresh positive evidence.",
-    "M230 completed: added python -m gsp.qa.visual compare-matrix and tools/run_datoviz_pre_rc_replay.sh so a future Datoviz post-merge S028 pack can be compared against the committed pre-RC baseline; M222 remains blocked pending fresh Texture2D runtime evidence.",
-    "M231 completed: GSP replayed Datoviz api/pre-rc-cleanup at af168b5a9 and now accepts Datoviz DvzResult mutator success codes; post-refactor S028 replay improved 10 Datoviz rows from crashed to strict with no regressions, leaving 4 SIGSEGV rows. M222 remains blocked because Texture2D-specific sampler/origin/color-role/unlit-equation evidence is still absent.",
-    "M232 completed: GSP replayed Datoviz api/pre-rc-cleanup at 1ef626a56; fast adapter validation passed, the latest S028 matrix matched M231 exactly with 52 strict, 4 adapted, 4 crashed, zero regressions, and zero improvements, and M222 remains blocked pending Texture2D sampler/origin/unmanaged-RGBA/unlit-equation evidence."
+    "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
     "M232 completed: added .agent/S050_DATOVIZ_LATEST_PRE_RC_REPLAY.md and artifacts/visual_qa/s050/latest_pre_rc_compat_s028 plus latest_pre_rc_datoviz_guide_axis. Datoviz 1ef626a56 produced no regression or improvement versus M231; remaining crashed rows are color/scalar_image_viridis_colorbar and the three guide/View2D rows.",

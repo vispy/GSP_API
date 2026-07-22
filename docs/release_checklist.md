@@ -82,10 +82,10 @@ Backend support must explicitly distinguish:
 - network renderer server requirements.
 
 Known limitations must explicitly mention that Datoviz v0.4 does not advertise
-`query.view3d.mesh_triangle_pick.v1` or face-culling; that its Texture2D capability requires the
-post-RC2 development API and remains fixed to the GSP nearest/clamp/no-mipmap profile; that
-perspective mesh picking and strict non-opaque 3D compositing remain deferred; and that native grid
-clipping is not full guide strictness.
+`query.view3d.mesh_triangle_pick.v1` or face-culling; that its Texture2D capabilities require the
+post-RC2 development API, preserve nearest/clamp/no-mipmap as the material baseline, and advertise
+visual-owned linear filtering separately; that perspective mesh picking and strict non-opaque 3D
+compositing remain deferred; and that native grid clipping is not full guide strictness.
 
 ## Tag Policy
 
