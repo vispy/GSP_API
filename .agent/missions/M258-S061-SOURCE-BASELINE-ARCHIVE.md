@@ -6,7 +6,7 @@ S061 - GSP And VisPy2 Migration Foundation
 
 ## Status
 
-Approved; M257 completed.
+Completed.
 
 ## Summary
 
@@ -24,3 +24,11 @@ Git bundle outside the working tree. This is archival preparation, not repositor
 
 Stop if the source baseline is not reproducible, the working tree contains unexplained changes, the
 bundle is not independently recoverable, or storage outside the repository cannot be resolved.
+
+## Result
+
+Established clean source baseline `463d34d1d6560f045e5c40af594372d0fea93ab5`, reproduced all
+repository/package/native validation gates, and created a complete 42 MiB external Git bundle with
+SHA-256 `4b6b8bdd0e403ea9f0ed7d169a7694ac0985e7a8906890d2f74cf1dc5c611f8b`. Bundle,
+checksum, clean-clone, exact-commit, and full object-integrity checks pass. See
+`.agent/S061_M258_SOURCE_BASELINE_ARCHIVE.md`.

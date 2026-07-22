@@ -6,7 +6,7 @@ S061 - GSP And VisPy2 Migration Foundation
 
 ## Status
 
-Draft; blocked on M258.
+Approved; M258 completed.
 
 ## Summary
 
@@ -25,4 +25,3 @@ artifacts as migrate-now, archive-only, or defer/reassess.
 
 Stop if protocol authority is disputed, a core component still requires the legacy object graph, or
 the manifest would silently discard evidence that is not recoverable from the verified archive.
-
