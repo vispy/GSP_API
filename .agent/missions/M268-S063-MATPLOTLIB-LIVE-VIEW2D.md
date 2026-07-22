@@ -6,7 +6,7 @@ S063 - Live View2D Interaction Parity And Regression Safety
 
 ## Status
 
-Draft; blocked on M267.
+Approved; M267 completed and the project owner authorized sequential execution.
 
 ## Summary
 

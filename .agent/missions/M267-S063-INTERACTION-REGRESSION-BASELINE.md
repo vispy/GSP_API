@@ -6,7 +6,8 @@ S063 - Live View2D Interaction Parity And Regression Safety
 
 ## Status
 
-Draft; requires explicit owner approval.
+Completed in fresh-root GSP commit `0a950be` with three intentional red regressions and three
+passing controls committed before production fixes.
 
 ## Summary
 

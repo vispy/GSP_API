@@ -2,7 +2,7 @@
 
 Date: 2026-07-22
 
-Status: proposed; no mission is approved.
+Status: approved; M267 is approved and M268-M270 are authorized sequential follow-ups.
 
 ## Trigger
 
@@ -42,7 +42,7 @@ adapter, new VisPy2 public plotting methods, remote sessions, and publication.
 
 | Mission | State | Scope | Commit boundary |
 |---|---|---|---|
-| M267 | draft | Freeze the interaction contract and add failing tests for the observed Matplotlib and Datoviz behavior. | Commit tests and evidence before production fixes. |
+| M267 | approved | Freeze the interaction contract and add failing tests for the observed Matplotlib and Datoviz behavior. | Commit tests and evidence before production fixes. |
 | M268 | draft | Correct Matplotlib DATA/NDC transform placement and synchronize toolbar limit changes into session-owned canonical `View2D` state. | Commit Matplotlib implementation and focused tests. |
 | M269 | draft | Activate existing canonical GSP View2D navigation for interactive Datoviz sessions and prove retained updates/cleanup. | Commit Datoviz implementation and focused native tests. |
 | M270 | draft | Rebuild all wheels, run full regression/parity/lifecycle gates, open both live windows, and close S063 after owner acceptance. | Commit qualification evidence and closeout. |
@@ -104,6 +104,6 @@ Stop if a proposed fix:
 
 ## Approval boundary
 
-This document records a proposed plan only. Implementation starts only after explicit owner
-approval of S063 missions M267-M270. Approval would authorize local changes and incremental commits
+The project owner explicitly approved S063 missions M267-M270 in the active Mission Control
+conversation on 2026-07-22. Approval authorizes local changes and incremental commits
 in `gsp`, `vispy2`, and Mission Control records, but not external repository or publication actions.
