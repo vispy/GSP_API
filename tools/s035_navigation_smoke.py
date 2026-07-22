@@ -213,6 +213,8 @@ class _FakeDatovizV04:
     dvz_sampled_field = None
     dvz_sampled_field_set_data = None
     dvz_visual_set_field = None
+    dvz_field_sampling_desc = None
+    dvz_visual_set_field_sampling = None
     dvz_sampled_field_destroy = None
     dvz_panel_view3d_desc = None
     dvz_panel_set_view3d_desc = None
