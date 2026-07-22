@@ -2946,7 +2946,7 @@
   ],
   "recommendations": [
     "S064 completed: archived predecessor repositories and verified mirror bundles preserve the old histories; fresh public vispy/gsp and vispy/vispy2 repositories track exact clean local heads and pass least-privilege GitHub Actions source, typing, lint, wheel-build, and installed-wheel gates.",
-    "Next recommended stage: keep version selection, tagging, GitHub releases, and package publication as a separately scoped and explicitly approved release operation.",
+    "Next recommended stage: scope the human-guided S065 code, examples, documentation, and feature-coverage audit recorded in .agent/S065_INTENT.md; keep release work deferred until the owner accepts the audit and resulting fix backlog.",
     "Datoviz remains an explicit development-source dependency at commit be7f2a80354c25e85bab88c85f5ea7340975b569 until an ordinary RC3-compatible artifact passes the same installed-wheel gates.",
     "S061 completed: architecture, naming, reproducible baseline, verified full-history bundle, and a validated 31-component migration manifest are ready for the approved local S062 bootstrap.",
     "M259 completed: the validated 31-component manifest classifies 16 migrate-now, 11 archive-only, and four defer/reassess components with exact baseline Git objects and destination owners; four expected coupling rewrites are explicit.",
