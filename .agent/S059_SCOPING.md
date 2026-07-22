@@ -12,7 +12,7 @@ linear renderer capability, and no public sampler object or additional sampler c
 
 | Mission | State | Scope |
 |---|---|---|
-| M249 | ready | Convert P036 into ADR-0034 and the normative spec/capability/diagnostic baseline. |
+| M249 | completed | Convert P036 into ADR-0034 and the normative spec/capability/diagnostic baseline. |
 | M250 | draft | Add the enum, appended MeshVisual field, validation, serialization behavior, and backend-neutral reference fixtures. |
 | M251 | draft | Add the single VisPy2 `texture_filter` producer keyword and producer capability. |
 | M252 | draft | Map nearest/linear to Datoviz field-slot state and promote only after real offscreen conformance. |
@@ -40,4 +40,5 @@ linear renderer capability, and no public sampler object or additional sampler c
 
 ## Approval
 
-Awaiting project-owner approval in Mission Control.
+The project owner approved the complete M249-M253 sequence in the active Mission Control
+conversation on 2026-07-22.

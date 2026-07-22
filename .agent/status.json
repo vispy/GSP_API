@@ -352,8 +352,8 @@
     {
       "id": "S059",
       "title": "Texture2D Nearest-Or-Linear Filtering Extension",
-      "state": "planned",
-      "progress": 0
+      "state": "in_progress",
+      "progress": 20
     }
   ],
   "missions": [
@@ -2584,16 +2584,16 @@
       "id": "M249",
       "title": "S059 linear filter ADR and specification baseline",
       "stage": "S059",
-      "state": "ready",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 249
     },
     {
       "id": "M250",
       "title": "S059 linear filter protocol and fixtures",
       "stage": "S059",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 250

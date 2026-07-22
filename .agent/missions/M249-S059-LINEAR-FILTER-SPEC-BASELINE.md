@@ -6,7 +6,7 @@ S059 - Texture2D Nearest-Or-Linear Filtering Extension
 
 ## Status
 
-Ready for owner approval.
+Completed.
 
 ## Summary
 
@@ -27,3 +27,10 @@ capability, diagnostic, backend, and VisPy2 specifications before public code ch
 
 Stop if the response conflicts with ADR-0029 or requires sampler resources, resource-owned state,
 broader color management, or a breaking default.
+
+## Result
+
+Added ADR-0034 and amended the accepted detailed/current Texture2D, capability, Datoviz, and VisPy2
+specifications. The baseline preserves nearest behavior and existing capability meaning, defines
+the linear formula and tolerance, and keeps all broader sampler concepts deferred. Specification
+traceability, profile consistency, public-doc consistency, and strict MkDocs validation pass.

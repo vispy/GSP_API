@@ -222,9 +222,11 @@ minification and magnification, and selects the unlit material model. S050 runti
 orientation, nearest/clamp behavior, vertex-color multiplication, retained DATA-space View3D, and
 the alpha diagnostic against Datoviz commit `be7f2a80354c25e85bab88c85f5ea7340975b569`.
 
-Datoviz also permits linear field-slot filtering. GSP S050 does not expose that choice: its accepted
-sampler remains fixed to nearest/clamp/no-mipmap. Adding linear sampling to GSP requires a future
-protocol capability or versioned sampler extension, not an adapter-only option.
+S059 exposes Datoviz's linear field-slot filtering through visual-owned
+`MeshVisual.texture_filter`. The existing material capability continues to guarantee nearest;
+Datoviz advertises `meshvisual.texture_filter.linear.v1` separately and only after offscreen
+fixtures prove ADR-0034 interpolation within `2/255`. Clamp-to-edge, no mipmaps, and base-level-only
+sampling remain fixed.
 
 ## M066 PointVisual retained path
 

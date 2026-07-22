@@ -314,6 +314,12 @@
       "path": "adr/ADR-0033-vispy2-producer-session-boundary.md"
     },
     {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0034-mesh-texture-filter-linear.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0034-mesh-texture-filter-linear.md"
+    },
+    {
       "classification": "detailed-normative-source",
       "destination": "spec/current/visuals.md",
       "disposition": "migration-required",

@@ -159,6 +159,7 @@ Mesh rendering does not imply mesh-triangle picking. Identity, geometry, barycen
 | `texture2d_id` | Texture2D resource ID | required |
 | `uv_mode` | vertex | fixed bounded mode |
 | `uvs` | finite float `(N,2)` | one UV per mesh vertex |
+| `texture_filter` | nearest/linear | visual-owned; default nearest; one value controls min and mag |
 | base color | uniform RGBA | multiplicative color under the accepted equation |
 
 `GSP-VIS-011`: mesh topology is triangles. Degenerate triangles, projected clipping, depth,

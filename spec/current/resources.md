@@ -44,9 +44,9 @@ The accepted texture resource is immutable two-dimensional RGBA8 data with expli
 - a declared `Texture2D` identifier;
 - finite per-vertex UV coordinates shaped `(N, 2)`;
 - UV topology matching mesh vertex indexing;
-- the fixed accepted unlit sampling and color-combination rules.
+- the accepted visual-owned nearest-or-linear unlit sampling and color-combination rules.
 
-Linear filtering, repeat wrapping, mipmaps, color management, generated UVs, and separate UV indices are outside the accepted bounded contract.
+Nearest and linear filtering are accepted for textured meshes. Repeat wrapping, mipmaps, color management, generated UVs, and separate UV indices remain outside the bounded contract.
 
 ### Texture2D
 

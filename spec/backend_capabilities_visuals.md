@@ -257,23 +257,30 @@ texture2d.rgba8.v1
 meshvisual.uv.vertex2d.v1
 meshvisual.material.texture2d_unlit.v1
 vispy2.producer.mesh.texture2d_unlit.v1
+meshvisual.texture_filter.linear.v1
+gsp_vispy2.producer.mesh.texture_filter.linear.v1
 ```
 
-Strict textured mesh support requires immutable RGBA8 `Texture2D` resources, per-vertex UVs, fixed
+Strict textured mesh support requires immutable RGBA8 `Texture2D` resources, per-vertex UVs,
 nearest/clamp/no-mipmap sampling, multiplicative unlit RGBA output, and the diagnostics in
 `spec/visuals/mesh_texture2d_unlit_s050.md`. A renderer must not advertise
 `meshvisual.material.texture2d_unlit.v1` until automated fixtures prove those semantics. Matplotlib
 currently remains unsupported for textured meshes. Datoviz's post-RC2 field-slot sampling API and
 the S050 runtime fixtures now provide the required evidence for the bounded Datoviz path.
 
+S059 adds visual-owned linear filtering without changing the existing nearest material guarantee.
+`meshvisual.texture_filter.linear.v1` requires the original material capability and proves the
+ADR-0034 bilinear rule independently. Producer support uses the separate
+`gsp_vispy2.producer.mesh.texture_filter.linear.v1` capability.
+
 Current S050 support summary:
 
-| Surface | `texture2d.rgba8.v1` | `meshvisual.uv.vertex2d.v1` | `meshvisual.material.texture2d_unlit.v1` | `vispy2.producer.mesh.texture2d_unlit.v1` | Notes |
-|---|---:|---:|---:|---:|---|
-| Protocol validation | supported | supported | validation only | n/a | Validates immutable RGBA8 textures and per-vertex UV fields; does not render. |
-| Matplotlib renderer | unsupported | unsupported | unsupported | n/a | Direct renderer and visual QA reject with `meshvisual_material_texture2d_unlit_unsupported`. |
-| Datoviz renderer | supported | supported | supported | n/a | Capability-gated on the post-RC2 field-slot sampling API; fixtures prove nearest/clamp/no-mipmap sampling, UV-origin adaptation, linear-color RGBA8 upload, unlit multiplication, and retained View3D execution. |
-| VisPy2 producer | n/a | n/a | n/a | supported | Emits canonical `Texture2D` resources and `texture2d_unlit` `MeshVisual` records only; renderer support remains separate. |
+| Surface | RGBA8 | vertex UV | nearest material | linear filter | VisPy2 linear producer | Notes |
+|---|---:|---:|---:|---:|---:|---|
+| Protocol validation | supported | supported | validation only | validation only | n/a | Validates resource, UV, material, filter, and applicability semantics; does not render. |
+| Matplotlib renderer | unsupported | unsupported | unsupported | unsupported | n/a | Rejects all textured meshes explicitly. |
+| Datoviz renderer | supported | supported | supported | pending runtime promotion | n/a | Nearest is proven; linear remains unadvertised until M252 offscreen conformance. |
+| VisPy2 producer | n/a | n/a | n/a | n/a | planned | M251 adds only the bounded `texture_filter` keyword; renderer support remains separate. |
 
 The following lighting and material capability names remain reserved/deferred after S050:
 

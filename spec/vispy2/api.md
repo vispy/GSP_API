@@ -116,9 +116,9 @@ the bounded flat-Lambert face-normal extension. It does not expose material obje
 objects, texture handles, culling/depth-state controls, mesh-local transforms, Datoviz slots, or
 backend draw calls. S050 later accepts one thin Texture2D/UV producer extension below.
 
-## S050 Texture2D mesh producer extension
+## S050/S059 Texture2D mesh producer extension
 
-VisPy2 extends the existing `Axes.mesh` producer with `texture` and `uvs` only:
+VisPy2 extends the existing `Axes.mesh` producer with texture data, UVs, and the bounded filter:
 
 ```python
 def mesh(
@@ -137,6 +137,7 @@ def mesh(
     transform=None,
     texture=None,
     uvs=None,
+    texture_filter="nearest",
 ):
     ...
 ```
@@ -149,12 +150,15 @@ Supplying exactly one of `texture` or `uvs` is an error.
 
 `texture` must be strict `uint8 (H,W,4)` with no filename, URI, PIL object, RGB expansion, float
 scaling, or color-profile handling in v1. `uvs` must be finite `(N,2)`. `color` remains the
-multiplicative base color. When `texture` is supplied, VisPy2 rejects non-default `shading` and does
-not expose `sampler`, `wrap`, `filter`, `mipmap`, `material`, `light`, `texture_id`,
+multiplicative base color. `texture_filter` accepts `nearest` or `linear`, defaults to nearest, and
+linear requires both texture and UVs. When `texture` is supplied, VisPy2 rejects non-default
+`shading` and does not expose `sampler`, `wrap`, independent min/mag, `mipmap`, `material`, `light`, `texture_id`,
 culling/depth-state, or backend-specific keywords in this stage.
 
 `gsp_vispy2.producer.mesh.texture2d_unlit.v1` is producer-only. `Figure.render_matplotlib()` and other
 renderer paths must still check renderer capabilities and diagnose unsupported textured meshes.
+`gsp_vispy2.producer.mesh.texture_filter.linear.v1` separately identifies producer support for the
+linear field and does not imply renderer support.
 
 ## S026 color mapping direction
 

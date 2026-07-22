@@ -27,6 +27,8 @@
     "texture2d.rgba8.v1",
     "meshvisual.material.texture2d_unlit.v1",
     "gsp_vispy2.producer.mesh.texture2d_unlit.v1",
+    "meshvisual.texture_filter.linear.v1",
+    "gsp_vispy2.producer.mesh.texture_filter.linear.v1",
     "query.view3d.ray_readback.v1",
     "query.view3d.mesh_triangle_pick.v1",
     "query.view3d.mesh_triangle_pick.geometry.v1",

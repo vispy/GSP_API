@@ -37,6 +37,8 @@ The machine registry is `spec/requirements/registries.json`. Important accepted 
 | `meshvisual.material.flat_lambert.v1` | bounded flat Lambert material |
 | `texture2d.rgba8.v1` | RGBA8 Texture2D protocol resource |
 | `meshvisual.material.texture2d_unlit.v1` | bounded textured unlit mesh material |
+| `meshvisual.texture_filter.linear.v1` | base-level bilinear mesh texture filtering |
+| `gsp_vispy2.producer.mesh.texture_filter.linear.v1` | producer emission of linear mesh texture filtering |
 | `query.view3d.ray_readback.v1` | canonical View3D ray context |
 | `query.view3d.mesh_triangle_pick.v1` | identity-only mesh triangle pick |
 | `query.view3d.mesh_triangle_pick.geometry.v1` | geometry payload sibling |

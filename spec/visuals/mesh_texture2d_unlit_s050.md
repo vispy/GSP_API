@@ -1,6 +1,6 @@
 # MeshVisual Texture2D Unlit Material - S050
 
-Status: accepted S050 protocol boundary.
+Status: accepted S050 protocol boundary, extended by S059/ADR-0034 for optional linear filtering.
 
 Semantic purpose: add the smallest backend-neutral texture material after S038 unlit RGBA and S039
 flat Lambert, while keeping material objects, sampler objects, model loading, alpha/culling
@@ -15,14 +15,15 @@ In scope:
 - immutable document-local `Texture2D` resources;
 - `rgba8` pixel data only;
 - per-vertex UVs indexed by the existing mesh faces;
-- fixed nearest/clamp/no-mipmap sampling;
+- visual-owned nearest-or-linear filtering with nearest as the backward-compatible default;
+- fixed clamp/no-mipmap/base-level sampling;
 - multiplicative unlit RGBA output;
 - conservative opaque-alpha gate for strict 3D depth conformance.
 
 Out of scope:
 
 - public material objects;
-- public sampler objects;
+- public sampler objects and independent minification/magnification state;
 - textured lighting, smooth normals, Phong, specular, normal maps, and PBR;
 - texture arrays, external image files, compressed/float/RGB/grayscale/depth textures;
 - culling expansion, transparency sorting, alpha test/discard, and OIT;
@@ -41,6 +42,7 @@ Out of scope:
 | `MeshVisual.texture2d_id` | `str` or `None` | `None` | Required for `texture2d_unlit`; must reference a declared `Texture2D`. |
 | `MeshVisual.uv_mode` | `"none"` / `"vertex"` | `"none"` | `vertex` means one UV pair per mesh vertex. |
 | `MeshVisual.uvs` | finite float array `(N,2)` or `None` | `None` | Required for `uv_mode="vertex"` and `texture2d_unlit`; `N == len(positions)`. |
+| `MeshVisual.texture_filter` | `"nearest"` / `"linear"` | `"nearest"` | Visual-slot filter used for matching minification and magnification; linear is valid only for `texture2d_unlit`. |
 
 `texture2d_id` must be absent or `None` for strict `unlit_rgba` and `flat_lambert` payloads unless
 a later material explicitly consumes it.
@@ -61,16 +63,23 @@ per-corner UVs, per-face UVs, generated UVs, and face-varying UV topology are un
 
 ## Sampling, Color, And Alpha
 
-The fixed sampler is:
+The bounded sampler profile is:
 
 | Parameter | Value |
 |---|---|
-| minification filter | `nearest` |
-| magnification filter | `nearest` |
+| minification filter | `texture_filter` (`nearest` or `linear`) |
+| magnification filter | same `texture_filter` value |
 | `u` wrap | `clamp_to_edge` |
 | `v` wrap | `clamp_to_edge` |
 | mipmaps | none |
 | LOD | base level only |
+
+For `linear`, clamp finite `(u,v)` to `[0,1]`, set `x=W*u-0.5` and
+`y=H*(1-v)-0.5`, clamp the two neighboring integer texel indices in each dimension to the texture
+edge, normalize straight-alpha RGBA bytes by `255`, and bilinearly interpolate all four unmanaged
+numeric channels. Filtering precedes base-color multiplication; RGB is not premultiplied by alpha.
+The complete formula is normative in ADR-0034. Stable unblended readback probes allow absolute
+per-channel error at most `2/255` from the real-valued reference.
 
 Let `base` be the resolved S038 mesh RGBA color and `tex` be the sampled normalized RGBA texel:
 
@@ -93,8 +102,10 @@ compositing/depth claims.
 |---|---|---|
 | `texture2d.rgba8.v1` | Renderer/protocol can validate and resolve immutable RGBA8 `Texture2D` resources. | `uint8 (H,W,4)`, non-empty dimensions, no silent coercion or color conversion. |
 | `meshvisual.uv.vertex2d.v1` | Renderer/protocol accepts per-vertex UVs indexed by mesh faces. | finite `(N,2)` UVs, no alternate UV topology. |
-| `meshvisual.material.texture2d_unlit.v1` | Renderer samples RGBA8 texture with fixed sampler and multiplicative unlit RGBA output. | Requires `texture2d.rgba8.v1` and `meshvisual.uv.vertex2d.v1`. |
+| `meshvisual.material.texture2d_unlit.v1` | Renderer samples RGBA8 texture with the original nearest/clamp/no-mipmap profile and multiplicative unlit RGBA output. | Requires `texture2d.rgba8.v1` and `meshvisual.uv.vertex2d.v1`. |
+| `meshvisual.texture_filter.linear.v1` | Renderer implements the ADR-0034 base-level bilinear rule. | Requires all three Texture2D resource/UV/material capabilities above. |
 | `vispy2.producer.mesh.texture2d_unlit.v1` | VisPy2 can emit canonical textured mesh payloads. | Producer-only; renderers still need renderer capabilities. |
+| `gsp_vispy2.producer.mesh.texture_filter.linear.v1` | VisPy2 accepts and emits the linear filter field. | Producer-only; requires the Texture2D mesh producer capability. |
 
 `meshvisual.positions3d.opaque_depth.v1` may combine with textured meshes only for retained
 DATA-space View3D paths that already satisfy opaque-depth requirements and only when final alpha is
@@ -112,8 +123,9 @@ conservatively opaque.
 | `meshvisual_uv_shape_mismatch` | `uvs` is not `(N,2)`. | Reject strict payload. |
 | `meshvisual_uv_nonfinite` | Any UV is NaN or infinite. | Reject strict payload. |
 | `meshvisual_uv_topology_unsupported` | Separate UV indices, per-corner UVs, per-face UVs, or generated UVs requested. | Reject unless a later capability accepts it. |
+| `meshvisual_texture_filter_inapplicable` | `linear` is requested without `texture2d_unlit`. | Reject the invalid visual; never ignore the request. |
 | `meshvisual_material_texture2d_unlit_unsupported` | Renderer lacks textured mesh material support. | Reject/diagnose; never render as flat color silently. |
-| `texture2d_sampler_unsupported` | Linear filtering, repeat wrap, mipmaps, border colors, anisotropy, or sampler state requested. | Reject in v1. |
+| `texture2d_sampler_unsupported` | A valid linear visual reaches a nearest-only renderer, or deferred wrap/mipmap/anisotropy/sampler state is requested. | Reject explicitly; never downgrade linear to nearest. |
 | `texture2d_colorspace_unsupported` | sRGB decode, ICC, linear-light conversion, or other color management requested. | Reject in v1. |
 | `meshvisual_texture_lighting_conflict` | Texture material is combined with Lambert/Phong/material/light semantics intended to affect color. | Reject in v1. |
 | `mesh3d_alpha_not_strict` | Textured 3D mesh has base alpha `< 1` or any texture alpha byte `< 255`. | Rendering is non-strict for final 3D compositing/depth claims. |
@@ -125,11 +137,10 @@ Matplotlib must not advertise `meshvisual.material.texture2d_unlit.v1` through t
 `meshvisual_material_texture2d_unlit_unsupported`. A future Matplotlib implementation would need a
 fixture-backed CPU textured triangle rasterizer.
 
-Datoviz may advertise `texture2d.rgba8.v1`, `meshvisual.uv.vertex2d.v1`, and
-`meshvisual.material.texture2d_unlit.v1` only after public Datoviz APIs prove canonical RGBA8
-upload, canonical per-vertex UV binding, nearest/clamp/no-mipmap sampling, compatible image origin,
-and unmanaged numeric color behavior. Private Vulkan objects, shader slots, mesh ids, or
-backend-native texture handles are not evidence.
+Datoviz may advertise `meshvisual.texture_filter.linear.v1` only after public per-field-slot APIs
+and real offscreen fixtures prove the normative interpolation, orientation, clamp, multiplication,
+alpha, min/mag, and shared-resource behavior within tolerance. Private Vulkan objects, shader
+slots, mesh ids, or backend-native texture handles are not evidence.
 
 VisPy2 may add only a thin producer helper that lowers to accepted GSP fields. It must not expose
 backend texture handles, sampler controls, file loading, material classes, shading controls, or
@@ -151,6 +162,7 @@ def mesh(
     order=0.0,
     texture=None,
     uvs=None,
+    texture_filter="nearest",
 ):
     ...
 ```
@@ -162,8 +174,9 @@ Rules:
 - `texture` must be strict `uint8 (H,W,4)` with no semantic conversion;
 - `uvs` must be finite `(N,2)`;
 - `color` remains the multiplicative base color;
+- `texture_filter` accepts only `nearest` or `linear`; linear requires both texture and UVs;
 - supplying exactly one of `texture` or `uvs` is an error;
-- no `sampler`, `wrap`, `filter`, `mipmap`, `material`, `normal`, `light`, `shading`,
+- no `sampler`, `wrap`, independent min/mag, `mipmap`, `material`, `normal`, `light`, `shading`,
   `texture_id`, culling/depth-state, or backend-specific keyword is accepted in this stage.
 
 ## Fixtures
@@ -188,8 +201,8 @@ Negative fixtures:
 - empty texture dimensions;
 - missing, wrong-length, wrong-shape, NaN, or infinite UVs;
 - separate UV indices, per-corner UVs, generated UVs, or face-varying UVs;
-- requested linear filtering, repeat wrap, mipmaps, sRGB decode, border color, anisotropy, or a
-  sampler object;
+- invalid filter values; linear on a non-textured visual; repeat wrap, mipmaps, sRGB decode, border
+  color, anisotropy, independent min/mag, or a sampler object;
 - texture material combined with Lambert, Phong/specular fields, normal maps, or material/light
   semantics intended to affect texture color;
 - unsupported backend receiving a textured mesh;
