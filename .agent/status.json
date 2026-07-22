@@ -370,7 +370,7 @@
     {
       "id": "S062",
       "title": "Clean GSP And VisPy2 Repository Bootstrap",
-      "state": "draft",
+      "state": "in_progress",
       "progress": 0
     }
   ],
@@ -2710,7 +2710,7 @@
       "id": "M261",
       "title": "S062 local fresh-root repositories",
       "stage": "S062",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 261
@@ -2870,7 +2870,8 @@
     }
   ],
   "recommendations": [
-    "S061 completed: architecture, naming, reproducible baseline, verified full-history bundle, and a validated 31-component migration manifest are ready; approve proposed S062 M261-M266 to create local unpublished fresh-root gsp and vispy2 repositories, implement provider-backed package separation, and qualify built wheels without remote or release operations.",
+    "S062 approved: execute M261-M266 locally to create fresh-root gsp and vispy2 repositories, isolate gsp-core, implement lazy providers and both adapters, migrate VisPy2, and qualify built wheels; do not create remotes, push, tag, release, or publish.",
+    "S061 completed: architecture, naming, reproducible baseline, verified full-history bundle, and a validated 31-component migration manifest are ready for the approved local S062 bootstrap.",
     "M259 completed: the validated 31-component manifest classifies 16 migrate-now, 11 archive-only, and four defer/reassess components with exact baseline Git objects and destination owners; four expected coupling rewrites are explicit.",
     "M258 completed: clean baseline 463d34d reproduces all repository, package, and Datoviz gates; a complete external 42 MiB bundle with SHA-256 4b6b8bdd0e403ea9f0ed7d169a7694ac0985e7a8906890d2f74cf1dc5c611f8b passes checksum, bundle, clean-clone, exact-commit, and fsck recovery checks.",
     "M257 completed: ADR-0035 accepts separate fresh-root gsp and vispy2 repositories, split adapter distributions, lazy GSP backend discovery, the target vispy2 identity, and preservation of GSP_API as the full archive.",

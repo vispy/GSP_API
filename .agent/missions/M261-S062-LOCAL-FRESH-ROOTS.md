@@ -6,7 +6,7 @@ S062 - Clean GSP And VisPy2 Repository Bootstrap
 
 ## Status
 
-Draft; awaiting explicit S062 approval.
+Approved.
 
 ## Summary
 
@@ -25,4 +25,3 @@ rules. Do not migrate implementation code yet.
 
 Stop if either target path exists unexpectedly, repository ownership/visibility is inferred, history
 is imported, a remote is added, or package boundaries conflict with ADR-0035.
-

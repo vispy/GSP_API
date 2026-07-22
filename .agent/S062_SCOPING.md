@@ -2,7 +2,7 @@
 
 Date: 2026-07-22
 
-Status: draft; awaiting explicit project-owner approval.
+Status: approved; M261 is ready.
 
 ## Objective
 
@@ -14,7 +14,7 @@ Keep both repositories unpublished and preserve `GSP_API` as the migration autho
 
 | Mission | State | Scope |
 |---|---|---|
-| M261 | draft | Create both local Git repositories with fresh roots, licenses, provenance, manifests, and package/workspace skeletons. |
+| M261 | approved | Create both local Git repositories with fresh roots, licenses, provenance, manifests, and package/workspace skeletons. |
 | M262 | draft | Curate `gsp-core`, remove its Matplotlib dependency, restore core tests, and build an isolated wheel. |
 | M263 | draft | Implement lazy `gsp.backends` discovery/session SPI and migrate `gsp-matplotlib` as the first provider. |
 | M264 | draft | Migrate the Datoviz v0.4 adapter as a second provider with source-development and RC3 publication boundaries. |
@@ -63,3 +63,8 @@ S062 ends with two clean local repositories and built-wheel evidence. Creating `
 `vispy/vispy2` on GitHub, configuring remotes, pushing histories, and releasing packages require a
 later explicit external-publication mission.
 
+## Approval
+
+The project owner explicitly approved S062 missions M261-M266 in the active Mission Control
+conversation on 2026-07-22. This approval is limited to the local unpublished bootstrap and does not
+authorize GitHub repository creation, remotes, pushes, tags, releases, or publication.
