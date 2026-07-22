@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved; M272 completed and the project owner authorized sequential execution.
+Completed. Both fresh repositories have least-privilege CI on `main`; source and isolated-wheel
+gates pass locally and in GitHub Actions. Closeout evidence is recorded in `.agent/S064_CLOSEOUT.md`.
 
 ## Acceptance
 

@@ -382,8 +382,8 @@
     {
       "id": "S064",
       "title": "GitHub Predecessor Archival And Fresh-Root Publication",
-      "state": "active",
-      "progress": 67
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -2830,9 +2830,9 @@
       "id": "M273",
       "title": "S064 GitHub CI qualification and closeout",
       "stage": "S064",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 273
     }
   ],
@@ -2945,9 +2945,8 @@
     }
   ],
   "recommendations": [
-    "S063 completed: Matplotlib native toolbar limits synchronize with canonical View2D while DATA and NDC placement remain distinct; Datoviz interactive 2D sessions activate retained canonical navigation; all wheel, lifecycle, parity, and owner live-review gates passed.",
-    "S062 completed: fresh-root local gsp and vispy2 repositories are independently recoverable, clean, fully committed, and qualified from installed wheels; neither repository has a remote.",
-    "Next recommended stage: create vispy/gsp and vispy/vispy2 GitHub repositories, add remotes, and push the qualified histories only after new explicit owner approval; keep tagging and publication separate.",
+    "S064 completed: archived predecessor repositories and verified mirror bundles preserve the old histories; fresh public vispy/gsp and vispy/vispy2 repositories track exact clean local heads and pass least-privilege GitHub Actions source, typing, lint, wheel-build, and installed-wheel gates.",
+    "Next recommended stage: keep version selection, tagging, GitHub releases, and package publication as a separately scoped and explicitly approved release operation.",
     "Datoviz remains an explicit development-source dependency at commit be7f2a80354c25e85bab88c85f5ea7340975b569 until an ordinary RC3-compatible artifact passes the same installed-wheel gates.",
     "S061 completed: architecture, naming, reproducible baseline, verified full-history bundle, and a validated 31-component migration manifest are ready for the approved local S062 bootstrap.",
     "M259 completed: the validated 31-component manifest classifies 16 migrate-now, 11 archive-only, and four defer/reassess components with exact baseline Git objects and destination owners; four expected coupling rewrites are explicit.",

@@ -2,7 +2,7 @@
 
 Date: 2026-07-22
 
-Status: approved; M271 is approved and M272-M273 are authorized sequential follow-ups.
+Status: completed; M271-M273 passed their stop conditions and acceptance gates.
 
 ## Authorization
 
@@ -18,9 +18,9 @@ of predecessor repositories, credential changes, or changes to the sibling Datov
 
 | Mission | State | Scope |
 |---|---|---|
-| M271 | approved | Back up, verify, rename, and archive both predecessor repositories; disable stale GSP Pages. |
-| M272 | draft | Create the fresh public repositories, add local remotes, and push the qualified `main` histories. |
-| M273 | draft | Add CI, validate/push CI commits, verify repository settings and checks, and close S064. |
+| M271 | completed | Backed up, verified, renamed, and archived both predecessor repositories; relocated stale GSP Pages. |
+| M272 | completed | Created fresh public repositories, added local remotes, and pushed the qualified `main` histories. |
+| M273 | completed | Added CI, validated and pushed CI commits, verified settings/checks, and closed S064. |
 
 ## Stop conditions
 
