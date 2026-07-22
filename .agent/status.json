@@ -1,5 +1,5 @@
 {
-  "current_stage": "S063",
+  "current_stage": "S064",
   "stages": [
     {
       "id": "S001",
@@ -378,6 +378,12 @@
       "title": "Live View2D Interaction Parity And Regression Safety",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S064",
+      "title": "GitHub Predecessor Archival And Fresh-Root Publication",
+      "state": "active",
+      "progress": 0
     }
   ],
   "missions": [
@@ -2801,6 +2807,33 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 270
+    },
+    {
+      "id": "M271",
+      "title": "S064 archive GitHub predecessors",
+      "stage": "S064",
+      "state": "approved",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 271
+    },
+    {
+      "id": "M272",
+      "title": "S064 create fresh GitHub roots",
+      "stage": "S064",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 272
+    },
+    {
+      "id": "M273",
+      "title": "S064 GitHub CI qualification and closeout",
+      "stage": "S064",
+      "state": "draft",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 273
     }
   ],
   "review_queue": [],
