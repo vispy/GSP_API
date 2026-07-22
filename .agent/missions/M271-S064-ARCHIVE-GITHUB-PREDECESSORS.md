@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved by the project owner on 2026-07-22.
+Completed. Verified bundles, renamed archival repositories, relocated predecessor Pages, and
+preserved repository identities are recorded in `.agent/S064_M271_PREDECESSOR_ARCHIVE.md`.
 
 ## Acceptance
 

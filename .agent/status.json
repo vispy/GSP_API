@@ -383,7 +383,7 @@
       "id": "S064",
       "title": "GitHub Predecessor Archival And Fresh-Root Publication",
       "state": "active",
-      "progress": 0
+      "progress": 33
     }
   ],
   "missions": [
@@ -2812,16 +2812,16 @@
       "id": "M271",
       "title": "S064 archive GitHub predecessors",
       "stage": "S064",
-      "state": "approved",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 271
     },
     {
       "id": "M272",
       "title": "S064 create fresh GitHub roots",
       "stage": "S064",
-      "state": "draft",
+      "state": "approved",
       "agent": "local-main-codex",
       "progress": 0,
       "priority": 272
