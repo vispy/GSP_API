@@ -6,7 +6,7 @@ S062 - Clean GSP And VisPy2 Repository Bootstrap
 
 ## Status
 
-Approved; M261 completed.
+Completed.
 
 ## Summary
 
@@ -24,3 +24,9 @@ Curate formal protocol records, specifications, accepted rationale, fixtures, an
 
 Stop if named colormap semantics cannot be preserved without a backend dependency, an archive-only
 module is required, or wheel tests depend on source-tree paths.
+
+## Result
+
+Curated and isolated `gsp-core==0.2.0a1` in GSP commit `a0d76b7`; 164 tests pass from its installed
+wheel, strict mypy/Ruff pass, metadata requires only NumPy, and importing GSP loads no backend. See
+`.agent/S062_M262_GSP_CORE_CURATION.md`.

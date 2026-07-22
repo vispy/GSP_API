@@ -6,7 +6,7 @@ S062 - Clean GSP And VisPy2 Repository Bootstrap
 
 ## Status
 
-Draft; blocked on M262.
+Approved; M262 completed.
 
 ## Summary
 
@@ -24,4 +24,3 @@ Implement lazy backend discovery and backend-neutral sessions in `gsp-core`, the
 
 Stop if core imports Matplotlib, discovery eagerly imports adapters, sessions leak native objects into
 semantic records, or adaptation occurs without explicit policy and diagnostics.
-
