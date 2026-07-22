@@ -6,7 +6,7 @@ S061 - GSP And VisPy2 Migration Foundation
 
 ## Status
 
-Approved; M258 completed.
+Completed.
 
 ## Summary
 
@@ -25,3 +25,13 @@ artifacts as migrate-now, archive-only, or defer/reassess.
 
 Stop if protocol authority is disputed, a core component still requires the legacy object graph, or
 the manifest would silently discard evidence that is not recoverable from the verified archive.
+
+## Result
+
+Created a validated 31-component migration manifest with 16 migrate-now, 11 archive-only, and four
+defer/reassess components. Every source component resolves to the declared Git blob/tree object at
+baseline `463d34d`; every migrate-now component has a destination owner. The dependency audit found
+no formal-protocol dependency on the legacy object graph and made four expected rewrite gates
+explicit: core colormap/Matplotlib coupling, legacy Matplotlib initialization, Datoviz sibling-source
+bootstrap, and direct VisPy2 adapter imports. See `.agent/S061_M259_CURATED_MIGRATION_INVENTORY.md`
+and `.agent/migration/S061_migration_manifest.json`.

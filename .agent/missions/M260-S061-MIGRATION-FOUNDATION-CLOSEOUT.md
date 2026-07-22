@@ -6,7 +6,7 @@ S061 - GSP And VisPy2 Migration Foundation
 
 ## Status
 
-Draft; blocked on M259.
+Approved; M259 completed.
 
 ## Summary
 
@@ -24,4 +24,3 @@ for creating local unpublished `gsp` and `vispy2` repositories with fresh roots.
 
 Stop if the inventory remains disputed, archive recovery is incomplete, or the next bootstrap scope
 would require a big-bang rewrite.
-
