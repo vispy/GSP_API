@@ -18,6 +18,7 @@ from gsp.protocol import (
     ColorbarOrientation,
     CoordinateSpace,
     FontRole,
+    GSP_VISPY2_PRODUCER_MESH_TEXTURE_FILTER_LINEAR_CAPABILITY,
     ImageOrigin,
     ImageVisual,
     MeshColorMode,
@@ -43,6 +44,7 @@ from gsp.protocol import (
     TextAnchorY,
     TextVisual,
     Texture2D,
+    TextureFilter,
     TickSpecKind,
     View2D,
     VisualTransformBinding,
@@ -568,12 +570,51 @@ def test_vispy2_mesh_helper_emits_s050_texture2d_unlit_fields():
     assert visual.texture2d_id is not None
     assert visual.texture2d_id.startswith("texture:mesh-")
     assert visual.uv_mode is MeshUVMode.VERTEX
+    assert visual.texture_filter is TextureFilter.NEAREST
     np.testing.assert_allclose(visual.uvs, uvs)
     resources = fig.texture_resources()
     assert len(resources) == 1
     assert isinstance(resources[0], Texture2D)
     assert resources[0].id == visual.texture2d_id
     np.testing.assert_array_equal(resources[0].image, texture)
+
+
+def test_vispy2_mesh_helper_emits_s059_linear_texture_filter():
+    texture = np.zeros((2, 2, 4), dtype=np.uint8)
+    visual = vp.mesh(
+        [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+        [[0, 1, 2]],
+        color=[255, 255, 255, 255],
+        texture=texture,
+        uvs=[[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+        texture_filter="linear",
+    )
+
+    assert visual.texture_filter is TextureFilter.LINEAR
+    assert (
+        GSP_VISPY2_PRODUCER_MESH_TEXTURE_FILTER_LINEAR_CAPABILITY
+        == "gsp_vispy2.producer.mesh.texture_filter.linear.v1"
+    )
+
+
+def test_vispy2_mesh_helper_rejects_invalid_or_inapplicable_texture_filter():
+    _, ax = vp.subplots()
+
+    with pytest.raises(ValueError, match="'cubic' is not a valid TextureFilter"):
+        ax.mesh(
+            [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+            [[0, 1, 2]],
+            color=[255, 255, 255, 255],
+            texture_filter="cubic",
+        )
+
+    with pytest.raises(ValueError, match="meshvisual_texture_filter_inapplicable"):
+        ax.mesh(
+            [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+            [[0, 1, 2]],
+            color=[255, 255, 255, 255],
+            texture_filter=TextureFilter.LINEAR,
+        )
 
 
 def test_vispy2_mesh_helper_requires_texture_and_uvs_together():
@@ -618,7 +659,9 @@ def test_vispy2_mesh_helper_rejects_invalid_s050_texture_and_uvs():
             texture=np.zeros((2, 2, 4), dtype=np.uint8),
             uvs=[[0.0, 0.0], [1.0, 0.0]],
         )
-    with pytest.raises(ValueError, match="texture2d_unlit does not accept explicit mesh shading"):
+    with pytest.raises(
+        ValueError, match="texture2d_unlit does not accept explicit mesh shading"
+    ):
         ax.mesh(
             [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
             [[0, 1, 2]],

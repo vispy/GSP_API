@@ -58,6 +58,7 @@ from gsp.protocol import (
     TickSpec,
     TickSpecKind,
     Texture2D,
+    TextureFilter,
     View2D,
     VisualAttachment,
     VisualTransformBinding,
@@ -714,6 +715,7 @@ class Axes:
         transform: npt.ArrayLike | VisualTransformBinding | None = None,
         texture: npt.ArrayLike | None = None,
         uvs: npt.ArrayLike | None = None,
+        texture_filter: str | TextureFilter = TextureFilter.NEAREST,
         id: str | None = None,
     ) -> MeshVisual:
         """Create a protocol MeshVisual for accepted inline triangle meshes."""
@@ -721,7 +723,11 @@ class Axes:
         face_array = _faces(faces)
         texture_resource = self._mesh_texture2d_resource(texture, uvs)
         mesh_shading = _mesh_shading(shading)
-        mesh_uvs = None if texture_resource is None else _mesh_uvs(uvs, position_array.shape[0])
+        mesh_uvs = (
+            None
+            if texture_resource is None
+            else _mesh_uvs(uvs, position_array.shape[0])
+        )
         if texture_resource is not None and mesh_shading is not MeshShading.UNLIT_RGBA:
             raise ValueError("texture2d_unlit does not accept explicit mesh shading")
         visual = MeshVisual(
@@ -744,6 +750,7 @@ class Axes:
             uvs=mesh_uvs,
             order=float(order),
             transform=_visual_transform(transform),
+            texture_filter=_texture_filter(texture_filter),
         )
         if texture_resource is not None:
             self.figure.texture2d_resources.append(texture_resource)
@@ -1165,6 +1172,12 @@ def _mesh_shading(value: str | MeshShading) -> MeshShading:
     return MeshShading(value)
 
 
+def _texture_filter(value: str | TextureFilter) -> TextureFilter:
+    if isinstance(value, TextureFilter):
+        return value
+    return TextureFilter(value)
+
+
 def _mesh_normals(value: npt.ArrayLike | None) -> npt.NDArray[np.float32] | None:
     if value is None:
         return None
@@ -1174,12 +1187,16 @@ def _mesh_normals(value: npt.ArrayLike | None) -> npt.NDArray[np.float32] | None
     return np.ascontiguousarray(array)
 
 
-def _mesh_uvs(value: npt.ArrayLike | None, vertex_count: int) -> npt.NDArray[np.float32]:
+def _mesh_uvs(
+    value: npt.ArrayLike | None, vertex_count: int
+) -> npt.NDArray[np.float32]:
     if value is None:
         raise ValueError("texture and uvs must be supplied together")
     array = np.asarray(value, dtype=np.float32)
     if array.shape != (vertex_count, 2):
-        raise ValueError(f"meshvisual_uv_shape_mismatch: uvs must have shape ({vertex_count}, 2)")
+        raise ValueError(
+            f"meshvisual_uv_shape_mismatch: uvs must have shape ({vertex_count}, 2)"
+        )
     if not np.all(np.isfinite(array)):
         raise ValueError("meshvisual_uv_nonfinite: uvs must be finite")
     return np.ascontiguousarray(array)

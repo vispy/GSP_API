@@ -318,6 +318,7 @@ from .visuals import (
     TextureFilter,
     validate_mesh_visual_flat_lambert,
     validate_mesh_visual_texture2d_unlit,
+    GSP_VISPY2_PRODUCER_MESH_TEXTURE_FILTER_LINEAR_CAPABILITY,
     GSP_VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY,
 )
 
@@ -561,6 +562,7 @@ __all__ = [
     "VisualCoordinateSpace",
     "VisualFamily",
     "VisualTransformBinding",
+    "GSP_VISPY2_PRODUCER_MESH_TEXTURE_FILTER_LINEAR_CAPABILITY",
     "GSP_VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY",
     "ZoomAboutAction",
     "zoom_view2d_about",

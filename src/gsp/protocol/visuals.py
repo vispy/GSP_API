@@ -183,6 +183,9 @@ MESH_TEXTURE_FILTER_LINEAR_CAPABILITY = "meshvisual.texture_filter.linear.v1"
 GSP_VISPY2_PRODUCER_MESH_TEXTURE2D_UNLIT_CAPABILITY = (
     "gsp_vispy2.producer.mesh.texture2d_unlit.v1"
 )
+GSP_VISPY2_PRODUCER_MESH_TEXTURE_FILTER_LINEAR_CAPABILITY = (
+    "gsp_vispy2.producer.mesh.texture_filter.linear.v1"
+)
 MESH_NORMALS_FACE3D_CAPABILITY = "meshvisual.normals.face3d.v1"
 MESH_NORMAL_GENERATION_FACE_FLAT_CAPABILITY = (
     "meshvisual.normal_generation.face_flat.v1"
