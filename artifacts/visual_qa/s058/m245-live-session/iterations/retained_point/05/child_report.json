@@ -1,0 +1,20 @@
+{
+  "after_sha256": "6495dc7f6637bca65b82bc785cd36f51ed87244dc30794b2986820a236619088",
+  "before_sha256": "0fdb07d91e3c353552a6c0d13ae35662c2ac21089da46a0198c74c72493119f0",
+  "frame_callback_count": 0,
+  "mode": "retained_point",
+  "phases": [
+    "create_requested",
+    "owner_created",
+    "visual_attached",
+    "first_frame",
+    "retained_point_update",
+    "updated_frame_verified",
+    "close_requested",
+    "owner_closed",
+    "double_close_idempotent"
+  ],
+  "schema_kind": "gsp.s053.datoviz_live_session_child",
+  "schema_version": 1,
+  "semantic_visual_id": "visual:s053:point"
+}

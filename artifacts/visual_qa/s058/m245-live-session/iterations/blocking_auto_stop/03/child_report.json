@@ -1,0 +1,20 @@
+{
+  "after_sha256": null,
+  "before_sha256": null,
+  "frame_callback_count": 3,
+  "mode": "blocking_auto_stop",
+  "phases": [
+    "create_requested",
+    "owner_created",
+    "visual_attached",
+    "first_frame",
+    "stop_requested",
+    "blocking_run_complete",
+    "close_requested",
+    "owner_closed",
+    "double_close_idempotent"
+  ],
+  "schema_kind": "gsp.s053.datoviz_live_session_child",
+  "schema_version": 1,
+  "semantic_visual_id": "visual:s053:point"
+}

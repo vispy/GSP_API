@@ -1,0 +1,650 @@
+{
+  "baseline_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s050/pre_rc_compat_s028_timeout/capability_matrix.json",
+  "baseline_run_id": "pre-rc-compat-s028-timeout",
+  "baseline_summary": {
+    "adapted": 4,
+    "crashed": 14,
+    "disabled": 0,
+    "experimental": 0,
+    "not_run": 0,
+    "strict": 42,
+    "unsupported": 0
+  },
+  "candidate_path": "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/capability_matrix.json",
+  "candidate_run_id": "s058-m245-v04dev-71c444cee",
+  "candidate_summary": {
+    "adapted": 7,
+    "crashed": 0,
+    "disabled": 0,
+    "experimental": 0,
+    "not_run": 0,
+    "strict": 53,
+    "unsupported": 0
+  },
+  "generated_at": "2026-07-22T10:48:15.037070+00:00",
+  "rows": [
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "color/marker_scalar_fill_alpha",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "color/point_scalar_gray_range",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "color/scalar_image_viridis_colorbar",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_axis_guide_adapted_review",
+      "candidate_status": "adapted",
+      "case_id": "guide/view2d_auto_grid",
+      "outcome": "improved",
+      "status_delta": 3
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_axis_guide_adapted_review",
+      "candidate_status": "adapted",
+      "case_id": "guide/view2d_grid_clip_title_boundary",
+      "outcome": "improved",
+      "status_delta": 3
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_axis_guide_adapted_review",
+      "candidate_status": "adapted",
+      "case_id": "guide/view2d_reversed_explicit",
+      "outcome": "improved",
+      "status_delta": 3
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "image/checker_nearest_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "image/origin_lower_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "image/rgba_alpha_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "image/scalar_gray_clim_ndc",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "marker/angle_size_stroke_ndc",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "marker/shapes_ndc",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "mesh/indexed_square_per_face_ndc_2d",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "mesh/indexed_square_uniform_ndc_2d",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "mesh/single_triangle_uniform_ndc_2d",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "overlay/point_over_image_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "path/subpaths_width_join_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "point/alpha_overlap_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "point/basic_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "point/diameter_ramp_ndc",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "segment/alpha_order_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "segment/width_cap_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_pending_promotion_audit",
+      "baseline_status": "adapted",
+      "candidate_reason_code": "datoviz_rendered_pending_promotion_audit",
+      "candidate_status": "adapted",
+      "case_id": "text/anchor_grid_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_pending_promotion_audit",
+      "baseline_status": "adapted",
+      "candidate_reason_code": "datoviz_rendered_pending_promotion_audit",
+      "candidate_status": "adapted",
+      "case_id": "text/basic_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_pending_promotion_audit",
+      "baseline_status": "adapted",
+      "candidate_reason_code": "datoviz_rendered_pending_promotion_audit",
+      "candidate_status": "adapted",
+      "case_id": "text/data_vs_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_pending_promotion_audit",
+      "baseline_status": "adapted",
+      "candidate_reason_code": "datoviz_rendered_pending_promotion_audit",
+      "candidate_status": "adapted",
+      "case_id": "text/multiline_unicode_smoke",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "text/rotation_alpha_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "transform/family_affine_view2d",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "baseline_status": "strict",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "transform/inline_named_equivalence",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "datoviz",
+      "baseline_reason_code": "datoviz_runtime_error",
+      "baseline_status": "crashed",
+      "candidate_reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "candidate_status": "strict",
+      "case_id": "transform/view2d_data_ndc_overlay",
+      "outcome": "improved",
+      "status_delta": 4
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "color/marker_scalar_fill_alpha",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "color/point_scalar_gray_range",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "color/scalar_image_viridis_colorbar",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "guide/view2d_auto_grid",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "guide/view2d_grid_clip_title_boundary",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "guide/view2d_reversed_explicit",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "image/checker_nearest_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "image/origin_lower_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "image/rgba_alpha_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "image/scalar_gray_clim_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "marker/angle_size_stroke_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "marker/shapes_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "mesh/indexed_square_per_face_ndc_2d",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "mesh/indexed_square_uniform_ndc_2d",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "mesh/single_triangle_uniform_ndc_2d",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "overlay/point_over_image_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "path/subpaths_width_join_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "point/alpha_overlap_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "point/basic_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "point/diameter_ramp_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "segment/alpha_order_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "segment/width_cap_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "text/anchor_grid_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "text/basic_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "text/data_vs_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "text/multiline_unicode_smoke",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "text/rotation_alpha_ndc",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "transform/family_affine_view2d",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "transform/inline_named_equivalence",
+      "outcome": "unchanged",
+      "status_delta": 0
+    },
+    {
+      "backend": "matplotlib",
+      "baseline_reason_code": "matplotlib_reference_rendered",
+      "baseline_status": "strict",
+      "candidate_reason_code": "matplotlib_reference_rendered",
+      "candidate_status": "strict",
+      "case_id": "transform/view2d_data_ndc_overlay",
+      "outcome": "unchanged",
+      "status_delta": 0
+    }
+  ],
+  "schema_kind": "gsp.visual_qa.capability_matrix_comparison",
+  "schema_version": 1,
+  "suite": "s028",
+  "summary": {
+    "backend_outcomes": {
+      "datoviz": {
+        "improved": 14,
+        "unchanged": 16
+      },
+      "matplotlib": {
+        "unchanged": 30
+      }
+    },
+    "outcomes": {
+      "added": 0,
+      "changed": 0,
+      "improved": 14,
+      "regressed": 0,
+      "removed": 0,
+      "unchanged": 46
+    },
+    "total_rows": 60
+  }
+}

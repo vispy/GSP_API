@@ -1,0 +1,1559 @@
+{
+  "generated_at": "2026-07-22T10:48:14.454179+00:00",
+  "review_classification_summary": {
+    "fail.layout": 0,
+    "fail.query": 0,
+    "fail.semantic": 0,
+    "pass.layout_strict": 0,
+    "pass.raster_tolerant": 0,
+    "pass.semantic_strict": 53,
+    "review.adapted": 7,
+    "review.native_backend": 0,
+    "unsupported.capability": 0
+  },
+  "review_classification_taxonomy": [
+    "pass.semantic_strict",
+    "pass.layout_strict",
+    "pass.raster_tolerant",
+    "review.adapted",
+    "review.native_backend",
+    "fail.semantic",
+    "fail.layout",
+    "fail.query",
+    "unsupported.capability"
+  ],
+  "rows": [
+    {
+      "backend": "matplotlib",
+      "case_id": "point/basic_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/point_basic_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/point_basic_ndc.log.txt"
+      ],
+      "family": "point",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "ndc",
+        "rgba8",
+        "pixel-size"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "point/basic_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/point_basic_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/point_basic_ndc.log.txt"
+      ],
+      "family": "point",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "ndc",
+        "rgba8",
+        "pixel-size"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "point/diameter_ramp_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/point_diameter_ramp_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/point_diameter_ramp_ndc.log.txt"
+      ],
+      "family": "point",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "ndc",
+        "rgba8",
+        "diameter-ramp"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "point/diameter_ramp_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/point_diameter_ramp_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/point_diameter_ramp_ndc.log.txt"
+      ],
+      "family": "point",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "ndc",
+        "rgba8",
+        "diameter-ramp"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "point/alpha_overlap_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/point_alpha_overlap_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/point_alpha_overlap_ndc.log.txt"
+      ],
+      "family": "point",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "ndc",
+        "rgba8",
+        "alpha"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "point/alpha_overlap_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/point_alpha_overlap_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/point_alpha_overlap_ndc.log.txt"
+      ],
+      "family": "point",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "ndc",
+        "rgba8",
+        "alpha"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "marker/shapes_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/marker_shapes_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/marker_shapes_ndc.log.txt"
+      ],
+      "family": "marker",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "marker",
+        "ndc",
+        "rgba8",
+        "shape",
+        "stroke"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "marker/shapes_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/marker_shapes_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/marker_shapes_ndc.log.txt"
+      ],
+      "family": "marker",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "marker",
+        "ndc",
+        "rgba8",
+        "shape",
+        "stroke"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "marker/angle_size_stroke_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/marker_angle_size_stroke_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/marker_angle_size_stroke_ndc.log.txt"
+      ],
+      "family": "marker",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "marker",
+        "ndc",
+        "rgba8",
+        "angle",
+        "pixel-size",
+        "stroke"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "marker/angle_size_stroke_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/marker_angle_size_stroke_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/marker_angle_size_stroke_ndc.log.txt"
+      ],
+      "family": "marker",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "marker",
+        "ndc",
+        "rgba8",
+        "angle",
+        "pixel-size",
+        "stroke"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "segment/width_cap_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/segment_width_cap_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/segment_width_cap_ndc.log.txt"
+      ],
+      "family": "segment",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "segment",
+        "ndc",
+        "rgba8",
+        "width",
+        "cap"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "segment/width_cap_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/segment_width_cap_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/segment_width_cap_ndc.log.txt"
+      ],
+      "family": "segment",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "segment",
+        "ndc",
+        "rgba8",
+        "width",
+        "cap"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "segment/alpha_order_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/segment_alpha_order_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/segment_alpha_order_ndc.log.txt"
+      ],
+      "family": "segment",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "segment",
+        "ndc",
+        "rgba8",
+        "alpha",
+        "layering"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "segment/alpha_order_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/segment_alpha_order_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/segment_alpha_order_ndc.log.txt"
+      ],
+      "family": "segment",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "segment",
+        "ndc",
+        "rgba8",
+        "alpha",
+        "layering"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "path/subpaths_width_join_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/path_subpaths_width_join_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/path_subpaths_width_join_ndc.log.txt"
+      ],
+      "family": "path",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "path",
+        "ndc",
+        "rgba8",
+        "subpath",
+        "width",
+        "cap",
+        "join"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "path/subpaths_width_join_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/path_subpaths_width_join_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/path_subpaths_width_join_ndc.log.txt"
+      ],
+      "family": "path",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "path",
+        "ndc",
+        "rgba8",
+        "subpath",
+        "width",
+        "cap",
+        "join"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "image/checker_nearest_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/image_checker_nearest_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/image_checker_nearest_ndc.log.txt"
+      ],
+      "family": "image",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "ndc",
+        "rgba8",
+        "nearest",
+        "extent",
+        "orientation"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "image/checker_nearest_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/image_checker_nearest_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/image_checker_nearest_ndc.log.txt"
+      ],
+      "family": "image",
+      "known_adaptations": [
+        "Datoviz uses retained RGBA8 image upload; S029 verifies nearest sampling, NDC extent, and upper-origin orientation"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "ndc",
+        "rgba8",
+        "nearest",
+        "extent",
+        "orientation"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "image/origin_lower_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/image_origin_lower_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/image_origin_lower_ndc.log.txt"
+      ],
+      "family": "image",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "ndc",
+        "rgba8",
+        "origin-lower",
+        "extent"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "image/origin_lower_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/image_origin_lower_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/image_origin_lower_ndc.log.txt"
+      ],
+      "family": "image",
+      "known_adaptations": [
+        "Datoviz uses retained RGBA8 image upload; S029 verifies lower-origin texcoord adaptation and NDC extent"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "ndc",
+        "rgba8",
+        "origin-lower",
+        "extent"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "image/scalar_gray_clim_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/image_scalar_gray_clim_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/image_scalar_gray_clim_ndc.log.txt"
+      ],
+      "family": "image",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "ndc",
+        "scalar",
+        "gray",
+        "clim"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "image/scalar_gray_clim_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/image_scalar_gray_clim_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/image_scalar_gray_clim_ndc.log.txt"
+      ],
+      "family": "image",
+      "known_adaptations": [
+        "GSP CPU maps scalar gray/clim data to canonical RGBA8 before Datoviz upload; S029 verifies rendered gray/clim output"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "ndc",
+        "scalar",
+        "gray",
+        "clim"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "image/rgba_alpha_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/image_rgba_alpha_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/image_rgba_alpha_ndc.log.txt"
+      ],
+      "family": "image",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "ndc",
+        "rgba8",
+        "alpha"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "image/rgba_alpha_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/image_rgba_alpha_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/image_rgba_alpha_ndc.log.txt"
+      ],
+      "family": "image",
+      "known_adaptations": [
+        "Datoviz uses retained RGBA8 image upload with legacy sRGB blending for Matplotlib parity"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "ndc",
+        "rgba8",
+        "alpha"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "overlay/point_over_image_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/overlay_point_over_image_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/overlay_point_over_image_ndc.log.txt"
+      ],
+      "family": "overlay",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "image",
+        "ndc",
+        "rgba8",
+        "layering"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "overlay/point_over_image_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/overlay_point_over_image_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/overlay_point_over_image_ndc.log.txt"
+      ],
+      "family": "overlay",
+      "known_adaptations": [
+        "S029 verifies Datoviz point-over-image layering for the rendered NDC overlay scope"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "image",
+        "ndc",
+        "rgba8",
+        "layering"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "text/basic_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/text_basic_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/text_basic_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "rgba8",
+        "font-size"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "text/basic_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/text_basic_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/text_basic_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "default BASELINE text-anchor semantics are not strictly verified by the Datoviz adapter"
+      ],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "rgba8",
+        "font-size"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "text/anchor_grid_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/text_anchor_grid_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/text_anchor_grid_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "anchor"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "text/anchor_grid_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/text_anchor_grid_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/text_anchor_grid_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "baseline, top, center, and bottom text-box anchors need a focused fixture before strict promotion"
+      ],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "anchor"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "text/rotation_alpha_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/text_rotation_alpha_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/text_rotation_alpha_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "rotation",
+        "alpha",
+        "z-order"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "text/rotation_alpha_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/text_rotation_alpha_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/text_rotation_alpha_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [
+        "Datoviz retained text receives per-item NDC positions, UTF-8 ASCII strings, RGBA alpha, font size, center anchors, and rotation radians",
+        "S029 verifies the rendered text draws above the orientation image with alpha blending and center-anchored rotation"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "ndc",
+        "rotation",
+        "alpha",
+        "z-order"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "text/data_vs_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/text_data_vs_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/text_data_vs_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "data",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "text/data_vs_ndc",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/text_data_vs_ndc.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/text_data_vs_ndc.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "DATA and NDC text placement is only proven under the identity [-1,+1] review-pack view"
+      ],
+      "protocol_scope": [
+        "text",
+        "data",
+        "ndc"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "text/multiline_unicode_smoke",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/text_multiline_unicode_smoke.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/text_multiline_unicode_smoke.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "text",
+        "multiline",
+        "unicode"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "text/multiline_unicode_smoke",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/text_multiline_unicode_smoke.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/text_multiline_unicode_smoke.log.txt"
+      ],
+      "family": "text",
+      "known_adaptations": [
+        "Datoviz rendering is reviewable but not yet promoted to strict"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [
+        "Unicode fallback and multiline BASELINE anchoring remain unverified"
+      ],
+      "protocol_scope": [
+        "text",
+        "multiline",
+        "unicode"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_pending_promotion_audit",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh/single_triangle_uniform_ndc_2d",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/mesh_single_triangle_uniform_ndc_2d.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/mesh_single_triangle_uniform_ndc_2d.log.txt"
+      ],
+      "family": "mesh",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "uniform",
+        "2d"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh/single_triangle_uniform_ndc_2d",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/mesh_single_triangle_uniform_ndc_2d.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/mesh_single_triangle_uniform_ndc_2d.log.txt"
+      ],
+      "family": "mesh",
+      "known_adaptations": [
+        "Datoviz uses retained mesh position/index upload with z=0 adaptation for the bounded 2D NDC triangle scope",
+        "S029 verifies flat uniform RGBA rendering with depth testing disabled for the 2D ordered-rendering scope"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "uniform",
+        "2d"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh/indexed_square_uniform_ndc_2d",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/mesh_indexed_square_uniform_ndc_2d.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/mesh_indexed_square_uniform_ndc_2d.log.txt"
+      ],
+      "family": "mesh",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "indexed",
+        "2d"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh/indexed_square_uniform_ndc_2d",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/mesh_indexed_square_uniform_ndc_2d.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/mesh_indexed_square_uniform_ndc_2d.log.txt"
+      ],
+      "family": "mesh",
+      "known_adaptations": [
+        "Datoviz preserves indexed 2D triangle geometry for the uniform-color square scope",
+        "S029 verifies the shared-vertex two-triangle square renders as one flat opaque RGBA mesh"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "indexed",
+        "2d"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "mesh/indexed_square_per_face_ndc_2d",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/mesh_indexed_square_per_face_ndc_2d.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/mesh_indexed_square_per_face_ndc_2d.log.txt"
+      ],
+      "family": "mesh",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "per-face",
+        "2d"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "mesh/indexed_square_per_face_ndc_2d",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/mesh_indexed_square_per_face_ndc_2d.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/mesh_indexed_square_per_face_ndc_2d.log.txt"
+      ],
+      "family": "mesh",
+      "known_adaptations": [
+        "Datoviz adapts per-face RGBA to its per-vertex color mesh path by duplicating triangle vertices",
+        "S029 verifies the two original face colors and diagonal split for the bounded 2D NDC scope"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "mesh",
+        "ndc",
+        "rgba8",
+        "per-face",
+        "2d"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "color/scalar_image_viridis_colorbar",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/color_scalar_image_viridis_colorbar.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/color_scalar_image_viridis_colorbar.log.txt"
+      ],
+      "family": "color",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "scalar",
+        "colormap",
+        "colorbar",
+        "viridis"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "color/scalar_image_viridis_colorbar",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/color_scalar_image_viridis_colorbar.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/color_scalar_image_viridis_colorbar.log.txt"
+      ],
+      "family": "color",
+      "known_adaptations": [
+        "GSP CPU maps the scalar image through the canonical viridis ColorScale before Datoviz RGBA8 upload",
+        "Datoviz native colorbar rendering receives explicit GSP tick values and labels for the S029 case"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "image",
+        "scalar",
+        "colormap",
+        "colorbar",
+        "viridis"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "color/point_scalar_gray_range",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/color_point_scalar_gray_range.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/color_point_scalar_gray_range.log.txt"
+      ],
+      "family": "color",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "scalar",
+        "colormap",
+        "range-clipping"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "color/point_scalar_gray_range",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/color_point_scalar_gray_range.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/color_point_scalar_gray_range.log.txt"
+      ],
+      "family": "color",
+      "known_adaptations": [
+        "GSP CPU maps scalar point values through the canonical gray ColorScale before Datoviz RGBA8 upload",
+        "S029 verifies under-range and over-range endpoint clipping for the rendered point scope"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "scalar",
+        "colormap",
+        "range-clipping"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "color/marker_scalar_fill_alpha",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/color_marker_scalar_fill_alpha.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/color_marker_scalar_fill_alpha.log.txt"
+      ],
+      "family": "color",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "marker",
+        "scalar",
+        "fill",
+        "alpha"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "color/marker_scalar_fill_alpha",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/color_marker_scalar_fill_alpha.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/color_marker_scalar_fill_alpha.log.txt"
+      ],
+      "family": "color",
+      "known_adaptations": [
+        "GSP CPU maps scalar marker fill values through the canonical magma ColorScale before Datoviz RGBA8 upload",
+        "S029 verifies scalar fill alpha with a constant marker stroke for the rendered marker scope"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "marker",
+        "scalar",
+        "fill",
+        "alpha"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "transform/inline_named_equivalence",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/transform_inline_named_equivalence.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/transform_inline_named_equivalence.log.txt"
+      ],
+      "family": "transform",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "affine2d",
+        "inline-transform",
+        "named-transform"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "transform/inline_named_equivalence",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/transform_inline_named_equivalence.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/transform_inline_named_equivalence.log.txt"
+      ],
+      "family": "transform",
+      "known_adaptations": [
+        "Datoviz CPU-adapts finite eager point positions with the same affine matrix for inline and named AFFINE_2D bindings before upload",
+        "S029 verifies inline and resolved named transform positions coincide in the rendered NDC point scope"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "affine2d",
+        "inline-transform",
+        "named-transform"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "transform/view2d_data_ndc_overlay",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/transform_view2d_data_ndc_overlay.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/transform_view2d_data_ndc_overlay.log.txt"
+      ],
+      "family": "transform",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "view2d",
+        "data",
+        "ndc",
+        "reversed-limits"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "transform/view2d_data_ndc_overlay",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/transform_view2d_data_ndc_overlay.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/transform_view2d_data_ndc_overlay.log.txt"
+      ],
+      "family": "transform",
+      "known_adaptations": [
+        "Datoviz uploads finite point DATA positions against native panel domains, including reversed x limits",
+        "S032 verifies native DATA-domain points align with explicit VIEW overlay points for the rendered point scope"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "view2d",
+        "data",
+        "ndc",
+        "reversed-limits"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "transform/family_affine_view2d",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/transform_family_affine_view2d.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/transform_family_affine_view2d.log.txt"
+      ],
+      "family": "transform",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "marker",
+        "segment",
+        "path",
+        "text",
+        "mesh",
+        "affine2d",
+        "view2d"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "transform/family_affine_view2d",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/transform_family_affine_view2d.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/transform_family_affine_view2d.log.txt"
+      ],
+      "family": "transform",
+      "known_adaptations": [
+        "Datoviz resolves one named AFFINE_2D resource and CPU-applies it to finite eager DATA positions before native panel-domain rendering",
+        "S029 verifies the rendered bounded point, marker, segment, path, text-center-anchor, and 2D uniform-mesh transform scope"
+      ],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "point",
+        "marker",
+        "segment",
+        "path",
+        "text",
+        "mesh",
+        "affine2d",
+        "view2d"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_rendered_strict_s029_family_audit",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "guide/view2d_auto_grid",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/guide_view2d_auto_grid.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/guide_view2d_auto_grid.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "auto-ticks",
+        "grid",
+        "labels"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "guide/view2d_auto_grid",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/guide_view2d_auto_grid.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/guide_view2d_auto_grid.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [
+        "Datoviz native panel axes render this row for review with backend-native auto ticks, grid, labels, and View2D domains",
+        "Panel title and guide query semantics remain excluded from the Datoviz rendered artifact"
+      ],
+      "known_missing_semantics": [
+        "strict GSP AUTO_LINEAR_NICE_V0 tick identity is not claimed for Datoviz backend-native ticks",
+        "panel title placement and guide/all-rendered query semantics are unsupported for this Datoviz slice"
+      ],
+      "promotion_blockers": [
+        "prove or exclude panel title layout before strict guide promotion",
+        "add Datoviz guide-query support before advertising guide or all-rendered query semantics"
+      ],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "auto-ticks",
+        "grid",
+        "labels"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_axis_guide_adapted_review",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "guide/view2d_reversed_explicit",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/guide_view2d_reversed_explicit.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/guide_view2d_reversed_explicit.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "reversed-limits",
+        "explicit-ticks",
+        "grid",
+        "labels"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "guide/view2d_reversed_explicit",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/guide_view2d_reversed_explicit.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/guide_view2d_reversed_explicit.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [
+        "Datoviz native panel axes render this row for review with reversed View2D domains; explicit GSP tick values/labels are applied when dvz_axis_set_ticks is exposed and otherwise adapt to the backend-native tick policy",
+        "Panel title and guide query semantics remain excluded from the Datoviz rendered artifact"
+      ],
+      "known_missing_semantics": [
+        "strict explicit GSP tick identity is not claimed when the Datoviz binding omits dvz_axis_set_ticks",
+        "panel title placement and guide/all-rendered query semantics are unsupported for this Datoviz slice"
+      ],
+      "promotion_blockers": [
+        "prove or exclude panel title layout before strict guide promotion",
+        "add Datoviz guide-query support before advertising guide or all-rendered query semantics"
+      ],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "reversed-limits",
+        "explicit-ticks",
+        "grid",
+        "labels"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_axis_guide_adapted_review",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    },
+    {
+      "backend": "matplotlib",
+      "case_id": "guide/view2d_grid_clip_title_boundary",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/guide_view2d_grid_clip_title_boundary.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/matplotlib/guide_view2d_grid_clip_title_boundary.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [],
+      "known_missing_semantics": [],
+      "promotion_blockers": [],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "explicit-ticks",
+        "grid",
+        "plot-clip",
+        "title"
+      ],
+      "query_supported": false,
+      "reason_code": "matplotlib_reference_rendered",
+      "rendering_supported": true,
+      "review_classification": "pass.semantic_strict",
+      "status": "strict"
+    },
+    {
+      "backend": "datoviz",
+      "case_id": "guide/view2d_grid_clip_title_boundary",
+      "evidence_artifacts": [
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/guide_view2d_grid_clip_title_boundary.png",
+        "/Users/cyrille/GIT/Viz/GSP_API/artifacts/visual_qa/s058/m245-s028-rolling-baseline/backends/datoviz/guide_view2d_grid_clip_title_boundary.log.txt"
+      ],
+      "family": "guide",
+      "known_adaptations": [
+        "Datoviz native panel axes render this title-boundary grid clipping row for review with explicit ticks, full source-extent grid geometry, and native plot viewport clipping when the verified Datoviz source fix is present",
+        "Panel title and guide query semantics remain excluded from the Datoviz rendered artifact"
+      ],
+      "known_missing_semantics": [
+        "strict panel title layout is not claimed for the adapted Datoviz title visual",
+        "guide/all-rendered query semantics are unsupported for this Datoviz slice"
+      ],
+      "promotion_blockers": [
+        "prove or exclude panel title layout before strict guide promotion",
+        "add Datoviz guide-query support before advertising guide or all-rendered query semantics"
+      ],
+      "protocol_scope": [
+        "guide",
+        "view2d",
+        "explicit-ticks",
+        "grid",
+        "plot-clip",
+        "title"
+      ],
+      "query_supported": false,
+      "reason_code": "datoviz_axis_guide_adapted_review",
+      "rendering_supported": true,
+      "review_classification": "review.adapted",
+      "status": "adapted"
+    }
+  ],
+  "run_id": "s058-m245-v04dev-71c444cee",
+  "schema_kind": "gsp.visual_qa.capability_matrix",
+  "schema_version": 1,
+  "stage": "S028",
+  "status_taxonomy": [
+    "strict",
+    "adapted",
+    "experimental",
+    "unsupported",
+    "disabled",
+    "crashed",
+    "not_run"
+  ],
+  "suite": "s028",
+  "summary": {
+    "adapted": 7,
+    "crashed": 0,
+    "disabled": 0,
+    "experimental": 0,
+    "not_run": 0,
+    "strict": 53,
+    "unsupported": 0
+  }
+}
