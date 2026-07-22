@@ -6,7 +6,7 @@ S050 - Post-S048 Implementation Roadmap And Datoviz Mesh-Pick Evidence
 
 ## Status
 
-Deferred to post-RC1 Datoviz work; candidate for RC2 reassessment.
+Completed on 2026-07-22 against post-RC2 Datoviz `v0.4-dev`.
 
 ## Summary
 
@@ -39,19 +39,17 @@ strict semantics.
 - Stop if the implementation needs private Datoviz APIs, unsupported sampler behavior, alpha/culling
   expansion, or mesh-picking payload expansion.
 
-## Blocker
+## Resolution
 
-M220 found public Datoviz upload and mesh texture binding symbols, but strict capability
-advertisement remains blocked pending fixture evidence for mesh nearest/clamp/no-mipmap sampler
-behavior, texture-origin behavior, unmanaged numeric RGBA behavior, and exact unlit
-multiplication. Datoviz records the required engine work in
-`spec/scene/integration/GSP_TEXTURE2D_MESH_PLAN.md` as a post-RC1, RC2-candidate increment. Do not
-implement or advertise Datoviz Texture2D renderer capabilities until that work lands and the GSP
-fixtures pass. `DVZ_COLOR_ROLE_LINEAR_COLOR` must be proven conversion-free for the accepted GSP
-resource contract; its name alone is not conformance evidence.
+Datoviz commit `be7f2a80354c25e85bab88c85f5ea7340975b569` supplies the public field-slot
+sampling descriptor and setter. GSP commit `e2008b1` implements capability-gated RGBA8 upload,
+per-vertex UV binding, top-row/high-v origin adaptation, nearest min/mag selection, clamp/no-mipmap
+defaults, linear-color role, vertex-color multiplication, and the unlit material model.
 
-## Current Ordering
+The focused S050 review rendered all five Texture2D cases, including retained DATA-space View3D and
+alpha diagnostics, without a Datoviz unsupported or crashed row. `tools/run_datoviz_texture2d_checkpoint.sh`
+now preserves exact provenance and repeats that evidence. Builds without the field-slot API fail
+current-binding preflight or omit the capability through the conservative snapshot translator.
 
-M232 is complete. Reassess this mission after Datoviz RC1 and the Datoviz Texture2D mesh plan, with
-RC2 as a candidate rather than a release blocker. Keep the capability unadvertised until fresh
-runtime fixtures prove sampler, origin, unmanaged RGBA, and unlit multiplication semantics.
+Linear filtering remains outside this completed nearest-only mission and is tracked separately by
+P036.

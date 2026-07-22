@@ -2335,9 +2335,9 @@
       "id": "M222",
       "title": "S050 Datoviz Texture2D capability advertisement",
       "stage": "S050",
-      "state": "deferred",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 222
     },
     {
@@ -2560,9 +2560,9 @@
       "id": "M247",
       "title": "S058 proven RC3 adapter changes",
       "stage": "S058",
-      "state": "deferred",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 100,
       "priority": 247
     },
     {
@@ -2667,11 +2667,18 @@
       "requires_human": false,
       "requires_chatgpt_pro": true,
       "state": "closed"
+    },
+    {
+      "id": "Q160-TEXTURE2D-LINEAR-FILTERING-SEMANTICS",
+      "summary": "P036 asks where a bounded nearest-or-linear texture filter belongs, how it is capability-versioned, and what numeric conformance rule applies. Public implementation is paused pending the ChatGPT Pro response.",
+      "requires_human": true,
+      "requires_chatgpt_pro": true,
+      "state": "open"
     }
   ],
   "recommendations": [
-    "S058 completed: the local Datoviz v0.4-dev checkpoint at 71c444cee has 53 strict, seven adapted, and zero crashed S028 rows, with four improvements and zero regressions versus the latest pre-RC baseline; rerun tools/run_datoviz_v04dev_checkpoint.sh after relevant Datoviz runtime/API/binding commits and open a narrow adapter mission only from new evidence.",
-    "M246 completed: Datoviz v0.4-dev 71c444cee improves four S028 rows with zero regressions and no crashes, while 10/10 public and 25/25 internal lifecycle runs pass; no capability promotes because Texture2D sampling, canonical mesh-triangle identity, rich image payloads, and strict guide evidence remain incomplete. M248 is the next ready rolling-checkpoint mission.",
+    "M247 and M222 completed: Datoviz be7f2a803 field-slot sampling unblocks the bounded GSP nearest-only Texture2D path; five of five native S050 cases render, the current-protocol example inspects successfully, and tools/run_datoviz_texture2d_checkpoint.sh preserves exact provenance for later RC3 commits.",
+    "Q160 is open: paste the P036 ChatGPT Pro response before adding public GSP linear filtering; nearest support, the Datoviz linear engine capability, and the compatibility image helper remain independent and complete.",
     "S054 completed: GSP now has a detailed 90-requirement 0.2 specification, deliberately breaking gsp_vispy2 public API, evidence-backed versioned profiles, executable public documentation, migration redirects, and CI-enforced traceability; the full closeout passed 650 tests with 2 skips, strict mypy, Ruff, strict MkDocs, redirects, and 0.2.0 package builds.",
     "M237 completed: the GSP 0.2 target specification is now about 9,100 words with 90 stable requirements and explicit source dispositions; M238 is running to align the breaking Python protocol and producer APIs without violating ADR-0033.",
     "M236 completed: the protocol-centered site builds strictly, spec/current is explicitly a consolidation draft, and 101 specification/ADR/decision sources are classified with 39 detailed normative sources mapped to GSP 0.2 target chapters; M237 is now running for requirement-level specification detail.",
@@ -2695,7 +2702,7 @@
     "M219 completed: S050 Texture2D visual-QA fixtures now record texture resources, UV/probe expectations, alpha diagnostics, negative diagnostic metadata, and unsupported backend classification without renderer promotion.",
     "M220 completed: Datoviz v0.4-dev exposes public mesh Texture2D candidate symbols, but strict S050 promotion remains blocked pending sampler, origin, unmanaged RGBA, and unlit multiplication fixture evidence.",
     "M221 completed: Matplotlib direct MeshVisual rendering now rejects texture2d_unlit with meshvisual_material_texture2d_unlit_unsupported instead of silently dropping texture fields.",
-    "M222 blocked: Datoviz Texture2D capability advertisement requires M220 sampler, origin, unmanaged RGBA, and unlit multiplication proof before implementation or promotion.",
+    "M222 completed: public post-RC2 Datoviz field-slot sampling plus five runtime fixtures prove the bounded nearest/clamp/no-mipmap Texture2D capability.",
     "M223 completed: VisPy2 Axes.mesh now emits strict Texture2D resources and texture2d_unlit MeshVisual fields when texture and uvs are supplied together.",
     "M224 completed: capability/docs audit now distinguishes protocol validation, VisPy2 producer support, Matplotlib unsupported diagnostics, and Datoviz blocked renderer promotion.",
     "M225 completed: S050 Texture2D closeout records protocol/fixture/producer support, Matplotlib unsupported policy, Datoviz blocked promotion, validation evidence, and remaining blockers.",
