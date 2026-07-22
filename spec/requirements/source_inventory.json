@@ -110,6 +110,12 @@
       "path": ".agent/decisions/S050_view3d_mesh_pick_geometry_payload.md"
     },
     {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S060_prerelease_rc3_timing.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S060_prerelease_rc3_timing.md"
+    },
+    {
       "classification": "accepted-rationale",
       "destination": "adr/ADR-0001-gsp-name.md",
       "disposition": "preserve-and-link",
@@ -318,6 +324,12 @@
       "destination": "adr/ADR-0034-mesh-texture-filter-linear.md",
       "disposition": "preserve-and-link",
       "path": "adr/ADR-0034-mesh-texture-filter-linear.md"
+    },
+    {
+      "classification": "accepted-rationale",
+      "destination": "adr/ADR-0035-gsp-vispy2-repository-separation.md",
+      "disposition": "preserve-and-link",
+      "path": "adr/ADR-0035-gsp-vispy2-repository-separation.md"
     },
     {
       "classification": "detailed-normative-source",
