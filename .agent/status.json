@@ -389,7 +389,7 @@
       "id": "S065",
       "title": "Camera And Priority Visual Completeness",
       "state": "active",
-      "progress": 64
+      "progress": 73
     }
   ],
   "missions": [
@@ -3018,9 +3018,9 @@
       "id": "M281",
       "title": "S065 text hardening and 3D billboards",
       "stage": "S065",
-      "state": "running",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 281,
       "repositories": [
         "gsp",
@@ -3044,7 +3044,7 @@
       "id": "M282",
       "title": "S065 minimal public query entry point",
       "stage": "S065",
-      "state": "draft",
+      "state": "running",
       "agent": "codex-ucl",
       "progress": 0,
       "priority": 282,
@@ -3268,6 +3268,7 @@
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M281 completed and independently accepted: 2D TextVisual behavior is preserved and screen-facing 3D billboards now have strict View3D validation, panel-correct projection, retained camera reprojection without style churn, stable geometry-then-z text ordering, conditional Datoviz text ABI capabilities, Axes3D.text, and a reviewed Matplotlib-only Unicode/font-role gallery. Depth occlusion and glyph parity remain unadvertised. M282 minimal public query entry point is approved next.",
     "M280 completed and independently accepted: bounded PrimitiveVisual now covers all five indexed/unindexed topologies with exact effective-stream cardinality and index validation, explicit Matplotlib adaptations, strict public Datoviz primitive/index lowering with independent indexed capability gating, VisPy2 2D/3D/module producers, and Python 3.13 installed-wheel gallery evidence. Native Datoviz capture remains assigned to M284. M281 text hardening and 3D billboards is approved next.",
     "M279 completed and independently accepted: VectorVisual now resolves scale and tail/center/head anchoring canonically before backend lowering, has strict 2D/3D validation and executable conformance, deterministic Matplotlib line/head adaptation, public Datoviz vector/style lowering with structural ABI diagnostics and item-identity preservation, VisPy2 vectors/quiver producers, and Python 3.13 installed-wheel evidence. Native Datoviz PNG capture remains assigned to M284. M280 bounded PrimitiveVisual is approved next.",
     "M278 completed and independently accepted: SphereVisual now has strict DATA-unit protocol validation, executable conformance, deterministic Matplotlib center-depth/projected-circle adaptation, public Datoviz raycast-impostor lowering with structured capability and failure gates, VisPy2 Axes3D producer/camera fitting, and Python 3.13 installed-wheel evidence. Native Datoviz capture aborted with exit 134 and produced no PNG, so native analytic-depth visual qualification remains assigned to M284. M279 VectorVisual is approved next.",
