@@ -2,9 +2,9 @@
 
 ## Status
 
-Owner-approved amended slice after run `R20260723-112827-M276` established that native lifecycle
-qualification cannot run in the agent subprocess. Provider: `codex-ucl`. Native qualification is
-deferred to M284; live capability promotion is forbidden in this slice.
+Completed in GSP commit `42ac325` and VisPy2 commit `0dce6d6`. The amended non-native slice passed
+independent supervisor review. Native qualification remains deferred to M284, and live Datoviz
+capability promotion remains forbidden until that checkpoint.
 
 ## Goal
 

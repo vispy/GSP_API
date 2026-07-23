@@ -2,7 +2,8 @@
 
 ## Status
 
-Draft; promote after M276. Target repositories: `gsp`, `vispy2`; Datoviz is read-only evidence.
+Approved after M276 completion. Target repositories: `gsp`, `vispy2`; Datoviz is read-only
+evidence.
 
 ## Goal
 
@@ -33,4 +34,3 @@ and diff checks pass.
 
 Stop if exact pixel semantics require device pixels instead of GSP logical pixels, raw item-state
 flags, or backend handles.
-

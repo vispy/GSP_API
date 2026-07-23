@@ -389,7 +389,7 @@
       "id": "S065",
       "title": "Camera And Priority Visual Completeness",
       "state": "active",
-      "progress": 18
+      "progress": 27
     }
   ],
   "missions": [
@@ -2890,9 +2890,9 @@
       "id": "M276",
       "title": "S065 retained and live camera behavior",
       "stage": "S065",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 20,
+      "progress": 100,
       "priority": 276,
       "repositories": [
         "gsp",
@@ -2914,7 +2914,7 @@
       "id": "M277",
       "title": "S065 PixelVisual end-to-end",
       "stage": "S065",
-      "state": "draft",
+      "state": "approved",
       "agent": "codex-ucl",
       "progress": 0,
       "priority": 277,
