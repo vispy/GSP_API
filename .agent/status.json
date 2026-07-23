@@ -389,7 +389,7 @@
       "id": "S065",
       "title": "Camera And Priority Visual Completeness",
       "state": "active",
-      "progress": 82
+      "progress": 91
     }
   ],
   "missions": [
@@ -3068,9 +3068,9 @@
       "id": "M283",
       "title": "S065 gallery docs and capability matrix",
       "stage": "S065",
-      "state": "running",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 283,
       "repositories": [
         "gsp",
@@ -3093,7 +3093,7 @@
       "id": "M284",
       "title": "S065 integrated qualification and human review",
       "stage": "S065",
-      "state": "draft",
+      "state": "approved",
       "agent": "codex-ucl",
       "progress": 0,
       "priority": 284,

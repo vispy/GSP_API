@@ -2,7 +2,8 @@
 
 ## Status
 
-Draft; promote after M283. Target repositories: `gsp`, `vispy2`; Datoviz is read-only evidence.
+Approved after M283 acceptance. Target repositories: `gsp`, `vispy2`; Datoviz is read-only
+evidence.
 
 ## Goal
 
@@ -28,4 +29,3 @@ query. Owner acceptance closes S065; findings open bounded follow-up missions.
 ## Exclusions
 
 No version change, tag, release, publication, force push, merge to main, or Datoviz edit.
-

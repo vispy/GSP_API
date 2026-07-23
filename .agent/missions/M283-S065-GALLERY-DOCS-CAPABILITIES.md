@@ -2,7 +2,8 @@
 
 ## Status
 
-Draft; promote after M282. Target repositories: `gsp`, `vispy2`.
+Completed and independently accepted on 2026-07-23. Integrated as GSP `d2d25a2` and VisPy2
+`66734a3`.
 
 ## Goal
 
@@ -28,4 +29,3 @@ limitations match code. Strict docs build if configured, tests, typing, lint, an
 
 Stop rather than editing capability claims to hide a backend failure. Record missing behavior as a
 finding for Mission Control.
-
