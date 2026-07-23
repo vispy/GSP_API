@@ -3093,9 +3093,9 @@
       "id": "M284",
       "title": "S065 integrated qualification and human review",
       "stage": "S065",
-      "state": "approved",
+      "state": "running",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 95,
       "priority": 284,
       "repositories": [
         "gsp",

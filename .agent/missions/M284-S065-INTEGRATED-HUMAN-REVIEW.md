@@ -2,8 +2,9 @@
 
 ## Status
 
-Approved after M283 acceptance. Target repositories: `gsp`, `vispy2`; Datoviz is read-only
-evidence.
+Automated qualification independently accepted and integrated as VisPy2 `befa0cc` on 2026-07-23.
+Awaiting explicit owner visual and interactive acceptance. GSP remained unchanged; Datoviz was
+read-only evidence.
 
 ## Goal
 
