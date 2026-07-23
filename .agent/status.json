@@ -389,7 +389,7 @@
       "id": "S065",
       "title": "Camera And Priority Visual Completeness",
       "state": "active",
-      "progress": 9
+      "progress": 18
     }
   ],
   "missions": [
@@ -2864,9 +2864,9 @@
       "id": "M275",
       "title": "S065 VisPy2 View3D and static camera",
       "stage": "S065",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 275,
       "repositories": [
         "gsp",
@@ -2890,7 +2890,7 @@
       "id": "M276",
       "title": "S065 retained and live camera behavior",
       "stage": "S065",
-      "state": "draft",
+      "state": "approved",
       "agent": "codex-ucl",
       "progress": 0,
       "priority": 276,
@@ -3225,6 +3225,7 @@
     }
   ],
   "recommendations": [
+    "M275 completed: VisPy2 now has a typed Axes3D static camera/projection API, reducer-backed programmatic navigation, deterministic fit, mesh/title scene emission, installed-wheel examples, and tested Matplotlib/Datoviz lowering. Native Datoviz PNG capture remains an M276/M284 environment checkpoint because both GSP capture and Datoviz's raw offscreen example hang on this machine; M276 is approved next.",
     "S065 approved: implement a powerful VisPy2 View3D camera plus PixelVisual, SphereVisual, VectorVisual, bounded PrimitiveVisual, hardened 3D billboard text, and a minimal public query entry point before human gallery review; comprehensive picking, glyphs, volume, and release operations remain deferred.",
     "M274 completed: agentctl now enforces clean isolated multi-repository worktrees, read-only Datoviz evidence, serialized approval and path-lock checks, bounded worker prompts, and explicit supervisor review/integration. M275 is approved next for VisPy2 View3D and static camera support.",
     "S064 completed: archived predecessor repositories and verified mirror bundles preserve the old histories; fresh public vispy/gsp and vispy/vispy2 repositories track exact clean local heads and pass least-privilege GitHub Actions source, typing, lint, wheel-build, and installed-wheel gates.",

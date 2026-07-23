@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved after M274. Target repositories: `gsp`, `vispy2`; provider: `codex-ucl`.
+Completed. Integrated as GSP commit `c39b046` and VisPy2 commit `60077e8`; closeout evidence is in
+`.agent/S065_M275_STATIC_VIEW3D.md`.
 
 ## Goal
 

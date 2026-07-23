@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft; promote after M275. Target repositories: `gsp`, `vispy2`.
+Approved after M275. Target repositories: `gsp`, `vispy2`; provider: `codex-ucl`.
 
 ## Goal
 
@@ -39,4 +39,3 @@ If the Datoviz live capability is promoted, pause for owner interaction review b
 
 Stop on native crash, callback leak, full visual re-upload for camera-only changes, hidden
 thread/event-loop ownership, or a need to edit Datoviz.
-
