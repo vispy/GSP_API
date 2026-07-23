@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved. Execute in `mission-control` with provider `codex-ucl`.
+Completed. The accepted implementation is commit `feafeae`; closeout evidence is recorded in
+`.agent/S065_M274_MULTIREPO_EXECUTION.md`.
 
 ## Goal
 
@@ -58,4 +59,3 @@ the sibling `gsp` and `vispy2` repositories while Mission Control remains author
 Stop if safe multi-repository sandbox access cannot be achieved with isolated child worktrees, if
 the change would grant write access to Datoviz, or if integration would require automatic merging,
 force operations, credential changes, or provider-account switching.
-

@@ -389,7 +389,7 @@
       "id": "S065",
       "title": "Camera And Priority Visual Completeness",
       "state": "active",
-      "progress": 0
+      "progress": 9
     }
   ],
   "missions": [
@@ -2845,9 +2845,9 @@
       "id": "M274",
       "title": "S065 safe multi-repository worker execution",
       "stage": "S065",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 274,
       "repositories": [
         "mission-control"
@@ -2864,7 +2864,7 @@
       "id": "M275",
       "title": "S065 VisPy2 View3D and static camera",
       "stage": "S065",
-      "state": "draft",
+      "state": "approved",
       "agent": "codex-ucl",
       "progress": 0,
       "priority": 275,
@@ -3226,7 +3226,7 @@
   ],
   "recommendations": [
     "S065 approved: implement a powerful VisPy2 View3D camera plus PixelVisual, SphereVisual, VectorVisual, bounded PrimitiveVisual, hardened 3D billboard text, and a minimal public query entry point before human gallery review; comprehensive picking, glyphs, volume, and release operations remain deferred.",
-    "M274 is the only initially approved S065 mission. It must make agentctl enforce clean multi-repository worktrees, read-only Datoviz evidence, and non-conflicting path locks before medium workers touch gsp or vispy2.",
+    "M274 completed: agentctl now enforces clean isolated multi-repository worktrees, read-only Datoviz evidence, serialized approval and path-lock checks, bounded worker prompts, and explicit supervisor review/integration. M275 is approved next for VisPy2 View3D and static camera support.",
     "S064 completed: archived predecessor repositories and verified mirror bundles preserve the old histories; fresh public vispy/gsp and vispy/vispy2 repositories track exact clean local heads and pass least-privilege GitHub Actions source, typing, lint, wheel-build, and installed-wheel gates.",
     "Datoviz remains an explicit development-source dependency at commit be7f2a80354c25e85bab88c85f5ea7340975b569 until an ordinary RC3-compatible artifact passes the same installed-wheel gates.",
     "S061 completed: architecture, naming, reproducible baseline, verified full-history bundle, and a validated 31-component migration manifest are ready for the approved local S062 bootstrap.",

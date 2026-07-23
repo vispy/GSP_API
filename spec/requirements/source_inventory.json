@@ -116,6 +116,12 @@
       "path": ".agent/decisions/S060_prerelease_rc3_timing.md"
     },
     {
+      "classification": "accepted-decision-record",
+      "destination": ".agent/decisions/S065_camera_visual_release_boundary.md",
+      "disposition": "preserve-and-link",
+      "path": ".agent/decisions/S065_camera_visual_release_boundary.md"
+    },
+    {
       "classification": "accepted-rationale",
       "destination": "adr/ADR-0001-gsp-name.md",
       "disposition": "preserve-and-link",

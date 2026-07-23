@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft; promote after M274. Target repositories: `gsp`, `vispy2`.
+Approved after M274. Target repositories: `gsp`, `vispy2`; provider: `codex-ucl`.
 
 ## Goal
 
@@ -40,4 +40,3 @@ renders deterministic Matplotlib PNGs, and renders/captures Datoviz without sour
 
 Stop on a need for backend state in Figure/Axes3D, a new camera model, silent camera adaptation, or
 Datoviz modification.
-
