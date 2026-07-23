@@ -389,7 +389,7 @@
       "id": "S065",
       "title": "Camera And Priority Visual Completeness",
       "state": "active",
-      "progress": 27
+      "progress": 36
     }
   ],
   "missions": [
@@ -2914,9 +2914,9 @@
       "id": "M277",
       "title": "S065 PixelVisual end-to-end",
       "stage": "S065",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 277,
       "repositories": [
         "gsp",
@@ -2940,7 +2940,7 @@
       "id": "M278",
       "title": "S065 SphereVisual end-to-end",
       "stage": "S065",
-      "state": "draft",
+      "state": "approved",
       "agent": "codex-ucl",
       "progress": 0,
       "priority": 278,
@@ -3225,6 +3225,7 @@
     }
   ],
   "recommendations": [
+    "M277 completed and independently accepted: PixelVisual now has strict protocol validation, executable conformance, deterministic Matplotlib 2D plus documented projected-3D adaptation, public dvz_pixel lowering with exact logical-size and unsupported-path evidence, VisPy2 2D/3D producers, installed-wheel artifacts, and truthful deferral of native Datoviz capture to M284. M278 SphereVisual is approved next.",
     "Owner-approved M276 amendment: implement the non-native cleanup, capability-gated session plumbing, Matplotlib rerender evidence, and caller-owned VisPy2 camera example now; keep live Datoviz navigation unadvertised and defer genuine native lifecycle plus manual interaction qualification to M284. M277 may proceed after this amended slice passes review.",
     "M276 first run stopped cleanly at its native-crash condition: the isolated Datoviz probe aborts inside dvz_app -> glfwInit -> _glfwInitCocoa -> _RegisterApplication before camera or callback code runs. The owner subsequently approved a non-native split; the crash remains an M284 qualification item.",
     "M275 completed: VisPy2 now has a typed Axes3D static camera/projection API, reducer-backed programmatic navigation, deterministic fit, mesh/title scene emission, installed-wheel examples, and tested Matplotlib/Datoviz lowering.",

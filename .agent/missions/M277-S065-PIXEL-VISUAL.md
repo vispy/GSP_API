@@ -2,8 +2,8 @@
 
 ## Status
 
-Approved after M276 completion. Target repositories: `gsp`, `vispy2`; Datoviz is read-only
-evidence.
+Completed and independently accepted. Target repositories: `gsp`, `vispy2`; Datoviz was
+read-only evidence.
 
 ## Goal
 

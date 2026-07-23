@@ -2,7 +2,8 @@
 
 ## Status
 
-Draft; promote after M277. Target repositories: `gsp`, `vispy2`; Datoviz is read-only evidence.
+Approved after M277 completion. Target repositories: `gsp`, `vispy2`; Datoviz is read-only
+evidence.
 
 ## Goal
 
@@ -31,4 +32,3 @@ repository and wheel gates pass.
 
 Stop if sphere radius semantics cannot remain DATA units or if strict behavior needs exposing
 Datoviz render modes/material state.
-
