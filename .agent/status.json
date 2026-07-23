@@ -389,7 +389,7 @@
       "id": "S065",
       "title": "Camera And Priority Visual Completeness",
       "state": "active",
-      "progress": 73
+      "progress": 82
     }
   ],
   "missions": [
@@ -3044,9 +3044,9 @@
       "id": "M282",
       "title": "S065 minimal public query entry point",
       "stage": "S065",
-      "state": "running",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 282,
       "repositories": [
         "gsp",
@@ -3068,7 +3068,7 @@
       "id": "M283",
       "title": "S065 gallery docs and capability matrix",
       "stage": "S065",
-      "state": "draft",
+      "state": "running",
       "agent": "codex-ucl",
       "progress": 0,
       "priority": 283,
