@@ -2,7 +2,8 @@
 
 Date recorded: 2026-07-22
 
-Status: future intent only; not scoped, approved, or launched.
+Status: superseded by the approved `.agent/S065_SCOPING.md` and
+`.agent/S065_TECHNICAL_BASELINE.md`.
 
 ## Purpose
 

@@ -1,5 +1,5 @@
 {
-  "current_stage": "S064",
+  "current_stage": "S065",
   "stages": [
     {
       "id": "S001",
@@ -384,6 +384,12 @@
       "title": "GitHub Predecessor Archival And Fresh-Root Publication",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S065",
+      "title": "Camera And Priority Visual Completeness",
+      "state": "active",
+      "progress": 0
     }
   ],
   "missions": [
@@ -2834,6 +2840,280 @@
       "agent": "local-main-codex",
       "progress": 100,
       "priority": 273
+    },
+    {
+      "id": "M274",
+      "title": "S065 safe multi-repository worker execution",
+      "stage": "S065",
+      "state": "approved",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 274,
+      "repositories": [
+        "mission-control"
+      ],
+      "path_locks": {
+        "mission-control": [
+          "tools/agentctl",
+          ".agent/project.json",
+          "tools/tests"
+        ]
+      }
+    },
+    {
+      "id": "M275",
+      "title": "S065 VisPy2 View3D and static camera",
+      "stage": "S065",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 275,
+      "repositories": [
+        "gsp",
+        "vispy2"
+      ],
+      "path_locks": {
+        "gsp": [
+          "packages/gsp-core",
+          "packages/gsp-matplotlib",
+          "packages/gsp-datoviz"
+        ],
+        "vispy2": [
+          "src/vispy2",
+          "tests",
+          "examples",
+          "docs"
+        ]
+      }
+    },
+    {
+      "id": "M276",
+      "title": "S065 retained and live camera behavior",
+      "stage": "S065",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 276,
+      "repositories": [
+        "gsp",
+        "vispy2"
+      ],
+      "path_locks": {
+        "gsp": [
+          "packages/gsp-matplotlib",
+          "packages/gsp-datoviz"
+        ],
+        "vispy2": [
+          "src/vispy2",
+          "tests",
+          "examples"
+        ]
+      }
+    },
+    {
+      "id": "M277",
+      "title": "S065 PixelVisual end-to-end",
+      "stage": "S065",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 277,
+      "repositories": [
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "gsp": [
+          "packages",
+          "conformance"
+        ],
+        "vispy2": [
+          "src",
+          "tests",
+          "examples",
+          "docs"
+        ]
+      }
+    },
+    {
+      "id": "M278",
+      "title": "S065 SphereVisual end-to-end",
+      "stage": "S065",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 278,
+      "repositories": [
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "gsp": [
+          "packages",
+          "conformance"
+        ],
+        "vispy2": [
+          "src",
+          "tests",
+          "examples",
+          "docs"
+        ]
+      }
+    },
+    {
+      "id": "M279",
+      "title": "S065 VectorVisual end-to-end",
+      "stage": "S065",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 279,
+      "repositories": [
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "gsp": [
+          "packages",
+          "conformance"
+        ],
+        "vispy2": [
+          "src",
+          "tests",
+          "examples",
+          "docs"
+        ]
+      }
+    },
+    {
+      "id": "M280",
+      "title": "S065 bounded PrimitiveVisual end-to-end",
+      "stage": "S065",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 280,
+      "repositories": [
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "gsp": [
+          "packages",
+          "conformance"
+        ],
+        "vispy2": [
+          "src",
+          "tests",
+          "examples",
+          "docs"
+        ]
+      }
+    },
+    {
+      "id": "M281",
+      "title": "S065 text hardening and 3D billboards",
+      "stage": "S065",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 281,
+      "repositories": [
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "gsp": [
+          "packages",
+          "conformance"
+        ],
+        "vispy2": [
+          "src",
+          "tests",
+          "examples",
+          "docs"
+        ]
+      }
+    },
+    {
+      "id": "M282",
+      "title": "S065 minimal public query entry point",
+      "stage": "S065",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 282,
+      "repositories": [
+        "gsp",
+        "vispy2"
+      ],
+      "path_locks": {
+        "gsp": [
+          "packages"
+        ],
+        "vispy2": [
+          "src",
+          "tests",
+          "examples",
+          "docs"
+        ]
+      }
+    },
+    {
+      "id": "M283",
+      "title": "S065 gallery docs and capability matrix",
+      "stage": "S065",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 283,
+      "repositories": [
+        "gsp",
+        "vispy2"
+      ],
+      "path_locks": {
+        "gsp": [
+          "README.md",
+          "docs",
+          "examples"
+        ],
+        "vispy2": [
+          "README.md",
+          "docs",
+          "examples"
+        ]
+      }
+    },
+    {
+      "id": "M284",
+      "title": "S065 integrated qualification and human review",
+      "stage": "S065",
+      "state": "draft",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 284,
+      "repositories": [
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "gsp": [
+          "artifacts",
+          "docs",
+          "examples"
+        ],
+        "vispy2": [
+          "artifacts",
+          "docs",
+          "examples"
+        ]
+      }
     }
   ],
   "review_queue": [],
@@ -2945,8 +3225,9 @@
     }
   ],
   "recommendations": [
+    "S065 approved: implement a powerful VisPy2 View3D camera plus PixelVisual, SphereVisual, VectorVisual, bounded PrimitiveVisual, hardened 3D billboard text, and a minimal public query entry point before human gallery review; comprehensive picking, glyphs, volume, and release operations remain deferred.",
+    "M274 is the only initially approved S065 mission. It must make agentctl enforce clean multi-repository worktrees, read-only Datoviz evidence, and non-conflicting path locks before medium workers touch gsp or vispy2.",
     "S064 completed: archived predecessor repositories and verified mirror bundles preserve the old histories; fresh public vispy/gsp and vispy/vispy2 repositories track exact clean local heads and pass least-privilege GitHub Actions source, typing, lint, wheel-build, and installed-wheel gates.",
-    "Next recommended stage: scope the human-guided S065 code, examples, documentation, and feature-coverage audit recorded in .agent/S065_INTENT.md; keep release work deferred until the owner accepts the audit and resulting fix backlog.",
     "Datoviz remains an explicit development-source dependency at commit be7f2a80354c25e85bab88c85f5ea7340975b569 until an ordinary RC3-compatible artifact passes the same installed-wheel gates.",
     "S061 completed: architecture, naming, reproducible baseline, verified full-history bundle, and a validated 31-component migration manifest are ready for the approved local S062 bootstrap.",
     "M259 completed: the validated 31-component manifest classifies 16 migrate-now, 11 archive-only, and four defer/reassess components with exact baseline Git objects and destination owners; four expected coupling rewrites are explicit.",
