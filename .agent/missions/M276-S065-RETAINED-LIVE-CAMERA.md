@@ -2,24 +2,29 @@
 
 ## Status
 
-Blocked at the explicit native-crash stop condition. Run `R20260723-112827-M276` made no changes;
-evidence and safe resume choices are recorded in `.agent/S065_M276_NATIVE_RUNTIME_BLOCKER.md`.
+Owner-approved amended slice after run `R20260723-112827-M276` established that native lifecycle
+qualification cannot run in the agent subprocess. Provider: `codex-ucl`. Native qualification is
+deferred to M284; live capability promotion is forbidden in this slice.
 
 ## Goal
 
 Make programmatic and interactive View3D camera changes reliable, retained, capability-declared,
 and ready for human review.
 
-## Work
+## Amended work
 
-- Wire Datoviz sessions to enable View3D navigation for accepted 3D scenes.
-- Remove the experimental capability gate only if current bindings and automated lifecycle evidence
-  pass; otherwise keep it unadvertised and produce a precise blocker.
-- Prove orbit/pan/zoom/reset change canonical View3D state and captured output while unchanged
-  visual buffers are not re-uploaded.
+- Fix renderer shutdown so `live_view3d_navigation` is unsubscribed before native objects are
+  destroyed; prove exact callback cleanup and idempotent close with synthetic bindings.
+- Add Datoviz session plumbing for View3D only when the session capability snapshot already
+  advertises `view3d.navigation.orbit_pan_zoom.v1`. Static/offscreen rendering remains
+  noninteractive and the current experimental/native gate remains closed.
+- Prove programmatic orbit/pan/zoom/reset update canonical retained state while unchanged visual
+  buffers are not re-uploaded.
 - Add deterministic Matplotlib re-render/update coverage from revised View3D state.
-- Add a VisPy2 live camera example with explicit caller-owned session lifecycle.
-- Run isolated repeated create/display/update/close cycles and callback cleanup checks.
+- Add a VisPy2 camera example with explicit caller-owned session lifecycle and clear wording that
+  live Datoviz input is deferred pending M284 qualification.
+- Run at least 25 synthetic create/enable/update/close cycles for callback and retained-state
+  regression evidence. Do not describe these as native qualification.
 
 ## Locks
 
@@ -28,15 +33,19 @@ and ready for human review.
 
 ## Acceptance
 
-Programmatic camera changes pass both backends. Datoviz passes at least 25 isolated lifecycle
-iterations with zero crash/hang and exact callback cleanup. A live review command and expected
-controls are recorded for the owner. Capability advertisement matches evidence.
+Programmatic camera changes pass both backends. Synthetic Datoviz lifecycle tests prove exact
+callback cleanup, idempotent close, and no camera-only visual re-upload. Full tests, strict typing,
+lint, wheels, and the example pass. Live Datoviz navigation remains unadvertised, and no native
+lifecycle claim is made.
 
-## Human checkpoint
+## Deferred human checkpoint
 
-If the Datoviz live capability is promoted, pause for owner interaction review before M277.
+M284 must run genuine timeout-bounded native lifecycle iterations in a GUI-capable environment and
+owner interaction review before live Datoviz capability promotion. M277 may proceed after this
+amended non-native slice passes supervisor review.
 
 ## Stop conditions
 
-Stop on native crash, callback leak, full visual re-upload for camera-only changes, hidden
-thread/event-loop ownership, or a need to edit Datoviz.
+Stop on callback leak, full visual re-upload for camera-only changes, hidden thread/event-loop
+ownership, a need to edit Datoviz, or any attempt to promote live Datoviz capability without M284
+native evidence. Do not execute native Datoviz app/window probes in this amended slice.

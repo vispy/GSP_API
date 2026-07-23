@@ -2890,7 +2890,7 @@
       "id": "M276",
       "title": "S065 retained and live camera behavior",
       "stage": "S065",
-      "state": "blocked",
+      "state": "approved",
       "agent": "codex-ucl",
       "progress": 20,
       "priority": 276,
@@ -3225,7 +3225,8 @@
     }
   ],
   "recommendations": [
-    "M276 is blocked at its explicit native-crash stop condition: the first isolated Datoviz lifecycle probe aborts inside dvz_app -> glfwInit -> _glfwInitCocoa -> _RegisterApplication before camera or callback code runs. Live capability remains unadvertised, both worktrees are untouched, and M277 must wait for either a GUI-capable native qualification environment or explicit owner approval to split and implement only the non-native cleanup/rerender/example slice.",
+    "Owner-approved M276 amendment: implement the non-native cleanup, capability-gated session plumbing, Matplotlib rerender evidence, and caller-owned VisPy2 camera example now; keep live Datoviz navigation unadvertised and defer genuine native lifecycle plus manual interaction qualification to M284. M277 may proceed after this amended slice passes review.",
+    "M276 first run stopped cleanly at its native-crash condition: the isolated Datoviz probe aborts inside dvz_app -> glfwInit -> _glfwInitCocoa -> _RegisterApplication before camera or callback code runs. The owner subsequently approved a non-native split; the crash remains an M284 qualification item.",
     "M275 completed: VisPy2 now has a typed Axes3D static camera/projection API, reducer-backed programmatic navigation, deterministic fit, mesh/title scene emission, installed-wheel examples, and tested Matplotlib/Datoviz lowering.",
     "S065 approved: implement a powerful VisPy2 View3D camera plus PixelVisual, SphereVisual, VectorVisual, bounded PrimitiveVisual, hardened 3D billboard text, and a minimal public query entry point before human gallery review; comprehensive picking, glyphs, volume, and release operations remain deferred.",
     "M274 completed: agentctl now enforces clean isolated multi-repository worktrees, read-only Datoviz evidence, serialized approval and path-lock checks, bounded worker prompts, and explicit supervisor review/integration. M275 is approved next for VisPy2 View3D and static camera support.",

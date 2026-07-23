@@ -55,3 +55,10 @@ panel/application lifecycle evidence.
 
 M277 remains dependent on M276 and is not launched automatically while this stop condition is
 active.
+
+## Owner decision
+
+The owner approved safe resume choice 2 on 2026-07-23. M276 is amended to implement only cleanup,
+capability-gated plumbing, Matplotlib rerender evidence, and the caller-owned VisPy2 example. Live
+Datoviz capability remains unadvertised, native qualification moves to M284, and M277 may proceed
+after the amended slice passes supervisor review.
