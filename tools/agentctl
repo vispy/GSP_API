@@ -4,25 +4,28 @@
 This intentionally uses only the Python standard library.
 It is a small tool surface that Codex can call under the hood.
 """
+
 from __future__ import annotations
 
 import argparse
+import contextlib
 import datetime as _dt
+import fcntl
 import json
-import os
 import pathlib
+import shutil
 import subprocess
 import sys
 import textwrap
+import urllib.parse
 from typing import Any
-
-
-ROOT = pathlib.Path.cwd()
 
 
 def repo_root() -> pathlib.Path:
     try:
-        out = subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip()
+        out = subprocess.check_output(
+            ["git", "rev-parse", "--show-toplevel"], text=True
+        ).strip()
         return pathlib.Path(out)
     except Exception:
         return pathlib.Path.cwd()
@@ -51,6 +54,7 @@ def now_id() -> str:
 def md_table(headers: list[str], rows: list[list[Any]]) -> str:
     def cell(x: Any) -> str:
         return str(x) if x is not None else ""
+
     out = []
     out.append("| " + " | ".join(headers) + " |")
     out.append("|" + "|".join(["---" for _ in headers]) + "|")
@@ -85,15 +89,17 @@ def get_mission(st: dict[str, Any], mission_id: str) -> dict[str, Any] | None:
 def provider_rows(pconf: dict[str, Any]) -> list[list[Any]]:
     rows = []
     for pid, spec in pconf.get("providers", {}).items():
-        rows.append([
-            pid,
-            spec.get("kind"),
-            spec.get("enabled", spec.get("kind") == "manual_main_session"),
-            spec.get("aisw_context", ""),
-            spec.get("aisw_profile", ""),
-            spec.get("cost_class", ""),
-            spec.get("description", ""),
-        ])
+        rows.append(
+            [
+                pid,
+                spec.get("kind"),
+                spec.get("enabled", spec.get("kind") == "manual_main_session"),
+                spec.get("aisw_context", ""),
+                spec.get("aisw_profile", ""),
+                spec.get("cost_class", ""),
+                spec.get("description", ""),
+            ]
+        )
     return rows
 
 
@@ -106,38 +112,307 @@ def find_prefixed_file(directory: pathlib.Path, prefix: str) -> pathlib.Path | N
     return None
 
 
+class LaunchError(RuntimeError):
+    """A launch precondition failed before a provider was started."""
+
+
+def git_output(repository: pathlib.Path, *args: str) -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "-C", str(repository), *args],
+            stderr=subprocess.STDOUT,
+            text=True,
+        ).strip()
+    except subprocess.CalledProcessError as exc:
+        detail = exc.output.strip()
+        raise LaunchError(
+            f"Git check failed for {repository}: {detail or ' '.join(args)}"
+        ) from exc
+
+
+def github_remote_identity(remote: str) -> str | None:
+    value = remote.strip().rstrip("/")
+    if value.startswith("git@github.com:"):
+        path = value.removeprefix("git@github.com:")
+    else:
+        parsed = urllib.parse.urlparse(value)
+        if (parsed.hostname or "").lower() != "github.com":
+            return None
+        path = parsed.path.lstrip("/")
+    if path.endswith(".git"):
+        path = path[:-4]
+    parts = [part for part in path.split("/") if part]
+    if len(parts) != 2:
+        return None
+    return f"github.com/{parts[0].lower()}/{parts[1].lower()}"
+
+
+def normalized_lock(value: Any) -> tuple[str, tuple[str, ...]]:
+    if not isinstance(value, str) or not value.strip():
+        raise LaunchError("Path locks must be non-empty relative paths")
+    path = pathlib.PurePosixPath(value)
+    if path.is_absolute() or any(part in ("", ".", "..") for part in path.parts):
+        raise LaunchError(f"Unsafe path lock: {value!r}")
+    normalized = path.as_posix()
+    return normalized, path.parts
+
+
+def locks_overlap(left: tuple[str, ...], right: tuple[str, ...]) -> bool:
+    common = min(len(left), len(right))
+    return left[:common] == right[:common]
+
+
+def mission_repository_keys(mission: dict[str, Any]) -> tuple[list[str], bool]:
+    declared = mission.get("repositories")
+    if declared is None:
+        return ["mission-control"], True
+    if not isinstance(declared, list) or not declared:
+        raise LaunchError("Mission repositories must be a non-empty list")
+    if any(not isinstance(key, str) or not key for key in declared):
+        raise LaunchError("Mission repository keys must be non-empty strings")
+    if len(set(declared)) != len(declared):
+        raise LaunchError("Mission repository keys must be unique")
+    return declared, False
+
+
+def active_run_locks(root: pathlib.Path) -> list[tuple[str, str, tuple[str, ...]]]:
+    active: list[tuple[str, str, tuple[str, ...]]] = []
+    runs_dir = root / ".agent" / "runs"
+    if not runs_dir.exists():
+        return active
+    for run_dir in sorted(runs_dir.iterdir()):
+        meta = load_json(run_dir / "run.json", {})
+        if meta.get("status") not in {"prepared", "manual_required", "running"}:
+            continue
+        for repository, values in meta.get("path_locks", {}).items():
+            for value in values:
+                normalized, parts = normalized_lock(value)
+                active.append(
+                    (repository, f"{meta.get('id', run_dir.name)}:{normalized}", parts)
+                )
+    return active
+
+
+def validate_mission_targets(
+    root: pathlib.Path,
+    mission: dict[str, Any],
+) -> tuple[list[dict[str, Any]], bool]:
+    keys, legacy = mission_repository_keys(mission)
+    registry = project(root).get("repositories", {})
+    if legacy and "mission-control" not in registry:
+        registry = {
+            **registry,
+            "mission-control": {
+                "path": str(root),
+                "expected_remote": git_output(root, "remote", "get-url", "origin"),
+                "writable": True,
+            },
+        }
+    requested_locks = mission.get("path_locks", {})
+    if not isinstance(requested_locks, dict):
+        raise LaunchError("Mission path_locks must be keyed by repository")
+    unknown_lock_keys = sorted(set(requested_locks) - set(keys))
+    if unknown_lock_keys:
+        raise LaunchError(
+            "Path locks target undeclared repositories: " + ", ".join(unknown_lock_keys)
+        )
+
+    active = active_run_locks(root)
+    targets: list[dict[str, Any]] = []
+    for key in keys:
+        spec = registry.get(key)
+        if not isinstance(spec, dict):
+            raise LaunchError(f"Repository {key!r} is not registered")
+        raw_path = spec.get("path")
+        expected_remote = spec.get("expected_remote")
+        writable = spec.get("writable")
+        if not isinstance(raw_path, str) or not pathlib.Path(raw_path).is_absolute():
+            raise LaunchError(
+                f"Repository {key!r} must have an absolute registered path"
+            )
+        if not isinstance(expected_remote, str):
+            raise LaunchError(f"Repository {key!r} has no expected GitHub remote")
+        if not isinstance(writable, bool):
+            raise LaunchError(f"Repository {key!r} has no boolean writable policy")
+
+        source = pathlib.Path(raw_path)
+        if not source.is_dir():
+            raise LaunchError(f"Repository {key!r} does not exist: {source}")
+        if git_output(source, "rev-parse", "--is-inside-work-tree") != "true":
+            raise LaunchError(f"Repository {key!r} is not a Git worktree: {source}")
+        top_level = pathlib.Path(git_output(source, "rev-parse", "--show-toplevel"))
+        if top_level.resolve() != source.resolve():
+            raise LaunchError(
+                f"Repository {key!r} path is not its worktree root: {source}"
+            )
+        actual_remote = git_output(source, "remote", "get-url", "origin")
+        actual_identity = github_remote_identity(actual_remote)
+        expected_identity = github_remote_identity(expected_remote)
+        if expected_identity is None:
+            raise LaunchError(
+                f"Repository {key!r} expected_remote is not a GitHub repository"
+            )
+        if actual_identity != expected_identity:
+            raise LaunchError(
+                f"Repository {key!r} remote mismatch: expected {expected_identity}, "
+                f"found {actual_identity or actual_remote}"
+            )
+        agents_file = source / "AGENTS.md"
+        if not agents_file.is_file():
+            raise LaunchError(f"Repository {key!r} is missing AGENTS.md")
+        if writable and git_output(source, "status", "--porcelain"):
+            raise LaunchError(f"Writable repository {key!r} is dirty: {source}")
+
+        raw_locks = requested_locks.get(key, [])
+        if not isinstance(raw_locks, list):
+            raise LaunchError(f"Path locks for {key!r} must be a list")
+        locks: list[str] = []
+        lock_parts: list[tuple[str, ...]] = []
+        for value in raw_locks:
+            normalized, parts = normalized_lock(value)
+            if any(locks_overlap(parts, existing) for existing in lock_parts):
+                raise LaunchError(
+                    f"Mission has overlapping locks in {key!r}: {normalized}"
+                )
+            locks.append(normalized)
+            lock_parts.append(parts)
+        if not legacy and writable and not locks:
+            raise LaunchError(
+                f"Writable repository {key!r} requires at least one path lock"
+            )
+        if not writable and locks:
+            raise LaunchError(f"Read-only repository {key!r} cannot receive path locks")
+        for active_repository, active_label, active_parts in active:
+            if active_repository != key:
+                continue
+            for lock, parts in zip(locks, lock_parts):
+                if locks_overlap(parts, active_parts):
+                    raise LaunchError(
+                        f"Path lock conflict in {key!r}: {lock} overlaps {active_label}"
+                    )
+
+        targets.append(
+            {
+                "key": key,
+                "source": source,
+                "writable": writable,
+                "expected_remote": expected_remote,
+                "actual_remote": actual_remote,
+                "baseline_head": git_output(source, "rev-parse", "HEAD"),
+                "locks": locks,
+                "agents_file": agents_file,
+            }
+        )
+    return targets, legacy
+
+
+@contextlib.contextmanager
+def launch_lock(root: pathlib.Path) -> Any:
+    runs_dir = root / ".agent" / "runs"
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    with (runs_dir / ".launch.lock").open("a+", encoding="utf-8") as lock_file:
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+
 def cmd_brief(args: argparse.Namespace) -> int:
     root = repo_root()
     st = status(root)
     pconf = providers(root)
-    print(f"# Project brief\n")
+    print("# Project brief\n")
     print(f"Repo: `{root}`")
     print(f"Current stage: `{st.get('current_stage', 'unknown')}`\n")
     stages = st.get("stages", [])
     if stages:
         print("## Stages\n")
-        print(md_table(["Stage", "Title", "State", "Progress"], [[s.get("id"), s.get("title"), s.get("state"), str(s.get("progress", 0)) + "%"] for s in stages]))
+        print(
+            md_table(
+                ["Stage", "Title", "State", "Progress"],
+                [
+                    [
+                        s.get("id"),
+                        s.get("title"),
+                        s.get("state"),
+                        str(s.get("progress", 0)) + "%",
+                    ]
+                    for s in stages
+                ],
+            )
+        )
         print()
     missions = st.get("missions", [])
     if missions:
         print("## Missions\n")
-        print(md_table(["Mission", "Title", "State", "Agent", "Progress", "Priority"], [[m.get("id"), m.get("title"), m.get("state"), m.get("agent"), str(m.get("progress", 0)) + "%", m.get("priority")] for m in missions]))
+        print(
+            md_table(
+                ["Mission", "Title", "State", "Agent", "Progress", "Priority"],
+                [
+                    [
+                        m.get("id"),
+                        m.get("title"),
+                        m.get("state"),
+                        m.get("agent"),
+                        str(m.get("progress", 0)) + "%",
+                        m.get("priority"),
+                    ]
+                    for m in missions
+                ],
+            )
+        )
         print()
     questions = st.get("open_questions", [])
     open_questions = [q for q in questions if q.get("state") == "open"]
     if open_questions:
         print("## Open questions\n")
-        print(md_table(["ID", "Summary", "Human", "ChatGPT Pro", "State"], [[q.get("id"), q.get("summary"), q.get("requires_human"), q.get("requires_chatgpt_pro"), q.get("state")] for q in open_questions]))
+        print(
+            md_table(
+                ["ID", "Summary", "Human", "ChatGPT Pro", "State"],
+                [
+                    [
+                        q.get("id"),
+                        q.get("summary"),
+                        q.get("requires_human"),
+                        q.get("requires_chatgpt_pro"),
+                        q.get("state"),
+                    ]
+                    for q in open_questions
+                ],
+            )
+        )
         print()
     blocked = [m for m in missions if m.get("state") == "blocked"]
     if blocked:
         print("## Blocked missions\n")
-        print(md_table(["Mission", "Title", "Stage", "Agent"], [[m.get("id"), m.get("title"), m.get("stage"), m.get("agent")] for m in blocked]))
+        print(
+            md_table(
+                ["Mission", "Title", "Stage", "Agent"],
+                [
+                    [m.get("id"), m.get("title"), m.get("stage"), m.get("agent")]
+                    for m in blocked
+                ],
+            )
+        )
         print()
     rows = provider_rows(pconf)
     if rows:
         print("## Provider summary\n")
-        print(md_table(["Provider", "Kind", "Enabled", "aisw context", "Profile", "Cost", "Description"], rows))
+        print(
+            md_table(
+                [
+                    "Provider",
+                    "Kind",
+                    "Enabled",
+                    "aisw context",
+                    "Profile",
+                    "Cost",
+                    "Description",
+                ],
+                rows,
+            )
+        )
         print()
     recs = st.get("recommendations", [])
     if recs:
@@ -155,10 +430,21 @@ def cmd_review_now(args: argparse.Namespace) -> int:
     questions = [q for q in st.get("open_questions", []) if q.get("state") == "open"]
     needs = []
     for r in reviews:
-        needs.append([r.get("id"), "review", r.get("summary", ""), r.get("priority", "")])
+        needs.append(
+            [r.get("id"), "review", r.get("summary", ""), r.get("priority", "")]
+        )
     for q in questions:
-        needs.append([q.get("id"), "question", q.get("summary", ""), "human" if q.get("requires_human") else ""]) 
-    ready = [m for m in st.get("missions", []) if m.get("state") in ("approved", "ready")]
+        needs.append(
+            [
+                q.get("id"),
+                "question",
+                q.get("summary", ""),
+                "human" if q.get("requires_human") else "",
+            ]
+        )
+    ready = [
+        m for m in st.get("missions", []) if m.get("state") in ("approved", "ready")
+    ]
     approved = [m for m in ready if m.get("state") == "approved"]
     for m in ready:
         needs.append([m.get("id"), "mission", m.get("title", ""), m.get("state")])
@@ -171,13 +457,19 @@ def cmd_review_now(args: argparse.Namespace) -> int:
         print(md_table(["ID", "Type", "Summary", "Priority/State"], needs))
     print("\n## Suggested action\n")
     if questions:
-        print("Resolve open human questions before launching dependent external workers.")
+        print(
+            "Resolve open human questions before launching dependent external workers."
+        )
     elif blocked:
-        print("Review blocked missions and either resolve blockers or create a consultation packet.")
+        print(
+            "Review blocked missions and either resolve blockers or create a consultation packet."
+        )
     elif approved:
         print("Use `tools/agentctl launch-approved` when the user says 'do it'.")
     elif ready:
-        print("Ask Mission Control to approve the ready mission, or execute it directly in the current session when appropriate.")
+        print(
+            "Ask Mission Control to approve the ready mission, or execute it directly in the current session when appropriate."
+        )
     else:
         print("Ask Mission Control to propose or refine the next mission.")
     return 0
@@ -190,7 +482,15 @@ def cmd_next(args: argparse.Namespace) -> int:
     rows = []
     for m in missions:
         if m.get("state") in ("draft", "ready", "approved", "blocked"):
-            rows.append([m.get("id"), m.get("title"), m.get("state"), m.get("stage"), m.get("priority")])
+            rows.append(
+                [
+                    m.get("id"),
+                    m.get("title"),
+                    m.get("state"),
+                    m.get("stage"),
+                    m.get("priority"),
+                ]
+            )
     print("# Recommended next missions\n")
     if rows:
         print(md_table(["Mission", "Title", "State", "Stage", "Priority"], rows))
@@ -210,12 +510,39 @@ def cmd_usage(args: argparse.Namespace) -> int:
     accounts = u.get("accounts", [])
     if accounts:
         print("## Accounts\n")
-        print(md_table(["ID", "Kind", "Role", "State", "Notes"], [[a.get("id"), a.get("kind"), a.get("role"), a.get("state"), a.get("notes", "")] for a in accounts]))
+        print(
+            md_table(
+                ["ID", "Kind", "Role", "State", "Notes"],
+                [
+                    [
+                        a.get("id"),
+                        a.get("kind"),
+                        a.get("role"),
+                        a.get("state"),
+                        a.get("notes", ""),
+                    ]
+                    for a in accounts
+                ],
+            )
+        )
         print()
     providers_dict = p.get("providers", {})
     if providers_dict:
         print("## Providers\n")
-        print(md_table(["Provider", "Kind", "Enabled", "aisw context", "Profile", "Cost", "Description"], provider_rows(p)))
+        print(
+            md_table(
+                [
+                    "Provider",
+                    "Kind",
+                    "Enabled",
+                    "aisw context",
+                    "Profile",
+                    "Cost",
+                    "Description",
+                ],
+                provider_rows(p),
+            )
+        )
         print()
     inventory = p.get("inventory", {})
     if inventory:
@@ -241,7 +568,22 @@ def cmd_mission(args: argparse.Namespace) -> int:
     root = repo_root()
     if args.mission_cmd == "list":
         st = status(root)
-        print(md_table(["Mission", "Title", "Stage", "State", "Agent", "Progress"], [[m.get("id"), m.get("title"), m.get("stage"), m.get("state"), m.get("agent"), str(m.get("progress", 0)) + "%"] for m in st.get("missions", [])]))
+        print(
+            md_table(
+                ["Mission", "Title", "Stage", "State", "Agent", "Progress"],
+                [
+                    [
+                        m.get("id"),
+                        m.get("title"),
+                        m.get("stage"),
+                        m.get("state"),
+                        m.get("agent"),
+                        str(m.get("progress", 0)) + "%",
+                    ]
+                    for m in st.get("missions", [])
+                ],
+            )
+        )
         return 0
     if args.mission_cmd == "show":
         path = find_prefixed_file(root / ".agent" / "missions", args.id)
@@ -272,101 +614,436 @@ def cmd_task(args: argparse.Namespace) -> int:
     return 2
 
 
-def mission_prompt(root: pathlib.Path, mission_id: str) -> str:
+def mission_prompt(
+    root: pathlib.Path,
+    mission_id: str,
+    targets: list[dict[str, Any]] | None = None,
+) -> str:
     mission_file = find_prefixed_file(root / ".agent" / "missions", mission_id)
     if not mission_file:
-        raise SystemExit(f"Mission file not found for {mission_id}")
+        raise LaunchError(f"Mission file not found for {mission_id}")
     parts = []
-    for rel in ["AGENTS.md", "PROJECT_CHARTER.md", "ARCHITECTURE.md", "SPEC_INDEX.md"]:
+    authority_files = [
+        "AGENTS.md",
+        "PROJECT_CHARTER.md",
+        "ARCHITECTURE.md",
+        "SPEC_INDEX.md",
+    ]
+    for rel in authority_files:
         p = root / rel
-        if p.exists():
-            text = p.read_text(encoding="utf-8")
-            parts.append(f"# File: {rel}\n\n{text}\n")
-    parts.append(f"# Mission file: {mission_file.relative_to(root)}\n\n{mission_file.read_text(encoding='utf-8')}\n")
-    parts.append(textwrap.dedent(f"""
+        if not p.is_file():
+            raise LaunchError(f"Mission Control authority file is missing: {rel}")
+        text = p.read_text(encoding="utf-8")
+        parts.append(f"# File: {rel}\n\n{text}\n")
+    parts.append(
+        f"# Mission file: {mission_file.relative_to(root)}\n\n{mission_file.read_text(encoding='utf-8')}\n"
+    )
+    baseline = root / ".agent" / "S065_TECHNICAL_BASELINE.md"
+    if not baseline.is_file():
+        raise LaunchError("S065 implementation baseline is missing")
+    parts.append(
+        "# S065 implementation baseline: "
+        f"{baseline.relative_to(root)}\n\n{baseline.read_text(encoding='utf-8')}\n"
+    )
+    if targets is not None:
+        rows = []
+        for target in targets:
+            execution_path = target.get("worktree") or target["source"]
+            if target["writable"] and target.get("worktree"):
+                access = "writable isolated worktree"
+            elif target["writable"]:
+                access = "writable source (manual session)"
+            else:
+                access = "read-only evidence"
+            rows.append(
+                [
+                    target["key"],
+                    access,
+                    execution_path,
+                    target["baseline_head"],
+                    ", ".join(target["locks"]) or "-",
+                ]
+            )
+        parts.append(
+            "# Repository execution map\n\n"
+            + md_table(
+                ["Repository", "Access", "Path", "Baseline HEAD", "Locks"],
+                rows,
+            )
+            + "\n\n"
+            + "For each writable repository that records lock roots, modify only files at or "
+            + "below those roots; edits outside them are forbidden even though the surrounding "
+            + "worktree is technically writable. A legacy writable repository with no recorded "
+            + "locks may be modified within its isolated worktree, subject to its mission and "
+            + "AGENTS.md. Read-only evidence paths must never receive edits, branches, or "
+            + "worktrees.\n"
+        )
+        for target in targets:
+            agents_file = target["agents_file"]
+            parts.append(
+                f"# Repository instructions: {target['key']} ({agents_file})\n\n"
+                f"{agents_file.read_text(encoding='utf-8')}\n"
+            )
+    parts.append(
+        textwrap.dedent(f"""
     # Execution instruction
 
     Execute mission {mission_id} exactly. Follow AGENTS.md.
-    Commit coherent changes if the mission asks for commits.
+    Commit coherent changes if the sandbox permits Git metadata writes. Otherwise leave the
+    validated worktree changes unstaged for Mission Control to review and commit.
     Stop if a stop condition is reached.
     End with a final report.
-    """))
+    """)
+    )
     return "\n\n".join(parts)
+
+
+def add_isolated_worktrees(
+    root: pathlib.Path,
+    targets: list[dict[str, Any]],
+    run_id: str,
+    legacy: bool,
+) -> tuple[pathlib.Path, pathlib.Path]:
+    if legacy:
+        workspace = root.parent / f"{root.name}-agent-worktrees"
+        worktree_paths = [workspace / run_id]
+    else:
+        workspace = root.parent / f"{root.name}-agent-workspaces" / run_id
+        worktree_paths = [
+            workspace / target["key"] for target in targets if target["writable"]
+        ]
+    if legacy:
+        workspace.mkdir(parents=True, exist_ok=True)
+    else:
+        workspace.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            workspace.mkdir()
+        except FileExistsError as exc:
+            raise LaunchError(f"Run workspace already exists: {workspace}") from exc
+    if not legacy:
+        subprocess.check_call(
+            ["git", "init", "-q", str(workspace)],
+            stdout=subprocess.DEVNULL,
+        )
+
+    created: list[dict[str, Any]] = []
+    try:
+        writable_index = 0
+        for target in targets:
+            target["worktree"] = None
+            target["branch"] = None
+            if not target["writable"]:
+                continue
+            worktree = worktree_paths[writable_index]
+            writable_index += 1
+            branch = f"agent/{run_id}"
+            if worktree.exists():
+                raise LaunchError(f"Run worktree already exists: {worktree}")
+            target["worktree"] = worktree
+            target["branch"] = branch
+            created.append(target)
+            subprocess.check_call(
+                [
+                    "git",
+                    "-C",
+                    str(target["source"]),
+                    "worktree",
+                    "add",
+                    "-b",
+                    branch,
+                    str(worktree),
+                    target["baseline_head"],
+                ]
+            )
+    except Exception as exc:
+        cleanup_errors = cleanup_worktrees(created)
+        if not legacy:
+            try:
+                shutil.rmtree(workspace)
+            except FileNotFoundError:
+                pass
+            except OSError as cleanup_exc:
+                cleanup_errors.append(
+                    f"could not remove coordination workspace {workspace}: {cleanup_exc}"
+                )
+        if cleanup_errors:
+            raise LaunchError(
+                f"Worktree preparation failed: {exc}. Cleanup was incomplete; "
+                "manual recovery is required: " + "; ".join(cleanup_errors)
+            ) from exc
+        raise
+
+    if legacy:
+        provider_cwd = pathlib.Path(targets[0]["worktree"])
+        return provider_cwd, provider_cwd
+    return workspace, workspace
+
+
+def cleanup_worktrees(targets: list[dict[str, Any]]) -> list[str]:
+    errors: list[str] = []
+    for target in reversed(targets):
+        worktree = target.get("worktree")
+        branch = target.get("branch")
+        if worktree is not None:
+            result = subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(target["source"]),
+                    "worktree",
+                    "remove",
+                    "--force",
+                    str(worktree),
+                ],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+            )
+            if result.returncode != 0 and pathlib.Path(worktree).exists():
+                errors.append(
+                    f"could not remove worktree {worktree}: {result.stdout.strip()}"
+                )
+        if branch is not None:
+            result = subprocess.run(
+                ["git", "-C", str(target["source"]), "branch", "-D", str(branch)],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+            )
+            if result.returncode != 0:
+                remaining = git_output(
+                    pathlib.Path(target["source"]), "branch", "--list", str(branch)
+                )
+                if remaining:
+                    errors.append(
+                        f"could not remove branch {branch} in {target['source']}: "
+                        f"{result.stdout.strip()}"
+                    )
+    return errors
+
+
+def run_repository_metadata(targets: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [
+        {
+            "key": target["key"],
+            "source": str(target["source"]),
+            "writable": target["writable"],
+            "baseline_head": target["baseline_head"],
+            "worktree": str(target["worktree"]) if target.get("worktree") else None,
+            "branch": target.get("branch"),
+            "locks": target["locks"],
+        }
+        for target in targets
+    ]
 
 
 def cmd_launch(args: argparse.Namespace) -> int:
     root = repo_root()
     st = status(root)
     pconf = providers(root).get("providers", {})
-    mids = []
+    mids: list[str] = []
     if args.approved:
-        mids = [m.get("id") for m in st.get("missions", []) if m.get("state") == "approved"]
+        mids = [
+            str(m.get("id"))
+            for m in st.get("missions", [])
+            if m.get("state") == "approved"
+        ]
     else:
         mids = [args.id]
     if not mids:
         print("No approved missions to launch.")
         return 0
+    result = 0
     for mid in mids:
         m = get_mission(st, mid)
         if not m:
             print(f"Mission {mid} not found", file=sys.stderr)
+            result = 2
+            continue
+        if m.get("state") != "approved":
+            print(f"Mission {mid} is not approved", file=sys.stderr)
+            result = 2
             continue
         provider_id = args.provider or m.get("agent") or "local-main-codex"
         provider = pconf.get(provider_id)
         if not provider:
             print(f"Provider {provider_id} not found for {mid}", file=sys.stderr)
+            result = 2
             continue
-        prompt = mission_prompt(root, mid)
-        run_id = now_id() + "-" + mid
-        run_dir = root / ".agent" / "runs" / run_id
-        run_dir.mkdir(parents=True, exist_ok=True)
-        prompt_file = run_dir / "prompt.md"
-        prompt_file.write_text(prompt, encoding="utf-8")
-        run_meta = {
-            "id": run_id,
-            "mission": mid,
-            "provider": provider_id,
-            "status": "prepared",
-            "created_at": _dt.datetime.now().isoformat(),
-            "prompt_file": str(prompt_file),
-        }
-        if provider.get("kind") == "manual_main_session" or not provider.get("enabled", False):
-            run_meta["status"] = "manual_required"
-            save_json(run_dir / "run.json", run_meta)
-            print(f"# Mission {mid} prepared for manual/current-session execution\n")
-            print(f"Prompt file: `{prompt_file}`\n")
-            print("Provider is manual or disabled. The current Mission Control agent should execute this mission directly, or configure providers first.")
-            continue
-        # external provider path
-        worktree_parent = root.parent / f"{root.name}-agent-worktrees"
-        worktree = worktree_parent / run_id
-        worktree_parent.mkdir(parents=True, exist_ok=True)
-        branch = f"agent/{run_id}"
-        if not worktree.exists():
-            subprocess.check_call(["git", "worktree", "add", "-B", branch, str(worktree), "HEAD"], cwd=root)
         cmd_template = provider.get("command_template")
-        if not cmd_template:
-            print(f"Provider {provider_id} has no command_template", file=sys.stderr)
-            continue
-        cmd = cmd_template.format(
-            aisw_context=provider.get("aisw_context", ""),
-            prompt_file=str(prompt_file),
-            run_dir=str(run_dir),
-            worktree=str(worktree),
-            mission_id=mid,
-            run_id=run_id,
+        manual = provider.get("kind") == "manual_main_session" or not provider.get(
+            "enabled", False
         )
-        run_meta.update({"status": "running", "worktree": str(worktree), "branch": branch, "command": cmd})
-        save_json(run_dir / "run.json", run_meta)
-        with (run_dir / "launcher.log").open("w", encoding="utf-8") as log:
-            proc = subprocess.Popen(cmd, cwd=root, shell=True, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-        run_meta["pid"] = proc.pid
-        save_json(run_dir / "run.json", run_meta)
-        m["state"] = "running"
-        m["agent"] = provider_id
-        save_json(root / ".agent" / "status.json", st)
-        print(f"Launched {mid} as {run_id} with provider {provider_id}.")
-    return 0
+        if not manual and not cmd_template:
+            print(f"Provider {provider_id} has no command_template", file=sys.stderr)
+            result = 2
+            continue
+        mission_file = find_prefixed_file(root / ".agent" / "missions", mid)
+        if not mission_file or "## Stop conditions" not in mission_file.read_text(
+            encoding="utf-8"
+        ):
+            print(f"Mission {mid} has no declared stop conditions", file=sys.stderr)
+            result = 2
+            continue
+
+        with launch_lock(root):
+            targets: list[dict[str, Any]] = []
+            worktrees_created = False
+            provider_started = False
+            legacy = True
+            run_id = now_id() + "-" + mid
+            run_dir = root / ".agent" / "runs" / run_id
+            try:
+                locked_status = status(root)
+                locked_mission = get_mission(locked_status, mid)
+                if not locked_mission or locked_mission.get("state") != "approved":
+                    raise LaunchError(
+                        f"Mission {mid} is no longer approved after launch serialization"
+                    )
+                st = locked_status
+                m = locked_mission
+                targets, legacy = validate_mission_targets(root, m)
+                for target in targets:
+                    target["worktree"] = None
+                    target["branch"] = None
+                provider_cwd = root
+                workspace: pathlib.Path | None = None
+                if not manual:
+                    workspace, provider_cwd = add_isolated_worktrees(
+                        root, targets, run_id, legacy
+                    )
+                    worktrees_created = True
+
+                run_dir.mkdir(parents=True, exist_ok=False)
+                prompt_file = run_dir / "prompt.md"
+                prompt_file.write_text(
+                    mission_prompt(root, mid, targets), encoding="utf-8"
+                )
+                run_meta = {
+                    "id": run_id,
+                    "mission": mid,
+                    "provider": provider_id,
+                    "status": "prepared",
+                    "created_at": _dt.datetime.now().isoformat(),
+                    "prompt_file": str(prompt_file),
+                    "workspace": str(workspace) if workspace else None,
+                    "repositories": run_repository_metadata(targets),
+                    "path_locks": {
+                        target["key"]: target["locks"]
+                        for target in targets
+                        if target["locks"]
+                    },
+                    "pid": None,
+                    "command": None,
+                }
+                writable_targets = [target for target in targets if target["writable"]]
+                if len(writable_targets) == 1 and writable_targets[0].get("worktree"):
+                    run_meta["worktree"] = str(writable_targets[0]["worktree"])
+                    run_meta["branch"] = writable_targets[0]["branch"]
+
+                launcher_log = run_dir / "launcher.log"
+                if manual:
+                    run_meta["status"] = "manual_required"
+                    launcher_log.write_text(
+                        "Prepared for manual/current-session execution; no provider started.\n",
+                        encoding="utf-8",
+                    )
+                    save_json(run_dir / "run.json", run_meta)
+                    print(
+                        f"# Mission {mid} prepared for manual/current-session execution\n"
+                    )
+                    print(f"Prompt file: `{prompt_file}`\n")
+                    print(
+                        "Provider is manual or disabled. The current Mission Control "
+                        "agent should execute this mission directly, or configure providers first."
+                    )
+                    continue
+
+                try:
+                    cmd = str(cmd_template).format(
+                        aisw_context=provider.get("aisw_context", ""),
+                        prompt_file=str(prompt_file),
+                        run_dir=str(run_dir),
+                        worktree=str(provider_cwd),
+                        workspace=str(workspace),
+                        mission_id=mid,
+                        run_id=run_id,
+                    )
+                except (KeyError, IndexError, ValueError) as exc:
+                    raise LaunchError(
+                        f"Provider {provider_id} command template is invalid: {exc}"
+                    ) from exc
+                run_meta["command"] = cmd
+                if args.prepare_only:
+                    launcher_log.write_text(
+                        "Preparation-only run; provider command was not started.\n",
+                        encoding="utf-8",
+                    )
+                    save_json(run_dir / "run.json", run_meta)
+                    print(f"Prepared {mid} as {run_id}; provider was not launched.")
+                    continue
+
+                run_meta["status"] = "running"
+                save_json(run_dir / "run.json", run_meta)
+                with launcher_log.open("w", encoding="utf-8") as log:
+                    proc = subprocess.Popen(
+                        cmd,
+                        cwd=root,
+                        shell=True,
+                        stdout=log,
+                        stderr=subprocess.STDOUT,
+                        start_new_session=True,
+                    )
+                provider_started = True
+                run_meta["pid"] = proc.pid
+                save_json(run_dir / "run.json", run_meta)
+                m["state"] = "running"
+                m["agent"] = provider_id
+                save_json(root / ".agent" / "status.json", st)
+                print(f"Launched {mid} as {run_id} with provider {provider_id}.")
+            except (LaunchError, OSError, subprocess.SubprocessError) as exc:
+                cleanup_errors: list[str] = []
+                if worktrees_created and not provider_started:
+                    cleanup_errors.extend(cleanup_worktrees(targets))
+                    if workspace is not None and not legacy:
+                        try:
+                            shutil.rmtree(workspace)
+                        except FileNotFoundError:
+                            pass
+                        except OSError as cleanup_exc:
+                            cleanup_errors.append(
+                                f"could not remove coordination workspace {workspace}: "
+                                f"{cleanup_exc}"
+                            )
+                if cleanup_errors:
+                    exc = LaunchError(
+                        f"{exc}. Cleanup was incomplete; manual recovery is required: "
+                        + "; ".join(cleanup_errors)
+                    )
+                if run_dir.exists() and not provider_started:
+                    save_json(
+                        run_dir / "run.json",
+                        {
+                            "id": run_id,
+                            "mission": mid,
+                            "provider": provider_id,
+                            "status": "failed",
+                            "created_at": _dt.datetime.now().isoformat(),
+                            "error": str(exc),
+                            "pid": None,
+                            "command": None,
+                        },
+                    )
+                action = (
+                    "Provider started but final metadata update failed"
+                    if provider_started
+                    else "Launch refused"
+                )
+                print(f"{action} for {mid}: {exc}", file=sys.stderr)
+                result = 2
+    return result
 
 
 def cmd_runs(args: argparse.Namespace) -> int:
@@ -380,12 +1057,25 @@ def cmd_runs(args: argparse.Namespace) -> int:
             if meta:
                 state = meta.get("status", "unknown")
                 totals[state] = totals.get(state, 0) + 1
-                rows.append([meta.get("id"), meta.get("mission"), meta.get("provider"), state, meta.get("pid", ""), meta.get("created_at", "")])
+                rows.append(
+                    [
+                        meta.get("id"),
+                        meta.get("mission"),
+                        meta.get("provider"),
+                        state,
+                        meta.get("pid", ""),
+                        meta.get("created_at", ""),
+                    ]
+                )
     print("# Runs\n")
     if rows:
-        print(md_table(["Run", "Mission", "Provider", "Status", "PID", "Created"], rows))
+        print(
+            md_table(["Run", "Mission", "Provider", "Status", "PID", "Created"], rows)
+        )
         print()
-        print(md_table(["Status", "Count"], [[k, v] for k, v in sorted(totals.items())]))
+        print(
+            md_table(["Status", "Count"], [[k, v] for k, v in sorted(totals.items())])
+        )
     else:
         print("No runs found.")
         print("\nRun metadata should be stored as `.agent/runs/<RUN_ID>/run.json`.")
@@ -436,10 +1126,12 @@ def main(argv: list[str] | None = None) -> int:
     p_launch = sub.add_parser("launch")
     p_launch.add_argument("id")
     p_launch.add_argument("--provider", default=None)
+    p_launch.add_argument("--prepare-only", action="store_true")
     p_launch.set_defaults(func=cmd_launch, approved=False)
 
     p_la = sub.add_parser("launch-approved")
     p_la.add_argument("--provider", default=None)
+    p_la.add_argument("--prepare-only", action="store_true")
     p_la.set_defaults(func=cmd_launch, approved=True, id=None)
 
     p_pro = sub.add_parser("pro-packet")

@@ -13,6 +13,28 @@
     "human_style": "natural_language",
     "dashboard_style": "markdown_tables_returned_by_tools"
   },
+  "repositories": {
+    "mission-control": {
+      "path": "/Users/cyrille/GIT/Viz/GSP_API",
+      "expected_remote": "https://github.com/vispy/GSP_API.git",
+      "writable": true
+    },
+    "gsp": {
+      "path": "/Users/cyrille/GIT/Viz/gsp",
+      "expected_remote": "https://github.com/vispy/gsp.git",
+      "writable": true
+    },
+    "vispy2": {
+      "path": "/Users/cyrille/GIT/Viz/vispy2",
+      "expected_remote": "https://github.com/vispy/vispy2.git",
+      "writable": true
+    },
+    "datoviz": {
+      "path": "/Users/cyrille/GIT/Viz/datoviz",
+      "expected_remote": "https://github.com/datoviz/datoviz.git",
+      "writable": false
+    }
+  },
   "policy": {
     "launch_only_approved_missions": true,
     "require_final_report": true,
