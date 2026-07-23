@@ -2890,9 +2890,9 @@
       "id": "M276",
       "title": "S065 retained and live camera behavior",
       "stage": "S065",
-      "state": "approved",
+      "state": "blocked",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 20,
       "priority": 276,
       "repositories": [
         "gsp",
@@ -3225,7 +3225,8 @@
     }
   ],
   "recommendations": [
-    "M275 completed: VisPy2 now has a typed Axes3D static camera/projection API, reducer-backed programmatic navigation, deterministic fit, mesh/title scene emission, installed-wheel examples, and tested Matplotlib/Datoviz lowering. Native Datoviz PNG capture remains an M276/M284 environment checkpoint because both GSP capture and Datoviz's raw offscreen example hang on this machine; M276 is approved next.",
+    "M276 is blocked at its explicit native-crash stop condition: the first isolated Datoviz lifecycle probe aborts inside dvz_app -> glfwInit -> _glfwInitCocoa -> _RegisterApplication before camera or callback code runs. Live capability remains unadvertised, both worktrees are untouched, and M277 must wait for either a GUI-capable native qualification environment or explicit owner approval to split and implement only the non-native cleanup/rerender/example slice.",
+    "M275 completed: VisPy2 now has a typed Axes3D static camera/projection API, reducer-backed programmatic navigation, deterministic fit, mesh/title scene emission, installed-wheel examples, and tested Matplotlib/Datoviz lowering.",
     "S065 approved: implement a powerful VisPy2 View3D camera plus PixelVisual, SphereVisual, VectorVisual, bounded PrimitiveVisual, hardened 3D billboard text, and a minimal public query entry point before human gallery review; comprehensive picking, glyphs, volume, and release operations remain deferred.",
     "M274 completed: agentctl now enforces clean isolated multi-repository worktrees, read-only Datoviz evidence, serialized approval and path-lock checks, bounded worker prompts, and explicit supervisor review/integration. M275 is approved next for VisPy2 View3D and static camera support.",
     "S064 completed: archived predecessor repositories and verified mirror bundles preserve the old histories; fresh public vispy/gsp and vispy/vispy2 repositories track exact clean local heads and pass least-privilege GitHub Actions source, typing, lint, wheel-build, and installed-wheel gates.",

@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved after M275. Target repositories: `gsp`, `vispy2`; provider: `codex-ucl`.
+Blocked at the explicit native-crash stop condition. Run `R20260723-112827-M276` made no changes;
+evidence and safe resume choices are recorded in `.agent/S065_M276_NATIVE_RUNTIME_BLOCKER.md`.
 
 ## Goal
 
