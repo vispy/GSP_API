@@ -389,7 +389,7 @@
       "id": "S065",
       "title": "Camera And Priority Visual Completeness",
       "state": "active",
-      "progress": 36
+      "progress": 45
     }
   ],
   "missions": [
@@ -2940,9 +2940,9 @@
       "id": "M278",
       "title": "S065 SphereVisual end-to-end",
       "stage": "S065",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 0,
+      "progress": 100,
       "priority": 278,
       "repositories": [
         "gsp",
@@ -2966,7 +2966,7 @@
       "id": "M279",
       "title": "S065 VectorVisual end-to-end",
       "stage": "S065",
-      "state": "draft",
+      "state": "running",
       "agent": "codex-ucl",
       "progress": 0,
       "priority": 279,
@@ -3268,6 +3268,7 @@
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M278 completed and independently accepted: SphereVisual now has strict DATA-unit protocol validation, executable conformance, deterministic Matplotlib center-depth/projected-circle adaptation, public Datoviz raycast-impostor lowering with structured capability and failure gates, VisPy2 Axes3D producer/camera fitting, and Python 3.13 installed-wheel evidence. Native Datoviz capture aborted with exit 134 and produced no PNG, so native analytic-depth visual qualification remains assigned to M284. M279 VectorVisual is approved next.",
     "M232 completed: added .agent/S050_DATOVIZ_LATEST_PRE_RC_REPLAY.md and artifacts/visual_qa/s050/latest_pre_rc_compat_s028 plus latest_pre_rc_datoviz_guide_axis. Datoviz 1ef626a56 produced no regression or improvement versus M231; remaining crashed rows are color/scalar_image_viridis_colorbar and the three guide/View2D rows.",
     "M232 opened as ready after inspecting sibling Datoviz api/pre-rc-cleanup at 1ef626a56. The next GSP step is a latest pre-RC compatibility replay focused on controller/result-contract return handling, View2D/View3D adapter paths, isolated offscreen crash rows, and M222 Texture2D non-promotion guardrails.",
     "M228 completed: added .agent/S050_DATOVIZ_TEXTURE2D_RUNTIME_SEMANTICS_PROOF.md and artifacts/visual_qa/s050/m228-dataviz-texture2d-runtime; M222 remains blocked because strict S050 sampler/origin/unmanaged RGBA/multiplication semantics are not proven with public Datoviz APIs.",
