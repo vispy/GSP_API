@@ -26,6 +26,13 @@ Automated gates are green, repository worktrees are clean, local/remote handling
 the review pack covers 2D, 3D, camera, pixel, sphere, vector, primitive, text, mesh, and minimal
 query. Owner acceptance closes S065; findings open bounded follow-up missions.
 
+## Stop conditions
+
+- Stop and report any reproducible native crash, hang, artifact mismatch, or installed-wheel
+  failure rather than weakening a capability claim.
+- Stop on a code/spec contradiction or any required correction outside the declared path locks.
+- Do not close S065 without explicit owner acceptance of the completed human-review pack.
+
 ## Exclusions
 
 No version change, tag, release, publication, force push, merge to main, or Datoviz edit.
