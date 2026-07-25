@@ -164,6 +164,33 @@ The second-pass classifier, closed containment, guide-lane conversion rejection,
 View3D navigation freshness, and public exports were independently accepted. Do not regress them.
 M287 remains blocked until this third pass and a fresh independent review pass.
 
+## Final freshness correction
+
+The third pass was integrated as GSP commit `da235f2` and Mission Control commit `b3f353e`.
+All four third-pass blockers are fixed and its complete gates passed (755 tests, strict mypy across
+51 source files, Ruff, and diff checks). Independent review found one final state-transition defect:
+
+- A `View2DNavigationInputAdapter` constructed or updated from a full `ResolvedLayoutSnapshot` can
+  later receive `set_panel_rect()`. The current method clears `pixel_origin` but retains the prior
+  `_layout_snapshot_id`, so emitted actions falsely claim strict snapshot provenance while using
+  different rect-only geometry.
+
+The final pinned `codex-ucl-gpt-5.6-sol-medium` correction must:
+
+1. track whether adapter geometry is snapshot-backed versus the legacy
+   `panel_rect + layout_snapshot_id` compatibility shape;
+2. preserve the legacy opaque ID when a legacy adapter receives `set_panel_rect()`;
+3. for snapshot-backed adapters, preferably reject `set_panel_rect()` and require
+   `set_layout_snapshot()` for an atomic rect/origin/identity update (clearing all provenance is an
+   acceptable alternative only if documented);
+4. add regression tests proving that no action can retain a stale strict snapshot ID after geometry
+   changes, and that `set_layout_snapshot()` restores a coherent strict tuple;
+5. replace “top edge” wording/tests for BOTTOM_LEFT minimum-y coordinates with
+   “origin-side/minimum-y edge,” or test the actual physical top at `y + height`;
+6. rerun the complete GSP suite, strict source mypy, Ruff, and diff checks.
+
+M287 remains blocked until independent review accepts this correction.
+
 ## Acceptance
 
 - The protocol has one unambiguous rectangle for visual projection and data queries.

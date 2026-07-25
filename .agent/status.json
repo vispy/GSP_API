@@ -3152,7 +3152,7 @@
       "stage": "S065",
       "state": "approved",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
-      "progress": 85,
+      "progress": 95,
       "priority": 286,
       "repositories": [
         "mission-control",
