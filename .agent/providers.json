@@ -16,6 +16,18 @@
       "command_template": "bash -lc 'aisw use codex ucl --state-mode isolated --non-interactive --quiet; cd {worktree}; codex exec --json --sandbox workspace-write --cd {worktree} \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
       "description": "Preferred stored aisw Codex profile for isolated medium worker launches."
     },
+    "codex-ucl-gpt-5.6-sol-medium": {
+      "kind": "codex_exec",
+      "enabled": true,
+      "aisw_context": "codex/ucl",
+      "aisw_tool": "codex",
+      "aisw_profile": "ucl",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "cost_class": "medium",
+      "command_template": "bash -lc 'aisw use codex ucl --state-mode isolated --non-interactive --quiet; cd {worktree}; codex exec --json --sandbox workspace-write --model gpt-5.6-sol -c model_reasoning_effort=\"medium\" --cd {worktree} \"$(cat {prompt_file})\" > {run_dir}/events.jsonl 2> {run_dir}/stderr.log'",
+      "description": "Pinned gpt-5.6-sol medium-reasoning worker through the stored UCL aisw context."
+    },
     "codex-ibl": {
       "kind": "codex_exec",
       "enabled": true,
@@ -49,7 +61,7 @@
   },
   "selection_policy": {
     "cheap": ["codex-ucl", "codex-adikia", "codex-ibl"],
-    "medium": ["codex-ucl", "codex-adikia", "codex-ibl", "claude-main"],
+    "medium": ["codex-ucl-gpt-5.6-sol-medium", "codex-ucl", "codex-adikia", "codex-ibl", "claude-main"],
     "high": ["local-main-codex"]
   },
   "inventory": {

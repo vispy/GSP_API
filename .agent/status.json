@@ -3093,7 +3093,7 @@
       "id": "M284",
       "title": "S065 integrated qualification and human review",
       "stage": "S065",
-      "state": "running",
+      "state": "deferred",
       "agent": "codex-ucl",
       "progress": 95,
       "priority": 284,
@@ -3128,6 +3128,96 @@
         "vispy2"
       ],
       "path_locks": {
+        "gsp": [
+          "packages/gsp-core/src",
+          "packages/gsp-core/tests",
+          "packages/gsp-matplotlib/src",
+          "packages/gsp-matplotlib/tests",
+          "packages/gsp-datoviz/src",
+          "packages/gsp-datoviz/tests",
+          "docs"
+        ],
+        "vispy2": [
+          "src",
+          "tests",
+          "examples",
+          "docs",
+          "README.md"
+        ]
+      }
+    },
+    {
+      "id": "M286",
+      "title": "S065 resolved plot-viewport contract",
+      "stage": "S065",
+      "state": "approved",
+      "agent": "codex-ucl-gpt-5.6-sol-medium",
+      "progress": 0,
+      "priority": 286,
+      "repositories": [
+        "mission-control",
+        "gsp"
+      ],
+      "path_locks": {
+        "mission-control": [
+          "spec/current/views-layout.md",
+          "spec/layout.md",
+          "spec/view3d.md",
+          ".agent/decisions"
+        ],
+        "gsp": [
+          "packages/gsp-core/src/gsp/protocol",
+          "packages/gsp-core/tests",
+          "conformance"
+        ]
+      }
+    },
+    {
+      "id": "M287",
+      "title": "S065 shared viewport backend consumption",
+      "stage": "S065",
+      "state": "blocked",
+      "agent": "codex-ucl-gpt-5.6-sol-medium",
+      "progress": 0,
+      "priority": 287,
+      "repositories": [
+        "mission-control",
+        "gsp",
+        "datoviz"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent/decisions"
+        ],
+        "gsp": [
+          "packages/gsp-core/src",
+          "packages/gsp-core/tests",
+          "packages/gsp-matplotlib/src",
+          "packages/gsp-matplotlib/tests",
+          "packages/gsp-datoviz/src",
+          "packages/gsp-datoviz/tests",
+          "docs"
+        ]
+      }
+    },
+    {
+      "id": "M288",
+      "title": "S065 viewport gallery requalification and owner handoff",
+      "stage": "S065",
+      "state": "blocked",
+      "agent": "codex-ucl-gpt-5.6-sol-medium",
+      "progress": 0,
+      "priority": 288,
+      "repositories": [
+        "mission-control",
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent/decisions"
+        ],
         "gsp": [
           "packages/gsp-core/src",
           "packages/gsp-core/tests",
@@ -3299,6 +3389,7 @@
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "Owner review found a second M284 correction: equal 800x600 canvases still produce approximately 1.29x larger Datoviz View3D geometry because Matplotlib renders into its native inset plot rectangle while Datoviz renders into the full panel. M286-M288 are owner-approved to formalize the plot viewport contract, make both backends consume one resolved layout, and requalify the gallery using pinned gpt-5.6-sol medium workers. M284 is deferred at 95 percent and S065 remains open.",
     "M285 completed and independently accepted: all owner-reported gallery issues are corrected; exact installed wheels produced fourteen 800x600 captures without retry, final provenance is portable and hash-verified, and Gallery 5 now services one Ctrl-C, releases the Datoviz session, exits code 0, and leaves no process behind. M284 is active at 95 percent pending explicit owner re-review; S065 remains open.",
     "M281 completed and independently accepted: 2D TextVisual behavior is preserved and screen-facing 3D billboards now have strict View3D validation, panel-correct projection, retained camera reprojection without style churn, stable geometry-then-z text ordering, conditional Datoviz text ABI capabilities, Axes3D.text, and a reviewed Matplotlib-only Unicode/font-role gallery. Depth occlusion and glyph parity remain unadvertised. M282 minimal public query entry point is approved next.",
     "M280 completed and independently accepted: bounded PrimitiveVisual now covers all five indexed/unindexed topologies with exact effective-stream cardinality and index validation, explicit Matplotlib adaptations, strict public Datoviz primitive/index lowering with independent indexed capability gating, VisPy2 2D/3D/module producers, and Python 3.13 installed-wheel gallery evidence. Native Datoviz capture remains assigned to M284. M281 text hardening and 3D billboards is approved next.",
