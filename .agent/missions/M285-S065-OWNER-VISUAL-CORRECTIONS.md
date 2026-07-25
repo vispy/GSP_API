@@ -2,8 +2,10 @@
 
 ## Status
 
-Approved from the owner's M284 visual-review findings. Target repositories: `gsp`, `vispy2`;
-Datoviz remains read-only evidence.
+Completed and independently accepted on 2026-07-25. Integrated as GSP `4ff1614` and VisPy2
+`482f494`, `920966a`, `d4c8d65`, and `5ce544f`. The final installed-wheel qualification produced
+fourteen 800×600 captures without retry, and the exact Gallery 5 command exits on one `Ctrl-C`
+after releasing its session with no process left behind. Datoviz remained read-only evidence.
 
 ## Goal
 
@@ -50,4 +52,3 @@ diff checks pass. An independent supervisor accepts the regenerated review pack.
 - Stop before any Datoviz repository edit, release, tag, push, PR, merge, version change, or
   publication.
 - Keep M284 and S065 open until the owner reviews and accepts the corrected pack.
-

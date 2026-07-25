@@ -2,10 +2,11 @@
 
 ## Status
 
-Automated qualification independently accepted and integrated as VisPy2 `befa0cc` on 2026-07-23.
-Owner review on 2026-07-25 found actionable size, View3D-frame, gallery-comparison, title, and
-launch-instruction issues. Deferred at 95 percent while M285 corrects the review pack; GSP remained
-unchanged during the original qualification and Datoviz remains read-only evidence.
+Automated qualification was independently accepted and integrated as VisPy2 `befa0cc` on
+2026-07-23. Owner review on 2026-07-25 found actionable size, View3D-frame, gallery-comparison,
+title, and launch-instruction issues. M285 corrected all findings and was independently accepted
+on 2026-07-25. This mission is active at 95 percent for the owner's re-review of the corrected
+portable pack; Datoviz remains read-only evidence.
 
 ## Goal
 
