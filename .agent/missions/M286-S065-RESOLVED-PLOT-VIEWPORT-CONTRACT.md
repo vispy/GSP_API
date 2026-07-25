@@ -10,8 +10,11 @@ First-pass commits were integrated after run `R20260725-173541-M286`:
 - GSP: `f7dc8aa`;
 - Mission Control: `7723def`.
 
-The independent supervision audit found the acceptance gaps below. M286 remains approved but
-incomplete until a second pinned-provider pass closes them and all validation is repeated.
+The first independent supervision audit found the acceptance gaps below. A second pinned-provider
+pass was integrated as GSP commit `1ad5d68` and Mission Control commit `f9966be`. Its complete
+automated gates passed (722 tests, strict mypy across 51 source files, Ruff, and diff checks), but
+independent semantic review rejected completion on the four third-pass blockers recorded below.
+M286 remains approved and incomplete.
 
 ## Context and confirmed defect
 
@@ -122,6 +125,44 @@ The second pass must close all of the following before M286 can complete:
    layout-resolved navigation rejection.
 8. Keep the core snapshot single-panel and explicitly defer aggregate/multi-panel layout.
 9. Run the complete GSP suite, strict mypy across all packages, Ruff, and diff checks.
+
+## Third-pass correction addendum
+
+The next pinned `codex-ucl-gpt-5.6-sol-medium` run must close all four blockers below. These are
+acceptance requirements, not optional cleanup.
+
+1. Make `Panel.viewport_rect` executable normalized allocation intent:
+   - validate every component as finite;
+   - require nonnegative `x` and `y`, positive width and height, and closed containment in
+     `[0, 1]` (`x + width <= 1`, `y + height <= 1`);
+   - add a deterministic Panel-intent-to-logical-outer-panel resolution helper or equivalent
+     executable fixture;
+   - test a valid inset, exact right/bottom edges, NaN/inf in every slot, negative/zero extents,
+     and right/bottom overflow;
+   - publicly export any new protocol helper.
+2. Make View2D navigation pixel-origin aware while preserving rect-only compatibility:
+   - provide a resolved-layout/pixel-origin-aware path for `pan_view2d`, `zoom_view2d_about`, and
+     `View2DNavigationInputAdapter`;
+   - use `plot_rect_px`, conditional y-anchor mapping, and origin-dependent vertical pan sign;
+   - test identical view/plot inputs under TOP_LEFT and BOTTOM_LEFT: a top-edge zoom preserves
+     `y_max` versus `y_min` respectively, and equal positive `dy_px` produces opposite signed
+     data pan;
+   - replace the contradictory unconditional y formula in `spec/navigation.md` with both origin
+     cases.
+3. Preserve explicit perspective aspect in low-level projection math:
+   - `_resolve_perspective_aspect_ratio` must use an authored non-None
+     `PerspectiveProjection3D.aspect_ratio` before any caller/layout fallback;
+   - test authored `2.0` plus conflicting supplied `1.0` for both project and unproject;
+   - test authored None uses a supplied layout aspect and both absent retain the diagnosed
+     compatibility value `1.0`.
+4. Validate `RenderTarget.pixel_origin` at runtime:
+   - explicitly require/coerce `PixelOrigin`;
+   - never let an invalid string or type silently behave as BOTTOM_LEFT;
+   - add invalid string/type tests.
+
+The second-pass classifier, closed containment, guide-lane conversion rejection, snapshot-aware
+View3D navigation freshness, and public exports were independently accepted. Do not regress them.
+M287 remains blocked until this third pass and a fresh independent review pass.
 
 ## Acceptance
 
