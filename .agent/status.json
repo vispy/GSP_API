@@ -3093,7 +3093,7 @@
       "id": "M284",
       "title": "S065 integrated qualification and human review",
       "stage": "S065",
-      "state": "running",
+      "state": "deferred",
       "agent": "codex-ucl",
       "progress": 95,
       "priority": 284,
@@ -3112,6 +3112,37 @@
           "artifacts",
           "docs",
           "examples"
+        ]
+      }
+    },
+    {
+      "id": "M285",
+      "title": "S065 owner visual-review corrections",
+      "stage": "S065",
+      "state": "approved",
+      "agent": "codex-ucl",
+      "progress": 0,
+      "priority": 285,
+      "repositories": [
+        "gsp",
+        "vispy2"
+      ],
+      "path_locks": {
+        "gsp": [
+          "packages/gsp-core/src",
+          "packages/gsp-core/tests",
+          "packages/gsp-matplotlib/src",
+          "packages/gsp-matplotlib/tests",
+          "packages/gsp-datoviz/src",
+          "packages/gsp-datoviz/tests",
+          "docs"
+        ],
+        "vispy2": [
+          "src",
+          "tests",
+          "examples",
+          "docs",
+          "README.md"
         ]
       }
     }

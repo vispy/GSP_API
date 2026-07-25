@@ -3,8 +3,9 @@
 ## Status
 
 Automated qualification independently accepted and integrated as VisPy2 `befa0cc` on 2026-07-23.
-Awaiting explicit owner visual and interactive acceptance. GSP remained unchanged; Datoviz was
-read-only evidence.
+Owner review on 2026-07-25 found actionable size, View3D-frame, gallery-comparison, title, and
+launch-instruction issues. Deferred at 95 percent while M285 corrects the review pack; GSP remained
+unchanged during the original qualification and Datoviz remains read-only evidence.
 
 ## Goal
 
