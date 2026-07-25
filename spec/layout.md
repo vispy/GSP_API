@@ -59,7 +59,10 @@ proven.
 context, and layout policy. It must be inspectable where layout strictness is advertised.
 
 `Panel.viewport_rect` is authoring input that allocates the outer panel within the resolved render
-target. The snapshot makes the resulting boundary executable:
+target. Each of its four normalized components is finite; x/y are nonnegative, width/height are
+positive, and closed containment requires `x + width <= 1` and `y + height <= 1`. For logical
+target size `(W,H)`, the outer panel resolves deterministically to
+`(x*W, y*H, width*W, height*H)`. The snapshot makes the resulting boundary executable:
 
 - `panel_rect_px` is the full presentation region for the panel, including guide lanes and the
   guide-query region;
@@ -101,6 +104,11 @@ pixel origin: top-left origin maps plot top-left to `(-1,+1)` and bottom-right t
 bottom-left origin reverses y. The protocol exposes typed conversions between render-target logical
 coordinates and plot-relative panel NDC, a resolved plot-aspect helper, and a three-way classifier
 for outside-panel, panel-guide-lane, and data-plot coordinates.
+
+`RenderTarget.pixel_origin` is validated as `PixelOrigin.TOP_LEFT` or
+`PixelOrigin.BOTTOM_LEFT`; implementations may explicitly coerce the corresponding string values,
+but unknown strings and non-enum types are invalid and must never fall through to bottom-left
+behavior.
 
 Geometric containment is closed, including exact rectangle edges, to preserve exact NDC edge round
 trips. Raster sample ownership may remain backend-private and half-open. Plot conversion rejects a

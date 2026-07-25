@@ -145,6 +145,10 @@ resolver shape remains a compatibility path: when no authored aspect and no layo
 available, it uses the historical aspect `1.0` and emits a stable missing-layout-geometry
 diagnostic. That path is not layout-strict.
 
+The same precedence applies in low-level projection and unprojection helpers: a non-null authored
+aspect is used before any supplied caller/layout fallback. A supplied fallback is used only when
+the projection aspect is null; if both are absent, the diagnosed compatibility value is `1.0`.
+
 Projection and unprojection produce panel NDC relative to `plot_rect_px`. View3D ray construction,
 mesh picking, and layout-dependent navigation use the same plot rectangle. Coordinates in an outer
 panel guide lane cannot produce data hits and are rejected before ray or mesh-pick construction.

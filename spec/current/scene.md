@@ -49,8 +49,11 @@ A panel is a rectangular presentation and query region. It associates views, vis
 
 `GSP-SCENE-007`: panel geometry is not stored as an unqualified backend rectangle. Requested layout
 intent and resolved logical-pixel geometry are distinct records. `Panel.viewport_rect` is finite,
-nonnegative normalized render-target allocation intent for the complete outer panel; it is not a
-backend axes rectangle or the data viewport. Layout resolution turns that intent into
+normalized render-target allocation intent `(x, y, width, height)` for the complete outer panel:
+`x` and `y` are nonnegative, width and height are positive, and the rectangle has closed
+containment in `[0,1]` (`x + width <= 1` and `y + height <= 1`). It is not a backend axes
+rectangle or the data viewport. Given logical target size `(W, H)`, its deterministic outer-panel
+resolution is `(x*W, y*H, width*W, height*H)`. Layout resolution turns that intent into
 `ResolvedLayoutSnapshot.panel_rect_px` and separately records the contained `plot_rect_px`
 remaining after guide/layout allocation.
 

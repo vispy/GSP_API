@@ -45,7 +45,9 @@ scale:
 
 ```text
 panel_ndc_x = -1 + 2 * (px_x - plot_x) / plot_width
-panel_ndc_y = -1 + 2 * (px_y - plot_y) / plot_height
+logical_y_fraction = (px_y - plot_y) / plot_height
+panel_ndc_y = +1 - 2 * logical_y_fraction  # TOP_LEFT
+panel_ndc_y = -1 + 2 * logical_y_fraction  # BOTTOM_LEFT
 ```
 
 Logical y conversion honors the render-target pixel origin. For top-left origin, plot top-left is
@@ -68,12 +70,15 @@ data units. For a plot rectangle of width `w` and height `h`:
 
 ```text
 data_dx = -dx_px / w * (xlim[1] - xlim[0])
-data_dy = -dy_px / h * (ylim[1] - ylim[0])
+data_dy = +dy_px / h * (ylim[1] - ylim[0])  # TOP_LEFT
+data_dy = -dy_px / h * (ylim[1] - ylim[0])  # BOTTOM_LEFT
 new_xlim = (xlim[0] + data_dx, xlim[1] + data_dx)
 new_ylim = (ylim[0] + data_dy, ylim[1] + data_dy)
 ```
 
-This formula preserves reversed limits because the span may be negative.
+These formulas preserve reversed limits because the span may be negative. Rect-only compatibility
+helpers retain their historical y behavior; layout-strict navigation supplies the resolved snapshot
+so plot geometry and origin are both authoritative.
 
 ### `zoom_about`
 
@@ -98,7 +103,17 @@ new_span_x = (xlim[1] - xlim[0]) / factor_x
 new_xlim = (anchor_data_x - tx * new_span_x, anchor_data_x + (1 - tx) * new_span_x)
 ```
 
-Y uses the same rule with `ty`, `ylim`, and `factor_y`. Reversed limits are preserved by signed spans.
+For y, first derive:
+
+```text
+logical_y_fraction = (anchor_y - rect_y) / rect_height
+ty = 1 - logical_y_fraction  # TOP_LEFT: top edge addresses ylim[1]
+ty = logical_y_fraction      # BOTTOM_LEFT: top edge addresses ylim[0]
+```
+
+Then use the same signed-span rule with `ty`, `ylim`, and `factor_y`. Thus a top-edge zoom preserves
+`y_max` under top-left origin and `y_min` under bottom-left origin. Reversed limits remain
+preserved.
 An anchor outside `plot_rect_px`, including one in a guide lane, is rejected or ignored; it is
 never clamped into the plot. A degenerate plot cannot drive navigation.
 
@@ -177,7 +192,9 @@ navigation actions and `View2D` updates.
 S035 includes a small backend-neutral pointer adapter for review and backend integration. The
 adapter accepts absolute render-target logical-pixel pointer events routed against the resolved
 data plot and emits only semantic `pan_by` or `zoom_about` actions. Backends are still responsible
-for applying accepted results to their native view state.
+for applying accepted results to their native view state. The layout-aware adapter path consumes
+`plot_rect_px`, `pixel_origin`, and snapshot identity together; its rect-only construction remains
+a compatibility path.
 
 Events anchored outside the plot are ignored rather than clamped. The default review gesture map
 is left-drag pan, wheel zoom about the pointer on both axes, and right-drag independent x/y zoom

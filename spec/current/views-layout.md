@@ -132,6 +132,13 @@ must be finite and nonnegative, lie inside the render target, and the plot recta
 contained by the panel rectangle. The outer panel must have positive area. A degenerate plot
 contains no data; coordinate conversion, navigation, and aspect helpers reject it.
 
+The authored viewport intent itself contains four finite normalized components. Its x/y origin is
+nonnegative, width/height are positive, and closed containment requires `x + width <= 1` and
+`y + height <= 1`. For logical target size `(W,H)`, outer-panel resolution is exactly
+`(x*W, y*H, width*W, height*H)`. `RenderTarget.pixel_origin` must be a valid `PixelOrigin` enum
+value (or be explicitly coerced from that enum's string value); an unknown string or other type is
+invalid protocol state.
+
 `GSP-VIEW-011`: DATA and panel-NDC visual positions map through `plot_rect_px`. Data queries,
 View3D rays, mesh picking, and layout-dependent navigation use that same rectangle. A logical
 coordinate inside `panel_rect_px` but outside `plot_rect_px` cannot hit a data visual; guide boxes
@@ -146,6 +153,12 @@ The typed routing classification is outside outer panel, panel guide lane, or da
 DATA queries in a guide lane return MISS; GUIDE and ALL_RENDERED queries may hit guide boxes. Rays,
 mesh picks, and navigation anchors never clamp or extrapolate a guide-lane coordinate into the
 plot. Layout-dependent pan/zoom deltas use plot width and height.
+
+View2D layout-aware navigation also uses the snapshot pixel origin. A top-edge zoom anchor preserves
+`y_max` for top-left logical coordinates and `y_min` for bottom-left logical coordinates. Equal
+positive logical `dy_px` therefore produces opposite signed data pan under those two origins.
+Rect-only helper calls retain their established compatibility behavior but cannot claim
+layout-strict origin resolution.
 
 `GSP-VIEW-012`: layout-strict and cross-backend comparison consumes one produced
 `ResolvedLayoutSnapshot` in every backend. A backend that cannot render a `PanelTextGuide` still
