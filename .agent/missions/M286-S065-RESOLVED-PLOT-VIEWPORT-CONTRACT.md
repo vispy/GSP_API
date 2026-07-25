@@ -5,6 +5,14 @@
 Approved by the owner on 2026-07-25 as the first mission in the M286-M288 correction sequence.
 Execute with the pinned `codex-ucl-gpt-5.6-sol-medium` provider. M284 remains open for human review.
 
+First-pass commits were integrated after run `R20260725-173541-M286`:
+
+- GSP: `f7dc8aa`;
+- Mission Control: `7723def`.
+
+The independent supervision audit found the acceptance gaps below. M286 remains approved but
+incomplete until a second pinned-provider pass closes them and all validation is repeated.
+
 ## Context and confirmed defect
 
 The M285 review pack uses equal 800×600 framebuffers, but guide-free Matplotlib View3D geometry is
@@ -79,6 +87,42 @@ In Mission Control:
 - Add `.agent/decisions/S065_resolved_plot_viewport.md` with the accepted boundary, staged
   producer/consumer plan, and deferred multi-panel/font-layout work.
 
+## Supervisor acceptance addendum
+
+The second pass must close all of the following before M286 can complete:
+
+1. Reconcile all affected authority, not only the three first-pass files:
+   - `spec/navigation.md` must use `plot_rect_px` for layout-dependent pan/zoom scaling and
+     anchors instead of the outer panel rectangle;
+   - `spec/current/scene.md` must include `Panel.viewport_rect` as normalized render-target
+     allocation intent, distinct from resolved backend geometry;
+   - update `spec/current/queries.md` wherever needed to make the panel/guide-lane/plot routing
+     result explicit.
+2. State that public logical pointer/query coordinates are absolute render-target logical
+   coordinates. Panel NDC `[-1,+1]` maps through `plot_rect_px`. For top-left origin, plot
+   top-left maps to `(-1,+1)` and bottom-right to `(+1,-1)`; bottom-left origin reverses y.
+3. Preserve closed geometric containment for exact NDC edge round trips. Raster sample ownership
+   remains backend-private and may be half-open. A degenerate plot contains no data; conversion
+   and aspect helpers reject it. The outer panel must be positive-area.
+4. Add a typed classifier/helper that distinguishes:
+   - outside the outer panel;
+   - inside the panel guide lane but outside the plot;
+   - inside the data plot.
+   Supported data queries in a guide lane return MISS, while GUIDE/ALL_RENDERED may still hit
+   guide boxes. No ray or mesh-pick may extrapolate from a guide-lane coordinate.
+5. Extend `apply_view3d_navigation_action` with the same optional
+   `ResolvedLayoutSnapshot` context and ID-matching compatibility shape as
+   `resolve_view3d_projection_snapshot`. Both current and updated projection freshness IDs must
+   resolve from that context. Preserve every existing ID-only call.
+6. State and test that navigation deltas use plot width/height. Pointer/zoom anchors outside the
+   plot are rejected or ignored, never clamped into the plot.
+7. Add fixtures for exact corners and center, both pixel origins, closed edges, all three
+   coordinate classifications, positive outer-panel validation, guide-lane ray/pick rejection,
+   repeated-snapshot stability, changed layout/plot identity, legacy aspect diagnostics, and stale
+   layout-resolved navigation rejection.
+8. Keep the core snapshot single-panel and explicitly defer aggregate/multi-panel layout.
+9. Run the complete GSP suite, strict mypy across all packages, Ruff, and diff checks.
+
 ## Acceptance
 
 - The protocol has one unambiguous rectangle for visual projection and data queries.
@@ -100,4 +144,3 @@ In Mission Control:
 - Stop if the change requires a new public multi-panel layout authoring API; record that as deferred
   work instead.
 - Do not edit Datoviz or VisPy2, push, merge, tag, release, publish, or change package versions.
-
