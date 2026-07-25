@@ -58,6 +58,18 @@ proven.
 `ResolvedLayoutSnapshot` is a derived protocol artifact for one scene, view, render target, font
 context, and layout policy. It must be inspectable where layout strictness is advertised.
 
+`Panel.viewport_rect` is authoring input that allocates the outer panel within the resolved render
+target. The snapshot makes the resulting boundary executable:
+
+- `panel_rect_px` is the full presentation region for the panel, including guide lanes and the
+  guide-query region;
+- `plot_rect_px` is the visual/data viewport after guide and layout allocation.
+
+Both rectangles have finite, nonnegative coordinates and extents, are contained by the logical
+render target, and `plot_rect_px` is contained by `panel_rect_px`. A zero-area rectangle can
+represent an allocated-but-inactive region, but projection, inverse projection, navigation, or
+aspect resolution requiring a data viewport rejects a zero-area plot.
+
 Minimal fields:
 
 - `snapshot_id`;
@@ -80,6 +92,16 @@ Minimal fields:
 The data-to-screen transform maps accepted data coordinates into logical pixel coordinates for the
 resolved plot rectangle. Reversed `View2D` limits are represented in that transform rather than by
 changing semantic domains.
+
+DATA positions and panel NDC map through `plot_rect_px`, never through the complete canvas or
+`panel_rect_px`. Panel NDC has `x=-1` at the plot left, `x=+1` at the plot right, `y=-1` at the plot
+bottom, and `y=+1` at the plot top. Logical-pixel conversion honors the render target's declared
+pixel origin. The protocol exposes typed conversions between render-target logical coordinates and
+plot-relative panel NDC, a resolved plot-aspect helper, and a data-viewport containment predicate.
+
+Data queries, View3D rays, mesh picking, and layout-dependent navigation use `plot_rect_px`. A
+coordinate may therefore be inside the outer panel but outside the data viewport. Such a coordinate
+cannot hit a data visual, although a guide query may hit a resolved guide box there.
 
 Grid lines are clipped to `plot_rect_px` in layout-strict mode unless a future spec defines an
 explicit alternate policy. A white overlay band that hides grid lines is a review artifact, not a
@@ -137,6 +159,12 @@ The protocol model includes records equivalent to:
 Exact transport command names may evolve, but the semantic requirement is fixed: render, query,
 readback, and all-rendered guide contributions must identify the same `layout_snapshot_id` whenever
 a backend advertises layout-strict behavior.
+
+Layout-strict and cross-backend comparison produce one `ResolvedLayoutSnapshot` and require every
+backend to consume it. Semantic-only operation may allow backend-resolved layout with diagnostics.
+Guide support does not alter geometry consumption: if a backend cannot render a
+`PanelTextGuide`, it consumes the same plot rectangle and reports the missing guide instead of
+expanding the plot into the reserved lane.
 
 ## Capability Surface
 

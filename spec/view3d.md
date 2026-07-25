@@ -129,11 +129,25 @@ snapshot. The snapshot records:
 - camera `eye` and `target`;
 - derived `right`, `true_up`, and `forward` basis vectors;
 - projection `xlim`, `ylim`, and `near_far`;
+- effective perspective aspect ratio and whether it is explicit or layout-resolved;
 - depth mode.
 
 The `view_projection_snapshot_id` must change when canonical projection inputs change, including
-camera state, projection bounds, view revision, layout snapshot id, or depth mode. It must remain
-stable for repeated resolution of the same state.
+camera state, projection bounds, effective perspective aspect, resolved plot viewport, view
+revision, layout snapshot id, or depth mode. It must remain stable for repeated resolution of the
+same state.
+
+For `PerspectiveProjection3D(aspect_ratio=None)`, strict resolution uses
+`plot_rect_px.width / plot_rect_px.height` from the consumed `ResolvedLayoutSnapshot`. An explicitly
+authored positive aspect remains an explicit projection input and is not overwritten by layout.
+The snapshot distinguishes `explicit` from `resolved_layout` provenance. The pre-S065 ID-only
+resolver shape remains a compatibility path: when no authored aspect and no layout geometry are
+available, it uses the historical aspect `1.0` and emits a stable missing-layout-geometry
+diagnostic. That path is not layout-strict.
+
+Projection and unprojection produce panel NDC relative to `plot_rect_px`. View3D ray construction,
+mesh picking, and layout-dependent navigation use the same plot rectangle. Coordinates in an outer
+panel guide lane cannot produce data hits.
 
 ## MeshVisual Integration
 

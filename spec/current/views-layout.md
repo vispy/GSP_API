@@ -83,10 +83,17 @@ canonical actions/state or remain explicitly non-canonical review behavior.
 | Projection | Fields | Validation |
 |---|---|---|
 | orthographic | x/y bounds, near/far | finite non-degenerate bounds; ordered near/far |
-| perspective | vertical FOV degrees, near/far | `0 < fov < 180`; positive ordered clipping range |
+| perspective | vertical FOV degrees, near/far, optional authored aspect | `0 < fov < 180`; positive ordered clipping range; authored aspect positive when present |
 
 `GSP-VIEW-006`: a view projection snapshot ID changes when camera, projection, relevant layout, or
 coordinate mapping changes. Query rays and mesh picking name the snapshot they use.
+
+For perspective projection, an omitted authored aspect is resolved as
+`plot_rect_px.width / plot_rect_px.height`. The projection snapshot records that effective value
+and whether it came from the authored projection or the resolved layout. The effective aspect and
+resolved plot rectangle are projection identity inputs. An old caller that supplies only a layout
+snapshot ID cannot prove the plot geometry; an implementation may preserve that call shape only as
+a diagnosed compatibility path, not as layout-strict resolution.
 
 ### View3D navigation
 
@@ -114,9 +121,26 @@ Resolved layout records concrete logical-pixel rectangles for panels, plot regio
 | `guide_boxes` | guide ID→resolved box/role | Exact guide geometry where supported. |
 | `revision_inputs` | scene/view/guide revisions | Coherence inputs. |
 
-Logical rectangles use `(x, y, width, height)` with positive extent and an explicit pixel-origin
+Logical rectangles use `(x, y, width, height)` with nonnegative extent and an explicit pixel-origin
 enum. `GSP-VIEW-008`: render, hit testing, guide geometry, and screen-coordinate queries use the
 same snapshot rather than independently recomputed layout.
+
+`Panel.viewport_rect` allocates the outer panel in the render target. In a resolved snapshot,
+`panel_rect_px` is the complete panel presentation and guide-query region, while `plot_rect_px` is
+the contained visual/data viewport remaining after guide and layout allocation. Both rectangles
+must be finite and nonnegative, lie inside the render target, and the plot rectangle must be
+contained by the panel rectangle.
+
+`GSP-VIEW-011`: DATA and panel-NDC visual positions map through `plot_rect_px`. Data queries,
+View3D rays, mesh picking, and layout-dependent navigation use that same rectangle. A logical
+coordinate inside `panel_rect_px` but outside `plot_rect_px` cannot hit a data visual; guide boxes
+in that outer-panel space remain independently queryable.
+
+`GSP-VIEW-012`: layout-strict and cross-backend comparison consumes one produced
+`ResolvedLayoutSnapshot` in every backend. A backend that cannot render a `PanelTextGuide` still
+uses the snapshot's plot rectangle and reports the missing guide; it does not reclaim the guide
+lane or change visual scale. Semantic-only rendering may resolve layout per backend when it reports
+the applicable diagnostics.
 
 `GSP-VIEW-009`: canvas sizing policies distinguish pixel-exact output from reference-pixel physical
 intent. A backend reports resolved logical, framebuffer, device-scale, and DPI values; it does not
