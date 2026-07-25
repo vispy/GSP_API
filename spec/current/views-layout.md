@@ -129,18 +129,32 @@ same snapshot rather than independently recomputed layout.
 `panel_rect_px` is the complete panel presentation and guide-query region, while `plot_rect_px` is
 the contained visual/data viewport remaining after guide and layout allocation. Both rectangles
 must be finite and nonnegative, lie inside the render target, and the plot rectangle must be
-contained by the panel rectangle.
+contained by the panel rectangle. The outer panel must have positive area. A degenerate plot
+contains no data; coordinate conversion, navigation, and aspect helpers reject it.
 
 `GSP-VIEW-011`: DATA and panel-NDC visual positions map through `plot_rect_px`. Data queries,
 View3D rays, mesh picking, and layout-dependent navigation use that same rectangle. A logical
 coordinate inside `panel_rect_px` but outside `plot_rect_px` cannot hit a data visual; guide boxes
 in that outer-panel space remain independently queryable.
 
+Public logical pointer/query coordinates are absolute render-target logical coordinates. Panel NDC
+maps through the closed `plot_rect_px`: with top-left origin, plot top-left is `(-1,+1)` and
+bottom-right is `(+1,-1)`; bottom-left origin reverses y. Exact edges participate in geometric
+round trips, while backend raster sample ownership may be half-open.
+
+The typed routing classification is outside outer panel, panel guide lane, or data plot. Supported
+DATA queries in a guide lane return MISS; GUIDE and ALL_RENDERED queries may hit guide boxes. Rays,
+mesh picks, and navigation anchors never clamp or extrapolate a guide-lane coordinate into the
+plot. Layout-dependent pan/zoom deltas use plot width and height.
+
 `GSP-VIEW-012`: layout-strict and cross-backend comparison consumes one produced
 `ResolvedLayoutSnapshot` in every backend. A backend that cannot render a `PanelTextGuide` still
 uses the snapshot's plot rectangle and reports the missing guide; it does not reclaim the guide
 lane or change visual scale. Semantic-only rendering may resolve layout per backend when it reports
 the applicable diagnostics.
+
+The core snapshot is single-panel. Aggregate/multi-panel layout snapshots and a public
+multi-panel authoring API are deferred.
 
 `GSP-VIEW-009`: canvas sizing policies distinguish pixel-exact output from reference-pixel physical
 intent. A backend reports resolved logical, framebuffer, device-scale, and DPI values; it does not

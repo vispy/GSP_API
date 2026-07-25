@@ -15,6 +15,12 @@ system.
 - Data queries, View3D rays, mesh picking, and layout-dependent navigation use `plot_rect_px`.
   Coordinates in the panel but outside the plot cannot hit data visuals; resolved guide boxes there
   remain queryable.
+- Public pointer/query logical coordinates are absolute render-target coordinates. Closed plot
+  containment preserves exact NDC edges for both pixel origins; raster ownership may be half-open.
+- Coordinates classify as outside panel, panel guide lane, or data plot. Guide-lane DATA queries
+  miss, guide scopes remain eligible, and rays/picks/navigation never extrapolate or clamp them.
+- The outer panel has positive area. A degenerate plot contains no data and cannot supply
+  conversion, aspect, or navigation geometry.
 - Perspective `aspect_ratio=None` resolves from plot width divided by plot height. An authored
   positive aspect remains explicit. The projection snapshot records the effective value and its
   provenance, and its identity includes the effective plot geometry.
@@ -26,8 +32,8 @@ system.
 ## Producer/Consumer Staging
 
 M286 implements and tests the backend-neutral producer boundary: rectangle validation, logical
-pixel/panel-NDC conversion, data-viewport containment, plot-aspect resolution, and View3D
-projection snapshot identity.
+pixel/panel-NDC conversion, typed coordinate routing, plot-aspect resolution, navigation freshness,
+and View3D projection snapshot identity. Navigation scaling consumes plot width/height.
 
 M287 connects the produced snapshot to Matplotlib and Datoviz render, query, and readback consumers.
 Backend consumption must not substitute native axes rectangles, full-canvas rectangles, gallery
@@ -46,6 +52,7 @@ layout-strict result.
 ## Deferred
 
 - Public multi-panel layout authoring and panel-to-view collection schemas.
+- Aggregate/multi-panel resolved-layout snapshots; the core snapshot remains single-panel.
 - Font measurement, text shaping, and cross-backend font-metric resolution.
 - Backend layout consumption and native guide realization, assigned to M287.
 - Datoviz and VisPy2 changes.

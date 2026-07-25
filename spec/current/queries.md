@@ -24,7 +24,7 @@ Scopes distinguish data visuals, guides, and all rendered contributions. A backe
 | Rule | Requirement |
 |---|---|
 | `GSP-QUERY-001` | Query support is negotiated independently from rendering. A rendered visual does not imply identity, value, coordinate, color, depth, or primitive payload support. |
-| `GSP-QUERY-002` | Query coordinates and their coordinate space are explicit. Outside-panel detection occurs against the named resolved panel rectangle. |
+| `GSP-QUERY-002` | Query coordinates and their coordinate space are explicit. Public logical coordinates are absolute render-target logical coordinates. Outside-panel detection occurs against the named resolved outer-panel rectangle. |
 | `GSP-QUERY-003` | Requested payloads are planned before execution. Missing required payload capability returns unsupported, not a partial hit with silently omitted fields. |
 
 ## Result states
@@ -39,6 +39,17 @@ Scopes distinguish data visuals, guides, and all rendered contributions. A backe
 | Invalid | The request itself violates the contract. |
 
 Unsupported, stale, and invalid states must not be encoded as misses.
+
+For a resolved logical coordinate, query routing first classifies exactly one region:
+
+| Region | DATA scope | GUIDES / ALL_RENDERED scope |
+|---|---|---|
+| outside `panel_rect_px` | `outside-panel` | `outside-panel` |
+| inside `panel_rect_px` but outside `plot_rect_px` | supported query returns `miss` | may hit a resolved guide box |
+| inside closed `plot_rect_px` | execute supported data query | execute applicable data/guide composition |
+
+Panel NDC `[-1,+1]` maps through `plot_rect_px`, not the outer panel. A guide-lane coordinate is
+never clamped or extrapolated into the plot for View3D ray construction or mesh picking.
 
 The complete core status vocabulary is `hit`, `miss`, `outside-panel`, `unsupported`, `stale`,
 `invalid`, `dropped`, and `failed`. `dropped` is permitted only under an advertised bounded async
@@ -106,6 +117,10 @@ the protocol mesh topology, not a backend-expanded triangle index.
 `GSP-QUERY-008`: culling, clipping, projection, and opaque depth used for picking match the rendered
 snapshot. CPU reference picking may be strict only for its explicitly bounded accepted scope and
 tolerance; otherwise it reports adaptation.
+
+Closed geometric plot containment includes exact edges so logical-pixel/panel-NDC corner round
+trips are stable. Raster sample ownership at those edges is backend-private and may use half-open
+pixel conventions; it does not change semantic query routing.
 
 ## Coherence
 

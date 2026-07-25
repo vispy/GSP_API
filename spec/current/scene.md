@@ -42,12 +42,17 @@ A panel is a rectangular presentation and query region. It associates views, vis
 |---|---|---:|---|---|
 | `id` | identifier | yes | — | Panel identity. |
 | `parent_id` | panel identifier or null | no | null | Optional layout parent; cycles are invalid. |
+| `viewport_rect` | normalized `(x, y, width, height)` | no | `(0, 0, 1, 1)` | Outer-panel allocation intent in render-target coordinates. |
 | `clip` | boolean | no | true | Clip data contributions to the resolved plot rectangle. |
 | `background_rgba` | RGBA8 or null | no | null | Semantic background; null inherits presentation policy. |
 | `metadata` | string-keyed map | no | empty | Non-semantic application metadata. |
 
 `GSP-SCENE-007`: panel geometry is not stored as an unqualified backend rectangle. Requested layout
-intent and resolved logical-pixel geometry are distinct records.
+intent and resolved logical-pixel geometry are distinct records. `Panel.viewport_rect` is finite,
+nonnegative normalized render-target allocation intent for the complete outer panel; it is not a
+backend axes rectangle or the data viewport. Layout resolution turns that intent into
+`ResolvedLayoutSnapshot.panel_rect_px` and separately records the contained `plot_rect_px`
+remaining after guide/layout allocation.
 
 ## Views
 

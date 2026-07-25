@@ -66,9 +66,9 @@ target. The snapshot makes the resulting boundary executable:
 - `plot_rect_px` is the visual/data viewport after guide and layout allocation.
 
 Both rectangles have finite, nonnegative coordinates and extents, are contained by the logical
-render target, and `plot_rect_px` is contained by `panel_rect_px`. A zero-area rectangle can
-represent an allocated-but-inactive region, but projection, inverse projection, navigation, or
-aspect resolution requiring a data viewport rejects a zero-area plot.
+render target, and `plot_rect_px` is contained by `panel_rect_px`. The outer panel has positive
+area. A zero-area plot can represent an allocated-but-inactive data region, contains no data, and
+is rejected by projection conversion, navigation, and aspect helpers.
 
 Minimal fields:
 
@@ -93,15 +93,24 @@ The data-to-screen transform maps accepted data coordinates into logical pixel c
 resolved plot rectangle. Reversed `View2D` limits are represented in that transform rather than by
 changing semantic domains.
 
-DATA positions and panel NDC map through `plot_rect_px`, never through the complete canvas or
+Public logical pointer and query coordinates are absolute render-target logical coordinates. DATA
+positions and panel NDC map through `plot_rect_px`, never through the complete canvas or
 `panel_rect_px`. Panel NDC has `x=-1` at the plot left, `x=+1` at the plot right, `y=-1` at the plot
 bottom, and `y=+1` at the plot top. Logical-pixel conversion honors the render target's declared
-pixel origin. The protocol exposes typed conversions between render-target logical coordinates and
-plot-relative panel NDC, a resolved plot-aspect helper, and a data-viewport containment predicate.
+pixel origin: top-left origin maps plot top-left to `(-1,+1)` and bottom-right to `(+1,-1)`;
+bottom-left origin reverses y. The protocol exposes typed conversions between render-target logical
+coordinates and plot-relative panel NDC, a resolved plot-aspect helper, and a three-way classifier
+for outside-panel, panel-guide-lane, and data-plot coordinates.
+
+Geometric containment is closed, including exact rectangle edges, to preserve exact NDC edge round
+trips. Raster sample ownership may remain backend-private and half-open. Plot conversion rejects a
+guide-lane coordinate rather than extrapolating NDC.
 
 Data queries, View3D rays, mesh picking, and layout-dependent navigation use `plot_rect_px`. A
 coordinate may therefore be inside the outer panel but outside the data viewport. Such a coordinate
 cannot hit a data visual, although a guide query may hit a resolved guide box there.
+Supported DATA queries there return MISS; GUIDE and ALL_RENDERED queries may still hit guide boxes.
+No View3D ray, mesh pick, pointer anchor, or zoom anchor is clamped or extrapolated from that lane.
 
 Grid lines are clipped to `plot_rect_px` in layout-strict mode unless a future spec defines an
 explicit alternate policy. A white overlay band that hides grid lines is a review artifact, not a
@@ -165,6 +174,9 @@ backend to consume it. Semantic-only operation may allow backend-resolved layout
 Guide support does not alter geometry consumption: if a backend cannot render a
 `PanelTextGuide`, it consumes the same plot rectangle and reports the missing guide instead of
 expanding the plot into the reserved lane.
+
+The core `ResolvedLayoutSnapshot` represents one panel/view boundary. Aggregate snapshot containers
+and public multi-panel layout authoring remain deferred.
 
 ## Capability Surface
 

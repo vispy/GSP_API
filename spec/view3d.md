@@ -147,7 +147,11 @@ diagnostic. That path is not layout-strict.
 
 Projection and unprojection produce panel NDC relative to `plot_rect_px`. View3D ray construction,
 mesh picking, and layout-dependent navigation use the same plot rectangle. Coordinates in an outer
-panel guide lane cannot produce data hits.
+panel guide lane cannot produce data hits and are rejected before ray or mesh-pick construction.
+Navigation snapshot freshness resolves both the current and updated projection identities from the
+same optional `ResolvedLayoutSnapshot`; the existing ID-only call remains compatible but cannot
+claim layout-strict aspect resolution. Anchors outside closed panel NDC `[-1,+1]` are rejected,
+never clamped.
 
 ## MeshVisual Integration
 

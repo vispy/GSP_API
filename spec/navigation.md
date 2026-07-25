@@ -38,13 +38,19 @@ new explicit `View2D`.
 
 ## Action Semantics
 
-Coordinates are in resolved panel logical pixels, using the layout snapshot named by the action when
-layout is available. The panel rectangle maps linearly to panel NDC:
+Public pointer coordinates and zoom anchors are absolute render-target logical coordinates. When
+layout is available, actions use the `plot_rect_px` from the named resolved layout snapshot.
+`plot_rect_px` maps linearly to panel NDC; the outer `panel_rect_px` does not set data-navigation
+scale:
 
 ```text
-panel_ndc_x = -1 + 2 * (px_x - rect_x) / rect_width
-panel_ndc_y = -1 + 2 * (px_y - rect_y) / rect_height
+panel_ndc_x = -1 + 2 * (px_x - plot_x) / plot_width
+panel_ndc_y = -1 + 2 * (px_y - plot_y) / plot_height
 ```
+
+Logical y conversion honors the render-target pixel origin. For top-left origin, plot top-left is
+`(-1,+1)` and plot bottom-right is `(+1,-1)`; bottom-left origin reverses y. Exact rectangle edges
+are included geometrically, while backend raster sample ownership may remain half-open.
 
 ### `pan_by`
 
@@ -54,11 +60,11 @@ Fields:
 |---|---:|---|
 | `dx_px` | yes | Horizontal logical-pixel delta. |
 | `dy_px` | yes | Vertical logical-pixel delta. |
-| `layout_snapshot_id` | yes if layout strict | Snapshot defining the panel rectangle. |
+| `layout_snapshot_id` | yes if layout strict | Snapshot defining the plot rectangle. |
 | `view2d_revision` | yes | Revision the action was computed against. |
 
-Dragging content to the right increases the visible data limits by the negative panel movement in
-data units. For a panel rectangle of width `w` and height `h`:
+Dragging content to the right increases the visible data limits by the negative plot movement in
+data units. For a plot rectangle of width `w` and height `h`:
 
 ```text
 data_dx = -dx_px / w * (xlim[1] - xlim[0])
@@ -75,10 +81,10 @@ Fields:
 
 | Field | Required | Semantics |
 |---|---:|---|
-| `anchor_px` | yes | Logical-pixel anchor in the target panel. |
+| `anchor_px` | yes | Absolute logical-pixel anchor inside the closed data plot. |
 | `factor_x` | yes | Finite positive x zoom factor. Values greater than `1` zoom in. |
 | `factor_y` | yes | Finite positive y zoom factor. Values greater than `1` zoom in. |
-| `layout_snapshot_id` | yes if layout strict | Snapshot defining the panel rectangle. |
+| `layout_snapshot_id` | yes if layout strict | Snapshot defining the plot rectangle. |
 | `view2d_revision` | yes | Revision the action was computed against. |
 
 The anchor maps to a data coordinate under the current `View2D`; after zoom, that data coordinate
@@ -93,6 +99,8 @@ new_xlim = (anchor_data_x - tx * new_span_x, anchor_data_x + (1 - tx) * new_span
 ```
 
 Y uses the same rule with `ty`, `ylim`, and `factor_y`. Reversed limits are preserved by signed spans.
+An anchor outside `plot_rect_px`, including one in a guide lane, is rejected or ignored; it is
+never clamped into the plot. A degenerate plot cannot drive navigation.
 
 ### `set_view`
 
@@ -130,6 +138,7 @@ Recommended diagnostics:
 | `GSP_NAVIGATION_NONFINITE` | Delta, anchor, factor, or resulting limit is non-finite. |
 | `GSP_NAVIGATION_INVALID_ZOOM_FACTOR` | Zoom factor is not finite and positive. |
 | `GSP_NAVIGATION_INVALID_PANEL_RECT` | Panel rectangle has zero or invalid width/height. |
+| `GSP_NAVIGATION_OUTSIDE_PLOT` | Pointer or zoom anchor is outside the resolved data plot. |
 | `GSP_NAVIGATION_RESET_UNAVAILABLE` | `reset_view` requested without a home view. |
 
 ## Render and Query Coherence
@@ -165,13 +174,14 @@ navigation actions and `View2D` updates.
 
 ## Input Adapter and Review Paths
 
-S035 includes a small backend-neutral pointer adapter for review and backend integration. The adapter
-accepts resolved target-panel logical-pixel pointer events and emits only semantic `pan_by` or
-`zoom_about` actions. Backends are still responsible for applying accepted results to their native
-view state.
+S035 includes a small backend-neutral pointer adapter for review and backend integration. The
+adapter accepts absolute render-target logical-pixel pointer events routed against the resolved
+data plot and emits only semantic `pan_by` or `zoom_about` actions. Backends are still responsible
+for applying accepted results to their native view state.
 
-The default review gesture map is left-drag pan, wheel zoom about the pointer on both axes, and
-right-drag independent x/y zoom about the pointer.
+Events anchored outside the plot are ignored rather than clamped. The default review gesture map
+is left-drag pan, wheel zoom about the pointer on both axes, and right-drag independent x/y zoom
+about the pointer.
 
 Supported in this stage:
 
