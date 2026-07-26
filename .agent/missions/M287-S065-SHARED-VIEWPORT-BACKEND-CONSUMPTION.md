@@ -2,8 +2,8 @@
 
 ## Status
 
-Owner-approved implementation direction; blocked until M286 is integrated and independently
-accepted. Execute with the pinned `codex-ucl-gpt-5.6-sol-medium` provider.
+Approved for execution after M286 was integrated and independently accepted on 2026-07-26.
+Execute with the pinned `codex-ucl-gpt-5.6-sol-medium` provider.
 
 ## Goal
 
@@ -75,4 +75,3 @@ a separate Datoviz mission.
 - Stop before any Datoviz repository edit.
 - Stop on a native crash, hang, or missing public viewport API and report exact evidence.
 - Do not edit VisPy2, push, merge, tag, release, publish, or change package versions.
-

@@ -2,8 +2,7 @@
 
 ## Status
 
-Approved by the owner on 2026-07-25 as the first mission in the M286-M288 correction sequence.
-Execute with the pinned `codex-ucl-gpt-5.6-sol-medium` provider. M284 remains open for human review.
+Completed and independently accepted on 2026-07-26. M284 remains open for human review.
 
 First-pass commits were integrated after run `R20260725-173541-M286`:
 
@@ -194,6 +193,11 @@ M287 remains blocked until independent review accepts this correction.
 Run `R20260725-181001-M286` ended before any file changes because its Codex transport exhausted
 WebSocket and HTTPS retries during a DNS/network interruption. This is an infrastructure failure,
 not an implementation result; relaunch from the unchanged `7c54d8f` / `da235f2` baselines.
+
+The successful final run `R20260726-131257-M286` was integrated as GSP commit `2d9c445` and
+Mission Control commit `c118bba`. Independent review issued an unconditional ACCEPT after its own
+strict/legacy transition-matrix probe. Final evidence: 758 tests passed, strict mypy passed across
+51 source files, Ruff passed, and both repository diff checks passed. M287 is unblocked.
 
 ## Acceptance
 
