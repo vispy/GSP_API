@@ -3337,9 +3337,9 @@
       "id": "M292",
       "title": "S065 exact-wheel native gallery qualification",
       "stage": "S065",
-      "state": "active",
+      "state": "blocked",
       "agent": "local-main-codex",
-      "progress": 0,
+      "progress": 50,
       "priority": 292,
       "repositories": [
         "mission-control",
@@ -3357,6 +3357,34 @@
           "README.md"
         ]
       }
+    },
+    {
+      "id": "M293",
+      "title": "S065 macOS Datoviz subprocess lifecycle correction",
+      "stage": "S065",
+      "state": "approved",
+      "agent": "codex-ucl-gpt-5.6-sol-medium",
+      "progress": 0,
+      "priority": 293,
+      "repositories": [
+        "mission-control",
+        "vispy2",
+        "gsp",
+        "datoviz"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent/decisions"
+        ],
+        "vispy2": [
+          "examples/validate_gallery.py",
+          "tests/test_gallery_contract.py",
+          "docs/gallery.md"
+        ],
+        "gsp": [
+          "packages/gsp-core/tests"
+        ]
+      }
     }
   ],
   "review_queue": [
@@ -3365,6 +3393,13 @@
       "type": "blocked",
       "summary": "Fail-closed source corrections accepted; full exact-wheel native gallery qualification is active as M292",
       "priority": 290,
+      "state": "blocked"
+    },
+    {
+      "id": "M292",
+      "type": "blocked",
+      "summary": "Exact-wheel publication is blocked by reproducible macOS Datoviz setsid teardown SIGSEGV; M293 is approved",
+      "priority": 292,
       "state": "blocked"
     }
   ],
