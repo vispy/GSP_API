@@ -2,8 +2,9 @@
 
 ## Status
 
-Approved for execution. M287 was integrated and independently accepted on 2026-07-26. Execute with
-the pinned `codex-ucl-gpt-5.6-sol-medium` provider.
+Stopped on its reproducible-native-hang condition on 2026-07-26. The useful draft is preserved as
+explicit WIP checkpoints `eb97d38` in `gsp` and `ce623f3` in `vispy2`; neither checkpoint is
+accepted. Corrections continue in M289.
 
 ## Goal
 
@@ -73,3 +74,31 @@ implementation worker. Do **not** run `agentctl launch`, inspect canonical Missi
 spawn another worker. Execute M288 directly in the supplied `gsp`, `vispy2`, and `mission-control`
 worktrees, using Datoviz only as read-only evidence. Commit or leave a validated unstaged handoff in
 each supplied writable worktree as sandbox permissions allow.
+
+## R20260726-194445-M288 stop report
+
+The second medium-worker run implemented a shared-layout gallery draft and passed focused static
+checks: 32 GSP tests, 19 VisPy2 tests, strict mypy for the touched source sets, Ruff, `git
+diff --check`, and a Matplotlib 800x600 smoke. Two bounded native Datoviz captures then timed out
+with the same macOS `com.apple.hiservices-xpcservice` denial and produced no PNG. The worker
+correctly stopped before wheel qualification, artifact regeneration, Gallery 5, full gates, or
+acceptance.
+
+Independent review rejected the draft for four mandatory corrections:
+
+1. Remove public `Figure.render(...)->Any`; it exposes backend-specific render objects through
+   VisPy2. Retain only the protocol-safe `Figure.resolve_layout()` boundary. Gallery-internal code
+   may call a caller-owned session directly and inspect its result for evidence.
+2. Preserve all prior gallery View3D capability assertions, including perspective/orthographic,
+   mesh, pixel, sphere, vector, billboard text, indexed primitive, and triangle-strip coverage.
+3. Datoviz may omit a consumed-layout panel text guide only when every guide is a non-queryable
+   `PanelTextRole.TITLE`. Continue rejecting subtitles, queryable titles, axes, and colorbars before
+   native resource creation, and add negative tests.
+4. Normalize manifest provenance at its generation source. Committed Markdown and manifests must
+   contain portable runtime descriptions and repository-relative or logical isolated-wheel import
+   paths, never `/Users/...`, `/private/tmp/...`, or another host-absolute path.
+
+The native failure is a worker-sandbox environment limitation, not accepted backend evidence.
+M289 performs the source correction and complete non-native qualification. A subsequent
+Mission-Control-owned run outside the worker sandbox will perform exact-wheel native capture,
+Gallery 5 lifecycle qualification, and independent visual review.

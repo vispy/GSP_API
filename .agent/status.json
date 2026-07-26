@@ -3207,10 +3207,46 @@
       "id": "M288",
       "title": "S065 viewport gallery requalification and owner handoff",
       "stage": "S065",
+      "state": "blocked",
+      "agent": "codex-ucl-gpt-5.6-sol-medium",
+      "progress": 55,
+      "priority": 288,
+      "repositories": [
+        "mission-control",
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent/decisions"
+        ],
+        "gsp": [
+          "packages/gsp-core/src",
+          "packages/gsp-core/tests",
+          "packages/gsp-matplotlib/src",
+          "packages/gsp-matplotlib/tests",
+          "packages/gsp-datoviz/src",
+          "packages/gsp-datoviz/tests",
+          "docs"
+        ],
+        "vispy2": [
+          "src",
+          "tests",
+          "examples",
+          "docs",
+          "README.md"
+        ]
+      }
+    },
+    {
+      "id": "M289",
+      "title": "S065 viewport gallery correction and static qualification",
+      "stage": "S065",
       "state": "approved",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
       "progress": 0,
-      "priority": 288,
+      "priority": 289,
       "repositories": [
         "mission-control",
         "gsp",
