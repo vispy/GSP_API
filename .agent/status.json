@@ -3410,9 +3410,9 @@
       "id": "M295",
       "title": "S065 GSP ctypes state-readback fail-closed guard",
       "stage": "S065",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
-      "progress": 0,
+      "progress": 100,
       "priority": 295,
       "repositories": [
         "gsp"
@@ -3450,9 +3450,9 @@
     {
       "id": "M295",
       "type": "mission",
-      "summary": "Reject incomplete Datoviz ctypes state output records before native invocation",
+      "summary": "Completed in GSP fd20c94: optional View3D state readback fails closed before native invocation or camera mutation while retained rendering remains available",
       "priority": 295,
-      "state": "approved"
+      "state": "completed"
     }
   ],
   "open_questions": [
