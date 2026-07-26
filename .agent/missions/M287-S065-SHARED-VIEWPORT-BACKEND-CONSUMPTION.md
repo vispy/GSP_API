@@ -141,3 +141,47 @@ corrections:
 Before final acceptance, run the full GSP suite, strict mypy over the complete source set, Ruff,
 backend import checks, and `git diff --check`. The supervisor must review the final diff and issue an
 unconditional ACCEPT.
+
+## Second correction pass after R20260726-185938-M287
+
+The second medium-worker run completed and its useful work is preserved in GSP commit `6e7af9a` as
+another explicit WIP checkpoint. The run added fail-closed public Datoviz panel creation, coherent
+snapshot/view checks, origin-aware placement and live input handling, plot-local Datoviz queries,
+stale query/ray/pick/navigation rejection, strict-layout navigation, producer viewport allocation,
+truthful partial capability claims, cross-backend ray evidence, and screen-space size-invariance
+coverage.
+
+Checkpoint validation was green: 776 tests passed, strict mypy passed all 51 source files, Ruff
+passed, backend imports/provider probes passed, and `git diff --check` passed. The checkpoint is
+nevertheless **not accepted**. Independent review reproduced four remaining semantic defects that
+the next worker must fix directly:
+
+1. Matplotlib consumed render targets with `device_scale != 1` are constructed incorrectly.
+   `_consumed_canvas_size()` currently returns `CanvasSize.pixel_exact(logical_width,
+   logical_height)`, so an 800x600 logical target at scale 2 produces an 800x600 framebuffer rather
+   than 1600x1200. Construct the consumed canvas from host-logical/reference dimensions while
+   preserving the snapshot's requested device scale, or explicitly reject unsupported scale values.
+   Add a scale-2 test that asserts logical canvas, framebuffer, figure, and physical axes dimensions.
+2. Matplotlib mesh picking still validates `request.panel_xy` against caller-supplied
+   `panel_bounds` before applying the authoritative consumed `layout_snapshot`. When those bounds
+   describe the outer panel, a guide-lane coordinate is admitted and the snapshot conversion raises.
+   In consumed mode, classify and convert from the snapshot plot rectangle first, or require exact
+   bounds equality. Add a competing-outer-bounds guide-lane test that returns a structured outside
+   result rather than raising.
+3. `render_protocol_scene_with_layout(layout_snapshot=...)` can still bypass session-level guide
+   safeguards. Its preflight only receives panel text guides; axis guides and colorbars may be
+   rendered after placement and mutate/shrink the consumed axes, and a missing resolved title box
+   must never silently fall back. Validate/reject unsupported axis/colorbar/title combinations at
+   the public renderer boundary before artist mutation, then draw and assert the observed plot
+   rectangle remains equal to the consumed plot. Add direct low-level tests for axis and colorbar
+   rejection/non-shrink plus missing-title-box rejection.
+4. Datoviz consumed perspective rendering has no explicit-aspect qualification, and the CPU Mesh3D
+   fallback still uses the full host-canvas aspect rather than the consumed plot aspect. Because the
+   public retained Datoviz camera has no authored aspect field, accept omitted aspect or an explicit
+   aspect equal to `plot_rect_px.width / plot_rect_px.height`; reject a differing explicit aspect
+   before resource creation. Use the plot ratio for CPU projection fallback. Add omitted, matching,
+   conflicting, and fallback-projection tests.
+
+The screen-space marker/pixel/text/line/vector invariance test added by the second pass is retained
+and green. Re-run all full gates after these four corrections. Do not mark M287 complete until the
+independent supervisor issues an unconditional ACCEPT.
