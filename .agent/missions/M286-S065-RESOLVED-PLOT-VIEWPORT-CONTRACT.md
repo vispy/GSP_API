@@ -191,6 +191,10 @@ The final pinned `codex-ucl-gpt-5.6-sol-medium` correction must:
 
 M287 remains blocked until independent review accepts this correction.
 
+Run `R20260725-181001-M286` ended before any file changes because its Codex transport exhausted
+WebSocket and HTTPS retries during a DNS/network interruption. This is an infrastructure failure,
+not an implementation result; relaunch from the unchanged `7c54d8f` / `da235f2` baselines.
+
 ## Acceptance
 
 - The protocol has one unambiguous rectangle for visual projection and data queries.
