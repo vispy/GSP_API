@@ -389,7 +389,7 @@
       "id": "S065",
       "title": "Camera And Priority Visual Completeness",
       "state": "active",
-      "progress": 92
+      "progress": 95
     }
   ],
   "missions": [
@@ -3310,9 +3310,9 @@
       "id": "M291",
       "title": "S065 Matplotlib HiDPI logical layout normalization",
       "stage": "S065",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
-      "progress": 0,
+      "progress": 100,
       "priority": 291,
       "repositories": [
         "mission-control",
@@ -3332,13 +3332,38 @@
           "tests"
         ]
       }
+    },
+    {
+      "id": "M292",
+      "title": "S065 exact-wheel native gallery qualification",
+      "stage": "S065",
+      "state": "active",
+      "agent": "local-main-codex",
+      "progress": 0,
+      "priority": 292,
+      "repositories": [
+        "mission-control",
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent/decisions"
+        ],
+        "vispy2": [
+          "examples/artifacts",
+          "docs",
+          "README.md"
+        ]
+      }
     }
   ],
   "review_queue": [
     {
       "id": "M290",
       "type": "blocked",
-      "summary": "Fail-closed source corrections accepted; full exact-wheel gallery qualification awaits M291 HiDPI normalization",
+      "summary": "Fail-closed source corrections accepted; full exact-wheel native gallery qualification is active as M292",
       "priority": 290,
       "state": "blocked"
     }

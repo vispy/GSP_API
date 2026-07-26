@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved for direct execution with `codex-ucl-gpt-5.6-sol-medium`.
+Completed and independently accepted. Integrated as GSP `6b5b8bc`.
 
 ## Baseline
 
