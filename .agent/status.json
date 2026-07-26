@@ -3327,6 +3327,9 @@
         "gsp": [
           "packages/gsp-matplotlib/src",
           "packages/gsp-matplotlib/tests"
+        ],
+        "vispy2": [
+          "tests"
         ]
       }
     }

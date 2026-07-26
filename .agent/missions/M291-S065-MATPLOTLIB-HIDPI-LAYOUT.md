@@ -92,4 +92,6 @@ The defect is a coordinate-space mix in `gsp-matplotlib`: native Matplotlib disp
 - Stop on a protocol/spec conflict, new public semantics, or any need for a Datoviz edit.
 - Do not edit VisPy2, Datoviz, Mission Control decisions, credentials, package versions, or release
   metadata.
+- The VisPy2 tests-only path lock exists solely so the isolated launcher can mount that repository
+  for validation; it does not authorize edits.
 - Do not push, merge, tag, release, publish, create a PR, or run native Datoviz presentation.
