@@ -185,3 +185,29 @@ the next worker must fix directly:
 The screen-space marker/pixel/text/line/vector invariance test added by the second pass is retained
 and green. Re-run all full gates after these four corrections. Do not mark M287 complete until the
 independent supervisor issues an unconditional ACCEPT.
+
+## Final correction pass after R20260726-192201-M287
+
+The third medium-worker run corrected the device-scale, low-level guide enforcement, and Datoviz
+perspective-aspect defects. Its validated work is preserved in GSP commit `5c3bd9d`. Validation was
+green: 785 tests passed, strict mypy passed all 51 source files, Ruff passed, backend imports and
+provider probes passed, the Datoviz v0.4 probe passed, and `git diff --check` passed.
+
+The checkpoint is still **not accepted** because independent review found one precise query-status
+semantic error in the remaining mesh-pick correction:
+
+- With a consumed layout snapshot, classify `request.panel_xy` using the authoritative resolved
+  layout before conversion.
+- `LogicalCoordinateRegion.PANEL_GUIDE_LANE` is inside the outer panel but outside the DATA plot.
+  For a DATA mesh-pick request it must return a structured `QueryStatus.MISS` with `hit=False`,
+  preserving the authoritative layout and pick-scene snapshot IDs. It must not report
+  `INVALID_OUTSIDE_PANEL`.
+- `LogicalCoordinateRegion.OUTSIDE_PANEL` remains `QueryStatus.INVALID` with the existing
+  `INVALID_OUTSIDE_PANEL` diagnostic.
+- Keep the legacy no-layout `panel_bounds` behavior unchanged.
+- Replace the current guide-lane test that locks `INVALID` with two explicit assertions: guide lane
+  returns `MISS`, and a genuinely outside-panel coordinate returns `INVALID`.
+
+This pass is intentionally bounded to the Matplotlib mesh-pick query implementation and its focused
+tests. Re-run the focused query tests and all full acceptance gates. Do not mark M287 complete until
+the independent supervisor issues an unconditional ACCEPT.
