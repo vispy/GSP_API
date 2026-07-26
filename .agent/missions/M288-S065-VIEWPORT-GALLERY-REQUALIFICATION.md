@@ -64,3 +64,12 @@ expansion and return to Mission Control if M287 did not fully establish the requ
   approved mission.
 - No absolute paths in committed Markdown or manifests.
 - Do not push, merge, tag, release, publish, or change package versions.
+
+## Worker execution instruction after R20260726-194255-M288
+
+The first run was stopped before any repository change because the worker recursively invoked
+`agentctl launch M288` and began acting as Mission Control. The next worker is already the launched
+implementation worker. Do **not** run `agentctl launch`, inspect canonical Mission Control dirt, or
+spawn another worker. Execute M288 directly in the supplied `gsp`, `vispy2`, and `mission-control`
+worktrees, using Datoviz only as read-only evidence. Commit or leave a validated unstaged handoff in
+each supplied writable worktree as sandbox permissions allow.
