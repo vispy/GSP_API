@@ -2,8 +2,8 @@
 
 ## Status
 
-Owner-approved qualification direction; blocked until M287 is integrated and independently
-accepted. Execute with the pinned `codex-ucl-gpt-5.6-sol-medium` provider.
+Approved for execution. M287 was integrated and independently accepted on 2026-07-26. Execute with
+the pinned `codex-ucl-gpt-5.6-sol-medium` provider.
 
 ## Goal
 
@@ -64,4 +64,3 @@ expansion and return to Mission Control if M287 did not fully establish the requ
   approved mission.
 - No absolute paths in committed Markdown or manifests.
 - Do not push, merge, tag, release, publish, or change package versions.
-

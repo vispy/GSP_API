@@ -236,3 +236,23 @@ The final implementation must therefore:
 Do not add any unbounded, clamped, sentinel, or nearest-edge NDC helper. Use the provisioned
 `/Users/cyrille/GIT/Viz/gsp/.venv` environment for the full pytest, strict mypy, Ruff, backend
 import/provider, and diff gates.
+
+## Completion evidence
+
+M287 was integrated in GSP through commits `add9a76`, `6e7af9a`, `5c3bd9d`, and final correction
+`2e45855`. The final implementation makes both backend adapters consume the same authoritative
+resolved plot viewport, preserves logical-pixel visual sizing and canonical camera state, qualifies
+Datoviz perspective aspect behavior, and keeps guide-lane query results outside DATA semantics
+without fabricating plot coordinates.
+
+Final validation after integration:
+
+- full GSP suite: 785 passed;
+- strict mypy: 51 source files passed;
+- Ruff: passed;
+- Matplotlib and Datoviz imports and provider probes: passed;
+- Datoviz v0.4 source probe: passed;
+- `git diff --check`: passed;
+- independent supervisor: unconditional ACCEPT.
+
+M287 is complete. M288 may now requalify the gallery and prepare the owner handoff.
