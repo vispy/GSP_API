@@ -211,3 +211,28 @@ semantic error in the remaining mesh-pick correction:
 This pass is intentionally bounded to the Matplotlib mesh-pick query implementation and its focused
 tests. Re-run the focused query tests and all full acceptance gates. Do not mark M287 complete until
 the independent supervisor issues an unconditional ACCEPT.
+
+## No-extrapolation clarification after R20260726-193114-M287
+
+The fourth medium-worker draft correctly split the resolved coordinate regions but attempted to
+satisfy the mesh-payload invariant by inventing an unbounded panel NDC such as `(0.0, 1.8)` for a
+guide-lane coordinate. Independent review rejected this. M286 deliberately defines panel NDC only
+inside the closed `plot_rect_px`; query, ray, and pick code must not extrapolate outside that plot.
+
+The final implementation must therefore:
+
+- return a plain structured `QueryResult` for `PANEL_GUIDE_LANE`, with `status=MISS`, `hit=False`,
+  the original absolute panel coordinate, a concise outside-data-viewport diagnostic, and the
+  authoritative layout and view-projection snapshot IDs;
+- attach no mesh extension payload and no `panel_ndc_xy`, because neither is truthful for a
+  coordinate outside the data plot; the pick-scene ID cannot be represented without the mesh
+  payload in the current protocol and must not be smuggled into a fabricated coordinate;
+- keep the mesh extension payload for ordinary DATA-plot hits/misses, where valid panel NDC exists;
+- keep `OUTSIDE_PANEL` as the existing structured `INVALID` result and retain the legacy no-layout
+  bounds path;
+- test explicitly that the guide-lane result has no extension payload or visual coordinate, carries
+  the original coordinate plus layout/view IDs, and that the outside-panel case remains invalid.
+
+Do not add any unbounded, clamped, sentinel, or nearest-edge NDC helper. Use the provisioned
+`/Users/cyrille/GIT/Viz/gsp/.venv` environment for the full pytest, strict mypy, Ruff, backend
+import/provider, and diff gates.
