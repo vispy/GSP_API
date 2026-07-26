@@ -34,8 +34,9 @@ system.
 - Layout-strict or cross-backend comparison produces one snapshot that every backend consumes.
   Semantic-only operation may remain backend-resolved with diagnostics.
 - View2D layout-aware pan and zoom use the snapshot plot rectangle and pixel origin. Top-left and
-  bottom-left origins invert vertical pan sign and make a top-edge zoom preserve `y_max` and
-  `y_min`, respectively. Existing rect-only helpers remain compatible but are not origin-strict.
+  bottom-left origins invert vertical pan sign and make a minimum-logical-y-edge zoom preserve
+  `y_max` and `y_min`, respectively. Existing rect-only helpers remain compatible but are not
+  origin-strict.
 
 ## Producer/Consumer Staging
 
@@ -60,6 +61,10 @@ layout-strict result.
 
 Existing rect-only View2D navigation callers retain their historical vertical mapping. Supplying a
 resolved layout makes both `plot_rect_px` and its `pixel_origin` authoritative.
+`View2DNavigationInputAdapter.set_panel_rect()` remains a legacy rect-only update and preserves a
+legacy opaque layout ID. Once an adapter is constructed or updated from a full resolved snapshot,
+geometry, origin, and strict identity may only change atomically through `set_layout_snapshot()`;
+rect-only mutation is rejected.
 
 ## Deferred
 

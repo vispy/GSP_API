@@ -154,9 +154,10 @@ DATA queries in a guide lane return MISS; GUIDE and ALL_RENDERED queries may hit
 mesh picks, and navigation anchors never clamp or extrapolate a guide-lane coordinate into the
 plot. Layout-dependent pan/zoom deltas use plot width and height.
 
-View2D layout-aware navigation also uses the snapshot pixel origin. A top-edge zoom anchor preserves
-`y_max` for top-left logical coordinates and `y_min` for bottom-left logical coordinates. Equal
-positive logical `dy_px` therefore produces opposite signed data pan under those two origins.
+View2D layout-aware navigation also uses the snapshot pixel origin. A minimum-logical-y-edge zoom
+anchor preserves `y_max` for top-left logical coordinates and `y_min` for bottom-left logical
+coordinates. Equal positive logical `dy_px` therefore produces opposite signed data pan under those
+two origins.
 Rect-only helper calls retain their established compatibility behavior but cannot claim
 layout-strict origin resolution.
 

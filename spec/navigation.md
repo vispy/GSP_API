@@ -108,12 +108,12 @@ For y, first derive:
 ```text
 logical_y_fraction = (anchor_y - rect_y) / rect_height
 ty = 1 - logical_y_fraction  # TOP_LEFT: top edge addresses ylim[1]
-ty = logical_y_fraction      # BOTTOM_LEFT: top edge addresses ylim[0]
+ty = logical_y_fraction      # BOTTOM_LEFT: origin-side/minimum-y edge addresses ylim[0]
 ```
 
-Then use the same signed-span rule with `ty`, `ylim`, and `factor_y`. Thus a top-edge zoom preserves
-`y_max` under top-left origin and `y_min` under bottom-left origin. Reversed limits remain
-preserved.
+Then use the same signed-span rule with `ty`, `ylim`, and `factor_y`. Thus the minimum-logical-y
+edge preserves `y_max` under top-left origin and `y_min` under bottom-left origin. The physical top
+under bottom-left origin is instead `rect_y + rect_height`. Reversed limits remain preserved.
 An anchor outside `plot_rect_px`, including one in a guide lane, is rejected or ignored; it is
 never clamped into the plot. A degenerate plot cannot drive navigation.
 
