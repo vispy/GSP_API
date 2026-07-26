@@ -97,3 +97,16 @@ perform native gallery capture outside the worker sandbox without making archite
 - Stop before any Datoviz repository edit or any sandboxed native Datoviz capture.
 - Stop on unrelated dirty state, path-lock conflict, or a need for credentials.
 - Do not push, merge, tag, release, publish, create a PR, or change package versions.
+
+## R20260726-201012-M289 supervision result
+
+The useful corrections are preserved in `gsp` commit `48e1fb0` and VisPy2 commit `a521242`.
+They are checkpoints, not accepted closeout. Green evidence included 788 GSP tests, 73 VisPy2
+tests, strict mypy, Ruff, provider probes, docs/link validation, seven Matplotlib 800x600 captures,
+four wheel builds, and project-wheel isolation.
+
+Independent review rejected the checkpoint because Gallery 3 still omitted `pixelvisual.v1`, the
+runtime description came from the harness rather than `--python`, logical import normalization
+selected the first package-named path component, and schema 2 omitted exact wheel hashes. Review
+also requested fail-closed fresh capture publication and a documented exact-project-wheel
+environment where Pillow is available. M290 owns these bounded corrections.
