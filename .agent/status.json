@@ -3337,9 +3337,9 @@
       "id": "M292",
       "title": "S065 exact-wheel native gallery qualification",
       "stage": "S065",
-      "state": "running",
+      "state": "blocked",
       "agent": "local-main-codex",
-      "progress": 55,
+      "progress": 60,
       "priority": 292,
       "repositories": [
         "mission-control",
@@ -3385,6 +3385,44 @@
           "packages/gsp-core/tests"
         ]
       }
+    },
+    {
+      "id": "M294",
+      "title": "S065 Datoviz panel-state ctypes ABI correction",
+      "stage": "S065",
+      "state": "approved",
+      "agent": "codex-ucl-gpt-5.6-sol-medium",
+      "progress": 0,
+      "priority": 294,
+      "repositories": [
+        "datoviz-ctypes-fix"
+      ],
+      "path_locks": {
+        "datoviz-ctypes-fix": [
+          "spec/bindings/ctypes.yml",
+          "tools/bindings",
+          "tools/tests",
+          "datoviz/_ctypes.py"
+        ]
+      }
+    },
+    {
+      "id": "M295",
+      "title": "S065 GSP ctypes state-readback fail-closed guard",
+      "stage": "S065",
+      "state": "approved",
+      "agent": "codex-ucl-gpt-5.6-sol-medium",
+      "progress": 0,
+      "priority": 295,
+      "repositories": [
+        "gsp"
+      ],
+      "path_locks": {
+        "gsp": [
+          "packages/gsp-datoviz/src",
+          "packages/gsp-datoviz/tests"
+        ]
+      }
     }
   ],
   "review_queue": [
@@ -3397,10 +3435,24 @@
     },
     {
       "id": "M292",
-      "type": "review",
-      "summary": "Exact-wheel publication resumed after independently accepted macOS Datoviz direct-child lifecycle correction",
+      "type": "blocked",
+      "summary": "Exact-wheel gallery state evidence exposed zero-size Datoviz ctypes output records; M294 and M295 are approved",
       "priority": 292,
-      "state": "running"
+      "state": "blocked"
+    },
+    {
+      "id": "M294",
+      "type": "mission",
+      "summary": "Repair ABI-exact generated Datoviz View2D/View3D state records and native readback proof",
+      "priority": 294,
+      "state": "approved"
+    },
+    {
+      "id": "M295",
+      "type": "mission",
+      "summary": "Reject incomplete Datoviz ctypes state output records before native invocation",
+      "priority": 295,
+      "state": "approved"
     }
   ],
   "open_questions": [

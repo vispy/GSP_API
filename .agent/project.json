@@ -33,6 +33,11 @@
       "path": "/Users/cyrille/GIT/Viz/datoviz",
       "expected_remote": "https://github.com/datoviz/datoviz.git",
       "writable": false
+    },
+    "datoviz-ctypes-fix": {
+      "path": "/Users/cyrille/GIT/Viz/GSP_API-agent-sources/M294-dataviz",
+      "expected_remote": "https://github.com/datoviz/datoviz.git",
+      "writable": true
     }
   },
   "policy": {
