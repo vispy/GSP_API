@@ -3390,9 +3390,9 @@
       "id": "M294",
       "title": "S065 Datoviz panel-state ctypes ABI correction",
       "stage": "S065",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
-      "progress": 10,
+      "progress": 100,
       "priority": 294,
       "repositories": [
         "datoviz-ctypes-fix"
@@ -3443,9 +3443,9 @@
     {
       "id": "M294",
       "type": "mission",
-      "summary": "Repair ABI-exact Datoviz panel-state bindings with safe fallback on Python runtimes lacking effective 16-byte ctypes alignment",
+      "summary": "Completed in Datoviz 22d3bf6d4: ABI-exact panel-state bindings, safe older-Python fallback, native readback, and clean Gallery 2 GC proof",
       "priority": 294,
-      "state": "approved"
+      "state": "completed"
     },
     {
       "id": "M295",
