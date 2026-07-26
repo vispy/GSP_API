@@ -3392,7 +3392,7 @@
       "stage": "S065",
       "state": "approved",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
-      "progress": 0,
+      "progress": 10,
       "priority": 294,
       "repositories": [
         "datoviz-ctypes-fix"
@@ -3443,7 +3443,7 @@
     {
       "id": "M294",
       "type": "mission",
-      "summary": "Repair ABI-exact generated Datoviz View2D/View3D state records and native readback proof",
+      "summary": "Repair ABI-exact Datoviz panel-state bindings with safe fallback on Python runtimes lacking effective 16-byte ctypes alignment",
       "priority": 294,
       "state": "approved"
     },
