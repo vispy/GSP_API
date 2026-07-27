@@ -4,9 +4,10 @@
 
 Automated qualification was independently accepted and integrated as VisPy2 `befa0cc` on
 2026-07-23. Owner review on 2026-07-25 found actionable size, View3D-frame, gallery-comparison,
-title, and launch-instruction issues. M285 corrected all findings and was independently accepted
-on 2026-07-25. This mission is active at 95 percent for the owner's re-review of the corrected
-portable pack; Datoviz remains read-only evidence.
+title, and launch-instruction issues. M285 corrected those findings, and M292 requalified the
+complete exact-wheel pack after the Datoviz ABI repairs. On 2026-07-28 the owner accepted the
+corrected static gallery. This mission remains at 95 percent only for the owner-run Gallery 5
+orbit/pan/zoom/reset and clean-close interaction check.
 
 ## Goal
 
