@@ -3428,9 +3428,9 @@
       "id": "M296",
       "title": "S065 Datoviz concrete ctypes record safety",
       "stage": "S065",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
-      "progress": 0,
+      "progress": 100,
       "priority": 296,
       "repositories": [
         "datoviz-ctypes-fix"
@@ -3477,9 +3477,9 @@
     {
       "id": "M296",
       "type": "mission",
-      "summary": "Generate or explicitly gate every public concrete ctypes record so zero-byte caller allocations cannot reach native code",
+      "summary": "Completed in Datoviz b45d692e4: all public concrete ctypes records are ABI-exact, explicitly pointer-opaque, or fail-closed; Python 3.12 and 3.14 native validation passed without crashes",
       "priority": 296,
-      "state": "approved"
+      "state": "completed"
     }
   ],
   "open_questions": [

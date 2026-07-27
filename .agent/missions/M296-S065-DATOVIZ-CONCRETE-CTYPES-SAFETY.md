@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved for direct execution with `codex-ucl-gpt-5.6-sol-medium`.
+Completed and independently accepted. Datoviz commit `b45d692e4` generates ABI-exact layouts for the supported records, records explicit provenance for safe pointer-opaque records, omits exactly 43 unsafe functions, and validates cleanly on Python 3.12 and 3.14 without a crash.
 
 ## Baseline and defect
 
