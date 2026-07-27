@@ -2,9 +2,9 @@
 
 ## Status
 
-Stopped on its reproducible-native-hang condition on 2026-07-26. The useful draft is preserved as
-explicit WIP checkpoints `eb97d38` in `gsp` and `ce623f3` in `vispy2`; neither checkpoint is
-accepted. Corrections continue in M289.
+Completed through the accepted M289, M290, and M292 correction/qualification chain on 2026-07-27.
+The original stopped-run evidence remains below; the superseding exact-wheel gallery is published
+in VisPy2 at `63d3301`.
 
 ## Goal
 

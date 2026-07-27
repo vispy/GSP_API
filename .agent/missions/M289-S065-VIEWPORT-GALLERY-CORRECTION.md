@@ -2,9 +2,8 @@
 
 ## Status
 
-Approved for execution after the stopped M288 run. Execute directly with the pinned
-`codex-ucl-gpt-5.6-sol-medium` provider. The worker is already the launched implementation worker;
-do not call `agentctl`, launch another worker, or act as Mission Control.
+Completed through the accepted M290 source correction and M292 exact-wheel qualification on
+2026-07-27. The intermediate review findings remain below as traceable history.
 
 ## Baseline
 

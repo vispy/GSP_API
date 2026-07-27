@@ -3207,9 +3207,9 @@
       "id": "M288",
       "title": "S065 viewport gallery requalification and owner handoff",
       "stage": "S065",
-      "state": "blocked",
+      "state": "completed",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
-      "progress": 55,
+      "progress": 100,
       "priority": 288,
       "repositories": [
         "mission-control",
@@ -3243,9 +3243,9 @@
       "id": "M289",
       "title": "S065 viewport gallery correction and static qualification",
       "stage": "S065",
-      "state": "blocked",
+      "state": "completed",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
-      "progress": 85,
+      "progress": 100,
       "priority": 289,
       "repositories": [
         "mission-control",
@@ -3279,9 +3279,9 @@
       "id": "M290",
       "title": "S065 fail-closed gallery evidence correction",
       "stage": "S065",
-      "state": "blocked",
+      "state": "completed",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
-      "progress": 95,
+      "progress": 100,
       "priority": 290,
       "repositories": [
         "mission-control",
@@ -3337,9 +3337,9 @@
       "id": "M292",
       "title": "S065 exact-wheel native gallery qualification",
       "stage": "S065",
-      "state": "blocked",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 60,
+      "progress": 100,
       "priority": 292,
       "repositories": [
         "mission-control",
@@ -3448,17 +3448,17 @@
   "review_queue": [
     {
       "id": "M290",
-      "type": "blocked",
-      "summary": "Fail-closed source corrections accepted; full exact-wheel native gallery qualification is active as M292",
+      "type": "mission",
+      "summary": "Completed through M292: fail-closed source corrections and exact portable gallery evidence passed",
       "priority": 290,
-      "state": "blocked"
+      "state": "completed"
     },
     {
       "id": "M292",
-      "type": "blocked",
-      "summary": "Exact-wheel gallery state evidence exposed zero-size Datoviz ctypes output records; M294 and M295 are approved",
+      "type": "mission",
+      "summary": "Completed: fourteen exact-wheel 800x600 captures, Gallery 5 lifecycle, and independent evidence review passed",
       "priority": 292,
-      "state": "blocked"
+      "state": "completed"
     },
     {
       "id": "M294",
@@ -3633,6 +3633,7 @@
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M292 completed and independently accepted: Datoviz ABI repairs eliminated the ctypes overwrite crashes; exactly four committed wheels produced fourteen fresh 800x600 captures with portable schema-2 provenance, all camera geometry ratios within 1.2 percent, and a clean Gallery 5 interrupt lifecycle. M288-M290 close; M284 and S065 remain at 95 percent pending owner visual and interactive acceptance.",
     "Owner review found a second M284 correction: equal 800x600 canvases still produce approximately 1.29x larger Datoviz View3D geometry because Matplotlib renders into its native inset plot rectangle while Datoviz renders into the full panel. M286-M288 are owner-approved to formalize the plot viewport contract, make both backends consume one resolved layout, and requalify the gallery using pinned gpt-5.6-sol medium workers. M284 is deferred at 95 percent and S065 remains open.",
     "M285 completed and independently accepted: all owner-reported gallery issues are corrected; exact installed wheels produced fourteen 800x600 captures without retry, final provenance is portable and hash-verified, and Gallery 5 now services one Ctrl-C, releases the Datoviz session, exits code 0, and leaves no process behind. M284 is active at 95 percent pending explicit owner re-review; S065 remains open.",
     "M281 completed and independently accepted: 2D TextVisual behavior is preserved and screen-facing 3D billboards now have strict View3D validation, panel-correct projection, retained camera reprojection without style churn, stable geometry-then-z text ordering, conditional Datoviz text ABI capabilities, Axes3D.text, and a reviewed Matplotlib-only Unicode/font-role gallery. Depth occlusion and glyph parity remain unadvertised. M282 minimal public query entry point is approved next.",

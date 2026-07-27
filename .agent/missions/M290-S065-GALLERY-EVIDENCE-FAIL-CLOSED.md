@@ -2,9 +2,8 @@
 
 ## Status
 
-Approved for direct execution with `codex-ucl-gpt-5.6-sol-medium`. The worker is already the
-launched implementation worker; do not call `agentctl`, launch another worker, or act as Mission
-Control.
+Completed and accepted through M292 on 2026-07-27. The fail-closed validator, exact provenance,
+freshness checks, and capability sets all passed the final exact-wheel native run.
 
 ## Baseline
 

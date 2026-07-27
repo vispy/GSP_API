@@ -2,8 +2,9 @@
 
 ## Status
 
-Approved for direct Mission Control execution. Native Datoviz presentation must run outside the
-external worker sandbox.
+Completed with unconditional independent acceptance on 2026-07-27. GSP `fd20c94` and VisPy2
+`7d2eb41` produced fourteen fresh 800x600 captures from exactly four wheels; VisPy2 `63d3301`
+publishes the portable evidence.
 
 ## Baseline
 
@@ -57,3 +58,16 @@ external worker sandbox.
   or a material visual mismatch.
 - Do not merge, tag, release, publish packages, create a PR, or modify versions.
 - Push only GSP_API, GSP, and VisPy2 after all final commits and checks; never push Datoviz.
+
+## 2026-07-27 closeout
+
+- Schema-2 manifest, exact wheel/source/script/artifact hashes, portable imports, shared layout,
+  capability/query probes, and all fourteen fresh captures passed.
+- Camera fit/orbit/pan/zoom raster ratios are 0.988–0.995 against a 2% tolerance.
+- Gallery 5 started from the isolated four-wheel site, accepted one bounded interrupt, exited zero,
+  and left no process.
+- Full committed-head gates passed: 801 GSP tests, 84 VisPy2 tests, strict mypy, Ruff,
+  documentation/link checks, and producer-only isolation.
+- Independent artifact review returned unconditional ACCEPT.
+- M288, M289, M290, and M292 close. M284 and S065 remain at 95% pending owner visual and
+  interactive acceptance.
