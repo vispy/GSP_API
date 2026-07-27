@@ -388,8 +388,8 @@
     {
       "id": "S065",
       "title": "Camera And Priority Visual Completeness",
-      "state": "active",
-      "progress": 95
+      "state": "completed",
+      "progress": 100
     }
   ],
   "missions": [
@@ -3093,9 +3093,9 @@
       "id": "M284",
       "title": "S065 integrated qualification and human review",
       "stage": "S065",
-      "state": "deferred",
+      "state": "completed",
       "agent": "codex-ucl",
-      "progress": 95,
+      "progress": 100,
       "priority": 284,
       "repositories": [
         "gsp",
@@ -3484,6 +3484,13 @@
   ],
   "open_questions": [
     {
+      "id": "Q180-GALLERY5-FLAT-LAMBERT-PRESENTATION",
+      "summary": "Gallery 5 is functionally accepted, but its uniform unlit mesh is visually unattractive. The recommended bounded follow-up is to use the existing strict flat_lambert path with generated face normals and established View3D lighting fields, without expanding public material semantics.",
+      "requires_human": false,
+      "requires_chatgpt_pro": false,
+      "state": "open"
+    },
+    {
       "id": "Q030-DATOVIZ-QUERY-RESULT-FIELDS",
       "summary": "Resolved by Datoviz commit 8bb192c2da6df70279eedac5b2eaed9f45aab96c: DvzQueryResult now exposes _fields_ and GSP smoke can read required query fields.",
       "requires_human": false,
@@ -3633,6 +3640,7 @@
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "S065 completed with owner acceptance on 2026-07-28: the corrected static gallery, live Gallery 5 orbit/pan/zoom/reset controls, and clean close all passed. The owner's unlit-mesh aesthetic concern is a non-blocking flat-Lambert example-polish follow-up.",
     "Owner accepted the corrected M292 static gallery on 2026-07-28. M284 and S065 remain at 95 percent only for the owner-run Gallery 5 orbit, pan, zoom, reset, and clean-close interaction check.",
     "M292 completed and independently accepted: Datoviz ABI repairs eliminated the ctypes overwrite crashes; exactly four committed wheels produced fourteen fresh 800x600 captures with portable schema-2 provenance, all camera geometry ratios within 1.2 percent, and a clean Gallery 5 interrupt lifecycle. M288-M290 close; M284 and S065 remain at 95 percent pending owner visual and interactive acceptance.",
     "Owner review found a second M284 correction: equal 800x600 canvases still produce approximately 1.29x larger Datoviz View3D geometry because Matplotlib renders into its native inset plot rectangle while Datoviz renders into the full panel. M286-M288 are owner-approved to formalize the plot viewport contract, make both backends consume one resolved layout, and requalify the gallery using pinned gpt-5.6-sol medium workers. M284 is deferred at 95 percent and S065 remains open.",

@@ -6,8 +6,9 @@ Automated qualification was independently accepted and integrated as VisPy2 `bef
 2026-07-23. Owner review on 2026-07-25 found actionable size, View3D-frame, gallery-comparison,
 title, and launch-instruction issues. M285 corrected those findings, and M292 requalified the
 complete exact-wheel pack after the Datoviz ABI repairs. On 2026-07-28 the owner accepted the
-corrected static gallery. This mission remains at 95 percent only for the owner-run Gallery 5
-orbit/pan/zoom/reset and clean-close interaction check.
+corrected static gallery and confirmed Gallery 5 orbit, pan, zoom, reset, and clean close. M284 and
+S065 are complete. The owner's non-blocking visual-quality observation about the example's uniform
+unlit mesh is recorded for a bounded flat-Lambert presentation follow-up.
 
 ## Goal
 
