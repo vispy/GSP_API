@@ -3552,7 +3552,7 @@
     {
       "id": "M298",
       "type": "mission",
-      "summary": "Completed and owner-confirmed in VisPy2 5b38b95, GSP ef345d3 and 767d09e, and Datoviz 3b5a18894: paired windows share logical/physical geometry, both backends honor Retina density, and close-time cleanup is safe",
+      "summary": "Completed and owner-confirmed through VisPy2 4f0f0be, GSP ef345d3 and 767d09e, and Datoviz 3b5a18894: live review has matched Retina rendering, safe lifecycle, and separate GSP/VisPy2 documentation sites",
       "priority": 298,
       "state": "completed"
     },
@@ -3741,6 +3741,7 @@
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M298 live-documentation amendment completed on 2026-07-28 in VisPy2 4f0f0be. VisPy2 now has a dedicated MkDocs Material site covering its high-level plotting API and manual review documents, while the GSP site retains protocol/backend ownership. The VisPy2 site passed a strict build; checkout-relative source and historical-artifact links outside docs are classified as informational rather than site-local.",
     "The owner confirmed on 2026-07-28 that the corrected priority-2d Retina comparison is fixed. Window geometry, semantic visual scaling, and Matplotlib native-guide raster density are no longer pending acceptance findings.",
     "M298 Matplotlib raster-DPI correction completed on 2026-07-28 in GSP 767d09e. After correcting Datoviz semantic visual units, the remaining mismatch was confined to Matplotlib-native titles, ticks, spines, and grids: the figure still used 96 DPI inside a 1600×1200 Retina framebuffer. Matplotlib now defaults to reference DPI multiplied by requested device scale when output DPI is unspecified, while explicit guide pixel styles convert through ResolvedCanvas. Actual captures resolve to 800×600 logical and 1600×1200 physical pixels; GSP passed 803 tests, strict mypy, and Ruff, and the owner confirmed the live correction.",
     "M298 HiDPI visual-size correction completed on 2026-07-28 in GSP ef345d3. After equalizing window geometry, Datoviz points, markers, strokes, and text appeared about 2× Matplotlib because the adapter multiplied GSP canvas pixels by framebuffer_per_canvas_px before Datoviz independently applied device scale. The adapter now uses canvas_to_host_scale, and colorbar geometry uses host-logical dimensions. GSP passed 801 tests, strict mypy, and Ruff; owner live confirmation remains.",

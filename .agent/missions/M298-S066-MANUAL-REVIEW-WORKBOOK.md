@@ -57,6 +57,13 @@ resolved canvas as well. Actual backend captures resolve to the same 800×600 lo
 physical geometry, and GSP passed 803 tests, strict mypy, and Ruff. The owner confirmed the
 corrected `priority-2d` live comparison on 2026-07-28, closing the Retina size and DPI finding.
 
+Live documentation amendment: VisPy2 `4f0f0be` adds a dedicated MkDocs Material site wrapper and
+landing page around the fresh repository's installation guide, user guide, API reference, producer
+boundary, gallery, capability matrix, workbook, and accepted review record. This keeps ownership
+clear: VisPy2 documents the plotting API, while GSP documents protocol and backend contracts. The
+site passed a strict build; repository-source and historical-artifact links outside `docs/` remain
+informational in MkDocs because they are valid checkout links rather than site pages.
+
 ## Goal
 
 Create one linear, self-contained Markdown workbook that lets the owner manually review the
