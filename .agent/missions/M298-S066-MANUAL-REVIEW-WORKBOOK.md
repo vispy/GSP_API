@@ -9,6 +9,13 @@ validation compiled 22 Python blocks and checked 43 local links; isolated Matplo
 outputs were 800×600; 105 tests, strict mypy, Ruff, and `git diff --check` passed; and four clean
 wheels produced fourteen fresh captures plus a schema-2 manifest.
 
+Owner amendment on 2026-07-28: VisPy2 `7e08163` converts the human path to blocking live windows.
+Matplotlib uses `Figure.show()` or an explicit caller-owned session; every Datoviz case uses a
+fresh ordinary process, `display(block=False)`, and `session.run()` until native close. PNGs remain
+only inside the optional automated qualification and are not human-review evidence. The live
+conversion also records the current public gap that VisPy2 DATA-space `imshow()` cannot use the
+qualified Datoviz NDC-only image lowering.
+
 ## Goal
 
 Create one linear, self-contained Markdown workbook that lets the owner manually review the
