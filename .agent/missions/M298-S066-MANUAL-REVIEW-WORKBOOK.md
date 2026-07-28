@@ -22,6 +22,15 @@ applies the same resolved plot viewport to each 3D pair, waits for both windows 
 supports the full priority/camera sequence through `all` or one named case. The runner and all nine
 scene builders are covered by tests and documented as the primary human visual path.
 
+Close-lifecycle correction: the owner's first live `priority-2d` run exposed a Datoviz SIGSEGV in
+`dvz_input_unsubscribe()`. Datoviz's unbounded app loop reaped the closed view and destroyed its
+input router before returning to GSP, although callers still needed to unsubscribe callbacks.
+Datoviz `3b5a18894` now preserves those resources until explicit reap or app destruction, and
+VisPy2 `e4eeaf8` additionally drives the paired-review Datoviz child with bounded one-frame pumping
+for compatibility and crash isolation. Datoviz built successfully with 37/37 app tests passing;
+VisPy2 passed 116 tests plus strict typing, lint, and documentation validation. Actual native
+click-close behavior remains an owner-run acceptance check.
+
 ## Goal
 
 Create one linear, self-contained Markdown workbook that lets the owner manually review the

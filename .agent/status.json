@@ -3552,7 +3552,7 @@
     {
       "id": "M298",
       "type": "mission",
-      "summary": "Completed and amended in VisPy2 ecd7da1: one terminal launches concurrent isolated Matplotlib/Datoviz windows for nine named live cases with shared 3D viewport geometry; PNGs remain machine-only",
+      "summary": "Completed and corrected in VisPy2 e4eeaf8 plus Datoviz 3b5a18894: one terminal launches concurrent isolated backend windows, while bounded frame pumping and preserved native input-router lifetime prevent close-time unsubscribe crashes",
       "priority": 298,
       "state": "completed"
     },
@@ -3693,8 +3693,8 @@
     }
   ],
   "recommendations": [
-    "Run one command from the VisPy2 root for the visual pass: \"$VISPY2_REVIEW_PYTHON\" examples/manual_live_compare.py all. It opens both backend windows concurrently for each case, keeps Datoviz isolated, and advances after both windows close.",
-    "Use VisPy2 ecd7da1 for the M298 review: all human visual judgments now come from live windows, with one isolated child per backend. Do not inspect generated PNGs. Classify Q200 after reviewing the public DATA-image versus Datoviz NDC-image gap.",
+    "Retry the corrected paired close lifecycle from the VisPy2 root with \"$VISPY2_REVIEW_PYTHON\" examples/manual_live_compare.py priority-2d; after both children close cleanly, use the same command with all for the complete visual pass.",
+    "Use VisPy2 e4eeaf8 and Datoviz 3b5a18894 for the M298 review: all human visual judgments come from live windows, Datoviz close-time input subscriptions remain valid until caller cleanup, and the paired runner retains bounded-frame defense in depth. Classify Q200 after reviewing the public DATA-image versus Datoviz NDC-image gap.",
     "M298 and M299 are complete. The immediate human step is to follow VisPy2 docs/manual-pre-release-review.md end to end and record API/backend findings; do not begin release operations. White-paper revision should wait until Q190 designates the canonical GSP 0.2 specification source and the human review freezes current evidence.",
     "Owner-approved S066 parallel review work: M298 creates one self-contained linear API/backend review workbook for human execution, while M299 assigns a separate high-reasoning subagent to a read-only white-paper correctness, completeness, narrative, figures, citations, and improvement-direction audit.",
     "M297 completed and independently accepted in VisPy2 c51ca4c: Axes3D has a typed backend-neutral lighting helper, camera reset preserves lighting, Gallery 5 fails closed on exact semantic capabilities, Matplotlib and native Datoviz show two large distinct face tones, and the live Datoviz lifecycle exits cleanly. The next S066 work is a separately scoped pre-release API, examples, docs, packaging, and feature-gap audit without release operations.",
@@ -3741,6 +3741,7 @@
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M298 close-lifecycle correction completed on 2026-07-28. The owner's first paired priority-2d close reproduced SIGSEGV -11 in Datoviz _remove_pointer_sub/dvz_input_unsubscribe because dvz_app_run(app, 0) reaped the closed view and destroyed its router before returning to GSP cleanup. Datoviz 3b5a18894 defers that reap until explicit cleanup/app destruction; VisPy2 e4eeaf8 uses bounded one-frame pumping in the paired runner as compatibility defense. Datoviz built and passed 37/37 app tests; VisPy2 passed 116 tests, strict mypy, Ruff, and documentation validation. Native click-close awaits owner confirmation.",
     "M298 single-terminal amendment completed on 2026-07-28 in VisPy2 ecd7da1. The paired live runner launches Matplotlib and Datoviz concurrently in separate children for priority 2D, perspective, orthographic, flat Lambert, and five camera states; 3D pairs consume one resolved plot viewport. All nine cases passed child-process smoke, 115 tests passed, and strict mypy, Ruff, and 22-block/44-link documentation validation passed.",
     "M298 live-window amendment completed on 2026-07-28 in VisPy2 7e08163. Matplotlib review uses blocking live windows, Datoviz review uses caller-owned native sessions in fresh processes, camera states are reviewed sequentially, and PNGs are confined to optional machine qualification. The conversion exposed Q200: VisPy2 DATA-space imshow has no equivalent qualified Datoviz live path because the adapter currently accepts NDC images only.",
     "M299 completed on 2026-07-28 as a read-only high-reasoning audit. The 711-line report preserves the paper's semantic-protocol thesis but identifies stale seven-family/API/status evidence, target-versus-implemented ambiguity, missing reproducible evaluation, and a split-spec authority contradiction. No paper or specification was edited.",
