@@ -1,5 +1,5 @@
 {
-  "current_stage": "S065",
+  "current_stage": "S066",
   "stages": [
     {
       "id": "S001",
@@ -395,7 +395,7 @@
       "id": "S066",
       "title": "Presentation Polish And Pre-release Audit",
       "state": "active",
-      "progress": 5
+      "progress": 20
     }
   ],
   "missions": [
@@ -3454,9 +3454,9 @@
       "id": "M297",
       "title": "S066 live flat-Lambert presentation polish",
       "stage": "S066",
-      "state": "approved",
+      "state": "completed",
       "agent": "codex-ucl-gpt-5.6-sol-medium",
-      "progress": 5,
+      "progress": 100,
       "priority": 297,
       "repositories": [
         "vispy2"
@@ -3507,15 +3507,22 @@
       "summary": "Completed in Datoviz b45d692e4: all public concrete ctypes records are ABI-exact, explicitly pointer-opaque, or fail-closed; Python 3.12 and 3.14 native validation passed without crashes",
       "priority": 296,
       "state": "completed"
+    },
+    {
+      "id": "M297",
+      "type": "mission",
+      "summary": "Completed in VisPy2 c51ca4c: typed View3D lighting, lighting-preserving camera reset, visibly distinct flat-Lambert Gallery 5 faces, strict capability gating, native Datoviz capture, and clean live lifecycle",
+      "priority": 297,
+      "state": "completed"
     }
   ],
   "open_questions": [
     {
       "id": "Q180-GALLERY5-FLAT-LAMBERT-PRESENTATION",
-      "summary": "Gallery 5 is functionally accepted, but its uniform unlit mesh is visually unattractive. The recommended bounded follow-up is to use the existing strict flat_lambert path with generated face normals and established View3D lighting fields, without expanding public material semantics.",
+      "summary": "Resolved by VisPy2 c51ca4c: Gallery 5 uses generated face normals, strict flat Lambert, one ambient-plus-directional light, and a review-proven initial orbit yielding two large visible face tones in both Matplotlib and Datoviz.",
       "requires_human": false,
       "requires_chatgpt_pro": false,
-      "state": "open"
+      "state": "closed"
     },
     {
       "id": "Q030-DATOVIZ-QUERY-RESULT-FIELDS",
@@ -3624,6 +3631,7 @@
     }
   ],
   "recommendations": [
+    "M297 completed and independently accepted in VisPy2 c51ca4c: Axes3D has a typed backend-neutral lighting helper, camera reset preserves lighting, Gallery 5 fails closed on exact semantic capabilities, Matplotlib and native Datoviz show two large distinct face tones, and the live Datoviz lifecycle exits cleanly. The next S066 work is a separately scoped pre-release API, examples, docs, packaging, and feature-gap audit without release operations.",
     "M277 completed and independently accepted: PixelVisual now has strict protocol validation, executable conformance, deterministic Matplotlib 2D plus documented projected-3D adaptation, public dvz_pixel lowering with exact logical-size and unsupported-path evidence, VisPy2 2D/3D producers, installed-wheel artifacts, and truthful deferral of native Datoviz capture to M284. M278 SphereVisual is approved next.",
     "Owner-approved M276 amendment: implement the non-native cleanup, capability-gated session plumbing, Matplotlib rerender evidence, and caller-owned VisPy2 camera example now; keep live Datoviz navigation unadvertised and defer genuine native lifecycle plus manual interaction qualification to M284. M277 may proceed after this amended slice passes review.",
     "M276 first run stopped cleanly at its native-crash condition: the isolated Datoviz probe aborts inside dvz_app -> glfwInit -> _glfwInitCocoa -> _RegisterApplication before camera or callback code runs. The owner subsequently approved a non-native split; the crash remains an M284 qualification item.",
@@ -3667,6 +3675,7 @@
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M297 completed on 2026-07-28 in VisPy2 c51ca4c. The supervisor rejected the worker's first two light-only compositions because hidden protocol face colors did not create visible shape, then integrated a raster-proven light plus initial orbit. Canonical VisPy2 passed 105 tests, strict mypy, Ruff, docs/link validation, native Datoviz capture, and a bounded live-session interrupt with no leftover process.",
     "S065 completed with owner acceptance on 2026-07-28: the corrected static gallery, live Gallery 5 orbit/pan/zoom/reset controls, and clean close all passed. The owner's unlit-mesh aesthetic concern is a non-blocking flat-Lambert example-polish follow-up.",
     "Owner accepted the corrected M292 static gallery on 2026-07-28. M284 and S065 remain at 95 percent only for the owner-run Gallery 5 orbit, pan, zoom, reset, and clean-close interaction check.",
     "M292 completed and independently accepted: Datoviz ABI repairs eliminated the ctypes overwrite crashes; exactly four committed wheels produced fourteen fresh 800x600 captures with portable schema-2 provenance, all camera geometry ratios within 1.2 percent, and a clean Gallery 5 interrupt lifecycle. M288-M290 close; M284 and S065 remain at 95 percent pending owner visual and interactive acceptance.",

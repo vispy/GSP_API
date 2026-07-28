@@ -2,9 +2,21 @@
 
 ## Status
 
-Owner-approved on 2026-07-28 for execution with the pinned
-`codex-ucl-gpt-5.6-sol-medium` provider. This is a bounded VisPy2 producer/example mission; it does
-not reopen S065 and does not expand GSP material semantics.
+Completed and independently accepted on 2026-07-28 in VisPy2 commit `c51ca4c`.
+The pinned `codex-ucl-gpt-5.6-sol-medium` worker implemented the bounded producer/example slice;
+Mission Control rejected two light-only compositions that changed hidden face values without
+changing the visible silhouette, then integrated a review-proven initial orbit and light direction.
+The result does not reopen S065 or expand GSP material semantics.
+
+Validation completed:
+
+- 105 VisPy2 tests;
+- strict mypy and Ruff for `src`, `tests`, and `examples`;
+- documentation Python-block and local-link validation;
+- wheel build and producer-only import with `gsp-core`;
+- deterministic Matplotlib raster proof with two large visible face tones;
+- native Datoviz capture showing the same two-tone tetrahedral shape;
+- bounded live Datoviz interrupt with exit code 0 and no remaining gallery process.
 
 ## Baseline and finding
 

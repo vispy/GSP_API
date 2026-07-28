@@ -5,11 +5,12 @@
 S066 improves first-experimental-release presentation and then audits the public API, examples,
 documentation, packaging, and bounded backend claims without performing a release.
 
-## First approved mission
+## First completed mission
 
-M297 addresses the owner-identified Gallery 5 visual-quality issue by using the already accepted
-S039 flat-Lambert contract. It may add only a small VisPy2 convenience for existing View3D light
-fields and must not broaden material or lighting semantics.
+M297 completed in VisPy2 `c51ca4c`. It addresses the owner-identified Gallery 5 visual-quality
+issue with the already accepted S039 flat-Lambert contract, a small typed VisPy2 convenience for
+existing View3D light fields, and a raster-proven initial camera/light composition. It does not
+broaden material or lighting semantics.
 
 ## Later work
 
