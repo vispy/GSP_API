@@ -395,7 +395,7 @@
       "id": "S066",
       "title": "Presentation Polish And Pre-release Audit",
       "state": "active",
-      "progress": 20
+      "progress": 60
     }
   ],
   "missions": [
@@ -3475,9 +3475,9 @@
       "id": "M298",
       "title": "S066 self-contained manual API and backend review workbook",
       "stage": "S066",
-      "state": "running",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 5,
+      "progress": 100,
       "priority": 298,
       "repositories": [
         "vispy2"
@@ -3492,9 +3492,9 @@
       "id": "M299",
       "title": "S066 high-reasoning white-paper audit",
       "stage": "S066",
-      "state": "approved",
+      "state": "completed",
       "agent": "high-reasoning-subagent",
-      "progress": 5,
+      "progress": 100,
       "priority": 299,
       "repositories": [
         "GSP_API"
@@ -3548,9 +3548,30 @@
       "summary": "Completed in VisPy2 c51ca4c: typed View3D lighting, lighting-preserving camera reset, visibly distinct flat-Lambert Gallery 5 faces, strict capability gating, native Datoviz capture, and clean live lifecycle",
       "priority": 297,
       "state": "completed"
+    },
+    {
+      "id": "M298",
+      "type": "mission",
+      "summary": "Completed in VisPy2 32d63b7: one linear self-contained human review workbook, ten executed embedded workflows, isolated native Datoviz cases, and a clean four-wheel fourteen-capture qualification",
+      "priority": 298,
+      "state": "completed"
+    },
+    {
+      "id": "M299",
+      "type": "mission",
+      "summary": "Completed: high-reasoning audit finds a strong position-paper core but nine P0 correctness/boundary issues, twelve P1 evidence/narrative gaps, and a canonical-spec authority decision required before revision",
+      "priority": 299,
+      "state": "completed"
     }
   ],
   "open_questions": [
+    {
+      "id": "Q190-GSP-CANONICAL-SPEC-AUTHORITY",
+      "summary": "M299 found two conflicting current specification copies: GSP_API has later viewport semantics but only seven visual families, while fresh GSP has the implemented eleven-family registry. The owner must designate the canonical GSP 0.2 specification home before a white-paper second edition or spec synchronization.",
+      "requires_human": true,
+      "requires_chatgpt_pro": false,
+      "state": "open"
+    },
     {
       "id": "Q180-GALLERY5-FLAT-LAMBERT-PRESENTATION",
       "summary": "Resolved by VisPy2 c51ca4c: Gallery 5 uses generated face normals, strict flat Lambert, one ambient-plus-directional light, and a review-proven initial orbit yielding two large visible face tones in both Matplotlib and Datoviz.",
@@ -3665,6 +3686,7 @@
     }
   ],
   "recommendations": [
+    "M298 and M299 are complete. The immediate human step is to follow VisPy2 docs/manual-pre-release-review.md end to end and record API/backend findings; do not begin release operations. White-paper revision should wait until Q190 designates the canonical GSP 0.2 specification source and the human review freezes current evidence.",
     "Owner-approved S066 parallel review work: M298 creates one self-contained linear API/backend review workbook for human execution, while M299 assigns a separate high-reasoning subagent to a read-only white-paper correctness, completeness, narrative, figures, citations, and improvement-direction audit.",
     "M297 completed and independently accepted in VisPy2 c51ca4c: Axes3D has a typed backend-neutral lighting helper, camera reset preserves lighting, Gallery 5 fails closed on exact semantic capabilities, Matplotlib and native Datoviz show two large distinct face tones, and the live Datoviz lifecycle exits cleanly. The next S066 work is a separately scoped pre-release API, examples, docs, packaging, and feature-gap audit without release operations.",
     "M277 completed and independently accepted: PixelVisual now has strict protocol validation, executable conformance, deterministic Matplotlib 2D plus documented projected-3D adaptation, public dvz_pixel lowering with exact logical-size and unsupported-path evidence, VisPy2 2D/3D producers, installed-wheel artifacts, and truthful deferral of native Datoviz capture to M284. M278 SphereVisual is approved next.",
@@ -3710,6 +3732,8 @@
     "M131 remains deferred until the user explicitly approves target version, package version update, tag creation, and publication target."
   ],
   "notes": [
+    "M299 completed on 2026-07-28 as a read-only high-reasoning audit. The 711-line report preserves the paper's semantic-protocol thesis but identifies stale seven-family/API/status evidence, target-versus-implemented ambiguity, missing reproducible evaluation, and a split-spec authority contradiction. No paper or specification was edited.",
+    "M298 completed on 2026-07-28 in VisPy2 32d63b7. The 1,215-line workbook embeds a complete linear public-API, Matplotlib, Datoviz, camera, capability, session, query, gallery, implementation-reading, and final decision path. Ten embedded workflows executed successfully; 105 tests, strict mypy, Ruff, 22 code-block/43-link docs validation, and a fresh four-wheel fourteen-capture schema-2 qualification passed.",
     "M297 completed on 2026-07-28 in VisPy2 c51ca4c. The supervisor rejected the worker's first two light-only compositions because hidden protocol face colors did not create visible shape, then integrated a raster-proven light plus initial orbit. Canonical VisPy2 passed 105 tests, strict mypy, Ruff, docs/link validation, native Datoviz capture, and a bounded live-session interrupt with no leftover process.",
     "S065 completed with owner acceptance on 2026-07-28: the corrected static gallery, live Gallery 5 orbit/pan/zoom/reset controls, and clean close all passed. The owner's unlit-mesh aesthetic concern is a non-blocking flat-Lambert example-polish follow-up.",
     "Owner accepted the corrected M292 static gallery on 2026-07-28. M284 and S065 remain at 95 percent only for the owner-run Gallery 5 orbit, pan, zoom, reset, and clean-close interaction check.",

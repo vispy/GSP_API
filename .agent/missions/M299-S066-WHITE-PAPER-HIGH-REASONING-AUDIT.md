@@ -2,7 +2,12 @@
 
 ## Status
 
-Owner-approved on 2026-07-28 for a dedicated high-reasoning subagent.
+Completed and accepted by Mission Control on 2026-07-28.
+
+Evidence: `.agent/reviews/M299-WHITE-PAPER-HIGH-REASONING-AUDIT.md` records the independent
+high-reasoning audit, including nine P0 findings, twelve P1 findings, twelve P2 improvements, a
+current-product coverage matrix, revised outline, prioritized program, owner questions, and the
+split-specification authority contradiction. The paper and product sources were not changed.
 
 ## Goal
 
