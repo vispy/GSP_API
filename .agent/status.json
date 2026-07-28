@@ -390,6 +390,12 @@
       "title": "Camera And Priority Visual Completeness",
       "state": "completed",
       "progress": 100
+    },
+    {
+      "id": "S066",
+      "title": "Presentation Polish And Pre-release Audit",
+      "state": "active",
+      "progress": 5
     }
   ],
   "missions": [
@@ -3441,6 +3447,27 @@
           "tools/bindings",
           "tools/tests",
           "datoviz/_ctypes.py"
+        ]
+      }
+    },
+    {
+      "id": "M297",
+      "title": "S066 live flat-Lambert presentation polish",
+      "stage": "S066",
+      "state": "approved",
+      "agent": "codex-ucl-gpt-5.6-sol-medium",
+      "progress": 5,
+      "priority": 297,
+      "repositories": [
+        "vispy2"
+      ],
+      "path_locks": {
+        "vispy2": [
+          "src/vispy2",
+          "tests",
+          "examples",
+          "docs",
+          "README.md"
         ]
       }
     }
