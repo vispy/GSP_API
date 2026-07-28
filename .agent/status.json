@@ -3470,6 +3470,40 @@
           "README.md"
         ]
       }
+    },
+    {
+      "id": "M298",
+      "title": "S066 self-contained manual API and backend review workbook",
+      "stage": "S066",
+      "state": "running",
+      "agent": "local-main-codex",
+      "progress": 5,
+      "priority": 298,
+      "repositories": [
+        "vispy2"
+      ],
+      "path_locks": {
+        "vispy2": [
+          "docs/manual-pre-release-review.md"
+        ]
+      }
+    },
+    {
+      "id": "M299",
+      "title": "S066 high-reasoning white-paper audit",
+      "stage": "S066",
+      "state": "approved",
+      "agent": "high-reasoning-subagent",
+      "progress": 5,
+      "priority": 299,
+      "repositories": [
+        "GSP_API"
+      ],
+      "path_locks": {
+        "GSP_API": [
+          ".agent/reviews/M299-WHITE-PAPER-HIGH-REASONING-AUDIT.md"
+        ]
+      }
     }
   ],
   "review_queue": [
@@ -3631,6 +3665,7 @@
     }
   ],
   "recommendations": [
+    "Owner-approved S066 parallel review work: M298 creates one self-contained linear API/backend review workbook for human execution, while M299 assigns a separate high-reasoning subagent to a read-only white-paper correctness, completeness, narrative, figures, citations, and improvement-direction audit.",
     "M297 completed and independently accepted in VisPy2 c51ca4c: Axes3D has a typed backend-neutral lighting helper, camera reset preserves lighting, Gallery 5 fails closed on exact semantic capabilities, Matplotlib and native Datoviz show two large distinct face tones, and the live Datoviz lifecycle exits cleanly. The next S066 work is a separately scoped pre-release API, examples, docs, packaging, and feature-gap audit without release operations.",
     "M277 completed and independently accepted: PixelVisual now has strict protocol validation, executable conformance, deterministic Matplotlib 2D plus documented projected-3D adaptation, public dvz_pixel lowering with exact logical-size and unsupported-path evidence, VisPy2 2D/3D producers, installed-wheel artifacts, and truthful deferral of native Datoviz capture to M284. M278 SphereVisual is approved next.",
     "Owner-approved M276 amendment: implement the non-native cleanup, capability-gated session plumbing, Matplotlib rerender evidence, and caller-owned VisPy2 camera example now; keep live Datoviz navigation unadvertised and defer genuine native lifecycle plus manual interaction qualification to M284. M277 may proceed after this amended slice passes review.",
