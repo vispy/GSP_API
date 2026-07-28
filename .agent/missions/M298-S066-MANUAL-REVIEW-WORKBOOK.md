@@ -16,6 +16,12 @@ only inside the optional automated qualification and are not human-review eviden
 conversion also records the current public gap that VisPy2 DATA-space `imshow()` cannot use the
 qualified Datoviz NDC-only image lowering.
 
+Single-terminal amendment: VisPy2 `ecd7da1` adds `examples/manual_live_compare.py`. One parent
+command launches matching Matplotlib and Datoviz windows concurrently in isolated children,
+applies the same resolved plot viewport to each 3D pair, waits for both windows to close, and
+supports the full priority/camera sequence through `all` or one named case. The runner and all nine
+scene builders are covered by tests and documented as the primary human visual path.
+
 ## Goal
 
 Create one linear, self-contained Markdown workbook that lets the owner manually review the
