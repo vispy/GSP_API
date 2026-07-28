@@ -4,10 +4,10 @@
 
 Completed on 2026-07-28 in VisPy2 `32d63b7`.
 
-Evidence: the workbook has 22 validated Python code blocks and 43 valid local links; all ten
-executable workflows ran successfully; isolated Matplotlib and Datoviz outputs were 800×600; 105
-tests, strict mypy, Ruff, and `git diff --check` passed; and four clean wheels produced fourteen
-fresh captures plus a schema-2 manifest.
+Evidence: all ten workbook Python blocks compiled and ran successfully; repository documentation
+validation compiled 22 Python blocks and checked 43 local links; isolated Matplotlib and Datoviz
+outputs were 800×600; 105 tests, strict mypy, Ruff, and `git diff --check` passed; and four clean
+wheels produced fourteen fresh captures plus a schema-2 manifest.
 
 ## Goal
 
