@@ -40,6 +40,14 @@ Both renderers now resolve to `800×600` logical and `1600×1200` framebuffer pi
 The correction passed 121 tests, strict typing, Ruff, 29-block/59-link documentation validation,
 and all nine headless paired cases. Native side-by-side appearance remains an owner check.
 
+HiDPI visual-size correction: once the windows matched, the owner's screenshot exposed roughly
+2× Datoviz point, marker, stroke, and text sizes. The GSP Datoviz adapter had converted canvas
+pixels with `framebuffer_per_canvas_px`, but Datoviz's `_px` attributes are already logical pixels
+and its runtime applies device scale during frame emission. GSP `ef345d3` now converts with
+`canvas_to_host_scale`, preventing the Retina scale from being applied twice; colorbar dimensions
+now use the resolved host-logical canvas too. The complete GSP validation passed 801 tests, strict
+mypy, and Ruff. Owner live comparison remains the final visual confirmation.
+
 ## Goal
 
 Create one linear, self-contained Markdown workbook that lets the owner manually review the
