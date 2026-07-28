@@ -31,6 +31,15 @@ for compatibility and crash isolation. Datoviz built successfully with 37/37 app
 VisPy2 passed 116 tests plus strict typing, lint, and documentation validation. Actual native
 click-close behavior remains an owner-run acceptance check.
 
+Live-size correction: the owner's next `priority-2d` review showed that an `800×600 pixel_exact`
+request produced a roughly `400×300` Matplotlib host window but an `800×600` Datoviz host window
+on a Retina display. VisPy2 `5b38b95` now detects Matplotlib's active device-pixel ratio once,
+requests `800×600` host-logical pixels with the same scale in both children, hides the Matplotlib
+toolbar, and compensates for GUI-manager chrome until its reported canvas is exactly `800×600`.
+Both renderers now resolve to `800×600` logical and `1600×1200` framebuffer pixels at scale 2.
+The correction passed 121 tests, strict typing, Ruff, 29-block/59-link documentation validation,
+and all nine headless paired cases. Native side-by-side appearance remains an owner check.
+
 ## Goal
 
 Create one linear, self-contained Markdown workbook that lets the owner manually review the
