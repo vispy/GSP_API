@@ -48,6 +48,15 @@ and its runtime applies device scale during frame emission. GSP `ef345d3` now co
 now use the resolved host-logical canvas too. The complete GSP validation passed 801 tests, strict
 mypy, and Ruff. Owner live comparison remains the final visual confirmation.
 
+Matplotlib raster-DPI correction: the follow-up live comparison confirmed that semantic visual
+sizes were corrected, but Matplotlib's native title, ticks, spines, and grid still rendered at
+96 DPI inside a 2×, 1600×1200 framebuffer. GSP `767d09e` now defaults the Matplotlib raster DPI to
+`reference_dpi * requested_device_scale` when no output DPI is explicitly requested, while keeping
+the figure's host-logical extent at 800×600. Explicit guide pixel styles now convert through the
+resolved canvas as well. Actual backend captures resolve to the same 800×600 logical and 1600×1200
+physical geometry, and GSP passed 803 tests, strict mypy, and Ruff. Owner live comparison remains
+the final visual confirmation.
+
 ## Goal
 
 Create one linear, self-contained Markdown workbook that lets the owner manually review the
