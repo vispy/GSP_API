@@ -3575,6 +3575,59 @@
           ".agent"
         ]
       }
+    },
+    {
+      "id": "M303",
+      "title": "S066 pre-release mechanical corrections",
+      "stage": "S066",
+      "state": "running",
+      "agent": "local-main-codex",
+      "progress": 10,
+      "priority": 303,
+      "repositories": [
+        "mission-control",
+        "gsp",
+        "vispy2"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent"
+        ],
+        "gsp": [
+          "packages",
+          "conformance",
+          "README.md",
+          "CHANGELOG.md",
+          "QUALIFICATION.md",
+          "docs"
+        ],
+        "vispy2": [
+          "pyproject.toml",
+          "tests",
+          "README.md",
+          "CHANGELOG.md",
+          "QUALIFICATION.md",
+          "docs"
+        ]
+      }
+    },
+    {
+      "id": "M304",
+      "title": "S066 Panel and producer-capability protocol consultation",
+      "stage": "S066",
+      "state": "blocked",
+      "agent": "chatgpt-pro",
+      "progress": 20,
+      "priority": 304,
+      "repositories": [
+        "mission-control"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent/consultations/P038-panel-and-producer-capability-contract.md",
+          ".agent/consultations/P038-response.md"
+        ]
+      }
     }
   ],
   "review_queue": [
@@ -3654,9 +3707,30 @@
       "summary": "Completed: implementation and native evidence are strong, but publication is NO-GO pending a Matplotlib 3.11 CI failure, stale changelog, canonical Panel/spec mismatch, producer capability namespace decision, package metadata/licensing, and Datoviz distribution policy",
       "priority": 302,
       "state": "completed"
+    },
+    {
+      "id": "M303",
+      "type": "mission",
+      "summary": "Running: restore supported-range CI, correct release claims, complete metadata/licensing, defer ordinary Datoviz publication, and rebuild qualification evidence",
+      "priority": 303,
+      "state": "running"
+    },
+    {
+      "id": "M304",
+      "type": "mission",
+      "summary": "Blocked pending P038 ChatGPT Pro response for the canonical Panel contract and producer capability namespace",
+      "priority": 304,
+      "state": "blocked"
     }
   ],
   "open_questions": [
+    {
+      "id": "Q210-PANEL-AND-PRODUCER-CAPABILITY-CONTRACT",
+      "summary": "P038 asks ChatGPT Pro to select the long-term canonical Panel/layout/clipping contract and producer capability namespace before aggressive pre-publication refactoring.",
+      "requires_human": true,
+      "requires_chatgpt_pro": true,
+      "state": "open"
+    },
     {
       "id": "Q200-VISPY2-DATOVIZ-DATA-IMAGE-LIVE-COVERAGE",
       "summary": "Resolved by M300: public VisPy2 DATA-space scalar-image/colorbar lowering through retained Datoviz View2D passed post-reboot native render, retained navigation, sizing, registration, mapping, and lifecycle evidence without a Datoviz API change.",
