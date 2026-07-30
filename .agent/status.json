@@ -3504,6 +3504,35 @@
           ".agent/reviews/M299-WHITE-PAPER-HIGH-REASONING-AUDIT.md"
         ]
       }
+    },
+    {
+      "id": "M300",
+      "title": "S066 Datoviz DATA-space image proof and Q200 closure",
+      "stage": "S066",
+      "state": "running",
+      "agent": "local-main-codex",
+      "progress": 90,
+      "priority": 300,
+      "repositories": [
+        "mission-control",
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent"
+        ],
+        "gsp": [
+          "packages/gsp-datoviz/src",
+          "packages/gsp-datoviz/tests"
+        ],
+        "vispy2": [
+          "tests",
+          "examples",
+          "docs"
+        ]
+      }
     }
   ],
   "review_queue": [
@@ -3562,12 +3591,19 @@
       "summary": "Completed: high-reasoning audit finds a strong position-paper core but nine P0 correctness/boundary issues, twelve P1 evidence/narrative gaps, and a canonical-spec authority decision required before revision",
       "priority": 299,
       "state": "completed"
+    },
+    {
+      "id": "M300",
+      "type": "mission",
+      "summary": "Implementation checkpoint passed in GSP 378ec88 and VisPy2 2d02c1b: public DATA-space scalar image, retained View2D, overlay registration, scalar mapping, and native colorbar are proven; final paired-live acceptance awaits reboot because the GPU driver is unavailable",
+      "priority": 300,
+      "state": "pending_reboot"
     }
   ],
   "open_questions": [
     {
       "id": "Q200-VISPY2-DATOVIZ-DATA-IMAGE-LIVE-COVERAGE",
-      "summary": "The live M298 workbook confirms that public VisPy2 imshow emits DATA-space ImageVisual while the qualified Datoviz image lowering accepts only NDC extents. The owner must classify the missing equivalent live Datoviz scalar-image/colorbar path as deferred or release-blocking after manual review.",
+      "summary": "M300 implements and proves public VisPy2 DATA-space scalar-image/colorbar lowering through retained Datoviz View2D without a Datoviz API change. Final paired-live human acceptance and strict promotion remain pending a reboot because the local GPU driver is unavailable.",
       "requires_human": true,
       "requires_chatgpt_pro": false,
       "state": "open"
@@ -3693,9 +3729,9 @@
     }
   ],
   "recommendations": [
-    "Run the complete paired live sequence from the VisPy2 root with \"$VISPY2_REVIEW_PYTHON\" examples/manual_live_compare.py all, recording any semantic, depth, lighting, camera, or lifecycle discrepancies in the manual review workbook.",
-    "Use VisPy2 5b38b95, GSP ef345d3 and 767d09e, and Datoviz 3b5a18894 for the M298 review: live windows share host-logical and framebuffer geometry, Datoviz screen-space units are converted once, Matplotlib rasterizes native guides at device density, and close-time cleanup remains safe. Classify Q200 after reviewing the DATA-image versus NDC-image gap.",
-    "M298 and M299 are complete. The immediate human step is to follow VisPy2 docs/manual-pre-release-review.md end to end and record API/backend findings; do not begin release operations. White-paper revision should wait until Q190 designates the canonical GSP 0.2 specification source and the human review freezes current evidence.",
+    "Do not run further Datoviz/Vulkan native gates until the owner reboots the machine and confirms the GPU driver is available.",
+    "After reboot, rebuild or reselect the exact candidate wheels and run \"$VISPY2_REVIEW_PYTHON\" examples/manual_live_compare.py scalar-image. Confirm DATA extent, lower origin, nearest cells, three red registration points, colorbar mapping, resize, pan/zoom, and clean close before resolving Q200.",
+    "M300 implementation and non-live qualification are complete without a Datoviz API change: GSP retains DATA or NDC image attachment semantics, the public VisPy2 paired runner includes scalar-image, 804 GSP tests and 123 CPU-safe VisPy2 tests pass, docs and wheels qualify, and strict promotion awaits only post-reboot paired-live acceptance.",
     "Owner-approved S066 parallel review work: M298 creates one self-contained linear API/backend review workbook for human execution, while M299 assigns a separate high-reasoning subagent to a read-only white-paper correctness, completeness, narrative, figures, citations, and improvement-direction audit.",
     "M297 completed and independently accepted in VisPy2 c51ca4c: Axes3D has a typed backend-neutral lighting helper, camera reset preserves lighting, Gallery 5 fails closed on exact semantic capabilities, Matplotlib and native Datoviz show two large distinct face tones, and the live Datoviz lifecycle exits cleanly. The next S066 work is a separately scoped pre-release API, examples, docs, packaging, and feature-gap audit without release operations.",
     "M277 completed and independently accepted: PixelVisual now has strict protocol validation, executable conformance, deterministic Matplotlib 2D plus documented projected-3D adaptation, public dvz_pixel lowering with exact logical-size and unsupported-path evidence, VisPy2 2D/3D producers, installed-wheel artifacts, and truthful deferral of native Datoviz capture to M284. M278 SphereVisual is approved next.",
