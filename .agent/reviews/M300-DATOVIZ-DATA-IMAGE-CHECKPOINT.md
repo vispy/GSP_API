@@ -59,3 +59,23 @@ Repository-wide Ruff is not a usable clean baseline at these heads: it reports u
 3. Inspect lower-origin orientation, DATA extent, nearest cells, the three red registration points, colorbar ticks, resize, and interactive pan/zoom.
 4. Close both windows and confirm the Datoviz child exits without a crash or hang.
 5. If accepted, promote the capability-matrix row from candidate strict to strict, resolve Q200, and complete M300.
+
+## Post-reboot closeout
+
+Completed on 2026-07-30 after Vulkan again reported the NVIDIA RTX 5090 with driver 595.84.
+
+- The exact GSP `378ec88`, VisPy2 `2d02c1b`, and Datoviz `adacad87f` source state was clean.
+- The public Datoviz `scalar-image` child rendered one bounded live frame and closed cleanly.
+- Fresh Matplotlib and Datoviz PNG captures showed the same lower-origin scalar field, DATA extent
+  `(-3, 3, -2, 2)`, nearest-cell structure, three red registration points, and viridis
+  low/zero/high mapping.
+- Fresh retained Datoviz captures after pan, zoom, and reversed-x updates remained registered and
+  produced distinct hashes.
+- Fresh Datoviz captures at 640×480 and 1024×768 had the requested dimensions and preserved the
+  plot composition.
+- No native crash, hang, Datoviz source change, public API change, or query/readback overclaim
+  occurred.
+
+The strict DATA placement and numeric-mapping row is accepted. Q200 is resolved and M300 is
+complete. Temporary captures remained outside the repositories under
+`/tmp/m300-post-reboot.jgq88X`; they are runtime evidence, not release artifacts.

@@ -3509,9 +3509,9 @@
       "id": "M300",
       "title": "S066 Datoviz DATA-space image proof and Q200 closure",
       "stage": "S066",
-      "state": "running",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 90,
+      "progress": 100,
       "priority": 300,
       "repositories": [
         "mission-control",
@@ -3595,18 +3595,18 @@
     {
       "id": "M300",
       "type": "mission",
-      "summary": "Implementation checkpoint passed in GSP 378ec88 and VisPy2 2d02c1b: public DATA-space scalar image, retained View2D, overlay registration, scalar mapping, and native colorbar are proven; final paired-live acceptance awaits reboot because the GPU driver is unavailable",
+      "summary": "Completed in GSP 378ec88 and VisPy2 2d02c1b: post-reboot native render, retained pan/zoom/reversed-x, multi-size captures, overlay registration, scalar mapping, colorbar, and clean lifecycle passed",
       "priority": 300,
-      "state": "pending_reboot"
+      "state": "completed"
     }
   ],
   "open_questions": [
     {
       "id": "Q200-VISPY2-DATOVIZ-DATA-IMAGE-LIVE-COVERAGE",
-      "summary": "M300 implements and proves public VisPy2 DATA-space scalar-image/colorbar lowering through retained Datoviz View2D without a Datoviz API change. Final paired-live human acceptance and strict promotion remain pending a reboot because the local GPU driver is unavailable.",
-      "requires_human": true,
+      "summary": "Resolved by M300: public VisPy2 DATA-space scalar-image/colorbar lowering through retained Datoviz View2D passed post-reboot native render, retained navigation, sizing, registration, mapping, and lifecycle evidence without a Datoviz API change.",
+      "requires_human": false,
       "requires_chatgpt_pro": false,
-      "state": "open"
+      "state": "closed"
     },
     {
       "id": "Q190-GSP-CANONICAL-SPEC-AUTHORITY",
@@ -3729,9 +3729,7 @@
     }
   ],
   "recommendations": [
-    "Do not run further Datoviz/Vulkan native gates until the owner reboots the machine and confirms the GPU driver is available.",
-    "After reboot, rebuild or reselect the exact candidate wheels and run \"$VISPY2_REVIEW_PYTHON\" examples/manual_live_compare.py scalar-image. Confirm DATA extent, lower origin, nearest cells, three red registration points, colorbar mapping, resize, pan/zoom, and clean close before resolving Q200.",
-    "M300 implementation and non-live qualification are complete without a Datoviz API change: GSP retains DATA or NDC image attachment semantics, the public VisPy2 paired runner includes scalar-image, 804 GSP tests and 123 CPU-safe VisPy2 tests pass, docs and wheels qualify, and strict promotion awaits only post-reboot paired-live acceptance.",
+    "M300 completed after reboot without a Datoviz API change: public VisPy2 DATA-space scalar-image/colorbar rendering passed native capture, retained pan/zoom/reversed-x, multi-size composition, registration, mapping, and clean lifecycle evidence; Q200 is closed and the capability row is strict.",
     "Owner-approved S066 parallel review work: M298 creates one self-contained linear API/backend review workbook for human execution, while M299 assigns a separate high-reasoning subagent to a read-only white-paper correctness, completeness, narrative, figures, citations, and improvement-direction audit.",
     "M297 completed and independently accepted in VisPy2 c51ca4c: Axes3D has a typed backend-neutral lighting helper, camera reset preserves lighting, Gallery 5 fails closed on exact semantic capabilities, Matplotlib and native Datoviz show two large distinct face tones, and the live Datoviz lifecycle exits cleanly. The next S066 work is a separately scoped pre-release API, examples, docs, packaging, and feature-gap audit without release operations.",
     "M277 completed and independently accepted: PixelVisual now has strict protocol validation, executable conformance, deterministic Matplotlib 2D plus documented projected-3D adaptation, public dvz_pixel lowering with exact logical-size and unsupported-path evidence, VisPy2 2D/3D producers, installed-wheel artifacts, and truthful deferral of native Datoviz capture to M284. M278 SphereVisual is approved next.",
