@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved by the owner on 2026-07-30. Blocked pending the P038 ChatGPT Pro response.
+Approved by the owner and completed on 2026-07-30. The P038 ChatGPT Pro response was archived
+verbatim and accepted as the canonical architectural decision.
 
 ## Goal
 
@@ -15,4 +16,5 @@ the pre-publication producer capability namespace.
 
 ## Stop condition
 
-Do not implement the dependent protocol/specification refactor until the response is available.
+Satisfied: `.agent/consultations/P038-response.md` is available and the dependent M305 refactor is
+approved.

@@ -395,7 +395,7 @@
       "id": "S066",
       "title": "Presentation Polish And Pre-release Audit",
       "state": "active",
-      "progress": 90
+      "progress": 95
     }
   ],
   "missions": [
@@ -3615,9 +3615,9 @@
       "id": "M304",
       "title": "S066 Panel and producer-capability protocol consultation",
       "stage": "S066",
-      "state": "blocked",
+      "state": "completed",
       "agent": "chatgpt-pro",
-      "progress": 20,
+      "progress": 100,
       "priority": 304,
       "repositories": [
         "mission-control"
@@ -3626,6 +3626,42 @@
         "mission-control": [
           ".agent/consultations/P038-panel-and-producer-capability-contract.md",
           ".agent/consultations/P038-response.md"
+        ]
+      }
+    },
+    {
+      "id": "M305",
+      "title": "S066 P038 canonical protocol refactor",
+      "stage": "S066",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 305,
+      "repositories": [
+        "mission-control",
+        "gsp",
+        "vispy2"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent"
+        ],
+        "gsp": [
+          "packages",
+          "conformance",
+          "specs",
+          "docs",
+          "tools",
+          "README.md",
+          "CHANGELOG.md"
+        ],
+        "vispy2": [
+          "src",
+          "tests",
+          "examples",
+          "docs",
+          "README.md",
+          "CHANGELOG.md"
         ]
       }
     }
@@ -3718,18 +3754,25 @@
     {
       "id": "M304",
       "type": "mission",
-      "summary": "Blocked pending P038 ChatGPT Pro response for the canonical Panel contract and producer capability namespace",
+      "summary": "Completed: P038 selects identity-only panels, required explicit scene layout, per-panel resolved geometry, attachment clipping, and VisPy2-local producer emission features",
       "priority": 304,
-      "state": "blocked"
+      "state": "completed"
+    },
+    {
+      "id": "M305",
+      "type": "mission",
+      "summary": "Completed in GSP ed08d18 and VisPy2 1d1842c: canonical identity-only panels, explicit layout, per-panel geometry, attachment clipping, provider-neutral GSP capabilities, VisPy2-local emission features, migration evidence, and fresh four-wheel qualification passed",
+      "priority": 305,
+      "state": "completed"
     }
   ],
   "open_questions": [
     {
       "id": "Q210-PANEL-AND-PRODUCER-CAPABILITY-CONTRACT",
-      "summary": "P038 asks ChatGPT Pro to select the long-term canonical Panel/layout/clipping contract and producer capability namespace before aggressive pre-publication refactoring.",
-      "requires_human": true,
+      "summary": "Resolved by P038: Panel is identity-only; explicit scene layout and per-panel resolved geometry own allocation; attachments own clipping; producer features are VisPy2-local and non-wire.",
+      "requires_human": false,
       "requires_chatgpt_pro": true,
-      "state": "open"
+      "state": "closed"
     },
     {
       "id": "Q200-VISPY2-DATOVIZ-DATA-IMAGE-LIVE-COVERAGE",
@@ -3859,7 +3902,7 @@
     }
   ],
   "recommendations": [
-    "M303 completed all non-architectural M302 corrections; M304/P038 is now the sole blocker before the aggressive canonical Panel and producer-capability refactor.",
+    "M304 archived and accepted P038; M305 is implementing the identity-only Panel, explicit scene layout, per-panel snapshot, attachment clipping, and VisPy2-local emission-feature architecture.",
     "M302 final pre-release verdict is NO-GO for publication: correct the supported-range Matplotlib CI failure, release-facing DATA-image contradiction, canonical Panel/viewport mismatch, superseded producer capability namespace, incomplete metadata/licensing, and non-ordinary Datoviz dependency before release operations.",
     "M301 resolved Q190: fresh-root gsp is the canonical GSP 0.2 specification home, GSP_API is historical, and archive-only viewport semantics must be synchronized through reviewed canonical changes.",
     "M300 completed after reboot without a Datoviz API change: public VisPy2 DATA-space scalar-image/colorbar rendering passed native capture, retained pan/zoom/reversed-x, multi-size composition, registration, mapping, and clean lifecycle evidence; Q200 is closed and the capability row is strict.",
