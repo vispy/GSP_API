@@ -3580,9 +3580,9 @@
       "id": "M303",
       "title": "S066 pre-release mechanical corrections",
       "stage": "S066",
-      "state": "running",
+      "state": "completed",
       "agent": "local-main-codex",
-      "progress": 10,
+      "progress": 100,
       "priority": 303,
       "repositories": [
         "mission-control",
@@ -3711,9 +3711,9 @@
     {
       "id": "M303",
       "type": "mission",
-      "summary": "Running: restore supported-range CI, correct release claims, complete metadata/licensing, defer ordinary Datoviz publication, and rebuild qualification evidence",
+      "summary": "Completed: 804 GSP and 124 VisPy2 tests pass, metadata/licensing and changelog are release-grade, the three-package publication set installs and passes 628 tests, and Datoviz is explicitly development-only",
       "priority": 303,
-      "state": "running"
+      "state": "completed"
     },
     {
       "id": "M304",
@@ -3859,6 +3859,7 @@
     }
   ],
   "recommendations": [
+    "M303 completed all non-architectural M302 corrections; M304/P038 is now the sole blocker before the aggressive canonical Panel and producer-capability refactor.",
     "M302 final pre-release verdict is NO-GO for publication: correct the supported-range Matplotlib CI failure, release-facing DATA-image contradiction, canonical Panel/viewport mismatch, superseded producer capability namespace, incomplete metadata/licensing, and non-ordinary Datoviz dependency before release operations.",
     "M301 resolved Q190: fresh-root gsp is the canonical GSP 0.2 specification home, GSP_API is historical, and archive-only viewport semantics must be synchronized through reviewed canonical changes.",
     "M300 completed after reboot without a Datoviz API change: public VisPy2 DATA-space scalar-image/colorbar rendering passed native capture, retained pan/zoom/reversed-x, multi-size composition, registration, mapping, and clean lifecycle evidence; Q200 is closed and the capability row is strict.",

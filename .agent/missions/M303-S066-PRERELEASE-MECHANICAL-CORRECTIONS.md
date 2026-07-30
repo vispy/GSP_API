@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved by the owner on 2026-07-30 and running under `local-main-codex`.
+Approved by the owner and completed on 2026-07-30 under `local-main-codex`.
 
 ## Goal
 
