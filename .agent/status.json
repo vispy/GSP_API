@@ -395,7 +395,7 @@
       "id": "S066",
       "title": "Presentation Polish And Pre-release Audit",
       "state": "active",
-      "progress": 70
+      "progress": 90
     }
   ],
   "missions": [
@@ -3555,6 +3555,26 @@
           "SPEC_INDEX.md"
         ]
       }
+    },
+    {
+      "id": "M302",
+      "title": "S066 final pre-release API documentation packaging and gap audit",
+      "stage": "S066",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 302,
+      "repositories": [
+        "mission-control",
+        "gsp",
+        "vispy2",
+        "datoviz"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent"
+        ]
+      }
     }
   ],
   "review_queue": [
@@ -3626,6 +3646,13 @@
       "type": "mission",
       "summary": "Completed: fresh-root gsp is the sole canonical GSP 0.2 specification home, GSP_API is explicitly historical, broken canonical index paths are corrected, and Q190 is closed",
       "priority": 301,
+      "state": "completed"
+    },
+    {
+      "id": "M302",
+      "type": "mission",
+      "summary": "Completed: implementation and native evidence are strong, but publication is NO-GO pending a Matplotlib 3.11 CI failure, stale changelog, canonical Panel/spec mismatch, producer capability namespace decision, package metadata/licensing, and Datoviz distribution policy",
+      "priority": 302,
       "state": "completed"
     }
   ],
@@ -3758,6 +3785,7 @@
     }
   ],
   "recommendations": [
+    "M302 final pre-release verdict is NO-GO for publication: correct the supported-range Matplotlib CI failure, release-facing DATA-image contradiction, canonical Panel/viewport mismatch, superseded producer capability namespace, incomplete metadata/licensing, and non-ordinary Datoviz dependency before release operations.",
     "M301 resolved Q190: fresh-root gsp is the canonical GSP 0.2 specification home, GSP_API is historical, and archive-only viewport semantics must be synchronized through reviewed canonical changes.",
     "M300 completed after reboot without a Datoviz API change: public VisPy2 DATA-space scalar-image/colorbar rendering passed native capture, retained pan/zoom/reversed-x, multi-size composition, registration, mapping, and clean lifecycle evidence; Q200 is closed and the capability row is strict.",
     "Owner-approved S066 parallel review work: M298 creates one self-contained linear API/backend review workbook for human execution, while M299 assigns a separate high-reasoning subagent to a read-only white-paper correctness, completeness, narrative, figures, citations, and improvement-direction audit.",
