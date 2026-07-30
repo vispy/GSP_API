@@ -395,7 +395,7 @@
       "id": "S066",
       "title": "Presentation Polish And Pre-release Audit",
       "state": "active",
-      "progress": 60
+      "progress": 70
     }
   ],
   "missions": [
@@ -3533,6 +3533,28 @@
           "docs"
         ]
       }
+    },
+    {
+      "id": "M301",
+      "title": "S066 canonical GSP 0.2 specification authority",
+      "stage": "S066",
+      "state": "completed",
+      "agent": "local-main-codex",
+      "progress": 100,
+      "priority": 301,
+      "repositories": [
+        "mission-control",
+        "gsp"
+      ],
+      "path_locks": {
+        "mission-control": [
+          ".agent",
+          "SPEC_INDEX.md"
+        ],
+        "gsp": [
+          "SPEC_INDEX.md"
+        ]
+      }
     }
   ],
   "review_queue": [
@@ -3598,6 +3620,13 @@
       "summary": "Completed in GSP 378ec88 and VisPy2 2d02c1b: post-reboot native render, retained pan/zoom/reversed-x, multi-size captures, overlay registration, scalar mapping, colorbar, and clean lifecycle passed",
       "priority": 300,
       "state": "completed"
+    },
+    {
+      "id": "M301",
+      "type": "mission",
+      "summary": "Completed: fresh-root gsp is the sole canonical GSP 0.2 specification home, GSP_API is explicitly historical, broken canonical index paths are corrected, and Q190 is closed",
+      "priority": 301,
+      "state": "completed"
     }
   ],
   "open_questions": [
@@ -3610,10 +3639,10 @@
     },
     {
       "id": "Q190-GSP-CANONICAL-SPEC-AUTHORITY",
-      "summary": "M299 found two conflicting current specification copies: GSP_API has later viewport semantics but only seven visual families, while fresh GSP has the implemented eleven-family registry. The owner must designate the canonical GSP 0.2 specification home before a white-paper second edition or spec synchronization.",
-      "requires_human": true,
+      "summary": "Resolved by M301: fresh-root gsp is the sole canonical GSP 0.2 specification home; GSP_API is historical, and archive-only viewport semantics require deliberate synchronization into the canonical specification.",
+      "requires_human": false,
       "requires_chatgpt_pro": false,
-      "state": "open"
+      "state": "closed"
     },
     {
       "id": "Q180-GALLERY5-FLAT-LAMBERT-PRESENTATION",
@@ -3729,6 +3758,7 @@
     }
   ],
   "recommendations": [
+    "M301 resolved Q190: fresh-root gsp is the canonical GSP 0.2 specification home, GSP_API is historical, and archive-only viewport semantics must be synchronized through reviewed canonical changes.",
     "M300 completed after reboot without a Datoviz API change: public VisPy2 DATA-space scalar-image/colorbar rendering passed native capture, retained pan/zoom/reversed-x, multi-size composition, registration, mapping, and clean lifecycle evidence; Q200 is closed and the capability row is strict.",
     "Owner-approved S066 parallel review work: M298 creates one self-contained linear API/backend review workbook for human execution, while M299 assigns a separate high-reasoning subagent to a read-only white-paper correctness, completeness, narrative, figures, citations, and improvement-direction audit.",
     "M297 completed and independently accepted in VisPy2 c51ca4c: Axes3D has a typed backend-neutral lighting helper, camera reset preserves lighting, Gallery 5 fails closed on exact semantic capabilities, Matplotlib and native Datoviz show two large distinct face tones, and the live Datoviz lifecycle exits cleanly. The next S066 work is a separately scoped pre-release API, examples, docs, packaging, and feature-gap audit without release operations.",

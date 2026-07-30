@@ -1,5 +1,9 @@
 # GSP Specification Index
 
+> **Historical archive.** The fresh-root `gsp` repository is the canonical specification home for
+> GSP 0.2. This index and `spec/` tree preserve development history and may contain later isolated
+> details or older registries; they must not be used to override the fresh-root specification.
+
 This index identifies the GSP 0.2 specification consolidation. The concise `spec/current/`
 chapters are the target organization and public reading path, but they remain a **consolidation
 draft** until requirement-level traceability is complete. During this transition, accepted detailed
